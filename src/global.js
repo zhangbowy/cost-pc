@@ -4,7 +4,7 @@ import constants from '@/utils/constants';
 import '@/assets/css/layout.scss';
 import '@/assets/css/ant.scss';
 import '@/assets/css/form.scss';
-import APPSSO from '../ssoMock'; // debug
+// import APPSSO from '../ssoMock'; // debug
 
 console.log('初始化');
 window.APPSSO = APPSSO; // debug
