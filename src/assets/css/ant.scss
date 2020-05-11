@@ -1,23 +1,30 @@
 :global {
+  .ant-layout-sider {
+    max-width: 190px;
+  }
+
   .app-table-responsive {
     display: flex;
     flex-direction: column;
     flex: auto;
     overflow: auto;
+
     .ant-card-body {
       display: flex;
       flex-direction: column;
       flex: auto;
       padding: 0 !important;
       overflow: auto;
+
       .ant-table-wrapper {
         flex: auto;
         overflow: auto;
       }
     }
   }
-  .ant-table-thead > tr > th,
-  .ant-table-tbody > tr > td {
+
+  .ant-table-thead>tr>th,
+  .ant-table-tbody>tr>td {
     word-wrap: break-word;
     word-break: break-word;
   }

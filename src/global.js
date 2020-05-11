@@ -1,21 +1,44 @@
 import 'moment/locale/zh-cn';
-import header from '@/utils/header';
+// import header from '@/utils/header';
 import constants from '@/utils/constants';
 import '@/assets/css/layout.scss';
 import '@/assets/css/ant.scss';
 import '@/assets/css/form.scss';
-// import APPSSO from '../ssoMock'; // debug
+import {
+  requestAuth
+} from '@/utils/ddApi';
+import {
+  getQueryString
+} from '@/utils/util';
+import APPSSO from '../userInfoMock'; // debug
 
-console.log('初始化');
-window.APPSSO = APPSSO; // debug
+const id = getQueryString('corpid');
+// console.log(window);
+window.APPSSO = APPSSO;
 
-// 设置请求头
-header.setPassword(constants.APP_PWD);
-header.setCommons({
-  appId: constants.APP_ID,
-  OSVersion: `${parseFloat(navigator.appVersion)}`,
+// 钉钉免登
+requestAuth(id, () => {
+  console.log('初始化登陆完成');
+  console.log(window);
+  // 用户信息存储
+}).then(res => {
+  console.log(res);
+  console.log('登陆完成了～');
+  console.log(window.g_app._store);
+  // window.g_app._store.dispatch({
+  //   type: 'session/save',
+  //   payload: {
+  //     isLogin: true,
+  //   },
+  // });
+  // // 左侧菜单请求
+  // window.g_app._store.dispatch({
+  //   type: 'session/getLeftMenu',
+  //   payload: {
+  //     sysId: constants.SYS_ID,
+  //   },
+  // });
 });
-
 // sso接入
 window.APPSSO.init({
   sysId: constants.SYS_ID,
@@ -23,10 +46,6 @@ window.APPSSO.init({
   password: constants.APP_PWD,
   domain: constants.APP_API,
 }).then((res) => {
-  header.setCommons({
-    userId: res.userResponse.userId,
-    token: res.token,
-  });
   console.log(window.g_app._store);
   // 用户信息存储
   window.g_app._store.dispatch({
@@ -47,9 +66,3 @@ window.APPSSO.init({
     },
   });
 });
-// window.g_app._store.dispatch({
-//   type: 'session/getLeftMenu',
-//   payload: {
-//     sysId: constants.SYS_ID,
-//   },
-// });

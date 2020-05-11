@@ -16,7 +16,9 @@ module.exports = {
   },
   rules: {
     'no-console': 'off',
-    'react/jsx-filename-extension': [1, { extensions: ['.js'] }],
+    'react/jsx-filename-extension': [1, {
+      extensions: ['.js']
+    }],
     'react/jsx-wrap-multilines': 0,
     'react/prop-types': 0,
     'react/jsx-tag-spacing': 0,
@@ -24,7 +26,9 @@ module.exports = {
     'react/jsx-one-expression-per-line': 0,
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    'import/no-unresolved': [2, { ignore: ['^@/', '^umi/', '^antd', '^./'] }],
+    'import/no-unresolved': [2, {
+      ignore: ['^@/', '^umi/', '^antd', '^./']
+    }],
     'import/prefer-default-export': 0,
     'import/no-extraneous-dependencies': [
       2,
@@ -44,11 +48,16 @@ module.exports = {
     'compat/compat': 0,
     "react/require-default-props": 0,
     "react/destructuring-assignment": 0,
-    "jsx-a11y/anchor-is-valid": 0
+    "jsx-a11y/anchor-is-valid": 0,
+    "no-underscore-dangle": 0
   },
   settings: {
     // support import modules from TypeScript files in JavaScript files
-    'import/resolver': { node: { extensions: ['.js', '.ts', '.tsx'] } },
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.ts', '.tsx']
+      }
+    },
     polyfills: ['fetch', 'promises', 'url', 'object-assign'],
   },
 };

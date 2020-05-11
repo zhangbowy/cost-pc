@@ -5,6 +5,7 @@
     padding: 16px 0 !important;
     user-select: none;
   }
+
   .app-content {
     display: flex;
     flex-direction: column;
@@ -12,8 +13,17 @@
     padding: 12px;
     overflow: auto;
   }
+
   .app-body {
     border-radius: 2px;
     background: #fff;
+  }
+
+  .sub-color {
+    color: rgba(0, 199, 149, 1);
+  }
+
+  .sub-bg {
+    background-color: rgba(0, 199, 149, 1);
   }
 }
