@@ -1,0 +1,14 @@
+:global {
+  .app-searchForm  {
+    padding: 8px 12px !important;
+    .ant-select {
+      min-width: 120px;
+    }
+    + .app-toolBar {
+      border-top: 1px solid #eee;
+    }
+  }
+  .app-toolBar {
+    padding: 8px 12px !important;
+  }
+}

@@ -1,0 +1,21 @@
+// 文字不换行
+@mixin text-nowrap {
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+// 多行文字超出省略
+@mixin text-ellipsis($line: 2) {
+  display: -webkit-box;
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+  -webkit-line-clamp: $line;
+  overflow: hidden;
+}
+// 居中
+@mixin display-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

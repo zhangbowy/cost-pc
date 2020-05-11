@@ -1,0 +1,19 @@
+:global {
+  .app-menu {
+    flex: 1;
+    overflow: auto;
+    padding: 16px 0 !important;
+    user-select: none;
+  }
+  .app-content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 12px;
+    overflow: auto;
+  }
+  .app-body {
+    border-radius: 2px;
+    background: #fff;
+  }
+}
