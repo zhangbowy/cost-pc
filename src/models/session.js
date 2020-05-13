@@ -1,5 +1,5 @@
 import localMenu from '@/common/menu';
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 import api from '@/services/api';
 import Session from '@/utils/session';
 // import { menuFilter } from '@/utils/authority';
@@ -18,15 +18,16 @@ export default {
     userInfo: {},
   },
   effects: {
-    * getLeftMenu( {  put }) {
-      // const response = yield call(
-      //   get,
-      //   api.getLeftMenu,
-      //   payload,
-      // );
+    * getLeftMenu( { payload }, { call, put }) {
+      const response = yield call(
+        get,
+        api.getLeftMenu,
+        payload,
+      );
       yield put({
         type: 'save',
         payload: {
+          newmenus: response,
           // menus: menuFilter(response, localMenu),
           menus: localMenu,
           isMenuReady: true,
