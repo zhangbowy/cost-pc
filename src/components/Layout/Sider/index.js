@@ -102,7 +102,7 @@ class App extends React.PureComponent {
     const { openKeys } = this.state;
     const selectedKeys = getMenuKey(this.props);
     const menuProps = collapsed ? {} : { openKeys };
-
+    console.log(menus);
     return (
       <Layout.Sider
         trigger={null}

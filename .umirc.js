@@ -41,6 +41,10 @@ export default {
       },
     }],
   ],
+  theme: {
+    "@primary-color": "rgba(0, 199, 149, 1)",
+    "@link-color": "rgba(0, 199, 149, 1)", // 链接色
+  },
   history: 'hash',
   hash: true,
   publicPath,
@@ -75,6 +79,9 @@ export default {
       .use(new webpack.BannerPlugin({
         banner: `${pkg.version} | Copyright © ${new Date().getFullYear()} 鑫蜂维有限公司. All rights reserved.`,
       }));
+    // config.module.test(/\.(less|css)$/)
+    // .use(['style-loader', 'css-loader'])
+    // .loader('less-loader', { javascriptEnabled: true });
 
     if (isInProd) {
       config

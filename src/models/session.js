@@ -1,7 +1,8 @@
 import localMenu from '@/common/menu';
-import { get } from '@/utils/request';
+import { post } from '@/utils/request';
 import api from '@/services/api';
-import { menuFilter } from '@/utils/authority';
+import Session from '@/utils/session';
+// import { menuFilter } from '@/utils/authority';
 
 export default {
   namespace: 'session',
@@ -14,9 +15,10 @@ export default {
     menus: [], // 左侧菜单
     isMenuReady: false, // 左侧单点数据获取标识
     isLogin: false, // 登录标识
+    userInfo: {},
   },
   effects: {
-    * getLeftMenu({ payload }, { call, put }) {
+    * getLeftMenu( {  put }) {
       // const response = yield call(
       //   get,
       //   api.getLeftMenu,
@@ -31,6 +33,18 @@ export default {
         },
       });
     },
+    *login({ payload }, { call, put }) {
+      console.log(api.login);
+      const response = yield call(post, api.login, payload);
+      Session.set('userInfo', JSON.stringify(response.result));
+      yield put({
+        type: 'save',
+        payload: {
+          userInfo: response.result,
+          isLogin: true,
+        }
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {

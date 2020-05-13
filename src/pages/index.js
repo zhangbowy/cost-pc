@@ -14,6 +14,7 @@ class App extends React.PureComponent {
   };
 
   render() {
+    console.log('测试');
     if (this.props.isMenuReady) {
       return <Redirect to={getRedirect()} />;
     }

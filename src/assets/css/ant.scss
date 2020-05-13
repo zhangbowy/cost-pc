@@ -1,6 +1,9 @@
+@import 'common.scss';
 :global {
   .ant-layout-sider {
-    max-width: 190px;
+    max-width: 190px !important;
+    width: 190px !important;
+    min-width: 190px !important;
   }
 
   .app-table-responsive {
@@ -23,9 +26,19 @@
     }
   }
 
-  .ant-table-thead>tr>th,
-  .ant-table-tbody>tr>td {
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
     word-wrap: break-word;
     word-break: break-word;
+  }
+.ant-menu.ant-menu-dark .ant-menu-item-selected,
+ .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
+    @extend .sub-bg;
+  }
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    // background-color: inherit !important;
+  }
+  .ant-layout {
+    background-color: rgba(247, 248, 250, 1);
   }
 }

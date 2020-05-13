@@ -17,6 +17,7 @@ export default {
   ERR_MSG: '系统错误，请稍后重试',
   // deviceId存储key
   DEVICEID_KEY: 'framework_deviceId',
+  APP_API,
 };
 
 /* ---------- Layout ----------*/

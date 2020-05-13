@@ -1,68 +1,57 @@
+/* eslint-disable no-undef */
 import 'moment/locale/zh-cn';
 // import header from '@/utils/header';
-import constants from '@/utils/constants';
+// import constants from '@/utils/constants';
 import '@/assets/css/layout.scss';
 import '@/assets/css/ant.scss';
 import '@/assets/css/form.scss';
-import {
-  requestAuth
-} from '@/utils/ddApi';
-import {
-  getQueryString
-} from '@/utils/util';
-import APPSSO from '../userInfoMock'; // debug
+import '@/assets/iconfont/iconfont.scss';
+import '@/assets/css/common.scss';
+import { includes } from 'lodash';
+import { parse } from 'qs';
+// import {
+//   getQueryString
+// } from '@/utils/util';
+import ddConfig from './utils/dd.config';
 
-const id = getQueryString('corpid');
-// console.log(window);
-window.APPSSO = APPSSO;
+ // 获取corpid
+ function getCorpid () {
+  const localval = localStorage.getItem('CORP_ID');
+  const { search } = window.location;
+  if (search) {
+    if (includes(search, 'corpid=')) {
+      return parse(search.slice(1)).corpid;
+    } if (
+      includes(search, '?') && !includes(search, '=')
+    ) {
+      return search.slice(1);
+    }
+      return localval;
+
+  }
+  return localval;
+}
+
+const corpId = getCorpid() || [];
 
 // 钉钉免登
-requestAuth(id, () => {
-  console.log('初始化登陆完成');
-  console.log(window);
-  // 用户信息存储
-}).then(res => {
-  console.log(res);
-  console.log('登陆完成了～');
-  console.log(window.g_app._store);
-  // window.g_app._store.dispatch({
-  //   type: 'session/save',
-  //   payload: {
-  //     isLogin: true,
-  //   },
-  // });
-  // // 左侧菜单请求
-  // window.g_app._store.dispatch({
-  //   type: 'session/getLeftMenu',
-  //   payload: {
-  //     sysId: constants.SYS_ID,
-  //   },
-  // });
-});
-// sso接入
-window.APPSSO.init({
-  sysId: constants.SYS_ID,
-  appId: constants.APP_ID,
-  password: constants.APP_PWD,
-  domain: constants.APP_API,
-}).then((res) => {
-  console.log(window.g_app._store);
+ddConfig.auth(corpId).then((res) => {
+  console.log(window.g_app._store.dispatch);
   // 用户信息存储
   window.g_app._store.dispatch({
-    type: 'session/save',
+    type: 'session/login',
     payload: {
-      userId: res.userResponse.userId,
-      userName: res.userResponse.userName,
-      realName: res.userResponse.realName,
-      phone: res.userResponse.phone,
+      corpId,
+      authCode: res.code,
       isLogin: true,
-    },
+    }
   });
   // 左侧菜单请求
   window.g_app._store.dispatch({
     type: 'session/getLeftMenu',
-    payload: {
-      sysId: constants.SYS_ID,
-    },
+    payload: {},
   });
+  console.log(window.g_app._store);
+}).catch(e => {
+  console.log(e);
 });

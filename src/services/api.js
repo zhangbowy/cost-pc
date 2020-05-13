@@ -1,14 +1,14 @@
 import constants from '@/utils/constants';
 
 const {
-  SSO_API,
   APP_API,
 } = constants;
 
 export default {
   /* ---------- sso ----------*/
   // 获取左侧菜单
-  getLeftMenu: `${SSO_API}/api/rbac/service/menuPlusV2/leftMenu/v1`,
+  getLeftMenu: `${APP_API}/cost/menu/nav`,
+  login: `${APP_API}/cost/user/login`,
 
   /* ---------- business ----------*/
   add: `${APP_API}/api/service/add`,

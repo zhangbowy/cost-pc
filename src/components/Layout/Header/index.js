@@ -60,7 +60,7 @@ class App extends React.PureComponent {
       collapsed,
     } = this.props;
     const breadcrumbList = this.setBreadcrumb();
-    const sysList = window.APPSSO.getAppList();
+    const sysList = [];
     const menu = (
       <Menu style={{ minWidth: 120 }}>
         <Menu.Item
@@ -70,9 +70,7 @@ class App extends React.PureComponent {
           <Icon type="logout" />
           <span>退出登录</span>
         </Menu.Item>
-        {
-          sysList.length > 0 && <Menu.Divider />
-        }
+        <Menu.Divider />
         {
           sysList.map((el) => (
             <Menu.Item key={el.sysId}>

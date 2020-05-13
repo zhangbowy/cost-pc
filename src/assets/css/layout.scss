@@ -10,20 +10,13 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    padding: 12px;
+    margin: 24px;
     overflow: auto;
+    background-color: #fff;
   }
 
   .app-body {
     border-radius: 2px;
     background: #fff;
-  }
-
-  .sub-color {
-    color: rgba(0, 199, 149, 1);
-  }
-
-  .sub-bg {
-    background-color: rgba(0, 199, 149, 1);
   }
 }
