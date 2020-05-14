@@ -1,11 +1,13 @@
 import post from '@/utils/request';
 import api from './services';
 
-
 export default {
   namespace: 'costCategory',
   state: {
-    costLists: [],
+    list: [{
+      id: '21',
+      costName: '测试'
+    }],
     query: {
       pageNum: 1,
       pageNo: 10
@@ -17,7 +19,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          costLists: response.result || [],
+          list: response.result || [],
           query: {
             pageNum: payload.pageNum,
             pageNo: payload.pageNo,
@@ -51,5 +53,5 @@ export default {
         ...payload,
       };
     },
-  }
+  },
 };

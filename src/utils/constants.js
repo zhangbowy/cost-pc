@@ -18,6 +18,23 @@ export default {
   // deviceId存储key
   DEVICEID_KEY: 'framework_deviceId',
   APP_API,
+  classify: [{
+    key: 'basic',
+    value: '基础设置',
+  }, {
+    key: 'field',
+    value: '字段设置',
+  }],
+  account: [{
+    key: '0',
+    name: '银行卡'
+  }, {
+    key: '1',
+    name: '支付宝'
+  }, {
+    key: '2',
+    name: '现金'
+  }]
 };
 
 /* ---------- Layout ----------*/

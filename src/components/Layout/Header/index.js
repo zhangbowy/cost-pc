@@ -25,6 +25,7 @@ class App extends React.PureComponent {
   // 设置面包屑
   setBreadcrumb = () => {
     const { breadcrumbs } = this.props;
+    console.log(breadcrumbs);
     return (
       <Breadcrumb className={styles.breadcrumb}>
         {breadcrumbs.map((item) => (

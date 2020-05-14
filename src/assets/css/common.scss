@@ -16,4 +16,19 @@
   .content-dt{
     padding: 24px 32px;
   }
+  .cnt-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    height: 32px;
+    .head_rg{
+      font-size:14px;
+      font-weight:400;
+      color:rgba(0,0,0,0.36);
+    }
+  }
+  .deleteColor{
+    color: rgba(251, 96, 45, 1);
+  }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 
 const labelItem = {
@@ -7,10 +7,14 @@ const labelItem = {
 };
 
 const AddGroup = (props) => {
+  const [visible, setVisible] = useState(false);
   return (
     <span>
-      <span>{props.children}</span>
-      <Modal>
+      <span onClick={() => setVisible(!visible)}>{props.children}</span>
+      <Modal
+        visible={visible}
+        onCancel={() => setVisible(!visible)}
+      >
         <Form>
           <Form.Item
             key="costName"

@@ -11,13 +11,18 @@ import { fetch } from 'dva';
 import header from '@/utils/header';
 import constants from '@/utils/constants';
 
+
 function parseJSON(response) {
+  response.headers.forEach((key, value) => {
+    console.log(key, value);
+  });
   return response.json();
 }
 
 // http请求状态校验
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
+    console.log(response.headers.get('token'));
     return response;
   }
 
@@ -68,6 +73,7 @@ function request(url, config) {
     method: config.method || 'POST',
     mode: 'cors', // 请求模式
     catche: 'no-cache', // 缓存
+    token: 'ad8ba887-83a4-4aad-b41d-357d9607116b',
   };
 
   /* ---------- 请求参数处理 ----------*/
@@ -84,6 +90,8 @@ function request(url, config) {
     Object.assign(options, {
       headers: {
         'Content-Type': 'application/json',
+        credentials: 'include',
+        token: 'ad8ba887-83a4-4aad-b41d-357d9607116b',
       },
     });
     if (config.data) {
@@ -108,6 +116,7 @@ function request(url, config) {
         ...options.headers,
         ...header.common,
         ...config.headers,
+        token: 'ad8ba887-83a4-4aad-b41d-357d9607116b',
       },
     });
   } else {
@@ -115,6 +124,7 @@ function request(url, config) {
       headers: {
         ...options.headers,
         ...config.headers,
+        token: 'ad8ba887-83a4-4aad-b41d-357d9607116b',
       },
     });
   }

@@ -1,0 +1,20 @@
+.cnt_foot{
+  margin-top: 32px;
+  margin-bottom: 13px;
+}
+.header{
+  color: rgba(0, 0, 0, 0.85);
+  font-size:16px;
+  span{
+    vertical-align: middle;
+    font-weight:500;
+  }
+}
+.line{
+  width:4px;
+  height:16px;
+  background:rgba(0,199,149,1);
+  margin-right: 4px;
+  display: inline-block;
+  vertical-align: middle;
+}

@@ -5,7 +5,7 @@ import constants from '@/utils/constants';
 export const dva = {
   config: {
     onError(err) {
-      console.log(err);
+      // console.log(err.message);
       err.preventDefault();
       // if (!window.APPSSO.httpCheck(err)) {
       //   return;
