@@ -15,18 +15,19 @@
   flex-direction: column;
 }
 .logo {
-  padding-left: 24px;
-  height: 54px;
-  line-height: 54px;
+  padding-left: 40px;
+  height: 79px;
+  padding-top: 24px;
+  // line-height: 54px;
   color: #fff;
   background: #002140;
   overflow: hidden;
   .img {
     display: inline-block;
     vertical-align: middle;
-    width: 32px;
+    width: 100px;
     height: 32px;
-    background: url(@/assets/img/logo.svg) no-repeat;
+    background: url(@/assets/img/logo.png) no-repeat;
     background-size: contain;
   }
   h1 {

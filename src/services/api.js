@@ -10,11 +10,21 @@ export default {
   getLeftMenu: `${APP_API}/cost/menu/nav`,
   login: `${APP_API}/cost/user/login`,
 
-  /* ---------- business ----------*/
-  add: `${APP_API}/api/service/add`,
-  update: `${APP_API}/api/service/update`,
-  delete: `${APP_API}/api/service/delete`,
-  getUserList: `${APP_API}/api/service/getUserList`,
-  getEmployeeList: `${APP_API}/api/service/getEmployeeList`,
-  getEmployeeDetail: `${APP_API}/api/service/getEmployeeDetail`,
+  /* ---------- 费用类别 ----------*/
+  costCategoryList: `${APP_API}/cost/category/list`,
+  authApi: `${APP_API}/cost/user/jsapiAuth`,
+  payAccount: `${APP_API}/cost/account/payment/list/on`,
+  invoiceDetail: `${APP_API}/cost/invoice/submit/detail`,
+  nodeList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
+  grantDownload: `${APP_API}/cost/space/grantDownload`,
+  approvedUrl: `${APP_API}/cost/invoice/submit/selectApprovedUrl`,
+  grantUpload: `${APP_API}/cost/space/grantUpload`,
+  userInfo: `${APP_API}/cost/user/userInfo`,
+  expenseList: `${APP_API}/cost/invoice/submit/expense/list`,
+  invoiceDet: `${APP_API}/cost/invoice/template/detail`,
+  cateDet: `${APP_API}/cost/category/detail`,
+  receitAccount: `${APP_API}/cost/account/receipt/list`, // 收款账户
+  approveList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
+  addInvoice: `${APP_API}/cost/invoice/submit/add`,
+  addReceipt: `${APP_API}/cost/account/receipt/add`,
 };

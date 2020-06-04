@@ -2,24 +2,52 @@ const menuData = [
   {
     id: 'workbench',
     name: '工作台',
-    icon: 'table',
+    myIcon: 'icongongzuotai',
     path: 'workbench',
+  },
+  {
+    id: 'payment',
+    name: '付款',
+    myIcon: 'iconbaoxiaodanguanli',
+    path: 'payment',
+  },
+  {
+    id: 'statistics',
+    name: '支出费用明细',
+    myIcon: 'iconzhichufeiyongtongji',
+    path: 'statistics',
   },
   {
     id: 'basicSetting',
     name: '基础设置',
-    icon: 'table',
+    myIcon: 'iconjichushezhi',
     path: 'basicSetting',
     children: [{
       id: 'basicSetting_costCategory',
       name: '费用类别',
       path: 'costCategory',
+    }, {
+      id: 'basicSetting_payAccount',
+      name: '付款账户',
+      path: 'payAccount',
+    }, {
+      id: 'basicSetting_receiptAccount',
+      name: '收款账户',
+      path: 'receiptAccount',
+    }, {
+      id: 'basicSetting_invoice',
+      name: '单据',
+      path: 'invoice',
+    }, {
+      id: 'basicSetting_approvalFlow',
+      name: '审批流',
+      path: 'approvalFlow',
     }],
   },
   {
     id: 'system',
     name: '系统设置',
-    icon: 'table',
+    myIcon: 'iconxitongshezhi',
     path: 'system',
     children: [{
       id: 'system_auth',

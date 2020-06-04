@@ -1,11 +1,7 @@
-/**
- * Routes:
- *  - src/components/PrivateRoute
- * auth: AUTHID
- */
+
 
 import React from 'react';
-import { Button, Table, Divider } from 'antd';
+import { Button, Table, Divider, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import AddAuth from './components/AddAuth';
 
@@ -13,6 +9,7 @@ import AddAuth from './components/AddAuth';
   loading: loading.effects['auth/list'] || false,
   list: auth.list,
   query: auth.query,
+  total: auth.total,
 }))
 class Auth extends React.PureComponent {
   constructor(props) {
@@ -26,20 +23,44 @@ class Auth extends React.PureComponent {
     const {
       query,
     } = this.props;
-    console.log(query);
     this.onQuery({...query});
   }
 
   onOk = () => {
-    this.setState({
-      visible: false,
+    const {
+      query,
+    } = this.props;
+    this.onQuery({
+      ...query
     });
+  }
+
+  onLink = (id) => {
+    this.props.history.push(`/system/auth/${id}`);
   }
 
   onQuery = (payload) => {
     this.props.dispatch({
       type: 'auth/list',
       payload,
+    });
+  }
+
+  onDelete = (id) => {
+    const {
+      query,
+      dispatch,
+    } = this.props;
+    dispatch({
+      type: 'auth/del',
+      payload: {
+        id,
+      }
+    }).then(() => {
+      message.success('删除成功');
+      this.onQuery({
+        ...query
+      });
     });
   }
 
@@ -50,8 +71,8 @@ class Auth extends React.PureComponent {
     const {
       list,
       query,
+      total,
     } = this.props;
-    console.log(list);
     const columns = [{
       title: '角色名称',
       dataIndex: 'roleName',
@@ -66,11 +87,29 @@ class Auth extends React.PureComponent {
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          <a className="deleteColor">删除</a>
-          <Divider type="vertical" />
-          <AddAuth onOk={this.onOk} data={record} visible={visible}>
-            <a>编辑</a>
+          {
+            !record.isSupperAdmin &&
+            <Popconfirm
+              title="确认删除该角色吗?"
+              onConfirm={() => this.onDelete(record.id)}
+            >
+              <span className="deleteColor">删除</span>
+            </Popconfirm>
+          }
+          {
+            !record.isSupperAdmin &&
+            <Divider type="vertical" />
+          }
+          <AddAuth isSupperAdmin={record.isSupperAdmin} onOk={this.onOk} data={record} visible={visible}>
+            {
+              record.isSupperAdmin ?
+                <a>查看</a>
+              :
+                <a>编辑</a>
+            }
           </AddAuth>
+          <Divider type="vertical" />
+          <a onClick={() => this.onLink(record.id)}>设置人员</a>
         </span>
       )
     }];
@@ -91,6 +130,23 @@ class Auth extends React.PureComponent {
           dataSource={list}
           pagination={{
             current: query.pageNo,
+            total,
+            showTotal: () => (`共${total}条数据`),
+            onChange: (pageNumber) => {
+              this.onQuery({
+                pageNo: pageNumber,
+                pageSize: query.pageSize
+              });
+            },
+            size:'small',
+            showSizeChanger: true,
+            showQuickJumper: true,
+            onShowSizeChange: (cur, size) => {
+              this.onQuery({
+                pageNo: cur,
+                pageSize: size
+              });
+            }
           }}
         />
       </div>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import withRouter from 'umi/withRouter';
 import { connect } from 'dva';
 import Exception from '@/components/Exception';
-// import { authCheck } from '@/utils/authority';
+import { authCheck } from '@/utils/authority';
 import { urlToList } from '@/utils/common';
 
 const filterMenu = (menu, path) => {
@@ -83,7 +83,6 @@ class App extends React.PureComponent {
       const path = route.menuKey || pathname;
       const pathSnippets = urlToList(path);
       const breadcrumbs = [];
-      console.log(pathSnippets);
       pathSnippets.forEach((item, index) => {
         const result = filterMenu(menus, item);
         if (result) {
@@ -117,8 +116,8 @@ class App extends React.PureComponent {
 
   render() {
     const { route, children } = this.props;
-    // if (route.auth && !authCheck(route.auth)) {
-      if (route.auth && false) {
+    if (route.auth && !authCheck(route.auth)) {
+      // if (route.auth && false) {
       return <Exception type="403" />;
     }
 

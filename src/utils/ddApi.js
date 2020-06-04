@@ -25,6 +25,10 @@ import {
 import {
   message
 } from 'antd';
+import openSlidePanel$ from 'dingtalk-jsapi/api/biz/util/openSlidePanel';
+import previewImage$ from 'dingtalk-jsapi/api/biz/util/previewImage';
+import preview$ from 'dingtalk-jsapi/api/biz/cspace/preview';
+import uploadAttachment$ from 'dingtalk-jsapi/api/biz/util/uploadAttachment';
 
 const defaultUser = {
   preview: [{
@@ -65,7 +69,6 @@ export const requestAuth = async (id = null, callback) => {
   //   typeof callback === 'function' && callback(data);
   //   return;
   // };
-  console.log(window.g_app);
   const corpId = id || sessionStorage.getItem('corpId');
   if (corpId) {
     runtime.permission.requestAuthCode({
@@ -99,7 +102,39 @@ export const ddConfig = (agentId, corpId, timeStamp, nonceStr, signature) => {
     nonceStr, // 必填，生成签名的随机串
     signature, // 必填，签名
     type: 0, // 选填，0表示微应用的jsapi，1表示服务窗的jsapi，不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
-    jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker'] // 必填，需要使用的jsapi列表，注意：不要带dd。
+    jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker', 'biz.cspace.preview', 'biz.util.uploadAttachment'] // 必填，需要使用的jsapi列表，注意：不要带dd。
+  });
+};
+
+/**
+ * 选人
+ *
+ * @param {array} users
+ * @param {function} callback
+ * @param {object} options
+ */
+export const choosePeople = (users = [], callback, options = {}) => {
+  if (!isInDingTalk) {
+    console.log(defaultUser);
+    typeof callback === 'function' && callback(defaultUser);
+    return;
+  }
+  const _users = users;
+  const choosed = choose({
+    multiple: options.multiple === false ? options.multiple : true, // 是否多选： true多选 false单选； 默认true
+    users: _users, // 默认选中的用户列表，员工userid；成功回调中应包含该信息
+    corpId: localStorage.getItem('corpId'), // 企业id
+    max: options.max || 1500, // 人数限制，当multiple为true才生效，可选范围1-1500
+    onSuccess: res => {
+      console.log('user', res);
+      typeof callback === 'function' && callback(res);
+    },
+    onFail: err => {
+      console.log(err);
+    }
+  });
+  choosed.catch(e => {
+    console.log(e.errorMessage);
   });
 };
 
@@ -234,6 +269,75 @@ export const ddOpenLink = (url, sCallBack, fCallBack) => {
     },
     onFail: () => {
       typeof fCallBack === 'function' && fCallBack();
+    }
+  });
+};
+
+export const ddOpenSlidePanel = (url, title, sCallback, fCallBack) => {
+  // if (!isInDingTalk) {
+  //   window.location.href = url;
+  //   return;
+  // }
+  console.log(url);
+  // window.location.href = url;
+  openSlidePanel$({
+    url, // 打开侧边栏的url
+    title, // 侧边栏顶部标题
+    onSuccess(result) {
+      typeof sCallback === 'function' && sCallback(result);
+    },
+    onFail() {
+      typeof fCallBack === 'function' && fCallBack();
+    }
+  });
+};
+
+// 预览图片
+export const ddPreviewImage = (options) => {
+  previewImage$({
+    current:options.urlArray[options.index],
+    urls: options.urlArray,
+    onSuccess: (result) => {
+      console.log(result);
+    },
+    onFail: (err) => {
+      console.log(`err${JSON.stringify(err)}`);
+    }
+  });
+};
+
+// 预览附件
+export const previewFile = (options) => {
+
+  preview$({
+    corpId: localStorage.getItem('corpId'),
+    spaceId: options.spaceId,
+    fileId: options.fileId,
+    fileName: options.fileName,
+    fileSize: options.fileSize,
+    fileType: options.fileType,
+    onSuccess: (result) => {
+      console.log(result);
+    },
+    onFail: (err) => {
+      console.log(err);
+    }
+  });
+};
+
+// 上传附件
+export const fileUpload = (options, sCallBack, fCallBack) => {
+  console.log(options.spaceId);
+  uploadAttachment$({
+    image: {multiple:true,compress:false,max: options.max || 9,spaceId: options.spaceId},
+    space:{corpId: localStorage.getItem('corpId') || '',spaceId: options.spaceId, isCopy:1 , max: options.max || 9},
+    file:{spaceId: options.spaceId,max:1},
+    types:['photo','camera','file','space'],
+    onSuccess(_result) {
+      typeof sCallBack === 'function' && sCallBack(_result.data);
+    },
+    onFail(err) {
+      typeof fCallBack === 'function' && fCallBack(err);
     }
   });
 };

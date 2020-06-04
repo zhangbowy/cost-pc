@@ -1,0 +1,63 @@
+.approval_cnt{
+  padding: 0;
+}
+.method_box {
+  position: absolute;
+  left: 30px;
+  top: 0;
+  & > p {
+    margin-bottom: 10px;
+  }
+  z-index: 10;
+}
+.nodeCnt{
+  position: relative;
+  margin-top: 30px;
+}
+
+.approve_process_end {
+  margin-top: -4px;
+}
+.save_box {
+  text-align: center;
+}
+.approval_process {
+  min-width: 100%;
+  overflow: auto;
+  position: relative;
+  display: inline-block;
+  transform: scale(1);
+  overflow: hidden;
+  transform-origin: 50% 0px 0px;
+}
+.circle {
+  width: 17px;
+  height: 17px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 100px;
+  margin: 0 auto;
+  position: relative;
+  margin-top: 20px;
+  &::before {
+    content: '';
+    display: block;
+    background-color: #cacaca;
+    width: 2px;
+    height: 20px;
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+.reduction {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.45);
+  line-height: 30px;
+  text-align: center;
+}
+.save {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}

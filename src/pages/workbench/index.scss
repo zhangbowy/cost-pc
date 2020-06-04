@@ -1,0 +1,67 @@
+.header_cnt{
+  display: flex;
+
+}
+.header_add{
+  width:80px;
+  height:80px;
+  background:rgba(0,199,149,1);
+  box-shadow:0px 8px 26px 0px rgba(157,163,180,0.1);
+  border-radius:4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  position: relative;
+  cursor: pointer;
+  :global(.iconxinzengbaoxiao) {
+    font-size: 20px;
+  }
+  p{
+    margin-bottom: 0;
+  }
+}
+.header_add_mc{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width:80px;
+  height:80px;
+  background: rgba(0,0,0,.1);
+  color: #fff;
+}
+.offten{
+  width:212px;
+  height:80px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 10px 32px 0px rgba(157,163,180,0.1);
+  border-radius:4px;
+  display: flex;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+  :global(.iconfont) {
+    color: rgba(0, 199, 149, 0.37);
+    font-size: 32px;
+    margin: 9px 04px 0 10px;
+  }
+}
+.offten:hover{
+  border: 1px solid rgba(0, 199, 149, 1);
+}
+.app_header{
+  padding: 24px 32px;
+  background: #ffffff;
+}
+.cost_cnt{
+  display: flex;
+  flex-direction: column;
+  height:80px;
+  margin-top: 16px;
+  margin-right: 16px;
+}
+.cost_cnt span{
+  width: 160px;
+  display: block;
+}

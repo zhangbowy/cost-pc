@@ -12,11 +12,12 @@ export default {
       pageSize: PAGE_SIZE,
     },
     menuList: [],
+    detailRoleList: [],
+    total: 0,
   },
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
-      console.log(response);
       yield put({
         type: 'save',
         payload: {
@@ -25,6 +26,7 @@ export default {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
+          total: response.page.total,
         },
       });
     },
@@ -35,7 +37,7 @@ export default {
       yield call(post, api.edit, payload);
     },
     *del({ payload }, { call }) {
-      yield call(post, api.del, payload);
+      yield call(get, api.del, payload);
     },
     *menu({ payload }, { call, put }) {
       const response = yield call(get, api.menu, payload);
@@ -43,6 +45,16 @@ export default {
         type: 'save',
         payload: {
           menuList: response || [],
+        },
+      });
+    },
+    *detail({ payload }, { call, put }) {
+      const response = yield call(get, api.detail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          detailRoleList: response.rolePurviewOperateVOS || [],
+          rolePurviewDataVos: response.rolePurviewDataVos || [],
         },
       });
     },

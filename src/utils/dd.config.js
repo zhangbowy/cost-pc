@@ -83,7 +83,6 @@ class DD {
         corpId,
         onSuccess (result) {
           resolve(result)
-          console.log(result);
         },
         onFail (err) { reject(err) }
       })

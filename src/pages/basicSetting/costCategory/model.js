@@ -1,34 +1,35 @@
-import post from '@/utils/request';
+import {post, get} from '@/utils/request';
 import api from './services';
 
 export default {
   namespace: 'costCategory',
   state: {
-    list: [{
-      id: '21',
-      costName: '测试'
-    }],
-    query: {
-      pageNum: 1,
-      pageNo: 10
-    }
+    list: [],
+    allList: [], // 所有数据
+    details: {},
   },
   effects: {
     *costList({ payload }, { call, put }) {
-      const response = yield call(post, api.getEmployeeList, payload);
+      const response = yield call(get, api.list, payload);
       yield put({
         type: 'save',
         payload: {
-          list: response.result || [],
-          query: {
-            pageNum: payload.pageNum,
-            pageNo: payload.pageNo,
-          },
+          list: response || [],
+        },
+      });
+    },
+    *allList({ payload }, { call, put }) {
+      const response = yield call(get, api.list, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          allList: response || [],
         },
       });
     },
     *add({ payload }, { call }) {
-      yield call(post, api.addCostGroup, payload);
+      const res = yield call(post, api.addCostGroup, payload);
+      console.log(res);
     },
     *del({ payload }, { call }) {
       yield call(post, api.delCostGroup, payload);
@@ -36,12 +37,18 @@ export default {
     *edit({ payload }, { call }) {
       yield call(post, api.edit, payload);
     },
+    *delPer({ payload }, { call }) {
+      yield call(post, api.delPer, payload);
+    },
+    *checkDel({ payload }, { call }) {
+      yield call(post, api.check, payload);
+    },
     *detail({ payload }, { call, put }) {
-      const response = yield call(post, api.detailCost, payload);
+      const response = yield call(get, api.detailCost, payload);
       yield put({
         type: 'save',
         payload: {
-          details: response.result || {},
+          details: response || {},
         },
       });
     }

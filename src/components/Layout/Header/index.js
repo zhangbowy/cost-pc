@@ -11,12 +11,11 @@ import {
 import styles from './index.scss';
 
 @connect(({ session, global }) => ({
-  userName: session.realName,
+  userInfo: session.userInfo,
   breadcrumbs: global.breadcrumbs,
 }))
 class App extends React.PureComponent {
   static propTypes = {
-    userName: PropTypes.string,
     breadcrumbs: PropTypes.array,
     collapsed: PropTypes.bool,
     onCollapse: PropTypes.func,
@@ -25,7 +24,7 @@ class App extends React.PureComponent {
   // 设置面包屑
   setBreadcrumb = () => {
     const { breadcrumbs } = this.props;
-    console.log(breadcrumbs);
+    // console.log(breadcrumbs);
     return (
       <Breadcrumb className={styles.breadcrumb}>
         {breadcrumbs.map((item) => (
@@ -57,7 +56,7 @@ class App extends React.PureComponent {
 
   render() {
     const {
-      userName,
+      userInfo,
       collapsed,
     } = this.props;
     const breadcrumbList = this.setBreadcrumb();
@@ -98,7 +97,7 @@ class App extends React.PureComponent {
         >
           <Dropdown overlay={menu}>
             <a style={{ color: '#333' }}>
-              <span>{userName}</span>
+              <span>{userInfo.name || ''}</span>
               <Icon
                 type="down"
                 style={{ marginLeft: 5 }}

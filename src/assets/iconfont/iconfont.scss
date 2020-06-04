@@ -1,23 +1,223 @@
-@font-face {
-  font-family: 'iconfont';  /* project id 1243553 */
-  src: url('//at.alicdn.com/t/font_1243553_d9hjkhuxl06.eot');
-  src: url('//at.alicdn.com/t/font_1243553_d9hjkhuxl06.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_1243553_d9hjkhuxl06.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_1243553_d9hjkhuxl06.woff') format('woff'),
-  url('//at.alicdn.com/t/font_1243553_d9hjkhuxl06.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_1243553_d9hjkhuxl06.svg#iconfont') format('svg');
-}
 
+@font-face {
+  font-family: 'iconfont';  /* project id 1803032 */
+  src: url('//at.alicdn.com/t/font_1803032_q3mb0jc2a3f.eot');
+  src: url('//at.alicdn.com/t/font_1803032_q3mb0jc2a3f.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1803032_q3mb0jc2a3f.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1803032_q3mb0jc2a3f.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1803032_q3mb0jc2a3f.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1803032_q3mb0jc2a3f.svg#iconfont') format('svg');
+}
 :global{
-  .iconfont{
+  .iconfont {
     font-family: "iconfont" !important;
     font-size: 16px;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  .arrow_down:before {
-    content: "\e685";
+
+  .iconjiantou:before {
+    content: "\e6b3";
   }
 
+  .iconpdf:before {
+    content: "\e6aa";
+  }
+
+  .icontxt:before {
+    content: "\e6ad";
+  }
+
+  .iconzip:before {
+    content: "\e6b1";
+  }
+
+  .iconimg:before {
+    content: "\e6ab";
+  }
+
+  .iconExcel:before {
+    content: "\e6ac";
+  }
+
+  .iconunknown:before {
+    content: "\e6ae";
+  }
+
+  .iconppt:before {
+    content: "\e6af";
+  }
+
+  .iconvedio:before {
+    content: "\e6b0";
+  }
+
+  .iconWord:before {
+    content: "\e6b2";
+  }
+
+  .icondelete_fill:before {
+    content: "\e6f2";
+  }
+
+  .iconyinhangka:before {
+    content: "\e6a7";
+  }
+
+  .iconxianjin:before {
+    content: "\e6a8";
+  }
+
+  .iconzhifubao:before {
+    content: "\e6a9";
+  }
+
+  .iconyuanxingweixuanzhong:before {
+    content: "\e72f";
+  }
+
+  .iconyuanxingxuanzhongfill:before {
+    content: "\e730";
+  }
+
+  .iconWarning:before {
+    content: "\e608";
+  }
+
+  .iconclose:before {
+    content: "\e60c";
+  }
+
+  .iconinfo-cirlce:before {
+    content: "\e628";
+  }
+
+  .iconmanage_fill:before {
+    content: "\e70b";
+  }
+
+  .iconqrcode:before {
+    content: "\e7dd";
+  }
+
+  .iconicon_approval_fill:before {
+    content: "\eba4";
+  }
+
+  .iconicon_copyto:before {
+    content: "\eba6";
+  }
+
+  .iconmorenleibietu2:before {
+    content: "\e6a3";
+  }
+
+  .iconmorenleibietu3:before {
+    content: "\e6a4";
+  }
+
+  .iconmorenleibietu1:before {
+    content: "\e6a5";
+  }
+
+  .iconmorenleibietu4:before {
+    content: "\e6a6";
+  }
+
+  .iconlianxikefu:before {
+    content: "\e69d";
+  }
+
+  .icongongzuotai:before {
+    content: "\e69e";
+  }
+
+  .iconjichushezhi:before {
+    content: "\e69f";
+  }
+
+  .iconxitongshezhi:before {
+    content: "\e6a0";
+  }
+
+  .iconbaoxiaodanguanli:before {
+    content: "\e6a1";
+  }
+
+  .iconzhichufeiyongtongji:before {
+    content: "\e6a2";
+  }
+
+  .iconenter:before {
+    content: "\e6f8";
+  }
+
+  .iconfile-text:before {
+    content: "\e7b9";
+  }
+
+  .iconpropertysafety:before {
+    content: "\e7c0";
+  }
+
+  .iconxinzengbaoxiao:before {
+    content: "\e69a";
+  }
+
+  .icontongjitu1:before {
+    content: "\e69b";
+  }
+
+  .icontongjitu2:before {
+    content: "\e69c";
+  }
+
+  .icondown:before {
+    content: "\e60d";
+  }
+
+  .iconcaredown:before {
+    content: "\e61a";
+  }
+
+  .icondanju:before {
+    content: "\e698";
+  }
+
+  .iconchakanquanbujiantou:before {
+    content: "\e699";
+  }
+
+  .iconfeiyongtongji:before {
+    content: "\e690";
+  }
+
+  .iconwode-fill:before {
+    content: "\e691";
+  }
+
+  .iconwode:before {
+    content: "\e692";
+  }
+
+  .iconhome-fill:before {
+    content: "\e693";
+  }
+
+  .iconhome:before {
+    content: "\e694";
+  }
+
+  .iconshenpijilu-fill:before {
+    content: "\e695";
+  }
+
+  .iconshenpijilu:before {
+    content: "\e696";
+  }
+
+  .iconfeiyongtongji-fill:before {
+    content: "\e697";
+  }
 }

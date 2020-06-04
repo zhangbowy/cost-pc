@@ -26,3 +26,44 @@
     padding: 0;
   }
 }
+.iconList{
+  width:40px;
+  height:40px;
+  border-radius:4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  margin-right: 8px;
+  :global(.iconfont){
+    font-size: 30px;
+  }
+}
+.iconMap{
+  display: flex;
+}
+.checked{
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width:16px;
+  height:16px;
+  background:rgba(0,199,149,1);
+  border-radius:2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.activeIcon{
+  border:1px solid rgba(0,199,149,1)!important;
+}
+.iconList:hover{
+  border:1px solid rgba(217,217,217,1);
+}
+
+.field{
+  :global(.ant-form-item) {
+    margin-bottom: 0;
+  }
+}

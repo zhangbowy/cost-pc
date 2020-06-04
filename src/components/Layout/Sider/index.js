@@ -10,7 +10,7 @@ import {
   Icon,
 } from 'antd';
 import { urlToList } from '@/utils/common';
-import constants from '@/utils/constants';
+// import constants from '@/utils/constants';
 import styles from './index.scss';
 
 const getMenuKey = (props) => {
@@ -24,7 +24,7 @@ const getIcon = (menu) => {
   if (menu.icon) {
     return <Icon type={menu.icon} />;
   }
-  return <i className={cs('app-icon', menu.myIcon)} />;
+  return <i className={cs('iconfont', menu.myIcon)} style={{marginRight: '6px'}} />;
 };
 
 @withRouter
@@ -102,7 +102,7 @@ class App extends React.PureComponent {
     const { openKeys } = this.state;
     const selectedKeys = getMenuKey(this.props);
     const menuProps = collapsed ? {} : { openKeys };
-    console.log(menus);
+    // console.log(menus);
     return (
       <Layout.Sider
         trigger={null}
@@ -115,7 +115,7 @@ class App extends React.PureComponent {
         <div className={styles.logo}>
           <Link to="/">
             <span className={styles.img} />
-            <h1>{constants.APP_NAME}</h1>
+            {/* <h1>{constants.APP_NAME}</h1> */}
           </Link>
         </div>
         <Menu

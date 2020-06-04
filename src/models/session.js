@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import localMenu from '@/common/menu';
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 import api from '@/services/api';
 import Session from '@/utils/session';
-// import { menuFilter } from '@/utils/authority';
+import { menuFilter } from '@/utils/authority';
+import treeConvert from '@/utils/treeConvert';
 
 export default {
   namespace: 'session',
@@ -20,29 +21,35 @@ export default {
   },
   effects: {
     * getLeftMenu({ payload }, { call, put }) {
-      // const response = yield call(
-      //   get,
-      //   api.getLeftMenu,
-      //   payload,
-      // );
+      const response = yield call(
+        get,
+        api.getLeftMenu,
+        payload,
+      );
+      const menus = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'menuName',
+        tName: 'name',
+        otherKeys: ['url'],
+      }, response);
       yield put({
         type: 'save',
         payload: {
           // newmenus: response,
-          // menus: menuFilter(response, localMenu),
-          menus: localMenu,
+          menus: menuFilter(menus, localMenu),
+          // menus: localMenu,
           isMenuReady: true,
         },
       });
     },
     *login({ payload }, { call, put }) {
-      console.log(api.login);
       const response = yield call(post, api.login, payload);
-      Session.set('userInfo', JSON.stringify(response.result));
+      Session.set('userInfo', JSON.stringify(response));
       yield put({
         type: 'save',
         payload: {
-          userInfo: response.result,
+          userInfo: response || {},
           isLogin: true,
         }
       });

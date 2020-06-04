@@ -1,0 +1,43 @@
+.header{
+  color: rgba(0, 0, 0, 0.85);
+  font-size:14px;
+  padding: 16px;
+  span{
+    vertical-align: middle;
+    font-weight:400;
+  }
+}
+.line{
+  width:4px;
+  height:16px;
+  background:rgba(0,199,149,1);
+  margin-right: 4px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.pop_cnt{
+  width:320px;
+  height:359px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 4px 12px 0px rgba(0,0,0,0.15);
+  border-radius:4px;
+  overflow-y: scroll;
+  p{
+    margin-bottom: 0;
+  }
+}
+.content{
+}
+.cnt_cnts{
+  padding: 0 16px 0 24px;
+}
+.cnt_cnts:hover{
+  background: #fafafa;
+}
+.pop_hover{
+  padding: 0;
+  :global(.ant-popover-inner){
+    box-shadow: none;
+    background: none;
+  }
+}

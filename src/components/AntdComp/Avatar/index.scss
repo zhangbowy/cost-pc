@@ -1,0 +1,11 @@
+.pmc-avatar{
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  img{
+    border-radius: 50%;
+  }
+  :global(.use_text){
+    background-color: #3296fa!important;
+  }
+}

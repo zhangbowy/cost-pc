@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Switch } from 'antd';
+import { Form, Input, Switch, Icon, Cascader } from 'antd';
+import cs from 'classnames';
 import TextArea from 'antd/lib/input/TextArea';
-import { formItemLayout } from '@/utils/constants';
+import { formItemLayout, classifyIcon } from '@/utils/constants';
+import treeConvert from '@/utils/treeConvert';
+import style from './classify.scss';
 
 const labelInfo = {
   costName: '名称',
@@ -15,31 +18,102 @@ class Basic extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      active: (props.data && props.data.icon) || 'morenleibietu1',
+      data: props.data || {},
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        data: this.props.data,
+        active: (this.props.data && this.props.data.icon) || 'morenleibietu1',
+      });
+    }
+  }
+
+  onChangeIcon = (active) => {
+    this.setState({
+      active,
+    });
+  }
+
+  onRest() {
+    this.setState({
+      active: 'morenleibietu1',
+    });
+    this.props.form.resetFields();
+  }
+
+  filter = (inputValue, path) => {
+    return path.some(option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
+  }
+
+  getFormItems = () => {
+    const {
+      form,
+    } = this.props;
+    const { active } = this.state;
+    let val = {
+      icon: active
+    };
+    form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        Object.assign(val, {
+          ...values,
+        });
+      } else {
+        val = null;
+      }
+    });
+    return val;
   }
 
   render() {
     const {
       form: { getFieldDecorator },
+      list,
+      title
     } = this.props;
+    const lists = list.filter(it => Number(it.type) === 0);
+    const datas = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tName: 'costName',
+    }, lists);
+    const { active, data} = this.state;
     return (
       <div style={{ width: '100%', paddingTop: '24px' }}>
-        <Form {...formItemLayout}>
+        <Form {...formItemLayout} className="formItem">
           <Form.Item label={labelInfo.costName}>
             {
               getFieldDecorator('costName', {
+                initialValue: data && data.costName,
+                rules: [{ required: true, message: '请输入' }]
               })(
-                <Input />
+                <Input placeholder="请输入" />
               )
             }
           </Form.Item>
           <Form.Item label={labelInfo.parentId}>
             {
-              getFieldDecorator('parentId')(
-                <Select>
-                  <Select.Option key="all">无</Select.Option>
-                </Select>
+              getFieldDecorator('parentId', {
+                initialValue: (data && data.parentId) || '',
+              })(
+                <Cascader
+                  options={datas}
+                  placeholder="请选择"
+                  fieldNames={{
+                    label: 'costName',
+                    value: 'id',
+                  }}
+                  disabled={title === 'edit'}
+                  changeOnSelect
+                  showSearch={this.filter}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                />
               )
             }
           </Form.Item>
@@ -48,23 +122,41 @@ class Basic extends Component {
           >
             {
               getFieldDecorator('note', {
+                initialValue: data && data.note,
                 rules: [{ max: 50, message: '不能超过50字' }]
               })(
-                <TextArea max={50} />
+                <TextArea max={50} placeholder="请输入" />
               )
             }
           </Form.Item>
           <Form.Item label={labelInfo.icon}>
-            {
-              getFieldDecorator('icon')(
-                <Input />
-              )
-            }
+            <div className={style.iconMap}>
+              {
+                classifyIcon.map(item => (
+                  <div
+                    className={item.key === active ? cs(style.iconList, style.activeIcon) : style.iconList}
+                    key={item.key}
+                    onClick={() => this.onChangeIcon(item.key)}
+                  >
+                    <i className={cs('iconfont', item.value)} style={{color: item.color}} />
+                    {
+                      (active === item.key) &&
+                      <div className={style.checked}>
+                        <Icon type="check" style={{color: '#fff'}} className="fs-12" />
+                      </div>
+                    }
+                  </div>
+                ))
+              }
+            </div>
           </Form.Item>
           <Form.Item label={labelInfo.status}>
             {
-              getFieldDecorator('status')(
-                <Switch defaultChecked />
+              getFieldDecorator('status', {
+                initialValue: data && data.status === undefined ? true : data.status,
+                valuePropName: 'checked'
+              })(
+                <Switch />
               )
             }
           </Form.Item>

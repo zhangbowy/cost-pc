@@ -5,9 +5,11 @@ const {
 } = constants;
 
 export default{
-  costList: `${APP_API}/cost/group/list`,
-  addCostGroup: `${APP_API}/cost/group/add`,
-  edit: `${APP_API}/cost/group/edit`,
-  detailCost: `${APP_API}/cost/group/detail`,
-  delCostGroup: `${APP_API}/cost/group/del`,
+  list: `${APP_API}/cost/category/list`,
+  addCostGroup: `${APP_API}/cost/category/add`,
+  edit: `${APP_API}/cost/category/edit`,
+  detailCost: `${APP_API}/cost/category/detail`,
+  delCostGroup: `${APP_API}/cost/category/del`,
+  check: `${APP_API}/cost/category/del/permit`,
+  delPer: `${APP_API}/cost/category/del/permit`,
 };

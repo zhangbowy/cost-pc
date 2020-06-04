@@ -41,4 +41,32 @@
   .ant-layout {
     background-color: rgba(247, 248, 250, 1);
   }
+  .ant-dropdown-menu{
+    // padding: 10px 0!important;
+    text-align: center!important;
+    width: 128px;
+    // height: 131px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ant-dropdown-menu-item {
+    padding: 0!important;
+  }
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    padding: 0px 16px!important;
+    height: 54px;
+  }
+  .ant-table-tbody > tr:hover td{
+    background: #fafafa!important;
+  }
+  .formItem{
+    .ant-form-item{
+      margin-bottom: 20px;
+    }
+  }
+  .ant-divider-horizontal{
+    margin: 0;
+  }
 }

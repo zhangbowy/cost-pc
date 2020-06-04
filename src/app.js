@@ -10,6 +10,7 @@ export const dva = {
       // if (!window.APPSSO.httpCheck(err)) {
       //   return;
       // }
+      console.log(err);
       if (err.message === 'Failed to fetch') {
         err.message = '';
       }

@@ -1,20 +1,20 @@
-/**
- * Routes:
- *  - src/components/PrivateRoute
- * auth: AUTHID
- */
 
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
-import { Button, Form, Input, Table } from 'antd';
-// import { SearchOutlined } from '@ant-design/icons';
-import SortModal from './components/SortModal';
+import cs from 'classnames';
+import { Button, Form, Table, Modal, message, Menu, Icon, Dropdown, Divider } from 'antd';
+import treeConvert from '@/utils/treeConvert';
+import { classifyIcon, getArrayColor } from '@/utils/constants';
+import Search from 'antd/lib/input/Search';
+// import SortModal from './components/SortModal';
 import AddClassify from './components/AddClassfy';
 import AddGroup from './components/AddGroup';
 
 const namespace = 'costCategory';
+const { confirm } = Modal;
 @connect((state) => ({
+  userInfo: state.session.userInfo,
   loading: state.loading.models[namespace],
   list: state[namespace].list,
   query: state[namespace].query,
@@ -22,31 +22,99 @@ const namespace = 'costCategory';
 
 class CostCategory extends React.PureComponent {
   static propsTypes = {
-    costLists: PropTypes.array,
+    list: PropTypes.array,
     query: PropTypes.object,
     loading: PropTypes.bool
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      costName: '',
+    };
+  }
+
   componentDidMount() {
-    const { query } = this.props;
-    this.onQuery({
-      pageNo: query.pageNo,
-      pageSize: query.pageSize,
-    });
+    this.onQuery({});
   }
 
   onQuery = (payload) => {
-    this.props.dispatch({
+    const { userInfo, dispatch } = this.props;
+    Object.assign(payload, { companyId: userInfo.companyId || '' });
+    dispatch({
       type: 'costCategory/costList',
       payload,
+    });
+  }
+
+  onOk = () => {
+    const { costName } = this.state;
+    this.onQuery({
+      costName,
+    });
+  }
+
+  handleVisibleChange = (id) => {
+    const _this = this;
+    this.props.dispatch({
+      type: 'costCategory/delPer',
+      payload: {
+        id,
+      }
+    }).then(() => {
+      confirm({
+        title: '请确认是否删除?',
+        content: '删除不能恢复',
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk() {
+          _this.onDelete(id);
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+    });
+  }
+
+  onSearch = (val) => {
+    this.setState({
+      costName: val,
+    });
+    this.onQuery({
+      costName: val,
+    });
+  }
+
+  onDelete = (id) => {
+    const { userInfo } = this.props;
+    this.props.dispatch({
+      type: 'costCategory/del',
+      payload: {
+        id,
+        companyId: userInfo.companyId || ''
+      }
+    }).then(() => {
+      message.success('删除成功');
+      this.onQuery({});
     });
   }
 
   render() {
     const {
       list,
-      query,
     } = this.props;
+    let lists = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      tName: 'costName',
+      name: 'costName',
+      otherKeys: ['icon', 'note', 'type', 'parentId']
+    }, list);
+    if (this.state.costName) {
+      lists = list;
+    }
     const columns = [{
       title: '名称',
       dataIndex: 'costName'
@@ -55,7 +123,13 @@ class CostCategory extends React.PureComponent {
       dataIndex: 'icon',
       render: (_, record) => (
         record.icon ?
-        (<img alt="" src={record.icon} />) :
+        (<i
+          className={cs('iconfont', `icon${record.icon}`)}
+          style={{
+            color: getArrayColor(record.icon, classifyIcon),
+            fontSize: '30px',
+          }}
+        />) :
         (<span>-</span>)
       )
     }, {
@@ -64,53 +138,138 @@ class CostCategory extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
-      render: (_, record) => (
-        <AddClassify detail={record}>
-          <a>创建子费用类别</a>
-        </AddClassify>
-      )
+      render: (_, record) => {
+        const _this = this;
+        let btns = [{
+          node: (
+            <AddGroup
+              onOk={() => _this.onOk()}
+              title="add"
+              data={{parentId: record.parentId ? [record.parentId, record.id] : [record.id]}}
+              list={list}
+            >
+              <span className="pd-20-9 c-black-65">添加子分组</span>
+            </AddGroup>
+          ),
+        }, {
+          node: (
+            <AddClassify
+              title="add"
+              data={{parentId: record.parentId ? [record.parentId, record.id] : [record.id]}}
+              onOk={() => _this.onOk()}
+              list={list}
+            >
+              <span className="m-l-8 pd-20-9 c-black-65">创建子费用类别</span>
+            </AddClassify>
+          ),
+        }, {
+          node: (
+            <AddGroup
+              data={{
+                ...record,
+              }}
+              title="copy"
+              list={list}
+              onOk={() => _this.onOk()}
+            >
+              <span className="m-l-8 pd-20-9 c-black-65">复制</span>
+            </AddGroup>
+          ),
+        }, {
+          node: (
+            <span
+              className="deleteColor m-l-8 pd-20-9"
+              onClick={() => _this.handleVisibleChange(record.id)}
+            >
+              删除
+            </span>
+          ),
+        }];
+        if (record.type === 1) {
+          btns = [{
+            node: (
+              <AddClassify
+                onOk={() => _this.onOk()}
+                data={record}
+                title="copy"
+                list={list}
+              >
+                <span className="pd-20-9 c-black-65">复制</span>
+              </AddClassify>
+            ),
+          }, {
+            node: (
+              <span
+                onClick={() => _this.handleVisibleChange(record.id)}
+                className="deleteColor pd-20-9"
+              >
+                删除
+              </span>
+            ),
+          }];
+        }
+        const menu = (
+          <Menu>
+            {
+              btns.map((item, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Menu.Item key={`q_${index}`}>{item.node}</Menu.Item>
+              ))
+            }
+          </Menu>
+        );
+        return (
+          <span>
+            {
+              record.type === 0 &&
+                <AddGroup data={record} onOk={() => _this.onOk()} title="edit" list={list}><a>编辑组</a></AddGroup>
+            }
+            {
+              record.type === 1 &&
+                <AddClassify onOk={() => _this.onOk()} data={record} title="edit" list={list}><a>编辑类别</a></AddClassify>
+            }
+            <Divider type="vertical" />
+            <Dropdown overlay={menu}>
+              <a className="ant-dropdown-link m-l-8" onClick={e => e.preventDefault()}>
+                更多 <Icon type="down" />
+              </a>
+            </Dropdown>
+          </span>
+        );
+        // return <TableBtn source={btns} />;
+      }
     }];
     return (
       <div className="content-dt">
-        <div>
-          <div>
-            <AddClassify>
+        <div className="cnt-header">
+          <div className="head_lf">
+            <AddClassify title="add" onOk={() => this.onOk()} list={list}>
               <Button type="primary" style={{marginRight: '8px'}}>新增费用类别</Button>
             </AddClassify>
-            <AddGroup>
+            <AddGroup onOk={this.onOk} title="add" list={list}>
               <Button style={{marginRight: '8px'}}>新增分组</Button>
             </AddGroup>
             <Form style={{display: 'inline-block'}}>
               <Form.Item>
-                <Input
+                <Search
                   placeholder="输入关键字，按回车搜索"
-                  suffix={
-                    <span className="iconfont " />
-                  }
                   style={{ width: '272px' }}
+                  onSearch={(e) => this.onSearch(e)}
                 />
               </Form.Item>
             </Form>
           </div>
-          <div style={{float: 'right', marginTop: '-30px'}}>
+          {/* <div style={{float: 'right', marginTop: '-30px'}}>
             <SortModal>
               <span>排序</span>
             </SortModal>
-          </div>
+          </div> */}
         </div>
         <Table
+          rowKey="id"
           columns={columns}
-          dataSource={list}
-          pagination={{
-            current: query.pageNo,
-            pageSize: query.pageSize,
-            onChange: (page, pageSize) => {
-              this.onQuery({
-                pageNo: page,
-                pageSize,
-              });
-            }
-          }}
+          dataSource={lists}
+          pagination={false}
         />
       </div>
     );

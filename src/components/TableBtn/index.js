@@ -16,6 +16,7 @@ import {
   Divider,
   Icon,
 } from 'antd';
+import style from './index.scss';
 
 function renderBtn(data) {
   return (
@@ -46,7 +47,11 @@ const App = ({
       </Menu>
     );
     const MoreBtn = () => (
-      <Dropdown overlay={menu}>
+      <Dropdown
+        overlay={menu}
+        overlayClassName={style.overClass}
+        placement="bottomCenter"
+      >
         <a>
           {moreText}
           <Icon type="down" />

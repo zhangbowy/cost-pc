@@ -13,6 +13,7 @@ import { parse } from 'qs';
 //   getQueryString
 // } from '@/utils/util';
 import ddConfig from './utils/dd.config';
+import Session from './utils/session';
 
  // 获取corpid
  function getCorpid () {
@@ -36,7 +37,6 @@ const corpId = getCorpid() || [];
 
 // 钉钉免登
 ddConfig.auth(corpId).then((res) => {
-  console.log(window.g_app._store.dispatch);
   // 用户信息存储
   window.g_app._store.dispatch({
     type: 'session/login',
@@ -45,13 +45,26 @@ ddConfig.auth(corpId).then((res) => {
       authCode: res.code,
       isLogin: true,
     }
+  }).then(() => {
+    const userInfo = Session.get('userInfo');
+    window.g_app._store.dispatch({
+      type: 'global/jsApiAuth',
+      payload: {
+        companyId: userInfo.companyId,
+        corpId,
+        url: window.location.href,
+      },
+    });
   });
+  localStorage.setItem('corpId', corpId);
+  localStorage.setItem('authCode', res.code);
   // 左侧菜单请求
   window.g_app._store.dispatch({
     type: 'session/getLeftMenu',
     payload: {},
   });
-  console.log(window.g_app._store);
+
+  // console.log(window.g_app._store);
 }).catch(e => {
   console.log(e);
 });

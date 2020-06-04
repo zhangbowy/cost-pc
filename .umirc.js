@@ -4,7 +4,8 @@ const pkg = require('./package.json');
 const AfterEmitWebpackPlugin = require('./webpackPlugin');
 const constants = require('./constants');
 
-const isInProd = process.env.SPD_ENV === 'production'; // 生产环境标识
+// const isInProd = process.env.SPD_ENV === 'production'; // 生产环境标识
+const isInProd = process.env.SPD_ENV === 'prod' || process.env.SPD_ENV === 'test'; // 生产环境标识
 let publicPath = '/';
 if (isInProd) {
   if (constants.APP_BASE) {
@@ -48,7 +49,7 @@ export default {
   history: 'hash',
   hash: true,
   publicPath,
-  outputPath: isInProd ? `./dist/${pkg.version}` : './dist',
+  outputPath: isInProd ? `./costhtml/${pkg.version}` : './costhtml',
   context: {
     name: pkg.description,
     version: pkg.version,
@@ -69,9 +70,17 @@ export default {
     APP_VER: pkg.version, // 版本号
     SPD_ENV: constants.APP_ENV, // 环境变量
     APP_API: constants.APP_API, // 接口网关
+    APP_NAME: constants.APP_NAME, // 名称
   },
   alias: {
     '@': path.resolve(__dirname, 'src'),
+  },
+  proxy: {
+    '/api': {
+      target: `http://172.17.9.120`,
+      pathRewrite: { '^/api': '' },
+      changeOrigin:true,
+    }
   },
   chainWebpack(config) {
     config
