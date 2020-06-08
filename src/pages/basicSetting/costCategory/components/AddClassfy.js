@@ -42,22 +42,29 @@ class AddClassify extends React.PureComponent {
     const { data, userInfo, allList, title } = this.props;
     let datas = {...data};
     const _this = this;
+    const lists = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      tName: 'costName',
+      name: 'costName',
+      otherKeys: ['icon', 'note', 'type']
+    }, allList);
     if (title === 'add') {
       Object.assign(datas, {
         showFields: costClassify,
       });
+      if (data && data.parentId) {
+        if (data && data.parentId !== '0') {
+          Object.assign(datas, {
+            parentId: _this.findIndexArray(lists, data.parentId, []),
+          });
+        }
+      }
       this.setState({
         visible: true,
         data: datas,
       });
     } else {
-      const lists = treeConvert({
-        rootId: 0,
-        pId: 'parentId',
-        tName: 'costName',
-        name: 'costName',
-        otherKeys: ['icon', 'note', 'type']
-      }, allList);
       this.props.dispatch({
         type: 'costCategory/detail',
         payload: {
@@ -213,6 +220,7 @@ class AddClassify extends React.PureComponent {
             height: '550px',
             overflowY: 'scroll'
           }}
+          maskClosable={false}
           width='780px'
           onCancel={() => this.onCancel()}
           onOk={e => this.onSave(e)}

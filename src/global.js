@@ -55,15 +55,14 @@ ddConfig.auth(corpId).then((res) => {
         url: window.location.href,
       },
     });
+    // 左侧菜单请求
+    window.g_app._store.dispatch({
+      type: 'session/getLeftMenu',
+      payload: {},
+    });
   });
   localStorage.setItem('corpId', corpId);
   localStorage.setItem('authCode', res.code);
-  // 左侧菜单请求
-  window.g_app._store.dispatch({
-    type: 'session/getLeftMenu',
-    payload: {},
-  });
-
   // console.log(window.g_app._store);
 }).catch(e => {
   console.log(e);

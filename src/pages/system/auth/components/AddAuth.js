@@ -245,7 +245,7 @@ class AddAuth extends Component {
           title={myTitle}
           visible={visible}
           width="980px"
-          height="550px"
+          maskClosable={false}
           bodyStyle={{
             height: '550px',
             overflowY: 'scroll'
@@ -319,15 +319,16 @@ class AddAuth extends Component {
           {
             dataRole.map(item => (
               <div key={item.invoiceId} style={{display: 'flex'}}>
-                <p>{item.invoiceName}：</p>
+                <p className={style.checkT}>{item.invoiceName}：</p>
                 <Checkbox.Group value={checkKeys[item.invoiceId]} disabled={isSupperAdmin}>
-                  <Checkbox value="4" checked>我负责的</Checkbox>
+                  <Checkbox value="4" checked className="m-r-30">我负责的</Checkbox>
                   {
                     item.purviewDataVos.map(it => (
                       <Checkbox
                         key={it.type}
                         value={`${item.invoiceId}_${it.type}`}
                         onClick={e => this.onChecks(e, item.invoiceId, item.type)}
+                        className="m-r-30"
                       >
                         {it.purviewDataName}
                       </Checkbox>

@@ -111,7 +111,8 @@ class Auth extends React.PureComponent {
           <Divider type="vertical" />
           <a onClick={() => this.onLink(record.id)}>设置人员</a>
         </span>
-      )
+      ),
+      width: '190px'
     }];
     return (
       <div className="content-dt">

@@ -13,6 +13,7 @@ import header from '@/utils/header';
 import constants from '@/utils/constants';
 import { includes } from 'lodash';
 import { parse } from 'qs';
+import moment from 'moment';
 import ddConfig from '@/utils/dd.config';
 // import Session from '@/utils/session';
 
@@ -150,7 +151,24 @@ function request(url, config) {
       },
     });
   }
-
+  console.log(options);
+  if(config.data.type === 'export') {
+    return Promise.race([
+      fetch(requestUrl, options),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('请求超时')), constants.TIMEOUT);
+      }),
+    ])
+      .then(checkStatus)
+      .then(res => res.blob())
+      .then(blob => {
+          const urls = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = urls;
+          a.download = `${config.data.fileName}-${moment(new Date()).format('YYYY-MM-DD')}.xls`;
+          a.click();
+       });
+  }
   return Promise.race([
     fetch(requestUrl, options),
     new Promise((_, reject) => {

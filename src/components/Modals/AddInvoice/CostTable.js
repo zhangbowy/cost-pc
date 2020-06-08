@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Divider, Tag, Popover } from 'antd';
+import { Table, Divider, Tag, Popover, Tooltip } from 'antd';
 import moment from 'moment';
 import AddCost from './AddCost';
 import style from './index.scss';
@@ -76,18 +76,27 @@ class CostTable extends Component {
     }, {
       title: '费用备注',
       dataIndex: 'note',
+      ellipsis: true,
+      width: '100px',
+      render: (text) => (
+        <Tooltip placement="topRight" title={text || ''}>
+          <span>{text}</span>
+        </Tooltip>
+      )
     }, {
       title: '图片',
       dataIndex: 'imgUrl',
       render: (_, record) => (
-        <span className={style.imgUrl}>
+        <span className={style.imgUrlTable}>
           {record.imgUrl && record.imgUrl.map((it, index) => (
             <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
               <img alt="图片" src={it.imgUrl} className={style.images} />
             </div>
           ))}
         </span>
-      )
+      ),
+      textWrap: 'word-break',
+      width: '140px'
     }, {
       title: '操作',
       dataIndex: 'opea',
@@ -99,7 +108,7 @@ class CostTable extends Component {
             <a>编辑</a>
           </AddCost>
         </span>
-      )
+      ),
     }];
     return (
       <div style={{ marginTop: '24px' }}>

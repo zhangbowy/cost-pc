@@ -90,11 +90,6 @@ class AddInvoice extends React.PureComponent {
                 showFields: JsonParse(detail.showField),
               });
             }
-            if (title === 'copy') {
-              Object.assign(datas, {
-                name: `${detail.name}的副本`,
-              });
-            }
             Object.assign(datas, {
               ...detail,
               costCategory,
@@ -102,6 +97,11 @@ class AddInvoice extends React.PureComponent {
               deptJson,
               sttaus: detail.status === 1,
             });
+            if (title === 'copy') {
+              Object.assign(datas, {
+                name: `${detail.name}的副本`,
+              });
+            }
             this.setState({
               data: datas,
               visible: true,
@@ -223,6 +223,7 @@ class AddInvoice extends React.PureComponent {
           }}
           width='780px'
           onCancel={this.onCancel}
+          maskClosable={false}
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="submit" type="primary" onClick={this.onSubmit}>保存</Button>

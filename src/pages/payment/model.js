@@ -16,10 +16,12 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
+      // eslint-disable-next-line no-return-assign
+      const lists = response.list && response.list.map(it => { return {...it, id: it.invoiceId}; });
       yield put({
         type: 'save',
         payload: {
-          list: response.list || [],
+          list: lists || [],
           // list: [{ id: 1 }, { id: 2 }],
           query: {
             pageSize: payload.pageSize,
@@ -32,8 +34,15 @@ export default {
     *send({ payload }, { call }) {
       yield call(post, api.send, payload);
     },
-    *export({ payload }, { call }) {
-      yield call(post, api.export, payload);
+    // 已发放
+    *exported({ payload }, { call }) {
+      Object.assign(payload, { type: 'export', fileName: '已发放列表' });
+      yield call(post, api.payedExport, payload);
+    },
+    // 待发放
+    *exporting({ payload }, { call }) {
+      Object.assign(payload, { type: 'export', fileName: '待发放列表' });
+      yield call(post, api.payingExport, payload);
     },
   },
   reducers: {

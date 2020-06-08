@@ -106,6 +106,14 @@ class AddAccount extends React.PureComponent {
     });
   }
 
+  check = (rule, value, callback) => {
+    if (!value && (this.state.type === 0) ) {
+      callback('请选择开户行');
+    } else {
+      callback();
+    }
+  }
+
   render() {
     const {
       children,
@@ -125,6 +133,7 @@ class AddAccount extends React.PureComponent {
           title={title && `${defaultTitle[title]}付款账户`}
           visible={visible}
           onCancel={() => this.setState({ visible: false })}
+          maskClosable={false}
           footer={[
             <Button
               key="cancel"
@@ -193,8 +202,8 @@ class AddAccount extends React.PureComponent {
               <Form.Item label="开户行">
                 {
                   getFieldDecorator('bankName', {
-                    initialValue: data && data.bankName,
-                    rules: [{ required: !!(Number(type) === 0), message: '请选择开户行' }]
+                    initialValue: (data && data.bankName) || '',
+                    rules: [{ validator: this.check }]
                   })(
                     <Select
                       showSearch

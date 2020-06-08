@@ -94,7 +94,7 @@ class Account extends Component {
           { record.status === 0 && <Tag color="red">已停用</Tag> }
         </span>
       ),
-      width: 100
+      width: 140
     }, {
       title: '账户类型',
       dataIndex: 'type',
@@ -105,7 +105,7 @@ class Account extends Component {
     }, {
       title: '备注',
       dataIndex: 'note',
-      width: 100,
+      width: 160,
       render: (text) => (
         <span>
           <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
@@ -125,7 +125,7 @@ class Account extends Component {
           </AddAccount>
         </span>
       ),
-      width: 100
+      width: 50
     }];
     return (
       <div className="content-dt">

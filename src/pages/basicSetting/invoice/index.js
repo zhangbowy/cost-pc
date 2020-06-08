@@ -124,6 +124,7 @@ class Invoice extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
+      width: '160px',
       render: (_, record) => {
         const _this = this;
         let btns = [{

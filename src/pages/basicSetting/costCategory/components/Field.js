@@ -145,7 +145,7 @@ class Field extends Component {
             <Form.Item key="dateType">
               {
                 getFieldDecorator(`dateType_${record.key}`, {
-                  initialValue: '1',
+                  initialValue: record.dateType || '1',
                 })(
                   <Select style={{width: '100px'}}>
                     {

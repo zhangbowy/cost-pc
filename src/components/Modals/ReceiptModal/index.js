@@ -82,7 +82,7 @@ class AddAccount extends React.PureComponent {
           type: action,
           payload,
         }).then(() => {
-          message.success('操作成功');
+          message.success('新增成功');
           this.setState({
             visible: false,
           });

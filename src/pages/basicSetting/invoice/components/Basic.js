@@ -134,6 +134,10 @@ class Basic extends React.PureComponent {
         users: [],
         deptJson: [],
       });
+    } else {
+      this.setState({
+        category: [],
+      });
     }
   }
 

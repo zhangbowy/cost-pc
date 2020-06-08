@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
 import { Modal, Form, Input, Row, Col, Divider, Button, Table, TreeSelect, InputNumber, Select, DatePicker, message } from 'antd';
@@ -23,6 +24,7 @@ const labelInfo = {
 @connect(({ global }) => ({
   expenseList: global.expenseList,
   deptInfo: global.deptInfo,
+  userId: global.userId,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -80,8 +82,9 @@ class AddCost extends Component {
           imgUrl: detail.imgUrl || [],
           costSum: detail.costSum,
           shareAmount: detail.shareTotal,
+        }, () => {
+          this.onChange(this.props.detail.categoryId);
         });
-        this.onChange(this.props.detail.categoryId);
       }
       this.setState({
         visible: true,
@@ -98,7 +101,35 @@ class AddCost extends Component {
       initDep: [],// 初始化承担部门
       costDate: 0, // 没有指定日期
       visible: false,
+      showField: {}, // 是否展示
     });
+  }
+
+  onSelectTree = () => {
+    const { expenseList } = this.props;
+    const list = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tId: 'value',
+      tName: 'title',
+      otherKeys: ['type','showField']
+    }, expenseList);
+    function addParams(lists){
+      lists.forEach(it => {
+        if (it.type === 0) {
+          it.disabled = true;
+        }
+        if (it.type === 1) {
+          it.disabled = false;
+        }
+        if (it.children) {
+          addParams(it.children);
+        }
+      });
+    }
+    addParams(list);
+    return list;
   }
 
   onAdd = () => {
@@ -129,20 +160,20 @@ class AddCost extends Component {
           userJson: JSON.stringify(val.users),
         }
       }).then(() => {
-        const { deptInfo } = this.props;
+        const { deptInfo, userId } = this.props;
         detail.splice(index, 1, {
           ...detail[index],
           users: val.users,
           depList: deptInfo,
           userName: val.users[0].userName,
-          userId: val.users[0].userId,
+          userId,
+          loanUserId: val.users[0].userId,
         });
         this.setState({
           costDetailShareVOS: detail,
         });
       });
     }
-    console.log(val);
   }
 
   //  提交
@@ -159,7 +190,7 @@ class AddCost extends Component {
     } = this.state;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
-        if (shareAmount !== val.costSum) {
+        if (costDetailShareVOS.length !== 0 && shareAmount !== val.costSum) {
           message.error('请检查分摊的金额');
           return;
         }
@@ -170,11 +201,11 @@ class AddCost extends Component {
           categoryId: val.categoryId,
           imgUrl,
           shareTotal: shareAmount,
+          categoryName: details.categoryName,
+          icon: details.icon,
         };
         if (costDate === 1) {
           detail = {
-            categoryName: details.categoryName,
-            icon: details.icon,
             ...detail,
             startTime: val.time ? moment(val.time).format('x') : ''
           };
@@ -199,7 +230,7 @@ class AddCost extends Component {
             userId: item.userId,
             deptName: deptList ? deptList[0].name : '',
             userName: item.userName,
-            userJson: JSON.stringify(item.users),
+            userJson: item.users,
             users: item.users,
             invoiceBaseId: invoiceId,
             depList: item.depList,
@@ -238,14 +269,35 @@ class AddCost extends Component {
     this.setState({
       shareAmount: amount,
     });
-    console.log();
     if (costSum && val) {
-      const scale = ((val / costSum).toFixed(4) * 10)*10;
+      const scale = ((val / costSum).toFixed(4) * 100).toFixed(2);
       this.props.form.setFieldsValue({
         [`shareScale[${key}]`]: scale,
       });
     }
-    console.log(val);
+  }
+
+  onInputScale = (val, key) => {
+    const costSum = this.props.form.getFieldValue('costSum');
+    if (costSum && val) {
+      const amounts = ((val * costSum).toFixed(4) / 100);
+      this.props.form.setFieldsValue({
+        [`shareAmount[${key}]`]: amounts,
+      });
+      const amm = this.props.form.getFieldValue('shareAmount');
+      let amount = 0;
+      if (Object.keys(amm)) {
+        Object.keys(amm).forEach(it => {
+          if (it !== key) {
+            amount+=amm[it];
+          }
+        });
+      }
+      amount+=amounts;
+      this.setState({
+        shareAmount: amount,
+      });
+    }
   }
 
   // 选择费用类别
@@ -295,17 +347,18 @@ class AddCost extends Component {
     const {
       children,
       form: { getFieldDecorator },
-      expenseList,
+      // expenseList,
       userInfo,
     } = this.props;
-    const list = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'costName',
-      tId: 'value',
-      tName: 'title',
-      otherKeys: ['type','showField']
-    }, expenseList);
+    const list = this.onSelectTree();
+    // const list = treeConvert({
+    //   rootId: 0,
+    //   pId: 'parentId',
+    //   name: 'costName',
+    //   tId: 'value',
+    //   tName: 'title',
+    //   otherKeys: ['type','showField']
+    // }, expenseList);
     const {
       visible,
       costDetailShareVOS,
@@ -394,7 +447,10 @@ class AddCost extends Component {
               getFieldDecorator(`shareScale[${record.key}]`, {
                 initialValue: record.shareScale
               })(
-                <InputNumber placeholder="请输入" onInput={this.onInputScale} />
+                <InputNumber
+                  placeholder="请输入"
+                  onChange={(val) => this.onInputScale(val, record.key)}
+                />
               )
             }
           </Form.Item>
@@ -434,6 +490,8 @@ class AddCost extends Component {
                           treeData={list}
                           placeholder="请选择"
                           onChange={this.onChange}
+                          style={{width: '100%'}}
+                          dropdownStyle={{height: '300px'}}
                         />
                       )
                     }
@@ -484,9 +542,14 @@ class AddCost extends Component {
                     {
                       costDate === 2 &&
                       getFieldDecorator('time', {
+                        initialValue: details.startTime && details.endTime ?
+                          [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                          :
+                          [],
                         rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                       })(
                         <RangePicker
+                          style={{width: '280px' }}
                           placeholder="请选择时间"
                           format="YYYY-MM-DD"
                           showTime={{

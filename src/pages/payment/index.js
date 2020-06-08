@@ -6,9 +6,10 @@ import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
-import { JsonParse } from '@/utils/common';
+import { JsonParse, rowSelect } from '@/utils/common';
 import style from './index.scss';
 import PayModal from './components/payModal';
+import DropBtn from '../../components/DropBtn';
 
 const { RangePicker } = DatePicker;
 @Form.create()
@@ -23,10 +24,11 @@ class Payments extends React.PureComponent {
     super(props);
     this.state = {
       status: '2',
-      selectKey: [],
+      selectedRowKeys: [],
       count: 0,
       sumAmount: 0,
       searchContent: '',
+      selectedRows: [],
     };
   }
 
@@ -61,6 +63,55 @@ class Payments extends React.PureComponent {
       endTime,
       pageNo: 1,
     });
+  };
+
+  onSelectAll = (selected, selectedRows, changeRows) => {
+    const result = rowSelect.onSelectAll(this.state, selected, changeRows);
+    const _selectedRows = result.selectedRows;
+    const { selectedRowKeys } = result;
+    let amount = 0;
+    _selectedRows.forEach(item => {
+      amount+=item.submitSum;
+    });
+
+    this.setState({
+        selectedRows: _selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
+    });
+  };
+
+  onSelect = (record, selected) => {
+      const {
+          selectedRows,
+          selectedRowKeys,
+      } = rowSelect.onSelect(this.state, record, selected);
+      console.log(selectedRowKeys);
+      let amount = 0;
+      selectedRows.forEach(item => {
+        amount+=item.submitSum;
+      });
+      this.setState({
+          selectedRows,
+          selectedRowKeys,
+          sumAmount: amount,
+      });
+  };
+
+  onDelete = (id) => {
+      const {
+          selectedRows,
+          selectedRowKeys,
+      } = rowSelect.onDelete(this.state, id);
+      let amount = 0;
+      selectedRows.forEach(item => {
+        amount+=item.submitSum;
+      });
+      this.setState({
+          selectedRows,
+          selectedRowKeys,
+          sumAmount: amount,
+      });
   };
 
   onOk = () => {
@@ -145,16 +196,39 @@ class Payments extends React.PureComponent {
     });
   }
 
-  export = () => {
-    const { selectKey } = this.state;
-    if (selectKey.length === 0) {
+  export = (key) => {
+    const { selectedRowKeys, status, searchContent } = this.state;
+    if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
     }
+    let params = {};
+    const createTime = this.props.form.getFieldValue('createTime');
+    let startTime = '';
+    let endTime = '';
+    if (createTime && createTime.length > 0) {
+      startTime = moment(createTime[0]).format('x');
+      endTime = moment(createTime[1]).format('x');
+    }
+    let url = 'payment/exporting';
+    if (key === '1') {
+      params = {
+        ids: selectedRowKeys
+      };
+    } else if (key === '2') {
+      params = {
+        searchContent,
+        startTime,
+        endTime,
+      };
+    }
+    if(Number(status) !== 2) {
+      url = 'payment/exported';
+    }
     this.props.dispatch({
-      type: 'payment/export',
+      type: url,
       payload: {
-        exportList: selectKey,
+        ...params,
       }
     }).then(() => {
       message.success('导出成功');
@@ -164,9 +238,10 @@ class Payments extends React.PureComponent {
   render() {
     const {
       status,
-      selectKey,
+      selectedRowKeys,
       count,
       sumAmount,
+      selectedRows,
     } = this.state;
     const {
       list,
@@ -287,15 +362,15 @@ class Payments extends React.PureComponent {
         width: 140,
       });
     }
-    let rowSelection = {
+    const rowSelection = {
       type: 'checkbox',
-      onChange: (selectedRowKeys, selectedRows) => {
-        this.onChange(selectedRowKeys, selectedRows);
-      },
+      selectedRowKeys,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
     };
-    if (Number(status) !== 2) {
-      rowSelection=null;
-    }
+    // if (Number(status) !== 2) {
+    //   rowSelection=null;
+    // }
     return (
       <div className="content-dt" style={{padding: 0}}>
         <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
@@ -311,12 +386,16 @@ class Payments extends React.PureComponent {
             <div className="head_lf">
               {
                 Number(status) === 2 &&
-                <PayModal selectKey={selectKey} onOk={() => this.onOk()}>
-                  <Button type="primary">标记已付</Button>
+                <PayModal selectKey={selectedRows} onOk={() => this.onOk()}>
+                  <Button type="primary" style={{marginRight: '8px'}}>标记已付</Button>
                 </PayModal>
               }
-              {/* <Button className="m-l-8" onClick={() => this.export()}>导出</Button>
-              <Button className="m-l-8">打印</Button> */}
+              <DropBtn
+                selectKeys={selectedRowKeys}
+                total={total}
+                onExport={(key) => this.export(key)}
+              />
+              <Button className="m-l-8">打印</Button>
               <Form style={{display: 'flex', marginLeft: '8px'}}>
                 <Form.Item label="提交时间">
                   {
@@ -346,16 +425,13 @@ class Payments extends React.PureComponent {
               <span>排序</span>
             </div> */}
           </div>
-          {
-            Number(status) === 2 &&
-            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{count}张单据，共计¥{sumAmount}</p>
-          }
+          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{count/100}张单据，共计¥{sumAmount}</p>
           <Table
             columns={columns}
             dataSource={list}
             rowSelection={rowSelection}
             scroll={{ x: 2000 }}
-            rowKey="invoiceId"
+            rowKey="id"
             pagination={{
               current: query.pageNo,
               onChange: (pageNumber) => {

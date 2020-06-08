@@ -1,14 +1,17 @@
 
 import React from 'react';
-import { Table, Divider, message, Form, DatePicker, Badge } from 'antd';
+import { Table, Form, DatePicker, Badge, Icon, Button, Tooltip, message } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
+import { rowSelect } from '@/utils/common';
 // import { JsonParse } from '@/utils/common';
 import style from './index.scss';
 import { getArrayValue, approveStatus, invoiceStatus } from '../../utils/constants';
+import LevelSearch from '../../components/LevelSearch';
+import DropBtn from '../../components/DropBtn';
 
 const { RangePicker } = DatePicker;
 @Form.create()
@@ -17,16 +20,18 @@ const { RangePicker } = DatePicker;
   list: statistics.list,
   query: statistics.query,
   total: statistics.total,
+  exportData: statistics.exportData,
 }))
 class Statistics extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      status: '2',
-      selectKey: [],
+      selectedRowKeys: [],
       count: 0,
       sumAmount: 0,
       searchContent: '',
+      leSearch: {},
+      selectedRows: [],
     };
   }
 
@@ -36,32 +41,8 @@ class Statistics extends React.PureComponent {
     } = this.props;
     this.onQuery({
       ...query,
-      status: 2,
     });
   }
-
-  handleClick = e => {
-    const { query } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent } = this.state;
-    this.setState({
-      status: e.key,
-    });
-    this.onQuery({
-      ...query,
-      status: e.key,
-      searchContent,
-      startTime,
-      endTime,
-      pageNo: 1,
-    });
-  };
 
   onOk = () => {
     const {
@@ -74,10 +55,9 @@ class Statistics extends React.PureComponent {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
     }
-    const { status, searchContent } = this.state;
+    const { searchContent } = this.state;
     this.onQuery({
       ...query,
-      status,
       startTime,
       endTime,
       searchContent,
@@ -86,13 +66,12 @@ class Statistics extends React.PureComponent {
 
   handChange = (date) => {
     if (!date) {
-      const { status, searchContent } = this.state;
+      const { searchContent } = this.state;
       const {
         query,
       } = this.props;
       this.onQuery({
         ...query,
-        status,
         searchContent,
       });
     }
@@ -104,28 +83,63 @@ class Statistics extends React.PureComponent {
 
   onQuery = (payload) => {
     this.props.dispatch({
-      type: 'payment/list',
+      type: 'statistics/list',
       payload,
     });
   }
 
-  onChange = (rows, keys) => {
+  onSelectAll = (selected, selectedRows, changeRows) => {
+    const result = rowSelect.onSelectAll(this.state, selected, changeRows);
+    const _selectedRows = result.selectedRows;
+    const { selectedRowKeys } = result;
     let amount = 0;
-    keys.forEach(item => {
-      if (item.submitSum) {
-        amount+=item.submitSum;
-      }
+    _selectedRows.forEach(item => {
+      amount+=item.submitSum;
     });
     this.setState({
-      selectKey: keys,
-      count: keys.length,
-      sumAmount: amount/100,
+        selectedRows: _selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
     });
-  }
+  };
+
+onSelect = (record, selected) => {
+    const {
+        selectedRows,
+        selectedRowKeys,
+    } = rowSelect.onSelect(this.state, record, selected);
+    console.log(selectedRowKeys);
+    let amount = 0;
+    selectedRows.forEach(item => {
+      amount+=item.submitSum;
+    });
+    this.setState({
+        selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
+    });
+};
+
+onDelete = (id) => {
+    const {
+        selectedRows,
+        selectedRowKeys,
+    } = rowSelect.onDelete(this.state, id);
+    let amount = 0;
+    selectedRows.forEach(item => {
+      amount+=item.submitSum;
+    });
+    this.setState({
+        selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
+    });
+};
+
+
 
   onSearch = (val) => {
     const { query } = this.props;
-    const { status } = this.state;
     const createTime = this.props.form.getFieldValue('createTime');
     let startTime = '';
     let endTime = '';
@@ -139,34 +153,76 @@ class Statistics extends React.PureComponent {
     this.onQuery({
       ...query,
       searchContent: val,
-      status,
       startTime,
       endTime,
     });
   }
 
-  export = () => {
-    const { selectKey } = this.state;
-    if (selectKey.length === 0) {
+  handleSearch = (detail) => {
+    const { query } = this.props;
+    const createTime = this.props.form.getFieldValue('createTime');
+    let startTime = '';
+    let endTime = '';
+    if (createTime && createTime.length > 0) {
+      startTime = moment(createTime[0]).format('x');
+      endTime = moment(createTime[1]).format('x');
+    }
+    this.setState({
+      leSearch: detail,
+    });
+    const { searchContent } = this.state;
+    this.onQuery({
+      ...query,
+      searchContent,
+      ...detail,
+      startTime,
+      endTime,
+    });
+  }
+
+  export = (key) => {
+    const { selectedRowKeys } = this.state;
+    if (selectedRowKeys.length === 0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
     }
+    const createTime = this.props.form.getFieldValue('createTime');
+    let startTime = '';
+    let endTime = '';
+    if (createTime && createTime.length > 0) {
+      startTime = moment(createTime[0]).format('x');
+      endTime = moment(createTime[1]).format('x');
+    }
+    const { searchContent, leSearch } = this.state;
+    let params = {};
+    if (key === '1') {
+      params = {
+        ids: selectedRowKeys,
+      };
+    }else if (key === '2') {
+      params = {
+        searchContent,
+        leSearch,
+        startTime,
+        endTime,
+      };
+    }
+
+    // const _this = this;
     this.props.dispatch({
-      type: 'payment/export',
+      type: 'statistics/export',
       payload: {
-        exportList: selectKey,
+        ...params,
       }
-    }).then(() => {
-      message.success('导出成功');
     });
   }
 
   render() {
     const {
-      status,
-      // selectKey,
+      selectedRowKeys,
       count,
       sumAmount,
+      leSearch,
     } = this.state;
     const {
       list,
@@ -187,16 +243,23 @@ class Statistics extends React.PureComponent {
       width: 100,
     }, {
       title: '承担人',
-      dataIndex: 'user',
+      dataIndex: 'userName',
       width: 130,
     }, {
       title: '承担部门',
-      dataIndex: 'dept',
+      dataIndex: 'deptName',
       width: 130,
     }, {
       title: '事由',
       dataIndex: 'reason',
       width: 100,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -210,11 +273,11 @@ class Statistics extends React.PureComponent {
       )
     }, {
       title: '制单人',
-      dataIndex: 'createName',
+      dataIndex: 'createUserName',
       width: 100,
     }, {
       title: '制单人部门',
-      dataIndex: 'createDept',
+      dataIndex: 'createDeptName',
       width: 100,
     }, {
       title: '提交时间',
@@ -239,7 +302,8 @@ class Statistics extends React.PureComponent {
       dataIndex: 'approveStatus',
       render: (text) => (
         <span>{getArrayValue(text, approveStatus)}</span>
-      )
+      ),
+      width: 100,
     }, {
       title: '发放状态',
       dataIndex: 'status',
@@ -255,16 +319,13 @@ class Statistics extends React.PureComponent {
               <span>{getArrayValue(text, invoiceStatus)}</span>
           }
         </span>
-      )
+      ),
+      width: 100,
     },{
       title: '操作',
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          {
-            Number(record.status) === 2 &&
-            <Divider type="vertical" />
-          }
           <InvoiceDetail id={record.invoiceId}>
             <a>查看</a>
           </InvoiceDetail>
@@ -273,22 +334,26 @@ class Statistics extends React.PureComponent {
       width: 140,
       fixed: 'right',
     }];
-    let rowSelection = {
+    const rowSelection = {
       type: 'checkbox',
-      onChange: (selectedRowKeys, selectedRows) => {
-        this.onChange(selectedRowKeys, selectedRows);
-      },
+      selectedRowKeys,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
     };
-    if (Number(status) !== 2) {
-      rowSelection=null;
-    }
     return (
       <div className="content-dt" style={{padding: 0}}>
         <div className={style.payContent}>
           <div className="cnt-header" style={{display: 'flex'}}>
             <div className="head_lf">
-              {/* <Button className="m-l-8" onClick={() => this.export()}>导出</Button>
-              <Button className="m-l-8">打印</Button> */}
+              <DropBtn
+                selectKeys={selectedRowKeys}
+                total={total}
+                className="m-l-8"
+                onExport={(key) => this.export(key)}
+              >
+                导出
+              </DropBtn>
+              <Button className="m-l-8">打印</Button>
               <Form style={{display: 'flex', marginLeft: '8px'}}>
                 <Form.Item label="提交时间">
                   {
@@ -314,20 +379,20 @@ class Statistics extends React.PureComponent {
                 />
               </Form>
             </div>
-            {/* <div className="head_rg">
-              <span>排序</span>
-            </div> */}
+            <LevelSearch onOk={this.handleSearch} details={leSearch}>
+              <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle'}}>
+                <Icon className="sub-color m-r-3" type="filter" />
+                <span className="fs-14 sub-color">高级搜索</span>
+              </div>
+            </LevelSearch>
           </div>
-          {
-            Number(status) === 2 &&
-            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{count}笔费用，共计¥{sumAmount}</p>
-          }
+          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{count}笔费用，共计¥{sumAmount/100}</p>
           <Table
             columns={columns}
             dataSource={list}
-            rowSelection={rowSelection}
             scroll={{ x: 2000 }}
-            rowKey="invoiceId"
+            rowKey="id"
+            rowSelection={rowSelection}
             pagination={{
               current: query.pageNo,
               onChange: (pageNumber) => {
@@ -343,7 +408,6 @@ class Statistics extends React.PureComponent {
                   pageNo: pageNumber,
                   pageSize: query.pageSize,
                   searchContent,
-                  status,
                   endTime,
                   startTime,
                 });
@@ -366,7 +430,6 @@ class Statistics extends React.PureComponent {
                   pageNo: cur,
                   pageSize: size,
                   searchContent,
-                  status,
                   endTime,
                   startTime,
                 });

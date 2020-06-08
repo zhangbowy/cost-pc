@@ -94,7 +94,7 @@ class AddGroup extends React.PureComponent {
       otherKeys: ['icon', 'note', 'type', 'parentId']
     }, listTree);
     const datas = {...data};
-    if (title !== 'add') {
+    if (data && data.parentId) {
       if (data && data.parentId !== '0') {
         console.log(findIndexArray(lists, data.parentId, []));
         Object.assign(datas, {
@@ -136,6 +136,7 @@ class AddGroup extends React.PureComponent {
           title={title && `${defaultTitle[title]}分组`}
           visible={visible}
           onCancel={this.onCancel}
+          maskClosable={false}
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
             <Button key="save" type="primary" onClick={e => this.handleOk(e)}>保存</Button>

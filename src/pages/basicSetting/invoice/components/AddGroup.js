@@ -102,6 +102,7 @@ class AddGroup extends React.PureComponent {
           title={title && `${defaultTitle[title]}分组`}
           visible={visible}
           onCancel={() => this.setState({ visible: false })}
+          maskClosable={false}
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="save" type="primary" onClick={this.handleOk} loading={loading}>保存</Button>

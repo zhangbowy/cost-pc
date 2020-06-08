@@ -8,6 +8,7 @@ import {
   Layout,
   Menu,
   Icon,
+  Button,
 } from 'antd';
 import { urlToList } from '@/utils/common';
 // import constants from '@/utils/constants';
@@ -128,6 +129,16 @@ class App extends React.PureComponent {
         >
           {this.getMenuItems(menus)}
         </Menu>
+        <div className={styles.footerSider}>
+          <i className={styles.lines} />
+          <div className="f-c m-b-8 cur-p t-l" style={{width: '100%'}}>
+            <i className="iconfont iconlianxikefu m-r-8" />
+            <span>联系我们</span>
+          </div>
+          <p className="f-c-85 fs-12">遇到问题？想开通更多功能请联系我们</p>
+          <Button type="primary" className={styles.footBtn}>版本升级</Button>
+          <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}>付费版，还有15天到期</p>
+        </div>
       </Layout.Sider>
     );
   }

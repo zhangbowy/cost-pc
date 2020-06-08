@@ -195,7 +195,7 @@ class Workbench extends PureComponent {
             {
               OftenTemplate.map(item => (
                 <AddInvoice
-                  id="473249444922396672"
+                  id={item.id}
                 >
                   <div key={item.id} className={cs(style.offten, 'm-l-20')}>
                     <i className="iconfont icondanju" />

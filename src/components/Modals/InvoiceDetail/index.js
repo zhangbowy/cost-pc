@@ -110,10 +110,11 @@ class InvoiceDetail extends Component {
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span>
-          <i className={`iconfont ${record.icon}`} />
+          <i className={`iconfont icon${record.icon}`} />
           <span>{record.categoryName}</span>
         </span>
-      )
+      ),
+      width: 130
     }, {
       title: '金额',
       dataIndex: 'costSum',
@@ -141,7 +142,8 @@ class InvoiceDetail extends Component {
             </Popover>
           }
         </span>
-      )
+      ),
+      width: 100
     }, {
       title: '发生日期',
       dataIndex: 'happenTime',
@@ -150,10 +152,13 @@ class InvoiceDetail extends Component {
           <span>{record.startTime ? moment(record.startTime).format('YYYY-MM-DD') : '-'}</span>
           <span>{record.endTime ? `-${moment(record.endTime).format('YYYY-MM-DD')}` : ''}</span>
         </span>
-      )
+      ),
+      width: 120
     }, {
       title: '费用备注',
       dataIndex: 'note',
+      width: 120,
+      ellipsis: true,
     }, {
       title: '图片',
       dataIndex: 'imgUrl',
@@ -165,7 +170,9 @@ class InvoiceDetail extends Component {
             </div>
           ))}
         </span>
-      )
+      ),
+      textWrap: 'word-break',
+      width: '140px'
     }];
     return (
       <span>

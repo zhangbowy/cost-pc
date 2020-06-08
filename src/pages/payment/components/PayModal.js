@@ -119,6 +119,7 @@ class PayModal extends React.PureComponent {
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
           title="标记已付"
+          maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
           footer={[

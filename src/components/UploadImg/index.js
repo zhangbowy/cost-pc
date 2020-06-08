@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Upload, Icon } from 'antd';
 import constants from '@/utils/constants';
+import cs from 'classnames';
 import style from './index.scss';
 import { ddPreviewImage } from '../../utils/ddApi';
 
@@ -53,7 +54,7 @@ class UploadImg extends Component {
       <div className={style.imgClass}>
         {
           imgUrl.map((it, index) => (
-            <div className={style.img} key={it.imgUrl}>
+            <div className={cs(style.img, 'm-b-8')} key={it.imgUrl}>
               <img src={it.imgUrl} alt="添加图片" style={{ width: '100%' }} onClick={() => this.previewImage(index)} />
               <i className="iconfont icondelete_fill" onClick={() => this.onDelete(index)} />
             </div>
@@ -75,7 +76,7 @@ class UploadImg extends Component {
             token: localStorage.getItem('token') || ''
           }}
         >
-          {uploadButton}
+          {imgUrl && imgUrl.length < 9 && uploadButton}
         </Upload>
       </div>
     );

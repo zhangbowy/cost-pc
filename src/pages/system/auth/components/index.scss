@@ -18,3 +18,11 @@
   display: inline-block;
   vertical-align: middle;
 }
+.checkT{
+  width: 165px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+}

@@ -21,6 +21,8 @@ export default {
     receiptAcc: [],
     nodes: {}, // 获取流程节点
     detailReceipt: {}, // 收款账户详情
+    userId: '', // 接收userId
+    invoiceList: [], // 单据列表
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -29,6 +31,15 @@ export default {
         type: 'save',
         payload: {
           costCategoryList: response || [],
+        },
+      });
+    },
+    *invoiceList({ payload }, { call, put }) {
+      const response = yield call(get, api.invoiceList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          invoiceList: response || [],
         },
       });
     },
@@ -47,6 +58,7 @@ export default {
         type: 'save',
         payload: {
           deptInfo: response.deptObject || [],
+          userId: response.userId || '',
         },
       });
     },
@@ -73,7 +85,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          receiptAcc: response.list || [],
+          receiptAcc: response || [],
         },
       });
     },

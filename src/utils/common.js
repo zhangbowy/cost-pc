@@ -92,3 +92,92 @@ export const dataType = (val = '', type) => {
     .toLowerCase(0);
   return type ? type === typeStr : typeStr;
 };
+
+// abtd表格勾选框操作
+export const rowSelect = {
+  onSelect(attributes, record, selected, key = 'id') {
+      const selectedRows = [...attributes.selectedRows];
+      const selectedRowKeys = [...attributes.selectedRowKeys];
+      // const { key = 'id' } = attributes;
+
+      if (selected) {
+          selectedRows.push(record);
+          selectedRowKeys.push(record[key]);
+      } else {
+          selectedRows.some((item, index) => {
+              if (item[key] === record[key]) {
+                  selectedRows.splice(index, 1);
+                  return true;
+              }
+              return false;
+          });
+
+          selectedRowKeys.some((value, index) => {
+              if (value === record[key]) {
+                  selectedRowKeys.splice(index, 1);
+                  return true;
+              }
+              return false;
+          });
+      }
+
+      return {
+          selectedRows,
+          selectedRowKeys,
+      };
+  },
+  onSelectAll(attributes, selected, changeRows, key = 'id') {
+      const selectedRows = [...attributes.selectedRows];
+      const selectedRowKeys = [...attributes.selectedRowKeys];
+      // const { key = 'id' } = attributes;
+
+      if (selected) {
+          changeRows.forEach((item) => {
+              selectedRows.push(item);
+              selectedRowKeys.push(item[key]);
+          });
+      } else {
+          changeRows.forEach((item) => {
+              // eslint-disable-next-line no-plusplus
+              for (let i = selectedRows.length; i--;) {
+                  if (item[key] === selectedRows[i][key]) {
+                      selectedRows.splice(i, 1);
+                      selectedRowKeys.splice(i, 1);
+                      break;
+                  }
+              }
+          });
+      }
+
+      return {
+          selectedRows,
+          selectedRowKeys,
+      };
+  },
+  onDelete(attributes, keyValue, key = 'id') {
+      const selectedRows = [...attributes.selectedRows];
+      const selectedRowKeys = [...attributes.selectedRowKeys];
+      // const { key = 'id' } = attributes;
+
+      selectedRows.some((item, index) => {
+          if (item[key] === keyValue) {
+              selectedRows.splice(index, 1);
+              return true;
+          }
+          return false;
+      });
+
+      selectedRowKeys.some((value, index) => {
+          if (value === keyValue) {
+              selectedRowKeys.splice(index, 1);
+              return true;
+          }
+          return false;
+      });
+
+      return {
+          selectedRows,
+          selectedRowKeys,
+      };
+  },
+};

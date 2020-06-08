@@ -256,6 +256,7 @@ class ApproveSettingModal extends Component {
           visible={visible}
           title={nodeType === 'APPROVER' ? '设置审批节点' : '设置抄送节点'}
           width="580px"
+          maskClosable={false}
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="save" onClick={this.onSubmit} type="primary">保存</Button>

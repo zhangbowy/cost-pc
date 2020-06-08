@@ -31,6 +31,7 @@ const labelInfo = {
   djDetail: global.djDetail,
   uploadSpace: global.uploadSpace,
   nodes: global.nodes,
+  userId: global.userId,
 }))
 @Form.create()
 class AddInvoice extends Component {
@@ -50,6 +51,7 @@ class AddInvoice extends Component {
       fileUrl: [], // 附件
       showField: {}, // 是否显示输入框
       total: 0,
+      loanUserId: '', // 审批人的userId
       // loading: false,
     };
   }
@@ -116,18 +118,19 @@ class AddInvoice extends Component {
         receiptId: arr[0].id,
         receiptName: arr[0].name,
         receiptNameJson: JSON.stringify(arr),
-        creatorDeptId: arr[0].id,
-        processPersonId: djDetails.approveId
       };
-      const params = {
-        creatorDeptId: arr[0].id,
-        processPersonId: djDetails.approveId
-      };
-      this.getNode(params);
     }
+    const params = {
+      creatorDeptId: detail.createDeptId || '',
+      processPersonId: djDetails.approveId
+    };
+    this.getNode(params);
     this.setState({
       accountList: account,
-      details: detail,
+      details: {
+        ...detail,
+        processPersonId: djDetails.approveId
+      },
     });
     this.setState({
       visible: true
@@ -170,9 +173,10 @@ class AddInvoice extends Component {
           users: val.users,
           details: {
             ...detail,
-            userId: val.users[0].userId,
+            userId: this.props.userId,
             deptId: deptInfo[0].deptId,
-          }
+          },
+          loanUserId: val.users[0].userId,
         });
       });
     }
@@ -212,16 +216,17 @@ class AddInvoice extends Component {
       if (it.costDetailShareVOS) {
         it.costDetailShareVOS.forEach(item => {
           loanEntities.push({
-            loanUserId: item.userId,
+            loanUserId: item.loanUserId,
             loanDeptId: item.deptId,
           });
         });
       }
     });
+    const { loanUserId } = this.state;
     this.getNode({
       loanEntities,
       creatorDeptId: detail.creatorDeptId,
-      loanUserId: detail.userId || '',
+      loanUserId: loanUserId || '',
       loanDeptId: detail.deptId || '',
       processPersonId: detail.processPersonId,
     });
@@ -313,7 +318,7 @@ class AddInvoice extends Component {
           userId: users && users.length > 0 ? users[0].userId : '',
           deptId: val.deptId,
           deptName: dep && dep.length > 0 ? dep[0].name : '',
-          userJson: JSON.stringify(users),
+          userJson: users,
           ...details,
           createDeptId: val.createDeptId,
           createDeptName: dept && dept.length > 0 ? dept[0].name : '',
@@ -340,10 +345,10 @@ class AddInvoice extends Component {
             item.costDetailShareVOS.forEach(it => {
               arr[index].costDetailShareVOS.push({
                 'shareAmount': (it.shareAmount * 1000)/10,
-                'shareScale': it.shareScale,
+                'shareScale': (it.shareScale * 1000)/10,
                 'deptId': it.deptId,
                 'userId': it.userId,
-                'userJson':JSON.stringify(it.users),
+                'userJson':it.users,
               });
             });
           }
@@ -373,9 +378,10 @@ class AddInvoice extends Component {
 
   onChangeCreate = (val) => {
     const detail = this.state.details;
+    const { loanUserId } = this.state;
     this.getNode({
       creatorDeptId: val,
-      loanUserId: detail.userId || '',
+      loanUserId: loanUserId || '',
       loanDeptId: detail.deptId || '',
       loanEntities: detail.loanEntities || [],
       processPersonId: detail.processPersonId,
@@ -390,9 +396,10 @@ class AddInvoice extends Component {
 
   onChangeDept = (val) => {
     const detail = this.state.details;
+    const { loanUserId } = this.state;
     this.getNode({
       creatorDeptId: detail.creatorDeptId,
-      loanUserId: detail.userId || '',
+      loanUserId: loanUserId || '',
       loanDeptId: val,
       loanEntities: detail.loanEntities || [],
       processPersonId: detail.processPersonId,
@@ -424,9 +431,10 @@ class AddInvoice extends Component {
           receiptNameJson: JSON.stringify(arr),
         };
       }
-    });
-    this.setState({
-      details: detail,
+      this.setState({
+        details: detail,
+        accountList: account,
+      });
     });
   }
 
@@ -530,7 +538,7 @@ class AddInvoice extends Component {
                   <Form.Item label={labelInfo.deptId} {...formItemLayout}>
                     {
                       getFieldDecorator('deptId', {
-                        rules: [{ required: true, message: '请选择承担人' }]
+                        rules: [{ required: true, message: '请选择承担部门' }]
                       })(
                         <Select placeholder="请选择" onChange={this.onChangeDept}>
                           {

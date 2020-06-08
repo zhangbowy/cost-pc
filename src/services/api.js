@@ -23,8 +23,9 @@ export default {
   expenseList: `${APP_API}/cost/invoice/submit/expense/list`,
   invoiceDet: `${APP_API}/cost/invoice/template/detail`,
   cateDet: `${APP_API}/cost/category/detail`,
-  receitAccount: `${APP_API}/cost/account/receipt/list`, // 收款账户
+  receitAccount: `${APP_API}/cost/account/receipt/list/on`, // 收款账户
   approveList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
   addReceipt: `${APP_API}/cost/account/receipt/add`,
+  invoiceList: `${APP_API}/cost/invoice/template/list`,
 };

@@ -1,4 +1,4 @@
-import { post, get } from '@/utils/request';
+import { post } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -12,10 +12,11 @@ export default {
       pageSize: PAGE_SIZE,
     },
     total: 0,
+    exportData: null,
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const response = yield call(get, api.list, payload);
+      const response = yield call(post, api.list, payload);
       yield put({
         type: 'save',
         payload: {
@@ -33,7 +34,11 @@ export default {
       yield call(post, api.send, payload);
     },
     *export({ payload }, { call }) {
-      yield call(post, api.export, payload);
+      Object.assign(payload, { type: 'export', fileName: '支出费用明细' });
+      yield call(post, api.exports, payload);
+      // yield put({
+      //   exportData: res,
+      // });
     },
   },
   reducers: {

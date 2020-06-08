@@ -101,6 +101,7 @@ class ApproveSend extends Component {
           visible={visible}
           onCancel={() => this.onCancel()}
           onOk={() => this.onSubmit()}
+          maskClosable={false}
         >
           <Form>
             <Form.Item label="发放节点名称" {...formItemLayout}>

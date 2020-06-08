@@ -138,6 +138,7 @@ class CostCategory extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
+      width: '160px',
       render: (_, record) => {
         const _this = this;
         let btns = [{
@@ -145,7 +146,7 @@ class CostCategory extends React.PureComponent {
             <AddGroup
               onOk={() => _this.onOk()}
               title="add"
-              data={{parentId: record.parentId ? [record.parentId, record.id] : [record.id]}}
+              data={{parentId: record.id}}
               list={list}
             >
               <span className="pd-20-9 c-black-65">添加子分组</span>
@@ -155,7 +156,7 @@ class CostCategory extends React.PureComponent {
           node: (
             <AddClassify
               title="add"
-              data={{parentId: record.parentId ? [record.parentId, record.id] : [record.id]}}
+              data={{parentId: record.id}}
               onOk={() => _this.onOk()}
               list={list}
             >
