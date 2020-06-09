@@ -205,7 +205,7 @@ function request(url, config) {
           // 返回所有数据【code+data/code+message】
           return data;
         }
-        if (Object.is(data.code, 200)) {
+        if (Object.is(data.code, 200) || Object.is(data.code, 500000)) {
           return data.result;
         }
         const error = new Error(data.message || constants.ERR_MSG);

@@ -3,7 +3,7 @@ import { Modal, Form, Row, Col, Button, DatePicker, Select, TreeSelect } from 'a
 import { connect } from 'dva';
 import moment from 'moment';
 import treeConvert from '@/utils/treeConvert';
-import { formItemLayout, approveStatus, defaultStatus } from '../../utils/constants';
+import { formItemLayout, approveStatus, statusList } from '../../utils/constants';
 import styles from './index.scss';
 import UserSelector from '../Modals/SelectPeople';
 
@@ -99,12 +99,6 @@ class LevelSearch extends Component {
       [`${dep}VOS`]: res.depts || [],
     });
   }
-
-  // onChangeTree = (value) => {
-  //   this.setState({
-  //     categoryIds: value,
-  //   });
-  // }
 
   onReset = () => {
     this.setState({
@@ -239,7 +233,7 @@ class LevelSearch extends Component {
                       initialValue: details.status || '',
                     })(
                       <Select placeholder="请选择">
-                        { defaultStatus.map(item => (
+                        { statusList.map(item => (
                           <Option key={item.key}>{item.value}</Option>
                         )) }
                       </Select>

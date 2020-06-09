@@ -138,6 +138,9 @@ export default {
     *addAcc({ payload }, { call }) {
       yield call(post, api.addReceipt, payload);
     },
+    *print({ payload }, { call }) {
+      yield call(get, api.print, payload);
+    },
     *grantUpload({ payload }, { call, put }) {
       const response = yield call(post, api.grantUpload, payload);
       console.log(response);

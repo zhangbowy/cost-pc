@@ -151,7 +151,7 @@ class AddCost extends Component {
   }
 
   //  选择承担人
-  selectPle = (val, index) => {
+  selectPle = (val, index, key) => {
     const detail = this.state.costDetailShareVOS;
     if (val.users) {
       this.props.dispatch({
@@ -168,6 +168,10 @@ class AddCost extends Component {
           userName: val.users[0].userName,
           userId,
           loanUserId: val.users[0].userId,
+          deptId: ''
+        });
+        this.props.form.setFieldsValue({
+          [`deptId[${key}]`]: '',
         });
         this.setState({
           costDetailShareVOS: detail,
@@ -180,6 +184,7 @@ class AddCost extends Component {
   handleOk = () => {
     const {
       invoiceId,
+      index,
     } = this.props;
     const {
       costDate,
@@ -224,6 +229,7 @@ class AddCost extends Component {
           // eslint-disable-next-line eqeqeq
           const deptList = item.depList.filter(it => it.deptId == val.deptId[item.key]);
           arr.push({
+            key: item.key,
             shareAmount: val.shareAmount[item.key],
             shareScale: val.shareScale[item.key],
             deptId: val.deptId[item.key],
@@ -240,7 +246,7 @@ class AddCost extends Component {
           ...detail,
           costDetailShareVOS: arr,
         };
-        this.props.onAddCost(detail);
+        this.props.onAddCost(detail, index);
         this.onCancel();
       }
     });
@@ -269,7 +275,7 @@ class AddCost extends Component {
     this.setState({
       shareAmount: amount,
     });
-    if (costSum && val) {
+    if (costSum && (val || val === 0)) {
       const scale = ((val / costSum).toFixed(4) * 100).toFixed(2);
       this.props.form.setFieldsValue({
         [`shareScale[${key}]`]: scale,
@@ -279,7 +285,7 @@ class AddCost extends Component {
 
   onInputScale = (val, key) => {
     const costSum = this.props.form.getFieldValue('costSum');
-    if (costSum && val) {
+    if (costSum && (val || val === 0)) {
       const amounts = ((val * costSum).toFixed(4) / 100);
       this.props.form.setFieldsValue({
         [`shareAmount[${key}]`]: amounts,
@@ -351,14 +357,6 @@ class AddCost extends Component {
       userInfo,
     } = this.props;
     const list = this.onSelectTree();
-    // const list = treeConvert({
-    //   rootId: 0,
-    //   pId: 'parentId',
-    //   name: 'costName',
-    //   tId: 'value',
-    //   tName: 'title',
-    //   otherKeys: ['type','showField']
-    // }, expenseList);
     const {
       visible,
       costDetailShareVOS,
@@ -387,7 +385,7 @@ class AddCost extends Component {
           <SelectPeople
             users={record.users}
             placeholder='请选择'
-            onSelectPeople={(val) => this.selectPle(val, index)}
+            onSelectPeople={(val) => this.selectPle(val, index, record.key)}
             invalid={[]}
             disabled={false}
             flag="users"
@@ -403,7 +401,8 @@ class AddCost extends Component {
           <Form.Item>
             {
               getFieldDecorator(`deptId[${record.key}]`, {
-                initialValue: record.deptId
+                initialValue: record.deptId,
+                rules:[{ required: true, message: '请选择承担部门' }]
               })(
                 <Select>
                   {

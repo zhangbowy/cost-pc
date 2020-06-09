@@ -7,7 +7,7 @@ import style from './index.scss';
 import AddCost from './AddCost';
 import UploadImg from '../../UploadImg';
 import SelectPeople from '../SelectPeople';
-import { fileUpload } from '../../../utils/ddApi';
+import { fileUpload, previewFile } from '../../../utils/ddApi';
 import CostTable from './CostTable';
 import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
@@ -58,18 +58,37 @@ class AddInvoice extends Component {
 
   onShowHandle = async() => {
     let detail = this.state.details;
-    const { id } = this.props;
+    const { id, userInfo } = this.props;
     const _this = this;
+    const userJson = [{
+      userName: userInfo.name,
+      userId: userInfo.dingUserId,
+      avatar: userInfo.avatar,
+      name: userInfo.name,
+    }];
     await this.props.dispatch({
       type: 'global/users',
       payload: {
-        type: 1,
+        userJson: JSON.stringify(userJson),
       }
     });
     const create = await _this.props.deptInfo;
     await this.setState({
-      depList: create
+      depList: create,
+      users: userJson,
     });
+    this.props.form.setFieldsValue({
+      deptId: `${_this.props.deptInfo[0].deptId}`,
+    });
+    detail = await {
+      ...detail,
+      userId: this.props.userId,
+      userName: userInfo.name,
+      deptId: _this.props.deptInfo[0].deptId,
+      loanUserId: userInfo.dingUserId,
+      loanDeptId: _this.props.deptInfo[0].deptId,
+    };
+
     await this.props.dispatch({
       type: 'global/users',
       payload: {}
@@ -111,7 +130,8 @@ class AddInvoice extends Component {
       }
     });
     const account = await _this.props.receiptAcc;
-    const arr = account.filter(it => it.isDefault && (it.status === 1));
+    const arr = account.filter(it => it.isDefault);
+
     if (arr && arr.length > 0) {
       detail = {
         ...detail,
@@ -122,7 +142,9 @@ class AddInvoice extends Component {
     }
     const params = {
       creatorDeptId: detail.createDeptId || '',
-      processPersonId: djDetails.approveId
+      processPersonId: djDetails.approveId,
+      loanUserId: detail.loanUserId,
+      loanDeptId: detail.loanDeptId,
     };
     this.getNode(params);
     this.setState({
@@ -138,14 +160,28 @@ class AddInvoice extends Component {
   }
 
   onCancel = () => {
+    this.props.form.resetFields();
     this.setState({
       visible: false,
+      imgUrl: [],
+      depList: [], // 所在部门
+      createDepList: [], // 承担部门
+      accountList: [], // 收款账户
+      details: {}, // 详情
+      inDetails: {},
+      users: [],
+      costDetailsVo: [], // 分摊
+      nodes: {},
+      fileUrl: [], // 附件
+      showField: {}, // 是否显示输入框
+      total: 0,
+      loanUserId: '', // 审批人的userId
     });
   }
 
   selectPle = (val) => {
     const detail = this.state.details;
-    if (val.users) {
+    if (val.users && val.users.length > 0) {
       this.props.dispatch({
         type: 'global/users',
         payload: {
@@ -160,6 +196,10 @@ class AddInvoice extends Component {
         if (deptInfo.length === 1) {
           this.props.form.setFieldsValue({
             deptId: `${deptInfo[0].deptId}`,
+          });
+        } else {
+          this.props.form.setFieldsValue({
+            deptId: '',
           });
         }
         this.getNode({
@@ -187,11 +227,12 @@ class AddInvoice extends Component {
     const { accountList } = this.state;
     accountList.forEach(item => {
       if (item.id === val) {
+        const arr = [item];
         detail = {
           ...detail,
           receiptId: val,
           receiptName: item.name,
-          receiptNameJson: JSON.stringify([val]),
+          receiptNameJson: JSON.stringify(arr),
         };
       }
     });
@@ -204,7 +245,7 @@ class AddInvoice extends Component {
   onAddCost = (val, index) => {
     const  share = this.state.costDetailsVo;
     const detail = this.state.details;
-    if (index) {
+    if (index === 0 || index) {
       share.splice(index, 1, val);
     } else {
       share.push(val);
@@ -249,13 +290,25 @@ class AddInvoice extends Component {
       payload: {},
     }).then(() => {
       const { uploadSpace } = this.props;
-      fileUpload({spaceId: uploadSpace}, (arr) => {
+      fileUpload({spaceId: uploadSpace, max: 9}, (arr) => {
         let file = _this.state.fileUrl;
         file = [...file, ...arr];
         _this.setState({
           fileUrl: file,
         });
       });
+    });
+  }
+
+  //  预览附件
+  previewFiless = (options) => {
+    this.props.dispatch({
+      type: 'global/grantDownload',
+      payload: {
+        fileIds: options.fileId
+      }
+    }).then(() => {
+      previewFile(options);
     });
   }
 
@@ -349,6 +402,8 @@ class AddInvoice extends Component {
                 'deptId': it.deptId,
                 'userId': it.userId,
                 'userJson':it.users,
+                deptName: it.deptName,
+                userName: it.userName,
               });
             });
           }
@@ -533,7 +588,7 @@ class AddInvoice extends Component {
                   </Form.Item>
                 </Col>
               </Row>
-              <Row>
+              <Row style={{display: 'flex', flexWrap: 'wrap'}}>
                 <Col span={12}>
                   <Form.Item label={labelInfo.deptId} {...formItemLayout}>
                     {
@@ -566,12 +621,12 @@ class AddInvoice extends Component {
                   </Col>
                 }
                 {
-                  showField.note && showField.note.status &&
+                  showField.receiptId && showField.receiptId.status &&
                   <Col span={12} style={{position: 'relative'}}>
                     <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
                       {
                         getFieldDecorator('receiptId', {
-                          initialValue: details.receiptId || '',
+                          initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : '',
                           rules: [{ required: !!(showField.note.isWrite), message: '请选择收款账户' }]
                         })(
                           <div style={{ display: 'flex' }}>
@@ -580,10 +635,11 @@ class AddInvoice extends Component {
                               dropdownClassName={style.opt}
                               onChange={(val) => this.onChangeAcc(val)}
                               optionLabelProp="label"
+                              value={details.receiptId}
                             >
                               {
                                 accountList.map(it => (
-                                  <Option key={it.id} label={it.name}>
+                                  <Option key={it.id} value={it.id} label={it.name}>
                                     <div className={style.selects}>
                                       <p className="c-black fs-14">{it.name} </p>
                                       <p className="c-black-36 fs-13">{it.account}</p>
@@ -620,8 +676,6 @@ class AddInvoice extends Component {
                     }
                   </Form.Item>
                 </Col>
-              </Row>
-              <Row>
                 <Col span={12}>
                   <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
                     <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
@@ -635,7 +689,7 @@ class AddInvoice extends Component {
                     <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
                     {
                       fileUrl.map((it, index) => (
-                        <div key={it.fileId} className={style.fileList}>
+                        <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
                           <div>
                             <img
                               className='attachment-icon'
@@ -669,6 +723,7 @@ class AddInvoice extends Component {
                     userInfo={userInfo}
                     invoiceId={id}
                     onChangeData={(val) => this.onChangeData(val)}
+                    addCost={this.onAddCost}
                   />
                 }
               </div>

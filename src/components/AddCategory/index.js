@@ -67,7 +67,7 @@ class AddCategory extends Component {
             </div> */}
             {
               lists.map(item => (
-                <div className={style.content}>
+                <div className={style.content} key={item.id}>
                   {
                     item.type === 0 &&
                     <div className={style.header} key={item.id}>

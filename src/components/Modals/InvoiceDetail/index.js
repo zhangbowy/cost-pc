@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Row, Col, Table, Tag, Popover, message } from 'antd';
+import { Modal, Row, Col, Table, Tag, Popover, message, Button } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -7,6 +7,7 @@ import { invoiceStatus, getArrayValue, approveStatus } from '@/utils/constants';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import style from './index.scss';
+// import { DownloadFile } from '../../../utils/ddApi';
 
 @connect(({ global }) => ({
   invoiceDetail: global.invoiceDetail,
@@ -94,7 +95,9 @@ class InvoiceDetail extends Component {
         fileIds: options.fileId
       }
     }).then(() => {
+      console.log(options);
       previewFile(options);
+      // DownloadFile(options.file, options.fileName);
     });
   }
 
@@ -185,6 +188,9 @@ class InvoiceDetail extends Component {
           width="980px"
           bodyStyle={{height: '680px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
+          footer={(
+            <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
+          )}
         >
           <div className={cs(style.header, 'm-b-16')}>
             <div className={style.line} />

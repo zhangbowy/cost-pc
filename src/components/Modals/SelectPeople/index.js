@@ -37,6 +37,7 @@ class UserSelector extends PureComponent {
                 userId: item.emplId,
                 userName: item.name,
                 avatar: item.avatar,
+                name: item.name,
               });
             });
           }
@@ -76,6 +77,7 @@ class UserSelector extends PureComponent {
           userId: item.emplId,
           userName: item.name,
           avatar: item.avatar,
+          name: item.name,
         });
       });
     }

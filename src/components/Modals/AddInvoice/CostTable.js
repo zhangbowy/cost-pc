@@ -25,6 +25,10 @@ class CostTable extends Component {
     this.props.onChangeData(lists);
   }
 
+  addCost = (val, index) => {
+    this.props.addCost(val, index);
+  }
+
   render() {
     const { list, userInfo, invoiceId } = this.props;
     const columns = [{
@@ -104,7 +108,7 @@ class CostTable extends Component {
         <span>
           <span className="deleteColor" onClick={() => this.onDelete(index)}>删除</span>
           <Divider type="vertical" />
-          <AddCost detail={record} invoiceId={invoiceId} userInfo={userInfo} index={index}>
+          <AddCost detail={record} invoiceId={invoiceId} userInfo={userInfo} index={index} onAddCost={this.addCost}>
             <a>编辑</a>
           </AddCost>
         </span>

@@ -164,7 +164,7 @@ class Workbench extends PureComponent {
               title="是否确认删除？"
               onConfirm={() => this.onDelete(record.id)}
             >
-              <a>删除</a>
+              <span className="deleteColor">删除</span>
             </Popconfirm>
           }
           {

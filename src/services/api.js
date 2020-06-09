@@ -28,4 +28,5 @@ export default {
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
   addReceipt: `${APP_API}/cost/account/receipt/add`,
   invoiceList: `${APP_API}/cost/invoice/template/list`,
+  print: `${APP_API}/cost/export/pdfDetail`,
 };

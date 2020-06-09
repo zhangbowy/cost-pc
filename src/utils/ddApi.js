@@ -29,6 +29,7 @@ import openSlidePanel$ from 'dingtalk-jsapi/api/biz/util/openSlidePanel';
 import previewImage$ from 'dingtalk-jsapi/api/biz/util/previewImage';
 import preview$ from 'dingtalk-jsapi/api/biz/cspace/preview';
 import uploadAttachment$ from 'dingtalk-jsapi/api/biz/util/uploadAttachment';
+import downloadFile$ from 'dingtalk-jsapi/api/biz/util/downloadFile';
 
 const defaultUser = {
   preview: [{
@@ -102,7 +103,7 @@ export const ddConfig = (agentId, corpId, timeStamp, nonceStr, signature) => {
     nonceStr, // 必填，生成签名的随机串
     signature, // 必填，签名
     type: 0, // 选填，0表示微应用的jsapi，1表示服务窗的jsapi，不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
-    jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker', 'biz.cspace.preview', 'biz.util.uploadAttachment'] // 必填，需要使用的jsapi列表，注意：不要带dd。
+    jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker', 'biz.cspace.preview', 'biz.util.uploadAttachment', 'biz.util.downloadFile'] // 必填，需要使用的jsapi列表，注意：不要带dd。
   });
 };
 
@@ -308,14 +309,18 @@ export const ddPreviewImage = (options) => {
 
 // 预览附件
 export const previewFile = (options) => {
-
+  const { fileName, fileType, spaceId, fileId, fileSize,
+    mode = 'normal', watermark = false } = options;
+    console.log(options);
   preview$({
     corpId: localStorage.getItem('corpId'),
-    spaceId: options.spaceId,
-    fileId: options.fileId,
-    fileName: options.fileName,
-    fileSize: options.fileSize,
-    fileType: options.fileType,
+    fileName, // "视频文件.mp4",
+    fileType, //  "mp4",
+    spaceId: `${spaceId}`, //  "902628271",
+    fileId: `${fileId}`, // "5163814759",
+    fileSize, // 716146,
+    mode,
+    watermark,
     onSuccess: (result) => {
       console.log(result);
     },
@@ -331,7 +336,7 @@ export const fileUpload = (options, sCallBack, fCallBack) => {
   uploadAttachment$({
     image: {multiple:true,compress:false,max: options.max || 9,spaceId: options.spaceId},
     space:{corpId: localStorage.getItem('corpId') || '',spaceId: options.spaceId, isCopy:1 , max: options.max || 9},
-    file:{spaceId: options.spaceId,max:1},
+    file:{spaceId: options.spaceId,max: options.max || 9},
     types:['photo','camera','file','space'],
     onSuccess(_result) {
       typeof sCallBack === 'function' && sCallBack(_result.data);
@@ -339,6 +344,24 @@ export const fileUpload = (options, sCallBack, fCallBack) => {
     onFail(err) {
       typeof fCallBack === 'function' && fCallBack(err);
     }
+  });
+};
+
+export const DownloadFile = (url, name) => {
+  downloadFile$({
+    url, // 要下载的文件的url
+    name, // 定义下载文件名字
+    onProgress (msg) {
+      // 文件下载进度回调
+      console.log(msg);
+    },
+    onSuccess (result) {
+      /*
+        true
+      */
+     console.log(result);
+    },
+    onFail () { }
   });
 };
 

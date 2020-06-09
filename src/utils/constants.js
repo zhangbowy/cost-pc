@@ -266,6 +266,14 @@ export const defaultStatus = [{
   value: '全部'
 }];
 
+export const statusList = [{
+  key: '2',
+  value: '待发放'
+}, {
+  key: '3',
+  value: '已发放'
+}];
+
 export const invoiceStatus = [
 //   {
 //   key: '0',

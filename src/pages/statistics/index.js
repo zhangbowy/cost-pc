@@ -9,11 +9,12 @@ import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 // import { JsonParse } from '@/utils/common';
 import style from './index.scss';
-import { getArrayValue, approveStatus, invoiceStatus } from '../../utils/constants';
+import constants, { getArrayValue, approveStatus, invoiceStatus } from '../../utils/constants';
 import LevelSearch from '../../components/LevelSearch';
 import DropBtn from '../../components/DropBtn';
 
 const { RangePicker } = DatePicker;
+const { APP_API } = constants;
 @Form.create()
 @connect(({ loading, statistics }) => ({
   loading: loading.effects['statistics/list'] || false,
@@ -55,24 +56,27 @@ class Statistics extends React.PureComponent {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
     }
-    const { searchContent } = this.state;
+    const { searchContent, leSearch } = this.state;
     this.onQuery({
       ...query,
+      pageNo: 1,
       startTime,
       endTime,
-      searchContent,
+      content:searchContent,
+      ...leSearch,
     });
   }
 
   handChange = (date) => {
     if (!date) {
-      const { searchContent } = this.state;
+      const { searchContent, leSearch } = this.state;
       const {
         query,
       } = this.props;
       this.onQuery({
         ...query,
-        searchContent,
+        content:searchContent,
+        ...leSearch,
       });
     }
   }
@@ -108,7 +112,6 @@ onSelect = (record, selected) => {
         selectedRows,
         selectedRowKeys,
     } = rowSelect.onSelect(this.state, record, selected);
-    console.log(selectedRowKeys);
     let amount = 0;
     selectedRows.forEach(item => {
       amount+=item.submitSum;
@@ -150,12 +153,36 @@ onDelete = (id) => {
     this.setState({
       searchContent: val,
     });
+    const { leSearch } = this.state;
     this.onQuery({
       ...query,
-      searchContent: val,
+      pageNo: 1,
+      content: val,
       startTime,
       endTime,
+      ...leSearch,
     });
+  }
+
+  print = () => {
+    const { selectedRows } = this.state;
+    if (selectedRows.length > 1) {
+      message.error('只支持打印一条数据');
+      return;
+    }
+    if (selectedRows.length === 0) {
+      message.error('请选择一条数据打印');
+      return;
+    }
+    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRows[0].invoiceSubmitId}`;
+    // this.props.dispatch({
+    //   type: 'global/print',
+    //   payload: {
+    //     id: selectedRows[0].invoiceSubmitId,
+    //   }
+    // }).then(() => {
+    //   message.success('打印成功');
+    // });
   }
 
   handleSearch = (detail) => {
@@ -173,7 +200,8 @@ onDelete = (id) => {
     const { searchContent } = this.state;
     this.onQuery({
       ...query,
-      searchContent,
+      pageNo: 1,
+      content:searchContent,
       ...detail,
       startTime,
       endTime,
@@ -202,7 +230,7 @@ onDelete = (id) => {
     }else if (key === '2') {
       params = {
         searchContent,
-        leSearch,
+        ...leSearch,
         startTime,
         endTime,
       };
@@ -220,7 +248,6 @@ onDelete = (id) => {
   render() {
     const {
       selectedRowKeys,
-      count,
       sumAmount,
       leSearch,
     } = this.state;
@@ -326,12 +353,12 @@ onDelete = (id) => {
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          <InvoiceDetail id={record.invoiceId}>
+          <InvoiceDetail id={record.invoiceSubmitId}>
             <a>查看</a>
           </InvoiceDetail>
         </span>
       ),
-      width: 140,
+      width: 80,
       fixed: 'right',
     }];
     const rowSelection = {
@@ -353,7 +380,7 @@ onDelete = (id) => {
               >
                 导出
               </DropBtn>
-              <Button className="m-l-8">打印</Button>
+              <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
               <Form style={{display: 'flex', marginLeft: '8px'}}>
                 <Form.Item label="提交时间">
                   {
@@ -386,7 +413,7 @@ onDelete = (id) => {
               </div>
             </LevelSearch>
           </div>
-          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{count}笔费用，共计¥{sumAmount/100}</p>
+          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，共计¥{sumAmount/100}</p>
           <Table
             columns={columns}
             dataSource={list}
@@ -407,9 +434,10 @@ onDelete = (id) => {
                 this.onQuery({
                   pageNo: pageNumber,
                   pageSize: query.pageSize,
-                  searchContent,
+                  content: searchContent,
                   endTime,
                   startTime,
+                  ...leSearch,
                 });
               },
               total,
@@ -427,11 +455,12 @@ onDelete = (id) => {
                 }
                 const { searchContent } = this.state;
                 this.onQuery({
-                  pageNo: cur,
+                  pageNo: 1,
                   pageSize: size,
-                  searchContent,
+                  content: searchContent,
                   endTime,
                   startTime,
+                  ...leSearch,
                 });
               }
             }}

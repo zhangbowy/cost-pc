@@ -10,8 +10,10 @@ import { JsonParse, rowSelect } from '@/utils/common';
 import style from './index.scss';
 import PayModal from './components/payModal';
 import DropBtn from '../../components/DropBtn';
+import constants from '../../utils/constants';
 
 const { RangePicker } = DatePicker;
+const { APP_API } = constants;
 @Form.create()
 @connect(({ loading, payment }) => ({
   loading: loading.effects['payment/list'] || false,
@@ -54,6 +56,9 @@ class Payments extends React.PureComponent {
     const { searchContent } = this.state;
     this.setState({
       status: e.key,
+      selectedRowKeys: [],
+      selectedRows: [],
+      sumAmount: 0,
     });
     this.onQuery({
       ...query,
@@ -235,11 +240,31 @@ class Payments extends React.PureComponent {
     });
   }
 
+  print = () => {
+    const { selectedRowKeys } = this.state;
+    if (selectedRowKeys.length > 1) {
+      message.error('只支持打印一条数据');
+      return;
+    }
+    if (selectedRowKeys.length === 0) {
+      message.error('请选择一条数据打印');
+      return;
+    }
+    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    // this.props.dispatch({
+    //   type: 'global/print',
+    //   payload: {
+    //     id: selectedRowKeys[0],
+    //   }
+    // }).then(() => {
+    //   message.success('打印成功');
+    // });
+  }
+
   render() {
     const {
       status,
       selectedRowKeys,
-      count,
       sumAmount,
       selectedRows,
     } = this.state;
@@ -395,7 +420,7 @@ class Payments extends React.PureComponent {
                 total={total}
                 onExport={(key) => this.export(key)}
               />
-              <Button className="m-l-8">打印</Button>
+              <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
               <Form style={{display: 'flex', marginLeft: '8px'}}>
                 <Form.Item label="提交时间">
                   {
@@ -425,7 +450,7 @@ class Payments extends React.PureComponent {
               <span>排序</span>
             </div> */}
           </div>
-          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{count/100}张单据，共计¥{sumAmount}</p>
+          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}</p>
           <Table
             columns={columns}
             dataSource={list}
