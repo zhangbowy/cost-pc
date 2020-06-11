@@ -217,7 +217,7 @@ class AddClassify extends React.PureComponent {
           key="addInvoice"
           bodyStyle={{
             padding: 0,
-            height: '550px',
+            height: '442px',
             overflowY: 'scroll'
           }}
           maskClosable={false}

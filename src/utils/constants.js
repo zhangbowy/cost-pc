@@ -158,7 +158,7 @@ export const costClassify = [{
   key: 'costNote',
   field: 'costNote',
   name: '费用备注',
-  status: false,
+  status: true,
   isWrite: false,
   note: '',
 }, {
