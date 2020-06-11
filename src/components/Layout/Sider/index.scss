@@ -13,6 +13,7 @@
 .sider > :global(.ant-layout-sider-children) {
   display: flex;
   flex-direction: column;
+  box-shadow:2px 0px 6px 0px rgba(0,21,41,0.35);
 }
 .logo {
   // padding-left: 40px;

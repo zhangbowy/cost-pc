@@ -24,12 +24,19 @@
   overflow-y: scroll;
   p{
     margin-bottom: 0;
+    display: block;
   }
 }
 .content{
 }
 .cnt_cnts{
   padding: 0 16px 0 24px;
+}
+.cnt_list{
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .cnt_cnts:hover{
   background: #fafafa;

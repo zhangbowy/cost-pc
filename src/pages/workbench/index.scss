@@ -15,6 +15,8 @@
   color: #ffffff;
   position: relative;
   cursor: pointer;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
   :global(.iconxinzengbaoxiao) {
     font-size: 20px;
   }
@@ -31,8 +33,10 @@
   height:80px;
   color: #fff;
 }
-.header_add_mc:hover{
-  background: rgba(0,0,0,.1);
+.header_add:hover{
+  // background: rgba(0,0,0,.1);
+  background:rgba(97,208,164,1);
+  color: #fff;
 }
 .offten{
   width:212px;

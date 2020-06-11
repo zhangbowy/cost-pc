@@ -16,11 +16,12 @@ class DropBtn extends Component {
     const {
       selectKeys,
       total,
+      noLevels
     } = this.props;
     const menu = (
       <Menu onClick={this.handleMenuClick}>
         <Menu.Item key="1"><span className="pd-20-9 c-black-65">导出选中（{selectKeys.length}）</span></Menu.Item>
-        <Menu.Item key="2"><span className="pd-20-9 c-black-65">导出高级搜索结果（{total}）</span></Menu.Item>
+        {!noLevels && <Menu.Item key="2"><span className="pd-20-9 c-black-65">导出高级搜索结果（{total}）</span></Menu.Item>}
         <Menu.Item key="3"><span className="pd-20-9 c-black-65">导出全部</span></Menu.Item>
       </Menu>
     );

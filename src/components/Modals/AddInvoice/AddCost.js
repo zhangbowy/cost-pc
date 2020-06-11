@@ -196,7 +196,7 @@ class AddCost extends Component {
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         if (costDetailShareVOS.length !== 0 && shareAmount !== val.costSum) {
-          message.error('请检查分摊的金额');
+          message.error('分摊明细金额合计不等于费用金额，请修改');
           return;
         }
         let detail = {
@@ -357,12 +357,15 @@ class AddCost extends Component {
       if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
         callback('金额小数不能超过2位');
       }
-      if (value > 1000000000) {
+      if (value > 100000000 || value === 100000000) {
         callback('金额需小于1个亿');
+      }
+      if (value < 0) {
+        callback('金额不能小于零');
       }
       callback();
     } else {
-      callback('请输入金额');
+      callback();
     }
   }
 

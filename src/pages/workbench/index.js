@@ -121,7 +121,7 @@ class Workbench extends PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 150,
+      width: 160,
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
@@ -231,7 +231,7 @@ class Workbench extends PureComponent {
                           <i className="iconfont icondanju" />
                           <div className={style.cost_cnt}>
                             <span className="fw-500 fs-14 c-black-85 li-22 m-b-2 eslips-1">{item.name}</span>
-                            <span className="fs-12 c-black-45">{item.note || '暂无备注'}</span>
+                            <span className="fs-12 c-black-45 eslips-1">{item.note || '暂无备注'}</span>
                           </div>
                         </div>
                       </AddInvoice>

@@ -78,4 +78,13 @@
   .ant-dropdown-menu-item:hover {
     background: #fafafa;
   }
+  .ant-table table{
+    text-align: center!important;
+  }
+  .ant-table-thead > tr > th{
+    text-align: center!important;
+  }
+  .ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled) {
+    background-color: #fafafa!important;
+  }
 }

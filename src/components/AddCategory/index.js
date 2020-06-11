@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Popover, Divider } from 'antd';
-import cs from 'classnames';
+// import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
 import AddInvoice from '../Modals/AddInvoice';
 import style from './index.scss';
@@ -31,14 +31,25 @@ class AddCategory extends Component {
     this.props.onHandleOk();
   }
 
-  render() {
-    const { children, UseTemplate } = this.props;
-    const { visible, modalVis } = this.state;
+  handleData = (UseTemplate) => {
     const lists = treeConvert({
       pId: 'parentId',
       rootId: 0,
       otherKeys: ['parentId', 'type', 'note']
-    }, UseTemplate);
+    }, UseTemplate).filter(({children = [], type}) => {
+      if(type === 1) return true;
+      // eslint-disable-next-line no-shadow
+      return children.length > 0 ? children.map(({type}) => type === 1).length : false;
+    }).sort(({children = []}, {children: bChildren = []}) => {
+      return bChildren.length - children.length;
+    });
+    return lists;
+  }
+
+  render() {
+    const { children, UseTemplate } = this.props;
+    const { visible, modalVis } = this.state;
+    const lists = this.handleData(UseTemplate);
     return (
       <Popover
         visible={visible}
@@ -82,9 +93,11 @@ class AddCategory extends Component {
                   {
                     item.parentId === 0 && (item.type === 1) &&
                     <AddInvoice id={item.id} visible={modalVis} onHandleOk={this.onOK}>
-                      <div className={cs('p-t-10', style.cnt_cnts)} key={item.id} onClick={() => this.onHandelShow()}>
-                        <p className="c-black-85 fw-500 fs-14">{item.name}</p>
-                        <p className="c-black-36 fs-13 m-b-13" style={{height: '19px'}}>{item.note || '暂无备注'}</p>
+                      <div className={style.cnt_cnts} key={item.id} onClick={() => this.onHandelShow()}>
+                        <div className={style.cnt_list}>
+                          <p className="c-black-85 fw-500 fs-14 eslips-1">{item.name}</p>
+                          <p className="c-black-36 fs-13 eslips-1">{item.note || ''}</p>
+                        </div>
                         <Divider type="horizontal" style={{margin: 0}} />
                       </div>
                     </AddInvoice>
@@ -92,9 +105,11 @@ class AddCategory extends Component {
                   {
                     item.children && item.children.map(it => (
                       <AddInvoice id={it.id} visible={modalVis}>
-                        <div className={cs('p-t-10', style.cnt_cnts)} key={it.id} onClick={() => this.onHandelShow()}>
-                          <p className="c-black-85 fw-500 fs-14">{it.name}</p>
-                          <p className="c-black-36 fs-13 m-b-13" style={{height: '19px'}}>{it.note || '暂无备注'}</p>
+                        <div className={style.cnt_cnts} key={it.id} onClick={() => this.onHandelShow()}>
+                          <div className={style.cnt_list}>
+                            <p className="c-black-85 fw-500 fs-14 eslips-1">{it.name}</p>
+                            <p className="c-black-36 fs-13 eslips-1">{it.note || ''}</p>
+                          </div>
                           <Divider type="horizontal" style={{margin: 0}} />
                         </div>
                       </AddInvoice>

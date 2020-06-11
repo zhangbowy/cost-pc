@@ -419,6 +419,7 @@ class Payments extends React.PureComponent {
                 selectKeys={selectedRowKeys}
                 total={total}
                 onExport={(key) => this.export(key)}
+                noLevels
               />
               <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
               <Form style={{display: 'flex', marginLeft: '8px'}}>
