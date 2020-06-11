@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
-import { Button, Form, Table, message, Modal, Menu, Dropdown, Icon, Divider } from 'antd';
+import { Button, Form, Table, message, Modal, Menu, Dropdown, Icon, Divider, Tag } from 'antd';
 // import TableBtn from '@/components/TableBtn';
 // import { SearchOutlined } from '@ant-design/icons';
 import QrCodeModal from '@/components/QrCodeModal';
@@ -117,7 +117,13 @@ class Invoice extends React.PureComponent {
     }
     const columns = [{
       title: '单据名称',
-      dataIndex: 'name'
+      dataIndex: 'name',
+      render: (_, record) => (
+        <span>
+          <span style={{ marginRight: '8px' }}>{record.name}</span>
+          { (record.status === 0) && <Tag color="red">已停用</Tag> }
+        </span>
+      ),
     }, {
       title: '描述',
       dataIndex: 'note'

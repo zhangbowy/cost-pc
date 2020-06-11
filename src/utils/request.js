@@ -130,9 +130,9 @@ function request(url, config) {
   if (config.standard) {
     // 约定请求
     if (config.method === 'POST' && config.data) {
-      header.signature(options.body);
+      header.signature(options.body, config.data.id);
     } else {
-      header.signature();
+      header.signature(null, config.data.id);
     }
     Object.assign(options, {
       headers: {
@@ -194,7 +194,6 @@ function request(url, config) {
           }).then(() => {
             // console.log(url, config);
           });
-          // console.log(window.g_app._store);
         }).catch(e => {
           console.log(e);
         });

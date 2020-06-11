@@ -38,7 +38,7 @@ export const Download = (props) => {
                 className="share-img-code"
               />
             </div>
-            <p className="sub-color m-t-40">请使用钉钉扫一扫</p>
+            <p className="use_a m-t-40">请使用钉钉扫一扫</p>
           </div>
         </div>
       </Modal>

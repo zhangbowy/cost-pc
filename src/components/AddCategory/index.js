@@ -27,6 +27,10 @@ class AddCategory extends Component {
     });
   }
 
+  onOK = () => {
+    this.props.onHandleOk();
+  }
+
   render() {
     const { children, UseTemplate } = this.props;
     const { visible, modalVis } = this.state;
@@ -77,10 +81,10 @@ class AddCategory extends Component {
                   }
                   {
                     item.parentId === 0 && (item.type === 1) &&
-                    <AddInvoice id={item.id} visible={modalVis}>
+                    <AddInvoice id={item.id} visible={modalVis} onHandleOk={this.onOK}>
                       <div className={cs('p-t-10', style.cnt_cnts)} key={item.id} onClick={() => this.onHandelShow()}>
                         <p className="c-black-85 fw-500 fs-14">{item.name}</p>
-                        <p className="c-black-36 fs-13 m-b-13">{item.note}</p>
+                        <p className="c-black-36 fs-13 m-b-13" style={{height: '19px'}}>{item.note || '暂无备注'}</p>
                         <Divider type="horizontal" style={{margin: 0}} />
                       </div>
                     </AddInvoice>
@@ -90,7 +94,7 @@ class AddCategory extends Component {
                       <AddInvoice id={it.id} visible={modalVis}>
                         <div className={cs('p-t-10', style.cnt_cnts)} key={it.id} onClick={() => this.onHandelShow()}>
                           <p className="c-black-85 fw-500 fs-14">{it.name}</p>
-                          <p className="c-black-36 fs-13 m-b-13">{it.note}</p>
+                          <p className="c-black-36 fs-13 m-b-13" style={{height: '19px'}}>{it.note || '暂无备注'}</p>
                           <Divider type="horizontal" style={{margin: 0}} />
                         </div>
                       </AddInvoice>

@@ -3,12 +3,15 @@ import { Modal, Row, Col, Table, Tag, Popover, message, Button } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
+import fileIcon from '@/utils/fileIcon.js';
 import { invoiceStatus, getArrayValue, approveStatus } from '@/utils/constants';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import style from './index.scss';
+import constants from '../../../utils/constants';
 // import { DownloadFile } from '../../../utils/ddApi';
 
+const { APP_API } = constants;
 @connect(({ global }) => ({
   invoiceDetail: global.invoiceDetail,
   approvedUrl: global.approvedUrl,
@@ -81,6 +84,11 @@ class InvoiceDetail extends Component {
     }
   }
 
+  handelOk = () => {
+    const { id } = this.props;
+    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
+  }
+
   previewImage = (arr, index) => {
     ddPreviewImage({
       urlArray: arr.map(it => it.imgUrl),
@@ -141,7 +149,7 @@ class InvoiceDetail extends Component {
                 </div>
               )}
             >
-              <Tag color="lime">分摊明细</Tag>
+              <Tag>分摊明细</Tag>
             </Popover>
           }
         </span>
@@ -184,12 +192,12 @@ class InvoiceDetail extends Component {
         </span>
         <Modal
           visible={visible}
-          title="单据名称详情"
+          title="单据详情"
           width="980px"
-          bodyStyle={{height: '680px', overflowY: 'scroll'}}
+          bodyStyle={{height: '572px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           footer={(
-            <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
+            <Button key="cancel" type="primary" onClick={() => this.handelOk()}>打印</Button>
           )}
         >
           <div className={cs(style.header, 'm-b-16')}>
@@ -198,7 +206,7 @@ class InvoiceDetail extends Component {
           </div>
           <Row className="m-b-16 fs-14">
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>事由：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销事由：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.reason}</span>
             </Col>
             <Col span={8}>
@@ -243,11 +251,11 @@ class InvoiceDetail extends Component {
           </Row>
           <Row className="m-b-16">
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>承担人：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销人：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.userName}</span>
             </Col>
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>承担人部门：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销人部门：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.deptName}</span>
             </Col>
             <Col span={8}>
@@ -278,7 +286,14 @@ class InvoiceDetail extends Component {
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
               <span className={cs('fs-14', 'c-black-65', style.file)}>
                 {invoiceDetail.fileUrl && invoiceDetail.fileUrl.map(it => (
-                  <p key={it.fileId} style={{marginBottom: '8px'}} onClick={() => this.previewFiles(it)}>{it.fileName}</p>
+                  <div className={style.files}>
+                    <img
+                      className='attachment-icon'
+                      src={fileIcon[it.fileType]}
+                      alt='attachment-icon'
+                    />
+                    <p key={it.fileId} style={{marginBottom: '8px'}} onClick={() => this.previewFiles(it)}>{it.fileName}</p>
+                  </div>
                 ))}
               </span>
             </Col>

@@ -349,6 +349,48 @@ class AddCost extends Component {
     });
   }
 
+  checkMoney = (rule, value, callback) => {
+    if (value) {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        callback('请输入正确的金额');
+      }
+      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+        callback('金额小数不能超过2位');
+      }
+      if (value > 1000000000) {
+        callback('金额需小于1个亿');
+      }
+      callback();
+    } else {
+      callback('请输入金额');
+    }
+  }
+
+  check = (rule, value, callback) => {
+    if (value) {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        callback('请输入正确的金额');
+      }
+      callback();
+    } else {
+      callback();
+    }
+  }
+
+  checkSale = (rule, value, callback) => {
+    if (value) {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        callback('请输入正确的比例');
+      }
+      if(value > 100) {
+        callback('承担比例不超过100');
+      }
+      callback();
+    } else {
+      callback();
+    }
+  }
+
   render() {
     const {
       children,
@@ -418,14 +460,15 @@ class AddCost extends Component {
       ),
       width: '230px'
     }, {
-      title: '承担金额',
+      title: '承担金额(元)',
       dataIndex: 'shareAmount',
       render: (_, record) => (
         <Form>
           <Form.Item>
             {
               getFieldDecorator(`shareAmount[${record.key}]`, {
-                initialValue: record.shareAmount
+                initialValue: record.shareAmount,
+                rules:[{ validator: this.check }]
               })(
                 <InputNumber
                   placeholder="请输入"
@@ -437,14 +480,15 @@ class AddCost extends Component {
         </Form>
       )
     }, {
-      title: '承担比例',
+      title: '承担比例（%）',
       dataIndex: 'shareScale',
       render: (_, record) => (
         <Form>
           <Form.Item>
             {
               getFieldDecorator(`shareScale[${record.key}]`, {
-                initialValue: record.shareScale
+                initialValue: record.shareScale,
+                rules: [{ validator: this.checkSale }]
               })(
                 <InputNumber
                   placeholder="请输入"
@@ -501,7 +545,10 @@ class AddCost extends Component {
                     {
                       getFieldDecorator('costSum', {
                         initialValue: details.costSum || '',
-                        rules: [{ required: true, message: '请输入金额' }]
+                        rules: [
+                          { required: true, message: '请输入金额' },
+                          { validator: this.checkMoney }
+                        ]
                       })(
                         <InputNumber placeholder="请输入" onChange={(val) => this.onChangeAmm(val)} style={{width: '100%'}} />
                       )
@@ -535,7 +582,7 @@ class AddCost extends Component {
                         initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
                         rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                       })(
-                        <DatePicker />
+                        <DatePicker style={{width: '100%'}} />
                       )
                     }
                     {

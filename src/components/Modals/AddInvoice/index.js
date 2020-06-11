@@ -15,8 +15,8 @@ import ReceiptModal from '../ReceiptModal';
 const {Option} = Select;
 const labelInfo = {
   reason: '事由',
-  userId: '承担人',
-  deptId: '承担部门',
+  userId: '报销人',
+  deptId: '报销部门',
   note: '单据备注',
   receiptId: '收款账户',
   createDeptId: '所在部门',
@@ -41,7 +41,7 @@ class AddInvoice extends Component {
       visible: false,
       imgUrl: [],
       depList: [], // 所在部门
-      createDepList: [], // 承担部门
+      createDepList: [], // 报销部门
       accountList: [], // 收款账户
       details: {}, // 详情
       inDetails: {},
@@ -165,7 +165,7 @@ class AddInvoice extends Component {
       visible: false,
       imgUrl: [],
       depList: [], // 所在部门
-      createDepList: [], // 承担部门
+      createDepList: [], // 报销部门
       accountList: [], // 收款账户
       details: {}, // 详情
       inDetails: {},
@@ -180,7 +180,9 @@ class AddInvoice extends Component {
   }
 
   selectPle = (val) => {
-    const detail = this.state.details;
+    let detail = this.state.details;
+    let params = {};
+    console.log(val.users);
     if (val.users && val.users.length > 0) {
       this.props.dispatch({
         type: 'global/users',
@@ -193,28 +195,44 @@ class AddInvoice extends Component {
           users: val.users,
           depList: deptInfo,
         });
+        console.log(deptInfo);
         if (deptInfo.length === 1) {
           this.props.form.setFieldsValue({
             deptId: `${deptInfo[0].deptId}`,
           });
+          detail = {
+            ...detail,
+            userId: this.props.userId,
+            deptId: deptInfo[0].deptId,
+          };
+          params = {
+            loanEntities: detail.loanEntities || [],
+            creatorDeptId: detail.createDeptId,
+            loanUserId: val.users[0].userId,
+            loanDeptId: deptInfo[0].deptId,
+            processPersonId: detail.processPersonId,
+          };
         } else {
           this.props.form.setFieldsValue({
             deptId: '',
           });
+          detail = {
+            ...detail,
+            userId: this.props.userId,
+          };
+          params = {
+            loanEntities: detail.loanEntities || [],
+            creatorDeptId: detail.createDeptId,
+            loanUserId: val.users[0].userId,
+            processPersonId: detail.processPersonId,
+          };
         }
-        this.getNode({
-          loanEntities: detail.loanEntities || [],
-          creatorDeptId: detail.createDeptId,
-          loanUserId: val.users[0].userId,
-          loanDeptId: deptInfo[0].deptId,
-          processPersonId: detail.processPersonId,
-        });
+        this.getNode(params);
         this.setState({
           users: val.users,
           details: {
             ...detail,
-            userId: this.props.userId,
-            deptId: deptInfo[0].deptId,
+            userName: val.users[0].userName,
           },
           loanUserId: val.users[0].userId,
         });
@@ -365,14 +383,14 @@ class AddInvoice extends Component {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
         let params = {
+          ...details,
           invoiceTemplateId: id,
           reason: val.reason,
           note: val.note || '',
-          userId: users && users.length > 0 ? users[0].userId : '',
+          userId: details.userId || '',
           deptId: val.deptId,
           deptName: dep && dep.length > 0 ? dep[0].name : '',
           userJson: users,
-          ...details,
           createDeptId: val.createDeptId,
           createDeptName: dept && dept.length > 0 ? dept[0].name : '',
           nodeConfigInfo: nodes,
@@ -420,6 +438,7 @@ class AddInvoice extends Component {
         }).then(() => {
           this.onCancel();
           message.success('发起单据成功');
+          this.props.onHandleOk();
         });
       }
     });
@@ -491,6 +510,17 @@ class AddInvoice extends Component {
         accountList: account,
       });
     });
+  }
+
+  check = (rule, value, callback) => {
+    const { showField } = this.state;
+    if (value) {
+      callback();
+    } else if (showField[rule.field].isWrite) {
+        callback('请选择收款账户');
+      } else {
+        callback();
+      }
   }
 
   render() {
@@ -593,7 +623,7 @@ class AddInvoice extends Component {
                   <Form.Item label={labelInfo.deptId} {...formItemLayout}>
                     {
                       getFieldDecorator('deptId', {
-                        rules: [{ required: true, message: '请选择承担部门' }]
+                        rules: [{ required: true, message: '请选择报销部门' }]
                       })(
                         <Select placeholder="请选择" onChange={this.onChangeDept}>
                           {
@@ -627,7 +657,11 @@ class AddInvoice extends Component {
                       {
                         getFieldDecorator('receiptId', {
                           initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : '',
-                          rules: [{ required: !!(showField.note.isWrite), message: '请选择收款账户' }]
+                          rules: [
+                            { required: !!(showField.receiptId.isWrite) },
+                            {
+                            validator: this.check
+                          }]
                         })(
                           <div style={{ display: 'flex' }}>
                             <Select
@@ -676,34 +710,40 @@ class AddInvoice extends Component {
                     }
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                    <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
-                    <Button onClick={() => this.uploadFiles()}>
-                      <Icon type="upload" /> 上传文件
-                    </Button>
-                    <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
-                    {
-                      fileUrl.map((it, index) => (
-                        <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
-                          <div>
-                            <img
-                              className='attachment-icon'
-                              src={fileIcon[it.fileType]}
-                              alt='attachment-icon'
-                            />
-                            <span>{it.fileName}</span>
+                {
+                  showField.imgUrl && showField.imgUrl.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
+                      <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.fileUrl && showField.fileUrl.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
+                      <Button onClick={() => this.uploadFiles()}>
+                        <Icon type="upload" /> 上传文件
+                      </Button>
+                      <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
+                      {
+                        fileUrl.map((it, index) => (
+                          <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
+                            <div className={style.fileIcon}>
+                              <img
+                                className='attachment-icon'
+                                src={fileIcon[it.fileType]}
+                                alt='attachment-icon'
+                              />
+                              <span className="eslips-1">{it.fileName}</span>
+                            </div>
+                            <i className="iconfont icondelete_fill" onClick={() => this.onDelFile(index)} />
                           </div>
-                          <i className="iconfont icondelete_fill" onClick={() => this.onDelFile(index)} />
-                        </div>
-                      ))
-                    }
-                  </Form.Item>
-                </Col>
+                        ))
+                      }
+                    </Form.Item>
+                  </Col>
+                }
               </Row>
             </Form>
             <Divider type="horizontal" />

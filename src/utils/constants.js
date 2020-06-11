@@ -256,11 +256,11 @@ export const classifyIcon = [{
 }];
 
 export const defaultStatus = [{
+  key: '1',
+  value: '审批中'
+}, {
   key: '2',
   value: '待发放'
-}, {
-  key: '3',
-  value: '已发放'
 }, {
   key: '0',
   value: '全部'

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
-import { Button, Form, Table, Modal, message, Menu, Icon, Dropdown, Divider } from 'antd';
+import { Button, Form, Table, Modal, message, Menu, Icon, Dropdown, Divider, Tag } from 'antd';
 import treeConvert from '@/utils/treeConvert';
 import { classifyIcon, getArrayColor } from '@/utils/constants';
 import Search from 'antd/lib/input/Search';
@@ -110,14 +110,20 @@ class CostCategory extends React.PureComponent {
       pId: 'parentId',
       tName: 'costName',
       name: 'costName',
-      otherKeys: ['icon', 'note', 'type', 'parentId']
+      otherKeys: ['icon', 'note', 'type', 'parentId', 'status']
     }, list);
     if (this.state.costName) {
       lists = list;
     }
     const columns = [{
       title: '名称',
-      dataIndex: 'costName'
+      dataIndex: 'costName',
+      render: (_, record) => (
+        <span>
+          <span style={{ marginRight: '8px' }}>{record.costName}</span>
+          { (record.status === 0) && <Tag color="red">已停用</Tag> }
+        </span>
+      ),
     }, {
       title: '图标',
       dataIndex: 'icon',

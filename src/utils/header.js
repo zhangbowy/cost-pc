@@ -9,7 +9,7 @@
  *
  */
 import md5 from 'md5';
-import { Base64 } from 'js-base64';
+// import { Base64 } from 'js-base64';
 
 class Header {
   constructor() {
@@ -51,27 +51,29 @@ class Header {
   getCommon = key => this.common[key];
 
   // 签名
-  signature = (bodyStr) => {
+  signature = (bodyStr, id) => {
     const { common } = this;
     const timestamp = (new Date().getTime() / 1000).toFixed();
-    const signature = [
-      `appId=${common.appId}`,
-      `userId=${common.userId}`,
-      `deviceId=${common.deviceId}`,
-      `OSVersion=${common.OSVersion}`,
-      `password=${this.password}`,
-      `timestamp=${timestamp}`,
-      `token=${common.token}`,
-    ];
-    if (bodyStr) {
-      signature.push(`body=${Base64.encode(bodyStr)}`);
+    // const signature = [
+    //   'key=sq2019',
+    //   `id=${id}`,
+    // ];
+    const sign = `${id}sq2019`;
+    // if (bodyStr) {
+    //   signature.push(`body=${Base64.encode(bodyStr)}`);
+    // }
+    // signature.sort();
+    // const sign = signature.join('&');
+    if (id) {
+      Object.assign(common, {
+        timestamp,
+        sign: md5(sign),
+      });
+    } else {
+      Object.assign(common, {
+        timestamp,
+      });
     }
-    signature.sort();
-    const sign = signature.join('&');
-    Object.assign(common, {
-      timestamp,
-      sign: md5(sign),
-    });
   };
 }
 

@@ -1,0 +1,13 @@
+.initModal{
+  :global(.ant-modal-content) {
+    box-shadow: none;
+    background-color: initial;
+  }
+}
+.imgs{
+  width: 424px;
+  height: 472px;
+  img{
+    width: 424px;
+  }
+}

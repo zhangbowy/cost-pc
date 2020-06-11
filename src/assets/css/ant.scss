@@ -1,9 +1,9 @@
 @import 'common.scss';
 :global {
   .ant-layout-sider {
-    max-width: 190px !important;
-    width: 190px !important;
-    min-width: 190px !important;
+    // max-width: 190px !important;
+    // width: 190px !important;
+    // min-width: 190px !important;
   }
 
   .app-table-responsive {
@@ -59,6 +59,12 @@
     height: 54px;
   }
   .ant-table-tbody > tr:hover td{
+    background: #fafafa!important;
+  }
+  .ant-table-fixed .ant-table-row-hover{
+    background: #fafafa!important;
+  }
+  .ant-table-fixed .ant-table-row-hover>td{
     background: #fafafa!important;
   }
   .formItem{

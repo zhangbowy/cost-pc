@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import {
-  Dropdown,
-  Menu,
-  Icon,
+  // Dropdown,
+  // Menu,
+  // Icon,
   Breadcrumb,
 } from 'antd';
 import styles from './index.scss';
@@ -57,53 +57,54 @@ class App extends React.PureComponent {
   render() {
     const {
       userInfo,
-      collapsed,
+      // collapsed,
     } = this.props;
-    const breadcrumbList = this.setBreadcrumb();
-    const sysList = [];
-    const menu = (
-      <Menu style={{ minWidth: 120 }}>
-        <Menu.Item
-          key="logout"
-          onClick={this.logout}
-        >
-          <Icon type="logout" />
-          <span>退出登录</span>
-        </Menu.Item>
-        <Menu.Divider />
-        {
-          sysList.map((el) => (
-            <Menu.Item key={el.sysId}>
-              <a href={el.url}>{el.name}</a>
-            </Menu.Item>
-          ))
-        }
-      </Menu>
-    );
+    // const breadcrumbList = this.setBreadcrumb();
+    // const sysList = [];
+    // const menu = (
+    //   <Menu style={{ minWidth: 120 }}>
+    //     <Menu.Item
+    //       key="logout"
+    //       onClick={this.logout}
+    //     >
+    //       <Icon type="logout" />
+    //       <span>退出登录</span>
+    //     </Menu.Item>
+    //     <Menu.Divider />
+    //     {
+    //       sysList.map((el) => (
+    //         <Menu.Item key={el.sysId}>
+    //           <a href={el.url}>{el.name}</a>
+    //         </Menu.Item>
+    //       ))
+    //     }
+    //   </Menu>
+    // );
 
     return (
       <div className={styles.header}>
-        <div className="app-left">
+        {/* <div className="app-left">
           <Icon
             className={styles.trigger}
             type={collapsed ? 'menu-unfold' : 'menu-fold'}
             onClick={this.toggle}
           />
           { breadcrumbList }
-        </div>
+        </div> */}
         <div
           className="app-right"
           style={{ marginRight: 12 }}
         >
-          <Dropdown overlay={menu}>
-            <a style={{ color: '#333' }}>
-              <span>{userInfo.name || ''}</span>
-              <Icon
-                type="down"
-                style={{ marginLeft: 5 }}
-              />
-            </a>
-          </Dropdown>
+          <a href="https://www.yuque.com/ed3xn3/lbawoz" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
+          {/* <Dropdown overlay={menu}> */}
+          <a style={{ color: '#333' }}>
+            <span>{userInfo.name || ''}</span>
+            {/* <Icon
+              type="down"
+              style={{ marginLeft: 5 }}
+            /> */}
+          </a>
+          {/* </Dropdown> */}
         </div>
       </div>
     );

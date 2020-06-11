@@ -122,9 +122,9 @@ class Auth extends React.PureComponent {
               <Button type="primary">新增角色</Button>
             </AddAuth>
           </div>
-          <div className="head_rg">
+          {/* <div className="head_rg">
             <span>排序</span>
-          </div>
+          </div> */}
         </div>
         <Table
           columns={columns}

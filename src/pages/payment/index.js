@@ -275,7 +275,7 @@ class Payments extends React.PureComponent {
       total,
     } = this.props;
     const columns = [{
-      title: '事由',
+      title: '报销事由',
       dataIndex: 'reason',
       width: 100,
     }, {

@@ -202,7 +202,7 @@ class AddInvoice extends React.PureComponent {
         visible: false,
       });
       onOk();
-      message.success(`${defaultTitle[title]}费用类别成功`);
+      message.success(`${defaultTitle[title]}单据成功`);
     });
   }
 
@@ -218,7 +218,7 @@ class AddInvoice extends React.PureComponent {
           key="addInvoice"
           bodyStyle={{
             padding: 0,
-            height: '550px',
+            height: '442px',
             overflowY: 'scroll'
           }}
           width='780px'
