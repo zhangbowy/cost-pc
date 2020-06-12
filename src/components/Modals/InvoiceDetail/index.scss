@@ -16,7 +16,7 @@
 }
 
 .nameTil{
-  width: 84px;
+  width: 98px;
   text-align: right;
   display: inline-block;
 }
@@ -27,6 +27,11 @@
   }
 }
 .imgUrl{
+  display: flex;
+  align-items: center;
+  // overflow-x: scroll;
+}
+.imgUrlScroll{
   display: flex;
   align-items: center;
   overflow-x: scroll;

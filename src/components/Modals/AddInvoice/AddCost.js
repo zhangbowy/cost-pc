@@ -15,7 +15,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const labelInfo = {
   costName: '费用类别',
-  costSum: '金额',
+  costSum: '金额(元)',
   costNote: '费用备注',
   imgUrl: '图片',
   happenTime: '发生日期'
@@ -170,9 +170,16 @@ class AddCost extends Component {
           loanUserId: val.users[0].userId,
           deptId: ''
         });
-        this.props.form.setFieldsValue({
-          [`deptId[${key}]`]: '',
-        });
+        if (deptInfo && deptInfo.length === 1) {
+          this.props.form.setFieldsValue({
+            [`deptId[${key}]`]: `${deptInfo[0].deptId}`,
+          });
+        } else {
+          this.props.form.setFieldsValue({
+            [`deptId[${key}]`]: '',
+          });
+        }
+
         this.setState({
           costDetailShareVOS: detail,
         });
@@ -483,7 +490,7 @@ class AddCost extends Component {
         </Form>
       )
     }, {
-      title: '承担比例（%）',
+      title: '承担比例(%)',
       dataIndex: 'shareScale',
       render: (_, record) => (
         <Form>

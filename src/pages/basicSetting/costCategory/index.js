@@ -244,7 +244,8 @@ class CostCategory extends React.PureComponent {
           </span>
         );
         // return <TableBtn source={btns} />;
-      }
+      },
+      className: 'fixCenter'
     }];
     return (
       <div className="content-dt">

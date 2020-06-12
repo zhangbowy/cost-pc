@@ -41,7 +41,7 @@ class CostTable extends Component {
         </span>
       )
     }, {
-      title: '金额',
+      title: '金额（元）',
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
@@ -91,7 +91,7 @@ class CostTable extends Component {
       title: '图片',
       dataIndex: 'imgUrl',
       render: (_, record) => (
-        <span className={style.imgUrlTable}>
+        <span className={record.imgUrl && (record.imgUrl.length > 0) ? style.imgScroll : style.imgUrlTable}>
           {record.imgUrl && record.imgUrl.map((it, index) => (
             <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
               <img alt="图片" src={it.imgUrl} className={style.images} />

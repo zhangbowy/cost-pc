@@ -125,7 +125,8 @@ class Account extends Component {
           </AddAccount>
         </span>
       ),
-      width: 50
+      width: 80,
+      className: 'fixCenter'
     }];
     return (
       <div className="content-dt">

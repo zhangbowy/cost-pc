@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Tooltip, Steps, Button } from 'antd';
 import style from './index.scss';
 import { ddOpenLink } from '../../utils/ddApi';
-import qrCode from '../../assets/img/qrCode.png';
+import qrCode from '../../assets/img/qrcode.JPG';
 
 const { Step } = Steps;
 class StepShow extends Component {

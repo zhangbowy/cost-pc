@@ -112,7 +112,8 @@ class Auth extends React.PureComponent {
           <a onClick={() => this.onLink(record.id)}>设置人员</a>
         </span>
       ),
-      width: '190px'
+      width: '190px',
+      className: 'fixCenter'
     }];
     return (
       <div className="content-dt">

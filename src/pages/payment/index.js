@@ -279,11 +279,12 @@ class Payments extends React.PureComponent {
       dataIndex: 'reason',
       width: 100,
     }, {
-      title: '金额',
+      title: '金额(元)',
       dataIndex: 'submitSum',
       render: (text) => (
         <span>{text/100}</span>
       ),
+      className: 'moneyCol',
       width: 100,
     }, {
       title: '单号',
@@ -347,6 +348,7 @@ class Payments extends React.PureComponent {
       ),
       width: 140,
       fixed: 'right',
+      className: 'fixCenter'
     }];
     if(Number(status) !== 2) {
       columns.splice(8, 0, {

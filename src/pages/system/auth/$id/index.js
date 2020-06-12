@@ -112,7 +112,8 @@ class setUser extends React.PureComponent {
           <span className="deleteColor" id={record.id}>删除</span>
         </Popconfirm>
       ),
-      width: '80px'
+      width: '80px',
+      className: 'fixCenter'
     }];
     return (
       <div>

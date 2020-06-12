@@ -35,11 +35,17 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: rgba(0, 199, 149, 1);
   color: #ffffff;
+  background: url("../../assets/img/codebg.png");
+  background-size: cover;
   p{
     margin-bottom: 0;
   }
+}
+.logos{
+  height: 30px;
+  width: auto;
+  margin-bottom: 8px;
 }
 .share_cnt{
   display: flex;
@@ -56,4 +62,18 @@
 .share-img-code{
   width: 150px;
   height: 150px;
+}
+.modalBtn{
+  position: absolute;
+  right: -114px;
+  display: flex;
+  flex-direction: column;
+  bottom: 0;
+}
+.codeModal{
+  :global(.ant-modal-close) {
+    top: -20px;
+    right: -56px;
+    color: #ffffff;
+  }
 }

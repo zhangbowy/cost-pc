@@ -112,12 +112,13 @@ class Workbench extends PureComponent {
       dataIndex: 'reason',
       width: 150,
     }, {
-      title: '金额',
+      title: '金额（元）',
       dataIndex: 'submitSum',
       render: (text) => (
         <span>{ text && text/100 }</span>
       ),
-      width: 100,
+      className: 'moneyCol',
+      width: 120,
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -197,8 +198,9 @@ class Workbench extends PureComponent {
           </InvoiceDetail>
         </span>
       ),
-      width: 100,
-      fixed: 'right'
+      width: 120,
+      fixed: 'right',
+      className: 'fixCenter'
     }];
     return (
       <div>

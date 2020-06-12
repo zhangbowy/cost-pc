@@ -24,7 +24,7 @@ const labelInfo = {
   fileUrl: '附件'
 };
 
-@connect(({ session, global }) => ({
+@connect(({ session, global, loading }) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
@@ -32,6 +32,7 @@ const labelInfo = {
   uploadSpace: global.uploadSpace,
   nodes: global.nodes,
   userId: global.userId,
+  loading: loading.effects['global/addInvoice'] || false,
 }))
 @Form.create()
 class AddInvoice extends Component {
@@ -253,6 +254,9 @@ class AddInvoice extends Component {
           receiptNameJson: JSON.stringify(arr),
         };
       }
+    });
+    this.props.form.setFieldsValue({
+      receiptId: val,
     });
     this.setState({
       details: detail,
@@ -514,13 +518,15 @@ class AddInvoice extends Component {
 
   check = (rule, value, callback) => {
     const { showField } = this.state;
-    if (value) {
-      callback();
-    } else if (showField[rule.field].isWrite) {
-        callback('请选择收款账户');
-      } else {
+    if (showField[rule.field].isWrite) {
+      if (value) {
         callback();
+      } else  {
+        callback('请选择收款账户');
       }
+    } else {
+      callback();
+    }
   }
 
   render() {
@@ -529,6 +535,7 @@ class AddInvoice extends Component {
       form: { getFieldDecorator },
       userInfo,
       id,
+      loading,
     } = this.props;
     const {
       visible,
@@ -581,7 +588,7 @@ class AddInvoice extends Component {
               <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
               <div>
                 <span className="fs-15 c-black-85 m-r-8">合计：¥<span className="fs-20 fw-500">{total}</span></span>
-                <Button key="save" type="primary" onClick={() => this.handleOk()}>确定</Button>
+                <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>
           )}
@@ -657,11 +664,7 @@ class AddInvoice extends Component {
                       {
                         getFieldDecorator('receiptId', {
                           initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : '',
-                          rules: [
-                            { required: !!(showField.receiptId.isWrite) },
-                            {
-                            validator: this.check
-                          }]
+                          rules: [{ required: !!(showField.receiptId.isWrite), message: '请输入收款账户' }],
                         })(
                           <div style={{ display: 'flex' }}>
                             <Select

@@ -360,6 +360,7 @@ onDelete = (id) => {
       ),
       width: 80,
       fixed: 'right',
+      className: 'fixCenter'
     }];
     const rowSelection = {
       type: 'checkbox',

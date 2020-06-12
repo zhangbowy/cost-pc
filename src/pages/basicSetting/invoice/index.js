@@ -223,7 +223,8 @@ class Invoice extends React.PureComponent {
             </Dropdown>
           </span>
         );
-      }
+      },
+      className: 'fixCenter'
     }];
     return (
       <div className="content-dt">

@@ -6,7 +6,7 @@ const { PAGE_SIZE } = constants;
 export default {
   namespace: 'statistics',
   state: {
-    list: [{id: 1}],
+    list: [],
     query: {
       pageNo: 1,
       pageSize: PAGE_SIZE,

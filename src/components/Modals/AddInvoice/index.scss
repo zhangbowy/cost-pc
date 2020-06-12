@@ -119,6 +119,11 @@
 .imgUrlTable{
   display: flex;
   align-items: center;
+  // overflow-x: scroll;
+}
+.imgScroll{
+  display: flex;
+  align-items: center;
   overflow-x: scroll;
 }
 .images{

@@ -186,9 +186,9 @@ class AddInvoice extends React.PureComponent {
       showField: JSON.stringify(datas.showFields),
       companyId: userInfo.companyId || '',
       type: 1,
-      useJson: !datas.isAllUse && JSON.stringify(datas.userJson),
-      deptJson: !datas.isAllUse &&
-                JSON.stringify(datas.deptJson),
+      useJson: !datas.isAllUse && datas.userJson ? JSON.stringify(datas.userJson) : '',
+      deptJson: !datas.isAllUse && datas.deptJson ?
+                JSON.stringify(datas.deptJson) : '',
     });
     if (datas.showFields) delete datas.showFields;
     dispatch({

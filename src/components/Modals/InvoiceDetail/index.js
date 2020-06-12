@@ -127,7 +127,7 @@ class InvoiceDetail extends Component {
       ),
       width: 130
     }, {
-      title: '金额',
+      title: '金额（元）',
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
@@ -174,7 +174,7 @@ class InvoiceDetail extends Component {
       title: '图片',
       dataIndex: 'imgUrl',
       render: (_, record) => (
-        <span className={style.imgUrl}>
+        <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
           {record.imgUrl && record.imgUrl.map((it, index) => (
             <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
               <img alt="图片" src={it.imgUrl} className={style.images} />
@@ -220,7 +220,7 @@ class InvoiceDetail extends Component {
           </Row>
           <Row className="m-b-16">
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销总额：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销总额(元)：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.submitSum/100}</span>
             </Col>
             <Col span={8}>

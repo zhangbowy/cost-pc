@@ -76,15 +76,25 @@
     margin: 0;
   }
   .ant-dropdown-menu-item:hover {
-    background: #fafafa;
+    background: #fafafa!important;
   }
-  .ant-table table{
+  // .ant-table table{
+  //   text-align: center!important;
+  // }
+  // .ant-table-thead > tr > th:last-child{
+  //   text-align: center!important;
+  // }
+  .fixCenter{
     text-align: center!important;
   }
-  .ant-table-thead > tr > th{
-    text-align: center!important;
-  }
+
   .ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled) {
     background-color: #fafafa!important;
+  }
+  .ant-divider{
+    background: rgba(0, 0, 0, 0.05)!important;
+  }
+  .moneyCol{
+    text-align: right!important;
   }
 }
