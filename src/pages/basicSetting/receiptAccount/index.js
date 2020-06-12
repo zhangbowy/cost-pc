@@ -83,7 +83,7 @@ class Account extends Component {
   }
 
   render() {
-    const { list, query, total } = this.props;
+    const { list, query, total, loading } = this.props;
 
     const columns = [{
       title: '名称',
@@ -145,6 +145,7 @@ class Account extends Component {
         <Table
           columns={columns}
           dataSource={list}
+          loading={loading}
           pagination={{
             current: query.pageNo,
             total,

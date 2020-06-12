@@ -72,6 +72,7 @@ class Auth extends React.PureComponent {
       list,
       query,
       total,
+      loading,
     } = this.props;
     const columns = [{
       title: '角色名称',
@@ -130,6 +131,7 @@ class Auth extends React.PureComponent {
         <Table
           columns={columns}
           dataSource={list}
+          loading={loading}
           pagination={{
             current: query.pageNo,
             total,

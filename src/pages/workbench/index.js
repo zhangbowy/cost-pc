@@ -14,7 +14,7 @@ import { JsonParse } from '../../utils/common';
 import StepShow from '../../components/StepShow';
 
 @connect(({ loading, workbench, session }) => ({
-  loading: loading.effects['workbench/list'],
+  loading: loading.effects['workbench/list'] || false,
   list: workbench.list,
   query: workbench.query,
   OftenTemplate: workbench.OftenTemplate,
@@ -106,7 +106,7 @@ class Workbench extends PureComponent {
   };
 
   render() {
-    const { list, OftenTemplate, total, query, UseTemplate, userInfo } = this.props;
+    const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading } = this.props;
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -264,6 +264,7 @@ class Workbench extends PureComponent {
                     dataSource={list}
                     rowKey="id"
                     scroll={{x: 1200}}
+                    loading={loading}
                     pagination={{
                       current: query.pageNo,
                       onChange: (pageNumber) => {

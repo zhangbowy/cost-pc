@@ -104,6 +104,7 @@ class Invoice extends React.PureComponent {
     const {
       list,
       userInfo,
+      loading,
     } = this.props;
     let lists = [];
     if (this.state.name) {
@@ -255,6 +256,7 @@ class Invoice extends React.PureComponent {
         <Table
           columns={columns}
           rowKey="id"
+          loading={loading}
           dataSource={lists}
           pagination={false}
           expandable={{

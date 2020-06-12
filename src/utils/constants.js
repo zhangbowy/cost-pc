@@ -316,16 +316,16 @@ export const approveStatus = [{
 // 审批默认配置
 export const defaultFlow = [{
   key: 'CreatorFirstLeader',
-  value: '制单人一级主管',
+  value: '差旅报销流程',
 }, {
   key: 'CreatorSecondLeader',
-  value: '制单人二级主管',
+  value: '采购报销流程',
 }, {
   key: 'LoanUserFirstLeader',
-  value: '承担人一级主管',
+  value: '对公报销流程',
 }, {
   key: 'LoanUserSecondLeader',
-  value: '承担人二级主管',
+  value: '承担人两级主管审批',
 }, {
   key: 'CreatorSelfChoose',
   value: '提报人自选',

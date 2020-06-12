@@ -104,6 +104,7 @@ class CostCategory extends React.PureComponent {
   render() {
     const {
       list,
+      loading
     } = this.props;
     let lists = treeConvert({
       rootId: 0,
@@ -275,6 +276,7 @@ class CostCategory extends React.PureComponent {
         </div>
         <Table
           rowKey="id"
+          loading={loading}
           columns={columns}
           dataSource={lists}
           pagination={false}

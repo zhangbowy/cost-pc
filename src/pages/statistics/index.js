@@ -256,11 +256,19 @@ onDelete = (id) => {
       query,
       form: { getFieldDecorator },
       total,
+      loading,
     } = this.props;
     const columns = [{
       title: '费用类别',
       dataIndex: 'categoryName',
       width: 100,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '金额',
       dataIndex: 'submitSum',
@@ -279,7 +287,7 @@ onDelete = (id) => {
     }, {
       title: '事由',
       dataIndex: 'reason',
-      width: 100,
+      width: 150,
       render: (text) => (
         <span>
           <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
@@ -421,6 +429,7 @@ onDelete = (id) => {
             scroll={{ x: 2000 }}
             rowKey="id"
             rowSelection={rowSelection}
+            loading={loading}
             pagination={{
               current: query.pageNo,
               onChange: (pageNumber) => {

@@ -273,6 +273,7 @@ class Payments extends React.PureComponent {
       query,
       form: { getFieldDecorator },
       total,
+      loading,
     } = this.props;
     const columns = [{
       title: '报销事由',
@@ -460,6 +461,7 @@ class Payments extends React.PureComponent {
             rowSelection={rowSelection}
             scroll={{ x: 2000 }}
             rowKey="id"
+            loading={loading}
             pagination={{
               current: query.pageNo,
               onChange: (pageNumber) => {
