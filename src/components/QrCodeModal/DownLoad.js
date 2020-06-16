@@ -5,6 +5,8 @@ import html2canvas from 'html2canvas';
 import logo from '../../assets/img/logo.png';
 import style from './index.scss';
 
+
+
 export const Download = (props) => {
   const [visible, setVisible] = useState(props.dVis || false);
   const qrBox = useRef();

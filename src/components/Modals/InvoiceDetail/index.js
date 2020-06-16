@@ -8,7 +8,7 @@ import { invoiceStatus, getArrayValue, approveStatus } from '@/utils/constants';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import style from './index.scss';
-import constants from '../../../utils/constants';
+import constants, { accountType } from '../../../utils/constants';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -41,9 +41,9 @@ class InvoiceDetail extends Component {
         });
       }
       if (invoiceDetail.receiptNameJson) {
-        const receipt = JsonParse(invoiceDetail.receiptNameJson);
+        const receipts = JsonParse(invoiceDetail.receiptNameJson);
         this.setState({
-          receipt: receipt[0] || {},
+          receipt: receipts[0] || {},
         });
       }
       this.setState({
@@ -269,6 +269,8 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">
                 {/* {invoiceDetail.receiptName}  */}
                 {/* {receipt.bankName}  */}
+                { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
+                <span className="m-r-8">{ receipt.bankName }</span>
                 {receipt.account}
               </span>
             </Col>

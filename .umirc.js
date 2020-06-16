@@ -71,6 +71,7 @@ export default {
     SPD_ENV: constants.APP_ENV, // 环境变量
     APP_API: constants.APP_API, // 接口网关
     APP_NAME: constants.APP_NAME, // 名称
+    APPID: constants.APPID, // appId
   },
   alias: {
     '@': path.resolve(__dirname, 'src'),

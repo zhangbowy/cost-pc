@@ -270,22 +270,22 @@ onDelete = (id) => {
         </span>
       ),
     }, {
-      title: '金额',
+      title: '金额（元）',
       dataIndex: 'submitSum',
       render: (text) => (
         <span>{text ? text/100 : 0}</span>
       ),
       width: 100,
     }, {
-      title: '承担人',
+      title: '报销人',
       dataIndex: 'userName',
       width: 130,
     }, {
-      title: '承担部门',
+      title: '报销部门',
       dataIndex: 'deptName',
       width: 130,
     }, {
-      title: '事由',
+      title: '报销事由',
       dataIndex: 'reason',
       width: 150,
       render: (text) => (

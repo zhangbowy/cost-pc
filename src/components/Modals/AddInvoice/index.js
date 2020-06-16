@@ -77,18 +77,23 @@ class AddInvoice extends Component {
     await this.setState({
       depList: create,
       users: userJson,
-    });
-    this.props.form.setFieldsValue({
-      deptId: `${_this.props.deptInfo[0].deptId}`,
-    });
-    detail = await {
-      ...detail,
-      userId: this.props.userId,
-      userName: userInfo.name,
-      deptId: _this.props.deptInfo[0].deptId,
       loanUserId: userInfo.dingUserId,
-      loanDeptId: _this.props.deptInfo[0].deptId,
-    };
+    });
+    if (create && create.length > 0) {
+      this.props.form.setFieldsValue({
+        deptId: `${create[0].deptId}`,
+      });
+      detail = await {
+        ...detail,
+        userId: this.props.userId,
+        userName: userInfo.name,
+        deptId: create[0].deptId,
+        loanUserId: userInfo.dingUserId,
+        loanDeptId: create[0].deptId,
+      };
+    } else {
+      message.error('部门无法同步，请联系管理员检查应用可见范围设置');
+    }
 
     await this.props.dispatch({
       type: 'global/users',
@@ -196,7 +201,7 @@ class AddInvoice extends Component {
           users: val.users,
           depList: deptInfo,
         });
-        console.log(deptInfo);
+        console.log(detail);
         if (deptInfo.length === 1) {
           this.props.form.setFieldsValue({
             deptId: `${deptInfo[0].deptId}`,
@@ -234,6 +239,7 @@ class AddInvoice extends Component {
           details: {
             ...detail,
             userName: val.users[0].userName,
+            loanUserId: val.users[0].userId,
           },
           loanUserId: val.users[0].userId,
         });
@@ -286,9 +292,10 @@ class AddInvoice extends Component {
       }
     });
     const { loanUserId } = this.state;
+    console.log(loanUserId);
     this.getNode({
       loanEntities,
-      creatorDeptId: detail.creatorDeptId,
+      creatorDeptId: detail.createDeptId || '',
       loanUserId: loanUserId || '',
       loanDeptId: detail.deptId || '',
       processPersonId: detail.processPersonId,
@@ -467,7 +474,7 @@ class AddInvoice extends Component {
     this.setState({
       details: {
         ...detail,
-        creatorDeptId: val,
+        createDeptId: val,
       },
     });
   }
@@ -476,7 +483,7 @@ class AddInvoice extends Component {
     const detail = this.state.details;
     const { loanUserId } = this.state;
     this.getNode({
-      creatorDeptId: detail.creatorDeptId,
+      creatorDeptId: detail.createDeptId,
       loanUserId: loanUserId || '',
       loanDeptId: val,
       loanEntities: detail.loanEntities || [],

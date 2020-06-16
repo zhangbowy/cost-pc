@@ -4,6 +4,11 @@ import QRCode from 'qrcode.react';
 // eslint-disable-next-line import/no-named-as-default
 import Download from './DownLoad';
 import style from './index.scss';
+// import constants from '../../utils/constants';
+
+// const {
+//   APPID,
+// } = constants;
 
 export const QrCodeModal = (props) => {
   const userInfo = props.userInfo || {};

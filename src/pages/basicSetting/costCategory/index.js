@@ -280,6 +280,7 @@ class CostCategory extends React.PureComponent {
           columns={columns}
           dataSource={lists}
           pagination={false}
+          defaultExpandAllRows
         />
       </div>
     );

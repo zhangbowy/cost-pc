@@ -16,7 +16,8 @@ module.exports = {
     "APP_NAME": false,
     "APP_VER": false,
     "APP_ENV": false,
-    "APP_API": false
+    "APP_API": false,
+    APPID: false,
   },
   rules: {
     'no-console': 'off',

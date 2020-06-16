@@ -41,11 +41,11 @@ class StepShow extends Component {
           <p className="fs-20 fw-500 c-black-85 m-b-16">感谢您选择使用鑫支出，使用前需设置以下基础信息</p>
           <p className="fs-14 c-black-65 m-b-16">请按如下顺序进行初始化设置。如有疑问可以查看操作手册 或联系客服</p>
           <div className="fs-14" style={{marginBottom: 0, display: 'flex'}}>
-            <div className="m-r-32" onClick={() => this.onOpen('1')}>
+            <div className="m-r-32" onClick={() => this.onOpen('2')}>
               <i className="iconfont iconIcon-yuangongshouce fs-24 vt-m sub-color m-r-8" />
               <a className="m-r-32">管理员操作手册</a>
             </div>
-            <div className="m-r-32" onClick={() => this.onOpen('2')}>
+            <div className="m-r-32" onClick={() => this.onOpen('1')}>
               <i className="iconfont iconIcon-guanlishouce fs-24 vt-m sub-color m-r-8" />
               <a className="m-r-32">员工操作手册</a>
             </div>

@@ -10,7 +10,7 @@ import { JsonParse, rowSelect } from '@/utils/common';
 import style from './index.scss';
 import PayModal from './components/payModal';
 import DropBtn from '../../components/DropBtn';
-import constants from '../../utils/constants';
+import constants, { getArrayValue, accountType } from '../../utils/constants';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
@@ -278,7 +278,7 @@ class Payments extends React.PureComponent {
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
-      width: 100,
+      width: 150,
     }, {
       title: '金额(元)',
       dataIndex: 'submitSum',
@@ -294,7 +294,7 @@ class Payments extends React.PureComponent {
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
-      width: 100,
+      width: 120,
       render: (text) => (
         <span>{text || '-'}</span>
       )
@@ -309,7 +309,8 @@ class Payments extends React.PureComponent {
         const account = record.receiptNameJson && JsonParse(record.receiptNameJson);
         return (
           <span>
-            {/* { account && account[0] && account[0].bankName } */}
+            {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
+            { account && account[0] && account[0].bankName }
             { account && account[0] && account[0].account }
             {!account && '-'}
           </span>
@@ -370,8 +371,9 @@ class Payments extends React.PureComponent {
           const account = record.payNameJson && JsonParse(record.payNameJson);
           return (
             <span>
-              { account && account[0].bankName }
-              { account && account[0].account }
+              {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
+              <span className="m-r-8">{ account && account[0] && account[0].bankName }</span>
+              { account && account[0] && account[0].account }
             </span>
           );
         },
@@ -383,7 +385,7 @@ class Payments extends React.PureComponent {
           const account = record.payNameJson && JsonParse(record.payNameJson);
           return (
             <span>
-              { account && account[0].name }
+              { account && account[0] && account[0].name }
             </span>
           );
         },

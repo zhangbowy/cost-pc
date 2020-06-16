@@ -46,6 +46,7 @@ export default {
     *login({ payload }, { call, put }) {
       const response = yield call(post, api.login, payload);
       Session.set('userInfo', JSON.stringify(response));
+      localStorage.setItem('token', response.token);
       yield put({
         type: 'save',
         payload: {

@@ -8,7 +8,7 @@ export default {
   // 分页每页条数
   PAGE_SIZE: 10,
   // appid
-  APP_ID: 'framework',
+  // APPID,
   // sysId
   SYS_ID: 'framework',
   // 请求超时时间

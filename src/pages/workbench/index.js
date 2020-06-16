@@ -12,6 +12,7 @@ import AddCategory from '../../components/AddCategory';
 import AddInvoice from '../../components/Modals/AddInvoice';
 import { JsonParse } from '../../utils/common';
 import StepShow from '../../components/StepShow';
+import { accountType } from '../../utils/constants';
 
 @connect(({ loading, workbench, session }) => ({
   loading: loading.effects['workbench/list'] || false,
@@ -138,12 +139,14 @@ class Workbench extends PureComponent {
         const account = record.receiptNameJson && JsonParse(record.receiptNameJson);
         return (
           <span>
+            {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
+            <span className="m-r-8">{ account && account[0] && account[0].bankName }</span>
             { account && account[0] && account[0].account }
             {!account && '-'}
           </span>
         );
       },
-      width: 100,
+      width: 160,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
@@ -263,7 +266,7 @@ class Workbench extends PureComponent {
                     columns={columns}
                     dataSource={list}
                     rowKey="id"
-                    scroll={{x: 1200}}
+                    scroll={{x: 1300}}
                     loading={loading}
                     pagination={{
                       current: query.pageNo,

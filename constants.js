@@ -19,9 +19,21 @@ const APP_API = {
   prod: 'https://cost.forwe.store',
 }[SPD_ENV];
 
+// 接口网关
+const APPID = {
+  // dev: 'http://framework-api.dev.jimistore.com',
+  // dev: 'http://10.255.0.169:8080', // debug
+  dev: '2021001161688157', // debug
+  test: '2021001161688157',
+  test2: 'http://framework-api.test2.jimistore.com',
+  pre: 'https://framework-api-sandbox.jimistore.com',
+  prod: '2021001164685655',
+}[SPD_ENV];
+
 module.exports = {
   APP_BASE,
   SPD_ENV,
   APP_API,
   APP_NAME,
+  APPID,
 };

@@ -259,6 +259,7 @@ class Invoice extends React.PureComponent {
           loading={loading}
           dataSource={lists}
           pagination={false}
+          defaultExpandAllRows
           expandable={{
             expandIcon: ({ expanded, onExpand, record }) =>
             expanded ? (
