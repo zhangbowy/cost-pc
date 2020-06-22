@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import group from '@/assets/img/group.jpg';
+import group1 from '@/assets/img/group1.png';
 import { Divider } from 'antd';
 
 const config = {
@@ -27,6 +28,10 @@ const NoDing = ({ type }) => (
     {
       type === '500' &&
       <img src={group} alt="钉钉" style={{width: '685px'}} />
+    }
+    {
+      type === '403' &&
+      <img src={group1} alt="钉钉" style={{width: '685px'}} />
     }
   </div>
 );
