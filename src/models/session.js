@@ -18,6 +18,7 @@ export default {
     isMenuReady: false, // 左侧单点数据获取标识
     isLogin: false, // 登录标识
     userInfo: {},
+    status: 0,
   },
   effects: {
     * getLeftMenu({ payload }, { call, put }) {
@@ -51,6 +52,7 @@ export default {
         type: 'save',
         payload: {
           userInfo: response || {},
+          status: response.costConfigCheckVo.status || 0,
           isLogin: true,
         }
       });

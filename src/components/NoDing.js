@@ -4,7 +4,7 @@ import group from '@/assets/img/group.jpg';
 import { Divider } from 'antd';
 
 const config = {
-  403: '尊敬的用户！ 您当前暂无鑫支出的管理权限',
+  403: '尊敬的用户！ 您当前暂无鑫支出的使用权限',
   500: '无法进入鑫支出',
 };
 
