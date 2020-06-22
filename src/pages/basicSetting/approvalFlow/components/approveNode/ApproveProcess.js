@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import { connect } from 'dva';
+import { Button } from 'antd';
 import ApproveNode from './ApproveNode';
 import style from './process.scss';
 import ApproveBtn from './ApproveBtn';
@@ -148,6 +149,28 @@ class ApproveProcess extends Component {
     this.nodesRender = [];
     return (
       <div className={style.node_box}>
+        <div className="branch-warp">
+          <div className="branch-box-wrap">
+            <div className="branch-box">
+              <Button class="condition-btn" click="addNode(node, 'condition')" className="node.conditionNodes.length >= 10 ? 'c-gray1' : ''">添加条件</Button>
+              <div v-for="(item, i) in node.conditionNodes" key="i" className="col-box">
+                <template v-if="i === 0">
+                  <div className="top-left-cover-line" />
+                  <div className="bottom-left-cover-line" />
+                </template>
+                <ApproveNode node="item" class="condition-node" addNode="addNode" deleteNode="deleteNode" showNodePop="showNodePop">
+                  <ApproveBtn slot="addNode" node="item" addNode="addNode" isConditional="isConditional" addNotifierStatus="false"/>
+                </ApproveNode>
+                <add-node-type v-if="item.childNode" node="item.childNode" addNode="addNode" isConditional="isConditional" isInSpindle="false"/>
+                <template v-if="i === node.conditionNodes.length - 1">
+                  <div className="top-right-cover-line" />
+                  <div className="bottom-right-cover-line" />
+                </template>
+              </div>
+            </div>
+            <ApproveBtn class="add-node-btn-box" node="node" addNode="addNode" isConditional="isConditional" addNotifierStatus="routeNodeAddNotifierStatus"/>
+          </div>
+        </div>
         {
           this.setNode(nodes).map(item => (
             item

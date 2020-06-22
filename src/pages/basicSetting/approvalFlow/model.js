@@ -14,7 +14,7 @@ export default {
     *list({ payload }, { call, put }) {
       const response = yield call(post, api.list, payload);
       yield put({
-        type: 'save',
+        type: 'changeNodes',
         payload: {
           nodes: response.node || {},
           detailNode: response || {},
@@ -33,9 +33,10 @@ export default {
       };
     },
     changeNodes(state, { payload }) {
+      console.log(payload);
       return {
         ...state,
-        newNodes: payload,
+        ...payload,
       };
     }
   }
