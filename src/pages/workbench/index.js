@@ -1,3 +1,9 @@
+/**
+ * Routes:
+ *  - src/components/PrivateRoute
+ * auth: AUTHID
+ */
+
 import React, { PureComponent } from 'react';
 import { Table, Badge, Popconfirm, Divider } from 'antd';
 import { connect } from 'dva';

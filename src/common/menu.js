@@ -42,6 +42,10 @@ const menuData = [
       id: 'basicSetting_approvalFlow',
       name: '审批流',
       path: 'approvalFlow',
+    }, {
+      id: 'basicSetting_controller',
+      name: '控制中心',
+      path: 'controller',
     }],
   },
   {
@@ -53,6 +57,10 @@ const menuData = [
       id: 'system_auth',
       name: '权限设置',
       path: 'auth',
+    }, {
+      id: 'system_peopleSetting',
+      name: '名额配置',
+      path: 'peopleSetting',
     }],
   }
 ];

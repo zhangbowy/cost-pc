@@ -8,11 +8,13 @@ import {
   Layout,
   Menu,
   Icon,
+  Button,
 } from 'antd';
 import { urlToList } from '@/utils/common';
 // import constants from '@/utils/constants';
 import styles from './index.scss';
 import InitModal from '../../Modals/InitModal';
+import Services from '../../Modals/Services';
 
 const getMenuKey = (props) => {
   const url = props.menuKey || props.location.pathname;
@@ -138,8 +140,10 @@ class App extends React.PureComponent {
             </div>
           </InitModal>
           <p className="f-c-85 fs-12">遇到问题？想开通更多功能请联系我们</p>
-          {/* <Button type="primary" className={styles.footBtn}>版本升级</Button> */}
-          {/* <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}>付费版，还有15天到期</p> */}
+          <Services>
+            <Button type="primary" className={styles.footBtn}>版本升级</Button>
+          </Services>
+          <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}>付费版，还有15天到期</p>
         </div>
       </Layout.Sider>
     );

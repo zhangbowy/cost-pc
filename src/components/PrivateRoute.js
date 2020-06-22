@@ -115,8 +115,9 @@ class App extends React.PureComponent {
 
 
   render() {
-    const { route, children } = this.props;
-    if (route.auth && !authCheck(route.auth)) {
+    const { route, children, menus } = this.props;
+    console.log('1222');
+    if (route.auth && authCheck(route.auth, menus)) {
       // if (route.auth && false) {
       return <Exception type="403" />;
     }

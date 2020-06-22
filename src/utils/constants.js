@@ -2,7 +2,7 @@
  * 配置文件
  */
 /* eslint-disable no-undef */
-
+import { version } from 'dingtalk-jsapi';
 /* ---------- System ----------*/
 export default {
   // 分页每页条数
@@ -19,6 +19,7 @@ export default {
   DEVICEID_KEY: 'framework_deviceId',
   APP_API,
   APP_NAME,
+  isInDingTalk: typeof version === 'string',
   classify: [{
     key: 'basic',
     value: '基础设置',

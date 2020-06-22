@@ -8,11 +8,11 @@ export default {
   state: {
     nodes: {},
     detailNode: {},
+    newNodes: {},
   },
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(post, api.list, payload);
-      console.log(response.node);
       yield put({
         type: 'save',
         payload: {
@@ -32,5 +32,11 @@ export default {
         ...payload,
       };
     },
+    changeNodes(state, { payload }) {
+      return {
+        ...state,
+        newNodes: payload,
+      };
+    }
   }
 };

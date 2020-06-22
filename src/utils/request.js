@@ -151,7 +151,6 @@ function request(url, config) {
       },
     });
   }
-  console.log(options);
   if(config.data.type === 'export') {
     return Promise.race([
       fetch(requestUrl, options),

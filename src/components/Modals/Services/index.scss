@@ -1,0 +1,19 @@
+.modals{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.codeBtn{
+  width: 103px;
+  height: 32px;
+  background: url('../../../assets/img/Rectangle.png') no-repeat;
+  background-size: cover;
+  text-align: center;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 37px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}

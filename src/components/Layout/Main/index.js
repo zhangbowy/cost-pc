@@ -25,6 +25,7 @@ class App extends React.PureComponent {
   render() {
     const { collapsed } = this.state;
     const { children } = this.props;
+    console.log('main');
     return (
       <ConfigProvider locale={zhCN}>
         <Layout style={{ width: '100vw', height: '100vh' }}>

@@ -40,9 +40,16 @@ export function getRedirect() {
 }
 
 // 权限校验
-export function authCheck(path) {
+export function authCheck(path, men) {
   // debug
-  const { menus } = window.g_app._store.getState().session;
+  let menus = [];
+  console.log(men);
+  if (window.g_app._store.getState().session.menus && window.g_app._store.getState().session.menus.length > 0) {
+    menus = window.g_app._store.getState().session.menus;
+  } else {
+    menus = men || [];
+  }
+  // const menus = window.g_app._store.getState().session.menus || menu;
   let withAuth = false;
   let router = '';
   switch (path) {

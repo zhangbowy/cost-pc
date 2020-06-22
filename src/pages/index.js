@@ -5,6 +5,7 @@ import Redirect from 'umi/redirect';
 import { getRedirect } from '@/utils/authority';
 import Welcome from '@/components/Welcome';
 
+console.log('进入页面');
 @connect((state) => ({
   isMenuReady: state.session.isMenuReady,
 }))
