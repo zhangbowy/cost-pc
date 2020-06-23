@@ -13,7 +13,7 @@ const download = () => {
   window.location.href='https://page.dingtalk.com/wow/dingtalk/act/download';
 };
 
-const NoDing = ({ type }) => (
+const NoDing = ({ type, configs }) => (
   <div style={{margin: '64px 0 0 50px'}}>
     <p className="c-black-85 fs-28 fw-600 m-b-17">{config[type]}</p>
     {
@@ -22,7 +22,7 @@ const NoDing = ({ type }) => (
     }
     {
       type === '403' &&
-      <p className="c-black-85 fs-14">请联系以下任意一位管理员给您添加权限：张小三/李小四/王小五</p>
+      <p className="c-black-85 fs-14">请联系以下任意一位管理员给您添加权限：{configs.adminNames && configs.adminNames.join('/')}</p>
     }
     <Divider type="horizontal" />
     {

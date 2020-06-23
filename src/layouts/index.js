@@ -9,6 +9,7 @@ const { isInDingTalk } = constants;
 @connect(({ session }) => ({
   isLogin: session.isLogin,
   status: session.status,
+  userInfo: session.userInfo,
 }))
 class BasicLayout extends React.PureComponent {
   static propTypes = {
@@ -17,12 +18,12 @@ class BasicLayout extends React.PureComponent {
   };
 
   render() {
-    const { children, isLogin, status } = this.props;
+    const { children, isLogin, status, userInfo } = this.props;
     if (!isLogin && isInDingTalk) {
       return null;
     }
     if (Number(status) === 1) {
-      return <NoDing type="403" />;
+      return <NoDing type="403" configs={userInfo.costConfigCheckVo || {}} />;
     }
     if (!isInDingTalk) {
       return <NoDing type="500" />;
