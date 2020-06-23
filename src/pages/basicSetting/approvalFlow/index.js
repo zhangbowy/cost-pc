@@ -4,8 +4,10 @@ import cs from 'classnames';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { defaultFlow, repeatMethod } from '@/utils/constants';
 import { connect } from 'dva';
-import ApproveProcess from './components/approveNode/ApproveProcess';
+import MockData from './mockData.js';
+// import ApproveProcess from './components/approveNode/ApproveProcess';
 import style from './index.scss';
+import Process from './components/Process';
 
 @connect(({ approvalFlow }) => ({
   nodes: approvalFlow.nodes,
@@ -113,7 +115,7 @@ class ApprovalFlow extends Component {
   }
 
   render() {
-    const { nodes, status, repeatMethods, ccPosition } = this.state;
+    const { status, repeatMethods } = this.state;
     console.log(repeatMethods);
     return (
       <div style={{ height: '100%' }}>
@@ -144,14 +146,21 @@ class ApprovalFlow extends Component {
               </Select>
             </div>
             <div className={style.approval_process} key={status}>
-              <ApproveProcess
+              <Process
+                // ref='processDesign'
+                conf={MockData.processData}
+                tabName="processDesign"
+                v-show="activeStep === 'processDesign'"
+                startNodeChange="onStartChange"
+              />
+              {/* <ApproveProcess
                 key={status}
                 nodes={nodes}
                 onChangeData={(val) => this.onChange(val)}
                 {...this.props}
                 ccPosition={ccPosition}
                 onChangePosition={(val) => this.onChangePosition(val)}
-              />
+              /> */}
               {/* <approve-process :node="form.node" :isTop="true" :isConditional="conditionalArr.includes(uniqueMask)" /> */}
               {/* ----下面的灰色小字审批结束和圆圈---- */}
               <div className={style.approve_process_end}>

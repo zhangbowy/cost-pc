@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import { Popover } from '_antd@3.26.17@antd';
-import { NodeUtils } from './util.js.js';
+import { NodeUtils } from './util.js';
 
 const isCondition = data => data.type === 'condition';
 const notEmptyArray = arr => Array.isArray(arr) && arr.length > 0;

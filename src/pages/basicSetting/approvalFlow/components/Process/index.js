@@ -14,8 +14,8 @@ class Process extends Component {
   constructor(props) {
     super(props);
     const data = getMockData();
-    if (typeof this.conf === 'object' && this.conf !== null) {
-      Object.assign(data, this.conf);
+    if (typeof props.conf === 'object' && props.conf !== null) {
+      Object.assign(data, props.conf);
     }
     this.state = {
       data, // 流程图数据
@@ -30,11 +30,13 @@ class Process extends Component {
 
   // 给父级组件提供的获取流程数据得方法
   getData(){
-    this.verifyMode = true;
+    this.setState({
+      verifyMode: true,
+    });
     if(NodeUtils.checkAllNode(this.data)) {
       return Promise.resolve({formData: this.data});
     }
-      return Promise.reject({target: this.tabName});
+      return Promise.reject({target: this.props.tabName});
 
   }
 
@@ -44,7 +46,9 @@ class Process extends Component {
    */
   eventReciver({ event, args }) {
     if (event === 'edit') {
-      this.activeData = args[0]; // 打开属性面板
+      this.setState({
+        activeData: args[0],// 打开属性面板
+      });
       return;
     }
     // 本实例只监听了第一层数据（startNode）变动
@@ -55,7 +59,10 @@ class Process extends Component {
   }
 
   forceUpdate() {
-    this.updateId += 1;
+    const { updateId } = this.state;
+    this.setState({
+      updateId: (updateId + 1),
+    });
   }
 
   /**
@@ -63,10 +70,14 @@ class Process extends Component {
    * @param { Object } val - 缩放增量 是step的倍数 可正可负
    */
   changeScale(val) {
-    if (this.scaleVal > 0 && this.scaleVal < 200) {
+    let { scaleVal } = this.state;
+    if (scaleVal > 0 && scaleVal < 200) {
       // 缩放介于0%~200%
-      this.scaleVal += val;
+      scaleVal += val;
     }
+    this.setState({
+      scaleVal,
+    });
   }
 
   /**
@@ -74,19 +85,23 @@ class Process extends Component {
    * @param { Object } value - 被编辑的节点的properties属性对象
    */
   onPropEditConfirm(value, content) {
-    this.activeData.content = content || '请设置条件';
-    const oldProp = this.activeData.properties;
-    this.activeData.properties = value;
+    const { activeData } = this.state;
+    activeData.content = content || '请设置条件';
+    const oldProp = activeData.properties;
+    activeData.properties = value;
     // 修改优先级
-    if (NodeUtils.isConditionNode(this.activeData) && value.priority !== oldProp.priority) {
+    if (NodeUtils.isConditionNode(activeData) && value.priority !== oldProp.priority) {
       NodeUtils.resortPrioByCNode(
-        this.activeData,
+        activeData,
         oldProp.priority,
         this.data
       );
-      NodeUtils.setDefaultCondition(this.activeData, this.data);
+      NodeUtils.setDefaultCondition(activeData, this.data);
     }
-    if(NodeUtils.isStartNode(this.activeData)) this.$emit('startNodeChange', this.data);
+    if(NodeUtils.isStartNode(activeData)) this.$emit('startNodeChange', this.data);
+    this.setState({
+      activeData,
+    });
     this.onClosePanel();
     this.forceUpdate();
   }
@@ -95,7 +110,9 @@ class Process extends Component {
    * 属性面板取消事件
    */
   onClosePanel() {
-    this.activeData = null;
+    this.setState({
+      activeData: null,
+    });
   }
 
   // 传formIds 查询指定组件 未传时  判断所有组件
