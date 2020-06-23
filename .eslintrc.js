@@ -21,6 +21,7 @@ module.exports = {
   },
   rules: {
     'no-console': 'off',
+    "no-plusplus": 'off',
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "arrow-parens": [0],
     'react/jsx-wrap-multilines': 0,
