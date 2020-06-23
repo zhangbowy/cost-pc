@@ -6,7 +6,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
-import nodeConfig from './config.js';
+import nodeConfig from './config.js.js';
 
 const isEmpty = data => data === null || data === undefined || data === '';
 const isEmptyArray = data => Array.isArray( data ) ? data.length === 0 : true;
