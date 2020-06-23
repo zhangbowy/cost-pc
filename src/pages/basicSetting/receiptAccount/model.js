@@ -25,7 +25,7 @@ export default {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
-          total: response.page.total,
+          total: response.page ? response.page.total : 0,
         },
       });
     },
