@@ -48,6 +48,10 @@ function checkStatus(response) {
     localStorage.removeItem('token');
     localStorage.setItem('token', response.headers.get('token'));
   }
+  if (response.headers.get('repeat')) {
+    localStorage.removeItem('repeat');
+    localStorage.setItem('repeat', response.headers.get('repeat'));
+  }
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -139,7 +143,8 @@ function request(url, config) {
         ...options.headers,
         ...header.common,
         ...config.headers,
-        token: (url.indexOf('/login') === -1 && localStorage.getItem('token')) || ''
+        token: (url.indexOf('/login') === -1 && localStorage.getItem('token')) || '',
+        repeat: localStorage.getItem('repeat') || ''
       },
     });
   } else {
@@ -147,7 +152,8 @@ function request(url, config) {
       headers: {
         ...options.headers,
         ...config.headers,
-        token: (url.indexOf('/login') === -1 && localStorage.getItem('token')) || ''
+        token: (url.indexOf('/login') === -1 && localStorage.getItem('token')) || '',
+        repeat: localStorage.getItem('repeat') || ''
       },
     });
   }
