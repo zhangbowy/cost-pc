@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Modal } from 'antd';
+import { Modal, Popover } from 'antd';
 import moment from 'moment';
 import group from '@/assets/img/Group.png';
+import adCode from '@/assets/img/adCode.png';
 import style from './index.scss';
 
 function Services(props) {
@@ -33,9 +34,19 @@ function Services(props) {
           </p>
           <p className="c-black-65 m-b-28">升级后您可以享受更多服务</p>
           <img alt="说明" src={group} style={{width: '612px'}} />
-          <div className={style.codeBtn}>
-            <span>扫码升级</span>
-          </div>
+          <Popover
+            content={(
+              <div>
+                <img alt="二维码" src={adCode} style={{width: '200px'}} />
+              </div>
+            )}
+            placement="top"
+            trigger="hover"
+          >
+            <div className={style.codeBtn}>
+              <span>扫码升级</span>
+            </div>
+          </Popover>
         </div>
       </Modal>
     </div>
