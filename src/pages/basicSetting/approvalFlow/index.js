@@ -147,27 +147,10 @@ class ApprovalFlow extends Component {
             </div>
             <div className={style.approval_process} key={status}>
               <Process
-                // ref='processDesign'
                 conf={MockData.processData}
                 tabName="processDesign"
-                v-show="activeStep === 'processDesign'"
                 startNodeChange="onStartChange"
               />
-              {/* <ApproveProcess
-                key={status}
-                nodes={nodes}
-                onChangeData={(val) => this.onChange(val)}
-                {...this.props}
-                ccPosition={ccPosition}
-                onChangePosition={(val) => this.onChangePosition(val)}
-              /> */}
-              {/* <approve-process :node="form.node" :isTop="true" :isConditional="conditionalArr.includes(uniqueMask)" /> */}
-              {/* ----下面的灰色小字审批结束和圆圈---- */}
-              <div className={style.approve_process_end}>
-                <div className={style.circle} />
-                <p className={style.reduction}>审批结束</p>
-              </div>
-              {/* <p class="save-box"><standardButton type="primary" @click="save()" class="save">保存</standardButton></p> */}
               <p className={style.save_box}><Button type="primary" onClick={() => this.save()}>保存</Button></p>
             </div>
           </div>

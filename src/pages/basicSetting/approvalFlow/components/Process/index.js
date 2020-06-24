@@ -6,8 +6,11 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
+import cs from 'classnames';
+import { Icon } from 'antd';
 import FlowCard from './FlowCard';
 import { NodeUtils, getMockData } from './FlowCard/util.js';
+import style from './index.scss';
 
 
 class Process extends Component {
@@ -29,7 +32,7 @@ class Process extends Component {
   }
 
   // 给父级组件提供的获取流程数据得方法
-  getData(){
+  getData = () => {
     this.setState({
       verifyMode: true,
     });
@@ -44,7 +47,7 @@ class Process extends Component {
    * 接收所有FlowCard事件触发
    * @param { Object } data - 含有event(事件名称)/args(参数)两个属性
    */
-  eventReciver({ event, args }) {
+  eventReciver = ({ event, args }) => {
     if (event === 'edit') {
       this.setState({
         activeData: args[0],// 打开属性面板
@@ -58,7 +61,7 @@ class Process extends Component {
     this.forceUpdate();
   }
 
-  forceUpdate() {
+  forceUpdate = () => {
     const { updateId } = this.state;
     this.setState({
       updateId: (updateId + 1),
@@ -69,7 +72,7 @@ class Process extends Component {
    * 控制流程图缩放
    * @param { Object } val - 缩放增量 是step的倍数 可正可负
    */
-  changeScale(val) {
+  changeScale = (val) => {
     let { scaleVal } = this.state;
     if (scaleVal > 0 && scaleVal < 200) {
       // 缩放介于0%~200%
@@ -84,7 +87,7 @@ class Process extends Component {
    * 属性面板提交事件
    * @param { Object } value - 被编辑的节点的properties属性对象
    */
-  onPropEditConfirm(value, content) {
+  onPropEditConfirm = (value, content) => {
     const { activeData } = this.state;
     activeData.content = content || '请设置条件';
     const oldProp = activeData.properties;
@@ -109,14 +112,14 @@ class Process extends Component {
   /**
    * 属性面板取消事件
    */
-  onClosePanel() {
+  onClosePanel = () => {
     this.setState({
       activeData: null,
     });
   }
 
   // 传formIds 查询指定组件 未传时  判断所有组件
-  isFilledPCon ( formIds ) {
+  isFilledPCon = ( formIds ) => {
     let res = false;
     const loopChild = (parent, callback) => parent.childNode && loop( parent.childNode, callback );
     const loop = ( data, callback ) => {
@@ -139,16 +142,18 @@ class Process extends Component {
   render() {
     const { scaleVal, step, updateId, data, verifyMode } = this.state;
     return (
-      <div className="flow-container">
-        <div className="scale-slider">
-          <i
-            className="btn  el-icon-minus"
-            onClick={this.changeScale.bind(this, -step)}
+      <div className={style['flow-container']}>
+        <div className={style['scale-slider']}>
+          <Icon
+            type="minus-square"
+            className={cs(style.btn, style['el-icon-minus'])}
+            onClick={() => this.changeScale(-step)}
           />
           <span className="fs-14">{scaleVal}%</span>
-          <i
-            className="btn  el-icon-plus "
-            onClick={this.changeScale.bind(this, step)}
+          <Icon
+            type="plus-square"
+            className={cs(style.btn, style['el-icon-minus'])}
+            onClick={() => this.changeScale(step)}
           />
         </div>
         <FlowCard
@@ -156,7 +161,7 @@ class Process extends Component {
           key={updateId}
           data={data}
           onEmits={this.eventReciver}
-          style={{ transform: `scale(${scaleVal / 100})` }}
+          scaleVal={scaleVal}
         />
         {/* <PropPanel
           value={this.activeData}

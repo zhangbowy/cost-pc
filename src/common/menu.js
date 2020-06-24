@@ -61,6 +61,10 @@ const menuData = [
       id: 'system_peopleSetting',
       name: '名额配置',
       path: 'peopleSetting',
+    }, {
+      id: 'system_approve',
+      name: '审批角色',
+      path: 'approve',
     }],
   }
 ];

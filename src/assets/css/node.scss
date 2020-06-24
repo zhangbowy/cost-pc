@@ -1,6 +1,6 @@
-$bg-color: #FFF;
+$bg-color: #f5f5f7;
 $line-color: #CACACA;
-$base-size: 14px;
+$base-size: 12px;
 
 
 @mixin flex-center() {
@@ -77,15 +77,13 @@ $base-size: 14px;
   }
 }
 .end-node  {
-  font-size: 14px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.45);
+  font-size: $base-size;
   text-align: center;
   @include flex-center();
   flex-direction: column;&::before  {
     content: "";
-    width: 17px;
-    height: 17px;
+    width: 10px;
+    height: 10px;
     margin: auto;
     border: none;
     margin-bottom: 12px;
@@ -244,23 +242,20 @@ $base-size: 14px;
     left: 0;
     right: 0;
     bottom: 0;
-    // z-index: -1;
+    z-index: -1;
     margin: auto;
     width: 2px;
     height: 100%;
     background-color: $line-color;
-  }
-  .add-node-btn  {
+  }.add-node-btn  {
     display: flex;
-    justify-content: center;
-    .btn  {
+    justify-content: center;.btn  {
       width: 32px;
       height: 32px;
-      z-index: 1;
       border-radius: 15px;
       cursor: pointer;
       outline: none;
-      background-color: rgba(0, 199, 149, 1);
+      background-color: #3296fa;
       border-color: transparent;
       transition: transform 0.5s;&:hover  {
         @include btn-bigger();
@@ -275,8 +270,7 @@ $base-size: 14px;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-  }
-  .branch-box {
+  }.branch-box {
     align-items: stretch;
     border-bottom: 2px solid $line-color;
     border-top: 2px solid $line-color;
@@ -285,8 +279,7 @@ $base-size: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      &:first-of-type {
+      position: relative;&:first-of-type {
         &::before, &::after {
           content: "";
           position: absolute;
@@ -299,32 +292,26 @@ $base-size: 14px;
         }&::after {
           bottom: -2px;
         }
-      }
-      &:last-of-type {
-        &::before,
-        &::after {
+      }&:last-of-type {
+        &::before, &::after {
           content: "";
           position: absolute;
           right: 0;
           height: 3px;
           width: calc(50% - 1px);
           background: $bg-color;
-        }
-        &::before {
+        }&::before {
           top: -2px;
-        }
-        &::after {
+        }&::after {
           bottom: -2px;
         }
-      }
-      .center-line {
+      }.center-line {
         height: 100%;
         width: 2px;
         background: $line-color;
         position: absolute;
       }
-    }
-    > .btn  {
+    }> .btn  {
       z-index: 99;
       cursor: pointer;
       position: absolute;
@@ -351,26 +338,23 @@ $base-size: 14px;
     color: #FF943E;
   }>div:nth-child(2) .iconfont {
     color: #3296FA;
-  }
-  .condition-icon {
+  }.condition-icon {
     width: 60px;
     height: 60px;
     line-height: 60px;
-    // border-radius: 30px;
+    border: 1px solid #e5e5e5;
+    border-radius: 30px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 12px;
     cursor: pointer;
-    color: rgba(0, 0, 0, 0.85);
-    // margin-bottom: 4px;
-    .iconfont {
+    margin-bottom: 4px;.iconfont {
       font-size: 32px;
+    }&:hover {
+      background: #3296FA;
+      box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.1);> .iconfont {
+        color: white;
+      }
     }
-    // &:hover {
-    //   background: #3296FA;
-    //   box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.1);> .iconfont {
-    //     color: white;
-    //   }
-    // }
   }
 }
 .relative {

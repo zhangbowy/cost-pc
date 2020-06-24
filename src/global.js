@@ -7,6 +7,7 @@ import '@/assets/css/ant.scss';
 import '@/assets/css/form.scss';
 import '@/assets/iconfont/iconfont.scss';
 import '@/assets/css/common.scss';
+import '@/assets/css/node.scss';
 import { includes } from 'lodash';
 import { parse } from 'qs';
 
