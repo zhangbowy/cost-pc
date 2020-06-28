@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import group from '@/assets/img/group.jpg';
+import group1 from '@/assets/img/group1.png';
 import { Divider } from 'antd';
 
 const config = {
-  403: '尊敬的用户！ 您当前暂无鑫支出的管理权限',
+  403: '尊敬的用户！ 您当前暂无鑫支出的使用权限',
   500: '无法进入鑫支出',
 };
 
@@ -12,7 +13,7 @@ const download = () => {
   window.location.href='https://page.dingtalk.com/wow/dingtalk/act/download';
 };
 
-const NoDing = ({ type }) => (
+const NoDing = ({ type, configs }) => (
   <div style={{margin: '64px 0 0 50px'}}>
     <p className="c-black-85 fs-28 fw-600 m-b-17">{config[type]}</p>
     {
@@ -21,12 +22,16 @@ const NoDing = ({ type }) => (
     }
     {
       type === '403' &&
-      <p className="c-black-85 fs-14">请联系以下任意一位管理员给您添加权限：张小三/李小四/王小五</p>
+      <p className="c-black-85 fs-14">请联系以下任意一位管理员给您添加权限：{configs.adminNames && configs.adminNames.join('/')}</p>
     }
     <Divider type="horizontal" />
     {
       type === '500' &&
       <img src={group} alt="钉钉" style={{width: '685px'}} />
+    }
+    {
+      type === '403' &&
+      <img src={group1} alt="钉钉" style={{width: '685px'}} />
     }
   </div>
 );

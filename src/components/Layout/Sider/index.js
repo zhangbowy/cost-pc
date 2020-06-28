@@ -34,6 +34,8 @@ const getIcon = (menu) => {
 @connect(({ session, global }) => ({
   menus: session.menus,
   menuKey: global.menuKey,
+  userInfo: session.userInfo,
+  status: session.status,
 }))
 class App extends React.PureComponent {
   static propTypes = {
@@ -101,10 +103,13 @@ class App extends React.PureComponent {
       collapsed,
       onCollapse,
       menus,
+      userInfo,
+      status,
     } = this.props;
     const { openKeys } = this.state;
     const selectedKeys = getMenuKey(this.props);
     const menuProps = collapsed ? {} : { openKeys };
+    const costConfigCheckVo = userInfo.costConfigCheckVo || {};
     // console.log(menus);
     return (
       <Layout.Sider
@@ -140,10 +145,10 @@ class App extends React.PureComponent {
             </div>
           </InitModal>
           <p className="f-c-85 fs-12">遇到问题？想开通更多功能请联系我们</p>
-          <Services>
+          <Services costConfigCheckVo={costConfigCheckVo} status={status} visible={Number(status) === 2}>
             <Button type="primary" className={styles.footBtn}>版本升级</Button>
           </Services>
-          <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}>付费版，还有15天到期</p>
+          <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}>{costConfigCheckVo.version}</p>
         </div>
       </Layout.Sider>
     );
