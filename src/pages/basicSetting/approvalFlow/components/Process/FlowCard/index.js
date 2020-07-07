@@ -188,7 +188,7 @@ function FlowCard(props) {
   };
 
   const NodeFactory = (ctx, data) => {
-    // console.log(`data${JSON.stringify(data)}`);
+    console.log(`UIdata${JSON.stringify(data)}`);
     if (!data) return;
     const showErrorTip = ctx.verifyMode && (NodeUtils.checkNode(data) === true);
     const res = [];

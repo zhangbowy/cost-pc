@@ -36,7 +36,7 @@ class ApproveNode extends Component {
   }
 
   verifyApprove = () => {
-    const isTips = this.approveNodesList.filter(v => v.type === 'SELF_CHOOSE' && v.require && !v.users.length).length > 0;
+    const isTips = this.approveNodesList.filter(v => v.type === 'SELF_CHOOSE' && v.require && !v.userList.length).length > 0;
     // eslint-disable-next-line no-unused-expressions
     isTips ? message.error('请选择审批人') : this.modifyApproveNodes();
     return !isTips;
@@ -46,15 +46,15 @@ class ApproveNode extends Component {
     const { approveNodesList } = this.state;
     const _this = this;
     if(typeof choosePeople === 'function') {
-      const { users = [] } = approveNodesList[index];
-      console.log('users   ', JSON.stringify(users));
-      choosePeople(users.map(({userId}) => userId), (result) => {
+      const { userList = [] } = approveNodesList[index];
+      console.log('users   ', JSON.stringify(userList));
+      choosePeople(userList.map(({userId}) => userId), (result) => {
         // const { users: resUsers } = result;
         console.log('resUsers ', JSON.stringify(result), index);
         // this.$spliceData({ 'approveNodesList': [index, 1, ] });
         approveNodesList.splice(index, 1, {
           ...approveNodesList[index],
-          users: result.map(val => {
+          userList: result.map(val => {
             return { ...val, userName: val.name, userId: val.emplId };
           })
         });
@@ -75,14 +75,14 @@ class ApproveNode extends Component {
     const traverse = (currentNode) => {
       const { childNode, nodeId, bizData, name, nodeType = '' } = currentNode;
       const { approveNode = {} } = bizData || {};
-      const { typeAttr = {}, users = [], method, allowSelfChoose } = approveNode || {};
+      const { typeAttr = {}, userList = [], method, allowSelfChoose } = approveNode || {};
       if(nodeType !== 'START' && nodeType !== '') {
         const { typeFirst: type, typeSecond = {} } = typeAttr;
         // eslint-disable-next-line no-unused-vars
         const { required: require = false, sFirst = '', sSecond = '' } = typeSecond;
         let title = name;
         let tips = '';
-        const len = users.length;
+        const len = userList.length;
         const methodObj = { OR: '或签', AND: '会签' };
         switch (nodeType) {
           case 'NOTIFIER':
@@ -97,9 +97,9 @@ class ApproveNode extends Component {
         if(nodeType === 'NOTIFIER') {
           title = `${title}${title.indexOf('抄送') >= 0 ? '' : '(抄送人)'}`;
         }
-        console.log('traverseNodeList', type, title, users, allowSelfChoose);
-        const shortUsers = users.length > 3 ? users.slice(0, 2) : [...users];
-        nodeArr.push({ users, method, type, nodeType, allowSelfChoose, title, tips, nodeId, require, shortUsers });
+        console.log('traverseNodeList', type, title, userList, allowSelfChoose);
+        const shortUsers = userList.length > 3 ? userList.slice(0, 2) : [...userList];
+        nodeArr.push({ userList, method, type, nodeType, allowSelfChoose, title, tips, nodeId, require, shortUsers });
       }
       if (dataType(childNode, 'object') && Object.keys(childNode).length) {
         traverse(childNode);
@@ -119,16 +119,16 @@ class ApproveNode extends Component {
     const { onChangeForm } = this.props;
     const { node } = JSON.parse(obj);
     const selfChooseObj = approveNodesList.filter(({type, nodeType, allowSelfChoose}) => (type === 'SELF_CHOOSE' || (nodeType === 'NOTIFIER' && allowSelfChoose))).reduce((pre, cur) => {
-      const { nodeId, users } = cur;
+      const { nodeId, userList } = cur;
       // eslint-disable-next-line no-param-reassign
-      pre[nodeId] = users;
+      pre[nodeId] = userList;
       return pre;
     }, {});
     const traverse = (currentNode) => {
       const { childNode = {}, nodeId, bizData } = currentNode || {};
         if(selfChooseObj[nodeId]) {
           const { approveNode = {} } = bizData || {};
-          console.log(`approveNode.users ${JSON.stringify(approveNode.users)}`);
+          console.log(`approveNode.userList ${JSON.stringify(approveNode.userList)}`);
           console.log(`approveNode ${JSON.stringify(approveNode)}`);
           approveNode.users=selfChooseObj[nodeId];
         }
@@ -176,7 +176,7 @@ class ApproveNode extends Component {
                     </div>
                     <div className={style.right}>
                       {
-                        item.users.length > 3 &&
+                        item.userList.length > 3 &&
                         (
                           <ViewMore list={approveNodesList[index]}>
                             <div className={style.view_box}>
@@ -189,7 +189,7 @@ class ApproveNode extends Component {
                       {
                         item.shortUsers.map((it, ind) => (
                           <div className={style.user_list_box}>
-                            {item.users.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
+                            {item.userList.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
                             <div className={cs(style.users_box, style.ellipsis)}>
                               <Avatar avatar={it.avatar} name={it.userName} size={36} className={style.avatar} />
                               <span className={style.user_name}>{it.userName}</span>

@@ -136,7 +136,7 @@ class ApprovalFlow extends Component {
 
   render() {
     const { status, repeatMethods } = this.state;
-    const { nodes } = this.state;
+    const { nodes } = this.props;
     return (
       <div style={{ height: '100%' }}>
         <div className="app_header">

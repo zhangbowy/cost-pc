@@ -34,15 +34,18 @@ class Process extends Component {
   }
 
   componentDidMount(){
-    this.setState({
-      data: this.props.conf,
-    });
+    setTimeout(() => {
+      console.log(this.props.conf);
+      this.setState({
+        data: this.props.conf,
+      });
+    },10);
   }
 
   componentDidUpdate(prevProps) {
     console.log(prevProps.conf);
     if (prevProps.conf !== this.props.conf) {
-      console.log(prevProps.conf);
+      console.log('更新呢');
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         data: this.props.conf,
@@ -75,15 +78,15 @@ class Process extends Component {
       });
       return;
     }
-    // const { data } = this.state;
+    const { data } = this.state;
     // 本实例只监听了第一层数据（startNode）变动
     // 为了实时更新  采用forceUpdate刷新 但是由于某些条件下触发失效（未排除清除原因）
     // 使用key + 监听父组件updateId方式强制刷新
-    NodeUtils[event](...args);
-    // this.setState({
-    //   data: nodes,
-    // });
-    // this.props.startNodeChange(nodes);
+    const nodes = NodeUtils[event](data,...args);
+    this.setState({
+      data: nodes,
+    });
+    this.props.startNodeChange(nodes);
     this.forceUpdate();
   }
 

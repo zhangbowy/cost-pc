@@ -214,7 +214,7 @@ export class NodeUtils {
       } );
       delete datas.conditionNodes;
     }
-    if ( oldChildNode && oldChildNode.nodeType === 'empty' ) {
+    if ( oldChildNode && oldChildNode.nodeType === 'route' ) {
       this.deleteNode( oldChildNode, datas );
     }
   }
@@ -227,9 +227,8 @@ export class NodeUtils {
    */
   static addApprovalNode ( oldData, data, isBranchAction, newChildNode = undefined ) {
     const datas = {...data};
-    const oldChildNode = {...data.childNode};
+    const oldChildNode = data.childNode || {};
     newChildNode = newChildNode || this.createNode( 'approver', data.nodeId );
-    datas.childNode = {};
     datas.childNode = newChildNode;
     if ( oldChildNode ) {
       newChildNode.childNode = oldChildNode;
@@ -244,10 +243,10 @@ export class NodeUtils {
       delete datas.conditionNodes;
     }
     console.log(`datas${JSON.stringify(data)}`);
-    if ( oldChildNode && oldChildNode.nodeType === 'empty' ) {
+    if ( oldChildNode && oldChildNode.nodeType === 'route' ) {
       this.deleteNode( oldChildNode, datas );
     }
-    return this.getMockData(oldData, data, 'add');
+    return this.getMockData(oldData, datas, 'add');
   }
 
   /**
@@ -257,14 +256,14 @@ export class NodeUtils {
    */
   static addEmptyNode ( data ) {
     const emptyNode = this.createNode( 'route', data.nodeId );
-    this.addApprovalNode( data, true, emptyNode );
+    this.addApprovalNodes( data, true, emptyNode );
     return emptyNode;
   }
 
   static addCopyNode ( oldData, data, isBranchAction ) {
     // 复用addApprovalNode  因为抄送人和审批人基本一致
-    this.addApprovalNode( data, isBranchAction, this.createNode( 'notifier', data.nodeId ) );
-    // return this.getMockData(oldData, datas, 'add');
+    this.addApprovalNodes( data, isBranchAction, this.createNode( 'notifier', data.nodeId ) );
+    return this.getMockData(oldData, data, 'add');
   }
 
   /**
@@ -298,8 +297,8 @@ export class NodeUtils {
       return c;
     } );
     nodeData.conditionNodes = conditionNodes;
-    console.log(`nodeData${JSON.stringify(nodeData)}`);
-    // return this.getMockData(oldData, nodeData, 'add');
+    console.log(`nodeData${JSON.stringify(data)}`);
+    return this.getMockData(oldData, nodeData, 'add');
   }
 
   /**
@@ -320,7 +319,7 @@ export class NodeUtils {
     delNode.priority = oldPriority;
     preNodes[oldPriority-1] = delNode;
     prevNode.conditionNodes = preNodes;
-    // return this.getMockData(processData, prevNode, 'edit');
+    return this.getMockData(processData, prevNode, 'edit');
   }
 
   /**
@@ -481,6 +480,17 @@ export class NodeUtils {
             x[key] = childNode(child[key]);
             Object.assign(result, x);
 
+        } else if (Array.isArray(child[key]) && key === 'conditionNodes') {
+          if (child[key].length > 0) {
+            const y = {
+              conditionNodes: child[key],
+            };
+            for(let i=0; i < child[key].length; i++) {
+              console.log(y[key]);
+              y.conditionNodes[i] = childNode(child[key][i]);
+              Object.assign(result, y);
+            }
+          }
         } else {
           const c = {};
           c[key] = child[key];
