@@ -66,6 +66,16 @@ class UserSelector extends PureComponent {
 
   }
 
+  onDelete = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    this.props.onSelectPeople({
+      users: [],
+      depts: [],
+    });
+  }
+
   selectPeop = () => {
     const { users, multiple, max } = this.props;
     const _this = this;
@@ -124,6 +134,10 @@ class UserSelector extends PureComponent {
                             ? depts[0].name
                             : `${depts[0].name}等${deptsLength}个部门`}
                   </span>
+                }
+                {
+                  (usersLength > 0 || deptsLength > 0 ) &&
+                  <i className="iconfont icondelete_fill" onClick={e => this.onDelete(e)} style={{float: 'right'}} />
                 }
               </>
         }

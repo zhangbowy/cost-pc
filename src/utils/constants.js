@@ -187,37 +187,40 @@ export const defaultTitle = {
 
 // 审批流
 export const approveUser = [{
-  key: 'ASSIGN_MEMBER',
+  key: 'assignMember',
   value: '指定审批人'
 }, {
-  key: 'LEADER',
+  key: 'leader',
   value: '指定主管'
 }, {
-  key: 'SELF_CHOOSE',
+  key: 'approverRole',
+  value: '按角色分配'
+}, {
+  key: 'selfSelect',
   value: '填报人自选'
 }];
 
 export const approveLeader = [{
-  key: 'FIRST_LEADER',
+  key: 'first_leader',
   value: '一级主管'
 }, {
-  key: 'SECOND_LEADER',
+  key: 'second_leader',
   value: '二级主管'
 }, {
-  key: 'THIRD_LEADER',
+  key: 'third_leader',
   value: '三级主管'
 }, {
-  key: 'FORTH_LEADER',
+  key: 'forth_leader',
   value: '四级主管'
 }, {
-  key: 'FIFTH_LEADER',
+  key: 'fifth_leader',
   value: '五级主管'
 }];
 export const approveCreate = [{
-  key: 'CREATOR',
+  key: 'make_user',
   value: '制单人'
 }, {
-  key: 'LOAN_USER_DEPT',
+  key: 'bear_user_or_dept',
   value: '承担人/部门'
 }];
 
@@ -375,6 +378,29 @@ export const repeatMethod = [{
 }, {
   key: 'RETAIN_LAST',
   value: '当审批人出现多次时，去重保留最后一个'
+}];
+
+// 包含/不包含条件
+export const condExclude = [{
+  key: 'include',
+  value: '包含'
+}, {
+  key: 'exclude',
+  value: '不包含'
+}];
+// 大于/小于条件
+export const condThan = [{
+  key: 'more_than',
+  value: '>'
+}, {
+  key: 'less_than',
+  value: '<'
+}, {
+  key: 'more_than_or_equal',
+  value: '≥'
+}, {
+  key: 'less_than_or_equal',
+  value: '≤'
 }];
 /* ---------- Business ----------*/
 /**

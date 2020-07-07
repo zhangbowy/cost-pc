@@ -8,17 +8,22 @@ class SubHeader extends React.PureComponent {
   }
 
   link = () => {
-    this.props.history.push('/system/auth');
+    const { title } = this.props;
+    if (title) {
+      this.props.history.push('/system/approve');
+    } else {
+      this.props.history.push('/system/auth');
+    }
   }
 
   render() {
-    const { content, sub } = this.props;
+    const { content, sub, title } = this.props;
     return (
       <div className={style.subHeader}>
         {
           sub &&
           <p className="fs-14 m-b-16">
-            <span className="sub-color cur-p" onClick={() => this.link()}>角色设置</span>
+            <span className="sub-color cur-p" onClick={() => this.link()}>{title || '角色设置'}</span>
             <span className="m-l-8">/</span>
             <span className="m-l-8">设置人员</span>
           </p>

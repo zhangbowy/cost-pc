@@ -237,6 +237,7 @@ class Workbench extends PureComponent {
                       <AddInvoice
                         id={item.id}
                         onHandleOk={this.onHandleOk}
+                        key={item.id}
                       >
                         <div key={item.id} className={cs(style.offten, 'm-l-20')}>
                           <i className="iconfont icondanju" />

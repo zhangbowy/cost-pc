@@ -132,6 +132,7 @@ class Auth extends React.PureComponent {
           columns={columns}
           dataSource={list}
           loading={loading}
+          rowKey="id"
           pagination={{
             current: query.pageNo,
             total,

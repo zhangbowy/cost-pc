@@ -23,6 +23,7 @@ export default {
     detailReceipt: {}, // 收款账户详情
     userId: '', // 接收userId
     invoiceList: [], // 单据列表
+    approverRoleList: [], // 审批角色列表
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -167,6 +168,15 @@ export default {
         payload: {
           approvedUrl: response.approvedUrl || '',
         }
+      });
+    },
+    *approverRole({ payload }, { call, put }) {
+      const response = yield call(get, api.approverRoleList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          approverRoleList: response.list || [],
+        },
       });
     },
   },

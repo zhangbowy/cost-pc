@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Table, Popconfirm, Divider, Button } from 'antd';
+import { Table, Popconfirm, Divider, Button, message } from 'antd';
 import SubHeader from '@/components/SubHeader';
 import AddModal from './components/AddModal';
 
@@ -36,6 +36,28 @@ class ApproveIndex extends Component {
     });
   }
 
+  onDelete = (id) => {
+    const {
+      query,
+      dispatch,
+    } = this.props;
+    dispatch({
+      type: 'auth/del',
+      payload: {
+        id,
+      }
+    }).then(() => {
+      message.success('删除成功');
+      this.onQuery({
+        ...query
+      });
+    });
+  }
+
+  onLink = (id) => {
+    this.props.history.push(`/system/approve/${id}`);
+  }
+
   onQuery = (payload) => {
     this.props.dispatch({
       type: 'approveIndex/list',
@@ -66,7 +88,7 @@ class ApproveIndex extends Component {
       render: (_, record) => (
         <span>
           {
-            !record.isSupperAdmin &&
+            !record.isDefault &&
             <Popconfirm
               title="确认删除该角色吗?"
               onConfirm={() => this.onDelete(record.id)}
@@ -75,12 +97,12 @@ class ApproveIndex extends Component {
             </Popconfirm>
           }
           {
-            !record.isSupperAdmin &&
+            !record.isDefault &&
             <Divider type="vertical" />
           }
-          <AddModal title="edit" isSupperAdmin={record.isSupperAdmin} onOk={this.onOk} detail={record} visible={visible}>
+          <AddModal title="edit" isSupperAdmin={record.isDefault} onOk={this.onOk} detail={record} visible={visible}>
             {
-              record.isSupperAdmin ?
+              record.isDefault ?
                 <a>查看</a>
               :
                 <a>编辑</a>

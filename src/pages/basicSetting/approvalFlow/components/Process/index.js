@@ -9,38 +9,57 @@ import React, { Component } from 'react';
 import cs from 'classnames';
 import { Icon } from 'antd';
 import FlowCard from './FlowCard';
-import { NodeUtils, getMockData } from './FlowCard/util.js';
+import { NodeUtils } from './FlowCard/util.js';
 import style from './index.scss';
+import PropPanel from './PropPanel';
 
 
 class Process extends Component {
   constructor(props) {
     super(props);
-    const data = getMockData();
+    const data = {};
     if (typeof props.conf === 'object' && props.conf !== null) {
-      Object.assign(data, props.conf);
+      ({ ...data, ...props.conf});
     }
     this.state = {
-      data, // 流程图数据
+      data: props.conf, // 流程图数据
       scaleVal: 100, // 流程图缩放比例 100%
       step: 5, // 缩放步长
       updateId: 0, // key值 用于模拟$forceUpdate
       activeData: null, // 被激活的流程卡片数据，用于属性面板编辑
       isProcessCmp: true,
-      verifyMode: false
+      verifyMode: false,
+      visible: false, // 弹窗
     };
+  }
+
+  componentDidMount(){
+    this.setState({
+      data: this.props.conf,
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log(prevProps.conf);
+    if (prevProps.conf !== this.props.conf) {
+      console.log(prevProps.conf);
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        data: this.props.conf,
+      });
+    }
   }
 
   // 给父级组件提供的获取流程数据得方法
   getData = () => {
-    this.setState({
-      verifyMode: true,
-    });
-    if(NodeUtils.checkAllNode(this.data)) {
-      return Promise.resolve({formData: this.data});
+    // this.setState({
+    //   verifyMode: true,
+    // });
+    // if(NodeUtils.checkAllNode(this.state.data)) {
+      if(true) {
+      return Promise.resolve({formData: this.state.data});
     }
       return Promise.reject({target: this.props.tabName});
-
   }
 
   /**
@@ -49,15 +68,22 @@ class Process extends Component {
    */
   eventReciver = ({ event, args }) => {
     if (event === 'edit') {
+      console.log(args[0]);
       this.setState({
-        activeData: args[0],// 打开属性面板
+        activeData: args[0],// 打开弹窗
+        visible: true,
       });
       return;
     }
+    // const { data } = this.state;
     // 本实例只监听了第一层数据（startNode）变动
-    // 为了实时更新  采用$forceUpdate刷新 但是由于某些条件下触发失效（未排除清除原因）
+    // 为了实时更新  采用forceUpdate刷新 但是由于某些条件下触发失效（未排除清除原因）
     // 使用key + 监听父组件updateId方式强制刷新
     NodeUtils[event](...args);
+    // this.setState({
+    //   data: nodes,
+    // });
+    // this.props.startNodeChange(nodes);
     this.forceUpdate();
   }
 
@@ -84,63 +110,49 @@ class Process extends Component {
   }
 
   /**
-   * 属性面板提交事件
-   * @param { Object } value - 被编辑的节点的properties属性对象
+   * 弹窗提交事件
+   * @param { Object } value - 被编辑的节点的bizData属性对象
    */
   onPropEditConfirm = (value, content) => {
-    const { activeData } = this.state;
-    activeData.content = content || '请设置条件';
-    const oldProp = activeData.properties;
-    activeData.properties = value;
+    const { activeData, data } = this.state;
+    const newData = {...activeData};
+    newData.content = content || '请设置条件';
+    const oldProp = activeData;
+    newData.bizData = value.bizData;
+    newData.priority = value.priority || '';
+    newData.name = value.name || '条件';
     // 修改优先级
-    if (NodeUtils.isConditionNode(activeData) && value.priority !== oldProp.priority) {
-      NodeUtils.resortPrioByCNode(
-        activeData,
+    if (NodeUtils.isConditionNode(newData) && (value.priority !== oldProp.priority)) {
+      const datas = NodeUtils.resortPrioByCNode(
+        newData,
         oldProp.priority,
-        this.data
+        data
       );
-      NodeUtils.setDefaultCondition(activeData, this.data);
+      this.setState({
+        data: datas,
+      });
+      this.props.startNodeChange(datas);
+      this.forceUpdate();
     }
-    if(NodeUtils.isStartNode(activeData)) this.$emit('startNodeChange', this.data);
     this.setState({
-      activeData,
+      activeData: newData,
     });
     this.onClosePanel();
     this.forceUpdate();
   }
 
   /**
-   * 属性面板取消事件
+   * 弹窗取消事件
    */
   onClosePanel = () => {
     this.setState({
       activeData: null,
+      visible: false,
     });
   }
 
-  // 传formIds 查询指定组件 未传时  判断所有组件
-  isFilledPCon = ( formIds ) => {
-    let res = false;
-    const loopChild = (parent, callback) => parent.childNode && loop( parent.childNode, callback );
-    const loop = ( data, callback ) => {
-      if(res || !data) return; // 查找到就退出
-      if ( Array.isArray( data.conditionNodes )) {
-        const uesd = data.conditionNodes.some( c => {
-          const cons = c.properties.conditions || [];
-          return Array.isArray(formIds)
-            ? cons.some( item => formIds.includes(item.formId)) // 查询特定组件
-            : cons.length > 0; // 只要有节点设置了条件 说明就有组件作为条件被使用
-        });
-        uesd ? callback() : data.conditionNodes.forEach(t => loopChild(t, callback));
-      }
-      loopChild(data, callback);
-    };
-    loop( this.data, () => res = true );
-    return res;
-  }
-
   render() {
-    const { scaleVal, step, updateId, data, verifyMode } = this.state;
+    const { scaleVal, step, updateId, data, verifyMode, visible } = this.state;
     return (
       <div className={style['flow-container']}>
         <div className={style['scale-slider']}>
@@ -163,12 +175,13 @@ class Process extends Component {
           onEmits={this.eventReciver}
           scaleVal={scaleVal}
         />
-        {/* <PropPanel
-          value={this.activeData}
-          processData={this.data}
+        <PropPanel
+          value={this.state.activeData}
+          processData={data}
+          visible={visible}
           onConfirm={this.onPropEditConfirm}
           onCancel={this.onClosePanel}
-        /> */}
+        />
       </div>
     );
   }

@@ -12,19 +12,20 @@ import style from './index.scss';
 function FlowCard(props) {
   console.log(props);
   const {scaleVal} = props;
-  const isCondition = data => data.type === 'condition';
+  const isCondition = data => data.nodeType === 'condition';
   const notEmptyArray = arr => Array.isArray(arr) && arr.length > 0;
-  const hasBranch = data => notEmptyArray(data.conditionNodes);
+  // const hasBranch = data => notEmptyArray(data.conditionNodes);
+  const hasBranch = data => (data.nodeType === 'route');
   const stopPro = ev => ev.stopPropagation();
   /**
    *事件触发器 统筹本组件所有事件并转发到父组件中
     * @param { Object } 包含event（事件名）和args（事件参数）两个参数
     */
-   const eventLancher = (event, ...args) => {
+   const eventLancher = (e, event, ...args) => {
+    e.stopPropagation();
+    e.preventDefault();
 
-    // args.slice(0,-1) vue 会注入MouseEvent到最后一个参数 去除事件对象
     const param = { event, args };
-    // this.$emit('emits', param);
     props.onEmits(param);
   };
 
@@ -35,10 +36,10 @@ function FlowCard(props) {
     const afterTrue = (isTrue, name) => (isTrue && classList.push(name), isTrue);
     const isStartNode = afterTrue(NodeUtils.isStartNode(conf), 'start-node');
     const isApprNode = afterTrue(NodeUtils.isApproverNode(conf), 'approver');
-    const isCopyNode = afterTrue(NodeUtils.isCopyNode(conf), 'copy');
-
+    const isCopyNode = afterTrue(NodeUtils.isCopyNode(conf), 'notifier');
+    const isGrant = afterTrue(NodeUtils.isGrant(conf), 'grant');
     return (
-      <section className={cs(style['flow-path-card'], style[classList[1]])} onClick={() => eventLancher('edit', conf)} >
+      <section className={cs(style['flow-path-card'], style[classList[1]])} onClick={(e) => eventLancher(e, 'edit', conf)} >
         <header className={style.header}>
           <div className={style['title-box']} style={{height: '100%',width:'190px'}}>
             {isApprNode && (
@@ -47,13 +48,13 @@ function FlowCard(props) {
             {isCopyNode && (
               <i className="el-icon-s-promotion fs-12" style={{color:'white',marginRight:'4px'}} />
             )}
-            <span className={style['title-text']}>{conf.properties.title}</span>
+            <span className={style['title-text']}>{conf.name}</span>
             {!isStartNode && (
-              <input vModel_trim={conf.properties.title} className={style['title-input']} style={{marginTop:'3px'}} onClick={stopPro} />
+              <span className={style['title-input']} style={{marginTop:'3px'}} onClick={stopPro}>{conf.name}</span>
             )}
           </div>
           <div className={style.actions} style={{marginRight: '4px'}}>
-            <Icon type="close" className={cs(style['el-icon-close'], style.icon)} onClick={() => eventLancher('deleteNode', conf, ctx.data)}  />
+            <Icon type="close" className={cs(style['el-icon-close'], style.icon)} onClick={(e) => eventLancher(e, 'deleteNode', conf, ctx.data)}  />
           </div>
         </header>
         <div className={style.body}>
@@ -68,11 +69,11 @@ function FlowCard(props) {
 
   // arg = ctx, data, h
   const createFunc = (...arg) => createNormalCard.call(arg[0], ...arg);
-  console.log(createFunc);
   const nodes = {
     start: createFunc,
     approver: createFunc,
-    copy: createFunc,
+    notifier: createFunc,
+    grant: createFunc,
     empty: _ => '',
     condition(ctx, conf) {
         // <i
@@ -82,25 +83,25 @@ function FlowCard(props) {
       return (
         <section
           className={cs(style['flow-path-card'], style.condition)}
-          onClick={() => eventLancher('edit', conf)}
+          onClick={(e) => eventLancher(e, 'edit', conf)}
         >
           <header className={style.header}>
             <div className={style['title-box']} style={{height: '20px',width:'160px'}}>
-              <span className={style['title-text']}>{conf.properties.title}</span>
-              <input
-                vModel_trim={conf.properties.title}
+              <span className={style['title-text']}>条件{conf.priority}</span>
+              {/* <input
+                vModel_trim={conf.bizData.title}
                 className={style['title-input']}
                 style={{marginTop:'1px'}}
                 onClick={stopPro}
-              />
+              /> */}
             </div>
-            <span className={style.priority}>优先级{conf.properties.priority + 1}</span>
+            <span className={style.priority}>优先级{conf.priority}</span>
             <div className={style.actions}>
 
               <Icon
                 type="close"
                 className={cs(style['el-icon-close'], style.icon)}
-                onClick={() => eventLancher(
+                onClick={(e) => eventLancher(e,
                   'deleteNode',
                   conf,
                   ctx.data
@@ -113,7 +114,7 @@ function FlowCard(props) {
           </div>
           <div
             className={cs(style['icon-wrapper'], style.left)}
-            onClick={() => eventLancher(
+            onClick={(e) => eventLancher(e,
               'increasePriority',
               conf,
               ctx.data
@@ -123,7 +124,7 @@ function FlowCard(props) {
           </div>
           <div
             className={cs(style['icon-wrapper'], style.right)}
-            onClick={() => eventLancher(
+            onClick={(e) => eventLancher(e,
               'decreasePriority',
               conf,
               ctx.data
@@ -139,10 +140,11 @@ function FlowCard(props) {
   const addNodeButton = (ctx, data, isBranch = false) => {
     // 只有非条件节点和条件分支树下面的那个按钮 才能添加新分支树
     const couldAddBranch = !hasBranch(data) || isBranch;
-    const isEmpty = data.type === 'empty';
+    const isEmpty = data.nodeType === 'empty';
     if (isEmpty && !isBranch) {
       return '';
     }
+    const isCopy = (data.nodeType === 'start') || (data.nodeType === 'grant');
     return (
       <div className={cs(style['add-node-btn-box'], style.flex, style['justify-center'])}>
         <div className={style['add-node-btn']}>
@@ -153,21 +155,23 @@ function FlowCard(props) {
             content={(
               <div className={style['condition-box']}>
                 <div className="c-black-85 fs-16">
-                  <div className={style['condition-icon']} onClick={() => eventLancher( 'addApprovalNode',  data, isBranch )} >
+                  <div className={style['condition-icon']} onClick={(e) => eventLancher(e, 'addApprovalNode',  data, isBranch)} >
                     <i className={cs(style.iconfont, 'iconfont', 'iconicon_approval_fill')} />
                   </div>
                   审批人
                 </div>
-
-                <div className="c-black-85 fs-16">
-                  <div className={style['condition-icon']} onClick={() => eventLancher( 'addCopyNode',  data, isBranch )} >
-                    <i className={cs('iconfont', 'iconicon_copyto', style.iconfont)} style={{verticalAlign: 'middle'}} />
+                {
+                  isCopy &&
+                  <div className="c-black-85 fs-16">
+                    <div className={style['condition-icon']} onClick={(e) => eventLancher(e, 'addCopyNode',  data, isBranch )} >
+                      <i className={cs('iconfont', 'iconicon_copyto', style.iconfont)} style={{verticalAlign: 'middle'}} />
+                    </div>
+                    抄送人
                   </div>
-                  抄送人
-                </div>
+                }
                 <div className="c-black-85 fs-16">
-                  <div className={style['condition-icon']} onClick={() =>eventLancher('appendBranch', data, isBranch)}>
-                    <i className={cs(style.iconfont, style.iconcondition)} />
+                  <div className={style['condition-icon']} onClick={(e) =>eventLancher(e, 'appendBranch', data, isBranch)}>
+                    <i className={cs('iconfont', 'iconicon_newgroup_fill', style.iconfont, 'green')} />
                   </div>
                   条件分支
                 </div>
@@ -184,24 +188,24 @@ function FlowCard(props) {
   };
 
   const NodeFactory = (ctx, data) => {
-    console.log(`data${JSON.stringify(data)}`);
+    // console.log(`data${JSON.stringify(data)}`);
     if (!data) return;
-    const showErrorTip = ctx.verifyMode && NodeUtils.checkNode(data) === false;
+    const showErrorTip = ctx.verifyMode && (NodeUtils.checkNode(data) === true);
     const res = [];
-      let branchNode = '';
-      const selfNode = (
-        <div className={style['node-wrap']}>
-          <div className={cs(style['node-wrap-box'], `${showErrorTip ? style.error : ''}`, style[data.type])}>
-            <Tooltip content="未设置条件" placement="top" effect="dark">
-              <div className={style['error-tip']} onClick={() => eventLancher('edit', data)}>!!!</div>
-            </Tooltip>
-            {nodes[data.type].call(ctx, ctx, data)}
-            {addNodeButton.call(ctx, ctx, data)}
-          </div>
+    let branchNode = '';
+    const selfNode = data.nodeType && (data.nodeType !== 'route') && (
+      <div className={style['node-wrap']}>
+        <div className={cs(style['node-wrap-box'], `${showErrorTip ? style.error : ''}`, style[data.nodeType])}>
+          <Tooltip content="未设置条件" placement="top" effect="dark">
+            <div className={style['error-tip']} onClick={(e) => eventLancher(e, 'edit', data)}>!!!</div>
+          </Tooltip>
+          {nodes[data.nodeType].call(ctx, ctx, data)}
+          {addNodeButton.call(ctx, ctx, data)}
         </div>
-      );
+      </div>
+    );
 
-    if (hasBranch(data)) {
+    if (hasBranch(data) && data.conditionNodes) {
       // 如果节点是数组 一定为条件分支 添加分支样式包裹
       // {data.childNode && NodeFactory.call(ctx, ctx, data.childNode, h)}
       branchNode = (
@@ -210,7 +214,7 @@ function FlowCard(props) {
             <div className={cs(style['branch-box'], style.flex, style['justify-center'], style.relative)}>
               <button
                 className={style.btn}
-                onClick={() => eventLancher('appendConditionNode', data)}
+                onClick={(e) => eventLancher(e, 'appendConditionNode', data)}
               >
                 添加条件
               </button>

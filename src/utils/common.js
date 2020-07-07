@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 
 // /system/user/id => ['/system','/system/user,'/system/user/id']
 export function urlToList(url) {
@@ -180,4 +181,27 @@ export const rowSelect = {
           selectedRowKeys,
       };
   },
+};
+
+/**
+ * 下拉树形选择框禁止一些条件
+ * @param { Array } list 传入的数组
+ * @memberof Conditions
+ */
+export const onSelectDis = (list) => {
+  function addParams(lists){
+    lists.forEach(it => {
+      if (it.type === 0) {
+        it.disabled = true;
+      }
+      if (it.type === 1) {
+        it.disabled = false;
+      }
+      if (it.children) {
+        addParams(it.children);
+      }
+    });
+  }
+  addParams(list);
+  return list;
 };

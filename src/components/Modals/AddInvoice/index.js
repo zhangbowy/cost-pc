@@ -90,6 +90,7 @@ class AddInvoice extends Component {
         deptId: create[0].deptId,
         loanUserId: userInfo.dingUserId,
         loanDeptId: create[0].deptId,
+        createDingUserId: userInfo.dingUserId,
       };
     } else {
       message.error('部门无法同步，请联系管理员检查应用可见范围设置');
@@ -151,6 +152,7 @@ class AddInvoice extends Component {
       processPersonId: djDetails.approveId,
       loanUserId: detail.loanUserId,
       loanDeptId: detail.loanDeptId,
+      createDingUserId: detail.createDingUserId,
     };
     this.getNode(params);
     this.setState({
@@ -187,6 +189,7 @@ class AddInvoice extends Component {
 
   selectPle = (val) => {
     let detail = this.state.details;
+    const { total } = this.state;
     let params = {};
     console.log(val.users);
     if (val.users && val.users.length > 0) {
@@ -201,7 +204,6 @@ class AddInvoice extends Component {
           users: val.users,
           depList: deptInfo,
         });
-        console.log(detail);
         if (deptInfo.length === 1) {
           this.props.form.setFieldsValue({
             deptId: `${deptInfo[0].deptId}`,
@@ -213,10 +215,13 @@ class AddInvoice extends Component {
           };
           params = {
             loanEntities: detail.loanEntities || [],
+            categorySumEntities: detail.categorySumEntities || [],
             creatorDeptId: detail.createDeptId,
             loanUserId: val.users[0].userId,
             loanDeptId: deptInfo[0].deptId,
             processPersonId: detail.processPersonId,
+            createDingUserId: detail.createDingUserId,
+            total: (total * 1000)/10,
           };
         } else {
           this.props.form.setFieldsValue({
@@ -228,9 +233,12 @@ class AddInvoice extends Component {
           };
           params = {
             loanEntities: detail.loanEntities || [],
+            categorySumEntities: detail.categorySumEntities || [],
             creatorDeptId: detail.createDeptId,
             loanUserId: val.users[0].userId,
             processPersonId: detail.processPersonId,
+            createDingUserId: detail.createDingUserId,
+            total: (total * 1000)/10,
           };
         }
         this.getNode(params);
@@ -280,6 +288,7 @@ class AddInvoice extends Component {
     }
     let mo = 0;
     const loanEntities = [];
+    const categorySumEntities = [];
     share.forEach(it => {
       mo+=it.costSum;
       if (it.costDetailShareVOS) {
@@ -290,15 +299,22 @@ class AddInvoice extends Component {
           });
         });
       }
+      categorySumEntities.push({
+        categoryId: it.categoryId,
+        costSum: it.costSum,
+      });
     });
     const { loanUserId } = this.state;
     console.log(loanUserId);
     this.getNode({
       loanEntities,
+      categorySumEntities,
       creatorDeptId: detail.createDeptId || '',
       loanUserId: loanUserId || '',
       loanDeptId: detail.deptId || '',
       processPersonId: detail.processPersonId,
+      createDingUserId: detail.createDingUserId,
+      total: (mo * 1000)/10,
     });
     this.setState({
       costDetailsVo: share,
@@ -306,6 +322,7 @@ class AddInvoice extends Component {
       details: {
         ...detail,
         loanEntities,
+        categorySumEntities,
       }
     });
   }
@@ -463,13 +480,16 @@ class AddInvoice extends Component {
 
   onChangeCreate = (val) => {
     const detail = this.state.details;
-    const { loanUserId } = this.state;
+    const { loanUserId, total } = this.state;
     this.getNode({
       creatorDeptId: val,
       loanUserId: loanUserId || '',
       loanDeptId: detail.deptId || '',
       loanEntities: detail.loanEntities || [],
+      categorySumEntities: detail.categorySumEntities || [],
       processPersonId: detail.processPersonId,
+      createDingUserId: detail.createDingUserId,
+      total: (total * 1000)/10,
     });
     this.setState({
       details: {
@@ -481,13 +501,16 @@ class AddInvoice extends Component {
 
   onChangeDept = (val) => {
     const detail = this.state.details;
-    const { loanUserId } = this.state;
+    const { loanUserId, total } = this.state;
     this.getNode({
       creatorDeptId: detail.createDeptId,
       loanUserId: loanUserId || '',
       loanDeptId: val,
       loanEntities: detail.loanEntities || [],
+      categorySumEntities: detail.categorySumEntities || [],
       processPersonId: detail.processPersonId,
+      createDingUserId: detail.createDingUserId,
+      total: (total * 1000)/10,
     });
     this.setState({
       details: {
@@ -624,7 +647,7 @@ class AddInvoice extends Component {
                       users={users}
                       placeholder='请选择'
                       onSelectPeople={(val) => this.selectPle(val)}
-                      invalid={[]}
+                      invalid={false}
                       disabled={false}
                       flag="users"
                       multiple={false}

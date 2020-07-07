@@ -4,7 +4,6 @@ import cs from 'classnames';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { defaultFlow, repeatMethod } from '@/utils/constants';
 import { connect } from 'dva';
-import MockData from './mockData.js';
 // import ApproveProcess from './components/approveNode/ApproveProcess';
 import style from './index.scss';
 import Process from './components/Process';
@@ -25,6 +24,17 @@ class ApprovalFlow extends Component {
   }
 
   componentDidMount () {
+    this.props.dispatch({
+      type: 'global/costList',
+      payload: {}
+    });
+    this.props.dispatch({
+      type: 'global/approverRole',
+      payload: {
+        pageNo: 1,
+        pageSize: 1000,
+      }
+    });
     this.props.dispatch({
       type: 'approvalFlow/list',
       payload: {
@@ -81,24 +91,34 @@ class ApprovalFlow extends Component {
     });
   }
 
+  onStartChange = (data) => {
+    console.log(data);
+  }
+
   save = () => {
-    const { nodes,status, repeatMethods, ccPosition } = this.state;
-    this.props.dispatch({
-      type: 'approvalFlow/add',
-      payload: {
-        node: {
-          ...nodes,
-        },
-        uniqueMark: status,
-        repeatMethod: repeatMethods,
-        ccPosition,
-        deepQueryFlag: false,
-      }
-    }).then(() => {
-      this.onQuery({
-        uniqueMark: status,
+    console.log(this.processData && this.processData.getData());
+    const { status, repeatMethods, ccPosition } = this.state;
+
+    const data = this.processData.getData();
+    Promise.all([data]).
+    then(res => {
+      this.props.dispatch({
+        type: 'approvalFlow/add',
+        payload: {
+          node: res[0].formData,
+          uniqueMark: status,
+          repeatMethod: repeatMethods,
+          ccPosition,
+          deepQueryFlag: false,
+        }
+      }).then(() => {
+        this.onQuery({
+          uniqueMark: status,
+        });
+        message.success('保存成功');
       });
-      message.success('保存成功');
+    }).catch(err => {
+      console.log(err);
     });
   }
 
@@ -116,7 +136,7 @@ class ApprovalFlow extends Component {
 
   render() {
     const { status, repeatMethods } = this.state;
-    console.log(repeatMethods);
+    const { nodes } = this.state;
     return (
       <div style={{ height: '100%' }}>
         <div className="app_header">
@@ -144,12 +164,14 @@ class ApprovalFlow extends Component {
                   ))
                 }
               </Select>
+
             </div>
             <div className={style.approval_process} key={status}>
               <Process
-                conf={MockData.processData}
+                conf={nodes}
                 tabName="processDesign"
-                startNodeChange="onStartChange"
+                startNodeChange={this.onChange}
+                ref={data => {this.processData = data;}}
               />
               <p className={style.save_box}><Button type="primary" onClick={() => this.save()}>保存</Button></p>
             </div>

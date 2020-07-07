@@ -104,7 +104,7 @@ class AddCategory extends Component {
                   }
                   {
                     item.children && item.children.map(it => (
-                      <AddInvoice id={it.id} visible={modalVis}>
+                      <AddInvoice id={it.id} visible={modalVis} key={it.id}>
                         <div className={style.cnt_cnts} key={it.id} onClick={() => this.onHandelShow()}>
                           <div className={style.cnt_list}>
                             <p className="c-black-85 fw-500 fs-14 eslips-1">{it.name}</p>

@@ -29,4 +29,5 @@ export default {
   addReceipt: `${APP_API}/cost/account/receipt/add`,
   invoiceList: `${APP_API}/cost/invoice/template/list`,
   print: `${APP_API}/cost/export/pdfDetail`,
+  approverRoleList: `${APP_API}/cost/approve/role/list`, // 审批角色
 };

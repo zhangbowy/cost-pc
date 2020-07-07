@@ -438,7 +438,7 @@ class AddCost extends Component {
             users={record.users}
             placeholder='请选择'
             onSelectPeople={(val) => this.selectPle(val, index, record.key)}
-            invalid={[]}
+            invalid={false}
             disabled={false}
             flag="users"
             multiple={false}
