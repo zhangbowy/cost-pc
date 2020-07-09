@@ -301,11 +301,10 @@ class AddInvoice extends Component {
       }
       categorySumEntities.push({
         categoryId: it.categoryId,
-        costSum: it.costSum,
+        costSum: ((it.costSum*1000) /10).toFixed(0),
       });
     });
     const { loanUserId } = this.state;
-    console.log(loanUserId);
     this.getNode({
       loanEntities,
       categorySumEntities,

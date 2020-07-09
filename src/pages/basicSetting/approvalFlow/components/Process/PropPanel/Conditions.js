@@ -3,12 +3,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
 import { Form, Radio, Select, Button, InputNumber, TreeSelect } from 'antd';
-import { formItemLayout, condExclude, condThan } from '@/utils/constants';
+import { condExclude, condThan } from '@/utils/constants';
 import UserSelector from '@/components/Modals/SelectPeople';
 import treeConvert from '@/utils/treeConvert';
 import { connect } from 'dva';
 import { onSelectDis } from '@/utils/common';
 import style from './index.scss';
+import { getArrayValue } from '../../../../../../utils/constants';
 
 const { Option } = Select;
 const { SHOW_CHILD } = TreeSelect;
@@ -60,7 +61,8 @@ class Conditions extends Component {
   }
 
   state = {
-    lists: [{
+    lists: this.props.conditions && this.props.conditions.length > 0 ?
+    this.props.conditions : [{
       key: 'cost_category',
       value: '费用类别',
       sel: condExclude,
@@ -68,7 +70,7 @@ class Conditions extends Component {
       id,
       ruleType: 'category'
     }],
-    method: 'OR',
+    method: this.props.conditionNode ? this.props.conditionNode.methods : 'OR',
   }
 
   /**
@@ -107,11 +109,11 @@ class Conditions extends Component {
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat([{
       id: ++id,
-      key: 'condition_creator_user_dept',
-      value: '制单人/部门',
+      key: 'cost_category',
+      value: '费用类别',
       sel: condExclude,
-      type: 'people',
-      ruleType: 'people',
+      type: 'selectTree',
+      ruleType: 'category'
     }]);
     form.setFieldsValue({
       keys: nextKeys,
@@ -132,10 +134,13 @@ class Conditions extends Component {
     if (keys.length === 1) {
       return;
     }
-
+    this.setState({
+      lists: keys.filter(key => key.id !== k),
+    });
     form.setFieldsValue({
       keys: keys.filter(key => key.id !== k),
     });
+
   };
 
   /**
@@ -184,6 +189,7 @@ class Conditions extends Component {
       ...list[index],
       ...val,
     };
+    console.log(list);
     this.setState({
       lists: list,
     });
@@ -203,22 +209,24 @@ class Conditions extends Component {
         const conditions = [];
         if (val.keys) {
           val.keys.forEach((it) => {
-            content+=`${it.value}、`;
+            content+=`${getArrayValue(it.key, condition)}、`;
             let rules = {};
             let values = [];
             if (it.type === 'people') {
               values = [{
                 type: 'user',
                 value: it.users && it.users.map(its => its.userId).toString(),
+                others: it.users && it.users.map(its => its.userName).toString(),
               }, {
                 type: 'dept',
                 value: it.depts && it.depts.map(its => its.deptId).toString(),
+                others: it.depts && it.depts.map(its => its.name).toString(),
               }];
             } else {
               values = [{
                 type: it.ruleType,
                 value: val.value && it.type === 'inputNumber' ? (val.value[`${it.id}`] * 1000)/10 :  val.value[`${it.id}`].toString(),
-                categoryId: val.categoryId || '',
+                categoryId: val.categoryId ? val.categoryId[`${it.id}`] : '',
               }];
             }
             rules = {
@@ -245,7 +253,28 @@ class Conditions extends Component {
         };
       }
     });
+    console.log(vals);
     return vals;
+  }
+
+  checkMoney = (rule, value, callback) => {
+    if (value) {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        callback('请输入正确的金额');
+      }
+      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+        callback('金额小数不能超过2位');
+      }
+      if (value > 100000000 || value === 100000000) {
+        callback('金额需小于1个亿');
+      }
+      if (value < 0) {
+        callback('金额不能小于零');
+      }
+      callback();
+    } else {
+      callback();
+    }
   }
 
   render() {
@@ -254,6 +283,8 @@ class Conditions extends Component {
       costCategoryList,
       priorityLength,
       details,
+      conditions,
+      conditionNode,
     } = this.props;
     const PriArr = this.numToArr(priorityLength);
     const list = treeConvert({
@@ -265,19 +296,27 @@ class Conditions extends Component {
     }, costCategoryList);
     const disList = this.onSelectTree();
     const { lists, method } = this.state;
-    getFieldDecorator('keys', { initialValue: lists });
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 3 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
+      },
+    };
+    getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
     const keys = getFieldValue('keys');
     const formItems = keys.map((item, index) => {
       return (
         <Form.Item
           key={item.id}
-          label={`条件${index+1}`}
           {...formItemLayout}
-          style={{marginBottom: '0'}}
+          style={{marginBottom: '0', marginLeft: '12.7%'}}
         >
           <div
-            style={{display: 'flex', flexWrap: 'wrap', position: 'relative'}}
-            className="m-b-16"
+            className={cs('m-b-8', style.formCondi)}
           >
             {
               getFieldDecorator(`type[${item.id}]`, {
@@ -286,7 +325,8 @@ class Conditions extends Component {
                 <Select
                   onChange={val => this.onChange(val, index)}
                   style={{width: '180px'}}
-                  className="m-b-16 m-r-16"
+                  className="m-r-16"
+                  getPopupContainer={triggerNode => triggerNode.parentElement}
                 >
                   {
                     condition.map(it => (
@@ -299,24 +339,27 @@ class Conditions extends Component {
             {
               item && item.key === 'cost_detail' &&
               getFieldDecorator(`categoryId[${item.id}]`, {
+                initialValue: item.categoryId || '',
                 rules: [{ required: true, message: '请选择' }]
               })(
                 <TreeSelect
                   treeData={disList}
-                  style={{width: '100%', marginBottom: '16px'}}
+                  style={{width: '250px', margin: '0 16px 0 0'}}
                   dropdownStyle={{height: '300px'}}
                   placeholder="请选择"
+                  getPopupContainer={triggerNode => triggerNode.parentElement}
                 />
               )
             }
             {
               item && item.sel &&
               getFieldDecorator(`methods[${item.id}]`, {
+                initialValue: item.methods || '',
                 rules: [{ required: true, message: '请选择' }]
               })(
                 <Select
                   style={{width: '100px'}}
-                  className="m-r-16 m-b-16"
+                  className="m-r-16"
                   getPopupContainer={triggerNode => triggerNode.parentElement}
                 >
                   {
@@ -342,7 +385,11 @@ class Conditions extends Component {
             {
               item && item.type === 'inputNumber' &&
               getFieldDecorator(`value[${item.id}]`, {
-                rules: [{ required: true, message: '请输入' }]
+                initialValue: item.ruleValue ? (item.ruleValue[0]/100) : '',
+                rules: [
+                  { required: true, message: '请输入' },
+                  { validator: this.checkMoney }
+                ]
               })(
                 <InputNumber placeholder="请输入" style={{width: '150px'}} />
               )
@@ -350,6 +397,7 @@ class Conditions extends Component {
             {
               item && item.type === 'selectTree' &&
               getFieldDecorator(`value[${item.id}]`, {
+                initialValue: item.ruleValue ? item.ruleValue : [],
                 rules: [{ required: true, message: '请选择' }]
               })(
                 <TreeSelect
@@ -366,26 +414,26 @@ class Conditions extends Component {
               keys.length > 1 &&
               <span
                 className={cs('deleteColor', style.del)}
-                onClick={() => this.remove(item.id)}
+                onClick={() => this.remove(item.id, index)}
               >
                 删除
               </span>
             }
-            {
-              (keys.length > 0) && (index < (keys.length -1)) &&
-              <p
-                className="m-t-16"
-                style={{lineHeight: 1, marginBottom: 0}}
-              >
-                {method === 'OR' ? '或' : '且'}
-              </p>
-            }
           </div>
+          {
+            (keys.length > 0) && (index < (keys.length -1)) &&
+            <p
+              className="m-t-16"
+              style={{lineHeight: 1, marginBottom: '8px'}}
+            >
+              {method === 'OR' ? '或' : '且'}
+            </p>
+          }
         </Form.Item>
       );
     });
     return (
-      <Form className="formItem">
+      <Form className="formItems">
         <Form.Item label="优先级" {...formItemLayout}>
           {
             getFieldDecorator('priority', {
@@ -402,10 +450,10 @@ class Conditions extends Component {
           }
         </Form.Item>
         <Form.Item label="条件" {...formItemLayout}>
-          <p>条件之间的关系</p>
+          <p className="c-black-25" style={{marginBottom: '0'}}>条件之间的关系</p>
           {
             getFieldDecorator('method', {
-              initialValue: 'OR'
+              initialValue: conditionNode.method || 'OR'
             })(
               <Radio.Group onChange={e => this.onChangeMethod(e)}>
                 <Radio key="OR" value="OR">或的关系（当满足以下任意一个条件时进入此流程）</Radio>
@@ -416,10 +464,10 @@ class Conditions extends Component {
         </Form.Item>
         {formItems}
         <Button
-          style={{marginLeft: '25%'}}
+          style={{marginLeft: '12.7%'}}
           key="add"
           onClick={this.onAdd}
-          disabled={keys.length > 5}
+          disabled={lists.length > 4}
         >
           添加条件
         </Button>

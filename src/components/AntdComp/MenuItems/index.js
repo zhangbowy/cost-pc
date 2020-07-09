@@ -23,14 +23,15 @@ class MenuItems extends Component {
   render() {
     const {
       lists,
+      params,
     } = this.props;
     const { status } = this.state;
     return (
       <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
         {
           lists.map(item => (
-            <Menu.Item key={item.key}>
-              {item.value}
+            <Menu.Item key={item[(params && params.key) || 'key']}>
+              {item[(params && params.value) || 'value']}
             </Menu.Item>
           ))
         }

@@ -10,8 +10,8 @@ import { NodeUtils } from './util.js';
 import style from './index.scss';
 
 function FlowCard(props) {
-  console.log(props);
-  const {scaleVal} = props;
+  // 判断是否已经有抄送节点
+  const {scaleVal, ccPosition} = props;
   const isCondition = data => data.nodeType === 'condition';
   const notEmptyArray = arr => Array.isArray(arr) && arr.length > 0;
   // const hasBranch = data => notEmptyArray(data.conditionNodes);
@@ -53,15 +53,21 @@ function FlowCard(props) {
               <span className={style['title-input']} style={{marginTop:'3px'}} onClick={stopPro}>{conf.name}</span>
             )}
           </div>
-          <div className={style.actions} style={{marginRight: '4px'}}>
-            <Icon type="close" className={cs(style['el-icon-close'], style.icon)} onClick={(e) => eventLancher(e, 'deleteNode', conf, ctx.data)}  />
-          </div>
+          {
+            !isGrant && !isStartNode &&
+            <div className={style.actions} style={{marginRight: '4px'}}>
+              <Icon type="close" className={cs(style['el-icon-close'], style.icon)} onClick={(e) => eventLancher(e, 'deleteNode', conf, ctx.data)}  />
+            </div>
+          }
         </header>
         <div className={style.body}>
           <span className={style.text}>{conf.content}</span>
-          <div className={cs(style['icon-wrapper'], style.right)}>
-            <Icon type="right" className={cs(style['el-icon-arrow-right'], style.icon, style['right-arrow'])} />
-          </div>
+          {
+            !isStartNode &&
+            <div className={cs(style['icon-wrapper'], style.right)}>
+              <Icon type="right" className={cs(style['el-icon-arrow-right'], style.icon, style['right-arrow'])} />
+            </div>
+          }
         </div>
       </section>
     );
@@ -144,45 +150,55 @@ function FlowCard(props) {
     if (isEmpty && !isBranch) {
       return '';
     }
-    const isCopy = (data.nodeType === 'start') || (data.nodeType === 'grant');
+    const isCopy = ((data.nodeType === 'start') ||
+                  (data.childNode && data.childNode.nodeType === 'grant'))
+                  &&  !ccPosition;
+    // 判断是否可以有抄送人
+    const isButton = data.nodeType === 'grant' ||
+                    (data.nodeType === 'start' && data.childNode && data.childNode.nodeType === 'notifier')
+                    || (data.nodeType === 'notifier' && data.childNode && data.childNode.nodeType === 'grant');
     return (
-      <div className={cs(style['add-node-btn-box'], style.flex, style['justify-center'])}>
-        <div className={style['add-node-btn']}>
-          <Popover
-            placement="right"
-            trigger="click"
-            width="300"
-            content={(
-              <div className={style['condition-box']}>
-                <div className="c-black-85 fs-16">
-                  <div className={style['condition-icon']} onClick={(e) => eventLancher(e, 'addApprovalNode',  data, isBranch)} >
-                    <i className={cs(style.iconfont, 'iconfont', 'iconicon_approval_fill')} />
-                  </div>
-                  审批人
-                </div>
-                {
-                  isCopy &&
+      <div className={cs(style['add-node-btn-box'], style.flex, style['justify-center'], isButton && style.addNodeBtns)}>
+        {
+          !isButton &&
+          <div className={style['add-node-btn']}>
+            <Popover
+              placement="right"
+              trigger="click"
+              width="300"
+              getPopupContainer={triggerNode => triggerNode.parentElement}
+              content={(
+                <div className={style['condition-box']}>
                   <div className="c-black-85 fs-16">
-                    <div className={style['condition-icon']} onClick={(e) => eventLancher(e, 'addCopyNode',  data, isBranch )} >
-                      <i className={cs('iconfont', 'iconicon_copyto', style.iconfont)} style={{verticalAlign: 'middle'}} />
+                    <div className={style['condition-icon']} onClick={(e) => eventLancher(e, 'addApprovalNode',  data, isBranch)} >
+                      <i className={cs(style.iconfont, 'iconfont', 'iconicon_approval_fill')} />
                     </div>
-                    抄送人
+                    审批人
                   </div>
-                }
-                <div className="c-black-85 fs-16">
-                  <div className={style['condition-icon']} onClick={(e) =>eventLancher(e, 'appendBranch', data, isBranch)}>
-                    <i className={cs('iconfont', 'iconicon_newgroup_fill', style.iconfont, 'green')} />
+                  {
+                    isCopy &&
+                    <div className="c-black-85 fs-16">
+                      <div className={style['condition-icon']} onClick={(e) => eventLancher(e, 'addCopyNode',  data, isBranch )} >
+                        <i className={cs('iconfont', 'iconicon_copyto', style.iconfont)} style={{verticalAlign: 'middle'}} />
+                      </div>
+                      抄送人
+                    </div>
+                  }
+                  <div className="c-black-85 fs-16">
+                    <div className={style['condition-icon']} onClick={(e) =>eventLancher(e, 'appendBranch', data, isBranch)}>
+                      <i className={cs('iconfont', 'iconicon_newgroup_fill', style.iconfont, 'green')} />
+                    </div>
+                    条件分支
                   </div>
-                  条件分支
                 </div>
-              </div>
-            )}
-          >
-            <button className={style.btn} type="button" slot="reference">
-              <Icon type="plus" className={cs(style['el-icon-plus'], style.icon)} />
-            </button>
-          </Popover>
-        </div>
+              )}
+            >
+              <button className={style.btn} type="button" slot="reference">
+                <Icon type="plus" className={cs(style['el-icon-plus'], style.icon, 'green')} />
+              </button>
+            </Popover>
+          </div>
+        }
       </div>
     );
   };

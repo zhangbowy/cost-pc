@@ -6,6 +6,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
+import { message } from 'antd';
 import nodeConfig from './config.js';
 import { timeStampToHex } from '../../../../../../utils/common.js';
 
@@ -107,7 +108,7 @@ export class NodeUtils {
    * @returns { Object } 父节点
    */
   static getPreviousNode ( prevId, processData ) {
-    if ( processData.nodeId === prevId ) return processData;
+    if ( processData && (processData.nodeId === prevId) ) return processData;
     if ( processData.childNode ) {
       const r1 = this.getPreviousNode( prevId, processData.childNode );
       if ( r1 ) {
@@ -150,7 +151,12 @@ export class NodeUtils {
       prev.childNode = delNode.childNode;
       isEmptyArray( prev.conditionNodes ) && ( prev.conditionNodes = delNode.conditionNodes );
       prev.childNode && ( prev.childNode.prevId = prev.nodeId );
-      prev.conditionNodes && prev.conditionNodes.forEach( c => c.prevId = prev.nodeId );
+      prev.conditionNodes && prev.conditionNodes.map( c => {
+        return {
+          ...c,
+          prevId: prev.nodeId,
+        };
+      } );
     };
     if ( this.isConditionNode( nodeData ) ) {
       const conditions = [...prevNode.conditionNodes];
@@ -158,10 +164,21 @@ export class NodeUtils {
       const index = cons.findIndex( c => c.nodeId === nodeData.nodeId );
       if ( cons.length > 2 ) {
         cons.splice( index, 1 );
-      } else {
+        const aonsDi = cons.map((item, i) => {
+          if ((i > index) || (i === index)) {
+            return {
+              ...item,
+              priority: item.priority - 1
+            };
+          }
+            return { ...item };
+        });
+        prevNode.conditionNodes = aonsDi;
+        return this.getMockData(data, prevNode, 'edit');
+      }
         const anotherCon = cons[+( !index )];
         delete prevNode.conditionNodes;
-        if ( prevNode.childNode ) {
+        if ( prevNode.childNode && prevNode.childNode.nodeId ) {
           let endNode = {...anotherCon};
           while ( endNode.childNode ) {
             endNode = endNode.childNode;
@@ -173,7 +190,7 @@ export class NodeUtils {
           return this.getMockData(data, prevNode, 'del');
         }
         concatChild( prevNode, anotherCon );
-      }
+
       // 重新编排优先级
       console.log(prevNode);
       // cons.forEach(( c, i ) => {
@@ -181,8 +198,7 @@ export class NodeUtils {
       // });
       return this.getMockData(data, prevNode, 'del');
     }
-    concatChild( prevNode, nodeData );
-    console.log(nodeData);
+    return this.getMockData(data, nodeData, 'del');
   }
   // TODO:
   // static copyNode ( nodeData, processData ) {
@@ -214,9 +230,9 @@ export class NodeUtils {
       } );
       delete datas.conditionNodes;
     }
-    if ( oldChildNode && oldChildNode.nodeType === 'route' ) {
-      this.deleteNode( oldChildNode, datas );
-    }
+    // if ( oldChildNode && oldChildNode.nodeType === 'route' ) {
+    //   this.deleteNode( oldChildNode, datas );
+    // }
   }
 
   /**
@@ -227,7 +243,7 @@ export class NodeUtils {
    */
   static addApprovalNode ( oldData, data, isBranchAction, newChildNode = undefined ) {
     const datas = {...data};
-    const oldChildNode = data.childNode || {};
+    const oldChildNode = data.childNode ? {...data.childNode} : null;
     newChildNode = newChildNode || this.createNode( 'approver', data.nodeId );
     datas.childNode = newChildNode;
     if ( oldChildNode ) {
@@ -243,9 +259,9 @@ export class NodeUtils {
       delete datas.conditionNodes;
     }
     console.log(`datas${JSON.stringify(data)}`);
-    if ( oldChildNode && oldChildNode.nodeType === 'route' ) {
-      this.deleteNode( oldChildNode, datas );
-    }
+    // if ( oldChildNode && oldChildNode.nodeType === 'route' ) {
+    //   this.deleteNode( oldChildNode, datas );
+    // }
     return this.getMockData(oldData, datas, 'add');
   }
 
@@ -262,8 +278,7 @@ export class NodeUtils {
 
   static addCopyNode ( oldData, data, isBranchAction ) {
     // 复用addApprovalNode  因为抄送人和审批人基本一致
-    this.addApprovalNodes( data, isBranchAction, this.createNode( 'notifier', data.nodeId ) );
-    return this.getMockData(oldData, data, 'add');
+    return this.addApprovalNode( oldData, data, isBranchAction, this.createNode( 'notifier', data.nodeId ) );
   }
 
   /**
@@ -272,12 +287,19 @@ export class NodeUtils {
    */
   static appendConditionNode ( oldData, data ) {
     console.log(data);
+    const nodeData = {...data};
+    if (nodeData.conditionNodes.length > 9) {
+      message.error('分支条件最多只能10个');
+      return this.getMockData(oldData, nodeData, 'edit');
+    }
     const conditions = [...data.conditionNodes];
     const node = this.createNode( 'condition', data.nodeId );
-    node.priority = conditions.length;
+    node.priority = conditions.length + 1;
     conditions.push( node );
     this.setDefaultCondition( node, data );
-    console.log(node);
+    console.log(`conditions${JSON.stringify(conditions)}`);
+    nodeData.conditionNodes = conditions;
+    return this.getMockData(oldData, nodeData, 'edit');
   }
 
   /**
@@ -311,14 +333,16 @@ export class NodeUtils {
     console.log(`cnode${JSON.stringify(cnode)}`);
     // const prevNode = this.getPreviousNode( cnode.prevId, processData );
     const prevNode = {...this.getPreviousNode( cnode.prevId, processData )};
+    console.log(prevNode);
     const preNodes = [...prevNode.conditionNodes];
-    const newPriority = (cnode.priority-1);
-    console.log(preNodes.splice( newPriority, 1, cnode ));
+    const newPriority = cnode.priority - 1;
+    console.log(newPriority);
     const objs = preNodes.splice( newPriority, 1, cnode );
-    const delNode = objs[0];
+    const delNode = {...objs[0]};
     delNode.priority = oldPriority;
     preNodes[oldPriority-1] = delNode;
     prevNode.conditionNodes = preNodes;
+    console.log(preNodes);
     return this.getMockData(processData, prevNode, 'edit');
   }
 
@@ -440,8 +464,10 @@ export class NodeUtils {
  */
   static getMockData (nodes, val, type) {
     let node = { ...nodes };
+    console.log(val);
     function childNode(child){
       const result = {};
+      // eslint-disable-next-line guard-for-in
       for (const key in child) {
         if (typeof (child[key]) === 'object' && !Array.isArray(child[key])) {
           let x = {};
@@ -470,31 +496,35 @@ export class NodeUtils {
             return result;
           }
           if (type === 'del' && (val.nodeId === child.nodeId)) {
-            x = {
+            x = val.childNode ? {
               ...val.childNode,
-            };
+            } : null;
             // x.childNode = val;
-            Object.assign(result, x);
-            return result;
+            // Object.assign(result, x);
+            console.log(`result${JSON.stringify(result)}`);
+            return x;
           }
             x[key] = childNode(child[key]);
             Object.assign(result, x);
 
-        } else if (Array.isArray(child[key]) && key === 'conditionNodes') {
-          if (child[key].length > 0) {
-            const y = {
-              conditionNodes: child[key],
-            };
-            for(let i=0; i < child[key].length; i++) {
-              console.log(y[key]);
-              y.conditionNodes[i] = childNode(child[key][i]);
-              Object.assign(result, y);
-            }
-          }
         } else {
           const c = {};
           c[key] = child[key];
           Object.assign(result, c);
+        }
+        if (Array.isArray(child[key]) && key === 'conditionNodes') {
+          if (child[key].length > 0) {
+            console.log(child[key]);
+            const conditionNodes = [...child[key]];
+            for(let i=0; i < child[key].length; i++) {
+              const datas = {...child[key][i]};
+              conditionNodes[i] = childNode(datas);
+              console.log(conditionNodes);
+              Object.assign(result, {
+                conditionNodes,
+              });
+            }
+          }
         }
       }
       return result;

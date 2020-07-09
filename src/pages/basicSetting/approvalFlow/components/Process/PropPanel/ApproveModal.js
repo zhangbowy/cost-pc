@@ -4,6 +4,7 @@ import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col } from 
 import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { connect } from 'dva';
 import { getArrayValue } from '../../../../../../utils/constants';
+import { choosePeople } from '../../../../../../utils/ddApi';
 
 const RadioGroup = Radio.Group;
 const { Option } =  Select;
@@ -23,16 +24,16 @@ class ApproveModal extends Component {
   constructor(props) {
     super(props);
     props.viewShowModal(this.getItems);
-  }
-
-  state = {
-    users: [],
-    type: this.props.approveNode.type || '',
+    this.state = {
+      users: this.props.approveNode && this.props.approveNode.userList ? this.props.approveNode.userList : [],
+      type: this.props.approveNode.type || '',
+    };
   }
 
   onChange = (e) => {
     this.setState({
       type: e.target.value,
+      users: [],
     });
   }
 
@@ -68,7 +69,8 @@ class ApproveModal extends Component {
             rule: {
               method: val.method,
               values: [{
-                type: val.value,
+                value: val.value,
+                type: 'approverRoleId',
               }]
             }
           };
@@ -76,6 +78,8 @@ class ApproveModal extends Component {
         if (nodeType === 'notifier') {
           approveNodes = {
             ...approveNodes,
+            type: 'notifier',
+            name: val.allowSelfChoose ? '填报人自选' : users.map(it => it.userName).toString(),
             allowSelfChoose: val.allowSelfChoose,
           };
         }
@@ -91,6 +95,24 @@ class ApproveModal extends Component {
       }
     });
     return vals;
+  }
+
+  addPeople = () => {
+    const _this = this;
+    const { users } = this.state;
+    choosePeople(users.map(it => it.userId), (res) => {
+      const arr = [];
+      res.forEach(item => {
+        arr.push({
+          userId: item.emplId,
+          avatar: item.avatar,
+          userName: item.name,
+        });
+      });
+      _this.setState({
+        users: arr
+      });
+    }, { multiple: true, max: 20 });
   }
 
   render() {
@@ -173,7 +195,7 @@ class ApproveModal extends Component {
               <span className="fs-14 c-black-45">按&nbsp;</span>
               {
                 getFieldDecorator('methods', {
-                  initialValue: approveNode.rule.method || '',
+                  initialValue: (approveNode && approveNode.methods) || '',
                   rules: [{ required: true, message: '请选择指定主管' }]
                 })(
                   <Select style={{width: '150px'}}>
@@ -207,7 +229,9 @@ class ApproveModal extends Component {
             type === 'approverRole' &&
             <div>
               {
-                getFieldDecorator('value')(
+                getFieldDecorator('value', {
+                  initialValue: approveNode.ruleValue,
+                })(
                   <Select>
                     {
                       approverRoleList.map(it => (

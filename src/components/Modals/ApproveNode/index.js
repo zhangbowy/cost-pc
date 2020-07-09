@@ -36,7 +36,7 @@ class ApproveNode extends Component {
   }
 
   verifyApprove = () => {
-    const isTips = this.approveNodesList.filter(v => v.type === 'SELF_CHOOSE' && v.require && !v.userList.length).length > 0;
+    const isTips = this.approveNodesList.filter(v => v.type === 'selfSelect' && v.require && !v.userList.length).length > 0;
     // eslint-disable-next-line no-unused-expressions
     isTips ? message.error('请选择审批人') : this.modifyApproveNodes();
     return !isTips;
@@ -73,28 +73,31 @@ class ApproveNode extends Component {
     const nodeArr = [];
     const { node = {} } = approveNodesObj || {};
     const traverse = (currentNode) => {
-      const { childNode, nodeId, bizData, name, nodeType = '' } = currentNode;
+      const { childNode, nodeId, bizData, name, nodeType = '', errorMsg } = currentNode;
       const { approveNode = {} } = bizData || {};
-      const { typeAttr = {}, userList = [], method, allowSelfChoose } = approveNode || {};
-      if(nodeType !== 'START' && nodeType !== '') {
-        const { typeFirst: type, typeSecond = {} } = typeAttr;
+      const { type, userList = [], method, allowSelfChoose } = approveNode || {};
+      if(nodeType !== 'start' && nodeType !== '') {
+        // const { typeFirst: type, typeSecond = {} } = typeAttr;
         // eslint-disable-next-line no-unused-vars
-        const { required: require = false, sFirst = '', sSecond = '' } = typeSecond;
+        // const { required: require = false, sFirst = '', sSecond = '' } = typeSecond;
         let title = name;
         let tips = '';
         const len = userList.length;
         const methodObj = { OR: '或签', AND: '会签' };
         switch (nodeType) {
-          case 'NOTIFIER':
+          case 'notifier':
             tips = `抄送${len}人`;
             break;
-          case 'GRANT':
-            tips = `${len}人${methodObj[method]}发放`;
+          case 'grant':
+            tips = method ? `${len}人${methodObj[method]}发放` : `${len}人发放`;
+            break;
+          case 'failed_end':
+            tips = errorMsg ? `${errorMsg}` : '节点信息有误';
             break;
           default:
-            tips = `${len}人${methodObj[method]}`;
+            tips = method ? `${len}人${methodObj[method]}` : `${len}人`;
         }
-        if(nodeType === 'NOTIFIER') {
+        if(nodeType === 'notifier') {
           title = `${title}${title.indexOf('抄送') >= 0 ? '' : '(抄送人)'}`;
         }
         console.log('traverseNodeList', type, title, userList, allowSelfChoose);
@@ -118,7 +121,7 @@ class ApproveNode extends Component {
     const obj = JSON.stringify(approveNodesData);
     const { onChangeForm } = this.props;
     const { node } = JSON.parse(obj);
-    const selfChooseObj = approveNodesList.filter(({type, nodeType, allowSelfChoose}) => (type === 'SELF_CHOOSE' || (nodeType === 'NOTIFIER' && allowSelfChoose))).reduce((pre, cur) => {
+    const selfChooseObj = approveNodesList.filter(({type, nodeType, allowSelfChoose}) => (type === 'selfSelect' || (nodeType === 'notifier' && allowSelfChoose))).reduce((pre, cur) => {
       const { nodeId, userList } = cur;
       // eslint-disable-next-line no-param-reassign
       pre[nodeId] = userList;
@@ -130,7 +133,7 @@ class ApproveNode extends Component {
           const { approveNode = {} } = bizData || {};
           console.log(`approveNode.userList ${JSON.stringify(approveNode.userList)}`);
           console.log(`approveNode ${JSON.stringify(approveNode)}`);
-          approveNode.users=selfChooseObj[nodeId];
+          approveNode.userList=selfChooseObj[nodeId];
         }
         if (Object.keys(childNode).length) {
           traverse(childNode);
@@ -156,6 +159,7 @@ class ApproveNode extends Component {
 
   render() {
     const { approveNodesList } = this.state;
+    console.log(approveNodesList);
     return (
       <div className={style.component_approve_node}>
         {/* <span className="title">审批流程</span> */}
@@ -198,9 +202,8 @@ class ApproveNode extends Component {
                           </div>
                         ))
                       }
-
                       {
-                        (item.type === 'SELF_CHOOSE' || (item.nodeType === 'NOTIFIER' && item.allowSelfChoose)) &&
+                        (item.type === 'selfSelect' || (item.nodeType === 'notifier' && item.allowSelfChoose)) &&
                         (
                           <div className={cs(style.view_box, style.view_add_box)}>
                             <img alt="add" className={style.add_img} src={addAvatars} mode="aspectFill" onClick={() => this.choosePerson(index)} />

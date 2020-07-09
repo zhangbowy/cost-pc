@@ -169,6 +169,7 @@ class LevelSearch extends Component {
                       initialValue: details.categoryIds || [],
                     })(
                       <TreeSelect
+                        showSearch
                         // onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
                         treeData={list}
                         treeCheckable
@@ -176,6 +177,7 @@ class LevelSearch extends Component {
                         showCheckedStrategy={SHOW_CHILD}
                         dropdownStyle={{height: '300px'}}
                         placeholder="请选择"
+                        treeNodeFilterProp="title"
                       />
                     )
                   }
@@ -188,7 +190,7 @@ class LevelSearch extends Component {
                     depts={deptVOS}
                     placeholder='请选择'
                     onSelectPeople={(val) => this.selectPle(val, 'user', 'dept')}
-                    invalid={[]}
+                    invalid={false}
                     disabled={false}
                     flag="useApep"
                   />

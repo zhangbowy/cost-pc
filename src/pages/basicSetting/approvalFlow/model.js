@@ -24,6 +24,9 @@ export default {
     *add({ payload }, { call }) {
       yield call(post, api.add, payload);
     },
+    *edit({ payload }, { call }) {
+      yield call(post, api.edit, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

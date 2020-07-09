@@ -30,4 +30,5 @@ export default {
   invoiceList: `${APP_API}/cost/invoice/template/list`,
   print: `${APP_API}/cost/export/pdfDetail`,
   approverRoleList: `${APP_API}/cost/approve/role/list`, // 审批角色
+  approvePersonList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 获取所有的审批模版
 };

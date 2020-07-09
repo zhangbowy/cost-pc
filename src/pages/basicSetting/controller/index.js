@@ -22,6 +22,13 @@ function Controller() {
         <Button className="m-t-13 m-b-17">一键清空</Button>
         <p className="fs-14 c-black-45 p-b-15">上次时间：2020-06-22</p>
         <Divider type="horizontal" />
+        <Lines name="人员同步">
+          <Tooltip title="同步时间可能会较长，请稍后刷新页面查看同步结果">
+            <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+          </Tooltip>
+        </Lines>
+        <Button className="m-t-13 m-b-17">同步钉钉通讯录</Button>
+        <p className="fs-14 c-black-45 p-b-15">上次时间：2020-06-22</p>
       </div>
     </div>
   );

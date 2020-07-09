@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '../../../../components/Modals/SelectPeople';
 import { formItemLayout, defaultTitle } from '../../../../utils/constants';
+import Lines from '../../../../components/StyleCom/Lines';
 
 const { SHOW_CHILD } = TreeSelect;
 @Form.create()
@@ -43,18 +44,19 @@ class AddRole extends Component {
           }
         }).then(() => {
           const { details } = this.props;
+          console.log(details.userVo);
           this.setState({
-            userVo: details.userName && [{ userName: details.userName, userId: details.userId, name: details.userName }],
-            makeUser: details.makeUser && details.makeUser.map(it => { return { ...it,userName: it.name }; }),
-            bearUser: details.bearUser && details.bearUser.map(it => { return { ...it,userName: it.name }; }),
-            bearDept: details.bearDept,
-            makeDept: details.makeDept,
-            category: details.categoryVos && details.categoryVos.map(it => {
+            userVo: details.userVo ? [details.userVo].map(it => { return { ...it,userName: it.name }; }) : [],
+            makeUser: details.makeUser ? details.makeUser.map(it => { return { ...it,userName: it.name }; }) : [],
+            bearUser: details.bearUser ? details.bearUser.map(it => { return { ...it,userName: it.name }; }) : [],
+            bearDept: details.bearDept ? details.bearDept.map(it => { return { ...it,deptId: `${it.deptId}` }; }) : [],
+            makeDept: details.makeDept ? details.makeDept.map(it => { return { ...it,deptId: `${it.deptId}` }; }) : [],
+            category: details.categoryVos ? details.categoryVos.map(it => {
               return {
                 label: it.costName,
                 value: it.id,
               };
-            }),
+            }) : [],
             visible: true,
           });
         });
@@ -66,8 +68,15 @@ class AddRole extends Component {
   }
 
   onCancel = () => {
+    this.props.form.resetFields();
     this.setState({
       visible: false,
+      category: [],
+      userVo: [],
+      makeUser: [],
+      bearUser: [],
+      makeDept: [],
+      bearDept: [],
     });
   }
 
@@ -79,6 +88,7 @@ class AddRole extends Component {
       title,
       id,
       onOk,
+      detail
     } = this.props;
     const {
       userVo,
@@ -105,6 +115,7 @@ class AddRole extends Component {
             makeDept,
             bearDept,
             approveRoleId: id,
+            id: detail && detail.id ? detail.id : '',
           }
         }).then(() => {
           this.onCancel();
@@ -182,6 +193,9 @@ class AddRole extends Component {
                 multiple={false}
               />
             </Form.Item>
+            <div className="m-b-16">
+              <Lines name='管理范围' fontSize="fs-14" />
+            </div>
             <Form.Item label="承担人/部门" {...formItemLayout}>
               <UserSelector
                 users={bearUser || []}

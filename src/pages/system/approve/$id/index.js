@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Button, Table, Popconfirm, Divider } from 'antd';
+import { Button, Table, Popconfirm, Divider, message } from 'antd';
 import { connect } from 'dva';
 import SubHeader from '../../../../components/SubHeader';
 import AddRole from '../components/AddRole';
@@ -32,6 +32,24 @@ class SettingPeople extends Component {
 
   handleOk = () => {
     this.onQuery({});
+  }
+
+  onDelete = (id) => {
+    const {
+      query,
+      dispatch,
+    } = this.props;
+    dispatch({
+      type: 'approveRole/del',
+      payload: {
+        id,
+      }
+    }).then(() => {
+      message.success('删除成功');
+      this.onQuery({
+        ...query
+      });
+    });
   }
 
   render() {

@@ -42,7 +42,7 @@ class ApproveIndex extends Component {
       dispatch,
     } = this.props;
     dispatch({
-      type: 'auth/del',
+      type: 'approveIndex/del',
       payload: {
         id,
       }

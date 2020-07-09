@@ -5,7 +5,7 @@ export default function Lines(props) {
   return (
     <div className={style.header}>
       <div className={style.line} />
-      <span>{props.name}</span>
+      <span className={props.fontSize || ''}>{props.name}</span>
       {props.children}
     </div>
   );

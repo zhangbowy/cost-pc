@@ -402,6 +402,52 @@ export const condThan = [{
   key: 'less_than_or_equal',
   value: '≤'
 }];
+
+/* -----------------------------------------------------分支条件----------------------------------------------------------*/
+export const condition = [{
+  key: 'condition_creator_user_dept',
+  value: '制单人/部门',
+  sel: condExclude,
+  type: 'people',
+  ruleType: 'people',
+}, {
+  key: 'condition_bear_user_dept',
+  value: '承担人/部门',
+  sel: condExclude,
+  type: 'people',
+  ruleType: 'people',
+}, {
+  key: 'cost_category',
+  value: '费用类别',
+  sel: condExclude,
+  type: 'selectTree',
+  ruleType: 'category',
+}, {
+  key: 'invoice_submit_sum',
+  value: '报销金额',
+  sel: condThan,
+  type: 'inputNumber',
+  ruleType: 'submit_sum',
+}, {
+  key: 'cost_detail',
+  value: '费用金额',
+  sel: condThan,
+  type: 'inputNumber',
+  ruleType: 'detail_sum',
+}];
+
+
+export const getObjValue = (list, key) => {
+  let obj = {};
+  list.forEach(it => {
+    if (it.key === key) {
+      obj={...it};
+    }
+  });
+  return obj;
+};
+
+
 /* ---------- Business ----------*/
 /**
  * 变量值提取

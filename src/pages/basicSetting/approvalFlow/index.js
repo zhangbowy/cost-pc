@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { Select, Button, message } from 'antd';
 import cs from 'classnames';
 import MenuItems from '@/components/AntdComp/MenuItems';
-import { defaultFlow, repeatMethod } from '@/utils/constants';
+import { repeatMethod } from '@/utils/constants';
 import { connect } from 'dva';
 // import ApproveProcess from './components/approveNode/ApproveProcess';
 import style from './index.scss';
 import Process from './components/Process';
+import SetName from './components/SetName';
 
-@connect(({ approvalFlow }) => ({
+@connect(({ approvalFlow, global }) => ({
   nodes: approvalFlow.nodes,
   detailNode: approvalFlow.detailNode,
+  approvePersonList: global.approvePersonList,
 }))
 class ApprovalFlow extends Component {
   constructor(props) {
@@ -23,7 +25,7 @@ class ApprovalFlow extends Component {
     };
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     this.props.dispatch({
       type: 'global/costList',
       payload: {}
@@ -35,7 +37,11 @@ class ApprovalFlow extends Component {
         pageSize: 1000,
       }
     });
-    this.props.dispatch({
+    await this.props.dispatch({
+      type: 'global/approverPersonList',
+      payload: {}
+    });
+    await this.props.dispatch({
       type: 'approvalFlow/list',
       payload: {
         uniqueMark: 'CreatorFirstLeader',
@@ -134,9 +140,16 @@ class ApprovalFlow extends Component {
     });
   }
 
+  handleOk = () => {
+    this.props.dispatch({
+      type: 'global/approverPersonList',
+      payload: {}
+    });
+  }
+
   render() {
-    const { status, repeatMethods } = this.state;
-    const { nodes } = this.props;
+    const { status, repeatMethods, nodes, ccPosition } = this.state;
+    const { approvePersonList } = this.props;
     return (
       <div style={{ height: '100%' }}>
         <div className="app_header">
@@ -145,12 +158,23 @@ class ApprovalFlow extends Component {
         </div>
         <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto' }}>
           <MenuItems
-            lists={defaultFlow}
+            lists={approvePersonList || []}
             onHandle={(val) => this.onHandle(val)}
+            params={{
+              key: 'uniqueMark',
+              value:'templateName'
+            }}
             status={status}
           />
           <div className={style.nodeCnt}>
             <div className={style.method_box}>
+              <SetName
+                approvePersonList={approvePersonList}
+                uniqueMark={status}
+                onOk={this.handleOk}
+              >
+                <Button type="primary" className="m-b-8">审批流设置</Button>
+              </SetName>
               <p>审批去重</p>
               <Select
                 value={repeatMethods}
@@ -172,6 +196,8 @@ class ApprovalFlow extends Component {
                 tabName="processDesign"
                 startNodeChange={this.onChange}
                 ref={data => {this.processData = data;}}
+                onChangePosition={this.onChangePosition}
+                ccPosition={ccPosition}
               />
               <p className={style.save_box}><Button type="primary" onClick={() => this.save()}>保存</Button></p>
             </div>

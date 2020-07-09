@@ -113,7 +113,8 @@ class PropPanel extends Component {
    */
   grandNodeConfirm = () => {
     const val = this.grand();
-    this.props.onConfirm(val, val.nodeContent);
+    console.log(val);
+    this.props.onConfirm(val, val.content);
     this.setState({
       visible: false,
     });
@@ -133,7 +134,7 @@ class PropPanel extends Component {
   }
 
 render() {
-    const { value } = this.props;
+    const { value, conditions, approveNode } = this.props;
     const { visible, priorityLength } = this.state;
     return (
       <Modal
@@ -152,7 +153,7 @@ render() {
           (value && value.nodeType === 'notifier')) &&
           <ApproveModal
             nodeType={(value && value.nodeType) || 'approver'}
-            approveNode={value.bizData.approveNode || {}}
+            approveNode={approveNode || {}}
             details={value || {}}
             // wrapperComponentRef={form => {this.approver=form;}}
             viewShowModal={fn=> { this.approver = fn; }}
@@ -162,9 +163,9 @@ render() {
           value && value.nodeType === 'condition' &&
           <Conditions
             priorityLength={priorityLength}
-            condition={value.bizData.conditionNode || []}
+            conditionNode={value.bizData.conditionNode || []}
             details={value || {}}
-            wrapperComponentRef={form => {this.condition=form;}}
+            conditions={conditions}
             viewShowModal={fn=> { this.condition = fn; }}
           />
         }
@@ -173,6 +174,7 @@ render() {
           <ApproveSend
             nodeDetail={value || {}}
             nodeType={value.nodeType || ''}
+            approveNode={approveNode || {}}
             onChangeData={fn => {this.grand = fn;}}
           />
         }

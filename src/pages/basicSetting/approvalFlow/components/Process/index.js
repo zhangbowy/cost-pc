@@ -12,6 +12,7 @@ import FlowCard from './FlowCard';
 import { NodeUtils } from './FlowCard/util.js';
 import style from './index.scss';
 import PropPanel from './PropPanel';
+import { getObjValue, condition } from '../../../../../utils/constants';
 
 
 class Process extends Component {
@@ -30,6 +31,8 @@ class Process extends Component {
       isProcessCmp: true,
       verifyMode: false,
       visible: false, // 弹窗
+      conditions: [], // 初始化条件
+      approveNode: {},
     };
   }
 
@@ -49,6 +52,7 @@ class Process extends Component {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         data: this.props.conf,
+        ccPosition: this.props.ccPosition,
       });
     }
   }
@@ -72,11 +76,97 @@ class Process extends Component {
   eventReciver = ({ event, args }) => {
     if (event === 'edit') {
       console.log(args[0]);
+      const data = args[0];
+      let conditionNodes = {};
+      const arr = [];
+      if (data.nodeType === 'start') {
+        return;
+      }
+      if (data.nodeType === 'condition') {
+        conditionNodes = data.bizData.conditionNode || {};
+        const conditions = conditionNodes.conditions || [];
+        conditions.forEach((item, index) => {
+          let obj = {
+            id: `a_${index}`,
+            ...getObjValue(condition,item.type),
+            methods: item.rule.method,
+          };
+          if (item.rule && item.rule.values) {
+            item.rule.values.forEach(it => {
+              if (it.type === 'user') {
+                obj = {
+                  ...obj,
+                  users: it.value && it.value.split(',').map((its, i) => {
+                    const userNames = it.others && it.others.split(',');
+                    return {
+                      userId: its,
+                      userName: userNames && userNames[i],
+                    };
+                  }),
+                };
+              } else if (it.type === 'dept') {
+                obj={
+                  ...obj,
+                  depts: it.value && it.value.split(',').map((its, j) => {
+                    const deptNames = it.others && it.others.split(',');
+                    return {
+                      deptId: its,
+                      name: deptNames && deptNames[j]
+                    };
+                  }),
+                };
+              } else {
+                const vals = it.value && `${it.value}`;
+                obj={
+                  ...obj,
+                  ruleValue: vals && vals.split(','),
+                  categoryId: it.categoryId,
+                };
+              }
+            });
+          }
+          arr.push(obj);
+        });
+      }
+      let approveNode = {};
+      if (data.nodeType === 'approver' || (data.nodeType === 'grant')) {
+        const approveNodes = data.bizData.approveNode || {};
+        approveNode = {...approveNodes};
+        if (approveNodes.rule) {
+          const rules = approveNodes.rule;
+          approveNode = {
+            ...approveNode,
+            methods: rules.method,
+          };
+          if (rules.values) {
+            approveNode = {
+              ...approveNode,
+              ruleType: rules.values[0].type,
+              ruleValue: rules.values[0].value,
+            };
+          }
+        }
+      }
+      console.log(approveNode);
       this.setState({
         activeData: args[0],// 打开弹窗
         visible: true,
+        conditions: arr,
+        approveNode,
       });
       return;
+    }
+    if(event === 'addCopyNode') {
+      let ccPosition = '';
+      if (args[0].nodeType === 'start') {
+        ccPosition = 'START';
+      } else {
+        ccPosition = 'FINISH';
+      }
+      this.props.onChangePosition(ccPosition);
+    }
+    if (event === 'deleteNode' && (args[0].nodeType === 'notifier')) {
+      this.props.onChangePosition('');
     }
     const { data } = this.state;
     // 本实例只监听了第一层数据（startNode）变动
@@ -124,21 +214,25 @@ class Process extends Component {
     newData.bizData = value.bizData;
     newData.priority = value.priority || '';
     newData.name = value.name || '条件';
+    console.log(newData);
     // 修改优先级
-    if (NodeUtils.isConditionNode(newData) && (value.priority !== oldProp.priority)) {
-      const datas = NodeUtils.resortPrioByCNode(
+    if (NodeUtils.isConditionNode(newData) && (Number(value.priority) !== Number(oldProp.priority))) {
+      console.log('编辑节点');
+      const nodes = NodeUtils.resortPrioByCNode(
         newData,
         oldProp.priority,
         data
       );
       this.setState({
-        data: datas,
+        data: nodes,
       });
-      this.props.startNodeChange(datas);
+      this.props.startNodeChange(nodes);
       this.forceUpdate();
     }
+    const nodes = NodeUtils.getMockData(data, newData, 'edit');
     this.setState({
       activeData: newData,
+      data: nodes,
     });
     this.onClosePanel();
     this.forceUpdate();
@@ -155,7 +249,7 @@ class Process extends Component {
   }
 
   render() {
-    const { scaleVal, step, updateId, data, verifyMode, visible } = this.state;
+    const { scaleVal, step, updateId, data, verifyMode, visible, conditions, ccPosition, approveNode } = this.state;
     return (
       <div className={style['flow-container']}>
         <div className={style['scale-slider']}>
@@ -177,6 +271,7 @@ class Process extends Component {
           data={data}
           onEmits={this.eventReciver}
           scaleVal={scaleVal}
+          ccPosition={ccPosition}
         />
         <PropPanel
           value={this.state.activeData}
@@ -184,6 +279,8 @@ class Process extends Component {
           visible={visible}
           onConfirm={this.onPropEditConfirm}
           onCancel={this.onClosePanel}
+          conditions={conditions}
+          approveNode={approveNode}
         />
       </div>
     );

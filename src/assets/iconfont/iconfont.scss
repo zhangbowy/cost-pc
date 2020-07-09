@@ -17,6 +17,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  .iconaddition_fill:before{
+    content: "\e6e0";
+  }
+
   .iconicon_newgroup_fill:before {
     content: "\ebaf";
   }

@@ -9,8 +9,8 @@ export default {
     menuKey: '', // 导航选中标识
     payAccount: [], // 收款账号列表
     costCategoryList: [], // 费用类别列表
-    jsApiAuth: {},
-    invoiceDetail: {}, // 详情
+    jsApiAuth: {}, // jsApi
+    invoiceDetail: {}, // 单据详情
     changeNodes: {}, // 审批流的节点
     approvedUrl: '', // 审批流的链接
     uploadSpace: '', // 上传文件授权
@@ -23,6 +23,7 @@ export default {
     detailReceipt: {}, // 收款账户详情
     userId: '', // 接收userId
     invoiceList: [], // 单据列表
+    approvePersonList: [], // 审批模板列表
     approverRoleList: [], // 审批角色列表
   },
   effects: {
@@ -176,6 +177,16 @@ export default {
         type: 'save',
         payload: {
           approverRoleList: response.list || [],
+        },
+      });
+    },
+    // 审批模版列表
+    *approverPersonList({ payload }, { call, put }) {
+      const response = yield call(get, api.approvePersonList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          approvePersonList: response || [],
         },
       });
     },

@@ -18,8 +18,8 @@ class ApproveSend extends Component {
     super(props);
     props.onChangeData(this.onSubmit);
     this.state = {
-      users: [],
-      type: 'assignMember',
+      users: this.props.approveNode && this.props.approveNode.userList ? this.props.approveNode.userList : [],
+      type: this.props.approveNode.type || 'assignMember',
     };
   }
 
@@ -44,18 +44,21 @@ class ApproveSend extends Component {
     let appNode = {...nodeDetail};
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
-        let approve = {
+        let content = '';
+        let approves = {
           type: val.type,
           name: labelIn[val.type]
         };
-        if (users) {
-          approve = {
-              ...approve,
+        if (users && users.length > 0) {
+          approves = {
+              ...approves,
               userList: users,
           };
+          content = users.map(it => it.userName).toString();
         } else {
-          approve = {
-            ...approve,
+          content = '审批角色分配';
+          approves = {
+            ...approves,
             rule: {
               values: [{
                 type: 'approverRoleId',
@@ -67,9 +70,9 @@ class ApproveSend extends Component {
         appNode = {
           ...appNode,
           name: val.name,
-          nodeContent: users.map(it => it.userName).toString(),
+          content,
           bizData: {
-            approveNode: approve,
+            approveNode: approves,
           }
         };
       }
@@ -80,6 +83,7 @@ class ApproveSend extends Component {
   onChange = (e) => {
     this.setState({
       type: e.target.value,
+      users: [],
     });
   }
 
@@ -106,6 +110,7 @@ class ApproveSend extends Component {
       nodeDetail,
       form: { getFieldDecorator },
       approverRoleList,
+      approveNode,
     } = this.props;
     const { users, type } = this.state;
     return (
@@ -134,7 +139,9 @@ class ApproveSend extends Component {
             type === 'approverRole' &&
             <div>
               {
-                getFieldDecorator('value')(
+                getFieldDecorator('value', {
+                  initialValue: approveNode.ruleValue,
+                })(
                   <Select>
                     {
                       approverRoleList.map(it => (

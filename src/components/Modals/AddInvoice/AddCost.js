@@ -247,6 +247,7 @@ class AddCost extends Component {
             users: item.users,
             invoiceBaseId: invoiceId,
             depList: item.depList,
+            loanUserId: item.loanUserId,
           });
         });
         detail = {

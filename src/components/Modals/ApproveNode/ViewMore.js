@@ -15,7 +15,7 @@ class ViewMore extends Component {
   onShow = () => {
     this.setState({
       visible: true,
-      list: this.props.list.users || [],
+      list: this.props.list.userList || [],
     });
   }
 
