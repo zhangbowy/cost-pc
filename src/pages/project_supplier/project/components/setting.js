@@ -40,7 +40,6 @@ class Setting extends PureComponent {
       data: {}, // 父组件传入的详情数据
       userJson: !props.data || !props.data.userJson ? [] : JSON.parse(props.data.userJson),
       deptJson: !props.data || !props.data.deptJson ? [] : JSON.parse(props.data.deptJson),
-      // parentId: !props.data || !props.data.parentId ? 0 : props.data.parentId
     };
   }
 
@@ -49,6 +48,7 @@ class Setting extends PureComponent {
     this.setState({
       visible: false
     });
+    // 重置Form
     this.props.form.resetFields();
   }
 
@@ -61,7 +61,6 @@ class Setting extends PureComponent {
     const val = { ...data };
     form.validateFieldsAndScroll((err, values) => {
       if(!err) {
-        // console.log(values);
         Object.assign(val, {
           ...values,
           status: val.status ? 1 : 0,
@@ -86,7 +85,6 @@ class Setting extends PureComponent {
           // eslint-disable-next-line prefer-destructuring
           val.parentId = values.parentId.pop();
         }
-        // console.log(val);
         dispatch({
           type: url,
           payload: {
@@ -102,14 +100,11 @@ class Setting extends PureComponent {
     });
   }
 
+  // 可用人员选择事件监听
   onChange = (e) => {
     const { data } = this.state;
     data.isAllUse = e.target.value;
     this.setState({ data });
-  }
-
-  cascaderChange = (e) => {
-    console.log(e);
   }
 
   selectPle = (res) => {
@@ -126,7 +121,7 @@ class Setting extends PureComponent {
     }
   }
 
-  // 显示modal
+  // 初始化Modal
   show = async () => {
     // 获取最新的list
     await this.props.dispatch({
@@ -134,7 +129,6 @@ class Setting extends PureComponent {
       payload: {}
     });
     const { list, action, type, data, userInfo } = this.props;
-    // console.log(data);
     let datas = {...data};
     const lists = (list && list.filter(it => Number(it.type) === 0)) || [];
     // 生成分组选择列表
@@ -167,7 +161,6 @@ class Setting extends PureComponent {
           parentId: this.findIndexArray(groupList, detail.parentId, []),
           status: Number(detail.status) === 1,
         };
-        console.log(datas);
       });
     }
 
@@ -178,6 +171,7 @@ class Setting extends PureComponent {
     });
   }
 
+  // 工具函数，获取树parentId
   findIndexArray  = (data, id, indexArray) => {
     const arr = Array.from(indexArray);
     for (let i = 0, len = data.length; i < len; i+=1) {
@@ -190,7 +184,7 @@ class Setting extends PureComponent {
         const result = this.findIndexArray(children, id, arr);
         if (result) return result;
       }
-      // arr.pop();
+      arr.pop();
     }
     return false;
   }
@@ -249,7 +243,6 @@ class Setting extends PureComponent {
                       label: 'name',
                       value: 'id',
                     }}
-                    onChange={this.cascaderChange}
                     notFoundContent="无"
                     showSearch
                     changeOnSelect
@@ -269,7 +262,7 @@ class Setting extends PureComponent {
                           required: true
                         }]
                       })(
-                        <RadioGroup onChange={e => this.onChange(e, 'allUser')}>
+                        <RadioGroup onChange={e => this.onChange(e)}>
                           {
                             isAllUse.map(item => (
                               <Radio key={item.key} value={item.key}>{item.value}</Radio>

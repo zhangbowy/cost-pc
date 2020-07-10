@@ -1,6 +1,11 @@
+/**
+ * @name 上传、下载模板组件
+ * @param {function} callback 操作完成后的回调
+ */
+
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Button, Upload, Icon, Spin } from 'antd';
+import { Modal, Button, Upload, Spin } from 'antd';
 import cs from 'classnames';
 import constants from '@/utils/constants';
 import styles from './index.scss';
@@ -11,55 +16,47 @@ const {
 
 @connect(({ session }) => ({
   userInfo: session.userInfo,
-
 }))
 class BatchImport extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
-      loading: false,
+      uploadModalVisible: false,
+      resultModalVisible: false,
+      uploadModalLoading: false,
       uploadRes: {
         failFileId: '',
         failNum: 0,
         successNum: 0
       },
-      showResultModal: false
     };
   }
 
-  // 显示上传modal
-  show = () => {
+  // 上传Modal开关
+  toogleUploadModal = (target) => {
     this.setState({
-      visible: true
-    });
-  }
-
-  // 关闭上传modal
-  cancel = () => {
-    this.setState({
-      visible: false
+      uploadModalVisible: target
     });
   }
 
   // 关闭上传结果modal
   closeResModal = (action) => {
-    let { visible } = this.state;
+    let { uploadModalVisible } = this.state;
     const { callback } = this.props;
     callback({});
     if(action === 'all') {
-      visible = false;
+      uploadModalVisible = false;
     }
     this.setState({
-      showResultModal: false,
-      visible
+      resultModalVisible: false,
+      uploadModalVisible
     });
   }
 
   // 上传过程监听
   uploadChange = (info) => {
     if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
+      this.setState({ uploadModalLoading: true });
     }
     if (info.file.status === 'done') {
       const { callback } = this.props;
@@ -69,28 +66,27 @@ class BatchImport extends React.PureComponent {
         uploadRes: response
       });
       this.setState({
-        showResultModal: true,
-        loading: false
+        resultModalVisible: true,
+        uploadModalLoading: false
       });
     }
   }
 
   render() {
     const { children } = this.props;
-    const { visible, loading, uploadRes, showResultModal } = this.state;
+    const { uploadModalVisible, resultModalVisible, uploadModalLoading, uploadRes } = this.state;
     return (
       <span className={styles.content}>
-        <span onClick={this.show}>{children}</span>
+        <span onClick={() => this.toogleUploadModal(true)}>{children}</span>
         <Modal
           title="批量导入项目"
-          visible={visible}
-          onCancel={this.cancel}
-          loading={this.state.loading}
+          visible={uploadModalVisible}
+          onCancel={() => this.toogleUploadModal(false)}
           footer={[
-            <Button key="cancel" onClick={() => this.cancel()}>取消</Button>,
+            <Button key="cancel" onClick={() => this.toogleUploadModal(false)}>取消</Button>,
           ]}
         >
-          <Spin spinning={loading}>
+          <Spin spinning={uploadModalLoading}>
             <div className="m-l-20">
               <sapn>请选择要导入的项目文件（Excel格式）</sapn>
               <div className={cs('m-t-8', styles.import_wrapper)}>
@@ -103,9 +99,7 @@ class BatchImport extends React.PureComponent {
                   // beforeUpload={this.beforeUpload}
                   showUploadList={false}
                 >
-                  <Button>
-                    <Icon type='upload' />上传文件
-                  </Button>
+                  <Button icon="upload">上传文件</Button>
                 </Upload>
 
                 <a href={`${APP_API}/cost/project/export/template?token=${localStorage.getItem('token')}`} size="small" className={cs('m-l-16', styles.download)}>下载模板</a>
@@ -113,9 +107,11 @@ class BatchImport extends React.PureComponent {
             </div>
           </Spin>
         </Modal>
+
+        {/* 导入展示Modal */}
         <Modal
           title="批量导入"
-          visible={showResultModal}
+          visible={resultModalVisible}
           onCancel={this.closeResModal}
           footer={[
             <Button key="cancel" onClick={() => this.closeResModal('all')}>关闭</Button>,
