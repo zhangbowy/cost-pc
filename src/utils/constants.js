@@ -26,6 +26,9 @@ export default {
   }, {
     key: 'field',
     value: '字段设置',
+  }, {
+    key: 'shareField',
+    value: '分摊设置',
   }],
   imgPath: `${APP_API}/cost/upload/image`
 };
@@ -100,6 +103,20 @@ export const costCategoryJson = [{
   key: 'deptId',
   field: 'deptId',
   name: '承担部门',
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'business',
+  field: 'business',
+  name: '供应商',
   status: true,
   isWrite: true,
   note: '',
