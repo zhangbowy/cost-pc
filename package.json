@@ -71,6 +71,12 @@
       "eslint -c .eslintrc.js"
     ]
   },
+  "eslintConfig": {
+    "extends": "react-app",
+    "rules":{
+      "jsx-a11y/anchor-is-valid":"off"
+    }
+  },
   "engines": {
     "node": ">=8.0.0"
   }

@@ -76,7 +76,7 @@ class ApproveNode extends Component {
       const { childNode, nodeId, bizData, name, nodeType = '', errorMsg } = currentNode;
       const { approveNode = {} } = bizData || {};
       const { type, userList = [], method, allowSelfChoose } = approveNode || {};
-      if(nodeType !== 'start' && nodeType !== '') {
+      if(nodeType !== '') { // 审核节点
         // const { typeFirst: type, typeSecond = {} } = typeAttr;
         // eslint-disable-next-line no-unused-vars
         // const { required: require = false, sFirst = '', sSecond = '' } = typeSecond;

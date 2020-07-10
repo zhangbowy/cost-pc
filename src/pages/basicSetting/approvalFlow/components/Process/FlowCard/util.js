@@ -183,9 +183,11 @@ export class NodeUtils {
           while ( endNode.childNode ) {
             endNode = endNode.childNode;
           }
-          endNode.childNode = {
-            ...prevNode.childNode,
-            prevId: endNode.nodeId
+          endNode = {
+            childNode: {
+              ...prevNode.childNode,
+              prevId: endNode.nodeId
+            }
           };
           return this.getMockData(data, prevNode, 'del');
         }
