@@ -83,7 +83,7 @@ class Process extends Component {
         return;
       }
       if (data.nodeType === 'condition') {
-        conditionNodes = data.bizData.conditionNode || {};
+        conditionNodes = data.bizData && data.bizData.conditionNode ? data.bizData.conditionNode : {};
         const conditions = conditionNodes.conditions || [];
         conditions.forEach((item, index) => {
           let obj = {
@@ -129,7 +129,7 @@ class Process extends Component {
         });
       }
       let approveNode = {};
-      if (data.nodeType === 'approver' || (data.nodeType === 'grant')) {
+      if (data.nodeType === 'approver' || (data.nodeType === 'grant') || (data.nodeType === 'notifier')) {
         const approveNodes = data.bizData.approveNode || {};
         approveNode = {...approveNodes};
         if (approveNodes.rule) {

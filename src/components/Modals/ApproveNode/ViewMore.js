@@ -38,6 +38,7 @@ class ViewMore extends Component {
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
           ]}
+          bodyStyle={{height: '550px', overflowY: 'scroll'}}
         >
           <div className={style.viewMores}>
             {

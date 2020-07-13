@@ -56,7 +56,7 @@ class ApproveSend extends Component {
           };
           content = users.map(it => it.userName).toString();
         } else {
-          content = '审批角色分配';
+          content = '按审批角色分工';
           approves = {
             ...approves,
             rule: {

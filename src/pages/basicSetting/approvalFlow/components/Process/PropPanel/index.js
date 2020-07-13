@@ -1,6 +1,6 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { Component } from 'react';
-import { Modal, Form, Button } from 'antd';
+import { Modal, Form, Button, message } from 'antd';
 import ApproveModal from './ApproveModal';
 import Conditions from './Conditions';
 import { NodeUtils } from '../FlowCard/util';
@@ -95,7 +95,10 @@ class PropPanel extends Component {
    */
   conditionNodeComfirm = () => {
     const cond = (this.condition && this.condition()) || {};
-    console.log(`condition${JSON.stringify(cond)}`);
+    if (!cond.content) {
+      message.error('请检查条件');
+      return;
+    }
     const nodeContent = cond.content;
     const val = {
       ...this.props.value,
@@ -113,7 +116,10 @@ class PropPanel extends Component {
    */
   grandNodeConfirm = () => {
     const val = this.grand();
-    console.log(val);
+    if (!val || !val.content) {
+      message.error('请节点配置');
+      return;
+    }
     this.props.onConfirm(val, val.content);
     this.setState({
       visible: false,
@@ -125,7 +131,12 @@ class PropPanel extends Component {
    */
   approveNodeConfirm = () => {
     const val = this.approver();
-    console.log(`approvers${JSON.stringify(val)}`);
+    if (!val || val === 'notifier' || !val.content) {
+      if (val !== 'notifier') {
+        message.error('请配置节点');
+      }
+      return;
+    }
     const nodeContent = val.content;
     this.props.onConfirm(val, nodeContent);
     this.setState({
@@ -163,7 +174,7 @@ render() {
           value && value.nodeType === 'condition' &&
           <Conditions
             priorityLength={priorityLength}
-            conditionNode={value.bizData.conditionNode || []}
+            conditionNode={value.bizData && value.bizData.conditionNode ? value.bizData.conditionNode : []}
             details={value || {}}
             conditions={conditions}
             viewShowModal={fn=> { this.condition = fn; }}

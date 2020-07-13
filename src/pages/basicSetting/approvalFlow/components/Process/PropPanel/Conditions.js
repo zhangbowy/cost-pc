@@ -207,12 +207,17 @@ class Conditions extends Component {
       if (!err) {
         let content = '';
         const conditions = [];
+        let flag = true;
         if (val.keys) {
           val.keys.forEach((it) => {
             content+=`${getArrayValue(it.key, condition)}、`;
             let rules = {};
             let values = [];
             if (it.type === 'people') {
+              if ((!it.users || (it.users && it.users.length === 0)) &&
+                  (!it.depts || (it.depts && it.depts.length === 0))) {
+                flag = false;
+              }
               values = [{
                 type: 'user',
                 value: it.users && it.users.map(its => its.userId).toString(),
@@ -241,6 +246,10 @@ class Conditions extends Component {
             conditions.push(rules);
           });
         }
+        if (!flag) {
+          vals = null;
+          return vals;
+        }
         vals = {
           bizData: {
             conditionNode: {
@@ -253,7 +262,6 @@ class Conditions extends Component {
         };
       }
     });
-    console.log(vals);
     return vals;
   }
 
@@ -321,12 +329,12 @@ class Conditions extends Component {
             {
               getFieldDecorator(`type[${item.id}]`, {
                 initialValue: item.key,
+                rules: [{ required: true, message: '请选择' }]
               })(
                 <Select
                   onChange={val => this.onChange(val, index)}
-                  style={{width: '180px'}}
+                  style={{width: '180px', height: '32px'}}
                   className="m-r-16"
-                  getPopupContainer={triggerNode => triggerNode.parentElement}
                 >
                   {
                     condition.map(it => (
@@ -344,10 +352,9 @@ class Conditions extends Component {
               })(
                 <TreeSelect
                   treeData={disList}
-                  style={{width: '250px', margin: '0 16px 0 0'}}
+                  style={{width: '250px', margin: '0 16px 0 0', height: '32px'}}
                   dropdownStyle={{height: '300px'}}
                   placeholder="请选择"
-                  getPopupContainer={triggerNode => triggerNode.parentElement}
                 />
               )
             }
@@ -358,9 +365,8 @@ class Conditions extends Component {
                 rules: [{ required: true, message: '请选择' }]
               })(
                 <Select
-                  style={{width: '100px'}}
+                  style={{width: '100px', height: '32px'}}
                   className="m-r-16"
-                  getPopupContainer={triggerNode => triggerNode.parentElement}
                 >
                   {
                     item.sel.map(it => (

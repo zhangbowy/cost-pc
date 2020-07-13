@@ -65,6 +65,9 @@ class ApproveNode extends Component {
           this.modifyApproveNodes();
           this.traverseNodeList(this.state.approveNodes);
         });
+      }, {
+        max: 20,
+        multiple: true,
       });
     }
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col } from 'antd';
+import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col, message } from 'antd';
 import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { connect } from 'dva';
 import { getArrayValue } from '../../../../../../utils/constants';
@@ -76,6 +76,11 @@ class ApproveModal extends Component {
           };
         }
         if (nodeType === 'notifier') {
+          if (users.length === 0 && !val.allowSelfChoose) {
+            message.error('请设置抄送人员或允许提报人自选');
+            vals='notifier';
+            return;
+          }
           approveNodes = {
             ...approveNodes,
             type: 'notifier',

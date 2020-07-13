@@ -276,9 +276,9 @@ class InvoiceDetail extends Component {
             </Col>
             <Col span={8} style={{display: 'flex'}}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
-              <span className={style.imgUrl}>
+              <span className={cs(style.imgUrl, style.wraps)}>
                 {invoiceDetail.imgUrl && invoiceDetail.imgUrl.map((it, index) => (
-                  <div className="m-r-8" onClick={() => this.previewImage(invoiceDetail.imgUrl, index)}>
+                  <div className="m-r-8 m-b-8" onClick={() => this.previewImage(invoiceDetail.imgUrl, index)}>
                     <img alt="图片" src={it.imgUrl} className={style.images} />
                   </div>
                 ))}
