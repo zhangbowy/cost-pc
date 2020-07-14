@@ -134,14 +134,16 @@ class Process extends Component {
         approveNode = {...approveNodes};
         if (approveNodes.rule) {
           const rules = approveNodes.rule;
-          approveNode = {
-            ...approveNode,
-            methods: rules.method,
-          };
+          if (approveNodes.type === 'leader') {
+            approveNode = {
+              ...approveNode,
+              methods: rules.method,
+            };
+          }
           if (rules.values) {
             approveNode = {
               ...approveNode,
-              ruleType: rules.values[0].type,
+              ruleType: approveNodes.type !== 'approverRole' ?  rules.values[0].type : '',
               ruleValue: rules.values[0].value,
             };
           }

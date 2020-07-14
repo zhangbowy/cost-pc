@@ -117,7 +117,9 @@ class PropPanel extends Component {
   grandNodeConfirm = () => {
     const val = this.grand();
     if (!val || !val.content) {
-      message.error('请节点配置');
+      if (val !== 'message') {
+        message.error('请检查节点配置');
+      }
       return;
     }
     this.props.onConfirm(val, val.content);
@@ -132,8 +134,8 @@ class PropPanel extends Component {
   approveNodeConfirm = () => {
     const val = this.approver();
     if (!val || val === 'notifier' || !val.content) {
-      if (val !== 'notifier') {
-        message.error('请配置节点');
+      if (val !== 'notifier' && (val !== 'message')) {
+        message.error('请检查节点配置');
       }
       return;
     }

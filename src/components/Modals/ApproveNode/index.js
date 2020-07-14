@@ -199,7 +199,7 @@ class ApproveNode extends Component {
                             {item.userList.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
                             <div className={cs(style.users_box, style.ellipsis)}>
                               <Avatar avatar={it.avatar} name={it.userName} size={36} className={style.avatar} />
-                              <span className={style.user_name}>{it.userName}</span>
+                              <span className={cs(style.user_name, 'eslips-2')}>{it.userName}</span>
                             </div>
                             {(ind < (item.shortUsers.length - 1)) && (<span className={style.add}>+</span>)}
                           </div>

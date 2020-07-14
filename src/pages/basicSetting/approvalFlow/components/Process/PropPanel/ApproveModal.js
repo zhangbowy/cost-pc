@@ -53,6 +53,11 @@ class ApproveModal extends Component {
           method: val.method,
           userList: users,
         };
+        if (val.type === 'assignMember' && (!users || (users && users.length === 0))) {
+          vals = 'message';
+          message.error('请选择指定人员');
+          return;
+        }
         if (val.type === 'leader') {
           approveNodes = {
             ...approveNodes,
@@ -97,6 +102,10 @@ class ApproveModal extends Component {
           },
         };
 
+      } else {
+          const keys = Object.keys(err);
+          vals = 'message';
+          message.error(err[keys[0]].errors[0].message);
       }
     });
     return vals;
@@ -236,6 +245,7 @@ class ApproveModal extends Component {
               {
                 getFieldDecorator('value', {
                   initialValue: approveNode.ruleValue,
+                  rules:[{ required: true, message: '请选择审批角色' }]
                 })(
                   <Select>
                     {
