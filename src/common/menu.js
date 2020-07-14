@@ -12,6 +12,21 @@ const menuData = [
     path: 'payment',
   },
   {
+    id: 'product_supplier',
+    name: '项目/供应商',
+    myIcon: 'xiangmugongyingshang',
+    path: 'project_supplier',
+    children: [{
+      id: 'product_supplier_product',
+      name: '项目',
+      path: 'project'
+    }, {
+      id: 'product_supplier_supplier',
+      name: '供应商',
+      path: 'supplier'
+    }]
+  },
+  {
     id: 'statistics',
     name: '支出费用明细',
     myIcon: 'iconzhichufeiyongtongji',

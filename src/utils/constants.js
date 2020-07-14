@@ -202,6 +202,11 @@ export const defaultTitle = {
   add: '新增'
 };
 
+export const targets = {
+  project: '项目',
+  group: '分组'
+};
+
 // 审批流
 export const approveUser = [{
   key: 'assignMember',
