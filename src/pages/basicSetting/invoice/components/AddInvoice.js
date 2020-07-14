@@ -232,7 +232,7 @@ class AddInvoice extends React.PureComponent {
           <div className={styles.classify}>
             <div className={styles.lefts}>
               {
-                constants.classify.map(item => (
+                constants.classify.slice(0,2).map(item => (
                   <div
                     className={left === item.key ? cs(styles.leftTl, styles.active) : styles.leftTl}
                     key={item.key}
