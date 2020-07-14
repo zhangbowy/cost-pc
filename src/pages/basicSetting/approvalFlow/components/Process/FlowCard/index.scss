@@ -188,9 +188,11 @@ $base-size: 14px;
     position: relative;
     padding: 12px;
     padding-right: 30px;
-    box-sizing: border-box;.text  {
+    box-sizing: border-box;
+    .text  {
       margin: 0;
-      @include ellipsis(4);
+      @include ellipsis(1);
+      display: block;
     }
   }
   .icon-wrapper  {
@@ -213,7 +215,8 @@ $base-size: 14px;
   }
 }
 .flow-path-card.condition  {
-  padding: 8px 14px;.header  {
+  padding: 8px 14px;
+  .header  {
     height: 18px;
     line-height: 18px;
     color: inherit;
@@ -358,7 +361,7 @@ $base-size: 14px;
   justify-content: space-around;
   align-items: center;
   text-align: center;
-  padding: 10px 20px;
+  padding: 10px;
   >div:nth-child(2) .iconfont  {
     color: #FF943E;
   }
@@ -366,7 +369,7 @@ $base-size: 14px;
     color: #576a95;
   }
   .condition-icon {
-    width: 60px;
+    width: 67px;
     height: 60px;
     line-height: 60px;
     // border-radius: 30px;
@@ -377,6 +380,12 @@ $base-size: 14px;
     // margin-bottom: 4px;
     .iconfont {
       font-size: 32px;
+    }
+    :global(.iconicon_copyto){
+      color: #FF943E;
+    }
+    :global(.iconicon_newgroup_fill){
+      color: #52c41a!important;
     }
     // &:hover {
     //   background: #3296FA;

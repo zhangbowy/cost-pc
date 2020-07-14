@@ -61,7 +61,7 @@ function FlowCard(props) {
           }
         </header>
         <div className={style.body}>
-          <span className={style.text}>{conf.content}</span>
+          <span className={cs(style.text, 'eslips-1')}>{conf.content}</span>
           {
             !isStartNode &&
             <div className={cs(style['icon-wrapper'], style.right)}>
@@ -118,7 +118,7 @@ function FlowCard(props) {
           <div className={style.body}>
             <pre className={style.text} >{conf.content}</pre>
           </div>
-          <div
+          {/* <div
             className={cs(style['icon-wrapper'], style.left)}
             onClick={(e) => eventLancher(e,
               'increasePriority',
@@ -137,7 +137,7 @@ function FlowCard(props) {
             )}
           >
             <Icon type="right" className={cs(style['el-icon-arrow-right'], style.icon, style['right-arrow'])} />
-          </div>
+          </div> */}
         </section>
       );
     }
@@ -156,7 +156,9 @@ function FlowCard(props) {
     // 判断是否可以有抄送人
     const isButton = data.nodeType === 'grant' ||
                     (data.nodeType === 'start' && data.childNode && data.childNode.nodeType === 'notifier')
-                    || (data.nodeType === 'notifier' && data.childNode && data.childNode.nodeType === 'grant');
+                    || (data.nodeType === 'notifier' &&
+                    data.childNode && data.childNode.nodeType === 'grant' &&
+                    (data.prevId.indexOf('START') === -1));
     return (
       <div className={cs(style['add-node-btn-box'], style.flex, style['justify-center'], isButton && style.addNodeBtns)}>
         {
@@ -204,7 +206,6 @@ function FlowCard(props) {
   };
 
   const NodeFactory = (ctx, data) => {
-    console.log(`UIdata${JSON.stringify(data)}`);
     if (!data) return;
     const showErrorTip = ctx.verifyMode && (NodeUtils.checkNode(data) === true);
     const res = [];

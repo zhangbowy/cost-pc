@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Radio, Select } from 'antd';
+import { Form, Input, Button, Radio, Select, message } from 'antd';
 import { formItemLayout } from '@/utils/constants';
 import { choosePeople } from '@/utils/ddApi';
 import { connect } from 'dva';
@@ -56,7 +56,7 @@ class ApproveSend extends Component {
           };
           content = users.map(it => it.userName).toString();
         } else {
-          content = '审批角色分配';
+          content = '按审批角色分工';
           approves = {
             ...approves,
             rule: {
@@ -67,6 +67,11 @@ class ApproveSend extends Component {
             }
           };
         }
+        if (val.type === 'assignMember' && users.length === 0) {
+          appNode = 'message';
+          message.error('请选择指定人员');
+          return;
+        }
         appNode = {
           ...appNode,
           name: val.name,
@@ -75,6 +80,10 @@ class ApproveSend extends Component {
             approveNode: approves,
           }
         };
+      } else {
+        const keys = Object.keys(err);
+        appNode = 'message';
+        message.error(err[keys[0]].errors[0].message);
       }
     });
     return appNode;
@@ -141,6 +150,7 @@ class ApproveSend extends Component {
               {
                 getFieldDecorator('value', {
                   initialValue: approveNode.ruleValue,
+                  rules: [{ required: true, message: '请选择审批角色' }]
                 })(
                   <Select>
                     {

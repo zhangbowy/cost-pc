@@ -282,7 +282,7 @@ class Workbench extends PureComponent {
                         this.onQuery({
                           pageNo: pageNumber,
                           pageSize: query.pageSize,
-                          type: type === '0' ? '' : type,
+                          type: Number(type) === 0 ? '' : type,
                           reason,
                         });
                       },
@@ -292,7 +292,10 @@ class Workbench extends PureComponent {
                       showSizeChanger: true,
                       showQuickJumper: true,
                       onShowSizeChange: (cur, size) => {
+                        const { type, reason } = this.state;
                         this.onQuery({
+                          type: type === '0' ? '' : type,
+                          reason,
                           pageNo: cur,
                           pageSize: size
                         });

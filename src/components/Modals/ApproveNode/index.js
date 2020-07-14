@@ -65,6 +65,9 @@ class ApproveNode extends Component {
           this.modifyApproveNodes();
           this.traverseNodeList(this.state.approveNodes);
         });
+      }, {
+        max: 20,
+        multiple: true,
       });
     }
   }
@@ -76,7 +79,7 @@ class ApproveNode extends Component {
       const { childNode, nodeId, bizData, name, nodeType = '', errorMsg } = currentNode;
       const { approveNode = {} } = bizData || {};
       const { type, userList = [], method, allowSelfChoose } = approveNode || {};
-      if(nodeType !== 'start' && nodeType !== '') {
+      if(nodeType !== '') { // 审核节点
         // const { typeFirst: type, typeSecond = {} } = typeAttr;
         // eslint-disable-next-line no-unused-vars
         // const { required: require = false, sFirst = '', sSecond = '' } = typeSecond;
@@ -196,7 +199,7 @@ class ApproveNode extends Component {
                             {item.userList.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
                             <div className={cs(style.users_box, style.ellipsis)}>
                               <Avatar avatar={it.avatar} name={it.userName} size={36} className={style.avatar} />
-                              <span className={style.user_name}>{it.userName}</span>
+                              <span className={cs(style.user_name, 'eslips-2')}>{it.userName}</span>
                             </div>
                             {(ind < (item.shortUsers.length - 1)) && (<span className={style.add}>+</span>)}
                           </div>

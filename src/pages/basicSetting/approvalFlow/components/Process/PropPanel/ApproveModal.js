@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col } from 'antd';
+import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col, message } from 'antd';
 import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { connect } from 'dva';
 import { getArrayValue } from '../../../../../../utils/constants';
@@ -53,6 +53,11 @@ class ApproveModal extends Component {
           method: val.method,
           userList: users,
         };
+        if (val.type === 'assignMember' && (!users || (users && users.length === 0))) {
+          vals = 'message';
+          message.error('请选择指定人员');
+          return;
+        }
         if (val.type === 'leader') {
           approveNodes = {
             ...approveNodes,
@@ -76,6 +81,11 @@ class ApproveModal extends Component {
           };
         }
         if (nodeType === 'notifier') {
+          if (users.length === 0 && !val.allowSelfChoose) {
+            message.error('请设置抄送人员或允许提报人自选');
+            vals='notifier';
+            return;
+          }
           approveNodes = {
             ...approveNodes,
             type: 'notifier',
@@ -92,6 +102,10 @@ class ApproveModal extends Component {
           },
         };
 
+      } else {
+          const keys = Object.keys(err);
+          vals = 'message';
+          message.error(err[keys[0]].errors[0].message);
       }
     });
     return vals;
@@ -231,6 +245,7 @@ class ApproveModal extends Component {
               {
                 getFieldDecorator('value', {
                   initialValue: approveNode.ruleValue,
+                  rules:[{ required: true, message: '请选择审批角色' }]
                 })(
                   <Select>
                     {

@@ -120,7 +120,7 @@ class AddInvoice extends Component {
     });
     const djDetails = await this.props.djDetail;
     const obj = {};
-    if (djDetails.showField) {
+    if (djDetails.showField && djDetails.showField.length > 5) {
       JSON.parse(djDetails.showField).forEach(item => {
         obj[item.field] = {...item};
       });

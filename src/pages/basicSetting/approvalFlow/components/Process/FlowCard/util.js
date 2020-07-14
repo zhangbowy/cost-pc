@@ -183,9 +183,11 @@ export class NodeUtils {
           while ( endNode.childNode ) {
             endNode = endNode.childNode;
           }
-          endNode.childNode = {
-            ...prevNode.childNode,
-            prevId: endNode.nodeId
+          endNode = {
+            childNode: {
+              ...prevNode.childNode,
+              prevId: endNode.nodeId
+            }
           };
           return this.getMockData(data, prevNode, 'del');
         }
@@ -351,20 +353,29 @@ export class NodeUtils {
    * @param { Object } data - 目标节点数据
    * @param { Object  } processData - 流程图的所有节点数据
    */
-  static increasePriority ( data, processData ) {
-    if ( data.bizData.isDefault ) {  // 默认节点不能修改优先级
-      return;
-    }
+  static increasePriority ( datas, data, processData ) {
     // 分支节点数据 包含该分支所有的条件节点
-    const prevNode = this.getPreviousNode( data.prevId, processData );
-    const branchData = prevNode.conditionNodes;
+    const prevNode = {...this.getPreviousNode( data.prevId, processData )};
+    const branchData = [...prevNode.conditionNodes];
     const index = branchData.findIndex( c => c === data );
     if ( index ) {
+      console.log(`index${index}`);
       // 和前一个数组项交换位置 Array.prototype.splice会返回包含被删除的项的集合（数组）
-      branchData[index - 1].priority = index;
-      branchData[index].priority = index - 1;
-      branchData[index - 1] = branchData.splice( index, 1, branchData[index - 1] )[0];
+      branchData[index - 1] = {
+        priority: index +1,
+        ...branchData[index - 1],
+      };
+      branchData[index] = {
+        priority: index,
+        ...branchData[index]
+      };
+      const temp = branchData[index];
+      branchData[index] = branchData[index-1];
+      branchData[index-1] = temp;
     }
+    console.log(`branchData${JSON.stringify(branchData)}`);
+    prevNode.conditionNodes = branchData;
+    return this.getMockData(processData, prevNode, 'edit');
   }
 
   /**
@@ -372,21 +383,28 @@ export class NodeUtils {
    * @param { Object } data - 目标节点数据
    * @param { Object  } processData - 流程图的所有节点数据
    */
-  static decreasePriority ( data, processData ) {
+  static decreasePriority ( datas, data, processData ) {
     // 分支节点数据 包含该分支所有的条件节点
-    const prevNode = this.getPreviousNode( data.prevId, processData );
-    const branchData = prevNode.conditionNodes;
+    const prevNode = {...this.getPreviousNode( data.prevId, processData )};
+    const branchData = [...prevNode.conditionNodes];
     const index = branchData.findIndex( c => c.nodeId === data.nodeId );
-    if ( index < branchData.length - 1 ) {
-      const lastNode = branchData[index + 1];
-      if ( lastNode.bizData.isDefault ) {  // 默认节点不能修改优先级
-        return;
-      }
+    if ( index < (branchData.length - 1) ) {
+      let lastNode = branchData[index + 1];
       // 和后一个数组项交换位置 Array.prototype.splice会返回包含被删除的项的集合（数组）
-      lastNode.bizData.priority = index;
-      branchData[index].bizData.priority = index + 1;
-      branchData[index + 1] = branchData.splice( index, 1, branchData[index + 1] )[0];
+      lastNode = {
+        priority: index +1,
+        ...lastNode,
+      };
+      branchData[index] = {
+        priority: index + 2,
+        ...branchData[index]
+      };
+      branchData[index+1] = branchData[index];
+      branchData[index] = lastNode;
     }
+    console.log(`branchData${JSON.stringify(branchData)}`);
+    prevNode.conditionNodes = branchData;
+    return this.getMockData(processData, prevNode, 'edit');
   }
 
   /**
@@ -422,20 +440,9 @@ export class NodeUtils {
     // 抄送人应该可以默认自选
     let valid = true;
     const props = node.bizData;
-    this.isStartNode( node )
-      && !props.initiator
-      && ( valid = false );
 
     this.isConditionNode( node )
-      && !props.isDefault
-      && !props.initiator
       && isEmptyArray( props.conditions )
-      && ( valid = false );
-
-    const customSettings = ['myself', 'optional', 'director'];
-    this.isApproverNode( node )
-      && !customSettings.includes( props.assigneeType )
-      && isEmptyArray( props.approvers )
       && ( valid = false );
     return valid;
   }

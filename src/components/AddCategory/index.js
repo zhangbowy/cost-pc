@@ -35,14 +35,16 @@ class AddCategory extends Component {
     const lists = treeConvert({
       pId: 'parentId',
       rootId: 0,
-      otherKeys: ['parentId', 'type', 'note']
+      otherKeys: ['note', 'type', 'parentId', 'createTime']
     }, UseTemplate).filter(({children = [], type}) => {
       if(type === 1) return true;
-      // eslint-disable-next-line no-shadow
-      return children.length > 0 ? children.map(({type}) => type === 1).length : false;
-    }).sort(({children = []}, {children: bChildren = []}) => {
-      return bChildren.length - children.length;
+      return children.length > 0 ? children.map(it => it.type === 1).length : false;
     });
+    // sort(({children = []}, {children: bChildren = []}) => {
+    // console.log(`children${children}`);
+    //  return bChildren.length - children.length;
+    // })
+    console.table(lists);
     return lists;
   }
 
@@ -84,23 +86,11 @@ class AddCategory extends Component {
               lists.map(item => (
                 <div className={style.content} key={item.id}>
                   {
-                    item.type === 0 &&
+                    item.children &&
                     <div className={style.header} key={item.id}>
                       <div className={style.line} />
                       <span>{item.name}</span>
                     </div>
-                  }
-                  {
-                    item.parentId === 0 && (item.type === 1) &&
-                    <AddInvoice id={item.id} visible={modalVis} onHandleOk={this.onOK}>
-                      <div className={style.cnt_cnts} key={item.id} onClick={() => this.onHandelShow()}>
-                        <div className={style.cnt_list}>
-                          <p className="c-black-85 fw-500 fs-14 eslips-1">{item.name}</p>
-                          <p className="c-black-36 fs-13 eslips-1">{item.note || ''}</p>
-                        </div>
-                        <Divider type="horizontal" style={{margin: 0}} />
-                      </div>
-                    </AddInvoice>
                   }
                   {
                     item.children && item.children.map(it => (
@@ -115,6 +105,19 @@ class AddCategory extends Component {
                       </AddInvoice>
                     ))
                   }
+                  {
+                    item.parentId === 0 && (item.type === 1) &&
+                    <AddInvoice id={item.id} visible={modalVis} onHandleOk={this.onOK}>
+                      <div className={style.cnt_cnts} key={item.id} onClick={() => this.onHandelShow()}>
+                        <div className={style.cnt_list}>
+                          <p className="c-black-85 fw-500 fs-14 eslips-1">{item.name}</p>
+                          <p className="c-black-36 fs-13 eslips-1">{item.note || ''}</p>
+                        </div>
+                        <Divider type="horizontal" style={{margin: 0}} />
+                      </div>
+                    </AddInvoice>
+                  }
+
                 </div>
               ))
             }
