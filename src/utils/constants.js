@@ -188,6 +188,32 @@ export const costClassify = [{
   note: '',
 }];
 
+// 费用类别分摊
+export const classifyShare = [{
+  key: 'user',
+  field: 'user',
+  disabled: true,
+  name: '承担人',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'dept',
+  field: 'dept',
+  name: '承担部门',
+  disabled: true,
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: false,
+  isWrite: false,
+  note: '',
+}];
+
 export const dataType = [{
   key: '1',
   value: '指定日期',
