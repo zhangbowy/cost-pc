@@ -216,4 +216,12 @@
   .t-l{
     text-align: left;
   }
+  .table-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    a:last-child{
+      margin-left: 10px;
+    }
+  }
 }

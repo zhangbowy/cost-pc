@@ -5,10 +5,11 @@ import PropTypes from 'prop-types';
 // import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
 import Search from 'antd/lib/input/Search';
-import BatchImport from './components/BatchImport';
-import Setting from './components/setting';
+import Setting from '@/components/Setting';
+import BatchImport from '@/components/BatchImport/index';
+import Sort from '@/components/TreeSort/index';
 
-const namespace = 'projects';
+const namespace = 'project';
 const { confirm } = Modal;
 
 @connect((state) => ({
@@ -40,7 +41,7 @@ class Product extends React.PureComponent {
     const { userInfo, dispatch } = this.props;
     Object.assign(payload, { companyId: userInfo.companyId || '' });
     dispatch({
-      type: 'projects/getList',
+      type: 'project/getList',
       payload
     });
   }
@@ -52,13 +53,23 @@ class Product extends React.PureComponent {
     });
   }
 
-  onOk = () => {
-    this.onQuery({});
+  onOk = (param, url, callback) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: url,
+      payload: {
+        ...param
+      }
+    }).then(() => {
+      callback();
+      this.onQuery({});
+      message.success('设置成功');
+    });
   }
 
   onDelete = (id) => {
     this.props.dispatch({
-      type: 'projects/delete',
+      type: 'project/delete',
       payload: { id }
     }).then(() => {
       message.success('删除成功');
@@ -68,7 +79,6 @@ class Product extends React.PureComponent {
 
   delete = (record) => {
     let confirmText = '';
-    console.log(record.type);
     if (record.type === 0) {
       confirmText = '确认删除该分组吗？';
     } else {
@@ -84,7 +94,6 @@ class Product extends React.PureComponent {
         this.onDelete(record.id);
       },
       onCancel: () => {
-        console.log('Cancel');
       },
     });
   }
@@ -156,7 +165,13 @@ class Product extends React.PureComponent {
           <div>
             <a onClick={() => this.delete(record)}>删除</a>
             <Divider type="vertical" />
-            <Setting action="edit" type={record.type === 1 ? 'project' : 'group'} data={record} onOk={this.onOk}>
+            <Setting
+              target="project"
+              list={list}
+              type={record.type === 1 ? 'item' : 'group'}
+              onOk={this.onOk}
+              detail={record}
+            >
               <a>编辑</a>
             </Setting>
           </div>
@@ -178,13 +193,13 @@ class Product extends React.PureComponent {
       <div className="content-dt">
         <div className="cnt-header">
           <div className="head_lf">
-            <Setting action="add" type="project" onOk={this.onOk}>
+            <Setting type="item" target="project" list={list} onOk={this.onOk}>
               <Button type="primary" style={{ marginRight: '8px' }}>新增项目</Button>
             </Setting>
-            <Setting action="add" type="group" onOk={this.onOk}>
+            <Setting type="group" target="project" list={list} onOk={this.onOk}>
               <Button style={{ marginRight: '8px' }}>新增分组</Button>
             </Setting>
-            <BatchImport callback={this.onQuery}>
+            <BatchImport callback={this.onQuery} type="project">
               <Button style={{ marginRight: '8px' }}>批量导入</Button>
             </BatchImport>
             <Form style={{ display: 'inline-block' }}>
@@ -197,9 +212,9 @@ class Product extends React.PureComponent {
               </Form.Item>
             </Form>
           </div>
-          <div style={{ justifyContent: 'flex-end' }}>
+          <Sort style={{ justifyContent: 'flex-end' }} list={lists} >
             <Button>排序</Button>
-          </div>
+          </Sort>
         </div>
         <Table
           rowKey="id"
