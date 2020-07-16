@@ -25,6 +25,7 @@ export default {
     invoiceList: [], // 单据列表
     approvePersonList: [], // 审批模板列表
     approverRoleList: [], // 审批角色列表
+    uploadRes: {}, // 供应商项目批量上传结果
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -190,6 +191,24 @@ export default {
         },
       });
     },
+    *uploadSupplierFile({ payload }, { call, put }) {
+      const response = yield call(post, api.uploadSupplier, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          uploadRes: response
+        }
+      });
+    },
+    *uploadProjectFile({ payload }, { call, put }) {
+      const response = yield call(post, api.uploadProject, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          uploadRes: response
+        }
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {

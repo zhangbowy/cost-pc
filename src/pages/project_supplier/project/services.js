@@ -7,9 +7,7 @@ const {
 export default{
   list: `${APP_API}/cost/project/list`,
   detail: `${APP_API}/cost/project/detail`,
-  projectEdit: `${APP_API}/cost/project/edit`,
-  projectAdd: `${APP_API}/cost/project/add`,
-  delete: `${APP_API}/cost/project/del`,
-  uploadFile: `${APP_API}/cost/project/import/projectExcel`,
-  downloadFile: `${APP_API}/cost/project/export/template`,
+  edit: `${APP_API}/cost/project/edit`,
+  add: `${APP_API}/cost/project/add`,
+  del: `${APP_API}/cost/project/del`
 };

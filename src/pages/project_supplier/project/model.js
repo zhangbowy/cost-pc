@@ -2,10 +2,11 @@ import { post, get } from '@/utils/request';
 import api from './services';
 
 export default {
-  namespace: 'projects',
+  namespace: 'project',
   state: {
     list: [],
     detail: {},
+    errMsg: ''
   },
   effects: {
     *getList({ payload }, { call, put }) {
@@ -26,17 +27,14 @@ export default {
         }
       });
     },
-    *projectEdit({ payload }, { call }) {
-      yield call(post, api.projectEdit, payload);
+    *edit({ payload }, { call }) {
+      yield call(post, api.edit, payload);
     },
-    *projectAdd({ payload }, { call }) {
-      yield call(post, api.projectAdd, payload);
+    *add({ payload }, { call }) {
+      yield call(post, api.add, payload);
     },
     *delete({ payload }, { call }) {
-      yield call(get, api.delete, payload);
-    },
-    *uploadFile({ payload }, { call }) {
-      yield call(post, api.uploadFile, payload);
+      yield call(get, api.del, payload);
     }
   },
   reducers: {

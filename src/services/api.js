@@ -31,4 +31,7 @@ export default {
   print: `${APP_API}/cost/export/pdfDetail`,
   approverRoleList: `${APP_API}/cost/approve/role/list`, // 审批角色
   approvePersonList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 获取所有的审批模版
+  canDel: `${APP_API}/cost/supplier/delAccountCheck`,
+  uploadSupplier: `${APP_API}/cost/supplier/import/projectExcel`,
+  uploadProject: `${APP_API}/cost/project/import/projectExcel`,
 };
