@@ -9,16 +9,13 @@ import Setting from '@/components/Setting';
 import BatchImport from '@/components/BatchImport/index';
 import Sort from '@/components/TreeSort/index';
 
-const namespace = 'project';
 const { confirm } = Modal;
-
-@connect((state) => ({
-  userInfo: state.session.userInfo,
-  loading: state.loading.models[namespace],
-  list: state[namespace].list,
-  query: state[namespace].query,
+@connect(({ session, project, loading }) => ({
+  userInfo: session.userInfo,
+  loading: loading.effects['project/getList'],
+  list: project.list,
+  query: project.query,
 }))
-
 class Product extends React.PureComponent {
   static propsTypes = {
     list: PropTypes.array,
@@ -37,12 +34,24 @@ class Product extends React.PureComponent {
   }
 
   // 请求数据
-  onQuery = (payload) => {
+  onQuery = (payload = {}) => {
     const { userInfo, dispatch } = this.props;
     Object.assign(payload, { companyId: userInfo.companyId || '' });
     dispatch({
       type: 'project/getList',
       payload
+    });
+  }
+
+  sortData = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      const e = data[i];
+      if (e.children && e.children.length) {
+        this.sortData(e.children);
+      }
+    }
+    data.sort((a, b) => {
+      return a.sort - b.sort;
     });
   }
 
@@ -96,6 +105,40 @@ class Product extends React.PureComponent {
       onCancel: () => {
       },
     });
+  }
+
+  // 获得排序结果
+  getSort = (list, callback) => {
+    console.log(list);
+    const result = this.openTree(list, []);
+    console.log(result);
+    // 传给后端数据
+    this.props.dispatch({
+      type: 'project/sort',
+      payload: {
+        sortList: result
+      }
+    }).then(() => {
+      message.success('排序成功!');
+      this.onQuery({});
+      callback();
+    });
+  }
+
+  // 展开树
+  openTree = (list, arr) => {
+    const result = arr;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if(e.children && e.children.length) {
+        const res = this.openTree(e.children, result);
+        console.log(res);
+        e.children = '';
+        result.concat(res);
+      }
+      result.push(e);
+    }
+    return result;
   }
 
   render() {
@@ -188,6 +231,7 @@ class Product extends React.PureComponent {
     if (this.state.costName) {
       lists = list;
     }
+    this.sortData(lists);
 
     return (
       <div className="content-dt">
@@ -212,7 +256,7 @@ class Product extends React.PureComponent {
               </Form.Item>
             </Form>
           </div>
-          <Sort style={{ justifyContent: 'flex-end' }} list={lists} >
+          <Sort style={{ justifyContent: 'flex-end' }} list={list} callback={this.getSort}>
             <Button>排序</Button>
           </Sort>
         </div>

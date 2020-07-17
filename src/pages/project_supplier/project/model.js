@@ -35,6 +35,9 @@ export default {
     },
     *delete({ payload }, { call }) {
       yield call(get, api.del, payload);
+    },
+    *sort({ payload }, { call }) {
+      yield call(post, api.sort, payload);
     }
   },
   reducers: {

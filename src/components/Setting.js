@@ -133,7 +133,7 @@ class Setting extends Component {
   // 保存设置
   onSave = (e) => {
     e.preventDefault();
-    const { form, onOk, target } = this.props;
+    const { form, onOk, target, type } = this.props;
     const { data, delIds } = this.state;
     const val = { ...data };
     const url = data.id ? `${target}/edit` : `${target}/add`;
@@ -143,7 +143,7 @@ class Setting extends Component {
           ...values,
           status: values.status ? 1 : 0,
         });
-        if (!values.isAllUse) {
+        if (!values.isAllUse && type !== 'group') {
           if (!data.userJson.length && !data.deptJson.length) {
             form.setFields({
               isAllUse: {
@@ -163,9 +163,8 @@ class Setting extends Component {
             deptJson: ''
           });
         }
-        if(target === 'supplier') {
-          const res = this.checkAccounts(data);
-          if(!res) {
+        if(target === 'supplier' && type === 'item') {
+          if(!this.checkAccounts(data)) {
             return;
           }
         }
@@ -178,6 +177,7 @@ class Setting extends Component {
     });
   }
 
+  // 标记编辑/新增 标记操作的内容位置
   setAction = (action, record) => {
     let editIndex = 0;
     this.state.data.supplierAccounts.forEach((item, index) => {
@@ -188,15 +188,12 @@ class Setting extends Component {
     this.setState({ action, editIndex });
   }
 
+  // 保存供应商账号
   onSaveSupplierSet = (val, callback) => {
     const { data, action, editIndex } = this.state;
     if (action === 'edit') {
-      const res = data.supplierAccounts.filter(item => item.name === val.name);
-      if (res.length) {
-        callback('repeat');
-      } else {
-        data.supplierAccounts[editIndex] = val;
-      }
+      data.supplierAccounts[editIndex] = val;
+      callback();
     } else {
       const res = data.supplierAccounts.filter(item => item.name === val.name);
       if (res.length) {
@@ -245,6 +242,7 @@ class Setting extends Component {
     }
   }
 
+  // 检查供应商账号是否为空
   checkAccounts = (data) => {
     let res = true;
     if(!data.supplierAccounts || !data.supplierAccounts.length) {
@@ -324,7 +322,7 @@ class Setting extends Component {
                   initialValue: data.name,
                   rules: [{
                     required: true,
-                    message: `请输入${title}名称`,
+                    message: '请输入名称',
                   }, {
                     max: 32,
                     message: '长度不能超过32个字符'
