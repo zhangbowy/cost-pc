@@ -269,7 +269,6 @@ class Supplier extends React.PureComponent {
           columns={columns}
           dataSource={lists}
           pagination={false}
-          defaultExpandAllRows
         />
       </div>
     );

@@ -266,7 +266,6 @@ class Product extends React.PureComponent {
           columns={columns}
           dataSource={lists}
           pagination={false}
-          defaultExpandAllRows
         />
       </div>
     );

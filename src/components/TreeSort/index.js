@@ -85,7 +85,7 @@ export default class Sort extends Component {
         </TreeNode>
       );
     }
-    return <TreeNode key={item.id} title={item.name} className="drop" />;
+    return <TreeNode key={item.id} title={item.name} />;
   })
 
   // 判断是否为同级
