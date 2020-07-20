@@ -33,7 +33,7 @@ export default {
   approvePersonList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 获取所有的审批模版
   canDel: `${APP_API}/cost/supplier/delAccountCheck`,
   /* ---------- 项目/供应商 ----------*/
-  uploadSupplier: `${APP_API}/cost/supplier/import/projectExcel`,
+  uploadSupplier: `${APP_API}/cost/supplier/import/supplierExcel`,
   uploadProject: `${APP_API}/cost/project/import/projectExcel`,
   usableProject: `${APP_API}/cost/project/getUsableProject`,
   usableSupplier: `${APP_API}/cost/supplier/getUsableSupplier`,
