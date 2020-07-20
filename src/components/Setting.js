@@ -307,6 +307,11 @@ class Setting extends Component {
           onCancel={() => this.closeModal()}
           onOk={e => this.onSave(e)}
           width="660px"
+          bodyStyle={{
+            padding: 20,
+            maxHeight: '440px',
+            overflowY: 'scroll'
+          }}
           footer={[
             <Button key="cancel" onClick={() => this.closeModal()}>取消</Button>,
             <Button key="save" type="primary" onClick={e => this.onSave(e)}>保存</Button>
