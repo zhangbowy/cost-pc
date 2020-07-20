@@ -2,6 +2,8 @@
  * @name 上传、下载模板组件
  * @param {function} callback 操作完成后的回调
  * @param {string} type 区分项目和供应商
+ * @param {boolean} loading 上传状态
+ * @param {object} uploadRes 上传成功返回的结果
  */
 
 import React from 'react';
@@ -17,7 +19,8 @@ const {
 } = constants;
 
 @Form.create()
-@connect(({ global }) => ({
+@connect(({ global, loading }) => ({
+  loading: loading.effects['global/uploadSupplierFile'] || loading.effects['global/uploadProjectFile'] || false,
   uploadRes: global.uploadRes
 }))
 class BatchImport extends React.PureComponent {
@@ -32,9 +35,8 @@ class BatchImport extends React.PureComponent {
       title: props.type === 'project' ? '项目' : '供应商',
       uploadModalVisible: false,
       resultModalVisible: false,
-      uploadModalLoading: false,
       fileList: [],
-      uploadRes: {}
+      uploadRes: {},
     };
   }
 
@@ -59,30 +61,6 @@ class BatchImport extends React.PureComponent {
     });
   }
 
-  // 上传过程监听
-  uploadChange = (info) => {
-    if (info.file.status === 'uploading') {
-      this.setState({ uploadModalLoading: true });
-    }
-    if (info.file.status === 'done') {
-      const { callback } = this.props;
-      callback({});
-      const response = info.file.response.result;
-      this.setState({
-        uploadRes: response
-      });
-      this.setState({
-        resultModalVisible: true,
-        uploadModalLoading: false
-      });
-    }
-  }
-
-  beforeUpload = (file) => {
-    this.setState({ fileList: [file] });
-    return false;
-  }
-
   removeFile = () => {
     this.setState({ fileList: [] });
   }
@@ -93,7 +71,6 @@ class BatchImport extends React.PureComponent {
     const formData = new FormData();
     const url = type === 'supplier' ? 'global/uploadSupplierFile' : 'global/uploadProjectFile';
     formData.append('file', fileList[0]);
-    this.setState({ uploadModalLoading: true });
     this.props.dispatch({
       type: url,
       payload: formData
@@ -101,7 +78,6 @@ class BatchImport extends React.PureComponent {
       const { uploadRes } = this.props;
       this.setState({
         uploadRes,
-        uploadModalLoading: false,
         resultModalVisible: true,
         fileList: []
       });
@@ -109,8 +85,8 @@ class BatchImport extends React.PureComponent {
   }
 
   render() {
-    const { children, type } = this.props;
-    const { uploadModalVisible, resultModalVisible, uploadModalLoading, uploadRes, title, fileList } = this.state;
+    const { children, type, loading } = this.props;
+    const { uploadModalVisible, resultModalVisible, uploadRes, title, fileList } = this.state;
     return (
       <span>
         <span onClick={() => this.toogleUploadModal(true)}>{children}</span>
@@ -120,10 +96,10 @@ class BatchImport extends React.PureComponent {
           onCancel={() => this.toogleUploadModal(false)}
           footer={[
             <Button key="cancel" onClick={() => this.toogleUploadModal(false)}>取消</Button>,
-            <Button key="" onClick={() => this.upload()}>确定上传</Button>
+            <Button key="ok" type="primary" onClick={() => this.upload()}>确定上传</Button>
           ]}
         >
-          <Spin spinning={uploadModalLoading}>
+          <Spin spinning={loading}>
             <div className="m-l-20">
               <span>{`请选择要导入的${title}文件（Excel格式）`}</span>
               <div className={cs('m-t-8', styles.import_wrapper)}>
@@ -132,7 +108,6 @@ class BatchImport extends React.PureComponent {
                   accept=".xlsx"
                   action={`${APP_API}/cost/${type}/import/projectExcel?token=${localStorage.getItem('token')}`}
                   onChange={this.uploadChange}
-                  // customRequest={this.customRequest}
                   beforeUpload={this.beforeUpload}
                   showUploadList
                   fileList={fileList}

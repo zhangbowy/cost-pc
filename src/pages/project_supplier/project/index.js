@@ -9,16 +9,13 @@ import Setting from '@/components/Setting';
 import BatchImport from '@/components/BatchImport/index';
 import Sort from '@/components/TreeSort/index';
 
-const namespace = 'project';
 const { confirm } = Modal;
-
-@connect((state) => ({
-  userInfo: state.session.userInfo,
-  loading: state.loading.models[namespace],
-  list: state[namespace].list,
-  query: state[namespace].query,
+@connect(({ session, project, loading }) => ({
+  userInfo: session.userInfo,
+  loading: loading.effects['project/getList'],
+  list: project.list,
+  query: project.query,
 }))
-
 class Product extends React.PureComponent {
   static propsTypes = {
     list: PropTypes.array,
@@ -29,6 +26,8 @@ class Product extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      historyList: [],
+      searchName: ''
     };
   }
 
@@ -37,7 +36,7 @@ class Product extends React.PureComponent {
   }
 
   // 请求数据
-  onQuery = (payload) => {
+  onQuery = (payload = {}) => {
     const { userInfo, dispatch } = this.props;
     Object.assign(payload, { companyId: userInfo.companyId || '' });
     dispatch({
@@ -46,11 +45,28 @@ class Product extends React.PureComponent {
     });
   }
 
-  onSearch = (e) => {
-    this.onQuery({name: e});
-    this.setState({
-      costName: e
+  sortData = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      const e = data[i];
+      if (e.children && e.children.length) {
+        this.sortData(e.children);
+      }
+    }
+    data.sort((a, b) => {
+      return a.sort - b.sort;
     });
+  }
+
+  onSearch = (e) => {
+    this.setState({
+      searchName: e
+    });
+    if(!this.state.searchName) {
+      this.setState({
+        historyList: JSON.parse(JSON.stringify(this.props.list))
+      });
+    }
+    this.onQuery({name: e});
   }
 
   onOk = (param, url, callback) => {
@@ -98,8 +114,43 @@ class Product extends React.PureComponent {
     });
   }
 
+  // 获得排序结果
+  getSort = (list, callback) => {
+    const result = this.openTree(list, []);
+    // 传给后端数据
+    this.props.dispatch({
+      type: 'project/sort',
+      payload: {
+        sortList: result
+      }
+    }).then(() => {
+      message.success('排序成功!');
+      this.setState({ searchName: '' }, () => {
+        this.onQuery({});
+      });
+      callback();
+    });
+  }
+
+  // 展开树
+  openTree = (list, arr) => {
+    const result = arr;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if(e.children && e.children.length) {
+        const res = this.openTree(e.children, result);
+        console.log(res);
+        e.children = '';
+        result.concat(res);
+      }
+      result.push(e);
+    }
+    return result;
+  }
+
   render() {
     const { loading, list } = this.props;
+    const { searchName, historyList } = this.state;
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -163,7 +214,7 @@ class Product extends React.PureComponent {
       render: (_, record) => {
         return (
           <div>
-            <a onClick={() => this.delete(record)}>删除</a>
+            <a disabled={record.children} onClick={() => this.delete(record)}>删除</a>
             <Divider type="vertical" />
             <Setting
               target="project"
@@ -185,9 +236,10 @@ class Product extends React.PureComponent {
       name: 'name',
       otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type', 'status', 'sort', 'parentId']
     }, list);
-    if (this.state.costName) {
+    if (searchName) {
       lists = list;
     }
+    this.sortData(lists);
 
     return (
       <div className="content-dt">
@@ -212,7 +264,7 @@ class Product extends React.PureComponent {
               </Form.Item>
             </Form>
           </div>
-          <Sort style={{ justifyContent: 'flex-end' }} list={lists} >
+          <Sort style={{ justifyContent: 'flex-end' }} list={searchName ? historyList : list} callback={this.getSort}>
             <Button>排序</Button>
           </Sort>
         </div>
@@ -222,7 +274,6 @@ class Product extends React.PureComponent {
           columns={columns}
           dataSource={lists}
           pagination={false}
-          defaultExpandAllRows
         />
       </div>
     );

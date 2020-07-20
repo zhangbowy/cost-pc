@@ -9,5 +9,6 @@ export default{
   detail: `${APP_API}/cost/project/detail`,
   edit: `${APP_API}/cost/project/edit`,
   add: `${APP_API}/cost/project/add`,
-  del: `${APP_API}/cost/project/del`
+  del: `${APP_API}/cost/project/del`,
+  sort: `${APP_API}/cost/project/sort`,
 };
