@@ -61,6 +61,11 @@ class BatchImport extends React.PureComponent {
     });
   }
 
+  beforeUpload = (file) => {
+    this.setState({ fileList: [file] });
+    return false;
+  }
+
   removeFile = () => {
     this.setState({ fileList: [] });
   }
