@@ -26,6 +26,8 @@ class Product extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      historyList: [],
+      searchName: ''
     };
   }
 
@@ -56,10 +58,15 @@ class Product extends React.PureComponent {
   }
 
   onSearch = (e) => {
-    this.onQuery({name: e});
     this.setState({
-      costName: e
+      searchName: e
     });
+    if(!this.state.searchName) {
+      this.setState({
+        historyList: JSON.parse(JSON.stringify(this.props.list))
+      });
+    }
+    this.onQuery({name: e});
   }
 
   onOk = (param, url, callback) => {
@@ -109,9 +116,7 @@ class Product extends React.PureComponent {
 
   // 获得排序结果
   getSort = (list, callback) => {
-    console.log(list);
     const result = this.openTree(list, []);
-    console.log(result);
     // 传给后端数据
     this.props.dispatch({
       type: 'project/sort',
@@ -120,7 +125,9 @@ class Product extends React.PureComponent {
       }
     }).then(() => {
       message.success('排序成功!');
-      this.onQuery({});
+      this.setState({ searchName: '' }, () => {
+        this.onQuery({});
+      });
       callback();
     });
   }
@@ -143,6 +150,7 @@ class Product extends React.PureComponent {
 
   render() {
     const { loading, list } = this.props;
+    const { searchName, historyList } = this.state;
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -206,7 +214,7 @@ class Product extends React.PureComponent {
       render: (_, record) => {
         return (
           <div>
-            <a onClick={() => this.delete(record)}>删除</a>
+            <a disabled={record.children} onClick={() => this.delete(record)}>删除</a>
             <Divider type="vertical" />
             <Setting
               target="project"
@@ -228,7 +236,7 @@ class Product extends React.PureComponent {
       name: 'name',
       otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type', 'status', 'sort', 'parentId']
     }, list);
-    if (this.state.costName) {
+    if (searchName) {
       lists = list;
     }
     this.sortData(lists);
@@ -256,7 +264,7 @@ class Product extends React.PureComponent {
               </Form.Item>
             </Form>
           </div>
-          <Sort style={{ justifyContent: 'flex-end' }} list={list} callback={this.getSort}>
+          <Sort style={{ justifyContent: 'flex-end' }} list={searchName ? historyList : list} callback={this.getSort}>
             <Button>排序</Button>
           </Sort>
         </div>

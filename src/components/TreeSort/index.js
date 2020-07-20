@@ -8,7 +8,7 @@ import { Modal, Button, Tree, message, Spin } from 'antd';
 import treeConvert from '@/utils/treeConvert';
 
 const { TreeNode } = Tree;
-export default class Sort extends Component {
+class Sort extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -184,7 +184,6 @@ export default class Sort extends Component {
             <Tree
               draggable
               blockNode
-              onDragEnter={this.onDragEnter}
               onDrop={this.onDrop}
             >
               {this.loop(data)}
@@ -195,3 +194,5 @@ export default class Sort extends Component {
     );
   }
 }
+
+export default Sort;

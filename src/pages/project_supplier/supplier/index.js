@@ -27,6 +27,8 @@ class Supplier extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      historyList: [],
+      searchName: ''
     };
   }
 
@@ -57,10 +59,15 @@ class Supplier extends React.PureComponent {
   }
 
   onSearch = (e) => {
-    this.onQuery({name: e});
     this.setState({
-      costName: e
+      searchName: e
     });
+    if(!this.state.searchName) {
+      this.setState({
+        historyList: JSON.parse(JSON.stringify(this.props.list))
+      });
+    }
+    this.onQuery({name: e});
   }
 
   onOk = (param, url, callback) => {
@@ -123,7 +130,9 @@ class Supplier extends React.PureComponent {
       }
     }).then(() => {
       message.success('排序成功!');
-      this.onQuery({});
+      this.setState({ searchName: '' }, () => {
+        this.onQuery({});
+      });
       callback();
     });
   }
@@ -146,6 +155,7 @@ class Supplier extends React.PureComponent {
 
   render() {
     const { loading, list } = this.props;
+    const { searchName, historyList } = this.state;
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -209,7 +219,7 @@ class Supplier extends React.PureComponent {
       render: (_, record) => {
         return (
           <div>
-            <a onClick={() => this.delete(record)}>删除</a>
+            <a disabled={record.children} onClick={() => this.delete(record)}>删除</a>
             <Divider type="vertical" />
             <Setting
               target="supplier"
@@ -231,7 +241,7 @@ class Supplier extends React.PureComponent {
       name: 'name',
       otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type', 'status', 'sort', 'parentId', 'supplierAccounts']
     }, list);
-    if (this.state.costName) {
+    if (searchName) {
       lists = list;
     }
     this.sortData(lists);
@@ -259,7 +269,7 @@ class Supplier extends React.PureComponent {
               </Form.Item>
             </Form>
           </div>
-          <Sort style={{ justifyContent: 'flex-end' }} list={list} callback={this.getSort}>
+          <Sort style={{ justifyContent: 'flex-end' }} list={searchName ? historyList : list} callback={this.getSort}>
             <Button>排序</Button>
           </Sort>
         </div>
