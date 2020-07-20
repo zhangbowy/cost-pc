@@ -8,7 +8,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, Upload, Spin, Form } from 'antd';
+import { Modal, Button, Upload, Spin, Form, message } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import constants from '@/utils/constants';
@@ -73,6 +73,10 @@ class BatchImport extends React.PureComponent {
   upload = () => {
     const { type } = this.props;
     const { fileList } = this.state;
+    if(!fileList.length) {
+      message.error('请上传文件');
+      return;
+    }
     const formData = new FormData();
     const url = type === 'supplier' ? 'global/uploadSupplierFile' : 'global/uploadProjectFile';
     formData.append('file', fileList[0]);

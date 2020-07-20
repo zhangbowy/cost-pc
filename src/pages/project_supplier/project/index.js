@@ -214,7 +214,7 @@ class Product extends React.PureComponent {
       render: (_, record) => {
         return (
           <div>
-            <a disabled={record.children} onClick={() => this.delete(record)}>删除</a>
+            <a className="deleteColor" disabled={record.children} onClick={() => this.delete(record)}>删除</a>
             <Divider type="vertical" />
             <Setting
               target="project"
