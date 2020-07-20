@@ -866,7 +866,9 @@ class AddInvoice extends Component {
                   <Col span={12}>
                     <Form.Item label={labelInfo.project} {...formItemLayout}>
                       {
-                        getFieldDecorator('projectId')(
+                        getFieldDecorator('projectId', {
+                          rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
+                        })(
                           <Select placeholder={`请选择${labelInfo.project}`} onChange={(val) => this.onChangePro(val, 'project')}>
                             {
                               usableProject.map(it => (
@@ -884,7 +886,9 @@ class AddInvoice extends Component {
                   <Col span={12}>
                     <Form.Item label={labelInfo.supplier} {...formItemLayout}>
                       {
-                        getFieldDecorator('supplier')(
+                        getFieldDecorator('supplier', {
+                          rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
+                        })(
                           <TreeSelect
                             treeData={supplierList}
                             placeholder="请选择"

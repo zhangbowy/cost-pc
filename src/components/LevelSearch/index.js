@@ -298,7 +298,9 @@ class LevelSearch extends Component {
               <Col span={12}>
                 <Form.Item label="项目" {...formItemLayout}>
                   {
-                    getFieldDecorator('projectId')(
+                    getFieldDecorator('projectIds', {
+                      initialValue: details.projectIds || [],
+                    })(
                       <TreeSelect
                         treeData={project}
                         placeholder="请选择项目"
@@ -314,7 +316,9 @@ class LevelSearch extends Component {
               <Col span={12}>
                 <Form.Item label="供应商" {...formItemLayout}>
                   {
-                    getFieldDecorator('supplierId')(
+                    getFieldDecorator('supplierIds', {
+                      initialValue: details.supplierIds || [],
+                    })(
                       <TreeSelect
                         treeData={supplierList}
                         placeholder="请选择供应商"

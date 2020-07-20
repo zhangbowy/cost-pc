@@ -303,7 +303,7 @@ class Payments extends React.PureComponent {
       dataIndex: 'receiptName',
       width: 120,
     }, {
-      title: '收款账户',
+      title: '个人/供应商收款账户',
       dataIndex: 'receiptNameJson',
       render: (_, record) => {
         const account = record.receiptNameJson && JsonParse(record.receiptNameJson);

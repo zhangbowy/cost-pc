@@ -348,7 +348,7 @@ class AddCost extends Component {
           const strs = JsonParse(item.shareField);
           strs.forEach(it => {
             if (it.field === 'project') {
-              project = {...item};
+              project = {...it};
             }
           });
         }
@@ -547,6 +547,7 @@ class AddCost extends Component {
               {
                 getFieldDecorator(`projectId[${record.key}]`, {
                   initialValue: record.projectId,
+                  rules: [{ required: !!(project.isWrite), message: '请选择项目' }]
                 })(
                   <Select>
                     {

@@ -1,5 +1,6 @@
 import { get, post } from '@/utils/request';
 import api from '@/services/api';
+import treeConvert from '@/utils/treeConvert';
 import { ddConfig } from '@/utils/ddApi';
 
 export default {
@@ -246,24 +247,15 @@ export default {
     // 供应商列表
     *supplierList({ payload }, { call, put }) {
       const response = yield call(get, api.supplierList, payload);
-      const arr = [];
+      let arr = [];
       if(response && response.length > 0) {
-        response.forEach(item => {
-          const obj = {
-            value: item.id,
-            title: item.name,
-            children: [],
-          };
-          if (item.supplierAccounts) {
-            item.supplierAccounts.forEach(it => {
-              obj.children.push({
-                value: it.id,
-                title: it.name,
-              });
-            });
-          }
-          arr.push(obj);
-        });
+        arr = treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          tId: 'value',
+          tName: 'title',
+          otherKeys: ['type', 'supplierAccounts', 'parentId'],
+        }, response);
       }
       yield put({
         type: 'save',

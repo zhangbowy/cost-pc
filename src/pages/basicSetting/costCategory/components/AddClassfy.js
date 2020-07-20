@@ -199,7 +199,7 @@ class AddClassify extends React.PureComponent {
       });
     }
     if (this.saveFormRef && this.saveFormRef.getFormItem) {
-      const values = this.saveFormRef.getFormItem();
+      const values = left === 'shareField' ? this.saveShare.getFormItem() :  this.saveFormRef.getFormItem();
       if(!values) {
         return;
       }
@@ -290,7 +290,7 @@ class AddClassify extends React.PureComponent {
                 />
               :
                 <Field
-                  wrappedComponentRef={form => {this.saveFormRef = form;}}
+                  wrappedComponentRef={form => {this[left === 'shareField' ? 'saveShare' : 'saveFormRef'] = form;}}
                   showFields={left !== 'shareField' ?  data.showFields : data.shareField}
                 />
             }
