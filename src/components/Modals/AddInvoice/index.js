@@ -1,6 +1,7 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect } from 'antd';
 import { connect } from 'dva';
 import fileIcon from '@/utils/fileIcon.js';
 import style from './index.scss';
@@ -21,7 +22,9 @@ const labelInfo = {
   receiptId: '收款账户',
   createDeptId: '所在部门',
   imgUrl: '图片',
-  fileUrl: '附件'
+  fileUrl: '附件',
+  project: '项目',
+  supplier: '供应商'
 };
 
 @connect(({ session, global, loading }) => ({
@@ -32,6 +35,8 @@ const labelInfo = {
   uploadSpace: global.uploadSpace,
   nodes: global.nodes,
   userId: global.userId,
+  usableSupplier: global.usableSupplier,
+  usableProject: global.usableProject,
   loading: loading.effects['global/addInvoice'] || false,
 }))
 @Form.create()
@@ -165,6 +170,16 @@ class AddInvoice extends Component {
     this.setState({
       visible: true
     });
+    this.props.dispatch({
+      type: 'global/usableSupplier',
+      payload: {},
+    });
+    this.props.dispatch({
+      type: 'global/usableProject',
+      payload: {
+        type: 1,
+      },
+    });
   }
 
   onCancel = () => {
@@ -222,6 +237,8 @@ class AddInvoice extends Component {
             processPersonId: detail.processPersonId,
             createDingUserId: detail.createDingUserId,
             total: (total * 1000)/10,
+            projectId: detail.projectId || '',
+            supplierId: detail.supplierId || ''
           };
         } else {
           this.props.form.setFieldsValue({
@@ -239,6 +256,8 @@ class AddInvoice extends Component {
             processPersonId: detail.processPersonId,
             createDingUserId: detail.createDingUserId,
             total: (total * 1000)/10,
+            projectId: detail.projectId || '',
+            supplierId: detail.supplierId || ''
           };
         }
         this.getNode(params);
@@ -296,6 +315,7 @@ class AddInvoice extends Component {
           loanEntities.push({
             loanUserId: item.loanUserId,
             loanDeptId: item.deptId,
+            projectId: item.projectId,
           });
         });
       }
@@ -314,6 +334,8 @@ class AddInvoice extends Component {
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
       total: (mo * 1000)/10,
+      projectId: detail.projectId || '',
+      supplierId: detail.supplierId || ''
     });
     this.setState({
       costDetailsVo: share,
@@ -409,6 +431,7 @@ class AddInvoice extends Component {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
+        console.log(val.supplier);
         let params = {
           ...details,
           invoiceTemplateId: id,
@@ -421,6 +444,9 @@ class AddInvoice extends Component {
           createDeptId: val.createDeptId,
           createDeptName: dept && dept.length > 0 ? dept[0].name : '',
           nodeConfigInfo: nodes,
+          projectId: val.projectId || '',
+          supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
+          supplierId: val.supplier ? val.supplier.split('_')[1] : '',
           imgUrl,
           fileUrl,
           submitSum: (total * 1000)/10
@@ -489,6 +515,8 @@ class AddInvoice extends Component {
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
       total: (total * 1000)/10,
+      projectId: detail.projectId || '',
+      supplierId: detail.supplierId || ''
     });
     this.setState({
       details: {
@@ -510,6 +538,8 @@ class AddInvoice extends Component {
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
       total: (total * 1000)/10,
+      projectId: detail.projectId || '',
+      supplierId: detail.supplierId || ''
     });
     this.setState({
       details: {
@@ -558,6 +588,59 @@ class AddInvoice extends Component {
     }
   }
 
+  onSelectTree = () => {
+    const { usableSupplier } = this.props;
+    const list = [];
+    usableSupplier.forEach(item => {
+      const obj = {
+        value: item.id,
+        title: item.name,
+        children: [],
+        disabled: true,
+      };
+      item.supplierAccounts.forEach(it => {
+        obj.children.push({
+          value: `${it.id}_${it.supplierId}`,
+          title: it.name,
+          parentId: it.supplierId,
+        });
+      });
+      list.push(obj);
+    });
+    return list;
+  }
+
+  onChangePro = (val, name) => {
+    let data = this.state.details;
+    if (name === 'project') {
+      data = {
+        ...data,
+        projectId: val,
+      };
+    } else {
+      data = {
+        ...data,
+        supplierId: val.split('_')[1],
+      };
+    }
+    const { loanUserId, total } = this.state;
+    this.getNode({
+      creatorDeptId: data.createDeptId || '',
+      loanUserId: loanUserId || '',
+      loanDeptId: data.deptId || '',
+      loanEntities: data.loanEntities || [],
+      categorySumEntities: data.categorySumEntities || [],
+      processPersonId: data.processPersonId,
+      createDingUserId: data.createDingUserId,
+      total: (total * 1000)/10,
+      projectId: data.projectId || '',
+      supplierId: data.supplierId || ''
+    });
+    this.setState({
+      details: data,
+    });
+  }
+
   render() {
     const {
       children,
@@ -565,7 +648,9 @@ class AddInvoice extends Component {
       userInfo,
       id,
       loading,
+      usableProject,
     } = this.props;
+    const supplierList = this.onSelectTree();
     const {
       visible,
       imgUrl,
@@ -772,6 +857,42 @@ class AddInvoice extends Component {
                             <i className="iconfont icondelete_fill" onClick={() => this.onDelFile(index)} />
                           </div>
                         ))
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.project && showField.project.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.project} {...formItemLayout}>
+                      {
+                        getFieldDecorator('projectId')(
+                          <Select placeholder={`请选择${labelInfo.project}`} onChange={(val) => this.onChangePro(val, 'project')}>
+                            {
+                              usableProject.map(it => (
+                                <Option key={it.id}>{it.name}</Option>
+                              ))
+                            }
+                          </Select>
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.supplier && showField.supplier.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.supplier} {...formItemLayout}>
+                      {
+                        getFieldDecorator('supplier')(
+                          <TreeSelect
+                            treeData={supplierList}
+                            placeholder="请选择"
+                            style={{width: '100%'}}
+                            dropdownStyle={{height: '300px'}}
+                            onChange={(val) => this.onChangePro(val, 'supplier')}
+                          />
+                        )
                       }
                     </Form.Item>
                   </Col>

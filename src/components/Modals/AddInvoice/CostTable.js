@@ -55,7 +55,11 @@ class CostTable extends Component {
                   {
                     record.costDetailShareVOS.map(it => (
                       <p key={it.id} className="c-black-36 fs-13">
-                        <span className="m-r-8">{it.userName}/{it.deptName}</span>
+                        <span className="m-r-8">{`${it.userName}/`}{it.deptName}</span>
+                        {
+                          it.projectName &&
+                          <span className="m-r-8">{it.projectName}</span>
+                        }
                         <span>¥{it.shareAmount}</span>
                       </p>
                     ))

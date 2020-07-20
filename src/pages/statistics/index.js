@@ -285,6 +285,10 @@ onDelete = (id) => {
       dataIndex: 'deptName',
       width: 130,
     }, {
+      title: '项目',
+      dataIndex: 'projectName',
+      width: 130,
+    }, {
       title: '报销事由',
       dataIndex: 'reason',
       width: 150,

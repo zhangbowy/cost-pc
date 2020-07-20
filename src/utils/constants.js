@@ -482,6 +482,18 @@ export const condition = [{
   sel: condThan,
   type: 'inputNumber',
   ruleType: 'detail_sum',
+}, {
+  key: 'project',
+  value: '项目',
+  sel: condExclude,
+  type: 'selectTree',
+  ruleType: 'project',
+}, {
+  key: 'supplier',
+  value: '供应商',
+  sel: condExclude,
+  type: 'selectTree',
+  ruleType: 'supplier',
 }];
 
 

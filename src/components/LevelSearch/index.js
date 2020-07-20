@@ -13,7 +13,9 @@ const { SHOW_CHILD } = TreeSelect;
 @Form.create()
 @connect(({ global }) => ({
   costCategoryList: global.costCategoryList,
-  invoiceList: global.invoiceList
+  invoiceList: global.invoiceList,
+  projectList: global.projectList,
+  supplierList: global.supplierList,
 }))
 class LevelSearch extends Component {
   constructor(props) {
@@ -28,8 +30,16 @@ class LevelSearch extends Component {
     };
   }
 
-  onShow = () => {
-    this.props.dispatch({
+  onShow = async () => {
+    await this.props.dispatch({
+      type: 'global/projectList',
+      payload: {}
+    });
+    await this.props.dispatch({
+      type: 'global/supplierList',
+      payload: {}
+    });
+    await this.props.dispatch({
       type: 'global/costList',
       payload: {},
     }).then(() => {
@@ -124,6 +134,8 @@ class LevelSearch extends Component {
       form: { getFieldDecorator },
       costCategoryList,
       invoiceList,
+      projectList,
+      supplierList,
     } = this.props;
     const lists = costCategoryList;
     const list = treeConvert({
@@ -140,6 +152,14 @@ class LevelSearch extends Component {
       tName: 'title',
       tId: 'value'
     }, invoiceList);
+    const project = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'name',
+      tName: 'title',
+      tId: 'value'
+    }, projectList);
+    console.log(supplierList);
     const { visible, userVOS, deptVOS, createUserVOS, createDeptVOS, details } = this.state;
     return (
       <span>
@@ -270,6 +290,38 @@ class LevelSearch extends Component {
                         showCheckedStrategy={SHOW_CHILD}
                         dropdownStyle={{height: '300px'}}
                         placeholder="请选择"
+                      />
+                    )
+                  }
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="项目" {...formItemLayout}>
+                  {
+                    getFieldDecorator('projectId')(
+                      <TreeSelect
+                        treeData={project}
+                        placeholder="请选择项目"
+                        treeCheckable
+                        style={{width: '100%'}}
+                        showCheckedStrategy={SHOW_CHILD}
+                        dropdownStyle={{height: '300px'}}
+                      />
+                    )
+                  }
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="供应商" {...formItemLayout}>
+                  {
+                    getFieldDecorator('supplierId')(
+                      <TreeSelect
+                        treeData={supplierList}
+                        placeholder="请选择供应商"
+                        treeCheckable
+                        style={{width: '100%'}}
+                        showCheckedStrategy={SHOW_CHILD}
+                        dropdownStyle={{height: '300px'}}
                       />
                     )
                   }

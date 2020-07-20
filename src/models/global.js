@@ -26,6 +26,10 @@ export default {
     approvePersonList: [], // 审批模板列表
     approverRoleList: [], // 审批角色列表
     uploadRes: {}, // 供应商项目批量上传结果
+    usableProject: [], // 可用的项目列表
+    usableSupplier: [], // 可用的供应商
+    projectList: [], // 项目列表
+    supplierList: [], // 供应商列表
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -208,7 +212,66 @@ export default {
           uploadRes: response
         }
       });
-    }
+    },
+    // 获取可用的项目列表
+    *usableProject({ payload }, { call, put }) {
+      const response = yield call(get, api.usableProject, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          usableProject: response || [],
+        },
+      });
+    },
+    // 获取可用的供应商
+    *usableSupplier({ payload }, { call, put }) {
+      const response = yield call(get, api.usableSupplier, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          usableSupplier: response || [],
+        },
+      });
+    },
+    // 项目列表
+    *projectList({ payload }, { call, put }) {
+      const response = yield call(get, api.projectList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          projectList: response || [],
+        },
+      });
+    },
+    // 供应商列表
+    *supplierList({ payload }, { call, put }) {
+      const response = yield call(get, api.supplierList, payload);
+      const arr = [];
+      if(response && response.length > 0) {
+        response.forEach(item => {
+          const obj = {
+            value: item.id,
+            title: item.name,
+            children: [],
+          };
+          if (item.supplierAccounts) {
+            item.supplierAccounts.forEach(it => {
+              obj.children.push({
+                value: it.id,
+                title: it.name,
+              });
+            });
+          }
+          arr.push(obj);
+        });
+      }
+      yield put({
+        type: 'save',
+        payload: {
+          supplierList: arr || [],
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {
