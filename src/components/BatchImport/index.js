@@ -74,7 +74,7 @@ class BatchImport extends React.PureComponent {
     const { type } = this.props;
     const { fileList } = this.state;
     if(!fileList.length) {
-      message.error('请上传文件');
+      message.error('请选择你要上传的文件');
       return;
     }
     const formData = new FormData();
