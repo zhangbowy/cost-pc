@@ -37,9 +37,9 @@ const accountType = {
 };
 
 @Form.create()
-@connect(({ supplierDel }) => ({
-  canDel: supplierDel.canDel,
-  msg: supplierDel.msg
+@connect(({ global }) => ({
+  accountCanDelRes: global.accountCanDelRes,
+  newDetail: global.newDetail,
 }))
 class Setting extends Component {
   constructor(props) {
@@ -72,22 +72,30 @@ class Setting extends Component {
       name: 'name',
       otherKeys: ['id']
     }, lists);
-
     if (detail && detail.id) { // 编辑
-      datas = {
-        ...detail,
-        parentId: findIndexArray(groupList, detail.parentId, []),
-        status: Number(detail.status) === 1,
-        userJson: !detail.userJson ? [] : JSON.parse(detail.userJson),
-        deptJson: !detail.deptJson ? [] : JSON.parse(detail.deptJson),
-      };
+      await this.props.dispatch({
+        type: `global/${target}_detail`,
+        payload: {
+          id: detail.id
+        }
+      }).then(() => {
+        const { newDetail } = this.props;
+        datas = {
+          ...newDetail,
+          parentId: findIndexArray(groupList, detail.parentId, []),
+          status: Number(detail.status) === 1,
+          userJson: !detail.userJson ? [] : JSON.parse(detail.userJson),
+          deptJson: !detail.deptJson ? [] : JSON.parse(detail.deptJson),
+        };
+      });
     } else { // 新增
       Object.assign(datas, {
         isAllUse: true,
         type: type === 'group' ? 0 : 1,
         parentId: [],
         userJson: [],
-        deptJson: []
+        deptJson: [],
+        status: 1
       });
     }
     this.setState({
@@ -136,7 +144,7 @@ class Setting extends Component {
     const { form, onOk, target, type } = this.props;
     const { data, delIds } = this.state;
     const val = { ...data };
-    const url = data.id ? `${target}/edit` : `${target}/add`;
+    const url = data.id ? `global/${target}_edit` : `global/${target}_add`;
     form.validateFields((err, values) => {
       if (!err) {
         Object.assign(val, {
@@ -167,6 +175,9 @@ class Setting extends Component {
           if(!this.checkAccounts(data)) {
             return;
           }
+        }
+        if(type === 'group') {
+          val.status = 1;
         }
         if (delIds.length) {
           val.delAccountIds = delIds;
@@ -218,12 +229,12 @@ class Setting extends Component {
     // 对原有账户记录的删除需要校验是否可以删除
     if (record.id) {
       this.props.dispatch({
-        type: 'supplierDel/checkCanDel',
+        type: 'global/accountCanDel',
         payload: {
           id: record.id
         }
       }).then(() => {
-        const { canDel, msg } = this.props;
+        const { accountCanDelRes: { canDel, msg } } = this.props;
         if (!canDel) {
           message.error(msg);
         } else {
@@ -307,11 +318,11 @@ class Setting extends Component {
           onCancel={() => this.closeModal()}
           onOk={e => this.onSave(e)}
           width="660px"
-          bodyStyle={{
+          bodyStyle={type === 'item' ? {
             padding: 20,
             maxHeight: '440px',
             overflowY: 'scroll'
-          }}
+          } : {}}
           footer={[
             <Button key="cancel" onClick={() => this.closeModal()}>取消</Button>,
             <Button key="save" type="primary" onClick={e => this.onSave(e)}>保存</Button>
