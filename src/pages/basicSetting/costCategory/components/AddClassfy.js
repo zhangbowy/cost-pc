@@ -142,10 +142,10 @@ class AddClassify extends React.PureComponent {
     });
   }
 
-  setLeft = (left) => {
-    const { data } = this.state;
+  setLeft = (lefts) => {
+    const { data, left } = this.state;
     const datas = {...data};
-    if (left !== 'basic') {
+    if (left === 'basic') {
       if (this.formRef && this.formRef.getFormItems) {
         const values = this.formRef.getFormItems();
         console.log(values);
@@ -156,23 +156,25 @@ class AddClassify extends React.PureComponent {
           ...values,
         });
       }
-    } else if (this.saveFormRef && this.saveFormRef.getFormItem) {
-      const values = this.saveFormRef.getFormItem();
-      if (!values) {
+    } else if (left === 'shareField'){
+      const values = this.saveShare && this.saveShare.getFormItem();
+      if(!values) {
         return;
       }
-      if (left === 'shareField') {
-        Object.assign(datas, {
-          shareField: [...values],
-        });
-      } else {
-        Object.assign(datas, {
-          showFields: [...values],
-        });
+      Object.assign(datas, {
+        shareField: [...values],
+      });
+    } else {
+      const values = this.saveFormRef && this.saveFormRef.getFormItem();
+      if(!values) {
+        return;
       }
+      Object.assign(datas, {
+        showFields: [...values],
+      });
     }
     this.setState({
-      left,
+      left: lefts,
       data: datas,
     });
   }
@@ -197,8 +199,7 @@ class AddClassify extends React.PureComponent {
         ...values,
         status: values.status ? 1 : 0,
       });
-    }
-    if (this.saveFormRef && this.saveFormRef.getFormItem) {
+    } else {
       const values = left === 'shareField' ? this.saveShare.getFormItem() :  this.saveFormRef.getFormItem();
       if(!values) {
         return;
