@@ -181,10 +181,13 @@ class Sort extends Component {
               <Button key="save" type="primary" onClick={e => this.onSave(e)}>保存</Button>
             ]}
           >
+            <span>拖拽下方内容修改排序</span>
             <Tree
               draggable
               blockNode
+              showIcon
               onDrop={this.onDrop}
+              style={{'marginTop': '20px'}}
             >
               {this.loop(data)}
             </Tree>
