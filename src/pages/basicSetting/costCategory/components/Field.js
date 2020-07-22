@@ -58,7 +58,6 @@ class Field extends Component {
       form: { getFieldDecorator },
     } = this.props;
     const { showFields } = this.state;
-    console.log(showFields);
     const columns = [{
       title: '字段',
       dataIndex: 'name',
@@ -87,7 +86,9 @@ class Field extends Component {
                 valuePropName: 'checked'
               })(
                 <Switch
-                  disabled={record.key === 'costCategory' || record.key === 'amount'}
+                  disabled={record.key === 'costCategory'
+                  || record.key === 'amount'
+                  || record.disabled}
                 />
               )
             }
@@ -108,7 +109,9 @@ class Field extends Component {
                   valuePropName: 'checked'
                 })(
                   <Switch
-                    disabled={record.key === 'costCategory' || record.key === 'amount'}
+                    disabled={record.key === 'costCategory'
+                    || record.key === 'amount'
+                    || record.disabled}
                   />
                 )
               }
@@ -117,24 +120,6 @@ class Field extends Component {
         </div>
       )
     },
-    // {
-    //   title: '备注（选填）',
-    //   dataIndex: 'note',
-    //   render: (_, record) => (
-    //     <div>
-    //       <Form.Item key="note">
-    //         {
-    //           getFieldDecorator(`note_${record.key}`, {
-    //             initialValue: record.note,
-    //             rules: [{ max: 20, message: '不超过20个字' }]
-    //           })(
-    //             <Input placeholder="请输入" />
-    //           )
-    //         }
-    //       </Form.Item>
-    //     </div>
-    //   )
-    // },
     {
       title: '其他操作',
       dataIndex: 'ope',

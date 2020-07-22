@@ -130,7 +130,7 @@ class Process extends Component {
       }
       let approveNode = {};
       if (data.nodeType === 'approver' || (data.nodeType === 'grant') || (data.nodeType === 'notifier')) {
-        const approveNodes = data.bizData.approveNode || {};
+        const approveNodes = data.bizData ? data.bizData.approveNode : {};
         approveNode = {...approveNodes};
         if (approveNodes.rule) {
           const rules = approveNodes.rule;

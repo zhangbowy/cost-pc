@@ -138,11 +138,27 @@ class Workbench extends PureComponent {
       title: '收款账户名称',
       dataIndex: 'receiptName',
       width: 150,
+      render: (_, record) => {
+        let name = record.receiptName;
+        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
+          name = record.supplierAccountVo.supplierAccountName;
+        }
+        return (
+          <span>{name || '-'}</span>
+        );
+      }
     }, {
-      title: '收款账户',
+      title: '个人/供应商收款账户',
       dataIndex: 'receiptId',
       render: (_, record) => {
-        const account = record.receiptNameJson && JsonParse(record.receiptNameJson);
+        let account = record.receiptNameJson && JsonParse(record.receiptNameJson);
+        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
+          account = [{
+            ...record.supplierAccountVo,
+            type: record.supplierAccountVo.accountType,
+            account: record.supplierAccountVo.supplierAccount,
+          }];
+        }
         return (
           <span>
             {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
@@ -152,7 +168,7 @@ class Workbench extends PureComponent {
           </span>
         );
       },
-      width: 160,
+      width: 180,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',

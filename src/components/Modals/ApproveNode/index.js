@@ -49,7 +49,7 @@ class ApproveNode extends Component {
       const { userList = [] } = approveNodesList[index];
       console.log('users   ', JSON.stringify(userList));
       choosePeople(userList.map(({userId}) => userId), (result) => {
-        // const { users: resUsers } = result;
+        // const { userList: resUsers } = result;
         console.log('resUsers ', JSON.stringify(result), index);
         // this.$spliceData({ 'approveNodesList': [index, 1, ] });
         approveNodesList.splice(index, 1, {

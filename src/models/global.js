@@ -1,5 +1,6 @@
 import { get, post } from '@/utils/request';
 import api from '@/services/api';
+import treeConvert from '@/utils/treeConvert';
 import { ddConfig } from '@/utils/ddApi';
 
 export default {
@@ -25,6 +26,15 @@ export default {
     invoiceList: [], // 单据列表
     approvePersonList: [], // 审批模板列表
     approverRoleList: [], // 审批角色列表
+    uploadRes: {}, // 供应商项目批量上传结果
+    usableProject: [], // 可用的项目列表
+    usableSupplier: [], // 可用的供应商
+    projectList: [], // 项目列表
+    supplierList: [], // 供应商列表
+    _projectList: [], // 项目列表
+    _supplierList: [], // 供应商列表
+    newDetail: {}, // 供应商/项目 详情
+    accountCanDelRes: {}, // 供应商账户可否删除校验结果
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -187,6 +197,164 @@ export default {
         type: 'save',
         payload: {
           approvePersonList: response || [],
+        },
+      });
+    },
+    /* -----------项目/供应商------------- */
+    // 项目
+    // 添加项目
+    *project_add({ payload }, { call }) {
+      yield call(post, api.addProject, payload);
+    },
+    // 删除项目
+    *project_del({ payload }, { call }) {
+      yield call(get, api.delProject, payload);
+    },
+    // 编辑项目
+    *project_edit({ payload }, { call }) {
+      yield call(post, api.editProject, payload);
+    },
+    // 获取项目列表
+    *project_list({ payload }, { call, put }) {
+      const response = yield call(get, api.projectList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          _projectList: response || [],
+        },
+      });
+    },
+    // 排序项目
+    *project_sort({ payload }, { call }) {
+      yield call(post, api.sortProject, payload);
+    },
+    // 项目详情
+    *project_detail({ payload }, { call, put }) {
+      const response = yield call(get, api.detailProject, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          newDetail: response || []
+        }
+      });
+    },
+    // 批量上传项目
+    *uploadProjectFile({ payload }, { call, put }) {
+      const response = yield call(post, api.uploadProject, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          uploadRes: response
+        }
+      });
+    },
+
+    // 供应商
+    // 新增供应商
+    *supplier_add({ payload }, { call }) {
+      yield call(post, api.addSupplier, payload);
+    },
+    // 删除供应商
+    *supplier_del({ payload }, { call }) {
+      yield call(get, api.delSupplier, payload);
+    },
+    // 编辑供应商
+    *supplier_edit({ payload }, { call }) {
+      yield call(post, api.editSupplier, payload);
+    },
+    // 获取供应商列表
+    *supplier_list({ payload }, { call, put }) {
+      const response = yield call(get, api.supplierList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          _supplierList: response || [],
+        },
+      });
+    },
+    // 供应商排序
+    *supplier_sort({ payload }, { call }) {
+      yield call(post, api.sortSupplier, payload);
+    },
+    // 供应商详情
+    *supplier_detail({ payload }, { call, put }) {
+      const response = yield call(get, api.detailSupplier, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          newDetail: response || []
+        }
+      });
+    },
+    // 批量上传供应商
+    *uploadSupplierFile({ payload }, { call, put }) {
+      const response = yield call(post, api.uploadSupplier, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          uploadRes: response
+        }
+      });
+    },
+    // 供应商账户删除校验
+    *accountCanDel({ payload }, { call, put }) {
+      const response = yield call(get, api.accountCanDel, payload);
+      console.log(response);
+      yield put({
+        type: 'save',
+        payload: {
+          accountCanDelRes: response
+        }
+      });
+    },
+
+    // 获取可用的项目列表
+    *usableProject({ payload }, { call, put }) {
+      const response = yield call(get, api.usableProject, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          usableProject: response || [],
+        },
+      });
+    },
+    // 获取可用的供应商
+    *usableSupplier({ payload }, { call, put }) {
+      const response = yield call(get, api.usableSupplier, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          usableSupplier: response || [],
+        },
+      });
+    },
+    // 项目列表
+    *projectList({ payload }, { call, put }) {
+      const response = yield call(get, api.projectList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          projectList: response || [],
+        },
+      });
+    },
+    // 供应商列表
+    *supplierList({ payload }, { call, put }) {
+      const response = yield call(get, api.supplierList, payload);
+      let arr = [];
+      if(response && response.length > 0) {
+        arr = treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          tId: 'value',
+          tName: 'title',
+          otherKeys: ['type', 'supplierAccounts', 'parentId'],
+        }, response);
+      }
+      yield put({
+        type: 'save',
+        payload: {
+          supplierList: arr || [],
         },
       });
     },

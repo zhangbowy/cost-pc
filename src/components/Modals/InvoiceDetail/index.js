@@ -141,7 +141,11 @@ class InvoiceDetail extends Component {
                   {
                     record.costDetailShareVOS.map(it => (
                       <p key={it.id} className="c-black-36 fs-13">
-                        <span className="m-r-8">{it.userName}/{it.deptName}</span>
+                        <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
+                        {
+                          it.projectName &&
+                          <span className="m-r-8">{it.projectName}</span>
+                        }
                         <span>¥{it.shareAmount/100}</span>
                       </p>
                     ))
@@ -297,6 +301,24 @@ class InvoiceDetail extends Component {
                     <p key={it.fileId} style={{marginBottom: '8px'}} onClick={() => this.previewFiles(it)}>{it.fileName}</p>
                   </div>
                 ))}
+              </span>
+            </Col>
+            <Col span={8} style={{display: 'flex'}} className="m-t-16">
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
+              <span className="fs-14 c-black-65">
+                {invoiceDetail.projectName}
+              </span>
+            </Col>
+            <Col span={8} style={{display: 'flex'}} className="m-t-16">
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
+              <span className="fs-14 c-black-65">
+                {invoiceDetail.supplierName}
+              </span>
+            </Col>
+            <Col span={8} style={{display: 'flex'}} className="m-t-16">
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
+              <span className="fs-14 c-black-65">
+                {invoiceDetail.supplierAccountName} {invoiceDetail.supplierAccount}
               </span>
             </Col>
           </Row>

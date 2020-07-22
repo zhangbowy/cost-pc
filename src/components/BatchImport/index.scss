@@ -1,0 +1,10 @@
+.import_wrapper{
+  position: relative;
+  width: 50%;
+  .download{
+    position: absolute;
+    top: 12px;
+    left: 120px;
+    text-decoration: underline;
+  }
+}

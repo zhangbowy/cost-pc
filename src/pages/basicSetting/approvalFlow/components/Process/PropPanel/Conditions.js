@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
 import { Form, Radio, Select, Button, InputNumber, TreeSelect } from 'antd';
-import { condExclude, condThan } from '@/utils/constants';
+import { condExclude, condition } from '@/utils/constants';
 import UserSelector from '@/components/Modals/SelectPeople';
 import treeConvert from '@/utils/treeConvert';
 import { connect } from 'dva';
@@ -14,41 +14,12 @@ import { getArrayValue } from '../../../../../../utils/constants';
 const { Option } = Select;
 const { SHOW_CHILD } = TreeSelect;
 let id = 0;
-const condition = [{
-  key: 'condition_creator_user_dept',
-  value: '制单人/部门',
-  sel: condExclude,
-  type: 'people',
-  ruleType: 'people',
-}, {
-  key: 'condition_bear_user_dept',
-  value: '承担人/部门',
-  sel: condExclude,
-  type: 'people',
-  ruleType: 'people',
-}, {
-  key: 'cost_category',
-  value: '费用类别',
-  sel: condExclude,
-  type: 'selectTree',
-  ruleType: 'category',
-}, {
-  key: 'invoice_submit_sum',
-  value: '报销金额',
-  sel: condThan,
-  type: 'inputNumber',
-  ruleType: 'submit_sum',
-}, {
-  key: 'cost_detail',
-  value: '费用金额',
-  sel: condThan,
-  type: 'inputNumber',
-  ruleType: 'detail_sum',
-}];
 
 @Form.create()
 @connect(({ global }) => ({
   costCategoryList: global.costCategoryList,
+  projectList: global.projectList,
+  supplierList: global.supplierList,
 }))
 class Conditions extends Component {
   static propTypes = {
@@ -189,7 +160,6 @@ class Conditions extends Component {
       ...list[index],
       ...val,
     };
-    console.log(list);
     this.setState({
       lists: list,
     });
@@ -293,6 +263,8 @@ class Conditions extends Component {
       details,
       conditions,
       conditionNode,
+      projectList,
+      supplierList,
     } = this.props;
     const PriArr = this.numToArr(priorityLength);
     const list = treeConvert({
@@ -302,6 +274,13 @@ class Conditions extends Component {
       tName: 'title',
       tId: 'value'
     }, costCategoryList);
+    const projectLists = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'name',
+      tName: 'title',
+      tId: 'value'
+    }, projectList);
     const disList = this.onSelectTree();
     const { lists, method } = this.state;
     const formItemLayout = {
@@ -317,6 +296,14 @@ class Conditions extends Component {
     getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
     const keys = getFieldValue('keys');
     const formItems = keys.map((item, index) => {
+      let valueList = [];
+      if (item.key === 'project') {
+        valueList = projectLists;
+      } else if (item.key === 'supplier') {
+        valueList = supplierList;
+      } else {
+        valueList = list;
+      }
       return (
         <Form.Item
           key={item.id}
@@ -407,7 +394,7 @@ class Conditions extends Component {
                 rules: [{ required: true, message: '请选择' }]
               })(
                 <TreeSelect
-                  treeData={list}
+                  treeData={valueList}
                   treeCheckable
                   style={{width: '100%'}}
                   showCheckedStrategy={SHOW_CHILD}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, message } from 'antd';
-import constants, { defaultTitle, costClassify } from '@/utils/constants';
+import constants, { defaultTitle, costClassify, classifyShare } from '@/utils/constants';
 import cs from 'classnames';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
@@ -52,6 +52,7 @@ class AddClassify extends React.PureComponent {
     if (title === 'add') {
       Object.assign(datas, {
         showFields: costClassify,
+        shareField: classifyShare,
       });
       if (data && data.parentId) {
         if (data && data.parentId !== '0') {
@@ -73,11 +74,11 @@ class AddClassify extends React.PureComponent {
         }
       }).then(() => {
         const { details } = _this.props;
-        console.log(details.status);
         datas = {
           ...details,
           parentId: _this.findIndexArray(lists, details.parentId, []),
-          showFields: (details.showField && JsonParse(details.showField)) || [],
+          showFields: (this.ObjToArray(details.showField, costClassify)) || [],
+          shareField: this.ObjToArray(details.shareField, classifyShare),
           status: Number(details.status) === 1,
         };
         if (title === 'copy') {
@@ -91,6 +92,29 @@ class AddClassify extends React.PureComponent {
         });
       });
     }
+  }
+
+  ObjToArray = (oldJson, newArr) => {
+    const arr = (oldJson && JsonParse(oldJson)) || [];
+    let resultArr = [];
+    if (arr && arr.length > 0) {
+      const obj = {};
+      arr.forEach(item => {
+        obj[item.field] = item;
+      });
+      newArr.forEach(item => {
+        if (item.field) {
+          resultArr.push({
+            ...item,
+            ...obj[item.field],
+          });
+        }
+      });
+    } else {
+      resultArr = newArr;
+    }
+    console.log(resultArr);
+    return resultArr;
   }
 
   findIndexArray  = (data, id, indexArray) => {
@@ -118,10 +142,10 @@ class AddClassify extends React.PureComponent {
     });
   }
 
-  setLeft = (left) => {
-    const { data } = this.state;
+  setLeft = (lefts) => {
+    const { data, left } = this.state;
     const datas = {...data};
-    if (left !== 'basic') {
+    if (left === 'basic') {
       if (this.formRef && this.formRef.getFormItems) {
         const values = this.formRef.getFormItems();
         console.log(values);
@@ -132,9 +156,17 @@ class AddClassify extends React.PureComponent {
           ...values,
         });
       }
-    } else if (this.saveFormRef && this.saveFormRef.getFormItem) {
-      const values = this.saveFormRef.getFormItem();
-      if (!values) {
+    } else if (left === 'shareField'){
+      const values = this.saveShare && this.saveShare.getFormItem();
+      if(!values) {
+        return;
+      }
+      Object.assign(datas, {
+        shareField: [...values],
+      });
+    } else {
+      const values = this.saveFormRef && this.saveFormRef.getFormItem();
+      if(!values) {
         return;
       }
       Object.assign(datas, {
@@ -142,14 +174,14 @@ class AddClassify extends React.PureComponent {
       });
     }
     this.setState({
-      left,
+      left: lefts,
       data: datas,
     });
   }
 
   onSave = e => {
     e.preventDefault();
-    const { data } = this.state;
+    const { data, left } = this.state;
     const datas = {...data};
     const {
       dispatch,
@@ -167,18 +199,24 @@ class AddClassify extends React.PureComponent {
         ...values,
         status: values.status ? 1 : 0,
       });
-    }
-    if (this.saveFormRef && this.saveFormRef.getFormItem) {
-      const values = this.saveFormRef.getFormItem();
+    } else {
+      const values = left === 'shareField' ? this.saveShare.getFormItem() :  this.saveFormRef.getFormItem();
       if(!values) {
         return;
       }
-      Object.assign(datas, {
-        showFields: [...values],
-      });
+      if (left === 'shareField') {
+        Object.assign(datas, {
+          shareField: [...values],
+        });
+      } else {
+        Object.assign(datas, {
+          showFields: [...values],
+        });
+      }
     }
     Object.assign(datas, {
       showField: JSON.stringify(datas.showFields),
+      shareField: JSON.stringify(datas.shareField),
       companyId: userInfo.companyId || '',
       type: 1,
       parentId: (datas.parentId && datas.parentId[datas.parentId.length-1]) || '',
@@ -253,8 +291,8 @@ class AddClassify extends React.PureComponent {
                 />
               :
                 <Field
-                  wrappedComponentRef={form => {this.saveFormRef = form;}}
-                  showFields={data.showFields}
+                  wrappedComponentRef={form => {this[left === 'shareField' ? 'saveShare' : 'saveFormRef'] = form;}}
+                  showFields={left !== 'shareField' ?  data.showFields : data.shareField}
                 />
             }
           </div>

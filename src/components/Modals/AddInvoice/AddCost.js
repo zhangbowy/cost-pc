@@ -25,6 +25,7 @@ const labelInfo = {
   expenseList: global.expenseList,
   deptInfo: global.deptInfo,
   userId: global.userId,
+  usableProject: global.usableProject,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ class AddCost extends Component {
       details: props.detail || {}, // 详细信息
       costSum: 0,
       shareAmount: 0,
+      project: {},
     };
   }
 
@@ -192,6 +194,7 @@ class AddCost extends Component {
     const {
       invoiceId,
       index,
+      usableProject,
     } = this.props;
     const {
       costDate,
@@ -235,11 +238,15 @@ class AddCost extends Component {
         costDetailShareVOS.forEach(item => {
           // eslint-disable-next-line eqeqeq
           const deptList = item.depList.filter(it => it.deptId == val.deptId[item.key]);
+          const projectName = val.projectId && val.projectId[item.key] ?
+              usableProject.filter(it => it.id === val.projectId[item.key])[0].name : '';
           arr.push({
             key: item.key,
             shareAmount: val.shareAmount[item.key],
             shareScale: val.shareScale[item.key],
             deptId: val.deptId[item.key],
+            projectId: val.projectId && val.projectId[item.key] ? val.projectId[item.key] : '',
+            projectName,
             userId: item.userId,
             deptName: deptList ? deptList[0].name : '',
             userName: item.userName,
@@ -320,6 +327,7 @@ class AddCost extends Component {
     let detail = this.state.details;
     const showFields = {};
     let costDate = 0;
+    let project = {};
     expenseList.forEach(item => {
       if (item.id === val) {
         detail = {
@@ -331,8 +339,17 @@ class AddCost extends Component {
           const str = JsonParse(item.showField);
           str.forEach(it => {
             showFields[it.field] = {...it};
-            if (it.field === 'happenTime' && it.dateType) {
-              costDate = Number(it.dateType);
+            if (it.field === 'happenTime') {
+              console.log(costDate);
+              costDate = it.dateType ? Number(it.dateType) : 1;
+            }
+          });
+        }
+        if (item.shareField) {
+          const strs = JsonParse(item.shareField);
+          strs.forEach(it => {
+            if (it.field === 'project') {
+              project = {...it};
             }
           });
         }
@@ -342,6 +359,7 @@ class AddCost extends Component {
       showField: showFields,
       costDate,
       details: detail,
+      project,
     });
   }
 
@@ -408,6 +426,7 @@ class AddCost extends Component {
       form: { getFieldDecorator },
       // expenseList,
       userInfo,
+      usableProject,
     } = this.props;
     const list = this.onSelectTree();
     const {
@@ -419,6 +438,7 @@ class AddCost extends Component {
       details,
       costSum,
       shareAmount,
+      project,
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -518,6 +538,35 @@ class AddCost extends Component {
       ),
       width: '70px'
     }];
+    if (project.status) {
+      columns.splice(2, 0, {
+        title: '项目',
+        dataIndex: 'projectId',
+        render: (_, record) => (
+          <Form>
+            <Form.Item>
+              {
+                getFieldDecorator(`projectId[${record.key}]`, {
+                  initialValue: record.projectId,
+                  rules: [{ required: !!(project.isWrite), message: '请选择项目' }]
+                })(
+                  <Select>
+                    {
+                      usableProject.map(it => (
+                        <Option key={it.id}>{it.name}</Option>
+                      ))
+                    }
+                  </Select>
+                )
+              }
+            </Form.Item>
+          </Form>
+        ),
+        width: '180px'
+      });
+    } else if (columns.length > 5) {
+      columns.splice(2,1);
+    }
     return (
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>

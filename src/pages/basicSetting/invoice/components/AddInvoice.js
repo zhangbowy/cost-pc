@@ -87,7 +87,7 @@ class AddInvoice extends React.PureComponent {
             }
             if (detail.showField) {
               Object.assign(datas, {
-                showFields: JsonParse(detail.showField),
+                showFields: this.ObjToArray(detail.showField, costCategoryJson),
               });
             }
             Object.assign(datas, {
@@ -117,6 +117,29 @@ class AddInvoice extends React.PureComponent {
         }
       });
     });
+  }
+
+  ObjToArray = (oldJson, newArr) => {
+    const arr = (oldJson && JsonParse(oldJson)) || [];
+    let resultArr = [];
+    if (arr && arr.length > 0) {
+      const obj = {};
+      arr.forEach(item => {
+        obj[item.field] = item;
+      });
+      newArr.forEach(item => {
+        if (item.field) {
+          resultArr.push({
+            ...item,
+            ...obj[item.field],
+          });
+        }
+      });
+    } else {
+      resultArr = newArr;
+    }
+    console.log(resultArr);
+    return resultArr;
   }
 
   onCancel = () => {
@@ -232,7 +255,7 @@ class AddInvoice extends React.PureComponent {
           <div className={styles.classify}>
             <div className={styles.lefts}>
               {
-                constants.classify.map(item => (
+                constants.classify.slice(0,2).map(item => (
                   <div
                     className={left === item.key ? cs(styles.leftTl, styles.active) : styles.leftTl}
                     key={item.key}

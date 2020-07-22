@@ -26,6 +26,9 @@ export default {
   }, {
     key: 'field',
     value: '字段设置',
+  }, {
+    key: 'shareField',
+    value: '分摊设置',
   }],
   imgPath: `${APP_API}/cost/upload/image`
 };
@@ -104,6 +107,20 @@ export const costCategoryJson = [{
   isWrite: true,
   note: '',
 }, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'supplier',
+  field: 'supplier',
+  name: '供应商',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
   key: 'note',
   field: 'note',
   name: '单据备注',
@@ -171,6 +188,32 @@ export const costClassify = [{
   note: '',
 }];
 
+// 费用类别分摊
+export const classifyShare = [{
+  key: 'user',
+  field: 'user',
+  disabled: true,
+  name: '承担人',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'dept',
+  field: 'dept',
+  name: '承担部门',
+  disabled: true,
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: false,
+  isWrite: false,
+  note: '',
+}];
+
 export const dataType = [{
   key: '1',
   value: '指定日期',
@@ -183,6 +226,11 @@ export const defaultTitle = {
   edit: '编辑',
   copy: '复制',
   add: '新增'
+};
+
+export const targets = {
+  project: '项目',
+  group: '分组'
 };
 
 // 审批流
@@ -434,6 +482,18 @@ export const condition = [{
   sel: condThan,
   type: 'inputNumber',
   ruleType: 'detail_sum',
+}, {
+  key: 'project',
+  value: '项目',
+  sel: condExclude,
+  type: 'selectTree',
+  ruleType: 'project',
+}, {
+  key: 'supplier',
+  value: '供应商',
+  sel: condExclude,
+  type: 'selectTree',
+  ruleType: 'supplier',
 }];
 
 

@@ -239,7 +239,7 @@ class Basic extends React.PureComponent {
                 depts={deptJson}
                 placeholder='请选择'
                 onSelectPeople={(val) => this.selectPle(val)}
-                invalid={[]}
+                invalid={false}
                 disabled={false}
               />
             }

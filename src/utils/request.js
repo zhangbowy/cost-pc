@@ -116,13 +116,16 @@ function request(url, config) {
       }
     }
   } else if (Object.is(config.method, 'POST')) {
-    Object.assign(options, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    if (config.data && !(config.data instanceof FormData)) {
+      Object.assign(options, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+    }
+
     if (config.data) {
-      if (typeof config.data !== 'string') {
+      if (typeof config.data !== 'string' && !(config.data instanceof FormData)) {
         options.body = JSON.stringify(config.data);
       } else {
         options.body = config.data;

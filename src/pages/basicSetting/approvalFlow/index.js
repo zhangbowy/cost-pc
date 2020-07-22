@@ -31,6 +31,14 @@ class ApprovalFlow extends Component {
       payload: {}
     });
     this.props.dispatch({
+      type: 'global/projectList',
+      payload: {},
+    });
+    this.props.dispatch({
+      type: 'global/supplierList',
+      payload: {},
+    });
+    this.props.dispatch({
       type: 'global/approverRole',
       payload: {
         pageNo: 1,

@@ -144,3 +144,20 @@
     white-space: nowrap;
   }
 }
+.treeOption{
+  display: flex;
+  align-items: center;
+  :global(.iconxianjin) {
+    color: #6FCC8C;
+  }
+  :global(.iconzhifubao) {
+    color: #3E82FE;
+  }
+  :global(.iconyinhangka) {
+    color: #F7B500;
+  }
+  :global(.iconfont) {
+    font-size: 21px;
+    line-height: 1;
+  }
+}

@@ -1,6 +1,7 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect } from 'antd';
 import { connect } from 'dva';
 import fileIcon from '@/utils/fileIcon.js';
 import style from './index.scss';
@@ -13,6 +14,7 @@ import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
 
 const {Option} = Select;
+const { TreeNode } = TreeSelect;
 const labelInfo = {
   reason: '事由',
   userId: '报销人',
@@ -21,7 +23,9 @@ const labelInfo = {
   receiptId: '收款账户',
   createDeptId: '所在部门',
   imgUrl: '图片',
-  fileUrl: '附件'
+  fileUrl: '附件',
+  project: '项目',
+  supplier: '供应商'
 };
 
 @connect(({ session, global, loading }) => ({
@@ -32,6 +36,8 @@ const labelInfo = {
   uploadSpace: global.uploadSpace,
   nodes: global.nodes,
   userId: global.userId,
+  usableSupplier: global.usableSupplier,
+  usableProject: global.usableProject,
   loading: loading.effects['global/addInvoice'] || false,
 }))
 @Form.create()
@@ -165,6 +171,16 @@ class AddInvoice extends Component {
     this.setState({
       visible: true
     });
+    this.props.dispatch({
+      type: 'global/usableSupplier',
+      payload: {},
+    });
+    this.props.dispatch({
+      type: 'global/usableProject',
+      payload: {
+        type: 1,
+      },
+    });
   }
 
   onCancel = () => {
@@ -222,6 +238,8 @@ class AddInvoice extends Component {
             processPersonId: detail.processPersonId,
             createDingUserId: detail.createDingUserId,
             total: (total * 1000)/10,
+            projectId: detail.projectId || '',
+            supplierId: detail.supplierId || ''
           };
         } else {
           this.props.form.setFieldsValue({
@@ -239,6 +257,8 @@ class AddInvoice extends Component {
             processPersonId: detail.processPersonId,
             createDingUserId: detail.createDingUserId,
             total: (total * 1000)/10,
+            projectId: detail.projectId || '',
+            supplierId: detail.supplierId || ''
           };
         }
         this.getNode(params);
@@ -296,6 +316,7 @@ class AddInvoice extends Component {
           loanEntities.push({
             loanUserId: item.loanUserId,
             loanDeptId: item.deptId,
+            projectId: item.projectId,
           });
         });
       }
@@ -314,6 +335,8 @@ class AddInvoice extends Component {
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
       total: (mo * 1000)/10,
+      projectId: detail.projectId || '',
+      supplierId: detail.supplierId || ''
     });
     this.setState({
       costDetailsVo: share,
@@ -404,11 +427,13 @@ class AddInvoice extends Component {
       createDepList,
       total,
     } = this.state;
+    const that = this;
     const { id, dispatch } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
+        console.log(val.supplier);
         let params = {
           ...details,
           invoiceTemplateId: id,
@@ -421,6 +446,9 @@ class AddInvoice extends Component {
           createDeptId: val.createDeptId,
           createDeptName: dept && dept.length > 0 ? dept[0].name : '',
           nodeConfigInfo: nodes,
+          projectId: val.projectId || '',
+          supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
+          supplierId: val.supplier ? val.supplier.split('_')[1] : '',
           imgUrl,
           fileUrl,
           submitSum: (total * 1000)/10
@@ -449,6 +477,7 @@ class AddInvoice extends Component {
                 'userJson':it.users,
                 deptName: it.deptName,
                 userName: it.userName,
+                projectId: it.projectId,
               });
             });
           }
@@ -463,7 +492,7 @@ class AddInvoice extends Component {
             ...params,
           }
         }).then(() => {
-          this.onCancel();
+          that.onCancel();
           message.success('发起单据成功');
           this.props.onHandleOk();
         });
@@ -489,6 +518,8 @@ class AddInvoice extends Component {
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
       total: (total * 1000)/10,
+      projectId: detail.projectId || '',
+      supplierId: detail.supplierId || ''
     });
     this.setState({
       details: {
@@ -510,6 +541,8 @@ class AddInvoice extends Component {
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
       total: (total * 1000)/10,
+      projectId: detail.projectId || '',
+      supplierId: detail.supplierId || ''
     });
     this.setState({
       details: {
@@ -558,6 +591,117 @@ class AddInvoice extends Component {
     }
   }
 
+  onSelectTree = () => {
+    const { usableSupplier } = this.props;
+    const list = [];
+    usableSupplier.forEach(item => {
+      const obj = {
+        value: item.id,
+        title: item.name,
+        children: [],
+        disabled: true,
+      };
+      item.supplierAccounts.forEach(it => {
+        obj.children.push({
+          value: `${it.id}_${it.supplierId}`,
+          title: it.name,
+          parentId: it.supplierId,
+          type: it.type,
+          account: it.account
+        });
+      });
+      list.push(obj);
+    });
+    return list;
+  }
+
+  treeNodeRender = (treeNode) => {
+
+  if(!treeNode || !treeNode.length){
+    return;
+  }
+    return treeNode.map((v) => {
+      return (
+        <TreeNode
+          value={v.value}
+          title={(
+            <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.title}</span>
+          )}
+          key={v.value}
+          disabled
+        >
+          {v.children && this.treeNodeChildRender(v.children)}
+        </TreeNode>
+      );
+    });
+  }
+
+  treeNodeChildRender = (list) => {
+    return list.map(it => (
+      <TreeNode
+        key={it.value}
+        value={it.value}
+        name={it.title}
+        title={(
+          <div>
+            <div className={style.treeOption}>
+              {
+                it.type === 0 &&
+                <i className="iconfont iconyinhangka" />
+              }
+              {
+                it.type === 1 &&
+                <i className="iconfont iconzhifubao" />
+              }
+              {
+                it.type === 2 &&
+                <i className="iconfont iconxianjin" />
+              }
+              {it.title}
+            </div>
+            <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
+              {it.type === 0 && '银行卡'}
+              {it.type === 1 && '支付宝'}
+              {it.type === 2 && '现金'}
+              {it.account}
+            </p>
+          </div>
+        )}
+      />
+    ));
+  }
+
+  onChangePro = (val, name) => {
+    let data = this.state.details;
+    if (name === 'project') {
+      data = {
+        ...data,
+        projectId: val,
+      };
+    } else {
+      data = {
+        ...data,
+        supplierId: val.split('_')[1],
+      };
+    }
+    const { loanUserId, total } = this.state;
+    this.getNode({
+      creatorDeptId: data.createDeptId || '',
+      loanUserId: loanUserId || '',
+      loanDeptId: data.deptId || '',
+      loanEntities: data.loanEntities || [],
+      categorySumEntities: data.categorySumEntities || [],
+      processPersonId: data.processPersonId,
+      createDingUserId: data.createDingUserId,
+      total: (total * 1000)/10,
+      projectId: data.projectId || '',
+      supplierId: data.supplierId || ''
+    });
+    this.setState({
+      details: data,
+    });
+  }
+
   render() {
     const {
       children,
@@ -565,7 +709,9 @@ class AddInvoice extends Component {
       userInfo,
       id,
       loading,
+      usableProject,
     } = this.props;
+    const supplierList = this.onSelectTree();
     const {
       visible,
       imgUrl,
@@ -627,12 +773,13 @@ class AddInvoice extends Component {
               <div className={style.line} />
               <span>基本信息</span>
             </div>
-            <Form className="formItem">
+            <Form className="formItem" refs={forms => {this.invoice = forms;}}>
               <Row>
                 <Col span={12}>
                   <Form.Item label={labelInfo.reason} {...formItemLayout}>
                     {
                       getFieldDecorator('reason', {
+                        initialValue: details.reason || '',
                         rules:[{ required: true, message: '请输入事由' }]
                       })(
                         <Input placeholder="请输入"  />
@@ -692,30 +839,29 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
                       {
                         getFieldDecorator('receiptId', {
-                          initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : '',
-                          rules: [{ required: !!(showField.receiptId.isWrite), message: '请输入收款账户' }],
+                          /* initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : null, */
+                          rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
                         })(
-                          <div style={{ display: 'flex' }}>
-                            <Select
-                              placeholder="请选择"
-                              dropdownClassName={style.opt}
-                              onChange={(val) => this.onChangeAcc(val)}
-                              optionLabelProp="label"
-                              value={details.receiptId}
-                            >
-                              {
-                                accountList.map(it => (
-                                  <Option key={it.id} value={it.id} label={it.name}>
-                                    <div className={style.selects}>
-                                      <p className="c-black fs-14">{it.name} </p>
-                                      <p className="c-black-36 fs-13">{it.account}</p>
-                                    </div>
-                                    <Divider type="horizontal" />
-                                  </Option>
-                                ))
-                              }
-                            </Select>
-                          </div>
+                          <Select
+                            placeholder="请选择"
+                            dropdownClassName={style.opt}
+                            onChange={(val) => this.onChangeAcc(val)}
+                            optionLabelProp="label"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
+                            // value={details.receiptId}
+                          >
+                            {
+                              accountList.map(it => (
+                                <Option key={it.id} value={it.id} label={it.name}>
+                                  <div className={style.selects}>
+                                    <p className="c-black fs-14">{it.name} </p>
+                                    <p className="c-black-36 fs-13">{it.account}</p>
+                                  </div>
+                                  <Divider type="horizontal" />
+                                </Option>
+                              ))
+                            }
+                          </Select>
                         )
                       }
                     </Form.Item>
@@ -731,7 +877,11 @@ class AddInvoice extends Component {
                         initialValue: details.createDeptId || '',
                         rules: [{ required: true, message: '请选择部门' }]
                       })(
-                        <Select placeholder="请选择" onChange={this.onChangeCreate}>
+                        <Select
+                          placeholder="请选择"
+                          onChange={this.onChangeCreate}
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
+                        >
                           {
                             createDepList.map(it => (
                               <Option key={it.deptId}>{it.name}</Option>
@@ -772,6 +922,56 @@ class AddInvoice extends Component {
                             <i className="iconfont icondelete_fill" onClick={() => this.onDelFile(index)} />
                           </div>
                         ))
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.project && showField.project.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.project} {...formItemLayout}>
+                      {
+                        getFieldDecorator('projectId', {
+                          initialValue: details.projectId || '',
+                          rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
+                        })(
+                          <Select
+                            placeholder={`请选择${labelInfo.project}`}
+                            onChange={(val) => this.onChangePro(val, 'project')}
+                            dropdownClassName="selectClass"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
+                          >
+                            {
+                              usableProject.map(it => (
+                                <Option key={it.id}>{it.name}</Option>
+                              ))
+                            }
+                          </Select>
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.supplier && showField.supplier.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.supplier} {...formItemLayout}>
+                      {
+                        getFieldDecorator('supplier', {
+                          rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
+                        })(
+                          <TreeSelect
+                            placeholder="请选择"
+                            style={{width: '100%'}}
+                            treeDefaultExpandAll
+                            dropdownStyle={{height: '300px'}}
+                            onChange={(val) => this.onChangePro(val, 'supplier')}
+                            treeNodeLabelProp="name"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
+                          >
+                            {this.treeNodeRender(supplierList)}
+                          </TreeSelect>
+                        )
                       }
                     </Form.Item>
                   </Col>
