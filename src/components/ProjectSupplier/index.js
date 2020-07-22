@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Button, Form, Table, Divider, Modal, message, Tag } from 'antd';
+import { Button, Form, Table, Divider, Modal, message, Tag, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 // import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
@@ -203,20 +203,27 @@ class Product extends React.PureComponent {
     }, {
       title: '备注',
       dataIndex: 'note',
-      width: '300px',
+      width: 160,
       render: (_, record) => {
-        return (
-          <div>
-            {
-              record.type === 1 ? <span>{record.note}</span> : <span>—</span>
-            }
-          </div>
-        );
+        let ele = null;
+        if (record.type === 1) {
+          ele = (
+            <span>
+              <Tooltip placement="topLeft" title={record.note || ''} arrowPointAtCenter>
+                <span className="eslips-2">{record.note}</span>
+              </Tooltip>
+            </span>
+          );
+        } else {
+          ele = <span>—</span>;
+        }
+        return ele;
       }
     }, {
       title: '操作',
       dataIndex: 'operate',
-      width: 160,
+      width: 120,
+      className: 'fixCenter',
       render: (_, record) => {
         return (
           <div>
