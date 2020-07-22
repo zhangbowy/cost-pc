@@ -317,7 +317,7 @@ class Setting extends Component {
           maskClosable={false}
           onCancel={() => this.closeModal()}
           onOk={e => this.onSave(e)}
-          width="660px"
+          width={type === 'item' ? '660px' : '480px'}
           bodyStyle={type === 'item' ? {
             padding: 20,
             maxHeight: '440px',

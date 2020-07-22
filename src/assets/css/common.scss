@@ -224,4 +224,19 @@
       margin-left: 10px;
     }
   }
+
+  .ant-tree li .ant-tree-node-content-wrapper:hover, .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background-color: #fafafa!important;
+  }
+  .ant-tree li .ant-tree-node-content-wrapper {
+    height: 40px!important;
+    line-height: 40px!important;
+  }
+  .ant-tree li span.ant-tree-switcher {
+    line-height: 40px!important;
+    height: 40px!important;
+  }
+  .ant-cascader-menu-item:hover {
+    background-color: #fafafa!important;
+  }
 }
