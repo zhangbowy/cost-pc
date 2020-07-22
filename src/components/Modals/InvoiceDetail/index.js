@@ -318,7 +318,7 @@ class InvoiceDetail extends Component {
             <Col span={8} style={{display: 'flex'}} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
               <span className="fs-14 c-black-65">
-                {invoiceDetail.supplierAccountName}
+                {invoiceDetail.supplierAccountName} {invoiceDetail.supplierAccount}
               </span>
             </Col>
           </Row>

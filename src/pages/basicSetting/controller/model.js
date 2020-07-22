@@ -18,8 +18,14 @@ export default {
         },
       });
     },
-    *del({ payload }, { call }) {
-      yield call(get, api.del, payload);
+    *del({ payload }, { call, put }) {
+      const response = yield call(get, api.del, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          removeDataTime: response || null,
+        },
+      });
     },
   },
   reducers: {

@@ -54,7 +54,7 @@ function Controller(props) {
           <span className="fs-14 c-black-45 fw-400">（清空数据后不可撤销，请谨慎操作）</span>
         </Lines>
         <Button className="m-t-13 m-b-17" onClick={clearsModal}>一键清空</Button>
-        <p className="fs-14 c-black-45 p-b-15">上次时间：{removeDataTime ? moment(removeDataTime).format('YYYY-MM-HH hh:mm') : '无'}</p>
+        <p className="fs-14 c-black-45 p-b-15">上次时间：{removeDataTime ? moment(Number(removeDataTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
         {/* <Divider type="horizontal" />
         <Lines name="人员同步">
           <Tooltip title="同步时间可能会较长，请稍后刷新页面查看同步结果">

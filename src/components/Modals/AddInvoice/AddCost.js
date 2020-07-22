@@ -339,8 +339,9 @@ class AddCost extends Component {
           const str = JsonParse(item.showField);
           str.forEach(it => {
             showFields[it.field] = {...it};
-            if (it.field === 'happenTime' && it.dateType) {
-              costDate = Number(it.dateType);
+            if (it.field === 'happenTime') {
+              console.log(costDate);
+              costDate = it.dateType ? Number(it.dateType) : 1;
             }
           });
         }
@@ -638,7 +639,7 @@ class AddCost extends Component {
                     {
                       costDate === 1 &&
                       getFieldDecorator('time', {
-                        initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : null,
+                        initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
                         rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                       })(
                         <DatePicker style={{width: '100%'}} />
@@ -650,7 +651,7 @@ class AddCost extends Component {
                         initialValue: details.startTime && details.endTime ?
                           [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
                           :
-                          null,
+                          [],
                         rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                       })(
                         <RangePicker

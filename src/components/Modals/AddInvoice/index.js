@@ -184,7 +184,7 @@ class AddInvoice extends Component {
   }
 
   onCancel = () => {
-    this.props.form.resetFields(['reason', 'supplier']);
+    this.props.form.resetFields();
     this.setState({
       visible: false,
       imgUrl: [],
@@ -839,7 +839,7 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
                       {
                         getFieldDecorator('receiptId', {
-                          initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : null,
+                          /* initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : null, */
                           rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
                         })(
                           <Select
@@ -847,6 +847,7 @@ class AddInvoice extends Component {
                             dropdownClassName={style.opt}
                             onChange={(val) => this.onChangeAcc(val)}
                             optionLabelProp="label"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
                             // value={details.receiptId}
                           >
                             {
@@ -876,7 +877,11 @@ class AddInvoice extends Component {
                         initialValue: details.createDeptId || '',
                         rules: [{ required: true, message: '请选择部门' }]
                       })(
-                        <Select placeholder="请选择" onChange={this.onChangeCreate}>
+                        <Select
+                          placeholder="请选择"
+                          onChange={this.onChangeCreate}
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
+                        >
                           {
                             createDepList.map(it => (
                               <Option key={it.deptId}>{it.name}</Option>
@@ -934,6 +939,7 @@ class AddInvoice extends Component {
                             placeholder={`请选择${labelInfo.project}`}
                             onChange={(val) => this.onChangePro(val, 'project')}
                             dropdownClassName="selectClass"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
                           >
                             {
                               usableProject.map(it => (
@@ -961,6 +967,7 @@ class AddInvoice extends Component {
                             dropdownStyle={{height: '300px'}}
                             onChange={(val) => this.onChangePro(val, 'supplier')}
                             treeNodeLabelProp="name"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
                           >
                             {this.treeNodeRender(supplierList)}
                           </TreeSelect>
