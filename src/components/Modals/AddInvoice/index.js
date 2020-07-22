@@ -14,6 +14,7 @@ import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
 
 const {Option} = Select;
+const { TreeNode } = TreeSelect;
 const labelInfo = {
   reason: '事由',
   userId: '报销人',
@@ -183,7 +184,7 @@ class AddInvoice extends Component {
   }
 
   onCancel = () => {
-    this.props.form.resetFields();
+    this.props.form.resetFields(['reason', 'supplier']);
     this.setState({
       visible: false,
       imgUrl: [],
@@ -426,6 +427,7 @@ class AddInvoice extends Component {
       createDepList,
       total,
     } = this.state;
+    const that = this;
     const { id, dispatch } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -475,6 +477,7 @@ class AddInvoice extends Component {
                 'userJson':it.users,
                 deptName: it.deptName,
                 userName: it.userName,
+                projectId: it.projectId,
               });
             });
           }
@@ -489,7 +492,7 @@ class AddInvoice extends Component {
             ...params,
           }
         }).then(() => {
-          this.onCancel();
+          that.onCancel();
           message.success('发起单据成功');
           this.props.onHandleOk();
         });
@@ -603,11 +606,69 @@ class AddInvoice extends Component {
           value: `${it.id}_${it.supplierId}`,
           title: it.name,
           parentId: it.supplierId,
+          type: it.type,
+          account: it.account
         });
       });
       list.push(obj);
     });
     return list;
+  }
+
+  treeNodeRender = (treeNode) => {
+
+  if(!treeNode || !treeNode.length){
+    return;
+  }
+    return treeNode.map((v) => {
+      return (
+        <TreeNode
+          value={v.value}
+          title={(
+            <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.title}</span>
+          )}
+          key={v.value}
+          disabled
+        >
+          {v.children && this.treeNodeChildRender(v.children)}
+        </TreeNode>
+      );
+    });
+  }
+
+  treeNodeChildRender = (list) => {
+    return list.map(it => (
+      <TreeNode
+        key={it.value}
+        value={it.value}
+        name={it.title}
+        title={(
+          <div>
+            <div className={style.treeOption}>
+              {
+                it.type === 0 &&
+                <i className="iconfont iconyinhangka" />
+              }
+              {
+                it.type === 1 &&
+                <i className="iconfont iconzhifubao" />
+              }
+              {
+                it.type === 2 &&
+                <i className="iconfont iconxianjin" />
+              }
+              {it.title}
+            </div>
+            <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
+              {it.type === 0 && '银行卡'}
+              {it.type === 1 && '支付宝'}
+              {it.type === 2 && '现金'}
+              {it.account}
+            </p>
+          </div>
+        )}
+      />
+    ));
   }
 
   onChangePro = (val, name) => {
@@ -712,12 +773,13 @@ class AddInvoice extends Component {
               <div className={style.line} />
               <span>基本信息</span>
             </div>
-            <Form className="formItem">
+            <Form className="formItem" refs={forms => {this.invoice = forms;}}>
               <Row>
                 <Col span={12}>
                   <Form.Item label={labelInfo.reason} {...formItemLayout}>
                     {
                       getFieldDecorator('reason', {
+                        initialValue: details.reason || '',
                         rules:[{ required: true, message: '请输入事由' }]
                       })(
                         <Input placeholder="请输入"  />
@@ -777,30 +839,28 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
                       {
                         getFieldDecorator('receiptId', {
-                          initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : '',
-                          rules: [{ required: !!(showField.receiptId.isWrite), message: '请输入收款账户' }],
+                          initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : null,
+                          rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
                         })(
-                          <div style={{ display: 'flex' }}>
-                            <Select
-                              placeholder="请选择"
-                              dropdownClassName={style.opt}
-                              onChange={(val) => this.onChangeAcc(val)}
-                              optionLabelProp="label"
-                              value={details.receiptId}
-                            >
-                              {
-                                accountList.map(it => (
-                                  <Option key={it.id} value={it.id} label={it.name}>
-                                    <div className={style.selects}>
-                                      <p className="c-black fs-14">{it.name} </p>
-                                      <p className="c-black-36 fs-13">{it.account}</p>
-                                    </div>
-                                    <Divider type="horizontal" />
-                                  </Option>
-                                ))
-                              }
-                            </Select>
-                          </div>
+                          <Select
+                            placeholder="请选择"
+                            dropdownClassName={style.opt}
+                            onChange={(val) => this.onChangeAcc(val)}
+                            optionLabelProp="label"
+                            // value={details.receiptId}
+                          >
+                            {
+                              accountList.map(it => (
+                                <Option key={it.id} value={it.id} label={it.name}>
+                                  <div className={style.selects}>
+                                    <p className="c-black fs-14">{it.name} </p>
+                                    <p className="c-black-36 fs-13">{it.account}</p>
+                                  </div>
+                                  <Divider type="horizontal" />
+                                </Option>
+                              ))
+                            }
+                          </Select>
                         )
                       }
                     </Form.Item>
@@ -867,9 +927,14 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.project} {...formItemLayout}>
                       {
                         getFieldDecorator('projectId', {
+                          initialValue: details.projectId || '',
                           rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
                         })(
-                          <Select placeholder={`请选择${labelInfo.project}`} onChange={(val) => this.onChangePro(val, 'project')}>
+                          <Select
+                            placeholder={`请选择${labelInfo.project}`}
+                            onChange={(val) => this.onChangePro(val, 'project')}
+                            dropdownClassName="selectClass"
+                          >
                             {
                               usableProject.map(it => (
                                 <Option key={it.id}>{it.name}</Option>
@@ -890,12 +955,15 @@ class AddInvoice extends Component {
                           rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
                         })(
                           <TreeSelect
-                            treeData={supplierList}
                             placeholder="请选择"
                             style={{width: '100%'}}
+                            treeDefaultExpandAll
                             dropdownStyle={{height: '300px'}}
                             onChange={(val) => this.onChangePro(val, 'supplier')}
-                          />
+                            treeNodeLabelProp="name"
+                          >
+                            {this.treeNodeRender(supplierList)}
+                          </TreeSelect>
                         )
                       }
                     </Form.Item>

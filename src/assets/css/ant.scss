@@ -102,4 +102,19 @@
   .moneyCol{
     text-align: right!important;
   }
+
+  .selectClass{
+    .ant-select-dropdown-menu-item{
+      padding: 12px!important;
+    }
+  }
+  .ant-select-tree li .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected{
+    background-color: #fafafa!important;
+  }
+  .ant-select-tree li .ant-select-tree-node-content-wrapper:hover{
+    background-color: #fafafa!important;
+  }
+  .ant-cascader-menu-item:hover{
+    background-color: #fafafa!important;
+  }
 }

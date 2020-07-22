@@ -245,7 +245,7 @@ class AddCost extends Component {
             shareAmount: val.shareAmount[item.key],
             shareScale: val.shareScale[item.key],
             deptId: val.deptId[item.key],
-            projectId: val.projectId ? val.projectId[item.key] : '',
+            projectId: val.projectId && val.projectId[item.key] ? val.projectId[item.key] : '',
             projectName,
             userId: item.userId,
             deptName: deptList ? deptList[0].name : '',
@@ -638,7 +638,7 @@ class AddCost extends Component {
                     {
                       costDate === 1 &&
                       getFieldDecorator('time', {
-                        initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                        initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : null,
                         rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                       })(
                         <DatePicker style={{width: '100%'}} />
@@ -650,7 +650,7 @@ class AddCost extends Component {
                         initialValue: details.startTime && details.endTime ?
                           [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
                           :
-                          [],
+                          null,
                         rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                       })(
                         <RangePicker
