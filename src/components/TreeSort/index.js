@@ -4,8 +4,9 @@
  */
 
 import React, { Component } from 'react';
-import { Modal, Button, Tree, message, Spin } from 'antd';
+import { Modal, Button, Tree, Spin, Divider, Icon } from 'antd';
 import treeConvert from '@/utils/treeConvert';
+import styles from './index.scss';
 
 const { TreeNode } = Tree;
 class Sort extends Component {
@@ -80,23 +81,82 @@ class Sort extends Component {
   loop = data => data.map(item => {
     if (item.children && item.children.length) {
       return (
-        <TreeNode key={item.id} title={item.name}>
+        <TreeNode
+          className={styles.treeNode}
+          key={item.id}
+          title={(
+            <div className={styles.treeWrapper}>
+              <span>{item.name}</span>
+              <div>
+                <a disabled={this.isTop(item.id, data)} onClick={() => this.move(item.id, 'up')}>上移</a>
+                <Divider type="vertical" />
+                <a disabled={this.isBottom(item.id, data)} onClick={() => this.move(item.id, 'down')}>下移</a>
+              </div>
+            </div>
+          )}
+        >
+          <a>上移</a>
           {this.loop(item.children)}
         </TreeNode>
       );
     }
-    return <TreeNode key={item.id} title={item.name} />;
+    return <TreeNode
+      className={styles.treeNode}
+      key={item.id}
+      title={(
+        <div className={styles.treeWrapper}>
+          <span>{item.name}</span>
+          <div>
+            <a disabled={this.isTop(item.id, data)} onClick={() => this.move(item.id, 'up')}>上移</a>
+            <Divider type="vertical" />
+            <a disabled={this.isBottom(item.id, data)} onClick={() => this.move(item.id, 'down')}>下移</a>
+          </div>
+        </div>
+      )}
+    />;
   })
 
-  // 判断是否为同级
-  compareIsPeer = (arr, currentId, targetId) => {
-    let result = true;
-    const currentArr = this.getCurrentArr(arr, currentId);
-    const targetArr = currentArr.filter(item => item.id === targetId);
-    if (!targetArr.length) {
-      result = false;
+  move = (id, action) => {
+    const n = action === 'up' ? -1 : 1;
+    const { data } = this.state;
+    const currentList = this.getCurrentArr(data, id);
+    const currentIndex = this.getIndex(currentList, id);
+    const item = currentList.splice(currentIndex, 1);
+    currentList.splice(currentIndex + n, 0, item[0]);
+    this.setState({ data });
+  }
+
+  // 判断是否为第一个
+  isTop = (id, arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      const e = arr[i];
+      if(e.id === id && i === 0) {
+        return true;
+      }
+
+      if(e.children) {
+        if(this.isTop(id, e.children)) {
+          return true;
+        }
+      }
     }
-    return result;
+    return false;
+  }
+
+  isBottom = (id, arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      const e = arr[i];
+      if(e.id === id && i === arr.length - 1) {
+        return true;
+      }
+
+      if(e.children) {
+        if(this.isBottom(id, e.children)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   // 获取排序的目标数组
@@ -128,38 +188,38 @@ class Sort extends Component {
     }
   }
 
-  // 拖拽放开时的回调
-  onDrop = (info) => {
-    const currentId = info.dragNodesKeys[info.dragNodesKeys.length - 1]; // 拖拽内容的id
-    const targetPosition = info.dropPosition; // 拖拽到的位置
-    const relativeId = info.node.props.eventKey; //  相对的内容
-    const { data } = this.state;
-    const currentList = this.getCurrentArr(data, currentId);
-    const currentIndex = this.getIndex(currentList, currentId);
-    const targetIndex = this.getIndex(currentList, relativeId);
+  // // 拖拽放开时的回调
+  // onDrop = (info) => {
+  //   const currentId = info.dragNodesKeys[info.dragNodesKeys.length - 1]; // 拖拽内容的id
+  //   const targetPosition = info.dropPosition; // 拖拽到的位置
+  //   const relativeId = info.node.props.eventKey; //  相对的内容
+  //   const { data } = this.state;
+  //   const currentList = this.getCurrentArr(data, currentId);
+  //   const currentIndex = this.getIndex(currentList, currentId);
+  //   const targetIndex = this.getIndex(currentList, relativeId);
 
-    const resultList = currentList.filter(item => item.id === relativeId);
-    if (!resultList.length) {
-      message.error('请在同级内移动');
-      return;
-    }
+  //   const resultList = currentList.filter(item => item.id === relativeId);
+  //   if (!resultList.length) {
+  //     message.error('请在同级内移动');
+  //     return;
+  //   }
 
-    let index = 0;
-    if (targetPosition <= targetIndex) { // 拖拽到前面
-      index = targetIndex;
-    } else { // 拖拽到后面
-      index = targetIndex + 1;
-    }
+  //   let index = 0;
+  //   if (targetPosition <= targetIndex) { // 拖拽到前面
+  //     index = targetIndex;
+  //   } else { // 拖拽到后面
+  //     index = targetIndex + 1;
+  //   }
 
-    if (currentIndex > targetIndex) { // 上移
-      const item = currentList.splice(currentIndex, 1);
-      currentList.splice(index, 0, item[0]);
-    } else { // 下移
-      const item = currentList.splice(currentIndex, 1);
-      currentList.splice(index - 1, 0, item[0]);
-    }
-    this.setState({ data });
-  }
+  //   if (currentIndex > targetIndex) { // 上移
+  //     const item = currentList.splice(currentIndex, 1);
+  //     currentList.splice(index, 0, item[0]);
+  //   } else { // 下移
+  //     const item = currentList.splice(currentIndex, 1);
+  //     currentList.splice(index - 1, 0, item[0]);
+  //   }
+  //   this.setState({ data });
+  // }
 
   render() {
     const { visible, data, isLoading } = this.state;
@@ -175,19 +235,20 @@ class Sort extends Component {
             maskClosable={false}
             onCancel={() => this.closeModal()}
             onOk={e => this.onSave(e)}
-            width="660px"
+            width="680px"
+            bodyStyle={{
+              padding: '20px',
+              height: '500px',
+              overflowY: 'scroll'
+            }}
             footer={[
               <Button key="cancel" onClick={() => this.closeModal()}>取消</Button>,
               <Button key="save" type="primary" onClick={e => this.onSave(e)}>保存</Button>
             ]}
           >
-            <span>拖拽下方内容修改排序</span>
             <Tree
-              draggable
               blockNode
-              showIcon
-              onDrop={this.onDrop}
-              style={{'marginTop': '20px'}}
+              switcherIcon={<Icon type="down" />}
             >
               {this.loop(data)}
             </Tree>

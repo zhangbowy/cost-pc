@@ -62,8 +62,8 @@ class BatchImport extends React.PureComponent {
   }
 
   beforeUpload = (file) => {
-    if(file.size > 2097152) {
-      message.error('上传文件不能超过2MB');
+    if(file.size > 1048576) {
+      message.error('上传文件不能超过1MB');
     } else {
       this.setState({ fileList: [file] });
     }
