@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Table, Popconfirm, Divider, Button, message } from 'antd';
+import { Table, Popconfirm, Divider, Button, message, Tooltip } from 'antd';
 import SubHeader from '@/components/SubHeader';
 import AddModal from './components/AddModal';
 
@@ -79,9 +79,14 @@ class ApproveIndex extends Component {
     }, {
       title: '角色简介',
       dataIndex: 'note',
+      width: 560,
       render: (text) => (
-        <span>{ text || '-' }</span>
-      )
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '操作',
       dataIndex: 'ope',

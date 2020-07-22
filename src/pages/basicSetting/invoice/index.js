@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
-import { Button, Form, Table, message, Modal, Menu, Dropdown, Icon, Divider, Tag } from 'antd';
+import { Button, Form, Table, message, Modal, Menu, Dropdown, Icon, Divider, Tag, Tooltip } from 'antd';
 // import TableBtn from '@/components/TableBtn';
 // import { SearchOutlined } from '@ant-design/icons';
 import QrCodeModal from '@/components/QrCodeModal';
@@ -127,7 +127,15 @@ class Invoice extends React.PureComponent {
       ),
     }, {
       title: '描述',
-      dataIndex: 'note'
+      dataIndex: 'note',
+      width: 460,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '操作',
       dataIndex: 'operate',

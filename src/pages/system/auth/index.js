@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { Button, Table, Divider, Popconfirm, message } from 'antd';
+import { Button, Table, Divider, Popconfirm, message, Tooltip } from 'antd';
 import { connect } from 'dva';
 import AddAuth from './components/AddAuth';
 
@@ -80,9 +80,14 @@ class Auth extends React.PureComponent {
     }, {
       title: '角色简介',
       dataIndex: 'note',
+      width: 560,
       render: (text) => (
-        <span>{ text || '-' }</span>
-      )
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '操作',
       dataIndex: 'ope',

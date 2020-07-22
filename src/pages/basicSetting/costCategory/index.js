@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
-import { Button, Form, Table, Modal, message, Menu, Icon, Dropdown, Divider, Tag } from 'antd';
+import { Button, Form, Table, Modal, message, Menu, Icon, Dropdown, Divider, Tag, Tooltip } from 'antd';
 import treeConvert from '@/utils/treeConvert';
 import { classifyIcon, getArrayColor } from '@/utils/constants';
 import Search from 'antd/lib/input/Search';
@@ -141,7 +141,15 @@ class CostCategory extends React.PureComponent {
       )
     }, {
       title: '描述',
-      dataIndex: 'note'
+      dataIndex: 'note',
+      width: 360,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '操作',
       dataIndex: 'operate',
