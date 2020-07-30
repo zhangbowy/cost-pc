@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Badge, Popconfirm, Divider } from 'antd';
+import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import moment from 'moment';
@@ -13,6 +13,8 @@ import MenuItems from '@/components/AntdComp/MenuItems';
 import { defaultStatus, getArrayValue, invoiceStatus, approveStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
+import banner from '@/assets/img/banner.png';
+import adCode from '@/assets/img/adCode.png';
 import style from './index.scss';
 import AddCategory from '../../components/AddCategory';
 import AddInvoice from '../../components/Modals/AddInvoice';
@@ -33,9 +35,10 @@ class Workbench extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state={
+    this.state = {
       type: '1',
       reason: '',
+      huaVisible: false
     };
   }
 
@@ -112,8 +115,13 @@ class Workbench extends PureComponent {
     });
   };
 
+  closeHua = () => {
+    this.setState({ huaVisible: false });
+  }
+
   render() {
     const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading } = this.props;
+    const { huaVisible } = this.state;
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -122,7 +130,7 @@ class Workbench extends PureComponent {
       title: '金额（元）',
       dataIndex: 'submitSum',
       render: (text) => (
-        <span>{ text && text/100 }</span>
+        <span>{text && text / 100}</span>
       ),
       className: 'moneyCol',
       width: 120,
@@ -162,8 +170,8 @@ class Workbench extends PureComponent {
         return (
           <span>
             {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
-            <span className="m-r-8">{ account && account[0] && account[0].bankName }</span>
-            { account && account[0] && account[0].account }
+            <span className="m-r-8">{account && account[0] && account[0].bankName}</span>
+            {account && account[0] && account[0].account}
             {!account && '-'}
           </span>
         );
@@ -182,12 +190,12 @@ class Workbench extends PureComponent {
       render: (text) => (
         <span>
           {
-            (Number(text) === 2 )|| (Number(text) === 3) ?
+            (Number(text) === 2) || (Number(text) === 3) ?
               <Badge
                 color={Number(text) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
                 text={getArrayValue(text, invoiceStatus)}
               />
-            :
+              :
               <span>{getArrayValue(text, invoiceStatus)}</span>
           }
         </span>
@@ -232,7 +240,7 @@ class Workbench extends PureComponent {
         {
           userInfo.isSupperAdmin && (localStorage.getItem('initShow') !== 'true') ?
             <StepShow {...this.props} userInfo={userInfo} />
-          :
+            :
             <>
               <div className={style.app_header}>
                 <p className="fs-14 fw-500 c-black-85 m-b-8">常用单据（点击直接新建）</p>
@@ -244,7 +252,7 @@ class Workbench extends PureComponent {
                   >
                     <div className={style.header_add}>
                       <div className={style.header_add_mc} />
-                      <i className="iconfont iconxinzengbaoxiao"/>
+                      <i className="iconfont iconxinzengbaoxiao" />
                       <p>我要报销</p>
                     </div>
                   </AddCategory>
@@ -267,15 +275,15 @@ class Workbench extends PureComponent {
                   }
                 </div>
               </div>
-              <div className="content-dt" style={{padding: 0}}>
-                <div style={{marginBottom: '24px'}}>
+              <div className="content-dt" style={{ padding: 0 }}>
+                <div style={{ marginBottom: '24px' }}>
                   <MenuItems
                     lists={defaultStatus}
                     onHandle={(val) => this.handleClick(val)}
                     status="1"
                   />
                 </div>
-                <div style={{margin: '0 32px'}}>
+                <div style={{ margin: '0 32px' }}>
                   <div className="m-b-16">
                     {/* <Button>导出</Button>
                     <Button className="m-l-8">打印</Button> */}
@@ -289,7 +297,7 @@ class Workbench extends PureComponent {
                     columns={columns}
                     dataSource={list}
                     rowKey="id"
-                    scroll={{x: 1300}}
+                    scroll={{ x: 1300 }}
                     loading={loading}
                     pagination={{
                       current: query.pageNo,
@@ -322,6 +330,44 @@ class Workbench extends PureComponent {
               </div>
             </>
         }
+
+        {/* 花呗工作花开通指引 */}
+        <Modal
+          footer={null}
+          header={null}
+          closable={false}
+          visible={huaVisible}
+          width="728px"
+          bodyStyle={{
+            padding: '0',
+          }}
+        >
+          <div className={style.banner_wrapper}>
+            <Icon onClick={this.closeHua} type="close" className={style.close} />
+            <img className={style.banner} src={banner} alt="" />
+            <div className={style.banner_footer}>
+              <div className={style.footer_left}>
+                <div className={style.left_top}>企业无预支，员工无垫付</div>
+                <div calssName={style.left_bottom}>鑫支出联合支付宝花呗工作花，为企业提供“报销备用金”</div>
+              </div>
+              <div className={style.footer_right}>
+                <div className={style.jumpout} onselectstart="return false;" onClick={this.closeHua}>跳过，稍后查看 &gt;</div>
+                {/* <Button type="primary" className={style.opening}>立刻咨询开通</Button> */}
+                <Popover
+                  content={(
+                    <div>
+                      <img alt="二维码" src={adCode} style={{ width: '200px' }} />
+                    </div>
+                  )}
+                  placement="top"
+                  trigger="hover"
+                >
+                  <Button type="primary" className={style.opening}>立刻咨询开通</Button>
+                </Popover>
+              </div>
+            </div>
+          </div>
+        </Modal>
       </div>
     );
   }

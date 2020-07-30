@@ -89,6 +89,14 @@ class InvoiceDetail extends Component {
     window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
   }
 
+  // 拒绝
+  handleRefuse = () => {
+    const { id, refuse } = this.props;
+    refuse(id, () => {
+      this.setState({ visible: false });
+    });
+  }
+
   previewImage = (arr, index) => {
     ddPreviewImage({
       urlArray: arr.map(it => it.imgUrl),
@@ -114,6 +122,7 @@ class InvoiceDetail extends Component {
     const {
       children,
       invoiceDetail,
+      canRefuse
     } = this.props;
 
     const columns = [{
@@ -200,8 +209,10 @@ class InvoiceDetail extends Component {
           width="980px"
           bodyStyle={{height: '572px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
-          footer={(
+          footer={([
+            canRefuse && <Button key="refuse" onClick={() => this.handleRefuse()}>拒绝</Button>,
             <Button key="cancel" type="primary" onClick={() => this.handelOk()}>打印</Button>
+          ]
           )}
         >
           <div className={cs(style.header, 'm-b-16')}>
