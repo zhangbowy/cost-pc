@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Divider, message, Menu, Button, Form, DatePicker } from 'antd';
+import { Table, Divider, message, Menu, Button, Form, DatePicker, Modal } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
@@ -12,6 +12,7 @@ import PayModal from './components/payModal';
 import DropBtn from '../../components/DropBtn';
 import constants, { getArrayValue, accountType } from '../../utils/constants';
 
+const { confirm } = Modal;
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
 @Form.create()
@@ -261,6 +262,24 @@ class Payments extends React.PureComponent {
     // });
   }
 
+  // 拒绝
+  handleRefuse = (id, callback) => {
+    confirm({
+      title: '确认拒绝该单据？',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'payment/refuse',
+          payload: {
+            invoiceSubmitIds: [id]
+          }
+        }).then(() => {
+          callback();
+          this.onOk();
+        });
+      }
+    });
+  }
+
   render() {
     const {
       status,
@@ -359,7 +378,7 @@ class Payments extends React.PureComponent {
             Number(record.status) === 2 &&
             <Divider type="vertical" />
           }
-          <InvoiceDetail id={record.invoiceId}>
+          <InvoiceDetail id={record.invoiceId} canRefuse={Number(record.status) === 2} refuse={this.handleRefuse}>
             <a>查看</a>
           </InvoiceDetail>
         </span>
