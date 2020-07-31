@@ -11,7 +11,7 @@
   }
   .approve_item_box {
     position: relative;
-    width: 330px;
+    width: 350px;
     &::before,
     &::after {
       content: '';
@@ -117,15 +117,15 @@
     }
   }
   .view_box {
+    &.view_add_box {
+      margin: 12px 0;
+      width: 55px;
+    }
     & > img {
       display: block;
       width: 36px;
       height: 36px;
       margin: auto;
-    }
-    &.view_add_box {
-      margin: 12px 0;
-      width: 55px;
     }
   }
   .approve_box {
@@ -176,7 +176,7 @@
     z-index: 10;
   }
 
-  .component_approve_node .approve_item_box .approve-item {
+  .component_approve_node .approve_item_box .approve-approve_item_box {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -285,13 +285,13 @@
     // flex-wrap: wrap;
     box-sizing: border-box;
     // flex-direction: column;
-    width: 100%;
+    // width: 100%;
     // padding:15px 22px;
   }
 
  .users_box {
     text-align: center;
-    width: 55px;
+    width: 57px;
     height: 60px;
   }
 
