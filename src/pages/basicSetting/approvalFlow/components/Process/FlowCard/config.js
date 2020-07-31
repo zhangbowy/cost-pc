@@ -2,7 +2,7 @@ export default {
   start: {
     nodeType: 'start',
     content: '所有人',
-    bizData: { title: '发起人', initiator: 'ALL' }
+    bizData: { title: '提交人', initiator: 'ALL' }
   },
   approver: {
     nodeType: 'approver',

@@ -228,11 +228,11 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{invoiceDetail.submitSum/100}</span>
             </Col>
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>制单人：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.createName}</span>
             </Col>
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>制单人部门：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人部门：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.createDeptName}</span>
             </Col>
           </Row>

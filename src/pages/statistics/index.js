@@ -311,11 +311,11 @@ onDelete = (id) => {
         <span>{text || '-'}</span>
       )
     }, {
-      title: '制单人',
+      title: '提交人',
       dataIndex: 'createUserName',
       width: 100,
     }, {
-      title: '制单人部门',
+      title: '提交人部门',
       dataIndex: 'createDeptName',
       width: 100,
     }, {

@@ -334,7 +334,7 @@ class Payments extends React.PureComponent {
       },
       width: 140,
     }, {
-      title: '制单人',
+      title: '提交人',
       dataIndex: 'createName',
       width: 100,
     }, {

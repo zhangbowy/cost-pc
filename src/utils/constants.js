@@ -266,14 +266,14 @@ export const approveLeader = [{
 }];
 export const approveCreate = [{
   key: 'make_user',
-  value: '制单人'
+  value: '提交人'
 }, {
   key: 'bear_user_or_dept',
   value: '承担人/部门'
 }];
 
 export const peopleType = {
-  'START': '发起人',
+  'START': '提交人',
   'CONDITION': '条件',
   'ROUTE': '路由（分叉）',
   'APPROVER': '审批人',
@@ -386,10 +386,10 @@ export const defaultFlow = [{
 // 审批默认配置
 export const defaultFlowId = [{
   key: '1111',
-  value: '制单人一级主管',
+  value: '提交人一级主管',
 }, {
   key: '222',
-  value: '制单人二级主管',
+  value: '提交人二级主管',
 }, {
   key: '333',
   value: '承担人一级主管',
@@ -454,7 +454,7 @@ export const condThan = [{
 /* -----------------------------------------------------分支条件----------------------------------------------------------*/
 export const condition = [{
   key: 'condition_creator_user_dept',
-  value: '制单人/部门',
+  value: '提交人/部门',
   sel: condExclude,
   type: 'people',
   ruleType: 'people',

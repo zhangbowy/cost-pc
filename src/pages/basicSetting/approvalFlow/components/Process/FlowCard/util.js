@@ -12,7 +12,11 @@ import { timeStampToHex } from '../../../../../../utils/common.js';
 
 const isEmpty = data => data === null || data === undefined || data === '';
 const isEmptyArray = data => Array.isArray( data ) ? data.length === 0 : true;
-
+/**
+ * 审批流的一般方法
+ * @export
+ * @class NodeUtils
+ */
 export class NodeUtils {
   static globalID = 10000
 
@@ -539,6 +543,28 @@ export class NodeUtils {
     node = childNode(node);
     console.log(`node${JSON.stringify(node)}`);
     return node;
+  }
+
+  /**
+   * 审批流的一般方法
+   * @export
+   * @function getApprove
+   */
+  static getApprove(datas){
+    let count = 0;
+    function nodeSearch(list){
+      for(const key in list) {
+        if (key === 'childNode') {
+          if (list.nodeType === 'approver'){
+            ++count;
+          }
+          nodeSearch(list.childNode);
+        }
+      }
+    }
+    nodeSearch(datas);
+    console.log('count', count);
+    return count;
   }
 }
 

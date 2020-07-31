@@ -31,13 +31,19 @@ function FlowCard(props) {
 
   const createNormalCard = (ctx, conf) => {
     const classList = ['flow-path-card'];
-
+    console.log('ctx', ctx);
+    let count = 0;
+    if (conf.nodeType === 'approver') {
+      count = NodeUtils.getApprove(ctx.data);
+    }
     // eslint-disable-next-line no-sequences
     const afterTrue = (isTrue, name) => (isTrue && classList.push(name), isTrue);
     const isStartNode = afterTrue(NodeUtils.isStartNode(conf), 'start-node');
     const isApprNode = afterTrue(NodeUtils.isApproverNode(conf), 'approver');
     const isCopyNode = afterTrue(NodeUtils.isCopyNode(conf), 'notifier');
     const isGrant = afterTrue(NodeUtils.isGrant(conf), 'grant');
+    const isOnlyApprove = conf && conf.nodeType === 'approver' && (((conf.prevId.indexOf('START') > -1) && conf.childNode && (conf.childNode.nodeType === 'grant')) ||
+                          (count === 1)); // 唯一的一个审批节点
     return (
       <section className={cs(style['flow-path-card'], style[classList[1]])} onClick={(e) => eventLancher(e, 'edit', conf)} >
         <header className={style.header}>
@@ -54,7 +60,7 @@ function FlowCard(props) {
             )}
           </div>
           {
-            !isGrant && !isStartNode &&
+            !isGrant && !isStartNode && !isOnlyApprove &&
             <div className={style.actions} style={{marginRight: '4px'}}>
               <Icon type="close" className={cs(style['el-icon-close'], style.icon)} onClick={(e) => eventLancher(e, 'deleteNode', conf, ctx.data)}  />
             </div>

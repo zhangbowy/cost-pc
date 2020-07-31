@@ -219,7 +219,7 @@ class LevelSearch extends Component {
             </Row>
             <Row>
               <Col span={12}>
-                <Form.Item label="制单人/部门" {...formItemLayout}>
+                <Form.Item label="提交人/部门" {...formItemLayout}>
                   <UserSelector
                     users={createUserVOS}
                     depts={createDeptVOS}
