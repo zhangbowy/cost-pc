@@ -186,7 +186,7 @@ class ApproveNode extends Component {
                         item.userList.length > 3 &&
                         (
                           <ViewMore list={approveNodesList[index]}>
-                            <div className={style.view_box}>
+                            <div className={cs(style.view_box, style.users_box, 'cur-p')}>
                               <img alt="全部" src={allAvatars} mode="aspectFill" />
                               <span className={style.text}>查看全部</span>
                             </div>
@@ -208,7 +208,7 @@ class ApproveNode extends Component {
                       {
                         (item.type === 'selfSelect' || (item.nodeType === 'notifier' && item.allowSelfChoose)) &&
                         (
-                          <div className={cs(style.view_box, style.view_add_box)}>
+                          <div className={cs(style.view_box, style.view_add_box, 'cur-p')}>
                             <img alt="add" className={style.add_img} src={addAvatars} mode="aspectFill" onClick={() => this.choosePerson(index)} />
                           </div>
                         )

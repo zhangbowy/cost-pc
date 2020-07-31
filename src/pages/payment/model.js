@@ -44,6 +44,9 @@ export default {
       Object.assign(payload, { type: 'export', fileName: '待发放列表' });
       yield call(post, api.payingExport, payload);
     },
+    *refuse({ payload }, { call }) {
+      yield call(post, api.refuse, payload);
+    }
   },
   reducers: {
     save(state, { payload }) {

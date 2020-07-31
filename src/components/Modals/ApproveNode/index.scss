@@ -67,7 +67,7 @@
   }
   .node_info {
     .title {
-      font-size: 15px;
+      font-size: 14px;
       color:rgba(0,0,0,0.85);
       display: block;
       line-height: 22px;
@@ -89,6 +89,7 @@
       margin: 0 12px;
     }
     .users_box {
+      width: 55px;
       & > img {
         display: block;
         margin: auto;
@@ -123,7 +124,8 @@
       margin: auto;
     }
     &.view_add_box {
-      margin-bottom: 20px;
+      margin: 12px 0;
+      width: 55px;
     }
   }
   .approve_box {
@@ -291,7 +293,6 @@
     text-align: center;
     width: 55px;
     height: 60px;
-    margin-bottom: 16px;
   }
 
   .component-approve-node .com-popup .user_list_box .users_box > .com_avatar {

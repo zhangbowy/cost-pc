@@ -4,6 +4,9 @@
     overflow: auto;
     // padding: 16px 0 !important;
     user-select: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   .app-content {
