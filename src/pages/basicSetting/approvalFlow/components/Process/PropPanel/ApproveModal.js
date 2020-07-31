@@ -89,7 +89,7 @@ class ApproveModal extends Component {
           approveNodes = {
             ...approveNodes,
             type: 'notifier',
-            name: val.allowSelfChoose ? '填报人自选' : users.map(it => it.userName).toString(),
+            name: val.allowSelfChoose ? '提交人自选' : users.map(it => it.userName).toString(),
             allowSelfChoose: val.allowSelfChoose,
           };
         }

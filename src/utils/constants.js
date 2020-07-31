@@ -245,7 +245,7 @@ export const approveUser = [{
   value: '按审批角色分工'
 }, {
   key: 'selfSelect',
-  value: '填报人自选'
+  value: '提交人自选'
 }];
 
 export const approveLeader = [{
