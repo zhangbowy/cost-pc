@@ -309,7 +309,7 @@ class ApproveSettingModal extends Component {
                   initialValue: (approveNode && approveNode.allowSelfChoose) || false,
                   valuePropName: 'checked'
                 })(
-                  <Checkbox >允许提报人自选</Checkbox>
+                  <Checkbox >允许提交人自选</Checkbox>
                 )
               }
               {

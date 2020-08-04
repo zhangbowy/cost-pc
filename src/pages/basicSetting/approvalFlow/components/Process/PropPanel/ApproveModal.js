@@ -82,7 +82,7 @@ class ApproveModal extends Component {
         }
         if (nodeType === 'notifier') {
           if (users.length === 0 && !val.allowSelfChoose) {
-            message.error('请设置抄送人员或允许提报人自选');
+            message.error('请设置抄送人员或允许提交人自选');
             vals='notifier';
             return;
           }
@@ -200,7 +200,7 @@ class ApproveModal extends Component {
               initialValue: (approveNode && approveNode.allowSelfChoose) || false,
               valuePropName: 'checked'
             })(
-              <Checkbox>允许提报人自选</Checkbox>
+              <Checkbox>允许提交人自选</Checkbox>
             )
           }
           {

@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Tooltip, Button, message, Modal } from 'antd';
+import { Tooltip, Button, message, Modal, Divider } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import Lines from '../../../components/StyleCom/Lines';
@@ -8,7 +8,7 @@ import style from './index.scss';
 
 function Controller(props) {
 
-  const { dispatch, userInfo, removeDataTime } = props;
+  const { dispatch, userInfo, removeDataTime, synCompanyTime } = props;
   useEffect(() => {
     dispatch({
       type: 'controller/getTime',
@@ -30,6 +30,18 @@ function Controller(props) {
     });
   };
 
+  const clearCompany = () => {
+    // delCompany
+    dispatch({
+      type: 'controller/delCompany',
+      payload: {
+        companyId: userInfo.companyId,
+      }
+    }).then(() => {
+      message.success('数据同步中请稍后查看人数');
+    });
+  };
+
   const clearsModal = () => {
     Modal.confirm({
       title: '一键清空',
@@ -39,6 +51,16 @@ function Controller(props) {
       }
     });
   };
+
+  // const synCompany = () => {
+  //   Modal.confirm({
+  //     title: '人员同步',
+  //     content: '清空数据后不可撤销',
+  //     onOk(){
+  //       clearCompany();
+  //     }
+  //   });
+  // };
 
   return (
     <div>
@@ -55,14 +77,14 @@ function Controller(props) {
         </Lines>
         <Button className="m-t-13 m-b-17" onClick={clearsModal}>一键清空</Button>
         <p className="fs-14 c-black-45 p-b-15">上次时间：{removeDataTime ? moment(Number(removeDataTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
-        {/* <Divider type="horizontal" />
+        <Divider type="horizontal" />
         <Lines name="人员同步">
           <Tooltip title="同步时间可能会较长，请稍后刷新页面查看同步结果">
             <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
           </Tooltip>
-        </Lines> */}
-        {/* <Button className="m-t-13 m-b-17">同步钉钉通讯录</Button>
-        <p className="fs-14 c-black-45 p-b-15">上次时间：2020-06-22</p> */}
+        </Lines>
+        <Button className="m-t-13 m-b-17" onClick={clearCompany}>同步钉钉通讯录</Button>
+        <p className="fs-14 c-black-45 p-b-15">上次时间：{synCompanyTime ? moment(Number(synCompanyTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
       </div>
     </div>
   );
@@ -71,6 +93,7 @@ const mapStateToProps = (state) => {
   return {
     removeDataTime: state.controller.removeDataTime,
     userInfo: state.session.userInfo,
+    synCompanyTime: state.controller.synCompanyTime
   };
 };
 export default connect(mapStateToProps)(Controller);

@@ -15,11 +15,22 @@ export default {
         type: 'save',
         payload: {
           removeDataTime: response ? response.removeDataTime : null,
+          synCompanyTime: response ? response.synCompanyTime : null,
+          status: response ? response.status : 0,
         },
       });
     },
     *del({ payload }, { call, put }) {
       const response = yield call(get, api.del, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          removeDataTime: response || null,
+        },
+      });
+    },
+    *delCompany({ payload }, { call, put }) {
+      const response = yield call(get, api.delCompany, payload);
       yield put({
         type: 'save',
         payload: {
