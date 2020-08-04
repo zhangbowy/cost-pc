@@ -190,7 +190,7 @@ class Workbench extends PureComponent {
       render: (text) => (
         <span>
           {
-            (Number(text) === 2) || (Number(text) === 3) ?
+            (Number(text) === 2) || (Number(text) === 3) || (Number(text) === 5) ?
               <Badge
                 color={Number(text) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
                 text={getArrayValue(text, invoiceStatus)}
