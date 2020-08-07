@@ -561,3 +561,15 @@ export const sexMap = {
   male: '男',
   female: '女',
 };
+
+// 自定义字段的类型
+export const customFields = [{
+  key: '0',
+  value: '单行输入框'
+}, {
+  key: '1',
+  value: '多行输入框'
+}, {
+  key: '2',
+  value: '单选框'
+}];

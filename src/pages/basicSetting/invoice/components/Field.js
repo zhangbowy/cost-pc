@@ -1,6 +1,7 @@
 import React from 'react';
-import { Table, Switch, Form } from 'antd';
+import { Table, Switch, Form, Button } from 'antd';
 import style from './classify.scss';
+import AddFieldStr from '../../../../components/Modals/AddFieldStr';
 
 @Form.create()
 class Field extends React.PureComponent {
@@ -13,6 +14,10 @@ class Field extends React.PureComponent {
 
   onRest() {
     this.props.form.resetFields();
+  }
+
+  onAdd = () => {
+
   }
 
   getFormItem = () => {
@@ -107,32 +112,18 @@ class Field extends React.PureComponent {
         </div>
       )
     }
-    // {
-    //   title: '备注（选填）',
-    //   dataIndex: 'note',
-    //   render: (_, record) => (
-    //     <div>
-    //       <Form.Item key="note">
-    //         {
-    //           getFieldDecorator(`note_${record.key}`, {
-    //             initialValue: record.note,
-    //             rules: [{ max: 20, message: '不超过20个字' }]
-    //           })(
-    //             <Input placeholder="请输入" />
-    //           )
-    //         }
-    //       </Form.Item>
-    //     </div>
-    //   )
-    // }
   ];
     return (
-      <div style={{ padding: '32px 19px 0 29px', width: '100%' }} className={style.field}>
+      <div style={{ padding: '16px 19px 0 29px', width: '100%' }} className={style.field}>
+        <AddFieldStr>
+          <Button onClick={() => this.onAdd()} className="m-b-16">添加自定义字段</Button>
+        </AddFieldStr>
         <Form>
           <Table
             columns={columns}
             dataSource={showFields}
             pagination={false}
+            scroll={{y: '320px'}}
           />
         </Form>
       </div>
