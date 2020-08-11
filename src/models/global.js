@@ -2,6 +2,7 @@ import { get, post } from '@/utils/request';
 import api from '@/services/api';
 import treeConvert from '@/utils/treeConvert';
 import { ddConfig } from '@/utils/ddApi';
+// import { message } from 'antd';
 
 export default {
   namespace: 'global',
@@ -106,6 +107,7 @@ export default {
       console.log(response);
       const { agentId, corpId, timeStamp, nonceStr, signature } = response;
       ddConfig(agentId, corpId, timeStamp, nonceStr, signature);
+      // message.error(response);
       yield put({
         type: 'save',
         payload: {

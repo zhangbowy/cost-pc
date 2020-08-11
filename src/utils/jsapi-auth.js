@@ -45,8 +45,10 @@ function gainCorpid () {
 // api权限验证
 function getDDAPIAuthed (corpId = gainCorpid()) {
   return new Promise((resolve, reject) => {
+    const urls = decodeURI(window.location.href).replace(/&v=2.0/, '');
+    const index = window.location.href.indexOf('#/');
     const params = {
-      url: decodeURI(window.location.href),
+      url: index > -1 ? urls.substring(0,index) : urls,
       corpId
     };
     _authentication(params).then(res => {
