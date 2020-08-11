@@ -7,7 +7,8 @@ import 'dingtalk-jsapi/entry/mobile';
 // import store from '@/store/index';
 import {
   config,
-  runtime
+  runtime,
+  // error
 } from 'dingtalk-jsapi';
 import choose from 'dingtalk-jsapi/api/biz/contact/choose';
 import complexPicker from 'dingtalk-jsapi/api/biz/contact/complexPicker';
@@ -98,13 +99,18 @@ export const requestAuth = async (id = null, callback) => {
 export const ddConfig = (agentId, corpId, timeStamp, nonceStr, signature) => {
   config({
     agentId, // 必填，微应用ID
-    corpId, // 必填，企业ID
+    corpId: `${corpId}`, // 必填，企业ID
     timeStamp, // 必填，生成签名的时间戳
-    nonceStr, // 必填，生成签名的随机串
-    signature, // 必填，签名
+    nonceStr: `${nonceStr}`, // 必填，生成签名的随机串
+    signature: `${signature}`, // 必填，签名
     type: 0, // 选填，0表示微应用的jsapi，1表示服务窗的jsapi，不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
     jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker', 'biz.cspace.preview', 'biz.util.uploadAttachment', 'biz.util.downloadFile'] // 必填，需要使用的jsapi列表，注意：不要带dd。
   });
+  console.log('config',config);
+  // message.error(`corpId_${corpId}`,1000000);
+  // error(function(err) {
+  //   message.error(JSON.stringify(err), 100000);
+  // });
 };
 
 /**
@@ -135,6 +141,7 @@ export const choosePeople = (users = [], callback, options = {}) => {
     }
   });
   choosed.catch(e => {
+    message.error(e.errorMessage);
     console.log(e.errorMessage);
   });
 };

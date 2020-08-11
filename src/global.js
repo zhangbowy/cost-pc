@@ -14,6 +14,7 @@ import { parse } from 'qs';
 // import {
 //   getQueryString
 // } from '@/utils/util';
+// import { message } from 'antd';
 import ddConfig from './utils/dd.config';
 import Session from './utils/session';
 import constants from './utils/constants';
@@ -51,13 +52,19 @@ if (isInDingTalk) {
         isLogin: true,
       }
     }).then(async() => {
+      localStorage.removeItem('corpId');
+      localStorage.removeItem('authCode');
+      localStorage.setItem('corpId', corpId);
+      localStorage.setItem('authCode', res.code);
       const userInfo = Session.get('userInfo');
+      const urls = window.location.href.replace(/&v=2.0/, '');
+      const index = urls.indexOf('#/');
       await window.g_app._store.dispatch({
         type: 'global/jsApiAuth',
         payload: {
           companyId: userInfo.companyId,
           corpId,
-          url: window.location.href,
+          url:  index > 0 ? urls.substring(0, index) : urls,
         },
       });
       // 左侧菜单请求
@@ -66,8 +73,7 @@ if (isInDingTalk) {
         payload: {},
       });
     });
-    localStorage.setItem('corpId', corpId);
-    localStorage.setItem('authCode', res.code);
+
     // console.log(window.g_app._store);
   }).catch(e => {
     console.log(e);
