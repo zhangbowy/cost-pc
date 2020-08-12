@@ -11,4 +11,5 @@ export default {
   edit: `${APP_API}/cost/invoice/template/edit`,
   delPer: `${APP_API}/cost/invoice/template/checkDel`,
   approve: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`,
+  delCheck: `${APP_API}/cost/invoice/template/checkDelExpand`,
 };

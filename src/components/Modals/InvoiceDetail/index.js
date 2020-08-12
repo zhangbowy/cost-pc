@@ -9,6 +9,7 @@ import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import style from './index.scss';
 import constants, { accountType } from '../../../utils/constants';
+import RefuseModal from './RefuseModal';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -210,7 +211,7 @@ class InvoiceDetail extends Component {
           bodyStyle={{height: '572px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           footer={([
-            canRefuse && <Button key="refuse" onClick={() => this.handleRefuse()}>拒绝</Button>,
+            canRefuse && <RefuseModal><Button key="refuse" className="m-r-16">拒绝</Button></RefuseModal>,
             <Button key="cancel" type="primary" onClick={() => this.handelOk()}>打印</Button>
           ]
           )}

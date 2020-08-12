@@ -573,3 +573,14 @@ export const customFields = [{
   key: '2',
   value: '单选框'
 }];
+
+export const refuseReason = [{
+  key: 'o1',
+  value: '发票抬头有误',
+}, {
+  key: 'o2',
+  value: '票务不符合财务规范',
+}, {
+  key: 'o3',
+  value: '报销内容与发票不符',
+}];

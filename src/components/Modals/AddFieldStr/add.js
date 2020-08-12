@@ -1,0 +1,243 @@
+import React, { Component } from 'react';
+import { Modal, Radio, Input, Button, Switch, Form } from 'antd';
+import cs from 'classnames';
+import { formItemLayout, customFields } from '../../../utils/constants';
+import style from  './index.scss';
+
+let id=0;
+const len = 5;
+@Form.create()
+class AddFieldStr extends Component {
+  constructor(props) {
+    super(props);
+    const initialVal = [];
+    for(let i=0; i<len; i++) {
+      initialVal.push(`expand_field_0${i+1}`);
+    }
+    this.state = {
+      visible: false,
+      fieldType: 0,
+      list: [{
+        id: 'expand_field_01'
+      }],
+      fields: initialVal,
+    };
+  }
+
+  onShow = () => {
+    const { detail } = this.props;
+    if (detail && detail.fieldType) {
+      this.setState({
+        fieldType: Number(detail.fieldType)
+      });
+    } else {
+      this.setState({
+        fieldType: 0
+      });
+    }
+    this.setState({
+      visible: true,
+    });
+  }
+
+  /**
+   * 新增条件
+   */
+  onAdd = () => {
+    const { form } = this.props;
+    // can use data-binding to get
+    const keys = form.getFieldValue('keys');
+    const nextKeys = keys.concat([{
+      id: ++id,
+      name: '',
+    }]);
+    form.setFieldsValue({
+      keys: nextKeys,
+    });
+  }
+
+  /**
+   * 删除条件
+   * @param { String } 包含k(删除的id值)
+   */
+  remove = k => {
+    const { form } = this.props;
+    const keys = form.getFieldValue('keys');
+    if (keys.length === 1) {
+      return;
+    }
+    form.setFieldsValue({
+      keys: keys.filter(key => key.id !== k),
+    });
+  };
+
+  onCancel  = () => {
+    this.props.form.resetFields();
+    this.setState({
+      visible: false,
+    });
+  }
+
+  onChange = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      fieldType: Number(e.target.value),
+    });
+  }
+
+  onConfirm = () => {
+    const {
+      expandField,
+      type,
+      detail,
+    } = this.props;
+    const { fields } = this.state;
+    let newArr = [...expandField];
+    this.props.form.validateFieldsAndScroll((err,val) => {
+      if (!err) {
+        let vals = {
+          ...val,
+          expand: true,
+        };
+        const oldFields = expandField.map(it => it.field);
+        if (val.keys && (Number(val.fieldType) === 2)) {
+          // val.keys.forEach(item => )
+        }
+        delete vals.keys;
+        if (type === 'edit') {
+          const arr = [];
+          newArr.forEach(it => {
+            if (it.field === detail.field) {
+              arr.push({
+                ...it,
+                ...vals,
+              });
+            } else {
+              arr.push(it);
+            }
+          });
+          newArr = arr;
+        } else {
+          const newFields = fields.filter(it => !oldFields.includes(it));
+          console.log(newFields);
+          vals = {
+            ...vals,
+            field: newFields[0],
+            key: newFields[0],
+          };
+          newArr.push(vals);
+        }
+        this.props.onAddStr(newArr);
+        this.onCancel();
+      }
+    });
+  }
+
+  render() {
+    const {
+      children,
+      form: { getFieldDecorator, getFieldValue },
+      detail,
+    } = this.props;
+    const { visible, fieldType, list } = this.state;
+    getFieldDecorator('keys', { initialValue: list });
+    const keys = getFieldValue('keys');
+    const formItems = fieldType === 2 ? keys.map(item=> (
+      <div className={style.addForm}>
+        <Form.Item
+          key={item.id}
+        >
+          {
+            getFieldDecorator(`${item.id}`)(
+              <Input placeholder="请输入选项" />
+            )
+          }
+        </Form.Item>
+        <span onClick={() => this.remove(item.id)} className={cs('deleteColor', style.del)}>删除</span>
+      </div>
+    )) : null;
+    return (
+      <span>
+        <span onClick={() => this.onShow()}>{children}</span>
+        <Modal
+          visible={visible}
+          title="新增自定义字段"
+          footer={[
+            <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
+            <Button key="save" type="primary" onClick={() => this.onConfirm()}>保存</Button>
+          ]}
+        >
+          <Form>
+            <Form.Item
+              {...formItemLayout}
+              label="字段类型"
+            >
+              {
+                getFieldDecorator('fieldType', {
+                  initialValue: `${fieldType}`,
+                  rules: [{ required: true, message: '请选择' }]
+                })(
+                  <Radio.Group onChange={e => this.onChange(e)}>
+                    {
+                      customFields.map(it => (
+                        <Radio key={it.key} value={it.key}>{it.value}</Radio>
+                      ))
+                    }
+                  </Radio.Group>
+                )
+              }
+            </Form.Item>
+            <Form.Item
+              {...formItemLayout}
+              label="字段名称"
+            >
+              {
+                getFieldDecorator('name', {
+                  initialValue: detail.name,
+                  rules: [{ required: true, message: '请输入字段名称' }]
+                })(
+                  <Input placeholder="请输入字段名称" />
+                )
+              }
+            </Form.Item>
+            {
+              fieldType === 2 &&
+              <div className={style.moveForm}>
+                {formItems}
+                <Button type="primary" className={style.addSelect} onClick={() => this.onAdd()}>添加选项</Button>
+              </div>
+            }
+            <Form.Item
+              {...formItemLayout}
+              label="启用"
+            >
+              {
+                getFieldDecorator('status', {
+                  initialValue: detail.status || true,
+                  valuePropName: 'checked'
+                })(
+                  <Switch />
+                )
+              }
+            </Form.Item>
+            <Form.Item
+              {...formItemLayout}
+              label="必填"
+            >
+              {
+                getFieldDecorator('isWrite', {
+                  initialValue: detail.isWrite || false,
+                  valuePropName: 'checked'
+                })(
+                  <Switch />
+                )
+              }
+            </Form.Item>
+          </Form>
+        </Modal>
+      </span>
+    );
+  }
+}
+
+export default AddFieldStr;

@@ -1,14 +1,16 @@
+/* eslint-disable react/no-access-state-in-setstate */
 import React from 'react';
-import { Table, Switch, Form, Button } from 'antd';
+import { Table, Switch, Form, Button, Divider } from 'antd';
 import style from './classify.scss';
-import AddFieldStr from '../../../../components/Modals/AddFieldStr';
+import AddFieldStr from '../../../../components/Modals/AddFieldStr/add';
 
 @Form.create()
 class Field extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-
+      showFields: props.showFields,
+      expandField: props.expandField || [],
     };
   }
 
@@ -16,37 +18,60 @@ class Field extends React.PureComponent {
     this.props.form.resetFields();
   }
 
-  onAdd = () => {
-
+  onAddStr = (arr) => {
+    const arrs = this.state.showFields.filter(it => !(it.field.indexOf('expand_field')> -1));
+    const oldArr = [...arr];
+    arr.unshift(4,0);
+    Array.prototype.splice.apply(arrs, arr);
+    this.setState({
+      showFields: arrs,
+      expandField: oldArr,
+    });
   }
 
   getFormItem = () => {
     const {
       form,
-      showFields,
     } = this.props;
+    const { showFields, expandField } = this.state;
     let list = [...showFields];
+    let expandList = [...expandField];
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         list.forEach(item => {
           Object.assign(item, {
-            status: values[`status_${item.key}`],
-            isWrite: values[`isWrite_${item.key}`],
-            note: values[`note_${item.key}`],
+            status: values[`status_${item.field}`],
+            isWrite: values[`isWrite_${item.field}`],
+            note: values[`note_${item.field}`],
           });
         });
+        expandList = list.filter(it => (it.field.indexOf('expand_field')> -1));
       } else {
         list = null;
       }
     });
-    return list;
+    console.log('expandList', expandList);
+    const obj = {
+      list,
+      expandField: expandList,
+    };
+    return obj;
+  }
+
+  handleVisibleChange = (field) => {
+    this.props.dispatch({
+      type: 'invoice/delCheck',
+      payload: {
+        field
+      }
+    });
   }
 
   render() {
     const {
       form: { getFieldDecorator },
-      showFields,
     } = this.props;
+    const { showFields, expandField } = this.state;
     const columns = [{
       title: '字段',
       dataIndex: 'name',
@@ -54,7 +79,7 @@ class Field extends React.PureComponent {
         <div>
           <Form.Item key="name">
             {
-              getFieldDecorator(`name_${record.key}`, {
+              getFieldDecorator(`name_${record.field}`, {
                 initialValue: record.name,
               })(
                 <span>{record.name}</span>
@@ -70,15 +95,15 @@ class Field extends React.PureComponent {
         <div>
           <Form.Item key="status">
             {
-              getFieldDecorator(`status_${record.key}`, {
+              getFieldDecorator(`status_${record.field}`, {
                 initialValue: record.status,
                 valuePropName: 'checked'
               })(
                 <Switch
-                  disabled={record.key === 'reason'
-                    || record.key === 'undertakerIson'
-                    || record.key === 'deptId'
-                    || record.key === 'userJson'}
+                  disabled={record.field === 'reason'
+                    || record.field === 'undertakerIson'
+                    || record.field === 'deptId'
+                    || record.field === 'userJson'}
                 />
               )
             }
@@ -95,15 +120,15 @@ class Field extends React.PureComponent {
           record.field !== 'fileUrl' &&
           <Form.Item key="isWrite">
             {
-              getFieldDecorator(`isWrite_${record.key}`, {
+              getFieldDecorator(`isWrite_${record.field}`, {
                 initialValue: record.isWrite,
                 valuePropName: 'checked'
               })(
                 <Switch
-                  disabled={record.key === 'reason'
-                    || record.key === 'undertakerIson'
-                    || record.key === 'deptId'
-                    || record.key === 'userJson'}
+                  disabled={record.field === 'reason'
+                    || record.field === 'undertakerIson'
+                    || record.field === 'deptId'
+                    || record.field === 'userJson'}
                 />
               )
             }
@@ -111,12 +136,41 @@ class Field extends React.PureComponent {
         }
         </div>
       )
+    }, {
+      title: '操作',
+      dataIndex: 'operate',
+      render: (_, record) => {
+        return (
+          <span>
+            {
+              (record.expand) || (record.field && record.field.indexOf('expand_field') > -1) &&
+              <span>
+                <span className="deleteColor" onClick={() => this.handleVisibleChange(record.field)}>删除</span>
+                <Divider type="vertical" />
+                <AddFieldStr
+                  type="edit"
+                  onAddStr={(arr) => this.onAddStr(arr)}
+                  expandField={expandField}
+                  detail={record}
+                >
+                  <a>编辑</a>
+                </AddFieldStr>
+              </span>
+            }
+          </span>
+        );
+      }
     }
   ];
     return (
       <div style={{ padding: '16px 19px 0 29px', width: '100%' }} className={style.field}>
-        <AddFieldStr>
-          <Button onClick={() => this.onAdd()} className="m-b-16">添加自定义字段</Button>
+        <AddFieldStr
+          type="add"
+          onAddStr={(arr) => this.onAddStr(arr)}
+          expandField={expandField}
+          detail={{}}
+        >
+          <Button className="m-b-16" type="primary">添加自定义字段</Button>
         </AddFieldStr>
         <Form>
           <Table
@@ -124,6 +178,7 @@ class Field extends React.PureComponent {
             dataSource={showFields}
             pagination={false}
             scroll={{y: '320px'}}
+            rowKey="field"
           />
         </Form>
       </div>

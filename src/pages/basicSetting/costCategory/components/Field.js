@@ -1,7 +1,9 @@
+/* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Table, Switch, Form, Select } from 'antd';
+import { Table, Switch, Form, Select, Button } from 'antd';
 import { costClassify, dataType } from '@/utils/constants';
 import style from './classify.scss';
+import AddFieldStr from '../../../../components/Modals/AddFieldStr/add';
 
 const { Option } = Select;
 @Form.create()
@@ -10,6 +12,7 @@ class Field extends Component {
     super(props);
     this.state = {
       showFields: props.showFields,
+      expandField: props.expandField,
     };
   }
 
@@ -22,6 +25,18 @@ class Field extends Component {
     }
   }
 
+  onAddStr = (arr) => {
+    const arrs = this.state.showFields.filter(it => !(it.field.indexOf('expand_field')> -1));
+    const oldArr = [...arr];
+    arr.unshift(4,0);
+    Array.prototype.splice.apply(arrs, arr);
+    console.log('arrs', arrs);
+    this.setState({
+      showFields: arrs,
+      expandField: oldArr,
+    });
+  }
+
   onRest() {
     this.props.form.resetFields();
   }
@@ -29,8 +44,10 @@ class Field extends Component {
   getFormItem = () => {
     const {
       form,
-      showFields,
     } = this.props;
+    const {
+      showFields,
+    } = this.state;
     let list = [...showFields];
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -57,7 +74,7 @@ class Field extends Component {
     const {
       form: { getFieldDecorator },
     } = this.props;
-    const { showFields } = this.state;
+    const { showFields, expandField } = this.state;
     const columns = [{
       title: '字段',
       dataIndex: 'name',
@@ -148,10 +165,19 @@ class Field extends Component {
     }];
     return (
       <div style={{ padding: '32px 19px 0 29px', width: '100%' }} className={style.field}>
+        <AddFieldStr
+          type="add"
+          onAddStr={(arr) => this.onAddStr(arr)}
+          expandField={expandField}
+          detail={{}}
+        >
+          <Button className="m-b-16" type="primary">添加自定义字段</Button>
+        </AddFieldStr>
         <Table
           columns={columns}
           dataSource={showFields || costClassify}
           pagination={false}
+          rowKey="field"
         />
       </div>
     );

@@ -3,7 +3,27 @@
   justify-content: space-between;
 }
 .addForm{
-  width: 60%;
+  // width: 60%;
   background: #FAFAFB;
+  padding: 0px 0 0px 12px;
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+  :global(.ant-form-item){
+    margin-bottom: 0;
+  }
+}
 
+.moveForm{
+  background: #FAFAFB;
+  width: 67%;
+  margin-left: 25%;
+  border-radius: 2px;
+  padding-top: 24px;
+}
+.del{
+  margin-left: 16px;
+}
+.addSelect{
+  margin: 8px 0 13px 12px;
 }

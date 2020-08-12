@@ -15,6 +15,7 @@ import Field from './Field';
   allList: invoice.allList,
   detail: invoice.detail,
   approveList: invoice.approveList,
+  check: invoice.check,
 }))
 class AddInvoice extends React.PureComponent {
   constructor(props) {
@@ -25,6 +26,7 @@ class AddInvoice extends React.PureComponent {
       categoryList: [],
       data: {
         showFields: costCategoryJson,
+        expandField: []
       }
     };
   }
@@ -86,8 +88,14 @@ class AddInvoice extends React.PureComponent {
               deptJson = JsonParse(detail.deptJson);
             }
             if (detail.showField) {
+              const arr = this.ObjToArray(detail.showField, costCategoryJson);
+              if (detail.expandField) {
+                const oldArr = [...detail.expandField];
+                oldArr.unshift(4,0);
+                Array.prototype.splice.apply(arr, oldArr);
+              }
               Object.assign(datas, {
-                showFields: this.ObjToArray(detail.showField, costCategoryJson),
+                showFields: arr,
               });
             }
             Object.assign(datas, {
@@ -167,7 +175,8 @@ class AddInvoice extends React.PureComponent {
     if (this.saveFormRef && this.saveFormRef.getFormItem) {
       const values = this.saveFormRef.getFormItem();
       Object.assign(datas, {
-        showFields: [...values],
+        showFields: values.list,
+        expandField: values.expandField,
       });
     }
     this.setState({
@@ -197,12 +206,23 @@ class AddInvoice extends React.PureComponent {
       });
     }
     if (this.saveFormRef && this.saveFormRef.getFormItem) {
-      const values = this.saveFormRef.getFormItem();
-      if(!values) {
+      const fieldVal = this.saveFormRef.getFormItem();
+      console.log(fieldVal);
+      if(!fieldVal) {
         return;
       }
+      let expandArr = [];
+      if (fieldVal.expandField) {
+        expandArr = fieldVal.expandField.map(it => {
+          return {
+            ...it,
+            status: it.status ? 1 : 0,
+          };
+        });
+      }
       Object.assign(datas, {
-        showFields: [...values],
+        showFields: fieldVal.list.filter(it => it.field.indexOf('expand_field') === -1),
+        expandField: expandArr,
       });
     }
     Object.assign(datas, {
@@ -230,7 +250,7 @@ class AddInvoice extends React.PureComponent {
   }
 
   render() {
-    const { children, title, allList, approveList } = this.props;
+    const { children, title, allList, approveList, check, dispatch } = this.props;
     const { visible, left, categoryList, data } = this.state;
     return (
       <span className={styles.content}>
@@ -278,8 +298,12 @@ class AddInvoice extends React.PureComponent {
                 />
               :
                 <Field
+                  check={check}
+                  dispatch={dispatch}
                   wrappedComponentRef={form => {this.saveFormRef = form;}}
+                  // viewShowModal={fn => this.saveFormRef(fn)}
                   showFields={data.showFields}
+                  expandField={data.expandField}
                 />
             }
           </div>

@@ -12,6 +12,7 @@ export default {
     detail: {},
     check: {},
     approveList: [], // 审批流的节点
+    checkDel: true,
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -40,6 +41,15 @@ export default {
     },
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
+    },
+    *delCheck({ payload }, { call, put }) {
+      const response = yield call(get, api.delCheck, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          checkDel: response,
+        }
+      });
     },
     *addGroup({ payload }, { call }) {
       yield call(post, api.addGroup, payload);
