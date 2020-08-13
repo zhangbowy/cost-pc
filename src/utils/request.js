@@ -228,6 +228,7 @@ function request(url, config) {
 
 // get请求
 async function get(url, data, config) {
+  // console.log(55555555+"get",url);
   return request(url, {
     data,
     method: 'GET',
@@ -239,6 +240,7 @@ async function get(url, data, config) {
 
 // post请求
 async function post(url, data, config) {
+  // console.log(55555555+"post",url);
   return request(url, {
     data,
     method: 'POST',

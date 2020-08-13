@@ -1,4 +1,4 @@
-import { get } from '@/utils/request';
+import { get, post } from '@/utils/request';
 // import constants from '@/utils/constants';
 import api from './services';
 
@@ -35,6 +35,25 @@ export default {
         type: 'save',
         payload: {
           removeDataTime: response || null,
+        },
+      });
+    },
+    *queryUsers({ payload }, { call, put }) {
+      const response = yield call(get, api.queryUsers, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          queryUsers: response || null,
+        },
+      });
+    },
+    *modifyGrant({ payload }, { call, put }) {
+      const response = yield call(post, api.modifyGrant, payload,{withCode: true});
+      console.log(5555,response);
+      yield put({
+        type: 'save',
+        payload: {
+          modifyGrant: response || null,
         },
       });
     },
