@@ -227,10 +227,12 @@ class AddCost extends Component {
         const expandCostDetailFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            expandCostDetailFieldVos.push({
-              ...it,
-              msg: val[it.field],
-            });
+            if (it.status) {
+              expandCostDetailFieldVos.push({
+                ...it,
+                msg: val[it.field],
+              });
+            }
           });
         }
         if (costDate === 1) {
@@ -723,18 +725,25 @@ class AddCost extends Component {
                     );
                   }
                     return (
-                      <Col span={12}>
-                        <Form.Item label={it.name} {...formItemLayout}>
-                          {
-                            getFieldDecorator(it.field, {
-                              initialValue: it.msg,
-                              rules: [{ required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` }]
-                            })(
-                              renderForm
-                            )
-                          }
-                        </Form.Item>
-                      </Col>
+                      <>
+                        {
+                          it.status ?
+                            <Col span={12}>
+                              <Form.Item label={it.name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator(it.field, {
+                                    initialValue: it.msg,
+                                    rules: [{ required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` }]
+                                  })(
+                                    renderForm
+                                  )
+                                }
+                              </Form.Item>
+                            </Col>
+                            :
+                            null
+                        }
+                      </>
                     );
                 })
               }

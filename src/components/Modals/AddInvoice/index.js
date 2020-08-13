@@ -440,12 +440,14 @@ class AddInvoice extends Component {
         const expandSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            expandSubmitFieldVos.push({
-              ...it,
-              field: it.field,
-              name: it.name,
-              msg: val[it.field],
-            });
+            if (it.status) {
+              expandSubmitFieldVos.push({
+                ...it,
+                field: it.field,
+                name: it.name,
+                msg: val[it.field],
+              });
+            }
           });
         }
         let params = {
@@ -1014,18 +1016,25 @@ class AddInvoice extends Component {
                       renderForm = (<Input />);
                     }
                     return (
-                      <Col span={12}>
-                        <Form.Item label={itw.name} {...formItemLayout}>
-                          {
-                            getFieldDecorator(itw.field, {
-                              initialValue: itw.msg,
-                              rules: [{ required: !!(itw.isWrite), message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}` }]
-                            })(
-                              renderForm
-                            )
-                          }
-                        </Form.Item>
-                      </Col>
+                      <>
+                        {
+                          itw.status ?
+                            <Col span={12}>
+                              <Form.Item label={itw.name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator(itw.field, {
+                                    initialValue: itw.msg,
+                                    rules: [{ required: !!(itw.isWrite), message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}` }]
+                                  })(
+                                    renderForm
+                                  )
+                                }
+                              </Form.Item>
+                            </Col>
+                            :
+                            null
+                        }
+                      </>
                     );
                   })
                 }

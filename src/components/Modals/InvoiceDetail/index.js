@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Row, Col, Table, Tag, Popover, message, Button } from 'antd';
+import { Modal, Row, Col, Table, Tag, Popover, message, Button, Tooltip } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -126,7 +126,17 @@ class InvoiceDetail extends Component {
       invoiceDetail,
       canRefuse
     } = this.props;
-
+    const newList = [];
+    category.forEach(it => {
+      const obj = {};
+      it.expandCostDetailFieldVos.forEach(i => {
+        obj[i.field] = i.msg;
+      });
+      newList.push({
+        ...it,
+        ...obj,
+      });
+    });
     const columns = [{
       title: '费用类别',
       dataIndex: 'categoryName',
@@ -169,7 +179,7 @@ class InvoiceDetail extends Component {
           }
         </span>
       ),
-      width: 100
+      width: 200
     }, {
       title: '发生日期',
       dataIndex: 'happenTime',
@@ -200,6 +210,23 @@ class InvoiceDetail extends Component {
       textWrap: 'word-break',
       width: '140px'
     }];
+    if (category && category.length > 0 && category[0].expandCostDetailFieldVos) {
+      const arr = [];
+      category[0].expandCostDetailFieldVos.forEach(it => {
+        arr.push({
+          title: it.name,
+          dataIndex: it.field,
+          render: (text) => (
+            <span>
+              <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+                <span className="eslips-2">{text}</span>
+              </Tooltip>
+            </span>
+          ),
+        });
+      });
+      columns.splice(2, 1, ...arr);
+    }
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -362,8 +389,9 @@ class InvoiceDetail extends Component {
           </div>
           <Table
             columns={columns}
-            dataSource={category}
+            dataSource={newList}
             pagination={false}
+            scroll={{x: '1200px'}}
             rowKey="id"
           />
         </Modal>

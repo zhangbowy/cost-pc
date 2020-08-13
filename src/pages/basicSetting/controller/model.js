@@ -48,9 +48,11 @@ export default {
         },
       });
     },
-    *modifyGrant({ payload }, { call, put }) {
+    *modifyGrant({ payload, callback }, { call, put }) {
       const response = yield call(post, api.modifyGrant, payload,{withCode: true});
-      console.log(5555,response);
+      if (callback) {
+        callback(response);
+      }
       yield put({
         type: 'save',
         payload: {

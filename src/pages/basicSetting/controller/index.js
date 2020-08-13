@@ -19,7 +19,6 @@ function Controller(props) {
   const [ isOpen, setIsOpen ] = useState(false);
   const [ userIdExpired, setUserIdExpired ] = useState();
 
-
   useEffect(() => {
     dispatch({
       type: 'controller/getTime',
@@ -99,12 +98,10 @@ function Controller(props) {
           userId: users[0].emplId,
           name: users[0].name
         }
+      },
+      callback: (res) => {
+        console.log(res);
       }
-    }).then(() => {
-      console.log(props.modifyGrant);
-      message.error(props.modifyGrant.message);
-      // if(res.result)
-      // message.success('清空数据成功');
     });
   };
 
@@ -245,7 +242,7 @@ const mapStateToProps = (state) => {
     userInfo: state.session.userInfo,
     synCompanyTime: state.controller.synCompanyTime,
     queryUsers: state.controller.queryUsers,
-    modifyGrant: state.controller.modifyGrant
+    modifyGrant: state.controller.modifyGrant,
   };
 };
 export default connect(mapStateToProps)(Controller);

@@ -79,7 +79,7 @@ class AddClassify extends React.PureComponent {
         const { details } = _this.props;
         const showFiels = this.ObjToArray(details.showField, costClassify) || [];
         if (details.expandField) {
-          const oldArr = details.expandField;
+          const oldArr = [...details.expandField];
           oldArr.unshift(2,0);
           Array.prototype.splice.apply(showFiels, oldArr);
         }

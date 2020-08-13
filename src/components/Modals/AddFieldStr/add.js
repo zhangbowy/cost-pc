@@ -144,6 +144,7 @@ class AddFieldStr extends Component {
           };
           newArr.push(vals);
         }
+        console.log('newArr', newArr);
         this.props.onAddStr(newArr);
         this.onCancel();
       }

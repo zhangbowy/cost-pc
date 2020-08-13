@@ -26,11 +26,11 @@ class Field extends Component {
   }
 
   onAddStr = (arr) => {
-    const arrs = this.state.showFields.filter(it => it.field.indexOf('expand_field')> -1);
+    const arrs = this.state.showFields.filter(it => it.field.indexOf('expand_field') === -1);
     const oldArr = [...arr];
     arr.unshift(2,0);
     Array.prototype.splice.apply(arrs, arr);
-    console.log('arrs', arrs);
+    console.log(arrs);
     this.setState({
       showFields: arrs,
       expandField: oldArr,
@@ -76,14 +76,15 @@ class Field extends Component {
       return list;
     }
       return obj;
-
   }
 
   render() {
     const {
       form: { getFieldDecorator },
+      left,
     } = this.props;
     const { showFields, expandField } = this.state;
+    console.log('expandField', expandField);
     const columns = [{
       title: '字段',
       dataIndex: 'name',
@@ -189,14 +190,17 @@ class Field extends Component {
     }];
     return (
       <div style={{ padding: '32px 19px 0 29px', width: '100%' }} className={style.field}>
-        <AddFieldStr
-          type="add"
-          onAddStr={(arr) => this.onAddStr(arr)}
-          expandField={expandField}
-          detail={{}}
-        >
-          <Button className="m-b-16" type="primary" disabled={expandField && (expandField.length > 5)}>添加自定义字段</Button>
-        </AddFieldStr>
+        {
+          left !== 'shareField' &&
+          <AddFieldStr
+            type="add"
+            onAddStr={(arr) => this.onAddStr(arr)}
+            expandField={expandField}
+            detail={{}}
+          >
+            <Button className="m-b-16" type="primary" disabled={expandField && (expandField.length > 5 || expandField.length === 5)}>添加自定义字段</Button>
+          </AddFieldStr>
+        }
         <Table
           columns={columns}
           dataSource={showFields || costClassify}
