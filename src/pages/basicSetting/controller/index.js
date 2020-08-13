@@ -47,13 +47,8 @@ function Controller(props) {
   };
 
   function onChange(value) {
-    console.log(`selected ${value}`);
     setUserIdExpired(value);
   }
-
-  const onSearch = (val) => {
-    console.log('search:', val);
-  };
 
   const clearCompany = () => {
     // delCompany
@@ -81,6 +76,10 @@ function Controller(props) {
     setVisible(true);
   };
 
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
   const handleOk = () => {
     if(!userIdExpired){
       message.error('请选择原发放人');
@@ -100,13 +99,14 @@ function Controller(props) {
         }
       },
       callback: (res) => {
-        console.log(res);
+        if(res.success){
+          message.success(res.message);
+          handleCancel();
+        }else{
+          message.error(res.message);
+        }
       }
     });
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
   };
 
   const getUsers = () => {
@@ -137,7 +137,6 @@ function Controller(props) {
 
 
   const setUser = (e) => {
-    console.log(1111,e);
     setUsers(e);
     setRawUser(e[0].emplId);
   };
@@ -205,10 +204,6 @@ function Controller(props) {
             optionFilterProp="children"
             size='large'
             onChange={onChange}
-            onSearch={onSearch}
-            // filterOption={(input, option) =>
-            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            // }
           >
             { getUsers() }
           </Select>
@@ -223,9 +218,6 @@ function Controller(props) {
               size='large'
               value={rawUser}
               open={isOpen}
-              // filterOption={(input, option) =>
-              //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              // }
             >
               { getOption() }
             </Select>
@@ -236,7 +228,6 @@ function Controller(props) {
   );
 }
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     removeDataTime: state.controller.removeDataTime,
     userInfo: state.session.userInfo,
