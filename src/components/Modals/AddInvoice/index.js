@@ -999,6 +999,7 @@ class AddInvoice extends Component {
                   expandField && (expandField.length > 0) &&
                   expandField.map(itw => {
                     let renderForm = null;
+                    let rule = [];
                     console.log(itw.fieldType);
                     if (Number(itw.fieldType) === 2) {
                       renderForm = (
@@ -1012,8 +1013,10 @@ class AddInvoice extends Component {
                       );
                     } else if (Number(itw.fieldType) === 1) {
                       renderForm = (<TextArea />);
+                      rule = [{ max: 128, message: '限制128个字' }];
                     } else {
                       renderForm = (<Input />);
+                      rule = [{ max: 20, message: '限制20个字' }];
                     }
                     return (
                       <>
@@ -1024,7 +1027,10 @@ class AddInvoice extends Component {
                                 {
                                   getFieldDecorator(itw.field, {
                                     initialValue: itw.msg,
-                                    rules: [{ required: !!(itw.isWrite), message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}` }]
+                                    rules: [
+                                      { required: !!(itw.isWrite), message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}` },
+                                      ...rule,
+                                    ],
                                   })(
                                     renderForm
                                   )

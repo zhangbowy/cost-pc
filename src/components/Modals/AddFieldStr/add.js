@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Radio, Input, Button, Switch, Form } from 'antd';
+import { Modal, Radio, Input, Button, Switch, Form, message } from 'antd';
 import cs from 'classnames';
 import { formItemLayout, customFields } from '../../../utils/constants';
 import style from  './index.scss';
@@ -19,11 +19,20 @@ class AddFieldStr extends Component {
       fieldType: 0,
       list: [],
       fields: initialVal,
+      details: {},
     };
   }
 
   onShow = () => {
-    const { detail } = this.props;
+    const { detail, getParams } = this.props;
+    if (getParams) {
+      const val = getParams();
+      const details = val.list.filter(it => it.field === detail.field);
+      this.setState({
+        details: details[0],
+      });
+      console.log(details);
+    }
     if (detail && detail.fieldType) {
       if (Number(detail.fieldType) === 2 && detail.options && detail.options.length > 0) {
         const arr = detail.options.map((it, index) => { return { id: `aa_${index}`, name: it }; });
@@ -101,6 +110,7 @@ class AddFieldStr extends Component {
     } = this.props;
     const { fields } = this.state;
     let newArr = [...expandField];
+    let flag = 0;
     this.props.form.validateFieldsAndScroll((err,val) => {
       if (!err) {
         let vals = {
@@ -110,15 +120,23 @@ class AddFieldStr extends Component {
           name: val.name
         };
         const oldFields = expandField.map(it => it.field);
-        console.log(val);
         const options = [];
 
         if (val.keys && (Number(val.fieldType) === 2)) {
           // val.keys.forEach(item => )
           const keys = val.keys.map(it => it.id);
-          keys.forEach(itm => { options.push(val[itm]); });
-          console.log(val.keys);
+          keys.forEach(itm => {
+            if (val[itm]) {
+              options.push(val[itm]);
+            } else {
+              flag = 1;
+            }
+          });
           vals.options = options;
+        }
+        if (flag) {
+          message.error('不能为空');
+          return;
         }
         delete vals.keys;
         if (type === 'edit') {
@@ -157,7 +175,7 @@ class AddFieldStr extends Component {
       form: { getFieldDecorator, getFieldValue },
       detail,
     } = this.props;
-    const { visible, fieldType, list } = this.state;
+    const { visible, fieldType, list, details } = this.state;
     getFieldDecorator('keys', { initialValue: list });
     const keys = getFieldValue('keys');
     const formItems = fieldType === 2 ? keys.map(item=> (
@@ -183,6 +201,11 @@ class AddFieldStr extends Component {
         <Modal
           visible={visible}
           title="新增自定义字段"
+          bodyStyle={{
+            padding: 0,
+            height: '342px',
+            overflowY: 'scroll'
+          }}
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
             <Button key="save" type="primary" onClick={() => this.onConfirm()}>保存</Button>
@@ -232,7 +255,7 @@ class AddFieldStr extends Component {
                   type="primary"
                   className={style.addSelect}
                   onClick={() => this.onAdd()}
-                  disabled={list && list.length > 15}
+                  disabled={list && (list.length > 15 || (list.length === 15))}
                 >
                   添加选项
                 </Button>
@@ -244,7 +267,7 @@ class AddFieldStr extends Component {
             >
               {
                 getFieldDecorator('status', {
-                  initialValue: detail.status || true,
+                  initialValue: !!details.status,
                   valuePropName: 'checked'
                 })(
                   <Switch />
@@ -257,7 +280,7 @@ class AddFieldStr extends Component {
             >
               {
                 getFieldDecorator('isWrite', {
-                  initialValue: detail.isWrite || false,
+                  initialValue: details.isWrite || false,
                   valuePropName: 'checked'
                 })(
                   <Switch />

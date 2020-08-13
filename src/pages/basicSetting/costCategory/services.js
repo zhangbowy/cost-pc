@@ -13,4 +13,5 @@ export default{
   check: `${APP_API}/cost/category/del/permit`,
   delPer: `${APP_API}/cost/category/del/permit`,
   delCheck: `${APP_API}/cost/category/checkDelExpand`,
+  expandLists: `${APP_API}/cost/category/queryExpand`,
 };

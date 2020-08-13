@@ -391,7 +391,7 @@ class InvoiceDetail extends Component {
             columns={columns}
             dataSource={newList}
             pagination={false}
-            scroll={{x: '1200px'}}
+            scroll={{x: newList.length > 6 ? '1200px' : '1000px'}}
             rowKey="id"
           />
         </Modal>

@@ -16,6 +16,7 @@ import Field from './Field';
   detail: invoice.detail,
   approveList: invoice.approveList,
   checkDel: invoice.checkDel,
+  expandLists: invoice.expandLists,
 }))
 class AddInvoice extends React.PureComponent {
   constructor(props) {
@@ -116,11 +117,24 @@ class AddInvoice extends React.PureComponent {
             });
           });
         } else {
-          Object.assign(data, {
-            showFields: costCategoryJson,
-          });
-          this.setState({
-            visible: true,
+          this.props.dispatch({
+            type: 'invoice/expandLists',
+            payload: {},
+          }).then(() => {
+            const { expandLists } = this.props;
+            const showDefault = [...costCategoryJson];
+            if (expandLists && expandLists.length > 0) {
+              const oldArr = [...expandLists];
+              oldArr.unshift(2,0);
+              Array.prototype.splice.apply(showDefault, oldArr);
+            }
+            Object.assign(data, {
+              showFields: showDefault,
+              expandField: expandLists,
+            });
+            this.setState({
+              visible: true,
+            });
           });
         }
       });

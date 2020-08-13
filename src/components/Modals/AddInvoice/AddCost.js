@@ -623,6 +623,7 @@ class AddCost extends Component {
                           placeholder="请选择"
                           onChange={this.onChange}
                           style={{width: '100%'}}
+                          treeDefaultExpandAll
                           dropdownStyle={{height: '300px'}}
                         />
                       )
@@ -709,10 +710,13 @@ class AddCost extends Component {
                 expandField && (expandField.length > 0) &&
                 expandField.map(it => {
                   let renderForm = null;
+                  let rule = [];
                   if (Number(it.fieldType) === 0) {
                     renderForm = (<Input />);
+                    rule = [{ max: 20, message: '限制20个字' }];
                   } else if (Number(it.fieldType) === 1) {
                     renderForm = (<TextArea />);
+                    rule = [{ max: 128, message: '限制128个字' }];
                   } else {
                     renderForm = (
                       <Select>
@@ -733,7 +737,10 @@ class AddCost extends Component {
                                 {
                                   getFieldDecorator(it.field, {
                                     initialValue: it.msg,
-                                    rules: [{ required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` }]
+                                    rules: [
+                                      { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
+                                      ...rule,
+                                    ]
                                   })(
                                     renderForm
                                   )

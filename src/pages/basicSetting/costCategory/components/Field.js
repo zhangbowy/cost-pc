@@ -1,6 +1,6 @@
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Table, Switch, Form, Select, Button, Divider } from 'antd';
+import { Table, Switch, Form, Select, Button, Divider, message, Popconfirm } from 'antd';
 import { costClassify, dataType } from '@/utils/constants';
 import style from './classify.scss';
 import AddFieldStr from '../../../../components/Modals/AddFieldStr/add';
@@ -39,6 +39,26 @@ class Field extends Component {
 
   onRest() {
     this.props.form.resetFields();
+  }
+
+  handleVisibleChange = (field) => {
+    this.props.dispatch({
+      type: 'costCategory/delCheck',
+      payload: {
+        field
+      }
+    }).then(() => {
+      const { checkDel } = this.props;
+      const { showFields, expandField } = this.state;
+      if (checkDel) {
+        this.setState({
+          showFields: showFields.filter(it => it.field !== field),
+          expandField: expandField.filter(it => it.field !== field)
+        });
+      } else {
+        message.error('有进行中或已完成已拒绝的费用类别用到了该字段');
+      }
+    });
   }
 
   getFormItem = () => {
@@ -173,13 +193,19 @@ class Field extends Component {
           {
             (record.expand) || (record.field && record.field.indexOf('expand_field') > -1) &&
             <span>
-              <span className="deleteColor" onClick={() => this.handleVisibleChange(record.field)}>删除</span>
+              <Popconfirm
+                title="确认删除吗？"
+                onConfirm={() => this.handleVisibleChange(record.field)}
+              >
+                <span className="deleteColor">删除</span>
+              </Popconfirm>
               <Divider type="vertical" />
               <AddFieldStr
                 type="edit"
                 onAddStr={(arr) => this.onAddStr(arr)}
                 expandField={expandField}
                 detail={record}
+                getParams={() => this.getFormItem()}
               >
                 <a>编辑</a>
               </AddFieldStr>
@@ -206,6 +232,7 @@ class Field extends Component {
           dataSource={showFields || costClassify}
           pagination={false}
           rowKey="field"
+          scroll={{y: '320px'}}
         />
       </div>
     );

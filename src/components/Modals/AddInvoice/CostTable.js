@@ -151,6 +151,8 @@ class CostTable extends Component {
         <Table
           dataSource={newList}
           columns={columns}
+          scroll={{x: newList.length > 6 ? '1200px' : '1000px'}}
+          rowKey="field"
           pagination={false}
         />
       </div>

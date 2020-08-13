@@ -8,6 +8,7 @@ export default {
     allList: [], // 所有数据
     details: {},
     checkDel: false,
+    expandLists: [],
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -25,6 +26,15 @@ export default {
         type: 'save',
         payload: {
           allList: response || [],
+        },
+      });
+    },
+    *expandLists({ payload }, { call, put }) {
+      const response = yield call(get, api.expandLists, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          expandLists: response || [],
         },
       });
     },

@@ -168,6 +168,7 @@ class Field extends React.PureComponent {
                   onAddStr={(arr) => this.onAddStr(arr)}
                   expandField={expandField}
                   detail={record}
+                  getParams={() => this.getFormItem()}
                 >
                   <a>编辑</a>
                 </AddFieldStr>

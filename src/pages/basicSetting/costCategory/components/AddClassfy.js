@@ -14,6 +14,8 @@ import Field from './Field';
   userInfo: session.userInfo,
   details: costCategory.details,
   allList: costCategory.allList,
+  checkDel: costCategory.checkDel,
+  expandLists: costCategory.expandLists,
 }))
 class AddClassify extends React.PureComponent {
   constructor(props) {
@@ -52,21 +54,33 @@ class AddClassify extends React.PureComponent {
       otherKeys: ['icon', 'note', 'type']
     }, allList);
     if (title === 'add') {
-      Object.assign(datas, {
-        showFields: costClassify,
-        shareField: classifyShare,
-        expandField: [],
-      });
-      if (data && data.parentId) {
-        if (data && data.parentId !== '0') {
-          Object.assign(datas, {
-            parentId: _this.findIndexArray(lists, data.parentId, []),
-          });
+      this.props.dispatch({
+        type: 'costCategory/expandLists',
+        payload: {},
+      }).then(() => {
+        const { expandLists } = this.props;
+        const showDefault = [...costClassify];
+        if (expandLists && expandLists.length > 0) {
+          const oldArr = [...expandLists];
+          oldArr.unshift(2,0);
+          Array.prototype.splice.apply(showDefault, oldArr);
         }
-      }
-      this.setState({
-        visible: true,
-        data: datas,
+        Object.assign(datas, {
+          showFields: showDefault,
+          shareField: classifyShare,
+          expandField: expandLists || [],
+        });
+        if (data && data.parentId) {
+          if (data && data.parentId !== '0') {
+            Object.assign(datas, {
+              parentId: _this.findIndexArray(lists, data.parentId, []),
+            });
+          }
+        }
+        this.setState({
+          visible: true,
+          data: datas,
+        });
       });
     } else {
       this.props.dispatch({
@@ -252,7 +266,9 @@ class AddClassify extends React.PureComponent {
     const {
       children,
       title,
-      allList
+      allList,
+      checkDel,
+      dispatch
     } = this.props;
     const {
       visible,
@@ -308,6 +324,8 @@ class AddClassify extends React.PureComponent {
                   showFields={left !== 'shareField' ?  data.showFields : data.shareField}
                   expandField={data.expandField}
                   left={left}
+                  checkDel={checkDel}
+                  dispatch={dispatch}
                 />
             }
           </div>

@@ -13,6 +13,7 @@ export default {
     check: {},
     approveList: [], // 审批流的节点
     checkDel: true,
+    expandLists: [],
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -48,6 +49,15 @@ export default {
         type: 'save',
         payload: {
           checkDel: response,
+        }
+      });
+    },
+    *expandLists({ payload }, { call, put }) {
+      const response = yield call(get, api.expandLists, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          expandLists: response,
         }
       });
     },
