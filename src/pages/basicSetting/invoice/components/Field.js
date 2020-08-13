@@ -1,6 +1,6 @@
 /* eslint-disable react/no-access-state-in-setstate */
 import React from 'react';
-import { Table, Switch, Form, Button, Divider } from 'antd';
+import { Table, Switch, Form, Button, Divider, Popconfirm, message } from 'antd';
 import style from './classify.scss';
 import AddFieldStr from '../../../../components/Modals/AddFieldStr/add';
 
@@ -63,6 +63,17 @@ class Field extends React.PureComponent {
       type: 'invoice/delCheck',
       payload: {
         field
+      }
+    }).then(() => {
+      const { checkDel } = this.props;
+      const { showFields, expandField } = this.state;
+      if (checkDel) {
+        this.setState({
+          showFields: showFields.filter(it => it.field !== field),
+          expandField: expandField.filter(it => it.field !== field)
+        });
+      } else {
+        message.error('有进行中或已完成已拒绝的单据用到了该字段');
       }
     });
   }
@@ -145,7 +156,12 @@ class Field extends React.PureComponent {
             {
               (record.expand) || (record.field && record.field.indexOf('expand_field') > -1) &&
               <span>
-                <span className="deleteColor" onClick={() => this.handleVisibleChange(record.field)}>删除</span>
+                <Popconfirm
+                  title="确认删除吗？"
+                  onConfirm={() => this.handleVisibleChange(record.field)}
+                >
+                  <span className="deleteColor">删除</span>
+                </Popconfirm>
                 <Divider type="vertical" />
                 <AddFieldStr
                   type="edit"
@@ -170,7 +186,7 @@ class Field extends React.PureComponent {
           expandField={expandField}
           detail={{}}
         >
-          <Button className="m-b-16" type="primary">添加自定义字段</Button>
+          <Button className="m-b-16" type="primary" disabled={expandField && (expandField.length > 5)}>添加自定义字段</Button>
         </AddFieldStr>
         <Form>
           <Table

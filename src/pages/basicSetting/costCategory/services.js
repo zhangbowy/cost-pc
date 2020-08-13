@@ -12,4 +12,5 @@ export default{
   delCostGroup: `${APP_API}/cost/category/del`,
   check: `${APP_API}/cost/category/del/permit`,
   delPer: `${APP_API}/cost/category/del/permit`,
+  delCheck: `${APP_API}/cost/category/checkDelExpand`,
 };

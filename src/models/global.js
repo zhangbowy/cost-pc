@@ -135,7 +135,7 @@ export default {
       });
     },
     *lbDetail({ payload }, { call, put }) {
-      const response = yield call(post, api.cateDet, payload);
+      const response = yield call(get, api.cateDet, payload);
       yield put({
         type: 'save',
         payload: {

@@ -21,7 +21,9 @@ class AddClassify extends React.PureComponent {
     this.state = {
       visible: false,
       left: 'basic',
-      data: {},
+      data: {
+        expandField: []
+      },
     };
   }
 
@@ -53,6 +55,7 @@ class AddClassify extends React.PureComponent {
       Object.assign(datas, {
         showFields: costClassify,
         shareField: classifyShare,
+        expandField: [],
       });
       if (data && data.parentId) {
         if (data && data.parentId !== '0') {
@@ -74,11 +77,18 @@ class AddClassify extends React.PureComponent {
         }
       }).then(() => {
         const { details } = _this.props;
+        const showFiels = this.ObjToArray(details.showField, costClassify) || [];
+        if (details.expandField) {
+          const oldArr = details.expandField;
+          oldArr.unshift(2,0);
+          Array.prototype.splice.apply(showFiels, oldArr);
+        }
         datas = {
           ...details,
           parentId: _this.findIndexArray(lists, details.parentId, []),
-          showFields: (this.ObjToArray(details.showField, costClassify)) || [],
+          showFields: showFiels,
           shareField: this.ObjToArray(details.shareField, classifyShare),
+          expandField: details.expandField,
           status: Number(details.status) === 1,
         };
         if (title === 'copy') {
@@ -170,7 +180,8 @@ class AddClassify extends React.PureComponent {
         return;
       }
       Object.assign(datas, {
-        showFields: [...values],
+        showFields: values.list,
+        expandField: values.expandField
       });
     }
     this.setState({
@@ -210,17 +221,19 @@ class AddClassify extends React.PureComponent {
         });
       } else {
         Object.assign(datas, {
-          showFields: [...values],
+          showFields: values.list,
+          expandField: values.expandField
         });
       }
     }
     Object.assign(datas, {
-      showField: JSON.stringify(datas.showFields),
+      showField: JSON.stringify(datas.showFields.filter(it => it.field.indexOf('expand_field') === -1)),
       shareField: JSON.stringify(datas.shareField),
       companyId: userInfo.companyId || '',
       type: 1,
       parentId: (datas.parentId && datas.parentId[datas.parentId.length-1]) || '',
       status: datas.status ? 1: 0,
+      expandField: datas.expandField.map(it => { return {...it, status: it.status ? 1 : 0}; })
     });
     if (datas.showFields) delete datas.showFields;
     dispatch({
@@ -293,6 +306,8 @@ class AddClassify extends React.PureComponent {
                 <Field
                   wrappedComponentRef={form => {this[left === 'shareField' ? 'saveShare' : 'saveFormRef'] = form;}}
                   showFields={left !== 'shareField' ?  data.showFields : data.shareField}
+                  expandField={data.expandField}
+                  left={left}
                 />
             }
           </div>

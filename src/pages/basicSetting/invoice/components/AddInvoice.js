@@ -15,7 +15,7 @@ import Field from './Field';
   allList: invoice.allList,
   detail: invoice.detail,
   approveList: invoice.approveList,
-  check: invoice.check,
+  checkDel: invoice.checkDel,
 }))
 class AddInvoice extends React.PureComponent {
   constructor(props) {
@@ -250,7 +250,7 @@ class AddInvoice extends React.PureComponent {
   }
 
   render() {
-    const { children, title, allList, approveList, check, dispatch } = this.props;
+    const { children, title, allList, approveList, checkDel, dispatch } = this.props;
     const { visible, left, categoryList, data } = this.state;
     return (
       <span className={styles.content}>
@@ -298,7 +298,7 @@ class AddInvoice extends React.PureComponent {
                 />
               :
                 <Field
-                  check={check}
+                  checkDel={checkDel}
                   dispatch={dispatch}
                   wrappedComponentRef={form => {this.saveFormRef = form;}}
                   // viewShowModal={fn => this.saveFormRef(fn)}

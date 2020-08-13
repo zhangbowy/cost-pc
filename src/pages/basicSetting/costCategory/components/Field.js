@@ -1,6 +1,6 @@
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Table, Switch, Form, Select, Button } from 'antd';
+import { Table, Switch, Form, Select, Button, Divider } from 'antd';
 import { costClassify, dataType } from '@/utils/constants';
 import style from './classify.scss';
 import AddFieldStr from '../../../../components/Modals/AddFieldStr/add';
@@ -12,7 +12,7 @@ class Field extends Component {
     super(props);
     this.state = {
       showFields: props.showFields,
-      expandField: props.expandField,
+      expandField: props.expandField || [],
     };
   }
 
@@ -26,9 +26,9 @@ class Field extends Component {
   }
 
   onAddStr = (arr) => {
-    const arrs = this.state.showFields.filter(it => !(it.field.indexOf('expand_field')> -1));
+    const arrs = this.state.showFields.filter(it => it.field.indexOf('expand_field')> -1);
     const oldArr = [...arr];
-    arr.unshift(4,0);
+    arr.unshift(2,0);
     Array.prototype.splice.apply(arrs, arr);
     console.log('arrs', arrs);
     this.setState({
@@ -44,18 +44,18 @@ class Field extends Component {
   getFormItem = () => {
     const {
       form,
+      left
     } = this.props;
-    const {
-      showFields,
-    } = this.state;
+    const { showFields, expandField } = this.state;
     let list = [...showFields];
+    let expandList = [...expandField];
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         list.forEach(item => {
           Object.assign(item, {
-            status: values[`status_${item.key}`],
-            isWrite: values[`isWrite_${item.key}`],
-            note: values[`note_${item.key}`],
+            status: values[`status_${item.field}`],
+            isWrite: values[`isWrite_${item.field}`],
+            note: values[`note_${item.field}`],
           });
           if (item.key === 'happenTime') {
             Object.assign(item, {
@@ -63,11 +63,20 @@ class Field extends Component {
             });
           }
         });
+        expandList = list.filter(it => (it.field.indexOf('expand_field')> -1));
       } else {
         list = null;
       }
     });
-    return list;
+    const obj = {
+      list,
+      expandField: expandList,
+    };
+    if (left === 'shareField') {
+      return list;
+    }
+      return obj;
+
   }
 
   render() {
@@ -82,7 +91,7 @@ class Field extends Component {
         <div>
           <Form.Item key="name">
             {
-              getFieldDecorator(`name_${record.key}`, {
+              getFieldDecorator(`name_${record.field}`, {
                 initialValue: record.name,
               })(
                 <span>{record.name}</span>
@@ -98,13 +107,13 @@ class Field extends Component {
         <div>
           <Form.Item key="status">
             {
-              getFieldDecorator(`status_${record.key}`, {
-                initialValue: record.status,
+              getFieldDecorator(`status_${record.field}`, {
+                initialValue: !!record.status,
                 valuePropName: 'checked'
               })(
                 <Switch
-                  disabled={record.key === 'costCategory'
-                  || record.key === 'amount'
+                  disabled={record.field === 'costCategory'
+                  || record.field === 'amount'
                   || record.disabled}
                 />
               )
@@ -121,13 +130,13 @@ class Field extends Component {
             record.field !== 'imgUrl' &&
             <Form.Item key="isWrite">
               {
-                getFieldDecorator(`isWrite_${record.key}`, {
+                getFieldDecorator(`isWrite_${record.field}`, {
                   initialValue: record.isWrite,
                   valuePropName: 'checked'
                 })(
                   <Switch
-                    disabled={record.key === 'costCategory'
-                    || record.key === 'amount'
+                    disabled={record.field === 'costCategory'
+                    || record.field === 'amount'
                     || record.disabled}
                   />
                 )
@@ -143,10 +152,10 @@ class Field extends Component {
       render: (_, record) => (
         <div>
           {
-            record.key === 'happenTime' &&
+            record.field === 'happenTime' &&
             <Form.Item key="dateType">
               {
-                getFieldDecorator(`dateType_${record.key}`, {
+                getFieldDecorator(`dateType_${record.field}`, {
                   initialValue: record.dateType || '1',
                 })(
                   <Select style={{width: '100px'}}>
@@ -160,6 +169,21 @@ class Field extends Component {
               }
             </Form.Item>
           }
+          {
+            (record.expand) || (record.field && record.field.indexOf('expand_field') > -1) &&
+            <span>
+              <span className="deleteColor" onClick={() => this.handleVisibleChange(record.field)}>删除</span>
+              <Divider type="vertical" />
+              <AddFieldStr
+                type="edit"
+                onAddStr={(arr) => this.onAddStr(arr)}
+                expandField={expandField}
+                detail={record}
+              >
+                <a>编辑</a>
+              </AddFieldStr>
+            </span>
+          }
         </div>
       )
     }];
@@ -171,7 +195,7 @@ class Field extends Component {
           expandField={expandField}
           detail={{}}
         >
-          <Button className="m-b-16" type="primary">添加自定义字段</Button>
+          <Button className="m-b-16" type="primary" disabled={expandField && (expandField.length > 5)}>添加自定义字段</Button>
         </AddFieldStr>
         <Table
           columns={columns}

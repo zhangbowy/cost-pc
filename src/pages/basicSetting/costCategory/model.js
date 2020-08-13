@@ -7,6 +7,7 @@ export default {
     list: [],
     allList: [], // 所有数据
     details: {},
+    checkDel: false,
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -33,6 +34,15 @@ export default {
     },
     *del({ payload }, { call }) {
       yield call(post, api.delCostGroup, payload);
+    },
+    *delCheck({ payload }, { call, put }) {
+      const response = yield call(get, api.delCheck, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          checkDel: response,
+        }
+      });
     },
     *edit({ payload }, { call }) {
       yield call(post, api.edit, payload);

@@ -31,6 +31,17 @@ class CostTable extends Component {
 
   render() {
     const { list, userInfo, invoiceId } = this.props;
+    const newList = [];
+    list.forEach(it => {
+      const obj = {};
+      it.expandCostDetailFieldVos.forEach(i => {
+        obj[i.field] = i.msg;
+      });
+      newList.push({
+        ...it,
+        ...obj,
+      });
+    });
     const columns = [{
       title: '费用类别',
       dataIndex: 'categoryName',
@@ -112,16 +123,33 @@ class CostTable extends Component {
         <span>
           <span className="deleteColor" onClick={() => this.onDelete(index)}>删除</span>
           <Divider type="vertical" />
-          <AddCost detail={record} invoiceId={invoiceId} userInfo={userInfo} index={index} onAddCost={this.addCost}>
+          <AddCost
+            detail={record}
+            invoiceId={invoiceId}
+            userInfo={userInfo}
+            index={index}
+            onAddCost={this.addCost}
+            expandField={record.expandCostDetailFieldVos}
+          >
             <a>编辑</a>
           </AddCost>
         </span>
       ),
     }];
+    if (list && list[0].expandCostDetailFieldVos) {
+      const arr = [];
+      list[0].expandCostDetailFieldVos.forEach(it => {
+        arr.push({
+          title: it.name,
+          dataIndex: it.field,
+        });
+      });
+      columns.splice(2, 1, ...arr);
+    }
     return (
       <div style={{ marginTop: '24px' }}>
         <Table
-          dataSource={list}
+          dataSource={newList}
           columns={columns}
           pagination={false}
         />

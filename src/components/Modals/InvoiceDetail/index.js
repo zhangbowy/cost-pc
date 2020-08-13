@@ -91,10 +91,11 @@ class InvoiceDetail extends Component {
   }
 
   // 拒绝
-  handleRefuse = () => {
+  handleRefuse = (rejectNote) => {
     const { id, refuse } = this.props;
-    refuse(id, () => {
-      this.setState({ visible: false });
+    refuse({
+      rejectNote,
+      id
     });
   }
 
@@ -211,7 +212,7 @@ class InvoiceDetail extends Component {
           bodyStyle={{height: '572px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           footer={([
-            canRefuse && <RefuseModal><Button key="refuse" className="m-r-16">拒绝</Button></RefuseModal>,
+            canRefuse && <RefuseModal refuse={val => this.handleRefuse(val)}><Button key="refuse" className="m-r-16">拒绝</Button></RefuseModal>,
             <Button key="cancel" type="primary" onClick={() => this.handelOk()}>打印</Button>
           ]
           )}
@@ -333,6 +334,27 @@ class InvoiceDetail extends Component {
                 {invoiceDetail.supplierAccountName} {invoiceDetail.supplierAccount}
               </span>
             </Col>
+            {
+              invoiceDetail.reasonForRejection &&
+              <Col span={8} style={{display: 'flex'}} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>拒绝原因：</span>
+                <span className="fs-14 c-black-65">
+                  {invoiceDetail.reasonForRejection}
+                </span>
+              </Col>
+            }
+            {
+              invoiceDetail.expandSubmitFieldVos &&
+              (invoiceDetail.expandSubmitFieldVos.length > 0) &&
+              invoiceDetail.expandSubmitFieldVos.map(it => (
+                <Col span={8} style={{display: 'flex'}} className="m-t-16" key={it.field}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
+                  <span className="fs-14 c-black-65">
+                    {it.msg}
+                  </span>
+                </Col>
+              ))
+            }
           </Row>
           <div className={cs(style.header, 'm-b-16')}>
             <div className={style.line} />

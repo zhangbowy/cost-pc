@@ -7,6 +7,7 @@ import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
 import moment from 'moment';
 import { JsonParse } from '@/utils/common';
+import TextArea from 'antd/lib/input/TextArea';
 import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
@@ -26,6 +27,7 @@ const labelInfo = {
   deptInfo: global.deptInfo,
   userId: global.userId,
   usableProject: global.usableProject,
+  lbDetail: global.lbDetail,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -41,6 +43,7 @@ class AddCost extends Component {
       costSum: 0,
       shareAmount: 0,
       project: {},
+      expandField: [],
     };
   }
 
@@ -75,17 +78,18 @@ class AddCost extends Component {
         id: this.props.invoiceId
       }
     }).then(() => {
-      const { index, detail } = this.props;
+      const { index, detail, expandField } = this.props;
       console.log(index, detail);
       if (index === 0 || index) {
         this.setState({
           details: detail,
           costDetailShareVOS: detail.costDetailShareVOS,
+          expandField,
           imgUrl: detail.imgUrl || [],
           costSum: detail.costSum,
           shareAmount: detail.shareTotal,
         }, () => {
-          this.onChange(this.props.detail.categoryId);
+          this.onChange(this.props.detail.categoryId, 'edit');
         });
       }
       this.setState({
@@ -202,6 +206,7 @@ class AddCost extends Component {
       details,
       imgUrl,
       shareAmount,
+      expandField,
     } = this.state;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -219,6 +224,15 @@ class AddCost extends Component {
           categoryName: details.categoryName,
           icon: details.icon,
         };
+        const expandCostDetailFieldVos = [];
+        if (expandField && expandField.length > 0) {
+          expandField.forEach(it => {
+            expandCostDetailFieldVos.push({
+              ...it,
+              msg: val[it.field],
+            });
+          });
+        }
         if (costDate === 1) {
           detail = {
             ...detail,
@@ -259,6 +273,7 @@ class AddCost extends Component {
         });
         detail = {
           ...detail,
+          expandCostDetailFieldVos,
           costDetailShareVOS: arr,
         };
         this.props.onAddCost(detail, index);
@@ -322,45 +337,54 @@ class AddCost extends Component {
   }
 
   // 选择费用类别
-  onChange = (val) => {
-    const { expenseList } = this.props;
+  onChange = (val, types) => {
     let detail = this.state.details;
     const showFields = {};
     let costDate = 0;
     let project = {};
-    expenseList.forEach(item => {
-      if (item.id === val) {
-        detail = {
-          ...detail,
-          categoryName: item.costName,
-          icon: item.icon,
-        };
-        if (item.showField) {
-          const str = JsonParse(item.showField);
-          str.forEach(it => {
-            showFields[it.field] = {...it};
-            if (it.field === 'happenTime') {
-              console.log(costDate);
-              costDate = it.dateType ? Number(it.dateType) : 1;
-            }
-          });
-        }
-        if (item.shareField) {
-          const strs = JsonParse(item.shareField);
-          strs.forEach(it => {
-            if (it.field === 'project') {
-              project = {...it};
-            }
-          });
-        }
+    this.props.dispatch({
+      type: 'global/lbDetail',
+      payload: {
+        id: val,
+      }
+    }).then(() => {
+      const { lbDetail } = this.props;
+      detail = {
+        ...detail,
+        categoryName: lbDetail.costName,
+        icon: lbDetail.icon,
+      };
+      if (lbDetail.showField) {
+        const str = JsonParse(lbDetail.showField);
+        str.forEach(it => {
+          showFields[it.field] = {...it};
+          if (it.field === 'happenTime') {
+            console.log(costDate);
+            costDate = it.dateType ? Number(it.dateType) : 1;
+          }
+        });
+      }
+      if (lbDetail.shareField) {
+        const strs = JsonParse(lbDetail.shareField);
+        strs.forEach(it => {
+          if (it.field === 'project') {
+            project = {...it};
+          }
+        });
+      }
+      this.setState({
+        showField: showFields,
+        costDate,
+        details: detail,
+        project,
+      });
+      if (types !== 'edit') {
+        this.setState({
+          expandField: lbDetail.expandField,
+        });
       }
     });
-    this.setState({
-      showField: showFields,
-      costDate,
-      details: detail,
-      project,
-    });
+
   }
 
   onChangeImg = (val) => {
@@ -439,7 +463,9 @@ class AddCost extends Component {
       costSum,
       shareAmount,
       project,
+      expandField
     } = this.state;
+    console.log('费用类别自定义', expandField);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -567,6 +593,7 @@ class AddCost extends Component {
     } else if (columns.length > 5) {
       columns.splice(2,1);
     }
+
     return (
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -675,6 +702,41 @@ class AddCost extends Component {
                     <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
                   </Form.Item>
                 </Col>
+              }
+              {
+                expandField && (expandField.length > 0) &&
+                expandField.map(it => {
+                  let renderForm = null;
+                  if (Number(it.fieldType) === 0) {
+                    renderForm = (<Input />);
+                  } else if (Number(it.fieldType) === 1) {
+                    renderForm = (<TextArea />);
+                  } else {
+                    renderForm = (
+                      <Select>
+                        {
+                          it.options && it.options.map(iteems => (
+                            <Select.Option key={iteems}>{iteems}</Select.Option>
+                          ))
+                        }
+                      </Select>
+                    );
+                  }
+                    return (
+                      <Col span={12}>
+                        <Form.Item label={it.name} {...formItemLayout}>
+                          {
+                            getFieldDecorator(it.field, {
+                              initialValue: it.msg,
+                              rules: [{ required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` }]
+                            })(
+                              renderForm
+                            )
+                          }
+                        </Form.Item>
+                      </Col>
+                    );
+                })
               }
               {/* </Row> */}
               <Divider type="horizontal" />

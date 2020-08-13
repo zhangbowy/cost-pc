@@ -17,9 +17,7 @@ class AddFieldStr extends Component {
     this.state = {
       visible: false,
       fieldType: 0,
-      list: [{
-        id: 'expand_field_01'
-      }],
+      list: [],
       fields: initialVal,
     };
   }
@@ -27,6 +25,12 @@ class AddFieldStr extends Component {
   onShow = () => {
     const { detail } = this.props;
     if (detail && detail.fieldType) {
+      if (Number(detail.fieldType) === 2 && detail.options && detail.options.length > 0) {
+        const arr = detail.options.map((it, index) => { return { id: `aa_${index}`, name: it }; });
+        this.setState({
+          list: arr
+        });
+      }
       this.setState({
         fieldType: Number(detail.fieldType)
       });
@@ -79,7 +83,11 @@ class AddFieldStr extends Component {
   }
 
   onChange = (e) => {
-    console.log(e.target.value);
+    if (Number(e.target.value) === 2) {
+      this.setState({
+        list: [{ id: 'a1' }]
+      });
+    }
     this.setState({
       fieldType: Number(e.target.value),
     });
@@ -96,12 +104,21 @@ class AddFieldStr extends Component {
     this.props.form.validateFieldsAndScroll((err,val) => {
       if (!err) {
         let vals = {
-          ...val,
-          expand: true,
+          fieldType: val.fieldType,
+          status: val.status,
+          isWrite: val.isWrite,
+          name: val.name
         };
         const oldFields = expandField.map(it => it.field);
+        console.log(val);
+        const options = [];
+
         if (val.keys && (Number(val.fieldType) === 2)) {
           // val.keys.forEach(item => )
+          const keys = val.keys.map(it => it.id);
+          keys.forEach(itm => { options.push(val[itm]); });
+          console.log(val.keys);
+          vals.options = options;
         }
         delete vals.keys;
         if (type === 'edit') {
@@ -148,7 +165,10 @@ class AddFieldStr extends Component {
           key={item.id}
         >
           {
-            getFieldDecorator(`${item.id}`)(
+            getFieldDecorator(`${item.id}`, {
+              initialValue:item.name,
+              rules: [{ max: 15, message: '限制15个字' }]
+            })(
               <Input placeholder="请输入选项" />
             )
           }
@@ -194,7 +214,10 @@ class AddFieldStr extends Component {
               {
                 getFieldDecorator('name', {
                   initialValue: detail.name,
-                  rules: [{ required: true, message: '请输入字段名称' }]
+                  rules: [
+                    { required: true, message: '请输入字段名称' },
+                    { max: 5, message: '限制5个字' }
+                  ]
                 })(
                   <Input placeholder="请输入字段名称" />
                 )
@@ -204,7 +227,14 @@ class AddFieldStr extends Component {
               fieldType === 2 &&
               <div className={style.moveForm}>
                 {formItems}
-                <Button type="primary" className={style.addSelect} onClick={() => this.onAdd()}>添加选项</Button>
+                <Button
+                  type="primary"
+                  className={style.addSelect}
+                  onClick={() => this.onAdd()}
+                  disabled={list && list.length > 15}
+                >
+                  添加选项
+                </Button>
               </div>
             }
             <Form.Item

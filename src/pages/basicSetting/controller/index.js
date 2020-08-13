@@ -10,15 +10,15 @@ import Avatar from '../../../components/AntdComp/Avatar';
 
 
 function Controller(props) {
-  
+
   const { Option } = Select;
-  const { dispatch, userInfo, removeDataTime, synCompanyTime,queryUsers, modifyGrant } = props;
+  const { dispatch, userInfo, removeDataTime, synCompanyTime,queryUsers } = props;
   const [ visible, setVisible ] = useState(false);
   const [ users, setUsers ] = useState([]);
   const [ rawUser, setRawUser ] = useState();
   const [ isOpen, setIsOpen ] = useState(false);
   const [ userIdExpired, setUserIdExpired ] = useState();
-  
+
 
   useEffect(() => {
     dispatch({
@@ -101,10 +101,8 @@ function Controller(props) {
         }
       }
     }).then(() => {
-      console.log(props);
-      setTimeout(()=>{
-        console.log(2222,modifyGrant);
-      },1000);
+      console.log(props.modifyGrant);
+      message.error(props.modifyGrant.message);
       // if(res.result)
       // message.success('清空数据成功');
     });
@@ -140,19 +138,19 @@ function Controller(props) {
     });
   };
 
-  
+
   const setUser = (e) => {
     console.log(1111,e);
     setUsers(e);
     setRawUser(e[0].emplId);
   };
-  
+
   const selectPeople = () => {
     setIsOpen(true);
     choosePeople([],setUser,{multiple:false});
     setIsOpen(false);
   };
-  
+
   // const synCompany = () => {
   //   Modal.confirm({
   //     title: '人员同步',

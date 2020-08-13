@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect } from 'antd';
 import { connect } from 'dva';
 import fileIcon from '@/utils/fileIcon.js';
+import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import AddCost from './AddCost';
 import UploadImg from '../../UploadImg';
@@ -59,6 +60,7 @@ class AddInvoice extends Component {
       showField: {}, // 是否显示输入框
       total: 0,
       loanUserId: '', // 审批人的userId
+      expandField: [], // 扩展字段
       // loading: false,
     };
   }
@@ -134,6 +136,7 @@ class AddInvoice extends Component {
     this.setState({
       inDetails: djDetails,
       showField: obj,
+      expandField: djDetails.expandField,
     });
     await this.props.dispatch({
       type: 'global/receiptAcc',
@@ -426,6 +429,7 @@ class AddInvoice extends Component {
       details,
       createDepList,
       total,
+      expandField,
     } = this.state;
     const that = this;
     const { id, dispatch } = this.props;
@@ -433,7 +437,17 @@ class AddInvoice extends Component {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
-        console.log(val.supplier);
+        const expandSubmitFieldVos = [];
+        if (expandField && expandField.length > 0) {
+          expandField.forEach(it => {
+            expandSubmitFieldVos.push({
+              ...it,
+              field: it.field,
+              name: it.name,
+              msg: val[it.field],
+            });
+          });
+        }
         let params = {
           ...details,
           invoiceTemplateId: id,
@@ -451,7 +465,8 @@ class AddInvoice extends Component {
           supplierId: val.supplier ? val.supplier.split('_')[1] : '',
           imgUrl,
           fileUrl,
-          submitSum: (total * 1000)/10
+          submitSum: (total * 1000)/10,
+          expandSubmitFieldVos
         };
         const arr = [];
         costDetailsVo.forEach((item, index) => {
@@ -466,6 +481,7 @@ class AddInvoice extends Component {
             'imgUrl':item.imgUrl,
             'invoiceBaseId':id,
             costDetailShareVOS: [],
+            expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
           });
           if (item.costDetailShareVOS) {
             item.costDetailShareVOS.forEach(it => {
@@ -726,6 +742,7 @@ class AddInvoice extends Component {
       fileUrl,
       showField,
       total,
+      expandField,
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -975,6 +992,42 @@ class AddInvoice extends Component {
                       }
                     </Form.Item>
                   </Col>
+                }
+                {
+                  expandField && (expandField.length > 0) &&
+                  expandField.map(itw => {
+                    let renderForm = null;
+                    console.log(itw.fieldType);
+                    if (Number(itw.fieldType) === 2) {
+                      renderForm = (
+                        <Select>
+                          {
+                            itw.options && itw.options.map(iteems => (
+                              <Select.Option key={iteems}>{iteems}</Select.Option>
+                            ))
+                          }
+                        </Select>
+                      );
+                    } else if (Number(itw.fieldType) === 1) {
+                      renderForm = (<TextArea />);
+                    } else {
+                      renderForm = (<Input />);
+                    }
+                    return (
+                      <Col span={12}>
+                        <Form.Item label={itw.name} {...formItemLayout}>
+                          {
+                            getFieldDecorator(itw.field, {
+                              initialValue: itw.msg,
+                              rules: [{ required: !!(itw.isWrite), message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}` }]
+                            })(
+                              renderForm
+                            )
+                          }
+                        </Form.Item>
+                      </Col>
+                    );
+                  })
                 }
               </Row>
             </Form>

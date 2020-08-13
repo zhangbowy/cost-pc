@@ -7,6 +7,7 @@ export default {
   namespace: 'controller',
   state: {
     removeDataTime: null,
+    modifyGrant: null,
   },
   effects: {
     *getTime({ payload }, { call, put }) {
@@ -53,7 +54,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          modifyGrant: response || null,
+          modifyGrant: response,
         },
       });
     },
