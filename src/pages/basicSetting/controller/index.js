@@ -77,6 +77,9 @@ function Controller(props) {
   };
 
   const handleCancel = () => {
+    setUsers([]);
+    setRawUser('');
+    setUserIdExpired('');
     setVisible(false);
   };
 
@@ -137,8 +140,11 @@ function Controller(props) {
 
 
   const setUser = (e) => {
-    setUsers(e);
-    setRawUser(e[0].emplId);
+    if (e && e.length > 0) {
+      const user = e.map(it => { return {...it, userId: it.emplId}; });
+      setUsers(user);
+      setRawUser(e[0].emplId);
+    }
   };
 
   const selectPeople = () => {
@@ -203,6 +209,7 @@ function Controller(props) {
             placeholder="请选择"
             optionFilterProp="children"
             size='large'
+            value={userIdExpired}
             onChange={onChange}
           >
             { getUsers() }

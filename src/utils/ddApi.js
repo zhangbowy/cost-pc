@@ -141,7 +141,7 @@ export const choosePeople = (users = [], callback, options = {}) => {
     }
   });
   choosed.catch(e => {
-    message.error(e.errorMessage);
+    // message.error(e.errorMessage);
     console.log(e.errorMessage);
   });
 };

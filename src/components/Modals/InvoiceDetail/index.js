@@ -365,7 +365,7 @@ class InvoiceDetail extends Component {
               invoiceDetail.reasonForRejection &&
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>拒绝原因：</span>
-                <span className="fs-14 c-black-65">
+                <span className={cs('fs-14','c-black-65', style.rightFlex)}>
                   {invoiceDetail.reasonForRejection}
                 </span>
               </Col>
@@ -376,7 +376,7 @@ class InvoiceDetail extends Component {
               invoiceDetail.expandSubmitFieldVos.map(it => (
                 <Col span={8} style={{display: 'flex'}} className="m-t-16" key={it.field}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
-                  <span className="fs-14 c-black-65">
+                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
                     {it.msg}
                   </span>
                 </Col>

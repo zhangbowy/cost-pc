@@ -247,7 +247,8 @@ class AddClassify extends React.PureComponent {
       type: 1,
       parentId: (datas.parentId && datas.parentId[datas.parentId.length-1]) || '',
       status: datas.status ? 1: 0,
-      expandField: datas.expandField.map(it => { return {...it, status: it.status ? 1 : 0}; })
+      expandField: datas.showFields.filter(it => it.field.indexOf('expand_field') > -1)
+                    .map(it => {return { ...it, status: it.status ? 1 : 0 };})
     });
     if (datas.showFields) delete datas.showFields;
     dispatch({

@@ -187,7 +187,13 @@ class Field extends React.PureComponent {
           expandField={expandField}
           detail={{}}
         >
-          <Button className="m-b-16" type="primary" disabled={expandField && (expandField.length > 5)}>添加自定义字段</Button>
+          <Button
+            className="m-b-16"
+            type="primary"
+            disabled={expandField && (expandField.length > 5 || (expandField.length === 5))}
+          >
+            添加自定义字段
+          </Button>
         </AddFieldStr>
         <Form>
           <Table

@@ -67,6 +67,9 @@ class AddFieldStr extends Component {
     form.setFieldsValue({
       keys: nextKeys,
     });
+    this.setState({
+      list: nextKeys,
+    });
   }
 
   /**
@@ -81,6 +84,9 @@ class AddFieldStr extends Component {
     }
     form.setFieldsValue({
       keys: keys.filter(key => key.id !== k),
+    });
+    this.setState({
+      list: keys.filter(key => key.id !== k),
     });
   };
 
@@ -201,6 +207,7 @@ class AddFieldStr extends Component {
         <Modal
           visible={visible}
           title="新增自定义字段"
+          onCancel={this.onCancel}
           bodyStyle={{
             padding: 0,
             height: '342px',

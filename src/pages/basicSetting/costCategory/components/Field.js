@@ -79,11 +79,11 @@ class Field extends Component {
           });
           if (item.key === 'happenTime') {
             Object.assign(item, {
-              dateType: values[`dateType_${item.key}`],
+              dateType: values[`dateType_${item.field}`],
             });
           }
         });
-        expandList = list.filter(it => (it.field.indexOf('expand_field')> -1));
+        expandList = list.filter(it => (it.field.indexOf('expand_field') > -1));
       } else {
         list = null;
       }
@@ -224,7 +224,13 @@ class Field extends Component {
             expandField={expandField}
             detail={{}}
           >
-            <Button className="m-b-16" type="primary" disabled={expandField && (expandField.length > 5 || expandField.length === 5)}>添加自定义字段</Button>
+            <Button
+              className="m-b-16"
+              type="primary"
+              disabled={expandField && (expandField.length > 5 || expandField.length === 5)}
+            >
+              添加自定义字段
+            </Button>
           </AddFieldStr>
         }
         <Table
