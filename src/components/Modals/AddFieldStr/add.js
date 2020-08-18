@@ -194,7 +194,7 @@ class AddFieldStr extends Component {
               initialValue:item.name,
               rules: [{ max: 15, message: '限制15个字' }]
             })(
-              <Input placeholder="请输入选项" />
+              <Input placeholder="请输入选项" style={{width: '300px'}} />
             )
           }
         </Form.Item>
@@ -211,14 +211,16 @@ class AddFieldStr extends Component {
           bodyStyle={{
             padding: 0,
             height: '342px',
-            overflowY: 'scroll'
+            overflowY: 'scroll',
+            marginTop: '32px'
           }}
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
             <Button key="save" type="primary" onClick={() => this.onConfirm()}>保存</Button>
           ]}
+          width='582px'
         >
-          <Form>
+          <Form className="formItem">
             <Form.Item
               {...formItemLayout}
               label="字段类型"

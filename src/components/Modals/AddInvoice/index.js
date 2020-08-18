@@ -1003,7 +1003,7 @@ class AddInvoice extends Component {
                     console.log(itw.fieldType);
                     if (Number(itw.fieldType) === 2) {
                       renderForm = (
-                        <Select>
+                        <Select placeholder='请选择'>
                           {
                             itw.options && itw.options.map(iteems => (
                               <Select.Option key={iteems}>{iteems}</Select.Option>
@@ -1012,10 +1012,10 @@ class AddInvoice extends Component {
                         </Select>
                       );
                     } else if (Number(itw.fieldType) === 1) {
-                      renderForm = (<TextArea />);
+                      renderForm = (<TextArea placeholder='请输入' />);
                       rule = [{ max: 128, message: '限制128个字' }];
                     } else {
-                      renderForm = (<Input />);
+                      renderForm = (<Input placeholder='请输入' />);
                       rule = [{ max: 20, message: '限制20个字' }];
                     }
                     return (

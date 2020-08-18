@@ -73,7 +73,7 @@ class Field extends React.PureComponent {
           expandField: expandField.filter(it => it.field !== field)
         });
       } else {
-        message.error('有进行中或已完成已拒绝的单据用到了该字段');
+        message.error('有单据正在使用该字段，不可删除');
       }
     });
   }
@@ -200,7 +200,7 @@ class Field extends React.PureComponent {
             columns={columns}
             dataSource={showFields}
             pagination={false}
-            scroll={{y: '320px'}}
+            // scroll={{y: '320px'}}
             rowKey="field"
           />
         </Form>

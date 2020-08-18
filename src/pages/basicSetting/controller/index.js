@@ -191,7 +191,6 @@ function Controller(props) {
           <Tooltip title="发放人员离职时可修改已提交单据的发放人">
             <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
           </Tooltip>
-          <span className="fs-14 c-black-45 fw-400">（发放人员离职时可修改已提交单据的发放人）</span>
         </Lines>
         <Button className="m-t-13 m-b-17" onClick={changePeople}>修改发放人</Button>
       </div>

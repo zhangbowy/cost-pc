@@ -712,14 +712,14 @@ class AddCost extends Component {
                   let renderForm = null;
                   let rule = [];
                   if (Number(it.fieldType) === 0) {
-                    renderForm = (<Input />);
+                    renderForm = (<Input placeholder='请输入' />);
                     rule = [{ max: 20, message: '限制20个字' }];
                   } else if (Number(it.fieldType) === 1) {
-                    renderForm = (<TextArea />);
+                    renderForm = (<TextArea placeholder='请输入' />);
                     rule = [{ max: 128, message: '限制128个字' }];
                   } else {
                     renderForm = (
-                      <Select>
+                      <Select placeholder='请选择'>
                         {
                           it.options && it.options.map(iteems => (
                             <Select.Option key={iteems}>{iteems}</Select.Option>

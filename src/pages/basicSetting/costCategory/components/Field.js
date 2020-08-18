@@ -56,7 +56,7 @@ class Field extends Component {
           expandField: expandField.filter(it => it.field !== field)
         });
       } else {
-        message.error('有进行中或已完成已拒绝的费用类别用到了该字段');
+        message.error('有单据正在使用该字段，不可删除');
       }
     });
   }
@@ -238,7 +238,7 @@ class Field extends Component {
           dataSource={showFields || costClassify}
           pagination={false}
           rowKey="field"
-          scroll={{y: '320px'}}
+          // scroll={{y: '320px'}}
         />
       </div>
     );
