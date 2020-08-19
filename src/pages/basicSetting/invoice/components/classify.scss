@@ -19,7 +19,7 @@
 }
 .classify{
   display: flex;
-  height: 131%;
+  height: 100%;
 }
 .content{
   :global(.ant-modal-body) {
@@ -50,6 +50,7 @@
 }
 
 .field{
+  overflow-y: scroll;
   :global(.ant-form-item) {
     margin-bottom: 0;
   }

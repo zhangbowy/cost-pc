@@ -276,7 +276,7 @@ class AddInvoice extends React.PureComponent {
           bodyStyle={{
             padding: 0,
             height: '442px',
-            overflowY: 'scroll'
+            // overflowY: 'scroll'
           }}
           width='780px'
           onCancel={this.onCancel}

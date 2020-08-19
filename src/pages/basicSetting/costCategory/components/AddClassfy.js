@@ -286,7 +286,7 @@ class AddClassify extends React.PureComponent {
           bodyStyle={{
             padding: 0,
             height: '442px',
-            overflowY: 'scroll'
+            // overflowY: 'scroll'
           }}
           maskClosable={false}
           width='780px'

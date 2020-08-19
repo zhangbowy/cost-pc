@@ -85,7 +85,7 @@ class Basic extends Component {
     }, lists);
     const { active, data} = this.state;
     return (
-      <div style={{ width: '100%', paddingTop: '24px' }}>
+      <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
         <Form {...formItemLayout} className="formItem">
           <Form.Item label={labelInfo.costName}>
             {

@@ -16,6 +16,7 @@ const { APP_API } = constants;
 @connect(({ global }) => ({
   invoiceDetail: global.invoiceDetail,
   approvedUrl: global.approvedUrl,
+  djDetail: global.djDetail,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class InvoiceDetail extends Component {
       visible: false,
       category: [],
       receipt: {},
+      showFields: {},
     };
   }
 
@@ -36,19 +38,38 @@ class InvoiceDetail extends Component {
       }
     }).then(() => {
       const { invoiceDetail } = this.props;
-      if (invoiceDetail.costDetailsVo) {
+      this.props.dispatch({
+        type: 'global/djDetail',
+        payload: {
+          id: invoiceDetail.invoiceTemplateId,
+          type: 1
+        }
+      }).then(() => {
+        const { djDetail } = this.props;
+        const showObj = {};
+        if (djDetail.showField) {
+          const arr = JSON.parse(djDetail.showField);
+          arr.forEach(it => {
+            showObj[it.field] = {...it};
+          });
+        }
         this.setState({
-          category: invoiceDetail.costDetailsVo,
+          showFields: showObj,
         });
-      }
-      if (invoiceDetail.receiptNameJson) {
-        const receipts = JsonParse(invoiceDetail.receiptNameJson);
+        if (invoiceDetail.costDetailsVo) {
+          this.setState({
+            category: invoiceDetail.costDetailsVo,
+          });
+        }
+        if (invoiceDetail.receiptNameJson) {
+          const receipts = JsonParse(invoiceDetail.receiptNameJson);
+          this.setState({
+            receipt: receipts[0] || {},
+          });
+        }
         this.setState({
-          receipt: receipts[0] || {},
+          visible: true,
         });
-      }
-      this.setState({
-        visible: true,
       });
     });
   }
@@ -120,7 +141,7 @@ class InvoiceDetail extends Component {
   }
 
   render() {
-    const { visible,  category, receipt } = this.state;
+    const { visible,  category, receipt, showFields } = this.state;
     const {
       children,
       invoiceDetail,
@@ -210,22 +231,36 @@ class InvoiceDetail extends Component {
       textWrap: 'word-break',
       width: '140px'
     }];
-    if (category && category.length > 0 && category[0].expandCostDetailFieldVos) {
+    if (category && category.length > 0 ) {
       const arr = [];
-      category[0].expandCostDetailFieldVos.forEach(it => {
-        arr.push({
-          title: it.name,
-          dataIndex: it.field,
-          render: (text) => (
-            <span>
-              <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
-                <span className="eslips-2">{text}</span>
-              </Tooltip>
-            </span>
-          ),
-        });
+      category.forEach(it => {
+        if (it.expandCostDetailFieldVos && (it.expandCostDetailFieldVos.length > 0)) {
+          const its = it.expandCostDetailFieldVos.map(item => {
+              return {
+                ...item,
+                title: item.name,
+                dataIndex: item.field,
+                render: (text) => (
+                  <span>
+                    <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+                      <span className="eslips-2">{text}</span>
+                    </Tooltip>
+                  </span>
+                ),
+              };
+          });
+          arr.push(...its);
+        }
       });
-      columns.splice(2, 1, ...arr);
+      const obj = {};
+      const per = arr.reduce((cur,next) => {
+        if (!obj[next.field]) {
+          obj[next.field] = true;
+          cur.push(next);
+        }
+        return cur;
+      },[]);
+      columns.splice(2, 0, ...per);
     }
     return (
       <span>
@@ -276,7 +311,7 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{invoiceDetail.createDeptName}</span>
             </Col>
           </Row>
-          <Row className="m-b-16">
+          <Row>
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交日期：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.createTime && moment(invoiceDetail.createTime).format('YYYY-MM-DD')}</span>
@@ -293,74 +328,93 @@ class InvoiceDetail extends Component {
               </span>
             </Col>
           </Row>
-          <Row className="m-b-16">
-            <Col span={8}>
+          <Row>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销人：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.userName}</span>
             </Col>
-            <Col span={8}>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销人部门：</span>
               <span className="fs-14 c-black-65">{invoiceDetail.deptName}</span>
             </Col>
-            <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.note}</span>
-            </Col>
-          </Row>
-          <Row className="m-b-16">
-            <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
-              <span className="fs-14 c-black-65">
-                {/* {invoiceDetail.receiptName}  */}
-                {/* {receipt.bankName}  */}
-                { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
-                <span className="m-r-8">{ receipt.bankName }</span>
-                {receipt.account}
-              </span>
-            </Col>
-            <Col span={8} style={{display: 'flex'}}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
-              <span className={cs(style.imgUrl, style.wraps)}>
-                {invoiceDetail.imgUrl && invoiceDetail.imgUrl.map((it, index) => (
-                  <div className="m-r-8 m-b-8" onClick={() => this.previewImage(invoiceDetail.imgUrl, index)}>
-                    <img alt="图片" src={it.imgUrl} className={style.images} />
-                  </div>
-                ))}
-              </span>
-            </Col>
-            <Col span={8} style={{display: 'flex'}}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
-              <span className={cs('fs-14', 'c-black-65', style.file)}>
-                {invoiceDetail.fileUrl && invoiceDetail.fileUrl.map(it => (
-                  <div className={style.files}>
-                    <img
-                      className='attachment-icon'
-                      src={fileIcon[it.fileType]}
-                      alt='attachment-icon'
-                    />
-                    <p key={it.fileId} style={{marginBottom: '8px'}} onClick={() => this.previewFiles(it)}>{it.fileName}</p>
-                  </div>
-                ))}
-              </span>
-            </Col>
-            <Col span={8} style={{display: 'flex'}} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
-              <span className="fs-14 c-black-65">
-                {invoiceDetail.projectName}
-              </span>
-            </Col>
-            <Col span={8} style={{display: 'flex'}} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
-              <span className="fs-14 c-black-65">
-                {invoiceDetail.supplierName}
-              </span>
-            </Col>
-            <Col span={8} style={{display: 'flex'}} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
-              <span className="fs-14 c-black-65">
-                {invoiceDetail.supplierAccountName} {invoiceDetail.supplierAccount}
-              </span>
-            </Col>
+            {
+              showFields.note && showFields.note.status &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
+                <span className="fs-14 c-black-65">{invoiceDetail.note}</span>
+              </Col>
+            }
+            {
+              showFields.receiptId && showFields.receiptId.status &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
+                <span className="fs-14 c-black-65">
+                  {/* {invoiceDetail.receiptName}  */}
+                  {/* {receipt.bankName}  */}
+                  { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
+                  <span className="m-r-8">{ receipt.bankName }</span>
+                  {receipt.account}
+                </span>
+              </Col>
+            }
+            {
+              showFields.imgUrl && showFields.imgUrl.status &&
+              <Col span={8} style={{display: 'flex'}} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
+                <span className={cs(style.imgUrl, style.wraps)}>
+                  {invoiceDetail.imgUrl && invoiceDetail.imgUrl.map((it, index) => (
+                    <div className="m-r-8 m-b-8" onClick={() => this.previewImage(invoiceDetail.imgUrl, index)}>
+                      <img alt="图片" src={it.imgUrl} className={style.images} />
+                    </div>
+                  ))}
+                </span>
+              </Col>
+            }
+            {
+              showFields.fileUrl && showFields.fileUrl.status &&
+              <Col span={8} style={{display: 'flex'}} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
+                <span className={cs('fs-14', 'c-black-65', style.file)}>
+                  {invoiceDetail.fileUrl && invoiceDetail.fileUrl.map(it => (
+                    <div className={style.files}>
+                      <img
+                        className='attachment-icon'
+                        src={fileIcon[it.fileType]}
+                        alt='attachment-icon'
+                      />
+                      <p key={it.fileId} style={{marginBottom: '8px'}} onClick={() => this.previewFiles(it)}>{it.fileName}</p>
+                    </div>
+                  ))}
+                </span>
+              </Col>
+            }
+            {
+              showFields.project && showFields.project.status &&
+              <Col span={8} style={{display: 'flex'}} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
+                <span className="fs-14 c-black-65">
+                  {invoiceDetail.projectName}
+                </span>
+              </Col>
+            }
+            {
+              showFields.supplier && showFields.supplier.status &&
+              <Col span={8} style={{display: 'flex'}} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
+                <span className="fs-14 c-black-65">
+                  {invoiceDetail.supplierName}
+                </span>
+              </Col>
+            }
+            {
+              showFields.supplier && showFields.supplier.status &&
+              <Col span={8} style={{display: 'flex'}} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
+                <span className="fs-14 c-black-65">
+                  {invoiceDetail.supplierAccountName} {invoiceDetail.supplierAccount}
+                </span>
+              </Col>
+            }
             {
               invoiceDetail.reasonForRejection &&
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
@@ -383,7 +437,7 @@ class InvoiceDetail extends Component {
               ))
             }
           </Row>
-          <div className={cs(style.header, 'm-b-16')}>
+          <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
             <div className={style.line} />
             <span>费用明细</span>
           </div>
@@ -391,7 +445,7 @@ class InvoiceDetail extends Component {
             columns={columns}
             dataSource={newList}
             pagination={false}
-            scroll={{x: newList.length > 6 ? '1200px' : '1000px'}}
+            scroll={{x: columns.length > 6 ? '1400px' : '1000px'}}
             rowKey="id"
           />
         </Modal>
