@@ -223,6 +223,22 @@ class AddFieldStr extends Component {
           <Form className="formItem">
             <Form.Item
               {...formItemLayout}
+              label="字段名称"
+            >
+              {
+                getFieldDecorator('name', {
+                  initialValue: detail.name,
+                  rules: [
+                    { required: true, message: '请输入字段名称' },
+                    { max: 5, message: '限制5个字' }
+                  ]
+                })(
+                  <Input placeholder="请输入字段名称" style={{width: '160px'}} />
+                )
+              }
+            </Form.Item>
+            <Form.Item
+              {...formItemLayout}
               label="字段类型"
             >
               {
@@ -237,22 +253,6 @@ class AddFieldStr extends Component {
                       ))
                     }
                   </Radio.Group>
-                )
-              }
-            </Form.Item>
-            <Form.Item
-              {...formItemLayout}
-              label="字段名称"
-            >
-              {
-                getFieldDecorator('name', {
-                  initialValue: detail.name,
-                  rules: [
-                    { required: true, message: '请输入字段名称' },
-                    { max: 5, message: '限制5个字' }
-                  ]
-                })(
-                  <Input placeholder="请输入字段名称" />
                 )
               }
             </Form.Item>
