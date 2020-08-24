@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Radio, Button, message } from 'antd';
+import { Button, message, Checkbox } from 'antd';
 import { connect } from 'dva';
+import cs from 'classnames';
 import style from './index.scss';
 import { choosePeople } from '../../../utils/ddApi';
 
@@ -96,21 +97,23 @@ class PeopleSetting extends Component {
           <div className={style.cnt_foot}>
             <div className={style.header}>
               <div className={style.line} />
-              <span>授权可用鑫支出的人员</span>
+              <span>授权可用鑫支出的人员（购买规格：{detail.payUserCount}人）</span>
             </div>
           </div>
-          <Radio.Group value={value} onChange={(e) => this.handleChange(e)}>
-            <Radio value className="m-b-12" style={{display: 'block'}}>
-              全部人员
-            </Radio>
-            <Radio value={false} className="m-b-12" style={{display: 'block'}}>
-              部分人员
-            </Radio>
-          </Radio.Group>
-          <div className={style.btns}>
-            <Button type="primary" onClick={() => this.selectPeople()} disabled={value}>添加人员</Button>
-            <span className="c-black-45 fs-14 m-l-16">{detail.useCount}/{detail.payUserCount}购买人数</span>
+          <div className={cs(style.btns, 'm-b-16')}>
+            <Button
+              type="primary"
+              onClick={() => this.selectPeople()}
+              disabled={value}
+              className="m-r-16"
+            >
+              添加人员
+            </Button>
+            <Checkbox>全部人员</Checkbox>
           </div>
+          <span className="c-black-45 fs-14 m-l-16">已授权桔梗、{detail.useCount}等人，还可以授权{detail.payUserCount}人，
+            <span className="sub-color">查看全部授权人员&gt;</span>
+          </span>
         </div>
       </div>
     );
