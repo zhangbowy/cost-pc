@@ -259,7 +259,7 @@ class AddInvoice extends React.PureComponent {
         visible: false,
       });
       onOk();
-      message.success(`${defaultTitle[title]}单据成功`);
+      message.success(`${defaultTitle[title]}单据模板成功`);
     });
   }
 
@@ -270,7 +270,7 @@ class AddInvoice extends React.PureComponent {
       <span className={styles.content}>
         <span onClick={() => this.show()}>{ children }</span>
         <Modal
-          title={title && `${defaultTitle[title]}单据`}
+          title={title && `${defaultTitle[title]}单据模板`}
           visible={visible}
           key="addInvoice"
           bodyStyle={{

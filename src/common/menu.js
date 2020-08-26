@@ -10,6 +10,15 @@ const menuData = [
     name: '付款',
     myIcon: 'iconbaoxiaodanguanli',
     path: 'payment',
+    children: [{
+      id: 'payment_invoicePay',
+      name: '报销付款',
+      path: 'invoicePay'
+    }, {
+      id: 'payment_borrowPay',
+      name: '借款付款',
+      path: 'borrowPay'
+    }],
   },
   {
     id: 'product_supplier',

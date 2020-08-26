@@ -117,7 +117,7 @@ class Invoice extends React.PureComponent {
       },list);
     }
     const columns = [{
-      title: '单据名称',
+      title: '单据模版名称',
       dataIndex: 'name',
       render: (_, record) => (
         <span>
@@ -149,7 +149,7 @@ class Invoice extends React.PureComponent {
               data={{parentId: record.id}}
               onOk={() => _this.onOk()}
             >
-              <span className="pd-20-9 c-black-65">添加单据</span>
+              <span className="pd-20-9 c-black-65">添加单据模版</span>
             </AddInvoice>
           ),
         }, {
@@ -222,7 +222,7 @@ class Invoice extends React.PureComponent {
             }
             {
               record.type === 1 &&
-                <AddInvoice onOk={() => _this.onOk()} data={record} title="edit"><a>编辑单据</a></AddInvoice>
+                <AddInvoice onOk={() => _this.onOk()} data={record} title="edit"><a>编辑单据模板</a></AddInvoice>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>

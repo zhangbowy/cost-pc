@@ -2,26 +2,19 @@
 import React from 'react';
 import { Table, Divider, message, Menu, Button, Form, DatePicker } from 'antd';
 import moment from 'moment';
-import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
 import { JsonParse, rowSelect } from '@/utils/common';
-import style from './index.scss';
-import PayModal from './components/payModal';
-import DropBtn from '../../components/DropBtn';
-import constants, { getArrayValue, accountType } from '../../utils/constants';
+import DropBtn from '@/components/DropBtn';
+import constants, { getArrayValue, accountType } from '@/utils/constants';
+import style from '../index.scss';
+import PayModal from './payModal';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
 @Form.create()
-@connect(({ loading, payment }) => ({
-  loading: loading.effects['payment/list'] || false,
-  list: payment.list,
-  query: payment.query,
-  total: payment.total,
-}))
-class Payments extends React.PureComponent {
+class PayTemp extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -203,6 +196,7 @@ class Payments extends React.PureComponent {
 
   export = (key) => {
     const { selectedRowKeys, status, searchContent } = this.state;
+    const { namespace } = this.props;
     if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
@@ -215,7 +209,7 @@ class Payments extends React.PureComponent {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
     }
-    let url = 'payment/exporting';
+    let url = `${namespace}/exporting`;
     if (key === '1') {
       params = {
         ids: selectedRowKeys
@@ -228,7 +222,7 @@ class Payments extends React.PureComponent {
       };
     }
     if(Number(status) !== 2) {
-      url = 'payment/exported';
+      url = `${namespace}/exported`;
     }
     this.props.dispatch({
       type: url,
@@ -251,20 +245,13 @@ class Payments extends React.PureComponent {
       return;
     }
     window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
-    // this.props.dispatch({
-    //   type: 'global/print',
-    //   payload: {
-    //     id: selectedRowKeys[0],
-    //   }
-    // }).then(() => {
-    //   message.success('打印成功');
-    // });
   }
 
   // 拒绝
   handleRefuse = (val) => {
+    const { namespace } = this.props;
     this.props.dispatch({
-      type: 'payment/refuse',
+      type: `${namespace}/refuse`,
       payload: {
         invoiceSubmitIds: [val.id],
         rejectNote: val.rejectNote
@@ -427,9 +414,6 @@ class Payments extends React.PureComponent {
       onSelect: this.onSelect,
       onSelectAll: this.onSelectAll,
     };
-    // if (Number(status) !== 2) {
-    //   rowSelection=null;
-    // }
     return (
       <div className="content-dt" style={{padding: 0}}>
         <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
@@ -481,11 +465,10 @@ class Payments extends React.PureComponent {
                 />
               </Form>
             </div>
-            {/* <div className="head_rg">
-              <span>排序</span>
-            </div> */}
           </div>
-          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}</p>
+          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
+            已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
+          </p>
           <Table
             columns={columns}
             dataSource={list}
@@ -544,4 +527,4 @@ class Payments extends React.PureComponent {
   }
 }
 
-export default Payments;
+export default PayTemp;
