@@ -88,6 +88,8 @@ class PeopleSetting extends Component {
       _this.setState({
         users: user,
       });
+    }, {
+      max: allUserCount,
     });
   }
 
@@ -153,7 +155,7 @@ class PeopleSetting extends Component {
               </Checkbox>
             }
           </div>
-          <span className="c-black-45 fs-14 m-l-16">已授权{users && users.length > 0 && users[0].userName}、等{detail.useCount}人，还可以授权{detail.payUserCount}人，
+          <span className="c-black-45 fs-14 m-l-16">已授权{users && users.length > 0 && users[0].userName}、等{detail.useCount}人，还可以授权{detail.payUserCount-detail.useCount}人，
             <LookAll userVos={users} allUserCount={allUserCount} onChangePeo={(val) => this.onChange(val)} visible={visible}>
               <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
             </LookAll>

@@ -29,6 +29,7 @@ class LookAll extends Component {
   selectPeople = () => {
     const { userVos } = this.state;
     const _this = this;
+    const { allUserCount } = this.props;
     choosePeople(userVos.map(it => it.userId), (res) => {
       console.log('取消', res);
       let user = userVos;
@@ -44,6 +45,8 @@ class LookAll extends Component {
       _this.setState({
         userVos: user,
       });
+    }, {
+      max: allUserCount
     });
   }
 
