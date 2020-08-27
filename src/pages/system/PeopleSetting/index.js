@@ -138,7 +138,7 @@ class PeopleSetting extends Component {
               <span>授权可用鑫支出的人员（购买规格：{payUserCount}人）</span>
             </div>
           </div>
-          <div className={cs(style.btns, 'm-b-10')}>
+          <div className={cs(style.btns, 'm-b-16')}>
             <Button
               type="primary"
               onClick={() => this.selectPeople()}
