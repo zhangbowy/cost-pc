@@ -4,10 +4,14 @@ import { connect } from 'dva';
 import cs from 'classnames';
 import style from './index.scss';
 import { choosePeople } from '../../../utils/ddApi';
+import LookAll from './components/LookAll';
 
 @connect(({ peopleSet }) => ({
   detail: peopleSet.detail,
   isAll: peopleSet.isAll,
+  userVos: peopleSet.userVos,
+  allUserCount: peopleSet.allUserCount,
+  checkAll: peopleSet.checkAll
 }))
 class PeopleSetting extends Component {
   constructor(props) {
@@ -15,6 +19,7 @@ class PeopleSetting extends Component {
     this.state = {
       users: [],
       value: false,
+      visible: false,
     };
   }
 
@@ -27,12 +32,12 @@ class PeopleSetting extends Component {
       type: 'peopleSet/detail',
       payload: {}
     }).then(() => {
-      const { detail, isAll } = this.props;
+      const { detail, isAll, userVos } = this.props;
       if (detail.msg) {
         message.error(detail.msg);
       }
       this.setState({
-        users: detail.userVos || [],
+        users: userVos || [],
         value: isAll,
       });
     });
@@ -51,27 +56,29 @@ class PeopleSetting extends Component {
     } else {
       this.selectPeople();
     }
-    this.setState({
-      value: e.target.value,
-    });
+    // this.setState({
+    //   value: e.target.value,
+    // });
   }
 
   selectPeople = () => {
     const { users } = this.state;
+    const { allUserCount } = this.props;
     const _this = this;
     choosePeople(users.map(it => it.userId), (res) => {
-      const user = res.map(it =>  {
-        return {
-          avatar: it.avatar,
-          userName: it.name,
-          userId: it.emplId
-        };
-      });
+      let user = users;
       if (res.length > 0) {
+        user = res.map(it =>  {
+          return {
+            avatar: it.avatar,
+            userName: it.name,
+            userId: it.emplId
+          };
+        });
         _this.props.dispatch({
           type: 'peopleSet/add',
           payload: {
-            isAll: false,
+            isAll: !((allUserCount - user.length) > 0),
             userVos: user,
           }
         }).then(() => {
@@ -84,9 +91,36 @@ class PeopleSetting extends Component {
     });
   }
 
+  onChange = (users) => {
+    const { allUserCount } = this.props;
+    this.props.dispatch({
+      type: 'peopleSet/add',
+      payload: {
+        isAll: !((allUserCount - users.length) > 0),
+        userVos: users,
+      }
+    }).then(() => {
+      this.setState({
+        visible: true,
+      });
+      this.onInit();
+    });
+  }
+
+  onChecked = (e) => {
+    this.props.dispatch({
+      type: 'peopleSet/add',
+      payload: {
+        isAll: e.target.value,
+      }
+    }).then(() => {
+      this.onInit();
+    });
+  }
+
   render() {
-    const { detail } = this.props;
-    const { value } = this.state;
+    const { detail, allUserCount, checkAll, isAll } = this.props;
+    const { value, users, visible } = this.state;
     return (
       <div>
         <div className="p-l-32" style={{backgroundColor: '#fff'}}>
@@ -104,15 +138,25 @@ class PeopleSetting extends Component {
             <Button
               type="primary"
               onClick={() => this.selectPeople()}
-              disabled={value}
               className="m-r-16"
             >
               添加人员
             </Button>
-            <Checkbox>全部人员</Checkbox>
+            {
+              checkAll &&
+              <Checkbox
+                checked={value}
+                disabled={isAll}
+                onChange={e => this.onChecked(e)}
+              >
+                全部人员
+              </Checkbox>
+            }
           </div>
-          <span className="c-black-45 fs-14 m-l-16">已授权桔梗、{detail.useCount}等人，还可以授权{detail.payUserCount}人，
-            <span className="sub-color">查看全部授权人员&gt;</span>
+          <span className="c-black-45 fs-14 m-l-16">已授权{users && users.length > 0 && users[0].userName}、等{detail.useCount}人，还可以授权{detail.payUserCount}人，
+            <LookAll userVos={users} allUserCount={allUserCount} onChangePeo={(val) => this.onChange(val)} visible={visible}>
+              <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
+            </LookAll>
           </span>
         </div>
       </div>

@@ -6,6 +6,9 @@ export default {
   state: {
     detail: {},
     isAll: false,
+    userVos: [],
+    allUserCount: 0,
+    checkAll: false,
   },
   effects: {
     *add({ payload }, { call }) {
@@ -18,6 +21,9 @@ export default {
         payload: {
           detail: response || {},
           isAll: response.isAll || false,
+          userVos: response.userVos || [],
+          allUserCount: response.allUserCount || 0,
+          checkAll: response.checkAll || false
         },
       });
     },
