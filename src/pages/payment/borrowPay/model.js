@@ -1,5 +1,5 @@
-import { post, get } from './node_modules/@/utils/request';
-import constants from './node_modules/@/utils/constants';
+import { post, get } from '@/utils/request';
+import constants from '@/utils/constants';
 import api from './services';
 
 const { PAGE_SIZE } = constants;
