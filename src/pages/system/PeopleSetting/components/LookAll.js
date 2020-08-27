@@ -29,7 +29,7 @@ class LookAll extends Component {
   selectPeople = () => {
     const { userVos } = this.state;
     const _this = this;
-    const { allUserCount } = this.props;
+    const { payUserCount } = this.props;
     choosePeople(userVos.map(it => it.userId), (res) => {
       console.log('取消', res);
       let user = userVos;
@@ -46,7 +46,7 @@ class LookAll extends Component {
         userVos: user,
       });
     }, {
-      max: allUserCount
+      max: payUserCount
     });
   }
 
@@ -64,7 +64,7 @@ class LookAll extends Component {
   }
 
   render() {
-    const { children, allUserCount } = this.props;
+    const { children, payUserCount, checkAll, allUserCount } = this.props;
     const { visible, userVos } = this.state;
     return (
       <span>
@@ -90,7 +90,7 @@ class LookAll extends Component {
             >
               添加人员
             </Button>
-            <span>已授权{userVos.length}人，还可以授权{allUserCount-userVos.length}人</span>
+            <span>已授权{userVos.length}人，还可以授权{checkAll ? (allUserCount-userVos.length) : (payUserCount-userVos.length)}人</span>
           </div>
           {
             userVos.map(it => (

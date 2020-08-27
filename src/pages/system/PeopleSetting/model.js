@@ -9,6 +9,7 @@ export default {
     userVos: [],
     allUserCount: 0,
     checkAll: false,
+    payUserCount: 0
   },
   effects: {
     *add({ payload }, { call }) {
@@ -23,7 +24,8 @@ export default {
           isAll: response.isAll || false,
           userVos: response.userVos || [],
           allUserCount: response.allUserCount || 0,
-          checkAll: response.checkAll || false
+          checkAll: response.checkAll || false,
+          payUserCount: response.payUserCount || 0,
         },
       });
     },

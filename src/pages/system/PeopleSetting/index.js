@@ -11,7 +11,8 @@ import LookAll from './components/LookAll';
   isAll: peopleSet.isAll,
   userVos: peopleSet.userVos,
   allUserCount: peopleSet.allUserCount,
-  checkAll: peopleSet.checkAll
+  checkAll: peopleSet.checkAll,
+  payUserCount: peopleSet.payUserCount
 }))
 class PeopleSetting extends Component {
   constructor(props) {
@@ -62,8 +63,8 @@ class PeopleSetting extends Component {
   }
 
   selectPeople = () => {
-    const { users } = this.state;
-    const { allUserCount } = this.props;
+    const { users, value } = this.state;
+    const { payUserCount, allUserCount } = this.props;
     const _this = this;
     choosePeople(users.map(it => it.userId), (res) => {
       let user = users;
@@ -78,7 +79,7 @@ class PeopleSetting extends Component {
         _this.props.dispatch({
           type: 'peopleSet/add',
           payload: {
-            isAll: !((allUserCount - user.length) > 0),
+            isAll: value ? !((allUserCount - user.length) > 0) : false,
             userVos: user,
           }
         }).then(() => {
@@ -89,16 +90,17 @@ class PeopleSetting extends Component {
         users: user,
       });
     }, {
-      max: allUserCount,
+      max: payUserCount,
     });
   }
 
   onChange = (users) => {
     const { allUserCount } = this.props;
+    const { value } = this.state;
     this.props.dispatch({
       type: 'peopleSet/add',
       payload: {
-        isAll: !((allUserCount - users.length) > 0),
+        isAll: value ? !((allUserCount - users.length) > 0) : false,
         userVos: users,
       }
     }).then(() => {
@@ -121,7 +123,7 @@ class PeopleSetting extends Component {
   }
 
   render() {
-    const { detail, allUserCount, checkAll, isAll } = this.props;
+    const { detail, allUserCount, checkAll, isAll, payUserCount } = this.props;
     const { value, users, visible } = this.state;
     return (
       <div>
@@ -133,10 +135,10 @@ class PeopleSetting extends Component {
           <div className={style.cnt_foot}>
             <div className={style.header}>
               <div className={style.line} />
-              <span>授权可用鑫支出的人员（购买规格：{detail.payUserCount}人）</span>
+              <span>授权可用鑫支出的人员（购买规格：{payUserCount}人）</span>
             </div>
           </div>
-          <div className={cs(style.btns, 'm-b-16')}>
+          <div className={cs(style.btns, 'm-b-10')}>
             <Button
               type="primary"
               onClick={() => this.selectPeople()}
@@ -155,8 +157,15 @@ class PeopleSetting extends Component {
               </Checkbox>
             }
           </div>
-          <span className="c-black-45 fs-14 m-l-16">已授权{users && users.length > 0 && users[0].userName}、等{detail.useCount}人，还可以授权{detail.payUserCount-detail.useCount}人，
-            <LookAll userVos={users} allUserCount={allUserCount} onChangePeo={(val) => this.onChange(val)} visible={visible}>
+          <span className="c-black-45 fs-14 m-l-10">已授权{users && users.length > 0 && users[0].userName}、等{detail.useCount}人，还可以授权{!value ? (payUserCount-users.length) : (allUserCount-users.length)}人，
+            <LookAll
+              userVos={users}
+              allUserCount={allUserCount}
+              onChangePeo={(val) => this.onChange(val)}
+              payUserCount={payUserCount}
+              visible={visible}
+              checkAll={value}
+            >
               <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
             </LookAll>
           </span>
