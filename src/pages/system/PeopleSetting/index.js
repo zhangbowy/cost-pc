@@ -63,10 +63,10 @@ class PeopleSetting extends Component {
   }
 
   selectPeople = () => {
-    const { users, value } = this.state;
-    const { payUserCount, allUserCount } = this.props;
+    const { users } = this.state;
+    const { allUserCount, payUserCount, checkAll } = this.props;
     const _this = this;
-    choosePeople(users.map(it => it.userId), (res) => {
+    choosePeople(users.map(it => it.userId) || [], (res) => {
       let user = users;
       if (res.length > 0) {
         user = res.map(it =>  {
@@ -79,7 +79,7 @@ class PeopleSetting extends Component {
         _this.props.dispatch({
           type: 'peopleSet/add',
           payload: {
-            isAll: value ? !((allUserCount - user.length) > 0) : false,
+            isAll: checkAll ? !((allUserCount - user.length) > 0) : false,
             userVos: user,
           }
         }).then(() => {
@@ -90,7 +90,7 @@ class PeopleSetting extends Component {
         users: user,
       });
     }, {
-      max: payUserCount,
+      max: checkAll ? allUserCount : payUserCount,
     });
   }
 
@@ -157,14 +157,15 @@ class PeopleSetting extends Component {
               </Checkbox>
             }
           </div>
-          <span className="c-black-45 fs-14 m-l-10">已授权{users && users.length > 0 && users[0].userName}、等{detail.useCount}人，还可以授权{!value ? (payUserCount-users.length) : (allUserCount-users.length)}人，
+          <span className="c-black-45 fs-14 m-l-10">
+            已授权{users && users.length > 0 ? `${users[0].userName}、等${detail.useCount}人` : '0人'}，还可以授权{!checkAll ? (payUserCount-users.length) : (allUserCount-users.length)}人，
             <LookAll
               userVos={users}
               allUserCount={allUserCount}
               onChangePeo={(val) => this.onChange(val)}
               payUserCount={payUserCount}
               visible={visible}
-              checkAll={value}
+              checkAll={checkAll}
             >
               <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
             </LookAll>
