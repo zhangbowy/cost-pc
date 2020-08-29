@@ -8,6 +8,7 @@ import { JsonParse } from '@/utils/common';
 import styles from './classify.scss';
 import Basic from './Basic';
 import Field from './Field';
+import { borrowJson } from '../../../../utils/constants';
 
 @connect(({ global, session, invoice }) => ({
   costCategoryList: global.costCategoryList,
@@ -25,8 +26,9 @@ class AddInvoice extends React.PureComponent {
       visible: false,
       left: 'basic',
       categoryList: [],
+
       data: {
-        showFields: costCategoryJson,
+        showFields: props.templateType ? borrowJson : costCategoryJson,
         expandField: []
       }
     };

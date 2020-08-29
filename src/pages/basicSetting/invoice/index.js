@@ -11,6 +11,7 @@ import Search from 'antd/lib/input/Search';
 // import SortModal from './components/SortModal';
 import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
+import JudgeType from './components/JudgeType';
 
 const namespace = 'invoice';
 const { confirm } = Modal;
@@ -139,7 +140,7 @@ class Invoice extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
-      width: '160px',
+      width: '200px',
       render: (_, record) => {
         const _this = this;
         let btns = [{
@@ -239,9 +240,9 @@ class Invoice extends React.PureComponent {
       <div className="content-dt">
         <div className="cnt-header">
           <div className="head_lf">
-            <AddInvoice title="add" data={{}} onOk={this.onOk}>
+            <JudgeType title="add" data={{}} onOk={this.onOk}>
               <Button type="primary" style={{marginRight: '8px'}}>新增单据</Button>
-            </AddInvoice>
+            </JudgeType>
             <AddGroup title="add" onOk={this.onOk}>
               <Button style={{marginRight: '8px'}}>新增分组</Button>
             </AddGroup>
@@ -255,11 +256,6 @@ class Invoice extends React.PureComponent {
               </Form.Item>
             </Form>
           </div>
-          {/* <div className="head_rg">
-            <SortModal>
-              <span>排序</span>
-            </SortModal>
-          </div> */}
         </div>
         <Table
           columns={columns}

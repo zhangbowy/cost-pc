@@ -150,6 +150,89 @@ export const costCategoryJson = [{
   note: '',
 }];
 
+export const borrowJson = [{
+  key: 'reason',
+  field: 'reason',
+  name: '借款事由',
+  status: true,
+  isWrite: true,
+  note: '',
+  disabled: true,
+}, {
+  key: 'userJson',
+  field: 'userJson',
+  name: '借款人',
+  status: true,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}, {
+  key: 'deptId',
+  field: 'deptId',
+  name: '借款部门',
+  status: true,
+  isWrite: true,
+  note: '',
+  disabled: true,
+}, {
+  key: 'loanSum',
+  field: 'loanSum',
+  name: '借款金额',
+  status: true,
+  isWrite: true,
+  note: '',
+  disabled: true,
+}, {
+  key: 'repaymentTime',
+  field: 'repaymentTime',
+  name: '预计还款时间',
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'supplier',
+  field: 'supplier',
+  name: '供应商',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'note',
+  field: 'note',
+  name: '单据备注',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'receiptId',
+  field: 'receiptId',
+  name: '收款账户',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'imgUrl',
+  field: 'imgUrl',
+  name: '图片',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'fileUrl',
+  field: 'fileUrl',
+  name: '附件',
+  status: true,
+  isWrite: false,
+  note: '',
+}];
+
 // 费用类别
 export const costClassify = [{
   key: 'costCategory',
