@@ -118,9 +118,9 @@
     background-color: #fafafa!important;
   }
   .ant-table-body{
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    // &::-webkit-scrollbar {
+    //   display: none;
+    // }
   }
   .ant-tag{
     background:rgba(245,245,245,1);
