@@ -262,6 +262,7 @@ class Workbench extends PureComponent {
                         id={item.id}
                         onHandleOk={this.onHandleOk}
                         key={item.id}
+                        templateType={item.templateType}
                       >
                         <div key={item.id} className={cs(style.offten, 'm-l-20')}>
                           <i className="iconfont icondanju" />

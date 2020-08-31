@@ -28,7 +28,7 @@ class AddInvoice extends React.PureComponent {
       categoryList: [],
 
       data: {
-        showFields: props.templateType ? borrowJson : costCategoryJson,
+        showFields: Number(props.templateType) ? borrowJson : costCategoryJson,
         expandField: []
       }
     };
@@ -44,7 +44,7 @@ class AddInvoice extends React.PureComponent {
   }
 
    show = () => {
-    const { userInfo, dispatch, data, title } = this.props;
+    const { userInfo, dispatch, data, title, templateType } = this.props;
     dispatch({
       type: 'global/costList',
       payload: {
@@ -124,7 +124,7 @@ class AddInvoice extends React.PureComponent {
             payload: {},
           }).then(() => {
             const { expandLists } = this.props;
-            const showDefault = [...costCategoryJson];
+            const showDefault = templateType && Number(templateType) ? [...borrowJson] : [...costCategoryJson];
             if (expandLists && expandLists.length > 0) {
               const oldArr = [...expandLists];
               oldArr.unshift(2,0);
@@ -209,6 +209,7 @@ class AddInvoice extends React.PureComponent {
       userInfo,
       onOk,
       title,
+      templateType,
     } = this.props;
     const url = title === 'edit' ? 'invoice/edit' : 'invoice/add';
     if (this.formRef && this.formRef.getFormItem) {
@@ -254,6 +255,7 @@ class AddInvoice extends React.PureComponent {
       type: url,
       payload: {
         ...datas,
+        templateType,
       }
     }).then(() => {
       this.onReset();
