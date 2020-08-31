@@ -35,11 +35,10 @@ function Controller(props) {
       }
         message.error('只能上传xlsx格式的文件!');
         return false;
-      
     },
     onChange(info) {
       if (info.file.status !== 'uploading') {
-        if(info.fileList.length){
+        if(info.fileList.length>1){
           info.fileList.splice(0,1);
         }
       }
@@ -187,6 +186,7 @@ function Controller(props) {
         companyId: userInfo.companyId,
       },
       callback: (res) => {
+        console.log('getAuthUrl',res);
         if(res){
           setAuthurl(res);
         }
@@ -198,6 +198,7 @@ function Controller(props) {
         companyId: userInfo.companyId,
       },
       callback: (res) => {
+        console.log('getCompanyAuthResult',res);
         if(res.isAuthor === 1){
           setStatus(true);
           setCurrent(current + 1);
@@ -215,6 +216,7 @@ function Controller(props) {
         companyId: userInfo.companyId,
       },
       callback: (res) => {
+        console.log('getImportInfo',res);
         setImportInfo(res);
       }
     });
@@ -269,7 +271,7 @@ function Controller(props) {
               <span className={style.btn}>x</span>
               <span style={{fontWeight:'400'}}>成功导入成功 { successNum }条，失败 { failNum }条&nbsp;&nbsp;&nbsp;</span>
               <a
-                href={`${APP_API}/cost/export/userInfo/failData?token=${localStorage.getItem('token')}`}
+                href={`${APP_API}/cost/export/userInfo/failData?failFileId=${failFileId}&token=${localStorage.getItem('token')}`}
                 style={{color:'#00C795'}}
               >导出失败数据
               </a>

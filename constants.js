@@ -12,9 +12,9 @@ const APP_NAME = '鑫支出';
 const APP_API = {
   // dev: 'http://framework-api.dev.jimistore.com',
   // dev: 'http://10.255.0.169:8080', // debug
-  // dev: 'http://127.0.0.1:8084/api', // debug
-  dev:'https://pretest.forwe.store',
-  test: 'http://172.17.9.120',
+  dev: 'http://127.0.0.1:8084/api', // debug
+  // test: 'http://172.17.9.120',
+  test: 'https://pretest.forwe.store',
   test2: 'http://framework-api.test2.jimistore.com',
   pre: 'https://framework-api-sandbox.jimistore.com',
   prod: 'https://cost.forwe.store',
