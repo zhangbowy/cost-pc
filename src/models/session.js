@@ -27,6 +27,18 @@ export default {
         api.getLeftMenu,
         payload,
       );
+      response.push({
+        id: '470531070073933867',
+        icon: 'iconbaoxiaodanguanli',
+        isAll:false,
+        menuName:'借款管理',
+        parentId:0,
+        perms:'',
+        sort:26,
+        type:1,
+        url:'borrowering'
+      });
+      console.log(11111,response);
       const menus = treeConvert({
         rootId: 0,
         pId: 'parentId',

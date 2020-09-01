@@ -1,0 +1,14 @@
+.payContent{
+
+  padding: 24px 32px;
+
+  :global(.cnt-header .head_lf) {
+    display: flex;
+  }
+  :global(.ant-form-item) {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+}

@@ -10,6 +10,11 @@ const menuData = [
     name: '付款',
     myIcon: 'iconbaoxiaodanguanli',
     path: 'payment',
+  },{
+    id: 'borrowering',
+    name: '借款管理',
+    myIcon: 'iconbaoxiaodanguanli',
+    path: 'borrowering',
   },
   {
     id: 'product_supplier',
