@@ -1,11 +1,12 @@
 import React from 'react';
-import { Modal, Form, Input, Button, message } from 'antd';
+import { Modal, Form, Input, Button, message, Radio } from 'antd';
 import { formItemLayout, defaultTitle, invoiceStatus } from '@/utils/constants';
 import { connect } from 'dva';
 
 const labelItem = {
   costName: '名称',
-  parentId: '所属分组'
+  parentId: '所属分组',
+  type: '类型选择'
 };
 @Form.create()
 @connect(({ loading }) => ({
@@ -108,13 +109,11 @@ class AddGroup extends React.PureComponent {
             <Button key="save" type="primary" onClick={this.handleOk} loading={loading}>保存</Button>
           ]}
         >
-          <Form
-            layout="inline"
-            {...formItemLayout}
-          >
+          <Form>
             <Form.Item
               key="name"
               label={labelItem.costName}
+              {...formItemLayout}
             >
               {
                 getFieldDecorator('name', {
@@ -131,6 +130,25 @@ class AddGroup extends React.PureComponent {
                 )
               }
             </Form.Item>
+            {
+              title === 'add' &&
+              <Form.Item
+                key="templateType"
+                label={labelItem.type}
+                {...formItemLayout}
+              >
+                {
+                  getFieldDecorator('templateType', {
+                    initialValue: (data && data.templateType) || 0,
+                  })(
+                    <Radio.Group>
+                      <Radio value={0}>报销单</Radio>
+                      <Radio value={1}>借款单</Radio>
+                    </Radio.Group>
+                  )
+                }
+              </Form.Item>
+            }
           </Form>
         </Modal>
       </span>

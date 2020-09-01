@@ -117,4 +117,9 @@
   .ant-cascader-menu-item:hover{
     background-color: #fafafa!important;
   }
+  .ant-table-body{
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }

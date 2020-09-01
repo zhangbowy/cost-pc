@@ -8,6 +8,7 @@ import { JsonParse } from '@/utils/common';
 import styles from './classify.scss';
 import Basic from './Basic';
 import Field from './Field';
+import { borrowJson } from '../../../../utils/constants';
 
 @connect(({ global, session, invoice }) => ({
   costCategoryList: global.costCategoryList,
@@ -25,8 +26,9 @@ class AddInvoice extends React.PureComponent {
       visible: false,
       left: 'basic',
       categoryList: [],
+
       data: {
-        showFields: costCategoryJson,
+        showFields: Number(props.templateType) ? borrowJson : costCategoryJson,
         expandField: []
       }
     };
@@ -42,7 +44,7 @@ class AddInvoice extends React.PureComponent {
   }
 
    show = () => {
-    const { userInfo, dispatch, data, title } = this.props;
+    const { userInfo, dispatch, data, title, templateType } = this.props;
     dispatch({
       type: 'global/costList',
       payload: {
@@ -122,7 +124,7 @@ class AddInvoice extends React.PureComponent {
             payload: {},
           }).then(() => {
             const { expandLists } = this.props;
-            const showDefault = [...costCategoryJson];
+            const showDefault = templateType && Number(templateType) ? [...borrowJson] : [...costCategoryJson];
             if (expandLists && expandLists.length > 0) {
               const oldArr = [...expandLists];
               oldArr.unshift(2,0);
@@ -207,6 +209,7 @@ class AddInvoice extends React.PureComponent {
       userInfo,
       onOk,
       title,
+      templateType,
     } = this.props;
     const url = title === 'edit' ? 'invoice/edit' : 'invoice/add';
     if (this.formRef && this.formRef.getFormItem) {
@@ -252,6 +255,7 @@ class AddInvoice extends React.PureComponent {
       type: url,
       payload: {
         ...datas,
+        templateType,
       }
     }).then(() => {
       this.onReset();
@@ -259,7 +263,7 @@ class AddInvoice extends React.PureComponent {
         visible: false,
       });
       onOk();
-      message.success(`${defaultTitle[title]}单据成功`);
+      message.success(`${defaultTitle[title]}单据模板成功`);
     });
   }
 
@@ -270,13 +274,13 @@ class AddInvoice extends React.PureComponent {
       <span className={styles.content}>
         <span onClick={() => this.show()}>{ children }</span>
         <Modal
-          title={title && `${defaultTitle[title]}单据`}
+          title={title && `${defaultTitle[title]}单据模板`}
           visible={visible}
           key="addInvoice"
           bodyStyle={{
             padding: 0,
             height: '442px',
-            overflowY: 'scroll'
+            // overflowY: 'scroll'
           }}
           width='780px'
           onCancel={this.onCancel}

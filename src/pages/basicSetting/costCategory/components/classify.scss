@@ -63,6 +63,7 @@
 }
 
 .field{
+  overflow-y: scroll;
   :global(.ant-form-item) {
     margin-bottom: 0;
   }

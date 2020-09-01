@@ -94,7 +94,7 @@ class AddCategory extends Component {
                   }
                   {
                     item.children && item.children.map(it => (
-                      <AddInvoice id={it.id} visible={modalVis} key={it.id}>
+                      <AddInvoice id={it.id} visible={modalVis} key={it.id} templateType={it.templateType}>
                         <div className={style.cnt_cnts} key={it.id} onClick={() => this.onHandelShow()}>
                           <div className={style.cnt_list}>
                             <p className="c-black-85 fw-500 fs-14 eslips-1">{it.name}</p>
@@ -107,7 +107,7 @@ class AddCategory extends Component {
                   }
                   {
                     item.parentId === 0 && (item.type === 1) &&
-                    <AddInvoice id={item.id} visible={modalVis} onHandleOk={this.onOK}>
+                    <AddInvoice id={item.id} visible={modalVis} onHandleOk={this.onOK} templateType={item.templateType}>
                       <div className={style.cnt_cnts} key={item.id} onClick={() => this.onHandelShow()}>
                         <div className={style.cnt_list}>
                           <p className="c-black-85 fw-500 fs-14 eslips-1">{item.name}</p>

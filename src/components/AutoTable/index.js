@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /**
  * 查询表格纵向高度自适应
  * 建议配合组件Card及样式app-table-responsive

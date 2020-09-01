@@ -71,7 +71,7 @@ class AddInvoice extends Component {
 
   onShowHandle = async() => {
     let detail = this.state.details;
-    const { id, userInfo } = this.props;
+    const { id, userInfo, templateType } = this.props;
     const _this = this;
     const userJson = [{
       userName: userInfo.name,
@@ -128,6 +128,7 @@ class AddInvoice extends Component {
       payload: {
         id,
         type: 1,
+        templateType,
       }
     });
     const djDetails = await this.props.djDetail;

@@ -19,7 +19,7 @@
 }
 .classify{
   display: flex;
-  height: 131%;
+  height: 100%;
 }
 .content{
   :global(.ant-modal-body) {
@@ -50,8 +50,26 @@
 }
 
 .field{
+  overflow-y: scroll;
   :global(.ant-form-item) {
     margin-bottom: 0;
   }
 }
-
+.judgeType{
+  display: flex;
+  justify-content: space-between;
+  div{
+    height: 224px;
+    width: 208px;
+    cursor: pointer;
+  }
+  p{
+    margin-bottom: 0px;
+  }
+}
+.invoiceType{
+  background: url('../../../../assets/img/invoice.png') no-repeat center;
+}
+.borrowType{
+  background: url('../../../../assets/img/borrow.png') no-repeat center;
+}

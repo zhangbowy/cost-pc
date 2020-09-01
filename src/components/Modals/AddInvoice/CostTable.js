@@ -138,13 +138,34 @@ class CostTable extends Component {
     }];
     if (list && list[0].expandCostDetailFieldVos) {
       const arr = [];
-      list[0].expandCostDetailFieldVos.forEach(it => {
-        arr.push({
-          title: it.name,
-          dataIndex: it.field,
-        });
+      list.forEach(it => {
+        if (it.expandCostDetailFieldVos && (it.expandCostDetailFieldVos.length > 0)) {
+          const its = it.expandCostDetailFieldVos.map(item => {
+              return {
+                ...item,
+                title: item.name,
+                dataIndex: item.field,
+                render: (text) => (
+                  <span>
+                    <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+                      <span className="eslips-2">{text}</span>
+                    </Tooltip>
+                  </span>
+                ),
+              };
+          });
+          arr.push(...its);
+        }
       });
-      columns.splice(2, 1, ...arr);
+      const obj = {};
+      const per = arr.reduce((cur,next) => {
+        if (obj[next.field]) {
+          obj[next.field] = true;
+          cur.push(next);
+        }
+        return cur;
+      },[]);
+      columns.splice(2, 0, ...per);
     }
     return (
       <div style={{ marginTop: '24px' }}>

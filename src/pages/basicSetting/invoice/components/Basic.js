@@ -178,7 +178,7 @@ class Basic extends React.PureComponent {
     const lists = (list && list.filter(it => Number(it.type) === 0)) || [];
     const { cost, user, category, users, deptJson } = this.state;
     return (
-      <div style={{ width: '100%', paddingTop: '24px' }}>
+      <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
         <Form {...formItemLayout} className="formItem">
           <Form.Item label={labelInfo.name}>
             {
