@@ -74,6 +74,7 @@ class AddInvoice extends React.PureComponent {
             payload: {
               id: data.id,
               type: 1,
+              templateType,
             }
           }).then(() => {
             const { detail } = this.props;
@@ -121,7 +122,9 @@ class AddInvoice extends React.PureComponent {
         } else {
           this.props.dispatch({
             type: 'invoice/expandLists',
-            payload: {},
+            payload: {
+              templateType
+            },
           }).then(() => {
             const { expandLists } = this.props;
             const showDefault = templateType && Number(templateType) ? [...borrowJson] : [...costCategoryJson];
@@ -224,7 +227,6 @@ class AddInvoice extends React.PureComponent {
     }
     if (this.saveFormRef && this.saveFormRef.getFormItem) {
       const fieldVal = this.saveFormRef.getFormItem();
-      console.log(fieldVal);
       if(!fieldVal) {
         return;
       }

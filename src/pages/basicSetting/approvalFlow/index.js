@@ -1,219 +1,102 @@
-import React, { Component } from 'react';
-import { Select, Button, message } from 'antd';
+import React, { useState, useEffect } from 'react';
 import cs from 'classnames';
+import PropTypes from 'prop-types';
 import MenuItems from '@/components/AntdComp/MenuItems';
-import { repeatMethod } from '@/utils/constants';
+import { Table, Button } from 'antd';
 import { connect } from 'dva';
-// import ApproveProcess from './components/approveNode/ApproveProcess';
 import style from './index.scss';
-import Process from './components/Process';
-import SetName from './components/SetName';
+import AddFlow from './components/AddFlow';
 
-@connect(({ approvalFlow, global }) => ({
-  nodes: approvalFlow.nodes,
-  detailNode: approvalFlow.detailNode,
-  approvePersonList: global.approvePersonList,
-}))
-class ApprovalFlow extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      nodes: {},
-      status: 'CreatorFirstLeader',
-      repeatMethods: 'NONE',
-      ccPosition: '',
-    };
-  }
+const approvePersonList = [{
+  key: '0',
+  value: '报销单审批流'
+}, {
+  key: '1',
+  value: '借款单审批流'
+}];
+function ApprovalFlow(props) {
 
-  async componentDidMount () {
-    this.props.dispatch({
-      type: 'global/costList',
-      payload: {}
-    });
-    this.props.dispatch({
-      type: 'global/projectList',
-      payload: {},
-    });
-    this.props.dispatch({
-      type: 'global/supplierList',
-      payload: {},
-    });
-    this.props.dispatch({
-      type: 'global/approverRole',
+  const [status, setStatus] = useState('0');
+
+  useEffect(() => {
+    props.dispatch({
+      type: 'approvalFlow/approvalList',
       payload: {
-        pageNo: 1,
-        pageSize: 1000,
+        templateType: status,
       }
     });
-    await this.props.dispatch({
-      type: 'global/approverPersonList',
-      payload: {}
-    });
-    await this.props.dispatch({
-      type: 'approvalFlow/list',
+  }, []);
+  const onHandle = (val) => {
+    setStatus(val);
+    props.dispatch({
+      type: 'approvalFlow/approvalList',
       payload: {
-        uniqueMark: 'CreatorFirstLeader',
-        deepQueryFlag: false,
+        templateType: val,
       },
     }).then(() => {
-      const { nodes, detailNode } = this.props;
-      this.setState({
-        nodes,
-        ccPosition: detailNode.ccPosition,
-        repeatMethods: detailNode.repeatMethod,
-      });
+      // const { nodes, detailNode } = props;
+      // this.setState({
+      //   nodes,
+      //   ccPosition: detailNode.ccPosition,
+      //   repeatMethods: detailNode.repeatMethod,
+      // });
     });
-  }
+  };
 
-  onHandle = (val) => {
-    this.setState({
-      status: val,
-    });
-    this.props.dispatch({
-      type: 'approvalFlow/list',
-      payload: {
-        uniqueMark: val,
-        deepQueryFlag: false,
-      },
-    }).then(() => {
-      const { nodes, detailNode } = this.props;
-      this.setState({
-        nodes,
-        ccPosition: detailNode.ccPosition,
-        repeatMethods: detailNode.repeatMethod,
-      });
-    });
-  }
+  const columns = [{
+    title: '审批流名称',
+    dataIndex: 'templateName',
+  }, {
+    title: '最后修改时间',
+    dataIndex: 'time',
+  }, {
+    title: '操作',
+    dataIndex: 'operate',
+    render: () => (
+      <span>
+        <a className="m-r-8">编辑</a>
+        <span className="deleteColor">删除</span>
+      </span>
+    ),
+    width: '100px',
+    className: 'fixCenter'
+  }];
 
-  onQuery = (payloads) => {
-    this.props.dispatch({
-      type: 'approvalFlow/list',
-      payload: payloads,
-    }).then(() => {
-      const { nodes, detailNode } = this.props;
-      this.setState({
-        nodes,
-        ccPosition: detailNode.ccPosition,
-        repeatMethods: detailNode.repeatMethod,
-      });
-    });
-  }
-
-  onChange = (nodes) => {
-    this.setState({
-      nodes,
-    });
-  }
-
-  onStartChange = (data) => {
-    console.log(data);
-  }
-
-  save = () => {
-    console.log(this.processData && this.processData.getData());
-    const { status, repeatMethods, ccPosition } = this.state;
-
-    const data = this.processData.getData();
-    Promise.all([data]).
-    then(res => {
-      this.props.dispatch({
-        type: 'approvalFlow/add',
-        payload: {
-          node: res[0].formData,
-          uniqueMark: status,
-          repeatMethod: repeatMethods,
-          ccPosition,
-          deepQueryFlag: false,
-        }
-      }).then(() => {
-        this.onQuery({
-          uniqueMark: status,
-        });
-        message.success('保存成功');
-      });
-    }).catch(err => {
-      console.log(err);
-    });
-  }
-
-  onChangRepeat = (val) => {
-    this.setState({
-      repeatMethods: val,
-    });
-  }
-
-  onChangePosition = (val) => {
-    this.setState({
-      ccPosition: val,
-    });
-  }
-
-  handleOk = () => {
-    this.props.dispatch({
-      type: 'global/approverPersonList',
-      payload: {}
-    });
-  }
-
-  render() {
-    const { status, repeatMethods, nodes, ccPosition } = this.state;
-    const { approvePersonList } = this.props;
-    return (
-      <div style={{ height: '100%' }}>
-        <div className="app_header">
-          <p className="app_header_title">审批设置</p>
-          <p className="app_header_line">默认为您提供5种类型的审批流程，您也可以自定义设置审批人</p>
-        </div>
-        <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto' }}>
-          <MenuItems
-            lists={approvePersonList || []}
-            onHandle={(val) => this.onHandle(val)}
-            params={{
-              key: 'uniqueMark',
-              value:'templateName'
-            }}
-            status={status}
+  return (
+    <div>
+      <div className="app_header">
+        <p className="app_header_title">审批设置</p>
+        <p className="app_header_line">默认为您提供5种类型的审批流程，您也可以自定义设置审批人</p>
+      </div>
+      <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto' }}>
+        <MenuItems
+          lists={approvePersonList || []}
+          onHandle={(val) => onHandle(val)}
+          params={{
+            key: 'key',
+            value:'value'
+          }}
+          status={status}
+        />
+        <div className="m-l-16 m-r-16">
+          <AddFlow>
+            <Button type="primary" className="m-t-16 m-b-16">新增</Button>
+          </AddFlow>
+          <Table
+            columns={columns}
+            dataSource={props.approveList}
           />
-          <div className={style.nodeCnt}>
-            <div className={style.method_box}>
-              <SetName
-                approvePersonList={approvePersonList}
-                uniqueMark={status}
-                onOk={this.handleOk}
-              >
-                <Button type="primary" className="m-b-8">审批流设置</Button>
-              </SetName>
-              <p>审批去重</p>
-              <Select
-                value={repeatMethods}
-                style={{minWidth: '300px'}}
-                onChange={(val) => this.onChangRepeat(val)}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-              >
-                {
-                  repeatMethod.map(it => (
-                    <Select.Option key={it.key}>{it.value}</Select.Option>
-                  ))
-                }
-              </Select>
-
-            </div>
-            <div className={style.approval_process} key={status}>
-              <Process
-                conf={nodes}
-                tabName="processDesign"
-                startNodeChange={this.onChange}
-                ref={data => {this.processData = data;}}
-                onChangePosition={this.onChangePosition}
-                ccPosition={ccPosition}
-              />
-              <p className={style.save_box}><Button type="primary" onClick={() => this.save()}>保存</Button></p>
-            </div>
-          </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-export default ApprovalFlow;
+ApprovalFlow.propTypes = {
+  approveList: PropTypes.array,
+};
+
+export default connect(({ approvalFlow }) => ({
+  approveList: approvalFlow.approveList,
+}))(ApprovalFlow);
+

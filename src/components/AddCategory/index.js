@@ -35,7 +35,7 @@ class AddCategory extends Component {
     const lists = treeConvert({
       pId: 'parentId',
       rootId: 0,
-      otherKeys: ['note', 'type', 'parentId', 'createTime']
+      otherKeys: ['note', 'type', 'parentId', 'createTime', 'templateType']
     }, UseTemplate).filter(({children = [], type}) => {
       if(type === 1) return true;
       return children.length > 0 ? children.map(it => it.type === 1).length : false;
@@ -94,7 +94,7 @@ class AddCategory extends Component {
                   }
                   {
                     item.children && item.children.map(it => (
-                      <AddInvoice id={it.id} visible={modalVis} key={it.id} templateType={it.templateType}>
+                      <AddInvoice id={it.id} visible={modalVis} key={it.id} onHandleOk={this.onOK} templateType={it.templateType}>
                         <div className={style.cnt_cnts} key={it.id} onClick={() => this.onHandelShow()}>
                           <div className={style.cnt_list}>
                             <p className="c-black-85 fw-500 fs-14 eslips-1">{it.name}</p>

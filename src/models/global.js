@@ -360,6 +360,10 @@ export default {
         },
       });
     },
+    // 添加借款单(单据)
+    *addLoan({ payload }, { call }) {
+      yield call(post, api.addLoan, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

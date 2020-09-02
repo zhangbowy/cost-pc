@@ -5,12 +5,12 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover } from 'antd';
+import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover, Radio } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
-import { defaultStatus, getArrayValue, invoiceStatus, approveStatus } from '@/utils/constants';
+import { workbenchStatus, getArrayValue, invoiceStatus, approveStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
 import banner from '@/assets/img/banner.png';
@@ -38,7 +38,8 @@ class Workbench extends PureComponent {
     this.state = {
       type: '1',
       reason: '',
-      huaVisible: false
+      huaVisible: false,
+      templateType: '0',
     };
   }
 
@@ -119,11 +120,17 @@ class Workbench extends PureComponent {
     this.setState({ huaVisible: false });
   }
 
+  onChangeType = e => {
+    this.setState({
+      templateType: e.target.value,
+    });
+  }
+
   render() {
     const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading } = this.props;
-    const { huaVisible } = this.state;
+    const { huaVisible, templateType } = this.state;
     const columns = [{
-      title: '报销事由',
+      title: '事由',
       dataIndex: 'reason',
       width: 150,
     }, {
@@ -279,15 +286,21 @@ class Workbench extends PureComponent {
               <div className="content-dt" style={{ padding: 0 }}>
                 <div style={{ marginBottom: '24px' }}>
                   <MenuItems
-                    lists={defaultStatus}
+                    lists={workbenchStatus}
                     onHandle={(val) => this.handleClick(val)}
                     status="1"
                   />
                 </div>
                 <div style={{ margin: '0 32px' }}>
                   <div className="m-b-16">
-                    {/* <Button>导出</Button>
-                    <Button className="m-l-8">打印</Button> */}
+                    <Radio.Group
+                      onChange={e => this.onChangeType(e)}
+                      className="m-r-16"
+                      value={templateType}
+                    >
+                      <Radio.Button value="0">报销单</Radio.Button>
+                      <Radio.Button value="1">借款单</Radio.Button>
+                    </Radio.Group>
                     <Search
                       placeholder="单号、事由、收款账户名称"
                       style={{ width: '272px' }}

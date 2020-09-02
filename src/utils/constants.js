@@ -667,3 +667,18 @@ export const refuseReason = [{
   key: 'o3',
   value: '报销内容与发票不符',
 }];
+
+// 工作台的选择
+export const workbenchStatus = [{
+  ket: '1',
+  value: '审批中',
+}, {
+  ket: '2',
+  value: '待发放',
+}, {
+  ket: '3',
+  value: '待核销',
+}, {
+  ket: '0',
+  value: '全部',
+}];

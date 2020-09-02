@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect, InputNumber, DatePicker } from 'antd';
 import { connect } from 'dva';
+import moment from 'moment';
 import fileIcon from '@/utils/fileIcon.js';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
@@ -433,7 +434,7 @@ class AddInvoice extends Component {
       expandField,
     } = this.state;
     const that = this;
-    const { id, dispatch } = this.props;
+    const { id, dispatch, templateType } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -505,8 +506,14 @@ class AddInvoice extends Component {
           ...params,
           costDetailsVo: arr,
         };
+        if(Number(templateType)) {
+          Object.assign(params, {
+            loanSum: (val.loanSum*1000)/10,
+            repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
+          });
+        }
         dispatch({
-          type: 'global/addInvoice',
+          type: Number(templateType) ? 'global/addLoan' : 'global/addInvoice',
           payload : {
             ...params,
           }
@@ -729,6 +736,7 @@ class AddInvoice extends Component {
       id,
       loading,
       usableProject,
+      templateType,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -796,7 +804,7 @@ class AddInvoice extends Component {
             <Form className="formItem" refs={forms => {this.invoice = forms;}}>
               <Row>
                 <Col span={12}>
-                  <Form.Item label={labelInfo.reason} {...formItemLayout}>
+                  <Form.Item label={showField.reason && showField.reason.name} {...formItemLayout}>
                     {
                       getFieldDecorator('reason', {
                         initialValue: details.reason || '',
@@ -808,7 +816,7 @@ class AddInvoice extends Component {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label={labelInfo.userId} {...formItemLayout}>
+                  <Form.Item label={showField.userJson && showField.userJson.name} {...formItemLayout}>
                     <SelectPeople
                       users={users}
                       placeholder='请选择'
@@ -823,7 +831,7 @@ class AddInvoice extends Component {
               </Row>
               <Row style={{display: 'flex', flexWrap: 'wrap'}}>
                 <Col span={12}>
-                  <Form.Item label={labelInfo.deptId} {...formItemLayout}>
+                  <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
                     {
                       getFieldDecorator('deptId', {
                         rules: [{ required: true, message: '请选择报销部门' }]
@@ -912,6 +920,42 @@ class AddInvoice extends Component {
                     }
                   </Form.Item>
                 </Col>
+                {
+                  showField.loanSum && showField.loanSum.status &&
+                  <Col span={12}>
+                    <Form.Item label={showField.loanSum && showField.loanSum.name} {...formItemLayout}>
+                      {
+                        getFieldDecorator('loanSum', {
+                          initialValue: details.loanSum || '',
+                          rules: [{
+                            required: !!(showField.loanSum && showField.loanSum.isWrite),
+                            message: `请输入${showField.loanSum && showField.loanSum.name}`
+                          }]
+                        })(
+                          <InputNumber placeholder={`请输入${showField.loanSum && showField.loanSum.name}`} />
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.repaymentTime && showField.repaymentTime.status &&
+                  <Col span={12}>
+                    <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
+                      {
+                        getFieldDecorator('repaymentTime', {
+                          initialValue: details.repaymentTime || '',
+                          rules: [{
+                            required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
+                            message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
+                          }]
+                        })(
+                          <DatePicker />
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
                 {
                   showField.imgUrl && showField.imgUrl.status &&
                   <Col span={12}>
@@ -1047,28 +1091,33 @@ class AddInvoice extends Component {
                 }
               </Row>
             </Form>
-            <Divider type="horizontal" />
-            <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-              <div className={style.header}>
-                <div className={style.line} />
-                <span>费用明细</span>
-              </div>
-              <div style={{textAlign: 'center'}} className={style.addbtn}>
-                <AddCost userInfo={userInfo} invoiceId={id} onAddCost={this.onAddCost}>
-                  <Button icon="plus" style={{ width: '231px' }}>添加费用</Button>
-                </AddCost>
-                {
-                  costDetailsVo && costDetailsVo.length > 0 &&
-                  <CostTable
-                    list={costDetailsVo}
-                    userInfo={userInfo}
-                    invoiceId={id}
-                    onChangeData={(val) => this.onChangeData(val)}
-                    addCost={this.onAddCost}
-                  />
-                }
-              </div>
-            </div>
+            {
+              !Number(templateType) &&
+              <>
+                <Divider type="horizontal" />
+                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                  <div className={style.header}>
+                    <div className={style.line} />
+                    <span>费用明细</span>
+                  </div>
+                  <div style={{textAlign: 'center'}} className={style.addbtn}>
+                    <AddCost userInfo={userInfo} invoiceId={id} onAddCost={this.onAddCost}>
+                      <Button icon="plus" style={{ width: '231px' }}>添加费用</Button>
+                    </AddCost>
+                    {
+                      costDetailsVo && costDetailsVo.length > 0 &&
+                      <CostTable
+                        list={costDetailsVo}
+                        userInfo={userInfo}
+                        invoiceId={id}
+                        onChangeData={(val) => this.onChangeData(val)}
+                        addCost={this.onAddCost}
+                      />
+                    }
+                  </div>
+                </div>
+              </>
+            }
             <Divider type="horizontal" />
             <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
               <div className={style.header} style={{padding: 0}}>

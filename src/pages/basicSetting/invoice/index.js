@@ -114,7 +114,7 @@ class Invoice extends React.PureComponent {
       lists = treeConvert({
         rootId: 0,
         pId: 'parentId',
-        otherKeys: ['status', 'note', 'type', 'sort'],
+        otherKeys: ['status', 'note', 'type', 'sort', 'templateType'],
       },list);
     }
     const columns = [{
@@ -149,6 +149,7 @@ class Invoice extends React.PureComponent {
               title="add"
               data={{parentId: record.id}}
               onOk={() => _this.onOk()}
+              templateType={record.templateType}
             >
               <span className="pd-20-9 c-black-65">添加单据模版</span>
             </AddInvoice>
@@ -180,6 +181,7 @@ class Invoice extends React.PureComponent {
                 onOk={() => _this.onOk()}
                 data={record}
                 title="copy"
+                templateType={record.templateType}
               >
                 <span className="pd-20-9 c-black-65">复制</span>
               </AddInvoice>
@@ -223,7 +225,14 @@ class Invoice extends React.PureComponent {
             }
             {
               record.type === 1 &&
-                <AddInvoice onOk={() => _this.onOk()} data={record} title="edit"><a>编辑单据模板</a></AddInvoice>
+                <AddInvoice
+                  onOk={() => _this.onOk()}
+                  data={record}
+                  title="edit"
+                  templateType={record.templateType}
+                >
+                  <a>编辑单据模板</a>
+                </AddInvoice>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>

@@ -60,7 +60,7 @@ const menuData = [
       path: 'receiptAccount',
     }, {
       id: 'basicSetting_invoice',
-      name: '单据',
+      name: '单据模板',
       path: 'invoice',
     }, {
       id: 'basicSetting_approvalFlow',

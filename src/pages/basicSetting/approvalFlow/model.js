@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 // import constants from '@/utils/constants';
 import api from './services';
 
@@ -9,6 +9,7 @@ export default {
     nodes: {},
     detailNode: {},
     newNodes: {},
+    approveList: []
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -18,6 +19,15 @@ export default {
         payload: {
           nodes: response.node || {},
           detailNode: response || {},
+        },
+      });
+    },
+    *approvalList({ payload }, { call, put }) {
+      const response = yield call(get, api.approvalList, payload);
+      yield put({
+        type: 'changeNodes',
+        payload: {
+          approveList: response || [],
         },
       });
     },
