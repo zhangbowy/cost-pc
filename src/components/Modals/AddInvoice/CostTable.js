@@ -98,7 +98,7 @@ class CostTable extends Component {
       ellipsis: true,
       width: '100px',
       render: (text) => (
-        <Tooltip placement="topRight" title={text || ''}>
+        <Tooltip placement="topLeft" title={text || ''}>
           <span>{text}</span>
         </Tooltip>
       )
