@@ -79,6 +79,7 @@ export default {
   proxy: {
     '/api': {
       target: `http://172.17.9.120`,
+      //target: `https://pretest.forwe.store`,
       pathRewrite: { '^/api': '' },
       changeOrigin:true,
     }

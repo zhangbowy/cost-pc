@@ -3,6 +3,7 @@ import { Popover, Divider } from 'antd';
 // import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
 import AddInvoice from '../Modals/AddInvoice';
+import AddBorrow from '../Modals/AddBorrow';
 import style from './index.scss';
 import Tags from '../Tags';
 
@@ -109,6 +110,16 @@ class AddCategory extends Component {
                           <Divider type="horizontal" style={{margin: 0}} />
                         </div>
                       </AddInvoice>
+                      || it.templateType === 1 &&
+                      <AddBorrow id={it.id} visible={modalVis} key={it.id} onHandleOk={this.onOK} templateType={it.templateType}>
+                        <div className={style.cnt_cnts} key={it.id} onClick={() => this.onHandelShow()}>
+                          <div className={style.cnt_list}>
+                            <p className="c-black-85 fw-500 fs-14 eslips-1">{it.name}</p>
+                            <p className="c-black-36 fs-13 eslips-1">{it.note || ''}</p>
+                          </div>
+                          <Divider type="horizontal" style={{margin: 0}} />
+                        </div>
+                      </AddBorrow>
                     ))
                   }
                   {

@@ -1,35 +1,31 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect, InputNumber, DatePicker } from 'antd';
-import { connect } from 'dva';
+import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect, DatePicker } from 'antd';
 import moment from 'moment';
+import { connect } from 'dva';
 import fileIcon from '@/utils/fileIcon.js';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
-import AddCost from './AddCost';
 import UploadImg from '../../UploadImg';
 import SelectPeople from '../SelectPeople';
 import { fileUpload, previewFile } from '../../../utils/ddApi';
-import CostTable from './CostTable';
-import BorrowTable from './BorrowTable';
-import AddBorrow from './AddBorrow';
 import ApproveNode from '../ApproveNode';
-import ReceiptModal from '../ReceiptModal';
 
 const {Option} = Select;
 const { TreeNode } = TreeSelect;
 const labelInfo = {
-  reason: '事由',
-  userId: '报销人',
-  deptId: '报销部门',
+  userId: '借款人',
+  deptId: '借款部门',
+  reason: '借款事由',
+  loanSum:'借款金额',
+  repaymentTime:'预计还款时间',
   note: '单据备注',
-  receiptId: '收款账户',
-  createDeptId: '所在部门',
+  project: '项目',
+  supplier: '供应商/账户',
   imgUrl: '图片',
   fileUrl: '附件',
-  project: '项目',
-  supplier: '供应商'
+  receiptId: '收款账户',
 };
 
 @connect(({ session, global, loading }) => ({
@@ -42,7 +38,7 @@ const labelInfo = {
   userId: global.userId,
   usableSupplier: global.usableSupplier,
   usableProject: global.usableProject,
-  loading: loading.effects['global/addInvoice'] || false,
+  loading: loading.effects['global/addLoan'] || false,
 }))
 @Form.create()
 class AddInvoice extends Component {
@@ -52,21 +48,19 @@ class AddInvoice extends Component {
       visible: false,
       imgUrl: [],
       depList: [], // 所在部门
-      createDepList: [], // 报销部门
+      // createDepList: [], // 报销部门
       accountList: [], // 收款账户
       details: {}, // 详情
       inDetails: {},
       users: [],
-      costDetailsVo: [], // 分摊
       nodes: {},
       fileUrl: [], // 附件
       showField: {}, // 是否显示输入框
       total: 0,
       loanUserId: '', // 审批人的userId
       expandField: [], // 扩展字段
+      loanSum:''
       // loading: false,
-      borrowArr:[],
-      selectedRowKeys:[]
     };
   }
 
@@ -121,18 +115,19 @@ class AddInvoice extends Component {
         createDepName: dep[0].name,
       };
     }
-    this.setState({
-      createDepList: dep
-    });
+    // this.setState({
+    //   createDepList: dep
+    // });
     await this.props.dispatch({
       type: 'global/djDetail',
       payload: {
         id,
         type: 1,
-        templateType,
+        templateType
       }
     });
     const djDetails = await this.props.djDetail;
+    console.log('detail=====',djDetails);
     const obj = {};
     if (djDetails.showField && djDetails.showField.length > 5) {
       JSON.parse(djDetails.showField).forEach(item => {
@@ -198,12 +193,11 @@ class AddInvoice extends Component {
       visible: false,
       imgUrl: [],
       depList: [], // 所在部门
-      createDepList: [], // 报销部门
+      // createDepList: [], // 报销部门
       accountList: [], // 收款账户
       details: {}, // 详情
       inDetails: {},
       users: [],
-      costDetailsVo: [], // 分摊
       nodes: {},
       fileUrl: [], // 附件
       showField: {}, // 是否显示输入框
@@ -306,114 +300,6 @@ class AddInvoice extends Component {
     });
   }
 
-  //  添加费用成功
-  onAddCost = (val, index) => {
-    const  share = this.state.costDetailsVo;
-    const detail = this.state.details;
-    if (index === 0 || index) {
-      share.splice(index, 1, val);
-    } else {
-      share.push(val);
-    }
-    let mo = 0;
-    const loanEntities = [];
-    const categorySumEntities = [];
-    share.forEach(it => {
-      mo+=it.costSum;
-      if (it.costDetailShareVOS) {
-        it.costDetailShareVOS.forEach(item => {
-          loanEntities.push({
-            loanUserId: item.loanUserId,
-            loanDeptId: item.deptId,
-            projectId: item.projectId,
-          });
-        });
-      }
-      categorySumEntities.push({
-        categoryId: it.categoryId,
-        costSum: ((it.costSum*1000) /10).toFixed(0),
-      });
-    });
-    const { loanUserId } = this.state;
-    this.getNode({
-      loanEntities,
-      categorySumEntities,
-      creatorDeptId: detail.createDeptId || '',
-      loanUserId: loanUserId || '',
-      loanDeptId: detail.deptId || '',
-      processPersonId: detail.processPersonId,
-      createDingUserId: detail.createDingUserId,
-      total: (mo * 1000)/10,
-      projectId: detail.projectId || '',
-      supplierId: detail.supplierId || ''
-    });
-    this.setState({
-      costDetailsVo: share,
-      total: mo,
-      details: {
-        ...detail,
-        loanEntities,
-        categorySumEntities,
-      }
-    });
-  }
-
-  //  选择借款
-  onAddBorrow = (val, selectedRowKeys) => {
-    console.log(11111);
-    // const share = this.state.costDetailsVo;
-    // const detail = this.state.details;
-    console.log(val,selectedRowKeys);
-    this.setState({borrowArr:val,selectedRowKeys});
-
-    // if (index === 0 || index) {
-    //   share.splice(index, 1, val);
-    // } else {
-    //   share.push(val);
-    // }
-    // let mo = 0;
-    // const loanEntities = [];
-    // const categorySumEntities = [];
-    // share.forEach(it => {
-    //   mo+=it.costSum;
-    //   if (it.costDetailShareVOS) {
-    //     it.costDetailShareVOS.forEach(item => {
-    //       loanEntities.push({
-    //         loanUserId: item.loanUserId,
-    //         loanDeptId: item.deptId,
-    //         projectId: item.projectId,
-    //       });
-    //     });
-    //   }
-    //   categorySumEntities.push({
-    //     categoryId: it.categoryId,
-    //     costSum: ((it.costSum*1000) /10).toFixed(0),
-    //   });
-    // });
-    // const { loanUserId } = this.state;
-    // this.getNode({
-    //   loanEntities,
-    //   categorySumEntities,
-    //   creatorDeptId: detail.createDeptId || '',
-    //   loanUserId: loanUserId || '',
-    //   loanDeptId: detail.deptId || '',
-    //   processPersonId: detail.processPersonId,
-    //   createDingUserId: detail.createDingUserId,
-    //   total: (mo * 1000)/10,
-    //   projectId: detail.projectId || '',
-    //   supplierId: detail.supplierId || ''
-    // });
-    // this.setState({
-    //   costDetailsVo: share,
-    //   total: mo,
-    //   details: {
-    //     ...detail,
-    //     loanEntities,
-    //     categorySumEntities,
-    //   }
-    // });
-  }
-
   // 上传附件
   uploadFiles = () => {
     console.log('上传');
@@ -485,20 +371,18 @@ class AddInvoice extends Component {
       imgUrl,
       fileUrl,
       nodes,
-      costDetailsVo,
       depList,
       users,
       details,
-      createDepList,
       total,
       expandField,
     } = this.state;
     const that = this;
-    const { id, dispatch, templateType } = this.props;
+    const { id, dispatch } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
-        const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
+        // const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
         const expandSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
@@ -517,12 +401,13 @@ class AddInvoice extends Component {
           invoiceTemplateId: id,
           reason: val.reason,
           note: val.note || '',
+          loanSum: this.state.loanSum,
           userId: details.userId || '',
           deptId: val.deptId,
           deptName: dep && dep.length > 0 ? dep[0].name : '',
           userJson: users,
-          createDeptId: val.createDeptId,
-          createDeptName: dept && dept.length > 0 ? dept[0].name : '',
+          createDeptId: val.deptId,
+          createDeptName: dep && dep.length > 0 ? dep[0].name : '',
           nodeConfigInfo: nodes,
           projectId: val.projectId || '',
           supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
@@ -532,48 +417,11 @@ class AddInvoice extends Component {
           submitSum: (total * 1000)/10,
           expandSubmitFieldVos
         };
-        const arr = [];
-        costDetailsVo.forEach((item, index) => {
-          arr.push({
-            'categoryId': item.categoryId,
-            'categoryName': item.categoryName,
-            'costSum': ((item.costSum) * 1000)/10,
-            'note': item.note,
-            'costDate':item.costDate,
-            'startTime':item.startTime || '',
-            'endTime':item.endTime || '',
-            'imgUrl':item.imgUrl,
-            'invoiceBaseId':id,
-            costDetailShareVOS: [],
-            expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
-          });
-          if (item.costDetailShareVOS) {
-            item.costDetailShareVOS.forEach(it => {
-              arr[index].costDetailShareVOS.push({
-                'shareAmount': (it.shareAmount * 1000)/10,
-                'shareScale': (it.shareScale * 1000)/10,
-                'deptId': it.deptId,
-                'userId': it.userId,
-                'userJson':it.users,
-                deptName: it.deptName,
-                userName: it.userName,
-                projectId: it.projectId,
-              });
-            });
-          }
-        });
         params = {
-          ...params,
-          costDetailsVo: arr,
+          ...params
         };
-        if(Number(templateType)) {
-          Object.assign(params, {
-            loanSum: (val.loanSum*1000)/10,
-            repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
-          });
-        }
         dispatch({
-          type: Number(templateType) ? 'global/addLoan' : 'global/addInvoice',
+          type: 'global/addLoan',
           payload : {
             ...params,
           }
@@ -586,18 +434,11 @@ class AddInvoice extends Component {
     });
   }
 
-  onChangeData = (val) => {
-    this.setState({
-      costDetailsVo: val,
-    });
-  }
-
-  changeBorrows = (val,keys) => {
-    this.setState({
-      borrowArr: val,
-      selectedRowKeys:keys
-    });
-  }
+  // onChangeData = (val) => {
+  //   this.setState({
+  //     costDetailsVo: val,
+  //   });
+  // }
 
   onChangeCreate = (val) => {
     const detail = this.state.details;
@@ -752,7 +593,7 @@ class AddInvoice extends Component {
               }
               {it.title}
             </div>
-            <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
+            <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}} >
               {it.type === 0 && '银行卡'}
               {it.type === 1 && '支付宝'}
               {it.type === 2 && '现金'}
@@ -795,31 +636,31 @@ class AddInvoice extends Component {
     });
   }
 
+  disabledDate = (current) => {
+    return current && current < moment().endOf('day');
+  }
+
   render() {
     const {
       children,
       form: { getFieldDecorator },
       userInfo,
-      id,
+      // id,
       loading,
       usableProject,
-      templateType,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
       visible,
       imgUrl,
       depList,
-      createDepList,
-      accountList,
       details,
       inDetails,
       users,
-      costDetailsVo,
       nodes,
       fileUrl,
       showField,
-      total,
+      // total,
       expandField,
     } = this.state;
     const formItemLayout = {
@@ -830,16 +671,6 @@ class AddInvoice extends Component {
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 16 },
-      },
-    };
-    const formItemLayouts = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 6 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 14 },
       },
     };
     return (
@@ -857,7 +688,9 @@ class AddInvoice extends Component {
             <div className={style.footerBtn}>
               <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
               <div>
-                <span className="fs-15 c-black-85 m-r-8">合计：¥<span className="fs-20 fw-500">{total}</span></span>
+                <span className="fs-15 c-black-85 m-r-8">借款金额：¥
+                  <span className="fs-20 fw-500">{this.state.loanSum}</span>
+                </span>
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>
@@ -871,7 +704,39 @@ class AddInvoice extends Component {
             <Form className="formItem" refs={forms => {this.invoice = forms;}}>
               <Row>
                 <Col span={12}>
-                  <Form.Item label={showField.reason && showField.reason.name} {...formItemLayout}>
+                  <Form.Item label={labelInfo.userId} {...formItemLayout}>
+                    <SelectPeople
+                      users={users}
+                      placeholder='请选择'
+                      onSelectPeople={(val) => this.selectPle(val)}
+                      invalid={false}
+                      disabled
+                      flag="users"
+                      multiple={false}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label={labelInfo.deptId} {...formItemLayout}>
+                    {
+                      getFieldDecorator('deptId', {
+                        rules: [{ required: true, message: '请选择借款部门' }]
+                      })(
+                        <Select placeholder="请选择" onChange={this.onChangeDept}>
+                          {
+                            depList.map(it => (
+                              <Option key={it.deptId}>{it.name}</Option>
+                            ))
+                          }
+                        </Select>
+                      )
+                    }
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row style={{display: 'flex', flexWrap: 'wrap'}}>
+                <Col span={12}>
+                  <Form.Item label={labelInfo.reason} {...formItemLayout}>
                     {
                       getFieldDecorator('reason', {
                         initialValue: details.reason || '',
@@ -883,33 +748,18 @@ class AddInvoice extends Component {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label={showField.userJson && showField.userJson.name} {...formItemLayout}>
-                    <SelectPeople
-                      users={users}
-                      placeholder='请选择'
-                      onSelectPeople={(val) => this.selectPle(val)}
-                      invalid={false}
-                      disabled={false}
-                      flag="users"
-                      multiple={false}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row style={{display: 'flex', flexWrap: 'wrap'}}>
-                <Col span={12}>
-                  <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
+                  <Form.Item label={labelInfo.loanSum} {...formItemLayout}>
                     {
-                      getFieldDecorator('deptId', {
-                        rules: [{ required: true, message: '请选择报销部门' }]
+                      getFieldDecorator('loanSum', {
+                        initialValue: details.loanSum || '',
+                        rules:[{ required: true, message: '请输入借款金额' }]
                       })(
-                        <Select placeholder="请选择" onChange={this.onChangeDept}>
-                          {
-                            depList.map(it => (
-                              <Option key={it.deptId}>{it.name}</Option>
-                            ))
-                          }
-                        </Select>
+                        <Input
+                          placeholder="请输入"
+                          onChange={(e) => {
+                          this.setState({loanSum: e.target.value});
+                        }}
+                        />
                       )
                     }
                   </Form.Item>
@@ -929,95 +779,64 @@ class AddInvoice extends Component {
                   </Col>
                 }
                 {
-                  showField.receiptId && showField.receiptId.status &&
-                  <Col span={12} style={{position: 'relative'}}>
-                    <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
+                  showField.repaymentTime && showField.repaymentTime.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.repaymentTime} {...formItemLayout}>
                       {
-                        getFieldDecorator('receiptId', {
-                          /* initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : null, */
-                          rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
+                        getFieldDecorator('repaymentTime',{
+                          rules: [{ required: !!(showField.repaymentTime.isWrite), message: '请选择预计还款时间' }]
+                        })(
+                          <DatePicker placeholder="请选择" disabledDate={this.disabledDate} />
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.project && showField.project.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.project} {...formItemLayout}>
+                      {
+                        getFieldDecorator('projectId', {
+                          initialValue: details.projectId || '',
+                          rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
                         })(
                           <Select
-                            placeholder="请选择"
-                            dropdownClassName={style.opt}
-                            onChange={(val) => this.onChangeAcc(val)}
-                            optionLabelProp="label"
+                            placeholder={`请选择${labelInfo.project}`}
+                            onChange={(val) => this.onChangePro(val, 'project')}
+                            dropdownClassName="selectClass"
                             getPopupContainer={triggerNode => triggerNode.parentNode}
-                            // value={details.receiptId}
                           >
                             {
-                              accountList.map(it => (
-                                <Option key={it.id} value={it.id} label={it.name}>
-                                  <div className={style.selects}>
-                                    <p className="c-black fs-14">{it.name} </p>
-                                    <p className="c-black-36 fs-13">{it.account}</p>
-                                  </div>
-                                  <Divider type="horizontal" />
-                                </Option>
+                              usableProject.map(it => (
+                                <Option key={it.id}>{it.name}</Option>
                               ))
                             }
                           </Select>
                         )
                       }
                     </Form.Item>
-                    <ReceiptModal title="add" onOk={this.handelAcc}>
-                      <a className={style.addReceipt}>新增</a>
-                    </ReceiptModal>
-                  </Col>
-                }
-                <Col span={12}>
-                  <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
-                    {
-                      getFieldDecorator('createDeptId', {
-                        initialValue: details.createDeptId || '',
-                        rules: [{ required: true, message: '请选择部门' }]
-                      })(
-                        <Select
-                          placeholder="请选择"
-                          onChange={this.onChangeCreate}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                        >
-                          {
-                            createDepList.map(it => (
-                              <Option key={it.deptId}>{it.name}</Option>
-                            ))
-                          }
-                        </Select>
-                      )
-                    }
-                  </Form.Item>
-                </Col>
-                {
-                  showField.loanSum && showField.loanSum.status &&
-                  <Col span={12}>
-                    <Form.Item label={showField.loanSum && showField.loanSum.name} {...formItemLayout}>
-                      {
-                        getFieldDecorator('loanSum', {
-                          initialValue: details.loanSum || '',
-                          rules: [{
-                            required: !!(showField.loanSum && showField.loanSum.isWrite),
-                            message: `请输入${showField.loanSum && showField.loanSum.name}`
-                          }]
-                        })(
-                          <InputNumber placeholder={`请输入${showField.loanSum && showField.loanSum.name}`} />
-                        )
-                      }
-                    </Form.Item>
                   </Col>
                 }
                 {
-                  showField.repaymentTime && showField.repaymentTime.status &&
+                  showField.supplier && showField.supplier.status &&
                   <Col span={12}>
-                    <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
+                    <Form.Item label={labelInfo.supplier} {...formItemLayout}>
                       {
-                        getFieldDecorator('repaymentTime', {
-                          initialValue: details.repaymentTime || '',
-                          rules: [{
-                            required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
-                            message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
-                          }]
+                        getFieldDecorator('supplier', {
+                          rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
                         })(
-                          <DatePicker />
+                          <TreeSelect
+                            placeholder="请选择"
+                            style={{width: '100%'}}
+                            treeDefaultExpandAll
+                            dropdownStyle={{height: '300px'}}
+                            onChange={(val) => this.onChangePro(val, 'supplier')}
+                            treeNodeLabelProp="name"
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
+                          >
+                            {this.treeNodeRender(supplierList)}
+                          </TreeSelect>
                         )
                       }
                     </Form.Item>
@@ -1158,55 +977,6 @@ class AddInvoice extends Component {
                 }
               </Row>
             </Form>
-            {
-              !Number(templateType) &&
-              <>
-                <Divider type="horizontal" />
-                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-                  <div className={style.header}>
-                    <div className={style.line} />
-                    <span>费用明细</span>
-                  </div>
-                  <div style={{textAlign: 'center'}} className={style.addbtn}>
-                    <AddCost userInfo={userInfo} invoiceId={id} onAddCost={this.onAddCost}>
-                      <Button icon="plus" style={{ width: '231px' }}>添加费用</Button>
-                    </AddCost>
-                    {
-                      costDetailsVo && costDetailsVo.length > 0 &&
-                      <CostTable
-                        list={costDetailsVo}
-                        userInfo={userInfo}
-                        invoiceId={id}
-                        onChangeData={(val) => this.onChangeData(val)}
-                        addCost={this.onAddCost}
-                      />
-                    }
-                  </div>
-                </div>
-              </>
-            }
-            <Divider type="horizontal" />
-            <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-              <div className={style.header}>
-                <div className={style.line} />
-                <span>借款核销</span>
-              </div>
-              <div style={{textAlign: 'center'}} className={style.addbtn}>
-                <AddBorrow userInfo={userInfo} invoiceId={id} onAddBorrow={this.onAddBorrow}>
-                  <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
-                </AddBorrow>
-                {
-                  this.state.borrowArr && this.state.borrowArr.length > 0 &&
-                  <BorrowTable
-                    list={this.state.borrowArr}
-                    selectedRowKeys={this.state.selectedRowKeys}
-                    userInfo={userInfo}
-                    invoiceId={id}
-                    onChangeData={(val,keys) => this.changeBorrows(val,keys)}
-                  />
-                }
-              </div>
-            </div>
             <Divider type="horizontal" />
             <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
               <div className={style.header} style={{padding: 0}}>
