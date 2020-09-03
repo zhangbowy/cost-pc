@@ -26,6 +26,7 @@ export default {
   receitAccount: `${APP_API}/cost/account/receipt/list/on`, // 收款账户
   approveList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
+  addLoan:`${APP_API}/cost/invoice/loan/add`,
   addReceipt: `${APP_API}/cost/account/receipt/add`,
   invoiceList: `${APP_API}/cost/invoice/template/list`,
   print: `${APP_API}/cost/export/pdfDetail`,

@@ -149,6 +149,9 @@ export default {
     *addInvoice({ payload }, { call }) {
       yield call(post, api.addInvoice, payload);
     },
+    *addLoan({ payload }, { call }) {
+      yield call(post, api.addLoan, payload);
+    },
     *addAcc({ payload }, { call }) {
       yield call(post, api.addReceipt, payload);
     },
