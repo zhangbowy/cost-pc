@@ -7,6 +7,9 @@ import Process from './Process';
 
 @connect(({ approvalFlow }) => ({
   nodes: approvalFlow.nodes,
+  initDetailNode: approvalFlow.initDetailNode,
+  initNode: approvalFlow.initNode,
+  detailNode: approvalFlow.detailNode
 }))
 class AddFlow extends Component {
   constructor(props) {
@@ -21,7 +24,7 @@ class AddFlow extends Component {
   }
 
   onShow = async() => {
-    const { title } = this.props;
+    const { title, processPersonId } = this.props;
     this.props.dispatch({
       type: 'global/costList',
       payload: {}
@@ -47,16 +50,23 @@ class AddFlow extends Component {
     });
     if (title === 'add') {
       await this.props.dispatch({
-        type: '',
-        payload: {
-
-        }
+        type: 'approvalFlow/initNode',
+        payload: {}
+      }).then(() => {
+        const { initNode, initDetailNode } = this.props;
+        this.setState({
+          nodes:initNode,
+          ccPosition: initDetailNode.ccPosition,
+          repeatMethods: initDetailNode.repeatMethod,
+          visible: true
+        });
       });
+
     } else {
       await this.props.dispatch({
         type: 'approvalFlow/list',
         payload: {
-          uniqueMark: 'CreatorFirstLeader',
+          processPersonId,
           deepQueryFlag: false,
         },
       }).then(() => {
@@ -65,6 +75,7 @@ class AddFlow extends Component {
           nodes,
           ccPosition: detailNode.ccPosition,
           repeatMethods: detailNode.repeatMethod,
+          visible: true
         });
       });
     }
@@ -112,6 +123,7 @@ class AddFlow extends Component {
 
   save = () => {
     console.log(this.processData && this.processData.getData());
+    const { templateType, processPersonId } = this.props;
     const { status, repeatMethods, ccPosition } = this.state;
 
     const data = this.processData.getData();
@@ -125,6 +137,8 @@ class AddFlow extends Component {
           repeatMethod: repeatMethods,
           ccPosition,
           deepQueryFlag: false,
+          templateType,
+          processPersonId
         }
       }).then(() => {
         this.onQuery({

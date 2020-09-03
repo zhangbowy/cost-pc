@@ -191,6 +191,7 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('account', {
                     initialValue: data && data.account,
+                    rules: [{ required: (Number(type) !== 2), message: `请输入${Number(type) === 0 ? labelInfo.account : '账号'}` }]
                   })(
                     <Input placeholder="请输入" />
                   )

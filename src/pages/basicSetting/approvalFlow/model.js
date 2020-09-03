@@ -9,7 +9,9 @@ export default {
     nodes: {},
     detailNode: {},
     newNodes: {},
-    approveList: []
+    approveList: [],
+    initDetailNode: {},
+    initNode: {},
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -31,6 +33,16 @@ export default {
         },
       });
     },
+    *initNode({ payload }, { call, put }) {
+      const response = yield call(get, api.initList, payload);
+      yield put({
+        type: 'changeNodes',
+        payload: {
+          initNode: response.node || {},
+          initDetailNode: response || {},
+        },
+      });
+    },
     *add({ payload }, { call }) {
       yield call(post, api.add, payload);
     },
@@ -38,7 +50,7 @@ export default {
       yield call(post, api.edit, payload);
     },
     *del({ payload }, { call }) {
-      yield call(post, api.del, payload);
+      yield call(get, api.del, payload);
     },
   },
   reducers: {

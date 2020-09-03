@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Table } from 'antd';
+import { Modal, Form, Table } from 'antd';
 import Search from 'antd/lib/input/Search';
 import { connect } from 'dva';
 import cs from 'classnames';
+import { rowSelect } from '@/utils/common';
 import style from './index.scss';
 
 // const labelInfo = {
@@ -14,6 +15,9 @@ import style from './index.scss';
 //   imgUrl: '图片',
 //   happenTime: '发生日期'
 // };
+@connect(({ workbench }) => ({
+  waitList: workbench.waitList,
+}))
 @Form.create()
 @connect(({ global }) => ({
   expenseList: global.expenseList,
@@ -29,7 +33,8 @@ class AddBorrow extends Component {
       visible: false,
       details: props.detail || [], // 详细信息
       money:0,
-      selectedRowKeys:[]
+      selectedRowKeys:[],
+      selectedRows: [],
     };
   }
 
@@ -45,6 +50,12 @@ class AddBorrow extends Component {
   }
 
   onShow = async() => {
+    this.props.dispatch({
+      type: 'workbench/waitList',
+      payload: {}
+    }).then(() => {
+      console.log(this.props.waitList);
+    });
     this.setState({
       visible: true,
     });
@@ -131,12 +142,46 @@ class AddBorrow extends Component {
     }
   }
 
+  onSelectAll = (selected, selectedRows, changeRows) => {
+    const result = rowSelect.onSelectAll(this.state, selected, changeRows);
+    const _selectedRows = result.selectedRows;
+    const { selectedRowKeys } = result;
+    this.setState({
+      selectedRows: _selectedRows,
+      selectedRowKeys,
+    });
+  };
+
+  onSelect = (record, selected) => {
+    console.log(record);
+    const {
+      selectedRows,
+      selectedRowKeys,
+    } = rowSelect.onSelect(this.state, record, selected);
+    this.setState({
+      selectedRows,
+      selectedRowKeys,
+    });
+  };
+
+  onDelete = (id) => {
+      const {
+        selectedRows,
+        selectedRowKeys,
+      } = rowSelect.onDelete(this.state, id);
+      this.setState({
+        selectedRows,
+        selectedRowKeys,
+      });
+  };
+
   render() {
     const {
       children,
     } = this.props;
     const {
       visible,
+      selectedRowKeys,
     } = this.state;
     const columns = [
       {
@@ -156,33 +201,24 @@ class AddBorrow extends Component {
       },
     ];
     const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        let money = 0;
-        const details = [];
-        selectedRows.map(item => {
-          money += Number(item.dhx);
-          details.push(item);
-          return item;
-        });
-        this.setState({money,details,selectedRowKeys});
-      },
-      selectedRowKeys:this.state.selectedRowKeys,
-      getCheckboxProps: record => (
-        console.log('getCheckboxProps',record)
-      ),
+      type: 'checkbox',
+      selectedRowKeys,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
     };
 
     const dataSource = [{
       shiyou:'111',
       jkdh:'36472384',
       dhx:'342324',
-      tjsj:'2019-05-06'
+      tjsj:'2019-05-06',
+      id: 123,
     },{
       shiyou:'2222',
       jkdh:'3647212384',
       dhx:'34223324',
-      tjsj:'2019-05-07'
+      tjsj:'2019-05-07',
+      id: 234
     }];
 
     return (
@@ -197,8 +233,8 @@ class AddBorrow extends Component {
           maskClosable={false}
           onOk={() => this.handleOk()}
         >
-          <div>
-            <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" />
+          <div className="m-b-16">
+            {/* <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" /> */}
             <Search
               placeholder="请输入单号、事由"
               style={{ width: '292px',marginRight:'20px' }}
@@ -213,7 +249,7 @@ class AddBorrow extends Component {
                 rowSelection={rowSelection}
                 dataSource={dataSource}
                 pagination={false}
-                rowKey="key"
+                rowKey="id"
               />
             </div>
           </div>

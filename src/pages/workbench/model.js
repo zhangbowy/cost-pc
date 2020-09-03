@@ -55,6 +55,15 @@ export default {
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
     },
+    *waitList({ payload }, { call, put }) {
+      const response = yield call(get, api.waitList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          waitList: response || []
+        }
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {

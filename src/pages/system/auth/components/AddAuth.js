@@ -307,6 +307,7 @@ class AddAuth extends Component {
             selectedKeys={this.state.selectedKeys}
             autoExpandParent={this.state.autoExpandParent}
             disabled={isSupperAdmin}
+            className={style.treeStyle}
           >
             {this.renderTreeNodes(treeData)}
           </Tree>

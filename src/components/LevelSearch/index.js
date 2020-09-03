@@ -3,7 +3,7 @@ import { Modal, Form, Row, Col, Button, DatePicker, Select, TreeSelect } from 'a
 import { connect } from 'dva';
 import moment from 'moment';
 import treeConvert from '@/utils/treeConvert';
-import { formItemLayout, approveStatus, statusList } from '../../utils/constants';
+import { approveStatus, statusList } from '../../utils/constants';
 import styles from './index.scss';
 import UserSelector from '../Modals/SelectPeople';
 
@@ -137,6 +137,16 @@ class LevelSearch extends Component {
       projectList,
       supplierList,
     } = this.props;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 7 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 15 },
+      },
+    };
     const lists = costCategoryList;
     const list = treeConvert({
       rootId: 0,

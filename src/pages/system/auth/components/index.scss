@@ -26,3 +26,9 @@
   display: block;
   white-space: nowrap;
 }
+.treeStyle{
+  :global(.ant-tree-checkbox) {
+    top: 11px!important;
+    padding: 0!important;
+  }
+}

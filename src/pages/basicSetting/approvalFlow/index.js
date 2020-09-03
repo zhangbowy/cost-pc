@@ -67,7 +67,9 @@ function ApprovalFlow(props) {
     dataIndex: 'operate',
     render: (_, record) => (
       <span>
-        <a className="m-r-8">编辑</a>
+        <AddFlow title="edit" templateType={status} processPersonId={record.id}>
+          <a className="m-r-8">编辑</a>
+        </AddFlow>
         {
           !record.isDefault &&
           <span className="deleteColor" onClick={() => onDel(record.id)}>删除</span>
