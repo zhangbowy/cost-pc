@@ -30,11 +30,12 @@ class InvoiceDetail extends Component {
   }
 
   onShow = () => {
-    const { id } = this.props;
+    const { id, templateType } = this.props;
     this.props.dispatch({
       type: 'global/invoiceDetail',
       payload: {
-        id
+        id,
+        templateType
       }
     }).then(() => {
       const { invoiceDetail } = this.props;
@@ -42,7 +43,8 @@ class InvoiceDetail extends Component {
         type: 'global/djDetail',
         payload: {
           id: invoiceDetail.invoiceTemplateId,
-          type: 1
+          type: 1,
+          templateType
         }
       }).then(() => {
         const { djDetail } = this.props;

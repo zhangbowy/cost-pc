@@ -12,6 +12,7 @@ import Search from 'antd/lib/input/Search';
 import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
+import Tags from '../../../components/Tags';
 
 const namespace = 'invoice';
 const { confirm } = Modal;
@@ -124,6 +125,12 @@ class Invoice extends React.PureComponent {
         <span>
           <span style={{ marginRight: '8px' }}>{record.name}</span>
           { (record.status === 0) && <Tag color="red">已停用</Tag> }
+          {
+            (record.type === 0) &&
+            <Tags color={record.templateType && Number(record.templateType) ? 'rgba(38, 128, 242, 0.08)' : 'rgba(0, 199, 149, 0.08)'}>
+              {record.templateType && Number(record.templateType) ? '借款' : '报销'}
+            </Tags>
+          }
         </span>
       ),
     }, {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import cs from 'classnames';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { Table, Button } from 'antd';
 import { connect } from 'dva';
@@ -43,19 +44,34 @@ function ApprovalFlow(props) {
     });
   };
 
+  const onDel = processPersonId => {
+    props.dispatch({
+      type: 'approvalFlow/del',
+      payload: {
+        processPersonId
+      }
+    });
+  };
+
   const columns = [{
     title: '审批流名称',
     dataIndex: 'templateName',
   }, {
     title: '最后修改时间',
-    dataIndex: 'time',
+    dataIndex: 'updateTime',
+    render: (text) => (
+      <span>{text && moment(text).format('YYYY-MM-DD hh:mm')}</span>
+    )
   }, {
     title: '操作',
     dataIndex: 'operate',
-    render: () => (
+    render: (_, record) => (
       <span>
         <a className="m-r-8">编辑</a>
-        <span className="deleteColor">删除</span>
+        {
+          !record.isDefault &&
+          <span className="deleteColor" onClick={() => onDel(record.id)}>删除</span>
+        }
       </span>
     ),
     width: '100px',
@@ -79,7 +95,7 @@ function ApprovalFlow(props) {
           status={status}
         />
         <div className="m-l-16 m-r-16">
-          <AddFlow>
+          <AddFlow title="add" templateType={status}>
             <Button type="primary" className="m-t-16 m-b-16">新增</Button>
           </AddFlow>
           <Table

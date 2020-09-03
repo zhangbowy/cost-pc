@@ -233,7 +233,7 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
             <Divider type="vertical" />
           }
-          <InvoiceDetail id={record.id}>
+          <InvoiceDetail id={record.id} templateType={record.templateType}>
             <a>查看</a>
           </InvoiceDetail>
         </span>
@@ -272,7 +272,7 @@ class Workbench extends PureComponent {
                         templateType={item.templateType}
                       >
                         <div key={item.id} className={cs(style.offten, 'm-l-20')}>
-                          <i className="iconfont icondanju" />
+                          <i className="iconfont icondanju" style={{color: item.templateType && Number(item.templateType) ? 'rgba(38, 128, 242, 0.37)' : 'rgba(0, 199, 149, 0.37)'}} />
                           <div className={style.cost_cnt}>
                             <span className="fw-500 fs-14 c-black-85 li-22 m-b-2 eslips-1">{item.name}</span>
                             <span className="fs-12 c-black-45 eslips-1">{item.note || '暂无备注'}</span>

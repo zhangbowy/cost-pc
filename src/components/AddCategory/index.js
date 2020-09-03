@@ -4,6 +4,7 @@ import { Popover, Divider } from 'antd';
 import treeConvert from '@/utils/treeConvert';
 import AddInvoice from '../Modals/AddInvoice';
 import style from './index.scss';
+import Tags from '../Tags';
 
 class AddCategory extends Component {
   constructor(props) {
@@ -89,7 +90,12 @@ class AddCategory extends Component {
                     item.children &&
                     <div className={style.header} key={item.id}>
                       <div className={style.line} />
-                      <span>{item.name}</span>
+                      <span className="m-r-8">{item.name}</span>
+                      <Tags
+                        color={item.templateType && Number(item.templateType) ? 'rgba(38, 128, 242, 0.08)' : 'rgba(0, 199, 149, 0.08)'}
+                      >
+                        {item.templateType && Number(item.templateType) ? '借款' : '报销'}
+                      </Tags>
                     </div>
                   }
                   {

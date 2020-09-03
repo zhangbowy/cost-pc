@@ -121,6 +121,13 @@ export const costCategoryJson = [{
   isWrite: false,
   note: '',
 }, {
+  key: 'loan',
+  field: 'loan',
+  name: '借款核销',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
   key: 'note',
   field: 'note',
   name: '单据备注',
