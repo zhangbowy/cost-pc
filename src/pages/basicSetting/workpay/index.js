@@ -38,7 +38,7 @@ function Controller(props) {
     },
     onChange(info) {
       if (info.file.status !== 'uploading') {
-        if(info.fileList.length>1){
+        if(info.fileList.length){
           info.fileList.splice(0,1);
         }
       }
@@ -60,6 +60,18 @@ function Controller(props) {
           setFailNum(data.failNum);
           setSuccessNum(data.successNum);
           message.success(`成功导入${data.successNum}条，失败${data.failNum}条`);
+          dispatch({
+            type: 'controller/getImportInfo',
+            payload: {
+              companyId: userInfo.companyId,
+            },
+            callback: (res) => {
+              console.log('getImportInfo',res);
+              setImportInfo(res);
+            }
+          });
+        }else{
+          message.error(info.file.response.message);
         }
       } else if (info.file.status === 'error') {
         if(info.file.response && info.file.response.result){
@@ -135,7 +147,7 @@ function Controller(props) {
             <span style={{fontWeight:'400'}}>扫码授权</span>
           </p>
           <div style={{textAlign:'center',marginTop:'50px'}}>
-            <span style={{display:'inline-block',padding:'22px',border:'1px dashed #1D1156',borderRadius:'2px'}} >
+            <span style={{display:'inline-block',padding:'22px',borderRadius:'2px',boxShadow: '0px 0px 6px 0px rgba(29, 17, 86, 0.12)'}} >
               <QRCode value={authUrl} size={130} />,
             </span>
           </div>
@@ -227,13 +239,21 @@ function Controller(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getTextTit = () => {
+    if(visible){
+      return '您的企业已成功开通花呗工作花，请及时告知员工到鑫支出开通该业务，即刻享受花呗提额';
+    }
+      return '如您已线下签约花呗工作花，请及时扫码授权，并录入员工信息，员工方可正常开通使用';
+    
+  };
+
   return (
     <div style={{minHeight:'100%'}}>
       <div className={style.app_header}>
         <p className="c-black-85 fs-20 fw-600 m-b-8">花呗工作花</p>
-        <p className="c-black-45 fs-14" style={{marginBottom: 0}}>鑫支出联合支付宝花呗工作花，为企业提供“报销备用金”，企业无预支，员工无垫付。</p>
+        <p className="c-black-45 fs-14" style={{marginBottom: 0}}>{getTextTit()}</p>
       </div>
-      <div className="content-dt" style={{overflowY:'auto',padding: '24px 10%',minHeight: 'calc(100% - 120px)' }} >
+      <div className="content-dt" style={{overflowY:'auto',padding: visible?'24px 32px':'24px 10%',minHeight: 'calc(100% - 120px)' }} >
         <>
           <div className={visible?style.hide:''}>
             <Steps current={current} >
@@ -252,7 +272,7 @@ function Controller(props) {
               </Tooltip>
             </Lines>
             <div style={{marginTop:'18px'}}>
-              <span style={{display:'inline-block',padding:'22px',border:'1px dashed #1D1156',borderRadius:'2px'}} >
+              <span style={{display:'inline-block',padding:'22px',borderRadius:'2px',boxShadow: '0px 0px 6px 0px rgba(29, 17, 86, 0.12)'}} >
                 <QRCode value={authUrl} size={130} />,
               </span>
             </div>
@@ -269,7 +289,7 @@ function Controller(props) {
             </p>
             <p className={`${style.testMessageRed} ${failFileId?'':style.hide}`} style={{marginLeft:0,marginTop:0,marginBottom:'16px'}}>
               <span className={style.btn}>x</span>
-              <span style={{fontWeight:'400'}}>成功导入成功 { successNum }条，失败 { failNum }条&nbsp;&nbsp;&nbsp;</span>
+              <span style={{fontWeight:'400'}}>成功导入 { successNum }条，失败 { failNum }条&nbsp;&nbsp;&nbsp;</span>
               <a
                 href={`${APP_API}/cost/export/userInfo/failData?failFileId=${failFileId}&token=${localStorage.getItem('token')}`}
                 style={{color:'#00C795'}}
