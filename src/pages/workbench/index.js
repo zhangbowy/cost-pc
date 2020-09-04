@@ -30,6 +30,7 @@ import { accountType } from '../../utils/constants';
   UseTemplate: workbench.UseTemplate,
   total: workbench.total,
   userInfo: session.userInfo,
+  huaVisible: workbench.huaVisible
 }))
 class Workbench extends PureComponent {
 
@@ -51,6 +52,13 @@ class Workbench extends PureComponent {
     this.props.dispatch({
       type: 'workbench/costList',
       payload: {}
+    });
+    this.props.dispatch({
+      type: 'workbench/ejectFrame',
+      payload: {}
+    }).then((e) => {
+      console.log(e);
+      this.setState({huaVisible:this.props.huaVisible});
     });
   }
 
@@ -348,10 +356,18 @@ class Workbench extends PureComponent {
             <div className={style.banner_footer}>
               <div className={style.footer_left}>
                 <div className={style.left_top}>企业无预支，员工无垫付</div>
-                <div calssName={style.left_bottom}>鑫支出联合支付宝花呗工作花，为企业提供“报销备用金”</div>
+                <div calssName={style.left_bottom} style={{position:'absolute'}}>鑫支出联合支付宝花呗工作花，为企业提供“报销备用金”</div>
+              </div>
+              <div className={style.footer_left_btn}>
+                <span
+                  style={{color:'#00C795',fontSize:'12px',cursor:'pointer'}} 
+                  onClick={() => {window.open('https://www.yuque.com/docs/share/09880e09-a80a-410a-86c6-7a7c7f31dc9a?#');}}
+                >
+                  查看签约流程 &gt;
+                </span>
               </div>
               <div className={style.footer_right}>
-                <div className={style.jumpout} onselectstart="return false;" onClick={this.closeHua}>跳过，稍后查看 &gt;</div>
+                <div className={style.jumpout} onselectstart="return false;" onClick={this.closeHua}>不再提醒 &gt;</div>
                 {/* <Button type="primary" className={style.opening}>立刻咨询开通</Button> */}
                 <Popover
                   content={(

@@ -267,7 +267,7 @@ function Controller(props) {
         <>
           <div className={visible?'':style.hide}>
             <Lines name={`企业支付宝授权${status?'【授权中】':'【已停止授权】'}`} style={{margin:'20px 0 18px'}}>
-              <Tooltip title="若要停止授权，请登录企业支付宝操作">
+              <Tooltip title="若要停止授权，请登录企业支付宝操作" className={status?'':style.hide} >
                 <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
               </Tooltip>
             </Lines>

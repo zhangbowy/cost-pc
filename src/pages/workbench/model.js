@@ -55,6 +55,16 @@ export default {
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
     },
+    *ejectFrame({ payload }, { call, put }) {
+      const response = yield call(get, api.ejectFrame, payload);
+      console.log(1111111111111,response);
+      yield put({
+        type: 'save',
+        payload: {
+          huaVisible: response.type === 1,
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {
