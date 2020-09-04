@@ -365,53 +365,6 @@ class AddInvoice extends Component {
     // const detail = this.state.details;
     console.log(val,selectedRowKeys);
     this.setState({borrowArr:val,selectedRowKeys});
-
-    // if (index === 0 || index) {
-    //   share.splice(index, 1, val);
-    // } else {
-    //   share.push(val);
-    // }
-    // let mo = 0;
-    // const loanEntities = [];
-    // const categorySumEntities = [];
-    // share.forEach(it => {
-    //   mo+=it.costSum;
-    //   if (it.costDetailShareVOS) {
-    //     it.costDetailShareVOS.forEach(item => {
-    //       loanEntities.push({
-    //         loanUserId: item.loanUserId,
-    //         loanDeptId: item.deptId,
-    //         projectId: item.projectId,
-    //       });
-    //     });
-    //   }
-    //   categorySumEntities.push({
-    //     categoryId: it.categoryId,
-    //     costSum: ((it.costSum*1000) /10).toFixed(0),
-    //   });
-    // });
-    // const { loanUserId } = this.state;
-    // this.getNode({
-    //   loanEntities,
-    //   categorySumEntities,
-    //   creatorDeptId: detail.createDeptId || '',
-    //   loanUserId: loanUserId || '',
-    //   loanDeptId: detail.deptId || '',
-    //   processPersonId: detail.processPersonId,
-    //   createDingUserId: detail.createDingUserId,
-    //   total: (mo * 1000)/10,
-    //   projectId: detail.projectId || '',
-    //   supplierId: detail.supplierId || ''
-    // });
-    // this.setState({
-    //   costDetailsVo: share,
-    //   total: mo,
-    //   details: {
-    //     ...detail,
-    //     loanEntities,
-    //     categorySumEntities,
-    //   }
-    // });
   }
 
   // 上传附件
@@ -795,6 +748,12 @@ class AddInvoice extends Component {
     });
   }
 
+  onInput = (e) => {
+    this.setState({
+      total: e.target.value
+    });
+  }
+
   render() {
     const {
       children,
@@ -999,7 +958,10 @@ class AddInvoice extends Component {
                             message: `请输入${showField.loanSum && showField.loanSum.name}`
                           }]
                         })(
-                          <InputNumber placeholder={`请输入${showField.loanSum && showField.loanSum.name}`} />
+                          <InputNumber
+                            onInput={e => this.onInput(e)}
+                            placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
+                          />
                         )
                       }
                     </Form.Item>
@@ -1185,28 +1147,33 @@ class AddInvoice extends Component {
                 </div>
               </>
             }
-            <Divider type="horizontal" />
-            <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-              <div className={style.header}>
-                <div className={style.line} />
-                <span>借款核销</span>
-              </div>
-              <div style={{textAlign: 'center'}} className={style.addbtn}>
-                <AddBorrow userInfo={userInfo} invoiceId={id} onAddBorrow={this.onAddBorrow}>
-                  <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
-                </AddBorrow>
-                {
-                  this.state.borrowArr && this.state.borrowArr.length > 0 &&
-                  <BorrowTable
-                    list={this.state.borrowArr}
-                    selectedRowKeys={this.state.selectedRowKeys}
-                    userInfo={userInfo}
-                    invoiceId={id}
-                    onChangeData={(val,keys) => this.changeBorrows(val,keys)}
-                  />
-                }
-              </div>
-            </div>
+            {
+              !Number(templateType) &&
+              <>
+                <Divider type="horizontal" />
+                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                  <div className={style.header}>
+                    <div className={style.line} />
+                    <span>借款核销</span>
+                  </div>
+                  <div style={{textAlign: 'center'}} className={style.addbtn}>
+                    <AddBorrow userInfo={userInfo} invoiceId={id} onAddBorrow={this.onAddBorrow}>
+                      <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
+                    </AddBorrow>
+                    {
+                      this.state.borrowArr && this.state.borrowArr.length > 0 &&
+                      <BorrowTable
+                        list={this.state.borrowArr}
+                        selectedRowKeys={this.state.selectedRowKeys}
+                        userInfo={userInfo}
+                        invoiceId={id}
+                        onChangeData={(val,keys) => this.changeBorrows(val,keys)}
+                      />
+                    }
+                  </div>
+                </div>
+              </>
+            }
             <Divider type="horizontal" />
             <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
               <div className={style.header} style={{padding: 0}}>

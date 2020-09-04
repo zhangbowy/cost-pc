@@ -677,15 +677,15 @@ export const refuseReason = [{
 
 // 工作台的选择
 export const workbenchStatus = [{
-  ket: '1',
+  key: '1',
   value: '审批中',
 }, {
-  ket: '2',
+  key: '2',
   value: '待发放',
 }, {
-  ket: '3',
+  key: '3',
   value: '待核销',
 }, {
-  ket: '0',
+  key: '0',
   value: '全部',
 }];
