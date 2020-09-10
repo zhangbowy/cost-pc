@@ -1,12 +1,14 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import { Form, Input, Select, Switch, Radio, TreeSelect } from 'antd';
+import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { formItemLayout, isAllUse, isAllCostCategory } from '@/utils/constants';
+import { formItemLayout, isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
+import AddFlow from '../../approvalFlow/components/AddFlow';
+import style from './classify.scss';
 
 const labelInfo = {
   name: '名称',
@@ -31,6 +33,8 @@ class Basic extends React.PureComponent {
       category: props.category || [],
       users: (props.data && props.data.userJson) || [], // 选择的人员是空
       deptJson: (props.data && props.data.deptJson) || [], // 选择部门
+      flowId: props.data && props.data.approveId || '',
+      approveList: props.approveList || [], // 审批列表
     };
   }
 
@@ -167,16 +171,33 @@ class Basic extends React.PureComponent {
     });
   }
 
+  onChangeSelect = () => {
+    this.props.dispatch({
+      type: 'global/approveList',
+      payload: {}
+    }).then(() => {
+      const { approveList } = this.props;
+      this.setState({
+        approveList,
+      });
+    });
+  }
+
+  onClicks = () => {
+    console.log('点击事件');
+  }
+
   render() {
     const {
       form: { getFieldDecorator },
       data,
       list,
       costCategoryList,
-      approveList,
+      templateType
     } = this.props;
-    const lists = (list && list.filter(it => Number(it.type) === 0)) || [];
-    const { cost, user, category, users, deptJson } = this.state;
+    const { cost, user, category, users, deptJson, flowId, approveList } = this.state;
+    // eslint-disable-next-line eqeqeq
+    const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
     return (
       <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
         <Form {...formItemLayout} className="formItem">
@@ -244,46 +265,85 @@ class Basic extends React.PureComponent {
               />
             }
           </Form.Item>
-          <Form.Item label={labelInfo.isAllCostCategory}>
-            {
-              getFieldDecorator('isAllCostCategory', {
-                initialValue: cost,
-              })(
-                <RadioGroup onChange={e => this.onChange(e, 'cost')}>
-                  {
-                    isAllCostCategory.map(item => (
-                      <Radio key={item.key} value={item.key}>{item.value}</Radio>
-                    ))
-                  }
-                </RadioGroup>
-              )
-            }
-            {
-              !cost &&
-              getFieldDecorator('costCategory', {
-                initialValue: category,
-              })(
-                <TreeSelect
-                  onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
-                  treeData={costCategoryList}
-                  treeCheckable
-                  style={{width: '100%'}}
-                  showCheckedStrategy={SHOW_CHILD}
-                  dropdownStyle={{height: '300px'}}
-                />
-              )
-            }
-          </Form.Item>
+          {
+            !Number(templateType) &&
+            <Form.Item label={labelInfo.isAllCostCategory}>
+              {
+                getFieldDecorator('isAllCostCategory', {
+                  initialValue: cost,
+                })(
+                  <RadioGroup onChange={e => this.onChange(e, 'cost')}>
+                    {
+                      isAllCostCategory.map(item => (
+                        <Radio key={item.key} value={item.key}>{item.value}</Radio>
+                      ))
+                    }
+                  </RadioGroup>
+                )
+              }
+              {
+                !cost &&
+                getFieldDecorator('costCategory', {
+                  initialValue: category,
+                })(
+                  <TreeSelect
+                    onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
+                    treeData={costCategoryList}
+                    treeCheckable
+                    style={{width: '100%'}}
+                    showCheckedStrategy={SHOW_CHILD}
+                    dropdownStyle={{height: '300px'}}
+                  />
+                )
+              }
+            </Form.Item>
+          }
           <Form.Item label={labelInfo.approveId}>
             {
               getFieldDecorator('approveId', {
-                initialValue: data && data.approveId && `${data.approveId}`,
+                initialValue: flowId,
                 rules: [{ required: true, message: '请选择审批流' }]
               })(
-                <Select placeholder="请选择">
+                <Select
+                  placeholder="请选择"
+                  optionLabelProp="label"
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  dropdownClassName={style.addSel}
+                  onChange={(val) => this.setState({ flowId: val })}
+                  dropdownRender={(menu) => (
+                    <div>
+                      {menu}
+                      <Divider style={{margin: '0'}} />
+                      <AddFlow
+                        templateType={templateType}
+                        title="add"
+                        name={templateType ? `${templateTypeList[templateType]}审批流` : '报销单审批流'}
+                        onOk={() => this.onChangeSelect()}
+                        {...this.props}
+                      >
+                        <div
+                          style={{height: '50px', textAlign: 'center', lineHeight: '50px'}}
+                          onMouseDown={e => e.preventDefault()}
+                        >
+                          <Icon type="plus" className="sub-color m-r-8" />
+                          <a className="fs-14">新建审批流</a>
+                        </div>
+                      </AddFlow>
+                    </div>
+                  )}
+                >
                   {
-                    approveList.map(it => (
-                      <Select.Option key={it.id}>{it.templateName}</Select.Option>
+                    approveList.filter(it => (it.templateType === Number(templateType))).map(it => (
+                      <Select.Option key={it.id} label={it.templateName} className={style.flowOption}>
+                        <span>
+                          <span className="m-r-8">{it.templateName}</span>
+                          {
+                            this.state.flowId === it.id &&
+                            <i className="iconfont icondui sub-color" />
+                          }
+                        </span>
+                        <a className={style.editFlow}>编辑</a>
+                      </Select.Option>
                     ))
                   }
                 </Select>

@@ -15,7 +15,6 @@ export default {
   authApi: `${APP_API}/cost/user/jsapiAuth`,
   payAccount: `${APP_API}/cost/account/payment/list/on`,
   invoiceDetail: `${APP_API}/cost/invoice/submit/detail`,
-  nodeList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
   grantDownload: `${APP_API}/cost/space/grantDownload`,
   approvedUrl: `${APP_API}/cost/invoice/submit/selectApprovedUrl`,
   grantUpload: `${APP_API}/cost/space/grantUpload`,
@@ -54,4 +53,10 @@ export default {
   accountCanDel: `${APP_API}/cost/supplier/delAccountCheck`, // 账户是否可删除
   uploadSupplier: `${APP_API}/cost/supplier/import/supplierExcel`, // 批量上传
   usableSupplier: `${APP_API}/cost/supplier/getUsableSupplier`, // 可用供应商
+  /* ---------- 审批流 ----------*/
+  nodeList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
+  addNode: `${APP_API}/cost/approve/apProcessPerson/saveApproveNodes`,
+  editNode: `${APP_API}/cost/approve/apProcessPerson/updateProcessName`, // 修改模板名称
+  approvalList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 审批流列表
+  initNodeList: `${APP_API}/cost/approve/apProcessPerson/defaultProcess`, // 初始化
 };

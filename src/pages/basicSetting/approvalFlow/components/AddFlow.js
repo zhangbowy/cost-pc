@@ -5,26 +5,27 @@ import style from './addFlow.scss';
 import { repeatMethod } from '../../../../utils/constants';
 import Process from './Process';
 
-@connect(({ approvalFlow }) => ({
-  nodes: approvalFlow.nodes,
-  initDetailNode: approvalFlow.initDetailNode,
-  initNode: approvalFlow.initNode,
-  detailNode: approvalFlow.detailNode
+@connect(({ global }) => ({
+  nodes: global.nodes,
+  initDetailNode: global.initDetailNode,
+  initNode: global.initNode,
+  detailNode: global.detailNode
 }))
 class AddFlow extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      flag: false,
+      flag: true,
       nodes: {},
       repeatMethods: '',
-      name: props.templateType && Number(props.templateType) ? '借款单审批流' : '报销单审批流',
+      name: '',
     };
   }
 
   onShow = async() => {
-    const { title, processPersonId } = this.props;
+    console.log('点击了');
+    const { title, processPersonId, name } = this.props;
     this.props.dispatch({
       type: 'global/costList',
       payload: {}
@@ -50,7 +51,7 @@ class AddFlow extends Component {
     });
     if (title === 'add') {
       await this.props.dispatch({
-        type: 'approvalFlow/initNode',
+        type: 'global/initNode',
         payload: {}
       }).then(() => {
         const { initNode, initDetailNode } = this.props;
@@ -58,13 +59,14 @@ class AddFlow extends Component {
           nodes:initNode,
           ccPosition: initDetailNode.ccPosition,
           repeatMethods: initDetailNode.repeatMethod,
-          visible: true
+          visible: true,
+          name
         });
       });
 
     } else {
       await this.props.dispatch({
-        type: 'approvalFlow/list',
+        type: 'global/nodeList',
         payload: {
           processPersonId,
           deepQueryFlag: false,
@@ -75,7 +77,8 @@ class AddFlow extends Component {
           nodes,
           ccPosition: detailNode.ccPosition,
           repeatMethods: detailNode.repeatMethod,
-          visible: true
+          visible: true,
+          name: title === 'copy' ? `${name}-副本` : name,
         });
       });
     }
@@ -85,6 +88,9 @@ class AddFlow extends Component {
   handleCancel = () => {
     this.setState({
       visible: false,
+      flag: true,
+      nodes: {},
+      repeatMethods: '',
     });
   }
 
@@ -109,7 +115,7 @@ class AddFlow extends Component {
 
   onQuery = (payloads) => {
     this.props.dispatch({
-      type: 'approvalFlow/list',
+      type: 'global/nodeList',
       payload: payloads,
     }).then(() => {
       const { nodes, detailNode } = this.props;
@@ -121,29 +127,43 @@ class AddFlow extends Component {
     });
   }
 
+  onChange = (nodes) => {
+    this.setState({
+      nodes,
+    });
+  }
+
+  onStartChange = (data) => {
+    console.log(data);
+  }
+
   save = () => {
     console.log(this.processData && this.processData.getData());
-    const { templateType, processPersonId } = this.props;
-    const { status, repeatMethods, ccPosition } = this.state;
+    const { templateType, processPersonId, title } = this.props;
+    const { status, repeatMethods, ccPosition, name } = this.state;
 
     const data = this.processData.getData();
+    const params = {
+      uniqueMark: status,
+      repeatMethod: repeatMethods,
+      ccPosition,
+      deepQueryFlag: false,
+      templateType,
+      name
+    };
+    if (title === 'edit') {
+      Object.assign(params, { processPersonId });
+    }
     Promise.all([data]).
     then(res => {
       this.props.dispatch({
-        type: 'approvalFlow/add',
+        type: 'global/add',
         payload: {
+          ...params,
           node: res[0].formData,
-          uniqueMark: status,
-          repeatMethod: repeatMethods,
-          ccPosition,
-          deepQueryFlag: false,
-          templateType,
-          processPersonId
-        }
+        },
       }).then(() => {
-        this.onQuery({
-          uniqueMark: status,
-        });
+        this.props.onOk();
         message.success('保存成功');
         this.setState({
           visible: false,
@@ -155,7 +175,7 @@ class AddFlow extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, templateType } = this.props;
     const { visible, flag, ccPosition, nodes, repeatMethods, name } = this.state;
     return (
       <span>
@@ -171,11 +191,13 @@ class AddFlow extends Component {
             height: '100vh',
             backgroundColor: ' #F7F8FA',
             padding: 0,
+            overflowY: 'scroll'
           }}
           bodyStyle={{
             height: '100vh',
             padding: 0,
             backgroundColor: ' #F7F8FA',
+            overflowY: 'scroll'
           }}
           onCancel={this.handleCancel}
           closable={false}
@@ -183,7 +205,7 @@ class AddFlow extends Component {
           <div>
             <div className={style.titles}>
               <div className={style.inputs}>
-                <Icon className="m-r-8" type="left" />
+                <Icon className="m-r-8 cur-p" type="left" onClick={() => this.handleCancel()} />
                 {
                   flag ?
                     <span>{name}</span>
@@ -219,6 +241,7 @@ class AddFlow extends Component {
                   ref={data => {this.processData = data;}}
                   onChangePosition={this.onChangePosition}
                   ccPosition={ccPosition}
+                  templateType={templateType}
                 />
               </div>
             </div>

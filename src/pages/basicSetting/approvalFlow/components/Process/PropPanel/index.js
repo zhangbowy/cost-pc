@@ -147,7 +147,7 @@ class PropPanel extends Component {
   }
 
 render() {
-    const { value, conditions, approveNode } = this.props;
+    const { value, conditions, approveNode, templateType } = this.props;
     const { visible, priorityLength } = this.state;
     return (
       <Modal
@@ -180,6 +180,7 @@ render() {
             details={value || {}}
             conditions={conditions}
             viewShowModal={fn=> { this.condition = fn; }}
+            templateType={templateType}
           />
         }
         {

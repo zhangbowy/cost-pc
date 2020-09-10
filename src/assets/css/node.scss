@@ -102,7 +102,8 @@ $base-size: 12px;
   position: relative;
   box-sizing: border-box;
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
-  background: #FFF;&:hover  {
+  background: #FFF;
+  &:hover  {
     box-shadow: 0 0 0 2px #3296fa, 0 0 5px 4px rgba(0, 0, 0, 0.2);
   }
   &.copy {
@@ -270,12 +271,14 @@ $base-size: 12px;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-  }.branch-box {
+  }
+  .branch-box {
     align-items: stretch;
     border-bottom: 2px solid $line-color;
     border-top: 2px solid $line-color;
     box-sizing: border-box;
-    background: $bg-color;> .col-box {
+    background: $bg-color;
+    >.col-box {
       display: flex;
       flex-direction: column;
       align-items: center;

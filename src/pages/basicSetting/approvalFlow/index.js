@@ -3,7 +3,7 @@ import cs from 'classnames';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
-import { Table, Button } from 'antd';
+import { Table, Button, Divider } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
 import AddFlow from './components/AddFlow';
@@ -53,6 +53,15 @@ function ApprovalFlow(props) {
     });
   };
 
+  const onQuery = () => {
+    props.dispatch({
+      type: 'approvalFlow/approvalList',
+      payload: {
+        templateType: status,
+      }
+    });
+  };
+
   const columns = [{
     title: '审批流名称',
     dataIndex: 'templateName',
@@ -67,16 +76,35 @@ function ApprovalFlow(props) {
     dataIndex: 'operate',
     render: (_, record) => (
       <span>
-        <AddFlow title="edit" templateType={status} processPersonId={record.id}>
-          <a className="m-r-8">编辑</a>
+        <AddFlow
+          title="edit"
+          templateType={status}
+          processPersonId={record.id}
+          name={record.templateName}
+          onOk={() => onQuery()}
+        >
+          <a>编辑</a>
+        </AddFlow>
+        <Divider type="vertical" />
+        <AddFlow
+          title="copy"
+          templateType={status}
+          processPersonId={record.id}
+          name={record.templateName}
+          onOk={() => onQuery()}
+        >
+          <a>复制</a>
         </AddFlow>
         {
           !record.isDefault &&
-          <span className="deleteColor" onClick={() => onDel(record.id)}>删除</span>
+          <>
+            <Divider type="vertical" />
+            <span className="deleteColor" onClick={() => onDel(record.id)}>删除</span>
+          </>
         }
       </span>
     ),
-    width: '100px',
+    width: '170px',
     className: 'fixCenter'
   }];
 
@@ -97,7 +125,12 @@ function ApprovalFlow(props) {
           status={status}
         />
         <div className="m-l-16 m-r-16">
-          <AddFlow title="add" templateType={status}>
+          <AddFlow
+            title="add"
+            templateType={status}
+            onOk={() => onQuery()}
+            name={Number(status) ? '借款审批流' : '报销审批流'}
+          >
             <Button type="primary" className="m-t-16 m-b-16">新增</Button>
           </AddFlow>
           <Table

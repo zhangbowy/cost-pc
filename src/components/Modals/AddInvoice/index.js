@@ -61,12 +61,12 @@ class AddInvoice extends Component {
       nodes: {},
       fileUrl: [], // 附件
       showField: {}, // 是否显示输入框
-      total: 0,
+      total: 0, // 报销金额
       loanUserId: '', // 审批人的userId
       expandField: [], // 扩展字段
       // loading: false,
       borrowArr:[],
-      selectedRowKeys:[]
+      assessSum: 0, // 核销金额
     };
   }
 
@@ -355,16 +355,35 @@ class AddInvoice extends Component {
         loanEntities,
         categorySumEntities,
       }
+    }, () => {
+      const { borrowArr } = this.state;
+      this.onAddBorrow(borrowArr);
     });
   }
 
   //  选择借款
-  onAddBorrow = (val, selectedRowKeys) => {
+  onAddBorrow = (val) => {
     console.log(11111);
-    // const share = this.state.costDetailsVo;
-    // const detail = this.state.details;
-    console.log(val,selectedRowKeys);
-    this.setState({borrowArr:val,selectedRowKeys});
+    console.log(val);
+    const detailList = [...val];
+    let money = this.state.total;
+    let assessSum = 0;
+    if (money || (money === 0)) {
+      detailList.forEach(it => {
+        if(Number(money) < (it.waitAssessSum/100)) {
+          it.money = money;
+          assessSum+=money;
+        } else {
+          money-=it.waitAssessSum/100;
+          it.money = it.waitAssessSum/100;
+          assessSum+=it.waitAssessSum/100;
+        }
+      });
+    }
+    this.setState({
+      borrowArr: detailList,
+      assessSum,
+    });
   }
 
   // 上传附件
@@ -546,10 +565,8 @@ class AddInvoice extends Component {
   }
 
   changeBorrows = (val,keys) => {
-    this.setState({
-      borrowArr: val,
-      selectedRowKeys:keys
-    });
+    console.log(val, keys);
+    this.onAddBorrow(val, keys);
   }
 
   onChangeCreate = (val) => {
@@ -748,9 +765,10 @@ class AddInvoice extends Component {
     });
   }
 
-  onInput = (e) => {
+  inputMoney = (val) => {
+    console.log('借款金额', val);
     this.setState({
-      total: e.target.value
+      total: val
     });
   }
 
@@ -780,6 +798,8 @@ class AddInvoice extends Component {
       showField,
       total,
       expandField,
+      borrowArr,
+      assessSum
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -807,7 +827,7 @@ class AddInvoice extends Component {
         <Modal
           visible={visible}
           width="980px"
-          bodyStyle={{height: '550px', overflowY: 'scroll'}}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           title={inDetails.name}
           onCancel={this.onCancel}
           maskClosable={false}
@@ -816,7 +836,16 @@ class AddInvoice extends Component {
             <div className={style.footerBtn}>
               <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
               <div>
-                <span className="fs-15 c-black-85 m-r-8">合计：¥<span className="fs-20 fw-500">{total}</span></span>
+                {
+                  showField.loan && showField.loan.status ?
+                    <>
+                      <span className="fs-15 c-black-50 m-r-8">报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span></span>
+                      <span className="fs-15 c-black-50 m-r-8">核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span></span>
+                      <span className="fs-15 c-black-50 m-r-8">收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum}</span></span>
+                    </>
+                  :
+                    <span className="fs-15 c-black-85 m-r-8">合计：¥<span className="fs-20 fw-500">{total}</span></span>
+                }
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>
@@ -959,7 +988,7 @@ class AddInvoice extends Component {
                           }]
                         })(
                           <InputNumber
-                            onInput={e => this.onInput(e)}
+                            onChange={val => this.inputMoney(val)}
                             placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
                           />
                         )
@@ -1102,7 +1131,10 @@ class AddInvoice extends Component {
                                   getFieldDecorator(itw.field, {
                                     initialValue: itw.msg,
                                     rules: [
-                                      { required: !!(itw.isWrite), message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}` },
+                                      {
+                                        required: !!(itw.isWrite),
+                                        message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}`
+                                      },
                                       ...rule,
                                     ],
                                   })(
@@ -1148,7 +1180,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              !Number(templateType) &&
+              showField.loan && showField.loan.status &&
               <>
                 <Divider type="horizontal" />
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
@@ -1157,14 +1189,18 @@ class AddInvoice extends Component {
                     <span>借款核销</span>
                   </div>
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
-                    <AddBorrow userInfo={userInfo} invoiceId={id} onAddBorrow={this.onAddBorrow}>
+                    <AddBorrow
+                      userInfo={userInfo}
+                      invoiceId={id}
+                      onAddBorrow={arr => this.onAddBorrow(arr)}
+                      list={borrowArr}
+                    >
                       <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
                     </AddBorrow>
                     {
                       this.state.borrowArr && this.state.borrowArr.length > 0 &&
                       <BorrowTable
-                        list={this.state.borrowArr}
-                        selectedRowKeys={this.state.selectedRowKeys}
+                        list={borrowArr}
                         userInfo={userInfo}
                         invoiceId={id}
                         onChangeData={(val,keys) => this.changeBorrows(val,keys)}

@@ -586,6 +586,77 @@ export const condition = [{
   ruleType: 'supplier',
 }];
 
+export const conditionObj = {
+  '0': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    ruleType: 'people',
+  }, {
+    key: 'condition_bear_user_dept',
+    value: '承担人/部门',
+    sel: condExclude,
+    type: 'people',
+    ruleType: 'people',
+  }, {
+    key: 'cost_category',
+    value: '费用类别',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'category',
+  }, {
+    key: 'invoice_submit_sum',
+    value: '报销金额',
+    sel: condThan,
+    type: 'inputNumber',
+    ruleType: 'submit_sum',
+  }, {
+    key: 'cost_detail',
+    value: '费用金额',
+    sel: condThan,
+    type: 'inputNumber',
+    ruleType: 'detail_sum',
+  }, {
+    key: 'project',
+    value: '项目',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'project',
+  }, {
+    key: 'supplier',
+    value: '供应商',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'supplier',
+  }],
+  '1': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    ruleType: 'people',
+  }, {
+    key: 'loan_detail',
+    value: '借款金额',
+    sel: condThan,
+    type: 'inputNumber',
+    ruleType: 'loan_amount',
+  }, {
+    key: 'project',
+    value: '项目',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'project',
+  }, {
+    key: 'supplier',
+    value: '供应商',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'supplier',
+  }]
+};
+
 
 export const getObjValue = (list, key) => {
   let obj = {};
@@ -683,9 +754,15 @@ export const workbenchStatus = [{
   key: '2',
   value: '待发放',
 }, {
-  key: '3',
+  key: '7',
   value: '待核销',
 }, {
   key: '0',
   value: '全部',
 }];
+
+// 单据类型
+export const templateTypeList = {
+  '0': '报销单',
+  '1': '借款单'
+};

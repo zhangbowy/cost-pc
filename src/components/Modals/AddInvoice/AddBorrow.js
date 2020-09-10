@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Modal, Form, Table } from 'antd';
 import Search from 'antd/lib/input/Search';
+import moment from 'moment';
 import { connect } from 'dva';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
@@ -55,10 +56,16 @@ class AddBorrow extends Component {
       payload: {}
     }).then(() => {
       console.log(this.props.waitList);
+      const { list } = this.props;
+      console.log('list', list);
+      this.setState({
+        visible: true,
+        selectedRowKeys: list.map(it => it.id) || [],
+        selectedRows: list || [],
+        details: list,
+      });
     });
-    this.setState({
-      visible: true,
-    });
+
   }
 
   onCancel = () => {
@@ -149,6 +156,7 @@ class AddBorrow extends Component {
     this.setState({
       selectedRows: _selectedRows,
       selectedRowKeys,
+      details: selectedRows,
     });
   };
 
@@ -161,6 +169,7 @@ class AddBorrow extends Component {
     this.setState({
       selectedRows,
       selectedRowKeys,
+      details: selectedRows,
     });
   };
 
@@ -186,18 +195,24 @@ class AddBorrow extends Component {
     const columns = [
       {
         title: '事由',
-        dataIndex: 'shiyou',
+        dataIndex: 'reason',
       },
       {
         title: '借款单号',
-        dataIndex: 'jkdh',
+        dataIndex: 'invoiceNo',
       },
       {
         title: '待核销',
-        dataIndex: 'dhx',
+        dataIndex: 'waitAssessSum',
+        render: (text) => (
+          <span>{text ? text/100 : 0}</span>
+        )
       },{
         title: '提交时间',
-        dataIndex: 'tjsj',
+        dataIndex: 'createTime',
+        render: (text) => (
+          <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
+        )
       },
     ];
     const rowSelection = {
@@ -208,16 +223,16 @@ class AddBorrow extends Component {
     };
 
     const dataSource = [{
-      shiyou:'111',
-      jkdh:'36472384',
-      dhx:'342324',
-      tjsj:'2019-05-06',
+      reason:'111',
+      invoiceNo:'36472384',
+      waitAssessSum:'342324',
+      createTime:'2019-05-06',
       id: 123,
     },{
-      shiyou:'2222',
-      jkdh:'3647212384',
-      dhx:'34223324',
-      tjsj:'2019-05-07',
+      reason:'2222',
+      invoiceNo:'3647212384',
+      waitAssessSum:'34223324',
+      createTime:'2019-05-07',
       id: 234
     }];
 

@@ -3,7 +3,7 @@ import constants from '@/utils/constants';
 const { APP_API } = constants;
 
 export default {
-  list: `${APP_API}/cost/invoice/submit/list`,
+  list: `${APP_API}/cost/invoice/base/list`,
   myList: `${APP_API}/cost/invoice/template/listForUser`,
   costCateList: `${APP_API}/cost/invoice/template/listForUser`,
   del: `${APP_API}/cost/invoice/submit/del`,

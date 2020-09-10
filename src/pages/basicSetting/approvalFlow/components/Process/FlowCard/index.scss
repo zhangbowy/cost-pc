@@ -1,4 +1,4 @@
-$bg-color: #FFF;
+$bg-color: #F7F8FA;
 $line-color: #CACACA;
 $base-size: 14px;
 
@@ -295,7 +295,8 @@ $base-size: 14px;
     border-bottom: 2px solid $line-color;
     border-top: 2px solid $line-color;
     box-sizing: border-box;
-    background: $bg-color;> .col-box {
+    background: $bg-color;
+    > .col-box {
       display: flex;
       flex-direction: column;
       align-items: center;

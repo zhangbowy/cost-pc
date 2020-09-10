@@ -273,7 +273,7 @@ class InvoiceDetail extends Component {
           visible={visible}
           title="单据详情"
           width="980px"
-          bodyStyle={{height: '572px', overflowY: 'scroll'}}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           footer={([
             canRefuse && <RefuseModal refuse={val => this.handleRefuse(val)}><Button key="refuse" className="m-r-16">拒绝</Button></RefuseModal>,

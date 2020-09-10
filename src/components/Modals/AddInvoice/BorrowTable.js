@@ -5,39 +5,40 @@ import moment from 'moment';
 class BorrowTable extends Component {
   constructor(props) {
     super(props);
-    this.state = {  };
+    this.state = {
+      lists: props.list || []
+     };
   }
 
-  onDelete = (index) => {
-    const { list, selectedRowKeys } = this.props;
-    list.splice(index, 1);
-    selectedRowKeys.splice(index, 1);
-    this.props.onChangeData(list);
+  onDelete = (id) => {
+    const list = this.state.lists;
+    const newArr = list.filter(it => it.id === id);
+    this.props.onChangeData(newArr);
   }
 
   render() {
     const { list } = this.props;
     const columns = [{
       title: '事由',
-      dataIndex: 'shiyou',
+      dataIndex: 'reason',
     }, {
       title: '借款单号',
-      dataIndex: 'jkdh',
+      dataIndex: 'invoiceNo',
     }, {
       title: '本次核销',
-      dataIndex: 'bchx',
+      dataIndex: 'money',
     }, {
       title: '提交时间',
-      dataIndex: 'tjsj',
+      dataIndex: 'createTime',
       render: (_, record) => (
-        <span>{record ? `-${moment(Number(record)).format('YYYY-MM-DD hh-mm-ss')}` : ''}</span>
+        <span>{record ? `${moment(Number(record.createTime)).format('YYYY-MM-DD')}` : '-'}</span>
       )
     }, {
       title: '操作',
       dataIndex: 'opea',
-      render: (_, record, index) => (
+      render: (_, record) => (
         <span>
-          <span className="deleteColor" onClick={() => this.onDelete(index)}>删除</span>
+          <span className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</span>
         </span>
       ),
     }];

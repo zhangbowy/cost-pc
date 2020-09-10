@@ -57,19 +57,62 @@
 }
 .judgeType{
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   div{
     height: 224px;
     width: 208px;
     cursor: pointer;
+    padding-right: 24px;
+    border-radius: 4px;
   }
   p{
     margin-bottom: 0px;
   }
 }
-.invoiceType{
-  background: url('../../../../assets/img/invoice.png') no-repeat center;
-}
 .borrowType{
-  background: url('../../../../assets/img/borrow.png') no-repeat center;
+  background: url('../../../../assets/img/invoice.png') no-repeat center / 100%;
+  box-shadow: 0 0 0 2px transparent inset;
+  transition:all .4s ease;
+  cursor: pointer;
+  margin-left: 12px;
+  &:hover{
+    background-size: 120%;
+    transform: translateY(-6px);
+  }
+}
+.invoiceType{
+  background: url('../../../../assets/img/borrow.png') no-repeat center / 100%;
+  box-shadow: 0 0 0 2px transparent inset;
+  transition:all .4s ease;
+  cursor: pointer;
+  margin-right: 12px;
+  &:hover{
+    background-size: 120%;
+    transform: translateY(-10px);
+  }
+}
+.addSel{
+  :global(.ant-select-dropdown-menu-item) {
+    height: 50px;
+    padding: 0 16px 0 16px;
+    line-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &:hover{
+      .editFlow{
+        display: inline-block;
+      }
+    }
+  }
+}
+.flowOption{
+  .editFlow{
+    display: none;
+  }
+  &:hover{
+    .editFlow{
+      display: inline-block!important;
+    }
+  }
 }

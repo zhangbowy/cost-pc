@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, message } from 'antd';
-import constants, { defaultTitle, costCategoryJson } from '@/utils/constants';
+import constants, { defaultTitle, costCategoryJson, templateTypeList } from '@/utils/constants';
 import cs from 'classnames';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
@@ -44,7 +44,7 @@ class AddInvoice extends React.PureComponent {
   }
 
    show = () => {
-    const { userInfo, dispatch, data, title, templateType } = this.props;
+    const { userInfo, dispatch, data, title, templateType, changeVisible } = this.props;
     dispatch({
       type: 'global/costList',
       payload: {
@@ -140,6 +140,7 @@ class AddInvoice extends React.PureComponent {
             this.setState({
               visible: true,
             });
+            changeVisible();
           });
         }
       });
@@ -265,24 +266,23 @@ class AddInvoice extends React.PureComponent {
         visible: false,
       });
       onOk();
-      message.success(`${defaultTitle[title]}单据模板成功`);
+      message.success(`${defaultTitle[title]}${templateTypeList[templateType]}据模板成功`);
     });
   }
 
   render() {
-    const { children, title, allList, approveList, checkDel, dispatch } = this.props;
+    const { children, title, allList, approveList, checkDel, dispatch, templateType } = this.props;
     const { visible, left, categoryList, data } = this.state;
     return (
       <span className={styles.content}>
         <span onClick={() => this.show()}>{ children }</span>
         <Modal
-          title={title && `${defaultTitle[title]}单据模板`}
+          title={title && `${defaultTitle[title]}${templateTypeList[templateType]}据模板`}
           visible={visible}
           key="addInvoice"
           bodyStyle={{
             padding: 0,
             height: '442px',
-            // overflowY: 'scroll'
           }}
           width='780px'
           onCancel={this.onCancel}
@@ -315,6 +315,8 @@ class AddInvoice extends React.PureComponent {
                   data={data}
                   category={data.costCategory}
                   approveList={approveList}
+                  templateType={templateType}
+                  {...this.props}
                 />
               :
                 <Field

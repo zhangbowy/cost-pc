@@ -36,6 +36,9 @@ export default {
     _supplierList: [], // 供应商列表
     newDetail: {}, // 供应商/项目 详情
     accountCanDelRes: {}, // 供应商账户可否删除校验结果
+    initNode: {}, // 初始化node节点
+    initDetailNode: {},
+    detailNode: {}, // 节点的详细信息
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -363,6 +366,42 @@ export default {
     // 添加借款单(单据)
     *addLoan({ payload }, { call }) {
       yield call(post, api.addLoan, payload);
+    },
+    // 审批流的节点信息的接口
+    *nodeList({ payload }, { call, put }) {
+      const response = yield call(post, api.nodeList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          nodes: response.node || {},
+          detailNode: response || {},
+        },
+      });
+    },
+    *approvalList({ payload }, { call, put }) {
+      const response = yield call(get, api.approvalList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          approveList: response || [],
+        },
+      });
+    },
+    *initNode({ payload }, { call, put }) {
+      const response = yield call(get, api.initNodeList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          initNode: response.node || {},
+          initDetailNode: response || {},
+        },
+      });
+    },
+    *addNode({ payload }, { call }) {
+      yield call(post, api.addNode, payload);
+    },
+    *editNode({ payload }, { call }) {
+      yield call(post, api.editNode, payload);
     },
   },
   reducers: {

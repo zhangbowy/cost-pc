@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
 import { Form, Radio, Select, Button, InputNumber, TreeSelect } from 'antd';
-import { condExclude, condition } from '@/utils/constants';
+import { condExclude, conditionObj } from '@/utils/constants';
 import UserSelector from '@/components/Modals/SelectPeople';
 import treeConvert from '@/utils/treeConvert';
 import { connect } from 'dva';
@@ -14,7 +14,24 @@ import { getArrayValue } from '../../../../../../utils/constants';
 const { Option } = Select;
 const { SHOW_CHILD } = TreeSelect;
 let id = 0;
-
+const defaultList = {
+  '0': [{
+    key: 'cost_category',
+    value: '费用类别',
+    sel: condExclude,
+    type: 'selectTree',
+    id,
+    ruleType: 'category'
+  }],
+  '1': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    id,
+    ruleType: 'people',
+  }]
+};
 @Form.create()
 @connect(({ global }) => ({
   costCategoryList: global.costCategoryList,
@@ -33,14 +50,7 @@ class Conditions extends Component {
 
   state = {
     lists: this.props.conditions && this.props.conditions.length > 0 ?
-    this.props.conditions : [{
-      key: 'cost_category',
-      value: '费用类别',
-      sel: condExclude,
-      type: 'selectTree',
-      id,
-      ruleType: 'category'
-    }],
+    this.props.conditions : defaultList[this.props.templateType],
     method: this.props.conditionNode ? this.props.conditionNode.methods : 'OR',
   }
 
@@ -51,10 +61,11 @@ class Conditions extends Component {
    */
   onChange = (val, index) => {
     const {lists} = this.state;
+    const { templateType } = this.props;
     const list = [...lists];
     const items = lists[index];
     const { form } = this.props;
-    condition.forEach(item => {
+    conditionObj[templateType].forEach(item => {
       if (item.key === val) {
         list[index] = {
           id: items.id,
@@ -171,6 +182,7 @@ class Conditions extends Component {
   getItems = () => {
     const {
       form,
+      templateType
     } = this.props;
     let vals = null;
     form.validateFieldsAndScroll((err, val) => {
@@ -180,7 +192,7 @@ class Conditions extends Component {
         let flag = true;
         if (val.keys) {
           val.keys.forEach((it) => {
-            content+=`${getArrayValue(it.key, condition)}、`;
+            content+=`${getArrayValue(it.key, conditionObj[templateType])}、`;
             let rules = {};
             let values = [];
             if (it.type === 'people') {
@@ -264,6 +276,7 @@ class Conditions extends Component {
       conditions,
       conditionNode,
       projectList,
+      templateType,
       supplierList,
     } = this.props;
     const PriArr = this.numToArr(priorityLength);
@@ -294,7 +307,12 @@ class Conditions extends Component {
       },
     };
     getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
+    console.log(conditions);
+    console.log('templateType', templateType);
+    console.log(defaultList[templateType]);
+    console.log(lists);
     const keys = getFieldValue('keys');
+    console.log(keys);
     const formItems = keys.map((item, index) => {
       let valueList = [];
       if (item.key === 'project') {
@@ -324,7 +342,7 @@ class Conditions extends Component {
                   className="m-r-16"
                 >
                   {
-                    condition.map(it => (
+                    conditionObj[templateType].map(it => (
                       <Option key={it.key}>{it.value}</Option>
                     ))
                   }

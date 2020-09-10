@@ -39,7 +39,7 @@ class Workbench extends PureComponent {
       type: '1',
       reason: '',
       huaVisible: false,
-      templateType: '0',
+      typeLeft: '8'
     };
   }
 
@@ -72,9 +72,9 @@ class Workbench extends PureComponent {
         id
       }
     }).then(() => {
-      const { type, reason } = this.state;
+      const { type, reason, typeLeft } = this.state;
       this.onQuery({
-        type: type === '0' ? '' : type,
+        type: type === '0' ? typeLeft : type,
         ...query,
         reason,
       });
@@ -82,24 +82,24 @@ class Workbench extends PureComponent {
   }
 
   onHandleOk = () => {
-    const { type, reason } = this.state;
+    const { type, reason, typeLeft } = this.state;
     const { query } = this.props;
     this.onQuery({
       reason,
-      type: type === '0' ? '' : type,
+      type: type === '0' ? typeLeft : type,
       ...query,
     });
   }
 
   onSearch = (val) => {
-    const { type } = this.state;
+    const { type, typeLeft } = this.state;
     const { query } = this.props;
     this.setState({
       reason: val,
     });
     this.onQuery({
       reason: val,
-      type: type === '0' ? '' : type,
+      type: type === '0' ? typeLeft : type,
       ...query,
     });
   }
@@ -108,10 +108,11 @@ class Workbench extends PureComponent {
     const { query } = this.props;
     this.setState({
       type: val,
+      typeLeft: '8'
     });
     this.onQuery({
       ...query,
-      type: val === '0' ? '' : val,
+      type: val === '0' ? '8' : val,
       pageNo: 1,
     });
   };
@@ -122,13 +123,19 @@ class Workbench extends PureComponent {
 
   onChangeType = e => {
     this.setState({
-      templateType: e.target.value,
+      typeLeft: e.target.value,
+    });
+    const { query } = this.props;
+    this.onQuery({
+      ...query,
+      type: e.target.value,
+      pageNo: 1,
     });
   }
 
   render() {
     const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading } = this.props;
-    const { huaVisible, templateType } = this.state;
+    const { huaVisible, typeLeft, type } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -292,20 +299,23 @@ class Workbench extends PureComponent {
                   />
                 </div>
                 <div style={{ margin: '0 32px' }}>
-                  <div className="m-b-16">
-                    <Radio.Group
-                      onChange={e => this.onChangeType(e)}
-                      className="m-r-16"
-                      value={templateType}
-                    >
-                      <Radio.Button value="0">报销单</Radio.Button>
-                      <Radio.Button value="1">借款单</Radio.Button>
-                    </Radio.Group>
+                  <div className="m-b-16" style={{display: 'flex', justifyContent: 'space-between'}}>
                     <Search
                       placeholder="单号、事由、收款账户名称"
                       style={{ width: '272px' }}
                       onSearch={(e) => this.onSearch(e)}
                     />
+                    {
+                      !Number(type) &&
+                      <Radio.Group
+                        onChange={e => this.onChangeType(e)}
+                        className="m-r-16"
+                        value={typeLeft}
+                      >
+                        <Radio.Button value="8">报销单</Radio.Button>
+                        <Radio.Button value="9">借款单</Radio.Button>
+                      </Radio.Group>
+                    }
                   </div>
                   <Table
                     columns={columns}
@@ -316,11 +326,11 @@ class Workbench extends PureComponent {
                     pagination={{
                       current: query.pageNo,
                       onChange: (pageNumber) => {
-                        const { type, reason } = this.state;
+                        const { reason } = this.state;
                         this.onQuery({
                           pageNo: pageNumber,
                           pageSize: query.pageSize,
-                          type: Number(type) === 0 ? '' : type,
+                          type: Number(type) === 0 ? typeLeft : type,
                           reason,
                         });
                       },
@@ -330,9 +340,9 @@ class Workbench extends PureComponent {
                       showSizeChanger: true,
                       showQuickJumper: true,
                       onShowSizeChange: (cur, size) => {
-                        const { type, reason } = this.state;
+                        const { reason } = this.state;
                         this.onQuery({
-                          type: type === '0' ? '' : type,
+                          type: Number(type) === 0 ? typeLeft : type,
                           reason,
                           pageNo: cur,
                           pageSize: size

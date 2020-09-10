@@ -252,6 +252,7 @@ class Process extends Component {
 
   render() {
     const { scaleVal, step, updateId, data, verifyMode, visible, conditions, ccPosition, approveNode } = this.state;
+    const { templateType } = this.props;
     return (
       <div className={style['flow-container']}>
         <div className={style['scale-slider']}>
@@ -283,6 +284,7 @@ class Process extends Component {
           onCancel={this.onClosePanel}
           conditions={conditions}
           approveNode={approveNode}
+          templateType={templateType}
         />
       </div>
     );
