@@ -274,6 +274,7 @@ class PayTemp extends React.PureComponent {
       form: { getFieldDecorator },
       total,
       loading,
+      templateType,
     } = this.props;
     const columns = [{
       title: '报销事由',
@@ -359,7 +360,12 @@ class PayTemp extends React.PureComponent {
             Number(record.status) === 2 &&
             <Divider type="vertical" />
           }
-          <InvoiceDetail id={record.invoiceId} canRefuse={Number(record.status) === 2} refuse={this.handleRefuse}>
+          <InvoiceDetail
+            id={record.invoiceId}
+            canRefuse={Number(record.status) === 2}
+            refuse={this.handleRefuse}
+            templateType={templateType}
+          >
             <a>查看</a>
           </InvoiceDetail>
         </span>
