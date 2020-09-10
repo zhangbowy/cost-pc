@@ -646,20 +646,22 @@ class AddInvoice extends Component {
             <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.title}</span>
           )}
           key={v.value}
+          searchs={v.title}
           disabled
         >
-          {v.children && this.treeNodeChildRender(v.children)}
+          {v.children && this.treeNodeChildRender(v.children, v.title)}
         </TreeNode>
       );
     });
   }
 
-  treeNodeChildRender = (list) => {
+  treeNodeChildRender = (list, titles) => {
     return list.map(it => (
       <TreeNode
         key={it.value}
         value={it.value}
         name={it.title}
+        searchs={titles}
         title={(
           <div>
             <div className={style.treeOption}>
@@ -772,7 +774,7 @@ class AddInvoice extends Component {
         <Modal
           visible={visible}
           width="980px"
-          bodyStyle={{height: '550px', overflowY: 'scroll'}}
+          bodyStyle={{height: '447px', overflowY: 'scroll'}}
           title={inDetails.name}
           onCancel={this.onCancel}
           maskClosable={false}
@@ -980,6 +982,8 @@ class AddInvoice extends Component {
                           rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
                         })(
                           <TreeSelect
+                            showSearch
+                            treeNodeFilterProp='searchs'
                             placeholder="请选择"
                             style={{width: '100%'}}
                             treeDefaultExpandAll
