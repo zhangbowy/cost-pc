@@ -20,6 +20,7 @@ export default {
     expenseList: [], // 可用的列表
     lbDetail: {},// 类别详情
     djDetail: {}, // 单据详情
+    loanDetail: {}, // 借款单详情
     receiptAcc: [],
     nodes: {}, // 获取流程节点
     detailReceipt: {}, // 收款账户详情
@@ -134,6 +135,16 @@ export default {
         type: 'save',
         payload: {
           djDetail: response || {},
+        },
+      });
+    },
+    // 借款单详情
+    *loanDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.loanDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          loanDetail: response || {},
         },
       });
     },

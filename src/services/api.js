@@ -28,6 +28,8 @@ export default {
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
   // 新增借款单单据
   addLoan: `${APP_API}/cost/invoice/loan/add`,
+  // 借款单详情
+  loanDetail: `${APP_API}/cost/invoice/loan/detail`,
   addReceipt: `${APP_API}/cost/account/receipt/add`,
   invoiceList: `${APP_API}/cost/invoice/template/list`,
   print: `${APP_API}/cost/export/pdfDetail`,

@@ -1,13 +1,11 @@
 
 import React from 'react';
-import { Table, Divider, message, Menu, Button, Form, DatePicker } from 'antd';
+import { Table, Menu, Button, Form, DatePicker, message } from 'antd';
 import moment from 'moment';
-// import { formItemLayout } from '@/utils/constants';
-import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
-import { JsonParse, rowSelect } from '@/utils/common';
+import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
-import constants, { getArrayValue, accountType } from '@/utils/constants';
+import constants from '@/utils/constants';
 import style from '../index.scss';
 import PayModal from './payModal';
 
@@ -152,10 +150,7 @@ class PayTemp extends React.PureComponent {
   }
 
   onQuery = (payload) => {
-    this.props.dispatch({
-      type: 'payment/list',
-      payload,
-    });
+    this.props.onQuerys(payload);
   }
 
   onChange = (rows, keys) => {
@@ -274,145 +269,9 @@ class PayTemp extends React.PureComponent {
       form: { getFieldDecorator },
       total,
       loading,
+      columns
     } = this.props;
-    const columns = [{
-      title: '报销事由',
-      dataIndex: 'reason',
-      width: 150,
-    }, {
-      title: '金额(元)',
-      dataIndex: 'submitSum',
-      render: (text) => (
-        <span>{text/100}</span>
-      ),
-      className: 'moneyCol',
-      width: 100,
-    }, {
-      title: '单号',
-      dataIndex: 'invoiceNo',
-      width: 130,
-    }, {
-      title: '单据类型',
-      dataIndex: 'invoiceTemplateName',
-      width: 120,
-      render: (text) => (
-        <span>{text || '-'}</span>
-      )
-    }, {
-      title: '收款账户名称',
-      dataIndex: 'receiptName',
-      width: 120,
-      render: (_, record) => {
-        let name = record.receiptName;
-        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
-          name = record.supplierAccountVo.supplierAccountName;
-        }
-        return (
-          <span>{name || '-'}</span>
-        );
-      }
-    }, {
-      title: '个人/供应商收款账户',
-      dataIndex: 'receiptNameJson',
-      render: (_, record) => {
-        let account = record.receiptNameJson && JsonParse(record.receiptNameJson);
-        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
-          account = [{
-            ...record.supplierAccountVo,
-            type: record.supplierAccountVo.accountType,
-            account: record.supplierAccountVo.supplierAccount,
-          }];
-        }
-        return (
-          <span>
-            {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
-            { account && account[0] && account[0].bankName }
-            { account && account[0] && account[0].account }
-            {!account && '-'}
-          </span>
-        );
-      },
-      width: 140,
-    }, {
-      title: '提交人',
-      dataIndex: 'createName',
-      width: 100,
-    }, {
-      title: '提交时间',
-      dataIndex: 'createTime',
-      render: (text) => (
-        <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
-      ),
-      width: 100,
-    }, {
-      title: '操作',
-      dataIndex: 'ope',
-      render: (_, record) => (
-        <span>
-          {
-            Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record}>
-                <a>标记已付</a>
-              </PayModal>
-          }
-          {
-            Number(record.status) === 2 &&
-            <Divider type="vertical" />
-          }
-          <InvoiceDetail
-            id={record.invoiceId}
-            canRefuse={Number(record.status) === 2}
-            refuse={this.handleRefuse}
-            templateType={record.templateType}
-          >
-            <a>查看</a>
-          </InvoiceDetail>
-        </span>
-      ),
-      width: 140,
-      fixed: 'right',
-      className: 'fixCenter'
-    }];
-    if(Number(status) !== 2) {
-      columns.splice(8, 0, {
-        title: '发放人',
-        dataIndex: 'payUserName',
-        width: 100,
-      }, {
-        title: '付款时间',
-        dataIndex: 'payTime',
-        render: (text) => (
-          <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
-        ),
-        width: 100,
-      }, {
-        title: '付款账户',
-        dataIndex: 'payNameJson',
-        render: (_, record) => {
-          const account = record.payNameJson && JsonParse(record.payNameJson);
-          return (
-            <span>
-              {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
-              <span className="m-r-8">{ account && account[0] && account[0].bankName }</span>
-              { account && account[0] && account[0].account }
-            </span>
-          );
-        },
-        width: 140,
-      }, {
-        title: '付款账户名称',
-        dataIndex: 'payName',
-        render: (_, record) => {
-          const account = record.payNameJson && JsonParse(record.payNameJson);
-          return (
-            <span>
-              { account && account[0] && account[0].name }
-            </span>
-          );
-        },
-        width: 140,
-      });
-    }
+
     const rowSelection = {
       type: 'checkbox',
       selectedRowKeys,

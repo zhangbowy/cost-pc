@@ -17,6 +17,7 @@ const { APP_API } = constants;
   invoiceDetail: global.invoiceDetail,
   approvedUrl: global.approvedUrl,
   djDetail: global.djDetail,
+  loanDetail: global.loanDetail
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -26,28 +27,20 @@ class InvoiceDetail extends Component {
       category: [],
       receipt: {},
       showFields: {},
+      details: {},
     };
   }
 
   onShow = () => {
-    const { id, templateType } = this.props;
+    const { id, templateType, templateId } = this.props;
     this.props.dispatch({
-      type: 'global/invoiceDetail',
+      type: 'global/djDetail',
       payload: {
-        id,
+        id: templateId,
         templateType
       }
     }).then(() => {
-      const { invoiceDetail } = this.props;
-      this.props.dispatch({
-        type: 'global/djDetail',
-        payload: {
-          id: invoiceDetail.invoiceTemplateId,
-          type: 1,
-          templateType
-        }
-      }).then(() => {
-        const { djDetail } = this.props;
+      const { djDetail } = this.props;
         const showObj = {};
         if (djDetail.showField) {
           const arr = JSON.parse(djDetail.showField);
@@ -58,12 +51,24 @@ class InvoiceDetail extends Component {
         this.setState({
           showFields: showObj,
         });
-        if (invoiceDetail.costDetailsVo) {
+      let url = 'global/invoiceDetail';
+      let params = { id };
+      if (Number(templateType)) {
+        url = 'global/loanDetail';
+        params = { loanId: id };
+      }
+      this.props.dispatch({
+        type: url,
+        payload: params
+      }).then(() => {
+        const { invoiceDetail, loanDetail } = this.props;
+        const details = Number(templateType) ? loanDetail : invoiceDetail;
+        if (details.costDetailsVo) {
           this.setState({
             category: invoiceDetail.costDetailsVo,
           });
         }
-        if (invoiceDetail.receiptNameJson) {
+        if (details.receiptNameJson) {
           const receipts = JsonParse(invoiceDetail.receiptNameJson);
           this.setState({
             receipt: receipts[0] || {},
@@ -71,6 +76,7 @@ class InvoiceDetail extends Component {
         }
         this.setState({
           visible: true,
+          details,
         });
       });
     });
@@ -143,11 +149,11 @@ class InvoiceDetail extends Component {
   }
 
   render() {
-    const { visible,  category, receipt, showFields } = this.state;
+    const { visible,  category, receipt, showFields, details } = this.state;
     const {
       children,
-      invoiceDetail,
-      canRefuse
+      canRefuse,
+      templateType
     } = this.props;
     const newList = [];
     category.forEach(it => {
@@ -287,63 +293,69 @@ class InvoiceDetail extends Component {
           </div>
           <Row className="m-b-16 fs-14">
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销事由：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.reason}</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
+              <span className="fs-14 c-black-65">{details.reason}</span>
             </Col>
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据类型：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.invoiceTemplateName}</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
+              <span className="fs-14 c-black-65">{details.invoiceTemplateName}</span>
             </Col>
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单号：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.invoiceNo}</span>
+              <span className="fs-14 c-black-65">{details.invoiceNo}</span>
             </Col>
           </Row>
           <Row className="m-b-16">
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销总额(元)：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.submitSum/100}</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{ Number(templateType) ? '借款总额(元)' : '报销总额(元)' }：</span>
+              <span className="fs-14 c-black-65">{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
             </Col>
-            <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.createName}</span>
-            </Col>
-            <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人部门：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.createDeptName}</span>
-            </Col>
+            {
+              !Number(templateType) &&
+              <Col span={8}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人：</span>
+                <span className="fs-14 c-black-65">{details.createName}</span>
+              </Col>
+            }
+            {
+              !Number(templateType) &&
+              <Col span={8}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人部门：</span>
+                <span className="fs-14 c-black-65">{details.createDeptName}</span>
+              </Col>
+            }
           </Row>
           <Row>
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交日期：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.createTime && moment(invoiceDetail.createTime).format('YYYY-MM-DD')}</span>
+              <span className="fs-14 c-black-65">{details.createTime && moment(details.createTime).format('YYYY-MM-DD')}</span>
             </Col>
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
-              <span className="fs-14 c-black-65">{getArrayValue(invoiceDetail.status, invoiceStatus)}</span>
+              <span className="fs-14 c-black-65">{getArrayValue(details.status, invoiceStatus)}</span>
             </Col>
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
               <span className="fs-14 c-black-65">
-                {getArrayValue(invoiceDetail.approveStatus, approveStatus)}
-                <span className="link-c m-l-8" onClick={() => this.onLinkDetail(invoiceDetail.approvedUrl, invoiceDetail.approveStatus)}>审批详情</span>
+                {getArrayValue(details.approveStatus, approveStatus)}
+                <span className="link-c m-l-8" onClick={() => this.onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
               </span>
             </Col>
           </Row>
           <Row>
             <Col span={8} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销人：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.userName}</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人' : '报销人'}：</span>
+              <span className="fs-14 c-black-65">{details.userName}</span>
             </Col>
             <Col span={8} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>报销人部门：</span>
-              <span className="fs-14 c-black-65">{invoiceDetail.deptName}</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人部门' : '报销人部门'}：</span>
+              <span className="fs-14 c-black-65">{details.deptName}</span>
             </Col>
             {
               showFields.note && showFields.note.status &&
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
-                <span className="fs-14 c-black-65">{invoiceDetail.note}</span>
+                <span className="fs-14 c-black-65">{details.note}</span>
               </Col>
             }
             {
@@ -351,8 +363,6 @@ class InvoiceDetail extends Component {
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
                 <span className="fs-14 c-black-65">
-                  {/* {invoiceDetail.receiptName}  */}
-                  {/* {receipt.bankName}  */}
                   { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
                   <span className="m-r-8">{ receipt.bankName }</span>
                   {receipt.account}
@@ -364,8 +374,8 @@ class InvoiceDetail extends Component {
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
                 <span className={cs(style.imgUrl, style.wraps)}>
-                  {invoiceDetail.imgUrl && invoiceDetail.imgUrl.map((it, index) => (
-                    <div className="m-r-8 m-b-8" onClick={() => this.previewImage(invoiceDetail.imgUrl, index)}>
+                  {details.imgUrl && details.imgUrl.map((it, index) => (
+                    <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.imgUrl, index)}>
                       <img alt="图片" src={it.imgUrl} className={style.images} />
                     </div>
                   ))}
@@ -377,7 +387,7 @@ class InvoiceDetail extends Component {
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
                 <span className={cs('fs-14', 'c-black-65', style.file)}>
-                  {invoiceDetail.fileUrl && invoiceDetail.fileUrl.map(it => (
+                  {details.fileUrl && details.fileUrl.map(it => (
                     <div className={style.files}>
                       <img
                         className='attachment-icon'
@@ -395,7 +405,7 @@ class InvoiceDetail extends Component {
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
                 <span className="fs-14 c-black-65">
-                  {invoiceDetail.projectName}
+                  {details.projectName}
                 </span>
               </Col>
             }
@@ -404,7 +414,7 @@ class InvoiceDetail extends Component {
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
                 <span className="fs-14 c-black-65">
-                  {invoiceDetail.supplierName}
+                  {details.supplierName}
                 </span>
               </Col>
             }
@@ -413,23 +423,23 @@ class InvoiceDetail extends Component {
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
                 <span className="fs-14 c-black-65">
-                  {invoiceDetail.supplierAccountName} {invoiceDetail.supplierAccount}
+                  {details.supplierAccountName} {details.supplierAccount}
                 </span>
               </Col>
             }
             {
-              invoiceDetail.reasonForRejection &&
+              details.reasonForRejection &&
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>拒绝原因：</span>
                 <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                  {invoiceDetail.reasonForRejection}
+                  {details.reasonForRejection}
                 </span>
               </Col>
             }
             {
-              invoiceDetail.expandSubmitFieldVos &&
-              (invoiceDetail.expandSubmitFieldVos.length > 0) &&
-              invoiceDetail.expandSubmitFieldVos.map(it => (
+              details.expandSubmitFieldVos &&
+              (details.expandSubmitFieldVos.length > 0) &&
+              details.expandSubmitFieldVos.map(it => (
                 <Col span={8} style={{display: 'flex'}} className="m-t-16" key={it.field}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
                   <span className={cs('fs-14','c-black-65', style.rightFlex)}>
@@ -439,17 +449,23 @@ class InvoiceDetail extends Component {
               ))
             }
           </Row>
-          <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
-            <div className={style.line} />
-            <span>费用明细</span>
-          </div>
-          <Table
-            columns={columns}
-            dataSource={newList}
-            pagination={false}
-            scroll={{x: columns.length > 6 ? '1400px' : '1000px'}}
-            rowKey="id"
-          />
+          {
+            !Number(templateType) &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>费用明细</span>
+              </div>
+              <Table
+                columns={columns}
+                dataSource={newList}
+                pagination={false}
+                scroll={{x: columns.length > 6 ? '1400px' : '1000px'}}
+                rowKey="id"
+              />
+            </>
+          }
+
         </Modal>
       </span>
     );

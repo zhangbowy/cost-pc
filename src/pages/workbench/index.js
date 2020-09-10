@@ -142,7 +142,7 @@ class Workbench extends PureComponent {
       width: 150,
     }, {
       title: '金额（元）',
-      dataIndex: 'submitSum',
+      dataIndex: 'sum',
       render: (text) => (
         <span>{text && text / 100}</span>
       ),
@@ -240,7 +240,11 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
             <Divider type="vertical" />
           }
-          <InvoiceDetail id={record.id} templateType={record.templateType}>
+          <InvoiceDetail
+            id={record.invoiceId}
+            templateId={record.invoiceTemplateId}
+            templateType={record.templateType}
+          >
             <a>查看</a>
           </InvoiceDetail>
         </span>

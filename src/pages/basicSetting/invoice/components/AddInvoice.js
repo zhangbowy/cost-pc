@@ -92,7 +92,7 @@ class AddInvoice extends React.PureComponent {
               deptJson = JsonParse(detail.deptJson);
             }
             if (detail.showField) {
-              const arr = this.ObjToArray(detail.showField, costCategoryJson);
+              const arr = JsonParse(detail.showField);
               if (detail.expandField) {
                 const oldArr = [...detail.expandField];
                 oldArr.unshift(4,0);
@@ -316,7 +316,7 @@ class AddInvoice extends React.PureComponent {
                   category={data.costCategory}
                   approveList={approveList}
                   templateType={templateType}
-                  {...this.props}
+                  dispatch={dispatch}
                 />
               :
                 <Field

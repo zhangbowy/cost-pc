@@ -33,7 +33,7 @@ class Basic extends React.PureComponent {
       category: props.category || [],
       users: (props.data && props.data.userJson) || [], // 选择的人员是空
       deptJson: (props.data && props.data.deptJson) || [], // 选择部门
-      flowId: props.data && props.data.approveId || '',
+      flowId: (props.detail && props.detail.approveId) || '',
       approveList: props.approveList || [], // 审批列表
     };
   }
@@ -51,6 +51,7 @@ class Basic extends React.PureComponent {
           category: this.props.category || [],
           users: (this.props.data && this.props.data.userJson) || [], // 选择的人员是空
           deptJson: (this.props.data && this.props.data.deptJson) || [], // 选择部门
+          flowId: (this.props.detail && this.props.detail.approveId) || '',
         });
     }
 }
@@ -193,9 +194,11 @@ class Basic extends React.PureComponent {
       data,
       list,
       costCategoryList,
-      templateType
+      templateType,
+      dispatch
     } = this.props;
     const { cost, user, category, users, deptJson, flowId, approveList } = this.state;
+    console.log('flowId', flowId);
     // eslint-disable-next-line eqeqeq
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
     return (
@@ -319,7 +322,7 @@ class Basic extends React.PureComponent {
                         title="add"
                         name={templateType ? `${templateTypeList[templateType]}审批流` : '报销单审批流'}
                         onOk={() => this.onChangeSelect()}
-                        {...this.props}
+                        dispatch={dispatch}
                       >
                         <div
                           style={{height: '50px', textAlign: 'center', lineHeight: '50px'}}

@@ -365,7 +365,10 @@ onDelete = (id) => {
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          <InvoiceDetail id={record.invoiceSubmitId}>
+          <InvoiceDetail
+            id={record.invoiceSubmitId}
+            templateId={record.invoiceTemplateId}
+          >
             <a>查看</a>
           </InvoiceDetail>
         </span>
