@@ -55,6 +55,9 @@ export default {
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
     },
+    *unRemind({ payload }, { call }) {
+      yield call(get, api.unRemind, payload);
+    },
     *ejectFrame({ payload }, { call, put }) {
       const response = yield call(get, api.ejectFrame, payload);
       console.log(1111111111111,response);

@@ -124,6 +124,12 @@ class Workbench extends PureComponent {
   };
 
   closeHua = () => {
+    this.props.dispatch({
+      type: 'workbench/unRemind',
+      payload: {
+        isCompany: true
+      }
+    });
     this.setState({ huaVisible: false });
   }
 

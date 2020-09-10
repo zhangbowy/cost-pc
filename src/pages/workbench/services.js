@@ -8,4 +8,5 @@ export default {
   costCateList: `${APP_API}/cost/invoice/template/listForUser`,
   del: `${APP_API}/cost/invoice/submit/del`,
   ejectFrame: `${APP_API}/cost/eject/frame`,
+  unRemind: `${APP_API}/cost/eject/unRemind`,
 };
