@@ -269,7 +269,8 @@ class PayTemp extends React.PureComponent {
       form: { getFieldDecorator },
       total,
       loading,
-      columns
+      columns,
+      templateType
     } = this.props;
 
     const rowSelection = {
@@ -293,7 +294,7 @@ class PayTemp extends React.PureComponent {
             <div className="head_lf">
               {
                 Number(status) === 2 &&
-                <PayModal selectKey={selectedRows} onOk={() => this.onOk()}>
+                <PayModal selectKey={selectedRows} onOk={() => this.onOk()} templateType={templateType}>
                   <Button type="primary" style={{marginRight: '8px'}}>标记已付</Button>
                 </PayModal>
               }

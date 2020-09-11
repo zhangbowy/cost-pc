@@ -205,3 +205,29 @@ export const onSelectDis = (list) => {
   addParams(list);
   return list;
 };
+
+/**
+ * 排序的升序、降序
+ * 默认升序
+ * @param { String } attr 属性
+ */
+export const sortBy = (attr,rev) => {
+  // 第二个参数没有传递 默认升序排列
+  if(rev ===  undefined){
+      rev = 1;
+  }else{
+      rev = (rev) ? 1 : -1;
+  }
+  // eslint-disable-next-line func-names
+  return function(a,b){
+      a = a[attr];
+      b = b[attr];
+      if(a < b){
+          return rev * -1;
+      }
+      if(a > b){
+          return rev * 1;
+      }
+      return 0;
+  };
+};

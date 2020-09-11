@@ -42,7 +42,7 @@ const labelInfo = {
   userId: global.userId,
   usableSupplier: global.usableSupplier,
   usableProject: global.usableProject,
-  loading: loading.effects['global/addInvoice'] || false,
+  loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
 }))
 @Form.create()
 class AddInvoice extends Component {
@@ -368,9 +368,11 @@ class AddInvoice extends Component {
     let assessSum = 0;
     if (money || (money === 0)) {
       detailList.forEach(it => {
+        console.log(money);
         if(Number(money) < (it.waitAssessSum/100)) {
           it.money = money;
           assessSum+=money;
+          money = 0;
         } else {
           money-=it.waitAssessSum/100;
           it.money = it.waitAssessSum/100;
@@ -421,7 +423,7 @@ class AddInvoice extends Component {
     const { templateType } = this.props;
     const { total } = this.state;
     if (Number(templateType)) {
-      Object.assign(payload, { borrowAmount: total });
+      Object.assign(payload, { borrowAmount: (total*1000)/10 });
     }
     this.props.dispatch({
       type: 'global/approveList',
@@ -466,6 +468,8 @@ class AddInvoice extends Component {
       createDepList,
       total,
       expandField,
+      showField,
+      borrowArr,
     } = this.state;
     const that = this;
     const { id, dispatch, templateType } = this.props;
@@ -544,6 +548,11 @@ class AddInvoice extends Component {
           Object.assign(params, {
             loanSum: (val.loanSum*1000)/10,
             repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
+          });
+        }
+        if (showField.loan && showField.loan.status) {
+          Object.assign(params, {
+            invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
           });
         }
         dispatch({
@@ -853,7 +862,7 @@ class AddInvoice extends Component {
                     <>
                       <span className="fs-15 c-black-50 m-r-8">报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span></span>
                       <span className="fs-15 c-black-50 m-r-8">核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span></span>
-                      <span className="fs-15 c-black-50 m-r-8">收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum}</span></span>
+                      <span className="fs-15 c-black-50 m-r-8">收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum > 0 ? (total-assessSum) : 0}</span></span>
                     </>
                   :
                     <span className="fs-15 c-black-85 m-r-8">合计：¥<span className="fs-20 fw-500">{total}</span></span>

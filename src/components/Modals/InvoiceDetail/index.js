@@ -10,6 +10,7 @@ import { JsonParse } from '@/utils/common';
 import style from './index.scss';
 import constants, { accountType } from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
+import Borrow from './Borrow';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -28,6 +29,7 @@ class InvoiceDetail extends Component {
       receipt: {},
       showFields: {},
       details: {},
+      invoiceLoanRepayRecords: [],
     };
   }
 
@@ -72,6 +74,11 @@ class InvoiceDetail extends Component {
           const receipts = JsonParse(invoiceDetail.receiptNameJson);
           this.setState({
             receipt: receipts[0] || {},
+          });
+        }
+        if (details.invoiceLoanRepayRecords) {
+          this.setState({
+            invoiceLoanRepayRecords: details.invoiceLoanRepayRecords,
           });
         }
         this.setState({
@@ -149,7 +156,7 @@ class InvoiceDetail extends Component {
   }
 
   render() {
-    const { visible,  category, receipt, showFields, details } = this.state;
+    const { visible,  category, receipt, showFields, details, invoiceLoanRepayRecords } = this.state;
     const {
       children,
       canRefuse,
@@ -291,7 +298,7 @@ class InvoiceDetail extends Component {
             <div className={style.line} />
             <span>单据基础信息</span>
           </div>
-          <Row className="m-b-16 fs-14">
+          <Row className="fs-14">
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
               <span className="fs-14 c-black-65">{details.reason}</span>
@@ -305,44 +312,40 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.invoiceNo}</span>
             </Col>
           </Row>
-          <Row className="m-b-16">
-            <Col span={8}>
+          <Row>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{ Number(templateType) ? '借款总额(元)' : '报销总额(元)' }：</span>
               <span className="fs-14 c-black-65">{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
             </Col>
             {
               !Number(templateType) &&
-              <Col span={8}>
+              <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人：</span>
                 <span className="fs-14 c-black-65">{details.createName}</span>
               </Col>
             }
             {
               !Number(templateType) &&
-              <Col span={8}>
+              <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人部门：</span>
                 <span className="fs-14 c-black-65">{details.createDeptName}</span>
               </Col>
             }
-          </Row>
-          <Row>
-            <Col span={8}>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交日期：</span>
               <span className="fs-14 c-black-65">{details.createTime && moment(details.createTime).format('YYYY-MM-DD')}</span>
             </Col>
-            <Col span={8}>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
               <span className="fs-14 c-black-65">{getArrayValue(details.status, invoiceStatus)}</span>
             </Col>
-            <Col span={8}>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
               <span className="fs-14 c-black-65">
                 {getArrayValue(details.approveStatus, approveStatus)}
                 <span className="link-c m-l-8" onClick={() => this.onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
               </span>
             </Col>
-          </Row>
-          <Row>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人' : '报销人'}：</span>
               <span className="fs-14 c-black-65">{details.userName}</span>
@@ -465,7 +468,10 @@ class InvoiceDetail extends Component {
               />
             </>
           }
-
+          {
+            invoiceLoanRepayRecords && invoiceLoanRepayRecords.length > 0 &&
+            <Borrow />
+          }
         </Modal>
       </span>
     );

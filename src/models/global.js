@@ -414,6 +414,9 @@ export default {
     *editNode({ payload }, { call }) {
       yield call(post, api.editNode, payload);
     },
+    *send({ payload }, { call }) {
+      yield call(post, api.send, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

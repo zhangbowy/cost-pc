@@ -8,6 +8,7 @@ import { connect } from 'dva';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import style from './index.scss';
+import { sortBy } from '../../../utils/common';
 
 // const labelInfo = {
 //   costName: '费用类别',
@@ -53,7 +54,10 @@ class AddBorrow extends Component {
   onShow = async() => {
     this.props.dispatch({
       type: 'workbench/waitList',
-      payload: {}
+      payload: {
+        pageNo: 1,
+        pageSize: 1000,
+      }
     }).then(() => {
       console.log(this.props.waitList);
       const { list } = this.props;
@@ -78,7 +82,8 @@ class AddBorrow extends Component {
   //  提交
   handleOk = () => {
     const { details, selectedRowKeys } = this.state;
-    this.props.onAddBorrow(details,selectedRowKeys);
+    const newArr = details.sort(sortBy('createTime', true));
+    this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
     this.onCancel();
   }
 
@@ -187,6 +192,7 @@ class AddBorrow extends Component {
   render() {
     const {
       children,
+      waitList
     } = this.props;
     const {
       visible,
@@ -222,20 +228,6 @@ class AddBorrow extends Component {
       onSelectAll: this.onSelectAll,
     };
 
-    const dataSource = [{
-      reason:'111',
-      invoiceNo:'36472384',
-      waitAssessSum:'342324',
-      createTime:'2019-05-06',
-      id: 123,
-    },{
-      reason:'2222',
-      invoiceNo:'3647212384',
-      waitAssessSum:'34223324',
-      createTime:'2019-05-07',
-      id: 234
-    }];
-
     return (
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -262,7 +254,7 @@ class AddBorrow extends Component {
               <Table
                 columns={columns}
                 rowSelection={rowSelection}
-                dataSource={dataSource}
+                dataSource={waitList}
                 pagination={false}
                 rowKey="id"
               />

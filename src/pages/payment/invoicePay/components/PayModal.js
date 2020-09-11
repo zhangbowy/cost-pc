@@ -73,7 +73,8 @@ class PayModal extends React.PureComponent {
       selectKey,
       form,
       payAccount,
-      onOk
+      onOk,
+      templateType,
     } = this.props;
 
     form.validateFieldsAndScroll((err, values) => {
@@ -87,13 +88,14 @@ class PayModal extends React.PureComponent {
         }
         const payList = payAccount.filter(it => it.id === values.account);
         dispatch({
-          type: 'payment/send',
+          type: 'global/send',
           payload: {
             invoiceIds,
             'payId': values.account,
             'payJson': JSON.stringify(payList),
             'payName': payList[0].name,
-            'payTime': moment(values.time).format('x')
+            'payTime': moment(values.time).format('x'),
+            templateType
           }
         }).then(() => {
           this.setState({

@@ -26,6 +26,7 @@ export default {
   approveList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
   // 新增报销单单据
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
+  send: `${APP_API}/cost/invoice/payment/payment`,
   // 新增借款单单据
   addLoan: `${APP_API}/cost/invoice/loan/add`,
   // 借款单详情
@@ -58,7 +59,7 @@ export default {
   /* ---------- 审批流 ----------*/
   nodeList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
   addNode: `${APP_API}/cost/approve/apProcessPerson/saveApproveNodes`,
-  editNode: `${APP_API}/cost/approve/apProcessPerson/updateProcessName`, // 修改模板名称
+  editNode: `${APP_API}/cost/approve/apProcessPerson/saveApproveNodes`, // 修改模板名称
   approvalList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 审批流列表
   initNodeList: `${APP_API}/cost/approve/apProcessPerson/defaultProcess`, // 初始化
 };

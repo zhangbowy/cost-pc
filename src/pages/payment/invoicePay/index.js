@@ -355,7 +355,7 @@ class Payment extends React.PureComponent {
         <span>
           {
             Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record}>
+              <PayModal onOk={() => this.onOk()} data={record} templateType={0}>
                 <a>标记已付</a>
               </PayModal>
           }
@@ -368,6 +368,7 @@ class Payment extends React.PureComponent {
             canRefuse={Number(record.status) === 2}
             refuse={this.handleRefuse}
             templateId={record.invoiceTemplateId}
+            templateType={0}
           >
             <a>查看</a>
           </InvoiceDetail>

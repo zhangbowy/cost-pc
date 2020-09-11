@@ -57,10 +57,11 @@ export default {
     },
     *waitList({ payload }, { call, put }) {
       const response = yield call(get, api.waitList, payload);
+      const lists = response.list.map(it => { return { ...it, id: it.loanId }; }) || [];
       yield put({
         type: 'save',
         payload: {
-          waitList: response || []
+          waitList: lists || []
         }
       });
     }

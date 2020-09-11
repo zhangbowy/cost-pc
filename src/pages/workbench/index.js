@@ -18,7 +18,6 @@ import adCode from '@/assets/img/adCode.png';
 import style from './index.scss';
 import AddCategory from '../../components/AddCategory';
 import AddInvoice from '../../components/Modals/AddInvoice';
-import { JsonParse } from '../../utils/common';
 import StepShow from '../../components/StepShow';
 import { accountType } from '../../utils/constants';
 
@@ -173,7 +172,7 @@ class Workbench extends PureComponent {
       title: '个人/供应商收款账户',
       dataIndex: 'receiptId',
       render: (_, record) => {
-        let account = record.receiptNameJson && JsonParse(record.receiptNameJson);
+        let account = record.accountVo;
         if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
           account = [{
             ...record.supplierAccountVo,
@@ -181,11 +180,12 @@ class Workbench extends PureComponent {
             account: record.supplierAccountVo.supplierAccount,
           }];
         }
+        console.log(account);
         return (
           <span>
-            {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
-            <span className="m-r-8">{account && account[0] && account[0].bankName}</span>
-            {account && account[0] && account[0].account}
+            {account && account.accountType ? getArrayValue(account.accountType, accountType) : ''}
+            <span className="m-r-8">{account && account.bankName}</span>
+            {account && account.account}
             {!account && '-'}
           </span>
         );

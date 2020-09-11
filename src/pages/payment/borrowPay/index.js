@@ -286,6 +286,7 @@ class BorrowPay extends React.PureComponent {
       total,
       loading,
     } = this.props;
+    console.log(list);
     const { status } = this.state;
     const columns = [{
       title: '借款事由',
@@ -362,13 +363,13 @@ class BorrowPay extends React.PureComponent {
       render: (_, record) => (
         <span>
           {
-            Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record}>
+            Number(status) === 2 &&
+              <PayModal onOk={() => this.onOk()} data={record} templateType={1}>
                 <a>标记已付</a>
               </PayModal>
           }
           {
-            Number(record.status) === 2 &&
+            Number(status) === 2 &&
             <Divider type="vertical" />
           }
           <InvoiceDetail
@@ -376,6 +377,7 @@ class BorrowPay extends React.PureComponent {
             templateId={record.invoiceTemplateId}
             canRefuse={Number(record.status) === 2}
             refuse={this.handleRefuse}
+            templateType={1}
           >
             <a>查看</a>
           </InvoiceDetail>
@@ -440,7 +442,7 @@ class BorrowPay extends React.PureComponent {
           total={total}
           loading={loading}
           {...this.props}
-          templateType={0}
+          templateType={1}
           columns={columns}
           onQuerys={val => this.onQuery(val)}
         />
