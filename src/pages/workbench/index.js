@@ -123,13 +123,15 @@ class Workbench extends PureComponent {
     });
   };
 
-  closeHua = () => {
-    this.props.dispatch({
-      type: 'workbench/unRemind',
-      payload: {
-        isCompany: true
-      }
-    });
+  closeHua = (type) => {
+    if(type){
+      this.props.dispatch({
+        type: 'workbench/unRemind',
+        payload: {
+          isCompany: true
+        }
+      });
+    }
     this.setState({ huaVisible: false });
   }
 
@@ -357,7 +359,7 @@ class Workbench extends PureComponent {
           }}
         >
           <div className={style.banner_wrapper}>
-            <Icon onClick={this.closeHua} type="close" className={style.close} />
+            <Icon onClick={() => {this.closeHua();}} type="close" className={style.close} />
             <img className={style.banner} src={banner} alt="" />
             <div className={style.banner_footer}>
               <div className={style.footer_left}>
@@ -373,7 +375,7 @@ class Workbench extends PureComponent {
                 </span>
               </div>
               <div className={style.footer_right}>
-                <div className={style.jumpout} onselectstart="return false;" onClick={this.closeHua}>不再提醒 &gt;</div>
+                <div className={style.jumpout} onselectstart="return false;" onClick={() => {this.closeHua(1);}}>不再提醒 &gt;</div>
                 {/* <Button type="primary" className={style.opening}>立刻咨询开通</Button> */}
                 <Popover
                   content={(
