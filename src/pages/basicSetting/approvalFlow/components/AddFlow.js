@@ -139,7 +139,7 @@ class AddFlow extends Component {
 
   save = () => {
     console.log(this.processData && this.processData.getData());
-    const { templateType, processPersonId, title } = this.props;
+    const { templateType, processPersonId, title, dispatch } = this.props;
     const { status, repeatMethods, ccPosition, name } = this.state;
 
     const data = this.processData.getData();
@@ -151,13 +151,15 @@ class AddFlow extends Component {
       templateType,
       name
     };
+    let url = 'global/addNode';
     if (title === 'edit') {
       Object.assign(params, { processPersonId });
+      url = 'global/editNode';
     }
     Promise.all([data]).
     then(res => {
-      this.props.dispatch({
-        type: 'global/add',
+      dispatch({
+        type: url,
         payload: {
           ...params,
           node: res[0].formData,

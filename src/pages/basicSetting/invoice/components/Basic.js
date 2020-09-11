@@ -195,11 +195,12 @@ class Basic extends React.PureComponent {
       list,
       costCategoryList,
       templateType,
-      dispatch
+      dispatch,
+      detail
     } = this.props;
     const { cost, user, category, users, deptJson, flowId, approveList } = this.state;
     console.log('flowId', flowId);
-    // eslint-disable-next-line eqeqeq
+    // eslint-disable-next-line
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
     return (
       <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
@@ -210,14 +211,14 @@ class Basic extends React.PureComponent {
                 initialValue: data && data.name,
                 rules: [{ required: true, message: '请输入名称' }]
               })(
-                <Input />
+                <Input placeholder="请输入名称" />
               )
             }
           </Form.Item>
           <Form.Item label={labelInfo.parentId}>
             {
               getFieldDecorator('parentId', {
-                initialValue: (data && data.parentId) || '0',
+                initialValue: (detail && detail.parentId) || '0',
               })(
                 <Select>
                   <Option key="0">无</Option>
@@ -319,6 +320,7 @@ class Basic extends React.PureComponent {
                       <Divider style={{margin: '0'}} />
                       <AddFlow
                         templateType={templateType}
+                        // {...this.props}
                         title="add"
                         name={templateType ? `${templateTypeList[templateType]}审批流` : '报销单审批流'}
                         onOk={() => this.onChangeSelect()}

@@ -309,6 +309,7 @@ class AddInvoice extends React.PureComponent {
             {
               left === 'basic' ?
                 <Basic
+                  {...this.props}
                   wrappedComponentRef={form => {this.formRef = form;}}
                   costCategoryList={categoryList}
                   list={allList}
