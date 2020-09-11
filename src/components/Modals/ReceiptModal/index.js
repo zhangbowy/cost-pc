@@ -29,35 +29,19 @@ class AddAccount extends React.PureComponent {
   }
 
   onShow = () => {
-    // const { record } = this.props;
-    // let type = '0';
-    // if (record) {
-    //   ({ type } = record);
-    //   this.props.dispatch({
-    //     type: 'receiptAcc/detail',
-    //     payload: {
-    //       id: record.id
-    //     }
-    //   }).then(() => {
-    //     const { detail } = this.props;
-    //     this.setState({
-    //       visible: true,
-    //       type,
-    //       data: detail,
-    //     });
-    //   });
-    // } else {
-
-    // }
     this.setState({
-      visible: true,
       type: '0',
+      visible: true,
     });
 
   }
 
   onRest = () => {
     this.props.form.resetFields();
+    this.setState({
+      type: '0',
+      visible: false
+    });
   }
 
   handleOk = (e) => {
@@ -117,7 +101,7 @@ class AddAccount extends React.PureComponent {
         <Modal
           title={title && `${defaultTitle[title]}收款账户`}
           visible={visible}
-          onCancel={() => this.setState({ visible: false })}
+          onCancel={() => this.onRest()}
           footer={[
             <Button
               key="cancel"
