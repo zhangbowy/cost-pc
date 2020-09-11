@@ -217,7 +217,7 @@ class Workbench extends PureComponent {
       width: 100,
     }, {
       title: '审批状态',
-      dataIndex: 'approveStatus',
+      dataIndex: 'status',
       render: (text) => (
         <span>{getArrayValue(text, approveStatus)}</span>
       ),

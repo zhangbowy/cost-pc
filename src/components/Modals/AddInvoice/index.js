@@ -363,8 +363,6 @@ class AddInvoice extends Component {
 
   //  选择借款
   onAddBorrow = (val) => {
-    console.log(11111);
-    console.log(val);
     const detailList = [...val];
     let money = this.state.total;
     let assessSum = 0;
@@ -388,7 +386,6 @@ class AddInvoice extends Component {
 
   // 上传附件
   uploadFiles = () => {
-    console.log('上传');
     const _this = this;
     this.props.dispatch({
       type: 'global/grantUpload',
@@ -421,6 +418,11 @@ class AddInvoice extends Component {
     Object.assign(payload, {
       deepQueryFlag: true,
     });
+    const { templateType } = this.props;
+    const { total } = this.state;
+    if (Number(templateType)) {
+      Object.assign(payload, { borrowAmount: total });
+    }
     this.props.dispatch({
       type: 'global/approveList',
       payload,
@@ -548,6 +550,7 @@ class AddInvoice extends Component {
           type: Number(templateType) ? 'global/addLoan' : 'global/addInvoice',
           payload : {
             ...params,
+            templateType
           }
         }).then(() => {
           that.onCancel();
@@ -767,8 +770,17 @@ class AddInvoice extends Component {
 
   inputMoney = (val) => {
     console.log('借款金额', val);
+    const { details } = this.state;
     this.setState({
       total: val
+    }, () => {
+      this.getNode({
+        projectId: details.projectId || '',
+        supplierId: details.supplierId || '',
+        createDingUserId: details.createDingUserId,
+        creatorDeptId: details.createDeptId || '',
+        processPersonId: details.processPersonId,
+      });
     });
   }
 
@@ -889,7 +901,7 @@ class AddInvoice extends Component {
                   <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
                     {
                       getFieldDecorator('deptId', {
-                        rules: [{ required: true, message: '请选择报销部门' }]
+                        rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
                       })(
                         <Select placeholder="请选择" onChange={this.onChangeDept}>
                           {
