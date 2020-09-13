@@ -30,63 +30,70 @@ class InvoiceDetail extends Component {
       showFields: {},
       details: {},
       invoiceLoanRepayRecords: [],
+      invoiceLoanAssessVos: [],
     };
   }
 
   onShow = () => {
-    const { id, templateType, templateId } = this.props;
-    this.props.dispatch({
-      type: 'global/djDetail',
-      payload: {
-        id: templateId,
-        templateType
-      }
-    }).then(() => {
-      const { djDetail } = this.props;
-        const showObj = {};
-        if (djDetail.showField) {
-          const arr = JSON.parse(djDetail.showField);
-          arr.forEach(it => {
-            showObj[it.field] = {...it};
-          });
-        }
-        this.setState({
-          showFields: showObj,
-        });
-      let url = 'global/invoiceDetail';
+    const { id, templateType } = this.props;
+    let url = 'global/invoiceDetail';
       let params = { id };
       if (Number(templateType)) {
         url = 'global/loanDetail';
         params = { loanId: id };
+    }
+    this.props.dispatch({
+      type: url,
+      payload: params
+    }).then(() => {
+      const { invoiceDetail, loanDetail } = this.props;
+      const details = Number(templateType) ? loanDetail : invoiceDetail;
+      if (details.costDetailsVo) {
+        this.setState({
+          category: invoiceDetail.costDetailsVo,
+        });
+      }
+      if (details.receiptNameJson) {
+        const receipts = JsonParse(invoiceDetail.receiptNameJson);
+        this.setState({
+          receipt: receipts[0] || {},
+        });
+      }
+      if (details.invoiceLoanRepayRecords) {
+        this.setState({
+          invoiceLoanRepayRecords: details.invoiceLoanRepayRecords,
+        });
+      }
+      if (details.invoiceLoanAssessVos) {
+        this.setState({
+          invoiceLoanAssessVos: details.invoiceLoanAssessVos,
+        });
       }
       this.props.dispatch({
-        type: url,
-        payload: params
+        type: 'global/djDetail',
+        payload: {
+          id: details.invoiceTemplateId,
+          templateType
+        }
       }).then(() => {
-        const { invoiceDetail, loanDetail } = this.props;
-        const details = Number(templateType) ? loanDetail : invoiceDetail;
-        if (details.costDetailsVo) {
+        const { djDetail } = this.props;
+          const showObj = {};
+          if (djDetail.showField) {
+            const arr = JSON.parse(djDetail.showField);
+            arr.forEach(it => {
+              showObj[it.field] = {...it};
+            });
+          }
           this.setState({
-            category: invoiceDetail.costDetailsVo,
+            showFields: showObj,
           });
-        }
-        if (details.receiptNameJson) {
-          const receipts = JsonParse(invoiceDetail.receiptNameJson);
           this.setState({
-            receipt: receipts[0] || {},
+            visible: true,
+            details,
           });
-        }
-        if (details.invoiceLoanRepayRecords) {
-          this.setState({
-            invoiceLoanRepayRecords: details.invoiceLoanRepayRecords,
-          });
-        }
-        this.setState({
-          visible: true,
-          details,
-        });
       });
     });
+
   }
 
   onCancel = () => {
@@ -156,7 +163,7 @@ class InvoiceDetail extends Component {
   }
 
   render() {
-    const { visible,  category, receipt, showFields, details, invoiceLoanRepayRecords } = this.state;
+    const { visible,  category, receipt, showFields, details, invoiceLoanRepayRecords, invoiceLoanAssessVos } = this.state;
     const {
       children,
       canRefuse,
@@ -470,7 +477,23 @@ class InvoiceDetail extends Component {
           }
           {
             invoiceLoanRepayRecords && invoiceLoanRepayRecords.length > 0 &&
-            <Borrow />
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>核销记录（借款¥{details.loanSum/100} 待核销¥{details.waitAssessSum/100} ）</span>
+              </div>
+              <Borrow list={invoiceLoanRepayRecords} type={0} />
+            </>
+          }
+          {
+            invoiceLoanAssessVos && invoiceLoanAssessVos.length > 0 &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>借款核销</span>
+              </div>
+              <Borrow list={invoiceLoanAssessVos} type={1} />
+            </>
           }
         </Modal>
       </span>

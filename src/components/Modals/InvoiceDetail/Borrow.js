@@ -5,18 +5,16 @@ import moment from 'moment';
 import InvoiceDetail from '.';
 
 function Borrow(props) {
-  const columns = [{
+
+  let columns = [{
     title: '类型',
     dataIndex: 'typeStr',
     width: 130
   }, {
     title: '核销金额（元）',
-    dataIndex: 'categoryName',
+    dataIndex: 'repaySum',
     render: (_, record) => (
-      <span>
-        <i className={`iconfont icon${record.icon}`} />
-        <span>{record.categoryName}</span>
-      </span>
+      <span>{record.repaySum ? record.repaySum/100 : ''}</span>
     ),
     width: 130
   }, {
@@ -26,7 +24,7 @@ function Borrow(props) {
       <span>
         {
           record.invoiceSubmitId ?
-            <InvoiceDetail>
+            <InvoiceDetail id={record.invoiceSubmitId} templateType={0}>
               <a>查看</a>
             </InvoiceDetail>
           :
@@ -48,11 +46,37 @@ function Borrow(props) {
     ),
     width: 130
   }];
+  if (props.type) {
+    columns = [{
+      title: '事由',
+      dataIndex: 'reason',
+    }, {
+      title: '借款单号',
+      dataIndex: 'invoiceNo',
+    }, {
+      title: '本次核销',
+      dataIndex: 'waitAssessSum',
+      render: (_, record) => (
+        <span>{record.waitAssessSum ? record.waitAssessSum/100 : ''}</span>
+      ),
+    }, {
+      title: '提交时间',
+      dataIndex: 'createTime',
+      render: (_, record) => (
+        <span>
+          {record.createTime && moment(record.createTime).format('YYYY-MM-DD')}
+        </span>
+      ),
+      width: 130
+    }];
+  }
   return (
     <div>
       <Table
         dataSource={props.list}
         columns={columns}
+        pagination={false}
+        scroll={{y: '500px'}}
       />
     </div>
   );
@@ -60,6 +84,7 @@ function Borrow(props) {
 
 Borrow.propTypes = {
   list: PropTypes.array,
+  type: PropTypes.number,
 };
 
 export default Borrow;

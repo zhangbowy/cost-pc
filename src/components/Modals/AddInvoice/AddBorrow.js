@@ -87,94 +87,34 @@ class AddBorrow extends Component {
     this.onCancel();
   }
 
-  onInputAmount = (val, key) => {
-    const costSum = this.props.form.getFieldValue('costSum');
-    // const amm = this.props.form.getFieldValue('shareAmount');
-    // let amount = 0;
-    // if (Object.keys(amm)) {
-    //   Object.keys(amm).forEach(it => {
-    //     if (it !== key) {
-    //       amount+=amm[it];
-    //     }
-    //   });
-    // }
-    // amount+=val;
-    if (costSum && (val || val === 0)) {
-      const scale = ((val / costSum).toFixed(4) * 100).toFixed(2);
-      this.props.form.setFieldsValue({
-        [`shareScale[${key}]`]: scale,
-      });
-    }
-  }
-
-  // 选择费用类别
-
-  checkMoney = (rule, value, callback) => {
-    if (value) {
-      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-        callback('请输入正确的金额');
-      }
-      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
-        callback('金额小数不能超过2位');
-      }
-      if (value > 100000000 || value === 100000000) {
-        callback('金额需小于1个亿');
-      }
-      if (value < 0) {
-        callback('金额不能小于零');
-      }
-      callback();
-    } else {
-      callback();
-    }
-  }
-
-  check = (rule, value, callback) => {
-    if (value) {
-      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-        callback('请输入正确的金额');
-      }
-      callback();
-    } else {
-      callback();
-    }
-  }
-
-  checkSale = (rule, value, callback) => {
-    if (value) {
-      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-        callback('请输入正确的比例');
-      }
-      if(value > 100) {
-        callback('承担比例不超过100');
-      }
-      callback();
-    } else {
-      callback();
-    }
-  }
-
   onSelectAll = (selected, selectedRows, changeRows) => {
     const result = rowSelect.onSelectAll(this.state, selected, changeRows);
     const _selectedRows = result.selectedRows;
     const { selectedRowKeys } = result;
+    const money = _selectedRows.reduce((acc, cur) => {
+      return acc+cur.waitAssessSum/100;
+    }, 0);
     this.setState({
       selectedRows: _selectedRows,
       selectedRowKeys,
-      details: selectedRows,
+      details: _selectedRows,
+      money,
     });
   };
 
   onSelect = (record, selected) => {
-    console.log(record);
     const {
       selectedRows,
       selectedRowKeys,
     } = rowSelect.onSelect(this.state, record, selected);
+    const money = selectedRows.reduce((acc, cur) => {
+      return acc+cur.waitAssessSum/100;
+    }, 0);
     this.setState({
       selectedRows,
       selectedRowKeys,
       details: selectedRows,
+      money,
     });
   };
 
@@ -188,6 +128,17 @@ class AddBorrow extends Component {
         selectedRowKeys,
       });
   };
+
+  onSearch = (e) => {
+    this.props.dispatch({
+      type: 'workbench/waitList',
+      payload: {
+        pageSize: 100,
+        pageNo: 1,
+        searchContent: e,
+      }
+    });
+  }
 
   render() {
     const {
