@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Divider, message, Menu, Form, DatePicker } from 'antd';
+import { Table, Divider, message, Menu, Form, DatePicker, Button } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
@@ -8,9 +8,10 @@ import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 import style from './index.scss';
-import PayModal from './components/payModal';
+import RecordModal from './components/RecordModal';
 import DropBtn from '../../components/DropBtn';
 import constants from '../../utils/constants';
+import AddModal from './components/AddModal';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
@@ -20,6 +21,8 @@ const { APP_API } = constants;
   list: payment.list,
   query: payment.query,
   total: payment.total,
+  loanSumObj: payment.loanSumObj,
+  recordList: payment.recordList
 }))
 class Payments extends React.PureComponent {
   constructor(props) {
@@ -31,6 +34,7 @@ class Payments extends React.PureComponent {
       sumAmount: 0,
       searchContent: '',
       selectedRows: [],
+      loanSumAll:0
     };
   }
 
@@ -54,6 +58,7 @@ class Payments extends React.PureComponent {
       endTime = moment(createTime[1]).format('x');
     }
     const { searchContent } = this.state;
+
     this.setState({
       status: e.key,
       selectedRowKeys: [],
@@ -75,14 +80,17 @@ class Payments extends React.PureComponent {
     const _selectedRows = result.selectedRows;
     const { selectedRowKeys } = result;
     let amount = 0;
+    let loanSumAll = 0;
     _selectedRows.forEach(item => {
-      amount+=item.submitSum;
+      amount+=item.loanSum;
+      loanSumAll +=item.waitLoanSum;
     });
 
     this.setState({
         selectedRows: _selectedRows,
         selectedRowKeys,
         sumAmount: amount,
+        loanSumAll
     });
   };
 
@@ -93,13 +101,16 @@ class Payments extends React.PureComponent {
       } = rowSelect.onSelect(this.state, record, selected);
       console.log(selectedRowKeys);
       let amount = 0;
+      let loanSumAll = 0;
       selectedRows.forEach(item => {
-        amount+=item.submitSum;
+        amount+=item.loanSum;
+        loanSumAll += item.waitLoanSum;
       });
       this.setState({
           selectedRows,
           selectedRowKeys,
           sumAmount: amount,
+          loanSumAll
       });
   };
 
@@ -109,13 +120,16 @@ class Payments extends React.PureComponent {
           selectedRowKeys,
       } = rowSelect.onDelete(this.state, id);
       let amount = 0;
+      let loanSumAll = 0;
       selectedRows.forEach(item => {
-        amount+=item.submitSum;
+        amount+=item.loanSum;
+        loanSumAll += item.waitLoanSum;
       });
       this.setState({
           selectedRows,
           selectedRowKeys,
           sumAmount: amount,
+          loanSumAll
       });
   };
 
@@ -159,23 +173,28 @@ class Payments extends React.PureComponent {
   }
 
   onQuery = (payload) => {
+    const obj = payload;
+    obj.type = payload.status*1 - 2;
     this.props.dispatch({
       type: 'payment/list',
-      payload,
+      payload: obj,
     });
   }
 
   onChange = (rows, keys) => {
     let amount = 0;
+    let loanSumAll = 0;
     keys.forEach(item => {
-      if (item.submitSum) {
-        amount+=item.submitSum;
+      if (item.loanSum) {
+        amount+=item.loanSum;
+        loanSumAll += item.waitLoanSum;
       }
     });
     this.setState({
       selectKey: keys,
       count: keys.length,
-      sumAmount: amount/100,
+      sumAmount: amount,
+      loanSumAll
     });
   }
 
@@ -261,6 +280,11 @@ class Payments extends React.PureComponent {
     // });
   }
 
+  repayment = (record) => {
+    console.log('record=====',record);
+
+  }
+
   // 拒绝
   handleRefuse = (val) => {
     this.props.dispatch({
@@ -280,6 +304,7 @@ class Payments extends React.PureComponent {
       selectedRowKeys,
       sumAmount,
       // selectedRows,
+      loanSumAll
     } = this.state;
     const {
       list,
@@ -294,7 +319,7 @@ class Payments extends React.PureComponent {
       width: 150,
     }, {
       title: '借款金额',
-      dataIndex: 'submitSum',
+      dataIndex: 'loanSum',
       render: (text) => (
         <span>{text/100}</span>
       ),
@@ -302,7 +327,7 @@ class Payments extends React.PureComponent {
       width: 100,
     }, {
       title: '待还款金额',
-      dataIndex: 'daisubmitSum',
+      dataIndex: 'waitLoanSum',
       render: (text) => (
         <span>{text/100}</span>
       ),
@@ -321,11 +346,11 @@ class Payments extends React.PureComponent {
       )
     }, {
       title: '提交人',
-      dataIndex: 'createName',
+      dataIndex: 'userName',
       width: 100,
     }, {
       title: '部门',
-      dataIndex: 'bumen',
+      dataIndex: 'deptName',
       width: 100,
     }, {
       title: '提交时间',
@@ -336,7 +361,7 @@ class Payments extends React.PureComponent {
       width: 100,
     }, {
       title: '预计还款时间',
-      dataIndex: 'endTime',
+      dataIndex: 'repaymentTime',
       render: (text) => (
         <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
       ),
@@ -344,36 +369,51 @@ class Payments extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'ope',
-      render: (_, record) => (
-        <span>
+      render: (_, record) => 
+      (
+        <div>
           {
-            Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record}>
-                <a>还款</a>
-              </PayModal>
+            Number(status) === 2 &&
+            <AddModal title="add" onOk={() => this.onOk()} detail={record}>
+              <Button type="link">还款</Button>
+            </AddModal>
           }
           {
-            Number(record.status) === 2 &&
+            Number(status) === 2 &&
             <Divider type="vertical" />
           }
-          <InvoiceDetail id={record.invoiceId} canRefuse={Number(record.status) === 2} refuse={this.handleRefuse}>
+          <RecordModal detail={record} RecordModal id={record.invoiceId} canRefuse={Number(status) === 2} refuse={this.handleRefuse}>
             <a>借还记录</a>
-          </InvoiceDetail>
-        </span>
+          </RecordModal>
+          {
+            Number(status) === 2 &&
+            <Divider type="vertical" />
+          }
+          {
+            Number(status) === 2 &&
+              <InvoiceDetail id={record.id} templateType={1} data={record}>
+                <a>查看详情</a>
+              </InvoiceDetail>
+          }
+        </div>
       ),
-      width: 140,
+      width: 250,
       fixed: 'right',
       className: 'fixCenter'
     }];
+    console.log(status);
     if(Number(status) !== 2) {
       columns.splice(8, 2,{
         title: '操作',
         dataIndex: 'ope',
         render: (_, record) => (
           <span>
-            <InvoiceDetail id={record.invoiceId} canRefuse={Number(record.status) === 2} refuse={this.handleRefuse}>
+            {/* <InvoiceDetail id={record.invoiceId} canRefuse={Number(record.status) === 2} refuse={this.handleRefuse}>
               <a>借还记录</a>
-            </InvoiceDetail>
+            </InvoiceDetail> */}
+            <RecordModal detail={record} RecordModal id={record.invoiceId} canRefuse={Number(status) === 2} refuse={this.handleRefuse}>
+              <a>借还记录</a>
+            </RecordModal>
           </span>
         ),
         width: 140,
@@ -438,13 +478,16 @@ class Payments extends React.PureComponent {
               <span>排序</span>
             </div> */}
           </div>
-          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}</p>
+          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
+            已选{selectedRowKeys.length}张单据，借款共计¥{sumAmount?sumAmount/100:this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100},
+            待还款共计¥{sumAmount?loanSumAll/100:this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100}
+          </p>
           <Table
             columns={columns}
             dataSource={list}
             rowSelection={rowSelection}
             scroll={{ x: 2000 }}
-            rowKey="id"
+            rowKey="loanId"
             loading={loading}
             pagination={{
               current: query.pageNo,

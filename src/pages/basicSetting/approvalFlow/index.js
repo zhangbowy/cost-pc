@@ -3,7 +3,7 @@ import cs from 'classnames';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
-import { Table, Button, Divider } from 'antd';
+import { Table, Button, Divider, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
 import AddFlow from './components/AddFlow';
@@ -44,21 +44,24 @@ function ApprovalFlow(props) {
     });
   };
 
-  const onDel = processPersonId => {
-    props.dispatch({
-      type: 'approvalFlow/del',
-      payload: {
-        processPersonId
-      }
-    });
-  };
-
   const onQuery = () => {
     props.dispatch({
       type: 'approvalFlow/approvalList',
       payload: {
         templateType: status,
       }
+    });
+  };
+
+  const onDel = processPersonId => {
+    props.dispatch({
+      type: 'approvalFlow/del',
+      payload: {
+        processPersonId
+      }
+    }).then(() => {
+      message.success('删除成功');
+      onQuery();
     });
   };
 
@@ -99,7 +102,12 @@ function ApprovalFlow(props) {
           !record.isDefault &&
           <>
             <Divider type="vertical" />
-            <span className="deleteColor" onClick={() => onDel(record.id)}>删除</span>
+            <Popconfirm
+              title="确认删除吗？"
+              onConfirm={() => onDel(record.id)}
+            >
+              <span className="deleteColor">删除</span>
+            </Popconfirm>
           </>
         }
       </span>
@@ -136,6 +144,8 @@ function ApprovalFlow(props) {
           <Table
             columns={columns}
             dataSource={props.approveList}
+            pagination={false}
+            scroll={{y: '500px'}}
           />
         </div>
       </div>

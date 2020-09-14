@@ -4,6 +4,11 @@ const menuData = [
     name: '工作台',
     myIcon: 'icongongzuotai',
     path: 'workbench',
+  },{
+    id: 'borrowering',
+    name: '借款管理',
+    myIcon: 'icongongzuotai',
+    path: 'borrowering',
   },
   {
     id: 'payment',

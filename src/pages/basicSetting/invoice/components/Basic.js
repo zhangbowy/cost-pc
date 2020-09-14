@@ -33,7 +33,7 @@ class Basic extends React.PureComponent {
       category: props.category || [],
       users: (props.data && props.data.userJson) || [], // 选择的人员是空
       deptJson: (props.data && props.data.deptJson) || [], // 选择部门
-      flowId: (props.detail && props.detail.approveId) || '',
+      flowId: (props.data && props.data.approveId) || '',
       approveList: props.approveList || [], // 审批列表
     };
   }
@@ -51,7 +51,7 @@ class Basic extends React.PureComponent {
           category: this.props.category || [],
           users: (this.props.data && this.props.data.userJson) || [], // 选择的人员是空
           deptJson: (this.props.data && this.props.data.deptJson) || [], // 选择部门
-          flowId: (this.props.detail && this.props.detail.approveId) || '',
+          flowId: (this.props.data && this.props.data.approveId) || '',
         });
     }
 }
@@ -203,7 +203,6 @@ class Basic extends React.PureComponent {
       costCategoryList,
       templateType,
       dispatch,
-      detail
     } = this.props;
     const { cost, user, category, users, deptJson, flowId, approveList } = this.state;
     console.log('flowId', flowId);
@@ -225,7 +224,7 @@ class Basic extends React.PureComponent {
           <Form.Item label={labelInfo.parentId}>
             {
               getFieldDecorator('parentId', {
-                initialValue: (detail && detail.parentId) || '0',
+                initialValue: (data && data.parentId) || '0',
               })(
                 <Select>
                   <Option key="0">无</Option>
