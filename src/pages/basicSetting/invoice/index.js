@@ -265,7 +265,7 @@ class Invoice extends React.PureComponent {
         <div className="cnt-header">
           <div className="head_lf">
             <JudgeType title="add" data={{}} onOk={this.onOk} visible={typeVisible} changeVisible={this.changeVisible}>
-              <Button type="primary" style={{marginRight: '8px'}}>新增单据</Button>
+              <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
             </JudgeType>
             <AddGroup title="add" onOk={this.onOk}>
               <Button style={{marginRight: '8px'}}>新增分组</Button>
