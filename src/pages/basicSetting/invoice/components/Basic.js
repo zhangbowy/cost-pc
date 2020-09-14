@@ -172,14 +172,21 @@ class Basic extends React.PureComponent {
     });
   }
 
-  onChangeSelect = () => {
+  onChangeSelect = (type) => {
     this.props.dispatch({
-      type: 'global/approveList',
+      type: 'invoice/approveList',
       payload: {}
     }).then(() => {
       const { approveList } = this.props;
       this.setState({
         approveList,
+      }, () => {
+        if (type === 'add') {
+          const len = approveList.length;
+          this.setState({
+            flowId: approveList[len-1].id,
+          });
+        }
       });
     });
   }
@@ -314,6 +321,7 @@ class Basic extends React.PureComponent {
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   dropdownClassName={style.addSel}
                   onChange={(val) => this.setState({ flowId: val })}
+                  dropdownStyle={{height: '300px'}}
                   dropdownRender={(menu) => (
                     <div>
                       {menu}
@@ -323,7 +331,7 @@ class Basic extends React.PureComponent {
                         // {...this.props}
                         title="add"
                         name={templateType ? `${templateTypeList[templateType]}审批流` : '报销单审批流'}
-                        onOk={() => this.onChangeSelect()}
+                        onOk={() => this.onChangeSelect('add')}
                         dispatch={dispatch}
                       >
                         <div

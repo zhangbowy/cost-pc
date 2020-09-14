@@ -16,19 +16,23 @@ export default {
     UseTemplate: [], // 常用
     OftenTemplate: [], // 其他
     total: 0,
+    loanSum: {}, // 待核销
+    waitLoanSum: {},
   },
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
+      const res = response.pageResult || {};
       yield put({
         type: 'save',
         payload: {
-          list: response.list || [],
+          list: res.list || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
-          total: response.page.total || 0,
+          total: res.page.total || 0,
+          loanSum: response.loanSum || {}
         },
       });
     },
@@ -57,11 +61,13 @@ export default {
     },
     *waitList({ payload }, { call, put }) {
       const response = yield call(get, api.waitList, payload);
-      const lists = response.list.map(it => { return { ...it, id: it.loanId }; }) || [];
+      const res = response.pageResult;
+      const lists = res.list.map(it => { return { ...it, id: it.loanId }; }) || [];
       yield put({
         type: 'save',
         payload: {
-          waitList: lists || []
+          waitList: lists || [],
+          waitLoanSum: response.loanSum || {},
         }
       });
     }

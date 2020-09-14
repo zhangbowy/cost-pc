@@ -29,6 +29,7 @@ import { accountType } from '../../utils/constants';
   UseTemplate: workbench.UseTemplate,
   total: workbench.total,
   userInfo: session.userInfo,
+  loanSum: workbench.loanSum,
 }))
 class Workbench extends PureComponent {
 
@@ -55,6 +56,9 @@ class Workbench extends PureComponent {
   }
 
   onQuery = (payload) => {
+    Object.assign(payload, {
+      searchContent: payload.reason || '',
+    });
     this.props.dispatch({
       type: 'workbench/list',
       payload,
@@ -133,20 +137,21 @@ class Workbench extends PureComponent {
   }
 
   render() {
-    const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading } = this.props;
+    const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading, loanSum } = this.props;
     const { huaVisible, typeLeft, type } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
       width: 150,
     }, {
-      title: '金额（元）',
+      // eslint-disable-next-line no-nested-ternary
+      title: `${Number(type) === 7 ? '借款金额(元)' : Number(type) === 0 ? '报销金额(元)': '金额(元)'}`,
       dataIndex: 'sum',
       render: (text) => (
         <span>{text && text / 100}</span>
       ),
       className: 'moneyCol',
-      width: 120,
+      width: 140,
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -199,30 +204,6 @@ class Workbench extends PureComponent {
       ),
       width: 150,
     }, {
-      title: '发放状态',
-      dataIndex: 'status',
-      render: (text) => (
-        <span>
-          {
-            (Number(text) === 2) || (Number(text) === 3) || (Number(text) === 5) ?
-              <Badge
-                color={Number(text) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
-                text={getArrayValue(text, invoiceStatus)}
-              />
-              :
-              <span>{getArrayValue(text, invoiceStatus)}</span>
-          }
-        </span>
-      ),
-      width: 100,
-    }, {
-      title: '审批状态',
-      dataIndex: 'status',
-      render: (text) => (
-        <span>{getArrayValue(text, approveStatus)}</span>
-      ),
-      width: 100,
-    }, {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record) => (
@@ -253,6 +234,58 @@ class Workbench extends PureComponent {
       fixed: 'right',
       className: 'fixCenter'
     }];
+    if (Number(type) === 2 || (Number(type) === 0)) {
+      columns.splice(7, 0, {
+        title: '发放状态',
+        dataIndex: 'status',
+        render: (text) => (
+          <span>
+            {
+              (Number(text) === 2) || (Number(text) === 3) || (Number(text) === 5) ?
+                <Badge
+                  color={Number(text) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
+                  text={getArrayValue(text, invoiceStatus)}
+                />
+                :
+                <span>{getArrayValue(text, invoiceStatus)}</span>
+            }
+          </span>
+        ),
+        width: 100,
+      });
+    }
+    if (Number(type) === 1 || (Number(type) === 0)) {
+      columns.splice(7, 0, {
+        title: '审批状态',
+        dataIndex: 'status',
+        render: (text) => (
+          <span>{getArrayValue(text, approveStatus)}</span>
+        ),
+        width: 100,
+      });
+    }
+    if (Number(type) === 7) {
+      columns.splice(7, 0, {
+        title: '还款状态',
+        dataIndex: 'status',
+        render: () => (
+          <Badge
+            color='rgba(255, 148, 62, 1)'
+            text='待还款'
+          />
+        ),
+        width: 100,
+      });
+      columns.splice(2, 0 ,{
+        title: '待核销金额(元)',
+        dataIndex: 'sum1',
+        render: (text) => (
+          <span>{text && text / 100}</span>
+        ),
+        className: 'moneyCol',
+        width: 140,
+      });
+    }
     return (
       <div>
         {
@@ -321,11 +354,15 @@ class Workbench extends PureComponent {
                       </Radio.Group>
                     }
                   </div>
+                  {
+                    Number(type) === 7 &&
+                    <p className="c-black-85 m-b-8">借款共计：¥{loanSum.loanSumAll/100}，待核销共计：¥{loanSum.waitAssessSumAll/100}</p>
+                  }
                   <Table
                     columns={columns}
                     dataSource={list}
                     rowKey="id"
-                    scroll={{ x: 1300 }}
+                    scroll={{ x: 1500 }}
                     loading={loading}
                     pagination={{
                       current: query.pageNo,

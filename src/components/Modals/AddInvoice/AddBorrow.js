@@ -19,21 +19,15 @@ import { sortBy } from '../../../utils/common';
 // };
 @connect(({ workbench }) => ({
   waitList: workbench.waitList,
+  waitLoanSum: workbench.waitLoanSum,
 }))
 @Form.create()
-@connect(({ global }) => ({
-  expenseList: global.expenseList,
-  deptInfo: global.deptInfo,
-  userId: global.userId,
-  usableProject: global.usableProject,
-  lbDetail: global.lbDetail,
-}))
 class AddBorrow extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      details: props.detail || [], // 详细信息
+      details: props.list || [], // 详细信息
       money:0,
       selectedRowKeys:[],
       selectedRows: [],
@@ -41,11 +35,11 @@ class AddBorrow extends Component {
   }
 
   componentDidUpdate(prevProps){
-    if (prevProps.detail !== this.props.detail) {
-      if(this.props.detail){
+    if (prevProps.list !== this.props.list) {
+      if(this.props.list){
       // eslint-disable-next-line react/no-did-update-set-state
         this.setState({
-          details: this.props.detail,
+          details: this.props.list,
         });
       }
     }
@@ -143,7 +137,8 @@ class AddBorrow extends Component {
   render() {
     const {
       children,
-      waitList
+      waitList,
+      waitLoanSum
     } = this.props;
     const {
       visible,
@@ -186,7 +181,7 @@ class AddBorrow extends Component {
           title="选择借款核销"
           visible={visible}
           width="880px"
-          bodyStyle={{height: '550px', overflowY: 'scroll'}}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={this.onCancel}
           maskClosable={false}
           onOk={() => this.handleOk()}
@@ -198,7 +193,7 @@ class AddBorrow extends Component {
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
             />
-            待核销金额总计：¥{this.state.money}
+            待核销金额总计：¥{waitLoanSum.waitAssessSumAll/100}
           </div>
           <div className={style.addCosts}>
             <div className={style.addTable}>

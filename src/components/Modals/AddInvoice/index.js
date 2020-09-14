@@ -551,6 +551,10 @@ class AddInvoice extends Component {
           });
         }
         if (showField.loan && showField.loan.status) {
+          if (showField.loan.isWrite && (borrowArr.length === 0)) {
+            message.error('请选择借款核销');
+            return;
+          }
           Object.assign(params, {
             invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
           });
@@ -793,6 +797,26 @@ class AddInvoice extends Component {
     });
   }
 
+  checkMoney = (rule, value, callback) => {
+    if (value) {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        callback('请输入正确的金额');
+      }
+      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+        callback('金额小数不能超过2位');
+      }
+      if (value > 100000000 || value === 100000000) {
+        callback('金额需小于1个亿');
+      }
+      if (value < 0) {
+        callback('金额不能小于零');
+      }
+      callback();
+    } else {
+      callback();
+    }
+  }
+
   render() {
     const {
       children,
@@ -1006,6 +1030,8 @@ class AddInvoice extends Component {
                           rules: [{
                             required: !!(showField.loanSum && showField.loanSum.isWrite),
                             message: `请输入${showField.loanSum && showField.loanSum.name}`
+                          }, {
+                            validator: this.checkMoney
                           }]
                         })(
                           <InputNumber

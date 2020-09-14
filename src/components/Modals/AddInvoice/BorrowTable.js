@@ -10,9 +10,20 @@ class BorrowTable extends Component {
      };
   }
 
+  componentDidUpdate(prevProps){
+    if (prevProps.list !== this.props.list) {
+      if(this.props.list){
+      // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          lists: this.props.list,
+        });
+      }
+    }
+  }
+
   onDelete = (id) => {
     const list = this.state.lists;
-    const newArr = list.filter(it => it.id === id);
+    const newArr = list.filter(it => it.id !== id) || [];
     this.props.onChangeData(newArr);
   }
 

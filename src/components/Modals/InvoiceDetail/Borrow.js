@@ -9,14 +9,12 @@ function Borrow(props) {
   let columns = [{
     title: '类型',
     dataIndex: 'typeStr',
-    width: 130
   }, {
     title: '核销金额（元）',
     dataIndex: 'repaySum',
     render: (_, record) => (
       <span>{record.repaySum ? record.repaySum/100 : ''}</span>
     ),
-    width: 130
   }, {
     title: '备注/事由',
     dataIndex: 'categoryName',
@@ -32,7 +30,6 @@ function Borrow(props) {
         }
       </span>
     ),
-    width: 130
   }, {
     title: '操作人',
     dataIndex: 'createName',
@@ -44,7 +41,6 @@ function Borrow(props) {
         {record.createTime && moment(record.createTime).format('YYYY-MM-DD')}
       </span>
     ),
-    width: 130
   }];
   if (props.type) {
     columns = [{
@@ -67,7 +63,16 @@ function Borrow(props) {
           {record.createTime && moment(record.createTime).format('YYYY-MM-DD')}
         </span>
       ),
-      width: 130
+    }, {
+      title: '查看',
+      dataIndex: 'operate',
+      render: (_, record) => (
+        <span>
+          <InvoiceDetail id={record.loanId} templateType={1}>
+            <a>查看</a>
+          </InvoiceDetail>
+        </span>
+      ),
     }];
   }
   return (
