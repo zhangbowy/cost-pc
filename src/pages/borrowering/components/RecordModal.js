@@ -6,10 +6,10 @@ import style from '../index.scss';
 import BorrowTable from './BorrowTable';
 
 @Form.create()
-@connect(({ loading, payment }) => ({
+@connect(({ loading, borrowering }) => ({
   loading: loading.effects['approveIndex/add'] ||
            loading.effects['approveIndex/edit'] || false,
-  recordList: payment.recordList
+  recordList: borrowering.recordList
 }))
 class RecordModal extends Component {
   static propTypes = {
@@ -24,7 +24,7 @@ class RecordModal extends Component {
   onShow = () => {
     const { detail, dispatch } = this.props;
     dispatch({
-      type: 'payment/repayRecord',
+      type: 'borrowering/repayRecord',
       payload: {
         loanId:detail.loanId,
         pageNo:1,
@@ -63,7 +63,7 @@ class RecordModal extends Component {
           return;
         }
         dispatch({
-          type: 'payment/repaySum',
+          type: 'borrowering/repaySum',
           payload: {
             ...values,
           }

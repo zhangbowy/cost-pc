@@ -54,7 +54,7 @@ class AddModal extends Component {
           return;
         }
         dispatch({
-          type: 'payment/repaySum',
+          type: 'borrowering/repaySum',
           payload: {
             ...values,
           }
@@ -90,7 +90,7 @@ class AddModal extends Component {
           <div className={style.tit}>
             <span className={style.h2}>借款金额：</span><span className={style.num}>¥{detail.loanSum/100}</span>
             <Divider type="vertical" />
-            <span className={style.h2}>已还款：</span><span className={style.num}>¥{(detail.freezeSum)/100 }</span>
+            <span className={style.h2}>已还款：</span><span className={style.num}>¥{(detail.loanSum - detail.waitLoanSum )/100 }</span>
             <Divider type="vertical" />
             <span className={style.h2}>待核销：</span><span className={style.num}>¥{detail.waitAssessSum/100}</span>
           </div>

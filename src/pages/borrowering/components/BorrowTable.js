@@ -32,7 +32,7 @@ class BorrowTable extends Component {
       )
     }, {
       title: '关联单据',
-      dataIndex: 'bchx',
+      dataIndex: 'invoiceSubmitId',
       render: (_, record) => (
         <span>
           {
