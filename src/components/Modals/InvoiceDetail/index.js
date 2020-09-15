@@ -239,6 +239,13 @@ class InvoiceDetail extends Component {
       dataIndex: 'note',
       width: 120,
       ellipsis: true,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '图片',
       dataIndex: 'imgUrl',

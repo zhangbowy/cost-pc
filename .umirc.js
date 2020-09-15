@@ -6,7 +6,7 @@ const constants = require('./constants');
 
 // const isInProd = process.env.SPD_ENV === 'production'; // 生产环境标识
 const isInProd = process.env.SPD_ENV === 'prod' || process.env.SPD_ENV === 'test'; // 生产环境标识
-let publicPath = '/';
+let publicPath = './';
 if (isInProd) {
   if (constants.APP_BASE) {
     // 非根目录部署

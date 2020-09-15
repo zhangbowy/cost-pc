@@ -57,6 +57,9 @@ class AddAccount extends React.PureComponent {
 
   onRest = () => {
     this.props.form.resetFields();
+    this.setState({
+      type: '0'
+    });
   }
 
   handleOk = (e) => {
@@ -132,7 +135,10 @@ class AddAccount extends React.PureComponent {
         <Modal
           title={title && `${defaultTitle[title]}付款账户`}
           visible={visible}
-          onCancel={() => this.setState({ visible: false })}
+          onCancel={() => {
+                this.onRest();
+                this.setState({ visible: false });
+          }}
           maskClosable={false}
           footer={[
             <Button

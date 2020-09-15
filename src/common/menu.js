@@ -71,6 +71,10 @@ const menuData = [
       id: 'basicSetting_approvalFlow',
       name: '审批流',
       path: 'approvalFlow',
+    },{
+      id: 'basicSetting_workpay',
+      name: '花呗工作花',
+      path: 'workpay',
     }, {
       id: 'basicSetting_controller',
       name: '控制中心',
