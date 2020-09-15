@@ -51,6 +51,7 @@ class PayTemp extends React.PureComponent {
       selectedRows: [],
       sumAmount: 0,
     });
+    this.props.onChangeStatus(e.key);
     this.onQuery({
       ...query,
       status: e.key,
@@ -244,12 +245,13 @@ class PayTemp extends React.PureComponent {
 
   // 拒绝
   handleRefuse = (val) => {
-    const { namespace } = this.props;
+    const { namespace, templateType } = this.props;
     this.props.dispatch({
       type: `${namespace}/refuse`,
       payload: {
         invoiceSubmitIds: [val.id],
-        rejectNote: val.rejectNote
+        rejectNote: val.rejectNote,
+        templateType,
       }
     }).then(() => {
       this.onOk();
@@ -338,7 +340,7 @@ class PayTemp extends React.PureComponent {
             columns={columns}
             dataSource={list}
             rowSelection={rowSelection}
-            scroll={{ x: 2000 }}
+            scroll={{ x: 2100 }}
             rowKey="id"
             loading={loading}
             pagination={{

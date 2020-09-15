@@ -136,6 +136,7 @@ class ApproveModal extends Component {
       nodeType,
       approveNode,
       approverRoleList,
+      templateType
     } = this.props;
     console.log(`approveNode${JSON.stringify(approveNode)}`);
     const { users, type } = this.state;
@@ -153,6 +154,8 @@ class ApproveModal extends Component {
     if (nodeType !== 'approver') {
       radioList = approveUser.filter(it => it.key !== 'leader');
     }
+    console.log(templateType);
+    const approveArr = Number(templateType) ? approveCreate.splice(2,1) : approveCreate;
     return (
       <Form>
         <Form.Item label={`${nodeTypes[nodeType]}名称`} {...formItemLayout}>
@@ -214,7 +217,7 @@ class ApproveModal extends Component {
                 })(
                   <Select style={{width: '150px'}}>
                     {
-                      approveCreate.map(item => (
+                      approveArr.map(item => (
                         <Option key={item.key}>{item.value}</Option>
                       ))
                     }

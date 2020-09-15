@@ -131,7 +131,7 @@ class AddGroup extends React.PureComponent {
               }
             </Form.Item>
             {
-              title === 'add' &&
+              title !== 'edit' &&
               <Form.Item
                 key="templateType"
                 label={labelItem.type}

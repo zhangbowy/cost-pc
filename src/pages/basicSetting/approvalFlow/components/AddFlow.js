@@ -23,8 +23,10 @@ class AddFlow extends Component {
     };
   }
 
-  onShow = async() => {
+  onShow = async(e) => {
     console.log('点击了');
+    e.preventDefault();
+    e.stopPropagation();
     const { title, processPersonId, name } = this.props;
     this.props.dispatch({
       type: 'global/costList',
@@ -137,6 +139,12 @@ class AddFlow extends Component {
     console.log(data);
   }
 
+  onChangePosition = (val) => {
+    this.setState({
+      ccPosition: val,
+    });
+  }
+
   save = () => {
     console.log(this.processData && this.processData.getData());
     const { templateType, processPersonId, title, dispatch } = this.props;
@@ -181,7 +189,7 @@ class AddFlow extends Component {
     const { visible, flag, ccPosition, nodes, repeatMethods, name } = this.state;
     return (
       <span>
-        <span onClick={() => this.onShow()}>{children}</span>
+        <span onClick={(e) => this.onShow(e)}>{children}</span>
         <Modal
           title={null}
           footer={null}

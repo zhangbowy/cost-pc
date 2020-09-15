@@ -48,13 +48,14 @@ class InvoiceDetail extends Component {
     }).then(() => {
       const { invoiceDetail, loanDetail } = this.props;
       const details = Number(templateType) ? loanDetail : invoiceDetail;
+      console.log(details);
       if (details.costDetailsVo) {
         this.setState({
-          category: invoiceDetail.costDetailsVo,
+          category: details.costDetailsVo,
         });
       }
       if (details.receiptNameJson) {
-        const receipts = JsonParse(invoiceDetail.receiptNameJson);
+        const receipts = JsonParse(details.receiptNameJson);
         this.setState({
           receipt: receipts[0] || {},
         });
@@ -284,6 +285,9 @@ class InvoiceDetail extends Component {
       },[]);
       columns.splice(2, 0, ...per);
     }
+    const moneys = newList && newList.reduce((arr, crr) => {
+      return arr+crr.costSum/100;
+    }, []);
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -311,7 +315,7 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.reason}</span>
             </Col>
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据类型：</span>
               <span className="fs-14 c-black-65">{details.invoiceTemplateName}</span>
             </Col>
             <Col span={8}>
@@ -322,8 +326,21 @@ class InvoiceDetail extends Component {
           <Row>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{ Number(templateType) ? '借款总额(元)' : '报销总额(元)' }：</span>
-              <span className="fs-14 c-black-65">{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
+              <span className="fs-14 c-black-65">¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
             </Col>
+            {
+              showFields.loan && showFields.loan.status &&
+              <>
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>核销金额：</span>
+                  <span className="fs-14 c-black-65">¥{ details.assessSum ? details.assessSum/100 : 0}</span>
+                </Col>
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款金额：</span>
+                  <span className="fs-14 c-black-65">¥{ details.receiveSum > 0 ? details.receiveSum/100 : 0}</span>
+                </Col>
+              </>
+            }
             {
               !Number(templateType) &&
               <Col span={8} className="m-t-16">
@@ -464,7 +481,7 @@ class InvoiceDetail extends Component {
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
-                <span>费用明细</span>
+                <span>费用明细（共{newList.length}项，合计¥{moneys}）</span>
               </div>
               <Table
                 columns={columns}

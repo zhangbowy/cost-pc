@@ -209,6 +209,9 @@ class AddInvoice extends Component {
       showField: {}, // 是否显示输入框
       total: 0,
       loanUserId: '', // 审批人的userId
+      borrowArr: [],
+      expandField: [],
+      assessSum: 0
     });
   }
 
@@ -442,7 +445,8 @@ class AddInvoice extends Component {
     });
   }
 
-  onDelFile = (index) => {
+  onDelFile = (index, e) => {
+    e.stopPropagation();
     const files = this.state.fileUrl;
     files.splice(index, 1);
     this.setState({
@@ -781,12 +785,24 @@ class AddInvoice extends Component {
     });
   }
 
-  inputMoney = (val) => {
-    console.log('借款金额', val);
+  inputMoney = (value) => {
+    console.log('借款金额', value);
     const { details } = this.state;
     this.setState({
-      total: val
+      total: value
     }, () => {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        return;
+      }
+      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+        return;
+      }
+      if (value > 100000000 || value === 100000000) {
+        return;
+      }
+      if (value < 0) {
+        return;
+      }
       this.getNode({
         projectId: details.projectId || '',
         supplierId: details.supplierId || '',
@@ -1073,7 +1089,7 @@ class AddInvoice extends Component {
                   showField.fileUrl && showField.fileUrl.status &&
                   <Col span={12}>
                     <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
-                      <Button onClick={() => this.uploadFiles()}>
+                      <Button onClick={() => this.uploadFiles()} disabled={fileUrl && (fileUrl.length > 9 || fileUrl.length === 9)}>
                         <Icon type="upload" /> 上传文件
                       </Button>
                       <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
@@ -1088,7 +1104,7 @@ class AddInvoice extends Component {
                               />
                               <span className="eslips-1">{it.fileName}</span>
                             </div>
-                            <i className="iconfont icondelete_fill" onClick={() => this.onDelFile(index)} />
+                            <i className="iconfont icondelete_fill" onClick={(e) => this.onDelFile(index, e)} />
                           </div>
                         ))
                       }

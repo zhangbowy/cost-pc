@@ -170,6 +170,7 @@ render() {
             details={value || {}}
             // wrapperComponentRef={form => {this.approver=form;}}
             viewShowModal={fn=> { this.approver = fn; }}
+            templateType={templateType}
           />
         }
         {

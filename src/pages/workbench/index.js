@@ -145,7 +145,7 @@ class Workbench extends PureComponent {
       width: 150,
     }, {
       // eslint-disable-next-line no-nested-ternary
-      title: `${Number(type) === 7 ? '借款金额(元)' : Number(type) === 0 ? '报销金额(元)': '金额(元)'}`,
+      title: `${Number(type) === 7 || (Number(type) === 0 && Number(typeLeft) === 9) ? '借款金额(元)' : Number(type) === 0 ? '报销金额(元)': '金额(元)'}`,
       dataIndex: 'sum',
       render: (text) => (
         <span>{text && text / 100}</span>
@@ -234,7 +234,7 @@ class Workbench extends PureComponent {
       fixed: 'right',
       className: 'fixCenter'
     }];
-    if (Number(type) === 2 || (Number(type) === 0)) {
+    if (Number(type) === 2) {
       columns.splice(7, 0, {
         title: '发放状态',
         dataIndex: 'status',
@@ -254,33 +254,83 @@ class Workbench extends PureComponent {
         width: 100,
       });
     }
-    if (Number(type) === 1 || (Number(type) === 0)) {
+    if (Number(type) === 1) {
+      console.log('11111');
       columns.splice(7, 0, {
         title: '审批状态',
-        dataIndex: 'status',
+        dataIndex: 'status1',
         render: (text) => (
           <span>{getArrayValue(text, approveStatus)}</span>
         ),
         width: 100,
       });
     }
-    if (Number(type) === 7) {
+    if (Number(type) === 0 && (columns.length < 10)) {
+      columns.splice(7, 0, {
+        title: '审批状态',
+        dataIndex: 'status1',
+        render: (_, record) => (
+          <span>{getArrayValue(record.status, approveStatus)}</span>
+        ),
+        width: 100,
+      }, {
+        title: '发放状态',
+        dataIndex: 'status2',
+        render: (text) => (
+          <span>
+            {
+              (Number(text) === 2) || (Number(text) === 3) || (Number(text) === 5) ?
+                <Badge
+                  color={Number(text) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
+                  text={getArrayValue(text, invoiceStatus)}
+                />
+                :
+                <span>{getArrayValue(text, invoiceStatus)}</span>
+            }
+          </span>
+        ),
+        width: 100,
+      });
+    }
+    if ( Number(typeLeft) === 9 && Number(type) === 0) {
       columns.splice(7, 0, {
         title: '还款状态',
-        dataIndex: 'status',
-        render: () => (
+        dataIndex: 'msg',
+        render: (text) => (
           <Badge
             color='rgba(255, 148, 62, 1)'
-            text='待还款'
+            text={text}
           />
         ),
         width: 100,
       });
       columns.splice(2, 0 ,{
         title: '待核销金额(元)',
-        dataIndex: 'sum1',
+        dataIndex: 'waitAssessSum',
         render: (text) => (
-          <span>{text && text / 100}</span>
+          <span>{text ? text / 100 : 0}</span>
+        ),
+        className: 'moneyCol',
+        width: 140,
+      });
+    }
+    if (Number(type) === 7) {
+      columns.splice(7, 0, {
+        title: '还款状态',
+        dataIndex: 'msg',
+        render: (text) => (
+          <Badge
+            color='rgba(255, 148, 62, 1)'
+            text={text}
+          />
+        ),
+        width: 100,
+      });
+      columns.splice(2, 0 ,{
+        title: '待核销金额(元)',
+        dataIndex: 'waitAssessSum',
+        render: (text) => (
+          <span>{text ? text / 100 : 0}</span>
         ),
         className: 'moneyCol',
         width: 140,
@@ -356,7 +406,7 @@ class Workbench extends PureComponent {
                   </div>
                   {
                     Number(type) === 7 &&
-                    <p className="c-black-85 m-b-8">借款共计：¥{loanSum.loanSumAll/100}，待核销共计：¥{loanSum.waitAssessSumAll/100}</p>
+                    <p className="c-black-85 m-b-8">借款共计：¥{loanSum.loanSumAll ? loanSum.loanSumAll/100 : 0}，待核销共计：¥{loanSum.waitAssessSumAll ? loanSum.waitAssessSumAll/100 : 0}</p>
                   }
                   <Table
                     columns={columns}

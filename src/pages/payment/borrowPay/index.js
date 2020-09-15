@@ -1,5 +1,5 @@
 import React from 'react';
-import { message, Form, Modal, Divider } from 'antd';
+import { message, Form, Modal, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
@@ -262,20 +262,28 @@ class BorrowPay extends React.PureComponent {
   }
 
   // 拒绝
-  handleRefuse = (id, callback) => {
+  handleRefuse = (val, callback) => {
     confirm({
       title: '确认拒绝该单据？',
       onOk: () => {
         this.props.dispatch({
           type: 'borrowPay/refuse',
           payload: {
-            invoiceSubmitIds: [id]
+            invoiceSubmitIds: [val.id],
+            rejectNote: val.rejectNote,
+            templateType: 1,
           }
         }).then(() => {
           callback();
           this.onOk();
         });
       }
+    });
+  }
+
+  onChangeStatus = (val) => {
+    this.setState({
+      status: val,
     });
   }
 
@@ -292,6 +300,13 @@ class BorrowPay extends React.PureComponent {
       title: '借款事由',
       dataIndex: 'reason',
       width: 150,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '借款金额(元)',
       dataIndex: 'loanSum',
@@ -358,6 +373,13 @@ class BorrowPay extends React.PureComponent {
       ),
       width: 100,
     }, {
+      title: '预计还款时间',
+      dataIndex: 'repaymentTime',
+      render: (text) => (
+        <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
+      ),
+      width: 100,
+    }, {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record) => (
@@ -388,14 +410,7 @@ class BorrowPay extends React.PureComponent {
       className: 'fixCenter'
     }];
     if(Number(status) !== 2) {
-      columns.splice(8, 0,  {
-        title: '预计还款时间',
-        dataIndex: 'repaymentTime',
-        render: (text) => (
-          <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
-        ),
-        width: 100,
-      }, {
+      columns.splice(8, 0, {
         title: '发放人',
         dataIndex: 'payUserName',
         width: 100,
@@ -445,6 +460,7 @@ class BorrowPay extends React.PureComponent {
           templateType={1}
           columns={columns}
           onQuerys={val => this.onQuery(val)}
+          onChangeStatus={(val) => this.onChangeStatus(val)}
         />
       </>
     );

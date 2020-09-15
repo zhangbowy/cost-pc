@@ -1,5 +1,5 @@
 import React from 'react';
-import { message, Form, Modal, Divider } from 'antd';
+import { message, Form, Modal, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
@@ -254,20 +254,28 @@ class Payment extends React.PureComponent {
   }
 
   // 拒绝
-  handleRefuse = (id, callback) => {
+  handleRefuse = (val, callback) => {
     confirm({
       title: '确认拒绝该单据？',
       onOk: () => {
         this.props.dispatch({
           type: 'payment/refuse',
           payload: {
-            invoiceSubmitIds: [id]
+            invoiceSubmitIds: [val.id],
+            rejectNote: val.rejectNote,
+            templateType: 0,
           }
         }).then(() => {
           callback();
           this.onOk();
         });
       }
+    });
+  }
+
+  onChangeStatus = (val) => {
+    this.setState({
+      status: val,
     });
   }
 
@@ -283,6 +291,13 @@ class Payment extends React.PureComponent {
       title: '报销事由',
       dataIndex: 'reason',
       width: 150,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '付款金额(元)',
       dataIndex: 'submitSum',
@@ -421,14 +436,16 @@ class Payment extends React.PureComponent {
     return (
       <>
         <PayTemp
+          {...this.props}
+          namespace="payment"
           list={list}
           query={query}
           total={total}
           loading={loading}
-          {...this.props}
           templateType={0}
           onQuerys={val => this.onQuery(val)}
           columns={columns}
+          onChangeStatus={(val) => this.onChangeStatus(val)}
         />
       </>
     );

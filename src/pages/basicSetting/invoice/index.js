@@ -37,7 +37,9 @@ class Invoice extends React.PureComponent {
   componentDidMount() {
     this.props.dispatch({
       type: 'invoice/approveList',
-      payload: {},
+      payload: {
+        isAuth: true,
+      },
     });
     this.onQuery({});
   }

@@ -214,7 +214,7 @@ export const borrowJson = [{
   key: 'note',
   field: 'note',
   name: '单据备注',
-  status: false,
+  status: true,
   isWrite: false,
   note: '',
 }, {

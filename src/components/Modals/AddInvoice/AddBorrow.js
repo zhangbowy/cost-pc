@@ -193,7 +193,7 @@ class AddBorrow extends Component {
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
             />
-            待核销金额总计：¥{waitLoanSum.waitAssessSumAll/100}
+            待核销金额总计：¥{waitLoanSum.waitAssessSumAll ? waitLoanSum.waitAssessSumAll/100 : 0}
           </div>
           <div className={style.addCosts}>
             <div className={style.addTable}>
