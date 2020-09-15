@@ -5,7 +5,7 @@
 // 基于根目录的项目路径
 const APP_BASE = process.env.APP_BASE || 'costhtml';
 // 环境变量
-const SPD_ENV = process.env.SPD_ENV || 'prod';
+const SPD_ENV = process.env.SPD_ENV || 'dev';
 
 const APP_NAME = '鑫支出';
 // 接口网关

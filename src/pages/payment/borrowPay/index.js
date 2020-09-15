@@ -262,7 +262,7 @@ class BorrowPay extends React.PureComponent {
   }
 
   // 拒绝
-  handleRefuse = (val, callback) => {
+  handleRefuse = (val) => {
     confirm({
       title: '确认拒绝该单据？',
       onOk: () => {
@@ -274,7 +274,8 @@ class BorrowPay extends React.PureComponent {
             templateType: 1,
           }
         }).then(() => {
-          callback();
+          // callback();
+          message.success('拒绝成功');
           this.onOk();
         });
       }

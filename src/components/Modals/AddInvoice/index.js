@@ -940,7 +940,7 @@ class AddInvoice extends Component {
                       placeholder='请选择'
                       onSelectPeople={(val) => this.selectPle(val)}
                       invalid={false}
-                      disabled={false}
+                      disabled={Number(templateType)}
                       flag="users"
                       multiple={false}
                     />
@@ -1173,7 +1173,10 @@ class AddInvoice extends Component {
                     console.log(itw.fieldType);
                     if (Number(itw.fieldType) === 2) {
                       renderForm = (
-                        <Select placeholder='请选择'>
+                        <Select
+                          placeholder='请选择'
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
+                        >
                           {
                             itw.options && itw.options.map(iteems => (
                               <Select.Option key={iteems}>{iteems}</Select.Option>

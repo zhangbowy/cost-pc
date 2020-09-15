@@ -86,16 +86,12 @@ class Conditions extends Component {
    * @memberof Conditions
    */
   onAdd = () => {
-    const { form } = this.props;
+    const { form, templateType } = this.props;
     // can use data-binding to get
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat([{
+      ...defaultList[templateType],
       id: ++id,
-      key: 'cost_category',
-      value: '费用类别',
-      sel: condExclude,
-      type: 'selectTree',
-      ruleType: 'category'
     }]);
     form.setFieldsValue({
       keys: nextKeys,

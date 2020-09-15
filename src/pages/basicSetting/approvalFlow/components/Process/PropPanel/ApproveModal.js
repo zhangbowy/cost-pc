@@ -154,8 +154,8 @@ class ApproveModal extends Component {
     if (nodeType !== 'approver') {
       radioList = approveUser.filter(it => it.key !== 'leader');
     }
-    console.log(templateType);
-    const approveArr = Number(templateType) ? approveCreate.splice(2,1) : approveCreate;
+    const newArr = [...approveCreate];
+    const approveArr = Number(templateType) ? newArr.filter(it => it.key==='make_user') : approveCreate;
     return (
       <Form>
         <Form.Item label={`${nodeTypes[nodeType]}名称`} {...formItemLayout}>

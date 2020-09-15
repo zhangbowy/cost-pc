@@ -4,7 +4,7 @@ import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
 import fileIcon from '@/utils/fileIcon.js';
-import { invoiceStatus, getArrayValue, approveStatus } from '@/utils/constants';
+import { invoiceStatus, getArrayValue, approveStatus, loanStatus } from '@/utils/constants';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import style from './index.scss';
@@ -368,7 +368,7 @@ class InvoiceDetail extends Component {
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
-              <span className="fs-14 c-black-65">{getArrayValue(details.status, invoiceStatus)}</span>
+              <span className="fs-14 c-black-65">{getArrayValue(details.grantStatus, invoiceStatus)}</span>
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
@@ -377,6 +377,22 @@ class InvoiceDetail extends Component {
                 <span className="link-c m-l-8" onClick={() => this.onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
               </span>
             </Col>
+            {
+              Number(templateType) &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>还款状态：</span>
+                <span className="fs-14 c-black-65">
+                  {getArrayValue(details.loanStatus, loanStatus)}
+                </span>
+              </Col>
+            }
+            {
+              Number(templateType) &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款时间：</span>
+                <span className="fs-14 c-black-65">{details.realRepaymentTime ? moment(details.realRepaymentTime).format('YYYY-MM-DD') : '-'}</span>
+              </Col>
+            }
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人' : '报销人'}：</span>
               <span className="fs-14 c-black-65">{details.userName}</span>

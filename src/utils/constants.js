@@ -455,6 +455,15 @@ export const approveStatus = [{
   value: '审批拒绝'
 }];
 
+// 还款状态
+export  const loanStatus = [{
+  key: '3',
+  value: '待还款'
+}, {
+  key: '6',
+  value: '已还款'
+}];
+
 // 审批默认配置
 export const defaultFlow = [{
   key: 'CreatorFirstLeader',
