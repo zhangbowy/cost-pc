@@ -4,7 +4,7 @@ import api from './services';
 
 const { PAGE_SIZE } = constants;
 export default {
-  namespace: 'payment',
+  namespace: 'borrowering',
   state: {
     list: [],
     recordList: [],
@@ -60,7 +60,7 @@ export default {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
-          total: response.page ? response.page.total : 0,
+          total: response.pageResult.page ? response.pageResult.page.total : 0,
         },
       });
     },

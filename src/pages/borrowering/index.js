@@ -16,13 +16,13 @@ import AddModal from './components/AddModal';
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
 @Form.create()
-@connect(({ loading, payment }) => ({
-  loading: loading.effects['payment/list'] || false,
-  list: payment.list,
-  query: payment.query,
-  total: payment.total,
-  loanSumObj: payment.loanSumObj,
-  recordList: payment.recordList
+@connect(({ loading, borrowering }) => ({
+  loading: loading.effects['borrowering/list'] || false,
+  list: borrowering.list,
+  query: borrowering.query,
+  total: borrowering.total,
+  loanSumObj: borrowering.loanSumObj,
+  recordList: borrowering.recordList
 }))
 class Payments extends React.PureComponent {
   constructor(props) {
@@ -58,7 +58,7 @@ class Payments extends React.PureComponent {
       endTime = moment(createTime[1]).format('x');
     }
     const { searchContent } = this.state;
-
+    console.log('e.key======',e.key);
     this.setState({
       status: e.key,
       selectedRowKeys: [],
@@ -176,7 +176,7 @@ class Payments extends React.PureComponent {
     const obj = payload;
     obj.type = payload.status*1 - 2;
     this.props.dispatch({
-      type: 'payment/list',
+      type: 'borrowering/list',
       payload: obj,
     });
   }
@@ -234,7 +234,7 @@ class Payments extends React.PureComponent {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
     }
-    let url = 'payment/exporting';
+    let url = 'borrowering/exporting';
     if (key === '1') {
       params = {
         ids: selectedRowKeys
@@ -247,7 +247,7 @@ class Payments extends React.PureComponent {
       };
     }
     if(Number(status) !== 2) {
-      url = 'payment/exported';
+      url = 'borrowering/exported';
     }
     this.props.dispatch({
       type: url,
@@ -280,15 +280,10 @@ class Payments extends React.PureComponent {
     // });
   }
 
-  repayment = (record) => {
-    console.log('record=====',record);
-
-  }
-
   // 拒绝
   handleRefuse = (val) => {
     this.props.dispatch({
-      type: 'payment/refuse',
+      type: 'borrowering/refuse',
       payload: {
         invoiceSubmitIds: [val.id],
         rejectNote: val.rejectNote
@@ -356,16 +351,16 @@ class Payments extends React.PureComponent {
       title: '提交时间',
       dataIndex: 'createTime',
       render: (text) => (
-        <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
+        <span>{ text && moment(text).format('YYYY-MM-DD hh:mm:ss') }</span>
       ),
-      width: 100,
+      width: 150,
     }, {
       title: '预计还款时间',
       dataIndex: 'repaymentTime',
       render: (text) => (
         <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
       ),
-      width: 200,
+      width: 100,
     }, {
       title: '操作',
       dataIndex: 'ope',
@@ -479,14 +474,15 @@ class Payments extends React.PureComponent {
             </div> */}
           </div>
           <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
-            已选{selectedRowKeys.length}张单据，借款共计¥{sumAmount?sumAmount/100:this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100},
-            待还款共计¥{sumAmount?loanSumAll/100:this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100}
+            {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
+            借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)},
+            待还款共计¥{sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)}
           </p>
           <Table
             columns={columns}
             dataSource={list}
             rowSelection={rowSelection}
-            scroll={{ x: 2000 }}
+            scroll={{ x: 1800 }}
             rowKey="loanId"
             loading={loading}
             pagination={{
