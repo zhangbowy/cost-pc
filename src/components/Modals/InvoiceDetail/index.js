@@ -31,6 +31,7 @@ class InvoiceDetail extends Component {
       details: {},
       invoiceLoanRepayRecords: [],
       invoiceLoanAssessVos: [],
+      supplierAccountVo: {},
     };
   }
 
@@ -68,6 +69,11 @@ class InvoiceDetail extends Component {
       if (details.invoiceLoanAssessVos) {
         this.setState({
           invoiceLoanAssessVos: details.invoiceLoanAssessVos,
+        });
+      }
+      if (details.supplierAccountVo) {
+        this.setState({
+          supplierAccountVo: details.supplierAccountVo || {},
         });
       }
       this.props.dispatch({
@@ -130,8 +136,12 @@ class InvoiceDetail extends Component {
   }
 
   handelOk = () => {
-    const { id } = this.props;
-    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
+    const { id, templateType } = this.props;
+    if (Number(templateType)) {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${id}`;
+    } else {
+      window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
+    }
   }
 
   // 拒绝
@@ -164,7 +174,7 @@ class InvoiceDetail extends Component {
   }
 
   render() {
-    const { visible,  category, receipt, showFields, details, invoiceLoanRepayRecords, invoiceLoanAssessVos } = this.state;
+    const { visible,  category, receipt, showFields, details, invoiceLoanRepayRecords, invoiceLoanAssessVos, supplierAccountVo } = this.state;
     const {
       children,
       canRefuse,
@@ -392,7 +402,7 @@ class InvoiceDetail extends Component {
               Number(templateType) ?
                 <Col span={8} className="m-t-16">
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款时间：</span>
-                  <span className="fs-14 c-black-65">{details.realRepaymentTime ? moment(details.realRepaymentTime).format('YYYY-MM-DD') : '-'}</span>
+                  <span className="fs-14 c-black-65">{details.repaymentTime ? moment(details.repaymentTime).format('YYYY-MM-DD') : '-'}</span>
                 </Col>
                 :
                 null
@@ -477,7 +487,7 @@ class InvoiceDetail extends Component {
               <Col span={8} style={{display: 'flex'}} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
                 <span className="fs-14 c-black-65">
-                  {details.supplierAccountName} {details.supplierAccount}
+                  {supplierAccountVo.supplierAccountName} {supplierAccountVo.supplierAccount}
                 </span>
               </Col>
             }

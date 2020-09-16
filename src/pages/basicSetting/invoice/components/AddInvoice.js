@@ -41,6 +41,10 @@ class AddInvoice extends React.PureComponent {
     if (this.saveFormRef && this.saveFormRef.onRest) {
       this.saveFormRef.onRest();
     }
+    this.setState({
+      left: 'basic',
+      categoryList: [],
+    });
   }
 
    show = () => {
@@ -244,6 +248,20 @@ class AddInvoice extends React.PureComponent {
         showFields: fieldVal.list.filter(it => it.field.indexOf('expand_field') === -1),
         expandField: expandArr,
       });
+    } else {
+      let expandArrNew = [];
+      if (datas.expandField) {
+        expandArrNew = datas.expandField.map(it => {
+          return {
+            ...it,
+            status: it.status ? 1 : 0,
+          };
+        });
+        Object.assign(datas, {
+          expandField: expandArrNew,
+          showFields: datas.showFields.filter(it => it.field.indexOf('expand_field') === -1),
+        });
+      }
     }
     Object.assign(datas, {
       showField: JSON.stringify(datas.showFields),

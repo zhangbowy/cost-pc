@@ -367,7 +367,7 @@ onDelete = (id) => {
         <span>
           <InvoiceDetail
             id={record.invoiceSubmitId}
-            templateId={record.invoiceTemplateId}
+            templateType={0}
           >
             <a>查看</a>
           </InvoiceDetail>

@@ -35,6 +35,9 @@ class Basic extends React.PureComponent {
       deptJson: (props.data && props.data.deptJson) || [], // 选择部门
       flowId: (props.data && props.data.approveId) || '',
       approveList: props.approveList || [], // 审批列表
+      visible: false,
+      title: 'add',
+      name: '',
     };
   }
 
@@ -52,6 +55,8 @@ class Basic extends React.PureComponent {
           users: (this.props.data && this.props.data.userJson) || [], // 选择的人员是空
           deptJson: (this.props.data && this.props.data.deptJson) || [], // 选择部门
           flowId: (this.props.data && this.props.data.approveId) || '',
+          title: 'add',
+          name: '',
         });
     }
 }
@@ -173,6 +178,7 @@ class Basic extends React.PureComponent {
   }
 
   onChangeSelect = (type) => {
+    this.onCancel();
     this.props.dispatch({
       type: 'invoice/approveList',
       payload: {}
@@ -191,8 +197,24 @@ class Basic extends React.PureComponent {
     });
   }
 
-  onClicks = () => {
-    console.log('点击事件');
+  onCancel = () => {
+    this.setState({
+      visible: false,
+    });
+  }
+
+  edit = (title, del) => {
+    console.log('点击一下');
+    const { templateType } = this.props;
+    let name = templateType ? `${templateTypeList[templateType]}审批流` : '报销单审批流';
+    if (title === 'edit') {
+      name = del.templateName;
+    }
+    this.setState({
+      visible: true,
+      name,
+      title,
+    });
   }
 
   render() {
@@ -204,7 +226,7 @@ class Basic extends React.PureComponent {
       templateType,
       dispatch,
     } = this.props;
-    const { cost, user, category, users, deptJson, flowId, approveList } = this.state;
+    const { cost, user, category, users, deptJson, flowId, approveList, visible, name, title } = this.state;
     console.log('flowId', flowId);
     // eslint-disable-next-line
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
@@ -320,56 +342,41 @@ class Basic extends React.PureComponent {
                   optionLabelProp="label"
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   dropdownClassName={style.addSel}
-                  onChange={(val) => this.setState({ flowId: val })}
+                  onChange={(val) => { this.setState({ flowId: val }); }}
                   dropdownStyle={{height: '300px'}}
-                  dropdownRender={(menu) => (
-                    <div
-                      onClick={(e) => {
-                        e.preventDefault();
-                      }}
-                      onMouseDown={(e) => { e.preventDefault(); }}
-                    >
-                      {menu}
-                      {
-                        approveList.length && !approveList[0].processOperationPermission &&
-                        <>
-                          <Divider style={{margin: '0'}} />
-                          <AddFlow
-                            templateType={templateType}
-                            // {...this.props}
-                            title="add"
-                            name={templateType ? `${templateTypeList[templateType]}审批流` : '报销单审批流'}
-                            onOk={() => this.onChangeSelect('add')}
-                            dispatch={dispatch}
-                          >
+                  dropdownRender={(menu) => {
+                    return (
+                      <div>
+                        <span onMouseDown={(e) => { e.preventDefault();}}>
+                          {menu}
+                        </span>
+                        {
+                          approveList.length && !approveList[0].processOperationPermission &&
+                          <>
+                            <Divider style={{margin: '0'}} />
                             <div
                               key="event"
                               style={{height: '50px', textAlign: 'center', lineHeight: '50px'}}
-                              onMouseDown={(e) => { e.preventDefault(); }}
+                              onClick={() => this.edit('add')}
+                              onMouseDown={e => {e.preventDefault();}}
                             >
                               <Icon type="plus" className="sub-color m-r-8" />
                               <a className="fs-14">新建审批流</a>
                             </div>
-                          </AddFlow>
-                        </>
-                      }
-                    </div>
-                  )}
+                          </>
+                        }
+                      </div>
+                    );
+                  }}
                 >
                   {
                     approveList.filter(it => (it.templateType === Number(templateType))).map(it => (
-                      <Select.Option
+                      <Option
                         key={it.id}
                         label={it.templateName}
                         className={style.flowOption}
-                        onChange={e => e.preventDefault()}
                       >
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault();
-                          }}
-                          onMouseDown={(e) => { e.preventDefault(); }}
-                        >
+                        <span>
                           <span className="m-r-8">{it.templateName}</span>
                           {
                             this.state.flowId === it.id &&
@@ -379,32 +386,18 @@ class Basic extends React.PureComponent {
                         {
                           !it.processOperationPermission &&
                           <span
-                            onClick={(e) => {
-                              e.preventDefault();
-                            }}
-                            onMouseDown={(e) => { e.preventDefault(); }}
                             key="flowEdit"
                           >
-                            <AddFlow
-                              // {...this.props}
-                              templateType={templateType}
-                              title="edit"
-                              name={it.templateName}
-                              processPersonId={it.id}
-                              onOk={() => this.onChangeSelect('edit')}
-                              dispatch={dispatch}
+                            <a
+                              className={style.editFlow}
+                              onClick={() => this.edit('edit', it)}
+                              onMouseDown={(e) => { e.preventDefault();}}
                             >
-                              <a
-                                className={style.editFlow}
-                                key="edits"
-                                onMouseDown={(e) => { e.preventDefault(); }}
-                              >
-                                编辑
-                              </a>
-                            </AddFlow>
+                              编辑
+                            </a>
                           </span>
                         }
-                      </Select.Option>
+                      </Option>
                     ))
                   }
                 </Select>
@@ -422,6 +415,17 @@ class Basic extends React.PureComponent {
             }
           </Form.Item>
         </Form>
+        <AddFlow
+          // {...this.props}
+          templateType={templateType}
+          title={title}
+          name={name}
+          processPersonId={flowId}
+          onOk={() => this.onChangeSelect(title)}
+          dispatch={dispatch}
+          visible={visible}
+          onCancel={() => this.onCancel()}
+        />
       </div>
     );
   }

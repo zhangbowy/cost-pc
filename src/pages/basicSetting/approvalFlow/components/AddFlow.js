@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-update-set-state */
 import React, { Component } from 'react';
 import { Modal, Icon, Button, Input, Select, message } from 'antd';
 import { connect } from 'dva';
@@ -15,7 +16,7 @@ class AddFlow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
+      visible: props.visible || false,
       flag: true,
       nodes: {},
       repeatMethods: '',
@@ -23,10 +24,21 @@ class AddFlow extends Component {
     };
   }
 
-  onShow = async(e) => {
+  componentDidUpdate(prev) {
+    if (prev.visible !== this.props.visible) {
+      if (this.props.visible) {
+        this.onShow();
+      }
+      this.setState({
+        visible: this.props.visible,
+      });
+    }
+  }
+
+  onShow = async() => {
     console.log('点击了');
-    e.preventDefault();
-    e.stopPropagation();
+    // e.preventDefault();
+    // e.stopPropagation();
     const { title, processPersonId, name } = this.props;
     this.props.dispatch({
       type: 'global/costList',
@@ -88,6 +100,10 @@ class AddFlow extends Component {
   }
 
   handleCancel = () => {
+    if (this.props.onCancel) {
+      console.log('执行cancel');
+      this.props.onCancel();
+    }
     this.setState({
       visible: false,
       flag: true,

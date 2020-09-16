@@ -232,6 +232,7 @@ class PayTemp extends React.PureComponent {
 
   print = () => {
     const { selectedRowKeys } = this.state;
+    const { templateType } = this.props;
     if (selectedRowKeys.length > 1) {
       message.error('只支持打印一条数据');
       return;
@@ -240,7 +241,11 @@ class PayTemp extends React.PureComponent {
       message.error('请选择一条数据打印');
       return;
     }
-    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    if (Number(templateType)) {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    } else {
+      window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    }
   }
 
   // 拒绝
