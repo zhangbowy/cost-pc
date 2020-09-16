@@ -51,6 +51,7 @@ class RefuseModal extends Component {
         <Modal
           title="拒绝理由"
           visible={visible}
+          onCancel={this.onCancel}
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
             <Button key="save" onClick={() => this.onConfirm()} type="primary">确认</Button>

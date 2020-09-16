@@ -61,6 +61,7 @@ class PayModal extends React.PureComponent {
   }
 
   onCancel = () => {
+    this.props.form.resetFields();
     this.setState({
       visible: false,
     });

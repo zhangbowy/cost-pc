@@ -135,6 +135,12 @@ class AddFlow extends Component {
     });
   }
 
+  onChangRepeat = (val) => {
+    this.setState({
+      repeatMethods: val,
+    });
+  }
+
   onStartChange = (data) => {
     console.log(data);
   }

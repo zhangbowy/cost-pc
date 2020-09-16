@@ -378,20 +378,24 @@ class InvoiceDetail extends Component {
               </span>
             </Col>
             {
-              Number(templateType) &&
-              <Col span={8} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>还款状态：</span>
-                <span className="fs-14 c-black-65">
-                  {getArrayValue(details.loanStatus, loanStatus)}
-                </span>
-              </Col>
+              Number(templateType) ?
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>还款状态：</span>
+                  <span className="fs-14 c-black-65">
+                    {getArrayValue(details.loanStatus, loanStatus)}
+                  </span>
+                </Col>
+                :
+                null
             }
             {
-              Number(templateType) &&
-              <Col span={8} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款时间：</span>
-                <span className="fs-14 c-black-65">{details.realRepaymentTime ? moment(details.realRepaymentTime).format('YYYY-MM-DD') : '-'}</span>
-              </Col>
+              Number(templateType) ?
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款时间：</span>
+                  <span className="fs-14 c-black-65">{details.realRepaymentTime ? moment(details.realRepaymentTime).format('YYYY-MM-DD') : '-'}</span>
+                </Col>
+                :
+                null
             }
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人' : '报销人'}：</span>
