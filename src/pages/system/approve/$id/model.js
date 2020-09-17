@@ -7,6 +7,7 @@ export default {
   state: {
     list: [],
     details: {},
+    detail: {},
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -24,6 +25,15 @@ export default {
         type: 'save',
         payload: {
           details: response || {},
+        },
+      });
+    },
+    *details({ payload }, { call, put }) {
+      const response = yield call(get, api.details, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          detail: response || {},
         },
       });
     },
