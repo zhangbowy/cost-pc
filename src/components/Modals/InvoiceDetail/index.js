@@ -307,6 +307,7 @@ class InvoiceDetail extends Component {
     const moneys = newList && newList.reduce((arr, crr) => {
       return arr+crr.costSum/100;
     }, []);
+    console.log(templateType, details.grantStatus);
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -380,7 +381,7 @@ class InvoiceDetail extends Component {
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
-              <span className="fs-14 c-black-65">{getArrayValue(details.grantStatus || details.status, invoiceStatus)}</span>
+              <span className="fs-14 c-black-65">{Number(templateType) ? getArrayValue(details.grantStatus, invoiceStatus) : getArrayValue(details.status, invoiceStatus)}</span>
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>

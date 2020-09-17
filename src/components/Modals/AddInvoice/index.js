@@ -485,8 +485,7 @@ class AddInvoice extends Component {
       showField,
       borrowArr,
     } = this.state;
-    const that = this;
-    const { id, dispatch, templateType } = this.props;
+    const { id, templateType } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -573,40 +572,45 @@ class AddInvoice extends Component {
             invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
           });
         }
-        dispatch({
-          type: Number(templateType) ? 'global/addLoan' : 'global/addInvoice',
-          payload : {
-            ...params,
-            templateType
-          }
-        }).then(() => {
-          that.onCancel();
-          message.success('发起单据成功');
-          this.props.onHandleOk();
-        });
+        this.chargeHandle(params);
       }
     });
   }
 
-  chargeHandle = () => {
+  onSubmit = (params) => {
+    const { dispatch, templateType } = this.props;
+    dispatch({
+      type: Number(templateType) ? 'global/addLoan' : 'global/addInvoice',
+      payload : {
+        ...params,
+        templateType
+      }
+    }).then(() => {
+      this.onCancel();
+      message.success('发起单据成功');
+      this.props.onHandleOk();
+    });
+  }
+
+  chargeHandle = (params) => {
     const { borrowArr } = this.state;
     const { templateType, waitLists } = this.props;
     if (templateType && Number(templateType)) {
-      this.handleOk();
+      this.onSubmit(params);
     } else if (borrowArr.length === 0 && (waitLists.length > 0)) {
       confirm({
         title: '还有借款未核销，确认提交吗？',
         okText: '确定提交',
         cancelText: '继续核销',
         onOk: () => {
-          this.handleOk();
+          this.onSubmit(params);
         },
         onCancel: () => {
           console.log('Cancel');
         },
       });
     } else {
-      this.handleOk();
+      this.onSubmit(params);
     }
 
   }
@@ -966,7 +970,7 @@ class AddInvoice extends Component {
                   :
                     <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500">{total}</span></span>
                 }
-                <Button key="save" type="primary" onClick={() => this.chargeHandle()} loading={loading}>确定</Button>
+                <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>
           )}

@@ -102,6 +102,19 @@ class AddInvoice extends React.PureComponent {
                 oldArr.unshift(4,0);
                 Array.prototype.splice.apply(arr, oldArr);
               }
+              if (!Number(templateType) && arr.filter(it => it.field === 'loan')) {
+                const newArr = arr.filter(it => it.field === 'loan');
+                if (newArr && newArr.length === 0) {
+                  arr.splice(4, 0, {
+                    key: 'loan',
+                    field: 'loan',
+                    name: '借款核销',
+                    status: false,
+                    isWrite: false,
+                    note: '',
+                  });
+                }
+              }
               Object.assign(datas, {
                 showFields: arr,
               });

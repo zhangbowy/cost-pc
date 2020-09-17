@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Divider } from 'antd';
+import { Table, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '../InvoiceDetail';
 
@@ -33,6 +33,13 @@ class BorrowTable extends Component {
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''}>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '借款单号',
       dataIndex: 'invoiceNo',

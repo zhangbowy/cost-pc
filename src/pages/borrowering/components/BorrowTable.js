@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Button } from 'antd';
+import { Table, Button, Tooltip } from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 
@@ -47,6 +47,13 @@ class BorrowTable extends Component {
     }, {
       title: '还款备注',
       dataIndex: 'note',
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''}>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '收款账户',
       dataIndex: 'accountVo',

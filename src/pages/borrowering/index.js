@@ -390,7 +390,7 @@ class Payments extends React.PureComponent {
           {
             Number(status) === 2 &&
               <InvoiceDetail id={record.id} templateType={1} data={record}>
-                <a>查看详情</a>
+                <a>查看</a>
               </InvoiceDetail>
           }
         </div>

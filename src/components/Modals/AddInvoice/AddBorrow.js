@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Table } from 'antd';
+import { Modal, Form, Table, Tooltip } from 'antd';
 import Search from 'antd/lib/input/Search';
 import moment from 'moment';
 import { connect } from 'dva';
@@ -148,6 +148,13 @@ class AddBorrow extends Component {
       {
         title: '事由',
         dataIndex: 'reason',
+        render: (text) => (
+          <span>
+            <Tooltip placement="topLeft" title={text || ''}>
+              <span className="eslips-2">{text}</span>
+            </Tooltip>
+          </span>
+        ),
       },
       {
         title: '借款单号',

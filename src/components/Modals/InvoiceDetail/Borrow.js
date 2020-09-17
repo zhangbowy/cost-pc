@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'antd';
+import { Table, Tooltip } from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '.';
 
@@ -17,10 +17,13 @@ function Borrow(props) {
     ),
   }, {
     title: '备注/事由',
-    dataIndex: 'categoryName',
-    render: (_, record) => (
-      <span>{record.note || '-'}</span>
-
+    dataIndex: 'note',
+    render: (text) => (
+      <span>
+        <Tooltip placement="topLeft" title={text || ''}>
+          <span className="eslips-2">{text}</span>
+        </Tooltip>
+      </span>
     ),
   }, {
     title: '操作人',
@@ -38,6 +41,13 @@ function Borrow(props) {
     columns = [{
       title: '事由',
       dataIndex: 'reason',
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''}>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '借款单号',
       dataIndex: 'invoiceNo',
