@@ -33,7 +33,7 @@ function FlowCard(props) {
     const classList = ['flow-path-card'];
     console.log('ctx', ctx);
     let count = 0;
-    if (conf.nodeType === 'approver') {
+    if (conf.nodeType === 'approver' && (conf.prevId.indexOf('condition') === -1)) {
       count = NodeUtils.getApprove(ctx.data);
     }
     // eslint-disable-next-line no-sequences
@@ -42,8 +42,12 @@ function FlowCard(props) {
     const isApprNode = afterTrue(NodeUtils.isApproverNode(conf), 'approver');
     const isCopyNode = afterTrue(NodeUtils.isCopyNode(conf), 'notifier');
     const isGrant = afterTrue(NodeUtils.isGrant(conf), 'grant');
-    const isOnlyApprove = conf && conf.nodeType === 'approver' && (((conf.prevId.indexOf('START') > -1) && conf.childNode && (conf.childNode.nodeType === 'grant')) ||
-                          (count === 1)); // 唯一的一个审批节点
+    const isOnlyApprove = conf && conf.nodeType === 'approver' &&
+                          (
+                            ((conf.prevId.indexOf('START') > -1) &&
+                            conf.childNode && (conf.childNode.nodeType === 'grant')) ||
+                            (count === 1)
+                          ); // 唯一的一个审批节点
     return (
       <section className={cs(style['flow-path-card'], style[classList[1]])} onClick={(e) => eventLancher(e, 'edit', conf)} >
         <header className={style.header}>
