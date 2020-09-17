@@ -222,6 +222,7 @@ class Payments extends React.PureComponent {
 
   export = (key) => {
     const { selectedRowKeys, status, searchContent } = this.state;
+    console.log('key======',key);
     if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
@@ -236,9 +237,11 @@ class Payments extends React.PureComponent {
     }
     if (key === '1') {
       params = {
-        ids: selectedRowKeys
+        ids: selectedRowKeys,
+        export: true,
+        fileName:'选中导出列表',
       };
-    } else if (key === '2') {
+    } else if (key === '3') {
       params = {
         searchContent,
         startTime,
@@ -298,7 +301,7 @@ class Payments extends React.PureComponent {
       selectedRowKeys,
       sumAmount,
       // selectedRows,
-      // loanSumAll
+      loanSumAll
     } = this.state;
     const {
       list,
@@ -482,8 +485,8 @@ class Payments extends React.PureComponent {
           </div>
           <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
             {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
-            借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)},
-            {/* 待还款共计¥{sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)} */}
+            借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)}
+            {status===2?`待还款共计¥${sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)}`:''},
           </p>
           <Table
             columns={columns}
