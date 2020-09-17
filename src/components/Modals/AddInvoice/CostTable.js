@@ -147,7 +147,7 @@ class CostTable extends Component {
                 dataIndex: item.field,
                 render: (text) => (
                   <span>
-                    <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+                    <Tooltip placement="topLeft" title={text || ''}>
                       <span className="eslips-2">{text}</span>
                     </Tooltip>
                   </span>

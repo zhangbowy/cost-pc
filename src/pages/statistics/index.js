@@ -264,7 +264,7 @@ onDelete = (id) => {
       width: 100,
       render: (text) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+          <Tooltip placement="topLeft" title={text || ''}>
             <span className="eslips-2">{text}</span>
           </Tooltip>
         </span>
@@ -302,7 +302,7 @@ onDelete = (id) => {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 130,
+      width: 140,
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
@@ -324,7 +324,7 @@ onDelete = (id) => {
       render: (text) => (
         <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
       ),
-      width: 100,
+      width: 120,
     }, {
       title: '发放人',
       dataIndex: 'payUserName',
@@ -382,6 +382,7 @@ onDelete = (id) => {
       selectedRowKeys,
       onSelect: this.onSelect,
       onSelectAll: this.onSelectAll,
+      columnWidth: '24px'
     };
     return (
       <div className="content-dt" style={{padding: 0}}>
@@ -433,7 +434,7 @@ onDelete = (id) => {
           <Table
             columns={columns}
             dataSource={list}
-            scroll={{ x: 2000 }}
+            scroll={{ x: 2200 }}
             rowKey="id"
             rowSelection={rowSelection}
             loading={loading}

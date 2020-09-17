@@ -228,7 +228,7 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
             <Popconfirm
               title="是否确认删除？"
-              onConfirm={() => this.onDelete(record.id)}
+              onConfirm={() => this.onDelete(record.invoiceId)}
             >
               <span className="deleteColor">删除</span>
             </Popconfirm>
@@ -286,7 +286,7 @@ class Workbench extends PureComponent {
         title: '审批状态',
         dataIndex: 'approveStatus',
         render: (_, record) => (
-          <span>{getArrayValue(record.status, approveStatus)}</span>
+          <span>{getArrayValue(record.approveStatus, approveStatus)}</span>
         ),
         width: 100,
       }, {
@@ -421,7 +421,7 @@ class Workbench extends PureComponent {
                   <Table
                     columns={columns}
                     dataSource={list}
-                    rowKey="id"
+                    rowKey="invoiceId"
                     scroll={{ x: 1500 }}
                     loading={loading}
                     pagination={{

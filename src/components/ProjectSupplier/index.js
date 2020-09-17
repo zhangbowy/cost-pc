@@ -209,7 +209,7 @@ class Product extends React.PureComponent {
         if (record.type === 1) {
           ele = (
             <span>
-              <Tooltip placement="topLeft" title={record.note || ''} arrowPointAtCenter>
+              <Tooltip placement="topLeft" title={record.note || ''}>
                 <span className="eslips-2">{record.note}</span>
               </Tooltip>
             </span>

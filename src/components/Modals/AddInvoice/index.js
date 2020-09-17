@@ -1058,6 +1058,7 @@ class AddInvoice extends Component {
                           <InputNumber
                             onChange={val => this.inputMoney(val)}
                             placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
+                            style={{width: '100%'}}
                           />
                         )
                       }

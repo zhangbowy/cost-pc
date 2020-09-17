@@ -285,6 +285,7 @@ class PayTemp extends React.PureComponent {
       selectedRowKeys,
       onSelect: this.onSelect,
       onSelectAll: this.onSelectAll,
+      columnWidth: '24px'
     };
     return (
       <div className="content-dt" style={{padding: 0}}>
