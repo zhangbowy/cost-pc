@@ -10,14 +10,23 @@ import AddRole from '../components/AddRole';
 
 @connect(({ approveRole, loading }) => ({
   list: approveRole.list,
+  detail: approveRole.detail,
   loading: loading.effects['approveRole/list'] || false,
 }))
 class SettingPeople extends Component {
   static propTypes = {
     list: PropTypes.array,
+    detail: PropTypes.object,
   }
 
   componentDidMount() {
+    const {id} = this.props.match.params;
+    this.props.dispatch({
+      type: 'approveRole/details',
+      payload: {
+        id,
+      }
+    });
     this.onQuery({});
   }
 
@@ -54,6 +63,7 @@ class SettingPeople extends Component {
 
   render() {
     const {id} = this.props.match.params;
+    const { detail } = this.props;
     const columns = [{
       title: '人员',
       dataIndex: 'userName',
@@ -95,8 +105,8 @@ class SettingPeople extends Component {
       <div>
         <SubHeader
           content={{
-            roleName: '审批角色',
-            note: '支持将多个相同审批职能的人设置为同一个角色，用于审批流中按对应管理条件审批'
+            roleName: detail.approveRoleName,
+            note: detail.note
           }}
           sub
           title="审批角色"
