@@ -251,6 +251,7 @@ class Payments extends React.PureComponent {
         export: true
       };
     }
+    console.log(params);
     this.props.dispatch({
       type: 'borrowering/loanExported',
       payload: {
@@ -486,7 +487,7 @@ class Payments extends React.PureComponent {
           <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
             {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
             借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)}
-            {status===2?`待还款共计¥${sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)}`:''},
+            {status==='2'?`，待还款共计¥${sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)}`:''}
           </p>
           <Table
             columns={columns}
