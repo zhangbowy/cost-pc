@@ -160,7 +160,7 @@ function request(url, config) {
       },
     });
   }
-  if(config.data.type === 'export') {
+  if(config.data.type === 'export' || config.data.export === true) {
     return Promise.race([
       fetch(requestUrl, options),
       new Promise((_, reject) => {

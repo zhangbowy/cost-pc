@@ -234,7 +234,6 @@ class Payments extends React.PureComponent {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
     }
-    let url = 'borrowering/exporting';
     if (key === '1') {
       params = {
         ids: selectedRowKeys
@@ -244,13 +243,13 @@ class Payments extends React.PureComponent {
         searchContent,
         startTime,
         endTime,
+        type:status-2,
+        fileName:status==='2'?'待还款列表':'已还款列表',
+        export: true
       };
     }
-    if(Number(status) !== 2) {
-      url = 'borrowering/exported';
-    }
     this.props.dispatch({
-      type: url,
+      type: 'borrowering/loanExported',
       payload: {
         ...params,
       }
@@ -299,7 +298,7 @@ class Payments extends React.PureComponent {
       selectedRowKeys,
       sumAmount,
       // selectedRows,
-      loanSumAll
+      // loanSumAll
     } = this.state;
     const {
       list,
@@ -409,9 +408,17 @@ class Payments extends React.PureComponent {
             <RecordModal detail={record} RecordModal id={record.invoiceId} canRefuse={Number(status) === 2} refuse={this.handleRefuse}>
               <a>借还记录</a>
             </RecordModal>
+            {
+              <Divider type="vertical" />
+            }
+            {
+              <InvoiceDetail id={record.id} templateType={1} data={record}>
+                <a>查看详情</a>
+              </InvoiceDetail>
+            }
           </span>
         ),
-        width: 140,
+        width: 200,
         fixed: 'right',
         className: 'fixCenter'
       });
@@ -476,7 +483,7 @@ class Payments extends React.PureComponent {
           <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
             {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
             借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)},
-            待还款共计¥{sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)}
+            {/* 待还款共计¥{sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)} */}
           </p>
           <Table
             columns={columns}

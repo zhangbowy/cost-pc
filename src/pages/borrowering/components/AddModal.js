@@ -103,10 +103,11 @@ class AddModal extends Component {
                 getFieldDecorator('repaySum', {
                   initialValue: detail.repaySum,
                   rules: [
-                    { required: true, message: '请输入本次还款金额' },
-                  ]
+                    { required: true, message: '请输入正确的还款金额', 
+                    pattern: new RegExp(/^\d*\.{0,1}\d{0,2}$/, 'g'),
+                  }]
                 })(
-                  <Input type="number" placeholder="还款金额需小于待核销金额" />
+                  <Input min={0} placeholder="还款金额需小于待核销金额" />
                 )
               }
             </Form.Item>
