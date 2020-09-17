@@ -252,7 +252,7 @@ class AddAccount extends React.PureComponent {
                   initialValue: data && data.isDefault,
                   valuePropName: 'checked'
                 })(
-                  <Checkbox>是否默认</Checkbox>
+                  <Checkbox>设置为付款默认账号</Checkbox>
                 )
               }
             </Form.Item>

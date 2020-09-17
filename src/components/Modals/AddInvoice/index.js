@@ -901,7 +901,7 @@ class AddInvoice extends Component {
               <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
               <div className={style.moneyList}>
                 {
-                  showField.loan && showField.loan.status ?
+                  !Number(templateType) ?
                     <>
                       <span className={cs('fs-15', 'c-black-50', style.moneyList)}>报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span></span>
                       <Divider type="vertical" />

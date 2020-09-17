@@ -159,6 +159,7 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('account', {
                     initialValue: data && data.account,
+                    rules: [{ required: (Number(type) !== 2), message: `请输入${Number(type) === 0 ? labelInfo.account : '账号'}` }]
                   })(
                     <Input placeholder="请输入" />
                   )
@@ -213,7 +214,7 @@ class AddAccount extends React.PureComponent {
                   initialValue: data && data.isDefault,
                   valuePropName: 'checked'
                 })(
-                  <Checkbox>是否默认</Checkbox>
+                  <Checkbox>设置为收款默认账号</Checkbox>
                 )
               }
             </Form.Item>
