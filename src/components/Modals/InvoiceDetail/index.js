@@ -378,7 +378,7 @@ class InvoiceDetail extends Component {
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
-              <span className="fs-14 c-black-65">{getArrayValue(details.grantStatus, invoiceStatus)}</span>
+              <span className="fs-14 c-black-65">{getArrayValue(details.grantStatus || details.status, invoiceStatus)}</span>
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
@@ -514,6 +514,16 @@ class InvoiceDetail extends Component {
             }
           </Row>
           {
+            invoiceLoanRepayRecords && invoiceLoanRepayRecords.length > 0 &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>核销记录（借款¥{details.loanSum/100} 待核销¥{details.waitAssessSum/100} ）</span>
+              </div>
+              <Borrow list={invoiceLoanRepayRecords} type={0} />
+            </>
+          }
+          {
             !Number(templateType) &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
@@ -527,16 +537,6 @@ class InvoiceDetail extends Component {
                 scroll={{x: columns.length > 6 ? '1400px' : '1000px'}}
                 rowKey="id"
               />
-            </>
-          }
-          {
-            invoiceLoanRepayRecords && invoiceLoanRepayRecords.length > 0 &&
-            <>
-              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
-                <div className={style.line} />
-                <span>核销记录（借款¥{details.loanSum/100} 待核销¥{details.waitAssessSum/100} ）</span>
-              </div>
-              <Borrow list={invoiceLoanRepayRecords} type={0} />
             </>
           }
           {

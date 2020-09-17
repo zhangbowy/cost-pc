@@ -73,12 +73,16 @@ class Workbench extends PureComponent {
     });
   }
 
-  onDelete = (id) => {
+  onDelete = (id, temp) => {
+    let url = 'workbench/del';
+    if (temp && Number(temp)) {
+      url = 'workbench/loanDel';
+    }
     const {
       query,
     } = this.props;
     this.props.dispatch({
-      type: 'workbench/del',
+      type: url,
       payload: {
         id
       }
@@ -228,7 +232,7 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
             <Popconfirm
               title="是否确认删除？"
-              onConfirm={() => this.onDelete(record.invoiceId)}
+              onConfirm={() => this.onDelete(record.invoiceId, record.templateType)}
             >
               <span className="deleteColor">删除</span>
             </Popconfirm>
