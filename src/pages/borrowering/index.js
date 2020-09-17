@@ -329,7 +329,7 @@ class Payments extends React.PureComponent {
       render: (text) => (
         <span>{text/100}</span>
       ),
-      className: 'daimoneyCol',
+      className: 'moneyCol',
       width: 100,
     }, {
       title: '单号',
@@ -367,7 +367,7 @@ class Payments extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'ope',
-      render: (_, record) => 
+      render: (_, record) =>
       (
         <div>
           {
@@ -432,6 +432,7 @@ class Payments extends React.PureComponent {
       selectedRowKeys,
       onSelect: this.onSelect,
       onSelectAll: this.onSelectAll,
+      columnWidth: '24px',
     };
     // if (Number(status) !== 2) {
     //   rowSelection=null;

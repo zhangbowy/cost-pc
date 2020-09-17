@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Table } from 'antd';
+import { Table, Divider } from 'antd';
 import moment from 'moment';
+import InvoiceDetail from '../InvoiceDetail';
 
 class BorrowTable extends Component {
   constructor(props) {
@@ -50,6 +51,10 @@ class BorrowTable extends Component {
       render: (_, record) => (
         <span>
           <span className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</span>
+          <Divider type="vertical" />
+          <InvoiceDetail id={record.loanId} templateType={1}>
+            <a>查看</a>
+          </InvoiceDetail>
         </span>
       ),
     }];

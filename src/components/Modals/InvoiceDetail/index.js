@@ -111,12 +111,14 @@ class InvoiceDetail extends Component {
 
   // 审批详情跳转
   onLinkDetail = () => {
-    const { invoiceDetail } = this.props;
-    if (invoiceDetail.proInsId) {
+    const { templateType } = this.props;
+    const { invoiceDetail, loanDetail } = this.props;
+    const details = Number(templateType) ? loanDetail : invoiceDetail;
+    if (details.proInsId) {
       this.props.dispatch({
         type: 'global/approveUrl',
         payload: {
-          proInsId: invoiceDetail.proInsId
+          proInsId: details.proInsId
         }
       }).then(() => {
         const url = this.props.approvedUrl;
@@ -346,7 +348,7 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
             </Col>
             {
-              showFields.loan && showFields.loan.status &&
+              !Number(templateType) &&
               <>
                 <Col span={8} className="m-t-16">
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>核销金额：</span>

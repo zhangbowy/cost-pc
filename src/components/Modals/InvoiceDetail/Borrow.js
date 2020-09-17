@@ -19,16 +19,8 @@ function Borrow(props) {
     title: '备注/事由',
     dataIndex: 'categoryName',
     render: (_, record) => (
-      <span>
-        {
-          record.invoiceSubmitId ?
-            <InvoiceDetail id={record.invoiceSubmitId} templateType={0}>
-              <a>查看</a>
-            </InvoiceDetail>
-          :
-            <span>{record.note}</span>
-        }
-      </span>
+      <span>{record.note || '-'}</span>
+
     ),
   }, {
     title: '操作人',

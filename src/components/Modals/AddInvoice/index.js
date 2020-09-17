@@ -32,8 +32,8 @@ const labelInfo = {
   project: '项目',
   supplier: '供应商'
 };
-
-@connect(({ session, global, loading }) => ({
+const { confirm } = Modal;
+@connect(({ session, global, loading, workbench }) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
@@ -43,6 +43,7 @@ const labelInfo = {
   userId: global.userId,
   usableSupplier: global.usableSupplier,
   usableProject: global.usableProject,
+  waitLists: workbench.waitLists,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
 }))
 @Form.create()
@@ -75,6 +76,15 @@ class AddInvoice extends Component {
     let detail = this.state.details;
     const { id, userInfo, templateType } = this.props;
     const _this = this;
+    if (!Number(templateType)) {
+      this.props.dispatch({
+        type: 'workbench/waitLists',
+        payload: {
+          pageNo: 1,
+          pageSize: 200,
+        }
+      });
+    }
     const userJson = [{
       userName: userInfo.name,
       userId: userInfo.dingUserId,
@@ -220,7 +230,6 @@ class AddInvoice extends Component {
     let detail = this.state.details;
     const { total } = this.state;
     let params = {};
-    console.log(val.users);
     if (val.users && val.users.length > 0) {
       this.props.dispatch({
         type: 'global/users',
@@ -579,6 +588,29 @@ class AddInvoice extends Component {
     });
   }
 
+  chargeHandle = () => {
+    const { borrowArr } = this.state;
+    const { templateType, waitLists } = this.props;
+    if (templateType && Number(templateType)) {
+      this.handleOk();
+    } else if (borrowArr.length === 0 && (waitLists.length > 0)) {
+      confirm({
+        title: '还有借款未核销，确认提交吗？',
+        okText: '确定提交',
+        cancelText: '继续核销',
+        onOk: () => {
+          this.handleOk();
+        },
+        onCancel: () => {
+          console.log('Cancel');
+        },
+      });
+    } else {
+      this.handleOk();
+    }
+
+  }
+
   onChangeData = (val) => {
     this.setState({
       costDetailsVo: val,
@@ -836,6 +868,28 @@ class AddInvoice extends Component {
     }
   }
 
+  range = (start, end) => {
+    const result = [];
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  }
+
+  disabledDate = (current) => {
+    console.log(current);
+    // Can not select days before today and today
+    return current && current < moment(new Date()).subtract(1, 'day');
+  }
+
+  disabledDateTime = () => {
+    return {
+      disabledHours: () => this.range(0, 24).splice(4, 20),
+      disabledMinutes: () => this.range(30, 60),
+      disabledSeconds: () => [55, 56],
+    };
+  }
+
   render() {
     const {
       children,
@@ -912,7 +966,7 @@ class AddInvoice extends Component {
                   :
                     <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500">{total}</span></span>
                 }
-                <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
+                <Button key="save" type="primary" onClick={() => this.chargeHandle()} loading={loading}>确定</Button>
               </div>
             </div>
           )}
@@ -1077,7 +1131,10 @@ class AddInvoice extends Component {
                             message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
                           }]
                         })(
-                          <DatePicker />
+                          <DatePicker
+                            disabledDate={this.disabledDate}
+                            disabledTime={this.disabledDateTime}
+                          />
                         )
                       }
                     </Form.Item>

@@ -18,6 +18,8 @@ export default {
     total: 0,
     loanSum: {}, // 待核销
     waitLoanSum: {},
+    waitLists: [],
+    waitLoanSums: {},
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -71,6 +73,18 @@ export default {
         payload: {
           waitList: lists || [],
           waitLoanSum: response.loanSum || {},
+        }
+      });
+    },
+    *waitLists({ payload }, { call, put }) {
+      const response = yield call(get, api.waitList, payload);
+      const res = response.pageResult;
+      const lists = res.list.map(it => { return { ...it, id: it.loanId }; }) || [];
+      yield put({
+        type: 'save',
+        payload: {
+          waitLists: lists || [],
+          waitLoanSums: response.loanSum || {},
         }
       });
     },

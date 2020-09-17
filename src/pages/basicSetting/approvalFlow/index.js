@@ -120,9 +120,11 @@ function ApprovalFlow(props) {
     <div>
       <div className="app_header">
         <p className="app_header_title">审批设置</p>
-        <p className="app_header_line">默认为您提供5种类型的审批流程，您也可以自定义设置审批人</p>
+        <p className="app_header_line">
+          { status === '0' ? '默认为您提供了一些模版，您也可以按单据类型自行添加' : '默认为您提供2个审批流模版，您也可以自行添加' }
+        </p>
       </div>
-      <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto' }}>
+      <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto', paddingBottom: '32px' }}>
         <MenuItems
           lists={approvePersonList || []}
           onHandle={(val) => onHandle(val)}
@@ -145,7 +147,6 @@ function ApprovalFlow(props) {
             columns={columns}
             dataSource={props.approveList}
             pagination={false}
-            scroll={{y: '500px'}}
           />
         </div>
       </div>

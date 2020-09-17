@@ -17,7 +17,9 @@ const APP_API = {
   // dev: 'http://127.0.0.1:8083/api', // debug
   // test: 'https://pretest.forwe.store',
   test: 'http://172.17.9.120',
-  pre: 'https://framework-api-sandbox.jimistore.com',
+  // test: 'https://pretest.forwe.store',
+  // pre: 'https://framework-api-sandbox.jimistore.com',
+  pre: 'https://pretest.forwe.store',
   prod: 'https://cost.forwe.store',
 }[SPD_ENV];
 
