@@ -132,7 +132,7 @@ function ApprovalFlow(props) {
           }}
           status={status}
         />
-        <div className="m-l-16 m-r-16">
+        <div className="m-l-32 m-r-32">
           <AddFlow
             title="add"
             templateType={status}

@@ -552,7 +552,7 @@ export class NodeUtils {
    */
   static getApprove(datas){
     let count = 0;
-    function nodeSearch(list){
+    function nodeSearch(list) {
       for(const key in list) {
         if (key === 'childNode') {
           if (list.nodeType === 'approver'){

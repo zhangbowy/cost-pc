@@ -247,7 +247,7 @@ class AddAuth extends Component {
           width="980px"
           maskClosable={false}
           bodyStyle={{
-            height: '550px',
+            height: '470px',
             overflowY: 'scroll'
           }}
           onCancel={() => this.onCancel(false)}

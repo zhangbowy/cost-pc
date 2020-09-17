@@ -15,6 +15,9 @@ class Field extends React.PureComponent {
   }
 
   onRest() {
+    this.setState({
+      expandField: [],
+    });
     this.props.form.resetFields();
   }
 
@@ -114,7 +117,8 @@ class Field extends React.PureComponent {
                   disabled={record.field === 'reason'
                     || record.field === 'undertakerIson'
                     || record.field === 'deptId'
-                    || record.field === 'userJson'}
+                    || record.field === 'userJson'
+                    || record.disabled}
                 />
               )
             }
@@ -139,7 +143,8 @@ class Field extends React.PureComponent {
                   disabled={record.field === 'reason'
                     || record.field === 'undertakerIson'
                     || record.field === 'deptId'
-                    || record.field === 'userJson'}
+                    || record.field === 'userJson'
+                    || record.disabled}
                 />
               )
             }

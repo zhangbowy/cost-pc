@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Modal, Form, Input, Row, Col, Divider, Button, Icon, Select, message, TreeSelect, InputNumber, DatePicker } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
+import cs from 'classnames';
 import fileIcon from '@/utils/fileIcon.js';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
@@ -898,16 +899,18 @@ class AddInvoice extends Component {
           footer={(
             <div className={style.footerBtn}>
               <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>
-              <div>
+              <div className={style.moneyList}>
                 {
                   showField.loan && showField.loan.status ?
                     <>
-                      <span className="fs-15 c-black-50 m-r-8">报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span></span>
-                      <span className="fs-15 c-black-50 m-r-8">核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span></span>
-                      <span className="fs-15 c-black-50 m-r-8">收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum > 0 ? (total-assessSum) : 0}</span></span>
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span></span>
+                      <Divider type="vertical" />
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span></span>
+                      <Divider type="vertical" />
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList, 'm-r-8')}>收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum > 0 ? (total-assessSum) : 0}</span></span>
                     </>
                   :
-                    <span className="fs-15 c-black-85 m-r-8">合计：¥<span className="fs-20 fw-500">{total}</span></span>
+                    <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500">{total}</span></span>
                 }
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
@@ -1055,6 +1058,7 @@ class AddInvoice extends Component {
                           <InputNumber
                             onChange={val => this.inputMoney(val)}
                             placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
+                            style={{width: '100%'}}
                           />
                         )
                       }

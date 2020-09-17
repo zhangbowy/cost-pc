@@ -59,6 +59,9 @@ export default {
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
     },
+    *loanDel({ payload }, { call }){
+      yield call(get, api.loanDel, payload);
+    },
     *waitList({ payload }, { call, put }) {
       const response = yield call(get, api.waitList, payload);
       const res = response.pageResult;

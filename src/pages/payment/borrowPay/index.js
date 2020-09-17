@@ -303,7 +303,7 @@ class BorrowPay extends React.PureComponent {
       width: 150,
       render: (text) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+          <Tooltip placement="topLeft" title={text || ''}>
             <span className="eslips-2">{text}</span>
           </Tooltip>
         </span>
@@ -453,15 +453,16 @@ class BorrowPay extends React.PureComponent {
     return (
       <>
         <PayTemp
+          {...this.props}
           list={list}
           query={query}
           total={total}
           loading={loading}
-          {...this.props}
           templateType={1}
           columns={columns}
           onQuerys={val => this.onQuery(val)}
           onChangeStatus={(val) => this.onChangeStatus(val)}
+          namespace="borrowPay"
         />
       </>
     );

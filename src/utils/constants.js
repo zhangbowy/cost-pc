@@ -753,6 +753,12 @@ export const refuseReason = [{
 }, {
   key: 'o3',
   value: '报销内容与发票不符',
+}, {
+  key: 'o4',
+  value: '有借款未结清',
+}, {
+  key: 'o5',
+  value: '其他',
 }];
 
 // 工作台的选择

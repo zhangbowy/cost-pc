@@ -82,6 +82,10 @@ class AddModal extends Component {
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="save" onClick={this.handleOk} type="primary" disabled={loading}>保存</Button>
           ]}
+          bodyStyle={{
+            height: '470px',
+            overflowY: 'scroll'
+          }}
           onCancel={this.onCancel}
           visible={visible}
         >

@@ -176,6 +176,10 @@ class AddRole extends Component {
           visible={visible}
           title={`${defaultTitle[title]}人员`}
           onCancel={this.onCancel}
+          bodyStyle={{
+            height: '470px',
+            overflowY: 'scroll'
+          }}
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="save" onClick={this.handleOk} type="primary" disabled={loading}>保存</Button>

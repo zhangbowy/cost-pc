@@ -19,7 +19,7 @@ import style from './index.scss';
 import AddCategory from '../../components/AddCategory';
 import AddInvoice from '../../components/Modals/AddInvoice';
 import StepShow from '../../components/StepShow';
-import { accountType } from '../../utils/constants';
+import { accountType, loanStatus } from '../../utils/constants';
 
 @connect(({ loading, workbench, session }) => ({
   loading: loading.effects['workbench/list'] || false,
@@ -73,12 +73,16 @@ class Workbench extends PureComponent {
     });
   }
 
-  onDelete = (id) => {
+  onDelete = (id, temp) => {
+    let url = 'workbench/del';
+    if (temp && Number(temp)) {
+      url = 'workbench/loanDel';
+    }
     const {
       query,
     } = this.props;
     this.props.dispatch({
-      type: 'workbench/del',
+      type: url,
       payload: {
         id
       }
@@ -228,7 +232,7 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
             <Popconfirm
               title="是否确认删除？"
-              onConfirm={() => this.onDelete(record.id)}
+              onConfirm={() => this.onDelete(record.invoiceId, record.templateType)}
             >
               <span className="deleteColor">删除</span>
             </Popconfirm>
@@ -253,7 +257,7 @@ class Workbench extends PureComponent {
     if (Number(type) === 2) {
       columns.splice(7, 0, {
         title: '发放状态',
-        dataIndex: 'status',
+        dataIndex: 'grantStatus',
         render: (text) => (
           <span>
             {
@@ -274,7 +278,7 @@ class Workbench extends PureComponent {
       console.log('11111');
       columns.splice(7, 0, {
         title: '审批状态',
-        dataIndex: 'status1',
+        dataIndex: 'approveStatus',
         render: (text) => (
           <span>{getArrayValue(text, approveStatus)}</span>
         ),
@@ -284,14 +288,14 @@ class Workbench extends PureComponent {
     if (Number(type) === 0 && (columns.length < 10)) {
       columns.splice(7, 0, {
         title: '审批状态',
-        dataIndex: 'status1',
+        dataIndex: 'approveStatus',
         render: (_, record) => (
-          <span>{getArrayValue(record.status, approveStatus)}</span>
+          <span>{getArrayValue(record.approveStatus, approveStatus)}</span>
         ),
         width: 100,
       }, {
         title: '发放状态',
-        dataIndex: 'status2',
+        dataIndex: 'grantStatus',
         render: (text) => (
           <span>
             {
@@ -311,12 +315,9 @@ class Workbench extends PureComponent {
     if ( Number(typeLeft) === 9 && Number(type) === 0) {
       columns.splice(7, 0, {
         title: '还款状态',
-        dataIndex: 'msg',
+        dataIndex: 'loanStatus',
         render: (text) => (
-          <Badge
-            color='rgba(255, 148, 62, 1)'
-            text={text}
-          />
+          <span>{getArrayValue(text, loanStatus)}</span>
         ),
         width: 100,
       });
@@ -333,12 +334,9 @@ class Workbench extends PureComponent {
     if (Number(type) === 7) {
       columns.splice(7, 0, {
         title: '还款状态',
-        dataIndex: 'msg',
+        dataIndex: 'loanStatus',
         render: (text) => (
-          <Badge
-            color='rgba(255, 148, 62, 1)'
-            text={text}
-          />
+          <span>{getArrayValue(text, loanStatus)}</span>
         ),
         width: 100,
       });
@@ -427,7 +425,7 @@ class Workbench extends PureComponent {
                   <Table
                     columns={columns}
                     dataSource={list}
-                    rowKey="id"
+                    rowKey="invoiceId"
                     scroll={{ x: 1500 }}
                     loading={loading}
                     pagination={{

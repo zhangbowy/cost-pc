@@ -20,8 +20,8 @@ export default function JudgeType(props) {
         width="520px"
         height="400px"
       >
-        <p className="fs-24 c-black-85 m-b-8" style={{marginLeft: '14px'}}>请选择你要创建的单据类型</p>
-        <p className="c-black-36 fs-12 m-b-22" style={{marginLeft: '15px'}}>请选择你要创建的单据类型</p>
+        <p className="fs-24 c-black-85 m-b-47" style={{marginLeft: '14px'}}>请选择你要创建的单据类型</p>
+        {/* <p className="c-black-36 fs-12 m-b-22" style={{marginLeft: '15px'}}>请选择你要创建的单据类型</p> */}
         <div className={style.judgeType}>
           <AddInvoice title={props.title} onOk={props.onOk} data={props.data} templateType={0} changeVisible={() => cancel()}>
             <div className={style.invoiceType}>
