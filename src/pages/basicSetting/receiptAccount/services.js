@@ -8,4 +8,5 @@ export default {
   edit: `${APP_API}/cost/account/receipt/edit`,
   add: `${APP_API}/cost/account/receipt/add`,
   delPer: `${APP_API}/cost/account/receipt/del/permit`,
+  sign: `${APP_API}/cost/batch/getSignLink`,
 };

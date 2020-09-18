@@ -62,4 +62,5 @@ export default {
   editNode: `${APP_API}/cost/approve/apProcessPerson/saveApproveNodes`, // 修改模板名称
   approvalList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 审批流列表
   initNodeList: `${APP_API}/cost/approve/apProcessPerson/defaultProcess`, // 初始化
+  getAliAccounts: `${APP_API}/cost/batch/getAliAccounts`, // 支付宝账户列表
 };

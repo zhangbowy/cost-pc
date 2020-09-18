@@ -40,6 +40,7 @@ export default {
     initNode: {}, // 初始化node节点
     initDetailNode: {},
     detailNode: {}, // 节点的详细信息
+    getAliAccounts: [], // 签约账号
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -416,6 +417,15 @@ export default {
     },
     *send({ payload }, { call }) {
       yield call(post, api.send, payload);
+    },
+    *getAliAccounts({ payload }, { call, put }) {
+      const response = yield call(get, api.getAliAccounts, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          getAliAccounts: response || [],
+        },
+      });
     },
   },
   reducers: {

@@ -14,6 +14,7 @@ export default {
     total: 0,
     detail: {},
     check: false,
+    signRes: ''
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -27,6 +28,15 @@ export default {
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+        },
+      });
+    },
+    *sign({ payload }, { call, put }) {
+      const response = yield call(post, api.sign, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          signRes: response || '',
         },
       });
     },

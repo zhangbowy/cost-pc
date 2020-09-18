@@ -388,7 +388,7 @@ class BorrowPay extends React.PureComponent {
           {
             Number(status) === 2 &&
               <PayModal onOk={() => this.onOk()} data={record} templateType={1}>
-                <a>标记已付</a>
+                <a>发起支付</a>
               </PayModal>
           }
           {

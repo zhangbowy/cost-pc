@@ -13,6 +13,7 @@ export default {
     },
     total: 0,
     check: false,
+    signRes: '',
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -34,6 +35,15 @@ export default {
     },
     *edit({ payload }, { call }) {
       yield call(post, api.edit, payload);
+    },
+    *sign({ payload }, { call, put }) {
+      const response = yield call(post, api.sign, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          signRes: response || '',
+        },
+      });
     },
     *delPer({ payload }, { call, put }) {
       const response = yield call(get, api.delPer, payload);

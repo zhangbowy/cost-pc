@@ -1,14 +1,22 @@
 import React from 'react';
-import { Modal, Form, Select, DatePicker, Button, message } from 'antd';
+import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { formItemLayout } from '@/utils/constants';
 
 const { Option } = Select;
+const accountType = [{
+  key: 1,
+  value: '标记已付'
+}, {
+  key: 2,
+  value: '线上支付'
+}];
 @Form.create()
 @connect(({ global, session }) => ({
   payAccount: global.payAccount,
   userInfo: session.userInfo,
+  getAliAccounts: global.getAliAccounts,
 }))
 class PayModal extends React.PureComponent {
   constructor(props) {
@@ -18,11 +26,16 @@ class PayModal extends React.PureComponent {
       defAcc: '',
       count: 1,
       amount: 0,
+      flag: false,
     };
   }
 
   onShow = () => {
     const { userInfo, selectKey, data } = this.props;
+    this.props.dispatch({
+      type: 'global/getAliAccounts',
+      payload: {}
+    });
     this.props.dispatch({
       type: 'global/payAccount',
       payload: {
@@ -114,9 +127,10 @@ class PayModal extends React.PureComponent {
     const {
       children,
       payAccount,
-      form: { getFieldDecorator }
+      form: { getFieldDecorator },
+      getAliAccounts,
     } = this.props;
-    const { visible, defAcc, count, amount } = this.state;
+    const { visible, defAcc, count, amount, flag } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -132,6 +146,27 @@ class PayModal extends React.PureComponent {
         >
           <Form className="formItem">
             <p className="c-black-85 fs-14">已选 {count}张单据，共计 <span className="fw-500 fs-20">¥{amount/100}</span></p>
+            <Form.Item label="付款方式" {...formItemLayout}>
+              {
+                getFieldDecorator('accountType', {
+                  initialValue: 1,
+                })(
+                  <Radio.Group disabled={flag}>
+                    {
+                      accountType.map(it => (
+                        <Radio key={it.key}>{it.value}</Radio>
+                      ))
+                    }
+                  </Radio.Group>
+                )
+              }
+              {
+                flag &&
+                <Tooltip title="已选单据有非支付宝收款账户，不支持线上支付">
+                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                </Tooltip>
+              }
+            </Form.Item>
             <Form.Item label="付款账户" {...formItemLayout}>
               {
                 getFieldDecorator('account', {
@@ -146,6 +181,16 @@ class PayModal extends React.PureComponent {
                     }
                   </Select>
                 )
+              }
+              {
+                flag &&
+                <Select>
+                  {
+                    getAliAccounts.map(item => (
+                      <Option key={item.id}>{item.name}</Option>
+                    ))
+                  }
+                </Select>
               }
             </Form.Item>
             <Form.Item label="付款时间" {...formItemLayout}>

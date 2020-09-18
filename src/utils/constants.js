@@ -464,6 +464,18 @@ export  const loanStatus = [{
   value: '已还款'
 }];
 
+// 签约状态
+export const signStatus = [{
+  key: '0',
+  value: '未签约'
+}, {
+  key: '1',
+  value: '签约处理中'
+}, {
+  key: '3',
+  value: '已签约'
+}];
+
 // 审批默认配置
 export const defaultFlow = [{
   key: 'CreatorFirstLeader',

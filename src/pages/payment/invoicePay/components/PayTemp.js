@@ -303,7 +303,7 @@ class PayTemp extends React.PureComponent {
               {
                 Number(status) === 2 &&
                 <PayModal selectKey={selectedRows} onOk={() => this.onOk()} templateType={templateType}>
-                  <Button type="primary" style={{marginRight: '8px'}}>标记已付</Button>
+                  <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
                 </PayModal>
               }
               <DropBtn

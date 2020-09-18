@@ -3,6 +3,7 @@ import { Table, Divider, Button, Tag, message, Modal, Tooltip } from 'antd';
 import { connect } from 'dva';
 import { accountType, getArrayValue } from '@/utils/constants';
 import AddAccount from './components/AddModal';
+import { signStatus } from '../../../utils/constants';
 
 const { confirm } = Modal;
 @connect(({ loading, account, session }) => ({
@@ -12,6 +13,7 @@ const { confirm } = Modal;
   userInfo: session.userInfo,
   total: account.total,
   check: account.check,
+  signRes: account.signRes,
 }))
 class Account extends Component {
   constructor(props) {
@@ -82,6 +84,20 @@ class Account extends Component {
     this.onQuery({ ...query });
   }
 
+  sign = (alipayAccount) => {
+    this.props.dispatch({
+      type: 'account/sign',
+      payload: {
+        alipayAccount
+      }
+    }).then(() => {
+      const { signRes } = this.props;
+      if (signRes) {
+        window.location.href = signRes;
+      }
+    });
+  }
+
   render() {
     const { list, query, total, loading } = this.props;
     const columns = [{
@@ -100,6 +116,20 @@ class Account extends Component {
       dataIndex: 'type',
       render: (_, record) => (
         <span>{getArrayValue(record.type, accountType)}</span>
+      ),
+      width: 100
+    }, {
+      title: '签约状态',
+      dataIndex: 'signStatus',
+      render: (_, record) => (
+        <>
+          {
+            record.type === 1 ?
+              <span>{getArrayValue(record.signStatus, signStatus)}</span>
+              :
+              '-'
+          }
+        </>
       ),
       width: 100
     }, {
@@ -123,6 +153,13 @@ class Account extends Component {
           <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
             <a>编辑</a>
           </AddAccount>
+          {
+            record.type === 1 && !record.signStatus &&
+            <>
+              <Divider type="vertical" />
+              <a onClick={() => this.sign(record.account)}>签约</a>
+            </>
+           }
         </span>
       ),
       width: 80,
