@@ -235,6 +235,7 @@ class InvoiceDetail extends Component {
           }
         </span>
       ),
+      className: 'moneyCol',
       width: 200
     }, {
       title: '发生日期',
