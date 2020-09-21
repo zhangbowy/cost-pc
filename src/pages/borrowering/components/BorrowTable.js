@@ -23,7 +23,9 @@ class BorrowTable extends Component {
       dataIndex: 'repaySum',
       render: (text) => (
         <span>{text/100}</span>
-      )
+      ),
+      className: 'moneyCol',
+      width: '100px'
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
