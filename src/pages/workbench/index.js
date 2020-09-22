@@ -185,9 +185,9 @@ class Workbench extends PureComponent {
       dataIndex: 'receiptName',
       width: 150,
       render: (_, record) => {
-        let name = record.receiptName;
-        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
-          name = record.supplierAccountVo.supplierAccountName;
+        let name = record.accountVo;
+        if (name) {
+          name = name.accountName;
         }
         return (
           <span>{name || '-'}</span>
@@ -205,7 +205,6 @@ class Workbench extends PureComponent {
             account: record.supplierAccountVo.supplierAccount,
           }];
         }
-        console.log(account);
         return (
           <span>
             {account && account.accountType ? getArrayValue(account.accountType, accountType) : ''}
