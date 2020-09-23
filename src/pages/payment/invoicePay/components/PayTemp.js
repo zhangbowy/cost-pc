@@ -263,6 +263,13 @@ class PayTemp extends React.PureComponent {
     });
   }
 
+  onConfirm = () => {
+    this.onOk();
+    this.setState({
+      visibleConfirm: true,
+    });
+  }
+
   render() {
     const {
       status,
@@ -277,7 +284,8 @@ class PayTemp extends React.PureComponent {
       total,
       loading,
       columns,
-      templateType
+      templateType,
+      confirm
     } = this.props;
 
     const rowSelection = {
@@ -302,7 +310,7 @@ class PayTemp extends React.PureComponent {
             <div className="head_lf">
               {
                 Number(status) === 2 &&
-                <PayModal selectKey={selectedRows} onOk={() => this.onOk()} templateType={templateType}>
+                <PayModal selectKey={selectedRows} onOk={() => this.onOk()} templateType={templateType} confirms={() => confirm()}>
                   <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
                 </PayModal>
               }

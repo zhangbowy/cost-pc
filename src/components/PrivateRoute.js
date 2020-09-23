@@ -80,7 +80,11 @@ class App extends React.PureComponent {
     } = this.props;
     if (menus.length !== 0) {
       const { location: { pathname } } = this.props;
-      const path = route.menuKey || pathname;
+      let path = route.menuKey || pathname;
+      if (path.indexOf('/_aliPayConfirms') !== -1) {
+        const indexs = path.indexOf('/_aliPayConfirms');
+        path = path.substring(0, indexs);
+      }
       const pathSnippets = urlToList(path);
       const breadcrumbs = [];
       pathSnippets.forEach((item, index) => {

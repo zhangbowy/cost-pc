@@ -17,7 +17,12 @@ import InitModal from '../../Modals/InitModal';
 import Services from '../../Modals/Services';
 
 const getMenuKey = (props) => {
-  const url = props.menuKey || props.location.pathname;
+  let url = props.menuKey || props.location.pathname;
+  if (url.indexOf('/_aliPayConfirms') !== -1) {
+    const indexs = url.indexOf('/_aliPayConfirms');
+    url = url.substring(0, indexs);
+  }
+  console.log(url);
   return urlToList(url);
 };
 // Allow menu.js config icon
@@ -106,11 +111,11 @@ class App extends React.PureComponent {
       userInfo,
       status,
     } = this.props;
+    console.log('menus', this.props);
     const { openKeys } = this.state;
     const selectedKeys = getMenuKey(this.props);
     const menuProps = collapsed ? {} : { openKeys };
     const costConfigCheckVo = userInfo.costConfigCheckVo || {};
-    console.log(menus);
     return (
       <Layout.Sider
         trigger={null}

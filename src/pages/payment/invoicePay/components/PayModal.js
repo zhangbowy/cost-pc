@@ -3,7 +3,6 @@ import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from
 import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
-import ConfirmPay from './ConfirmPay';
 
 const { Option } = Select;
 const accountType = [{
@@ -32,7 +31,6 @@ class PayModal extends React.PureComponent {
       amount: 0,
       flag: false,
       status: '1',
-      visibleConfirm: false,
     };
   }
 
@@ -100,7 +98,8 @@ class PayModal extends React.PureComponent {
       payAccount,
       onOk,
       templateType,
-      getAliAccounts
+      getAliAccounts,
+      confirms
     } = this.props;
     const { status } = this.state;
     // const _this = this;
@@ -141,9 +140,7 @@ class PayModal extends React.PureComponent {
         }).then(() => {
           if (status !== '1') {
             message.success('批量下单成功');
-            this.setState({
-              visibleConfirm: true,
-            });
+            confirms();
           } else {
             message.success('标记已付成功');
             onOk();
@@ -160,17 +157,26 @@ class PayModal extends React.PureComponent {
     });
   }
 
+  check = (rule, value, callback) => {
+    if (value) {
+      const { getAliAccounts } = this.props;
+      const arr = getAliAccounts.filter(it => it.account === value);
+      if (arr[0].status !== 3) {
+        callback('请先对公司付款支付宝账户签约授权');
+      }
+      callback();
+    }
+  }
+
   render() {
     const {
       children,
       payAccount,
       form: { getFieldDecorator },
       getAliAccounts,
-      batchDetails,
-      dispatch,
       loading
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status, visibleConfirm } = this.state;
+    const { visible, defAcc, count, amount, flag, status } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -245,7 +251,10 @@ class PayModal extends React.PureComponent {
                 {
                   getFieldDecorator('account', {
                     initialValue: defAcc || '',
-                    rules: [{ required: true, message: '请选择付款账户' }]
+                    rules: [
+                      { required: true, message: '请选择付款账户' },
+                      { validator: this.check }
+                    ]
                   })(
                     <Select
                       notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
@@ -282,12 +291,6 @@ class PayModal extends React.PureComponent {
             <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
           </div>
         </Modal>
-        <ConfirmPay
-          batchDetails={batchDetails}
-          visible={visibleConfirm}
-          onOk={() => this.props.onOk()}
-          dispatch={dispatch}
-        />
       </span>
     );
   }

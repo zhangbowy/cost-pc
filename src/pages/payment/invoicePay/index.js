@@ -11,15 +11,17 @@ import PayTemp from './components/PayTemp';
 import PayModal from './components/payModal';
 import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType } from '../../../utils/constants';
+import ConfirmPay from './components/ConfirmPay';
 
 const { confirm } = Modal;
 const { APP_API } = constants;
 @Form.create()
-@connect(({ loading, payment }) => ({
+@connect(({ loading, payment, global }) => ({
   loading: loading.effects['payment/list'] || false,
   list: payment.list,
   query: payment.query,
   total: payment.total,
+  batchDetails: global.batchDetails,
 }))
 class Payment extends React.PureComponent {
   constructor(props) {
@@ -31,6 +33,8 @@ class Payment extends React.PureComponent {
       sumAmount: 0,
       searchContent: '',
       selectedRows: [],
+      visibleConfirm: false,
+      visible: false,
     };
   }
 
@@ -280,14 +284,24 @@ class Payment extends React.PureComponent {
     });
   }
 
+  onConfirm = () => {
+    this.onOk();
+    console.log('确认一下');
+    this.setState({
+      visibleConfirm: true,
+    });
+  }
+
   render() {
     const {
       list,
       query,
       total,
       loading,
+      batchDetails,
+      dispatch,
     } = this.props;
-    const { status } = this.state;
+    const { status, visibleConfirm } = this.state;
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -378,7 +392,7 @@ class Payment extends React.PureComponent {
         <span>
           {
             Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record} templateType={0} selectKey={[record]}>
+              <PayModal onOk={() => this.onOk()} data={record} templateType={0} selectKey={[record]} confirms={() => this.onConfirm()}>
                 <a>发起支付</a>
               </PayModal>
           }
@@ -454,6 +468,14 @@ class Payment extends React.PureComponent {
           onQuerys={val => this.onQuery(val)}
           columns={columns}
           onChangeStatus={(val) => this.onChangeStatus(val)}
+          confirm={() => this.onConfirm()}
+        />
+        <ConfirmPay
+          batchDetails={batchDetails}
+          visible={visibleConfirm}
+          onOk={() => this.props.onOk()}
+          onCancels={() => this.onCancel()}
+          dispatch={dispatch}
         />
       </>
     );

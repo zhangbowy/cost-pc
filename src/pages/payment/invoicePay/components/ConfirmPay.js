@@ -29,14 +29,13 @@ class ConfirmPay extends Component {
       type: 'global/batchPay',
       payload: {
         fundBatchOrderId: batchDetails && batchDetails.batchOrderId,
-        returnUrl: window.location.href,
+        returnUrl: encodeURI(`${window.location.href}/_aliPayConfirms`),
       }
     }).then(() => {
       const { alipayUrl } = this.props;
       if (alipayUrl) {
         window.location.href = alipayUrl;
       }
-      this.props.onOk();
     });
   }
 
@@ -71,7 +70,7 @@ class ConfirmPay extends Component {
                 <p className="c-black-65 m-b-24">付款批次：{batchDetails && batchDetails.batchOrderId}</p>
                 <p className="c-black-65 m-b-24">单据条数：{batchDetails && batchDetails.availableOrderCount}</p>
                 <p className="c-black-65 m-b-24">金额共计：{batchDetails && batchDetails.totalAmount}</p>
-                <p className="c-black-65 m-b-24">支付状态：待支付<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
+                <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
             <Button key="save" onClick={() => this.onSave()} loading={loading} disabled={loading} type="primary">去支付</Button>
