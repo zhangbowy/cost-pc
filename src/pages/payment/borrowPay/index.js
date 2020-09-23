@@ -11,6 +11,7 @@ import PayTemp from '../invoicePay/components/PayTemp';
 import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType } from '../../../utils/constants';
 import PayModal from '../invoicePay/components/payModal';
+import ConfirmPay from '../invoicePay/components/ConfirmPay';
 
 const { confirm } = Modal;
 const { APP_API } = constants;
@@ -31,6 +32,7 @@ class BorrowPay extends React.PureComponent {
       sumAmount: 0,
       searchContent: '',
       selectedRows: [],
+      visibleConfirm: false,
     };
   }
 
@@ -288,15 +290,25 @@ class BorrowPay extends React.PureComponent {
     });
   }
 
+  onConfirm = () => {
+    this.onOk();
+    console.log('确认一下');
+    this.setState({
+      visibleConfirm: true,
+    });
+  }
+
   render() {
     const {
       list,
       query,
       total,
       loading,
+      batchDetails,
+      dispatch
     } = this.props;
     console.log(list);
-    const { status } = this.state;
+    const { status, visibleConfirm } = this.state;
     const columns = [{
       title: '借款事由',
       dataIndex: 'reason',
@@ -394,7 +406,7 @@ class BorrowPay extends React.PureComponent {
         <span>
           {
             Number(status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record} templateType={1}>
+              <PayModal onOk={() => this.onOk()} data={record} templateType={1} selectKey={[record]} confirms={() => this.onConfirm()}>
                 <a>发起支付</a>
               </PayModal>
           }
@@ -470,6 +482,14 @@ class BorrowPay extends React.PureComponent {
           onQuerys={val => this.onQuery(val)}
           onChangeStatus={(val) => this.onChangeStatus(val)}
           namespace="borrowPay"
+          confirm={() => this.onConfirm()}
+        />
+        <ConfirmPay
+          batchDetails={batchDetails}
+          visible={visibleConfirm}
+          onOk={() => this.props.onOk()}
+          onCancels={() => this.onCancel()}
+          dispatch={dispatch}
         />
       </>
     );

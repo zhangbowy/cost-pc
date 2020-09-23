@@ -139,13 +139,13 @@ class Account extends Component {
           <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
             <a>编辑</a>
           </AddAccount>
-          {
+          {/* {
             record.type === 1 && !record.signStatus &&
             <>
               <Divider type="vertical" />
               <a onClick={() => this.sign(record.account)}>签约</a>
             </>
-           }
+           } */}
         </span>
       ),
       width: 80,
