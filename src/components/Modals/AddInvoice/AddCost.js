@@ -11,6 +11,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
+import { numAdd } from '../../../utils/float';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -303,7 +304,8 @@ class AddCost extends Component {
         }
       });
     }
-    amount+=val;
+    amount = numAdd(val, amount);
+    console.log(amount);
     this.setState({
       shareAmount: amount,
     });
@@ -315,10 +317,31 @@ class AddCost extends Component {
     }
   }
 
+  toFixed = (num, s) => {
+    // eslint-disable-next-line no-restricted-properties
+    const times = Math.pow(10, s);
+    let des = num * times + 0.5;
+    des = parseInt(des, 10) / times;
+    return `${des  }`;
+  }
+
   onInputScale = (val, key) => {
     const costSum = this.props.form.getFieldValue('costSum');
+    if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(val)) {
+      return;
+    }
+    if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(val)) {
+      return;
+    }
+    if (val > 100000000 || val === 100000000) {
+      return;
+    }
+    if (val < 0) {
+      return;
+    }
     if (costSum && (val || val === 0)) {
       const amounts = ((val * costSum).toFixed(4) / 100);
+      // const amounts = numMulti(val, costSum)/100;
       this.props.form.setFieldsValue({
         [`shareAmount[${key}]`]: amounts,
       });
@@ -603,7 +626,7 @@ class AddCost extends Component {
           title="添加费用"
           visible={visible}
           width="880px"
-          bodyStyle={{height: '550px', overflowY: 'scroll'}}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={this.onCancel}
           maskClosable={false}
           onOk={() => this.handleOk()}

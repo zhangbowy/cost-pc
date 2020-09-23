@@ -1046,7 +1046,7 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
                       {
                         getFieldDecorator('receiptId', {
-                          /* initialValue: details.receiptId ? { key:details.receiptId, label: details.receiptName  } : null, */
+                          initialValue: details.receiptId ? [details.receiptId] : null,
                           rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
                         })(
                           <Select

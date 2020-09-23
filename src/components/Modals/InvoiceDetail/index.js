@@ -197,7 +197,7 @@ class InvoiceDetail extends Component {
       title: '费用类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
-        <span>
+        <span className={style.icons}>
           <i className={`iconfont icon${record.icon}`} />
           <span>{record.categoryName}</span>
         </span>
@@ -235,6 +235,7 @@ class InvoiceDetail extends Component {
           }
         </span>
       ),
+      className: 'moneyCol',
       width: 200
     }, {
       title: '发生日期',
@@ -304,10 +305,6 @@ class InvoiceDetail extends Component {
       },[]);
       columns.splice(2, 0, ...per);
     }
-    const moneys = newList && newList.reduce((arr, crr) => {
-      return arr+crr.costSum/100;
-    }, []);
-    console.log(templateType, details.grantStatus);
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -531,7 +528,7 @@ class InvoiceDetail extends Component {
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
-                <span>费用明细（共{newList.length}项，合计¥{moneys}）</span>
+                <span>费用明细（共{newList.length}项，合计¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}）</span>
               </div>
               <Table
                 columns={columns}

@@ -33,7 +33,7 @@ function FlowCard(props) {
     const classList = ['flow-path-card'];
     console.log('ctx', ctx);
     let count = 0;
-    if (conf.nodeType === 'approver' && (conf.prevId.indexOf('condition') === -1)) {
+    if (conf.nodeType === 'approver') {
       count = NodeUtils.getApprove(ctx.data);
     }
     // eslint-disable-next-line no-sequences
@@ -44,8 +44,8 @@ function FlowCard(props) {
     const isGrant = afterTrue(NodeUtils.isGrant(conf), 'grant');
     const isOnlyApprove = conf && conf.nodeType === 'approver' &&
                           (
-                            ((conf.prevId.indexOf('START') > -1) &&
-                            conf.childNode && (conf.childNode.nodeType === 'grant')) ||
+                            ((conf.prevId.indexOf('START') > -1) ||
+                            conf.childNode && (conf.childNode.nodeType === 'grant')) &&
                             (count === 1)
                           ); // 唯一的一个审批节点
     return (

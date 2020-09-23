@@ -15,6 +15,8 @@ function Borrow(props) {
     render: (_, record) => (
       <span>{record.repaySum ? record.repaySum/100 : ''}</span>
     ),
+    className: 'moneyCol',
+    width: '120px'
   }, {
     title: '备注/事由',
     dataIndex: 'note',
