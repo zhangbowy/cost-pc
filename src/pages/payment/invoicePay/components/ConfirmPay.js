@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import style from './index.scss';
 
 @connect(({ global, loading }) => ({
-  batchDetails: global.batchDetails,
+  // batchDetails: global.batchDetails,
   alipayUrl: global.alipayUrl,
   loading: loading.effects['global/batchPay'] || false,
 }))

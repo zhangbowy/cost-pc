@@ -1,0 +1,146 @@
+.header_cnt{
+  display: flex;
+
+}
+.header_add{
+  width:80px;
+  height:80px;
+  background:rgba(0,199,149,1);
+  box-shadow:0px 8px 26px 0px rgba(157,163,180,0.1);
+  border-radius:4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  position: relative;
+  cursor: pointer;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  :global(.iconxinzengbaoxiao) {
+    font-size: 20px;
+  }
+  p{
+    margin-bottom: 0;
+  }
+}
+.header_add_mc{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width:80px;
+  height:80px;
+  color: #fff;
+}
+.header_add:hover{
+  // background: rgba(0,0,0,.1);
+  background:rgba(97,208,164,1);
+  color: #fff;
+}
+.offten{
+  width:212px;
+  height:80px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 10px 32px 0px rgba(157,163,180,0.1);
+  border-radius:4px;
+  display: flex;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+  :global(.iconfont) {
+    color: rgba(0, 199, 149, 0.37);
+    font-size: 32px;
+    margin: 9px 04px 0 10px;
+  }
+}
+.offten:hover{
+  border: 1px solid rgba(0, 199, 149, 1);
+}
+.app_header{
+  padding: 24px 32px;
+  background: #ffffff;
+}
+.cost_cnt{
+  display: flex;
+  flex-direction: column;
+  height:80px;
+  margin-top: 16px;
+  margin-right: 16px;
+}
+.cost_cnt span{
+  width: 160px;
+  display: block;
+}
+
+// 花呗工作花引导弹框
+.banner_wrapper {
+  position: relative;
+  -webkit-user-select:none;/*webkit浏览器*/
+}
+.close {
+  position: absolute;
+  top: 0;
+  right: -34px;
+  padding : 10px;
+  color: rgba(255, 255, 255, .5);
+  font-size: 15px;
+  cursor: pointer;
+}
+.banner {
+  width: 728px;
+  height: 420px;
+}
+
+.banner_footer {
+  display: flex;
+  padding: 30px;
+  width: 100%;
+  height: 160px;
+  justify-content: space-between;
+  .left_top {
+    margin-bottom: 8px;
+    line-height: 28px;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, .85);
+  }
+  .left_bottom {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, .65);
+    line-height: 24px;
+    position: absolute;
+  }
+  .footer_right {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+  }
+  .footer_left_btn{
+    position: absolute;
+    bottom: 35px;
+  }
+  .jumpout {
+    font-size: 13px;
+    color: rgba(0, 0, 0, .65);
+    line-height: 24px;
+    cursor: pointer;
+    &:active {
+      color: rgba(0, 0, 0, .5);
+    }
+  }
+  .opening {
+    margin-left: 16px;
+  }
+}
+.modalTit{
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(0, 0, 0, .85);
+  text-align: center;
+}
+.modalText{
+  font-size: 14px;
+  color: rgba(0, 0, 0, .85);
+  text-align: center;
+}

@@ -23,6 +23,10 @@ const menuData = [
       id: 'payment_borrowPay',
       name: '借款付款',
       path: 'borrowPay'
+    },{
+      id: 'payment_batch',
+      name: '付款批次',
+      path: 'batch',
     }],
   },
   {

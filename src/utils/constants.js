@@ -58,6 +58,17 @@ export const tailFormItemLayout = {
   },
 };
 
+export const batchStatus = [
+  {
+    key: '3',
+    value: '待处理'
+  },{
+    key: '1',
+    value: '待支付'
+  },{
+    key: '0',
+    value: '全部'
+  }];
 
 export const accountType = [{
   key: 0,
