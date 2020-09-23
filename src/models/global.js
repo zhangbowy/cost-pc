@@ -41,6 +41,8 @@ export default {
     initDetailNode: {},
     detailNode: {}, // 节点的详细信息
     getAliAccounts: [], // 签约账号
+    batchDetails: {}, // 批次的详细信息
+    alipayUrl: '', // 跳转支付宝链接地址
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -378,6 +380,27 @@ export default {
     // 添加借款单(单据)
     *addLoan({ payload }, { call }) {
       yield call(post, api.addLoan, payload);
+    },
+    // 批量下单
+    *addBatch({ payload }, { call, put }) {
+      const response = yield call(post, api.addBatch, payload);
+      console.log(response);
+      yield put({
+        type: 'save',
+        payload: {
+          batchDetails: response || {},
+        },
+      });
+    },
+    // 发起支付
+    *batchPay({ payload }, { call, put }) {
+      const response = yield call(post, api.batchPay, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          alipayUrl: response || '',
+        }
+      });
     },
     // 审批流的节点信息的接口
     *nodeList({ payload }, { call, put }) {

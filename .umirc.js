@@ -80,7 +80,7 @@ export default {
     '/api': {
       // target: `http://172.17.9.120`,
       target: `https://xingzhe.utools.club`,
-      //target: `https://pretest.forwe.store`,
+      // target: `https://pretest.forwe.store`,
       pathRewrite: { '^/api': '' },
       changeOrigin:true,
     }

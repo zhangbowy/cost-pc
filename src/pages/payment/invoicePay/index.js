@@ -319,6 +319,13 @@ class Payment extends React.PureComponent {
         <span>{text || '-'}</span>
       )
     }, {
+      title: '账户类型',
+      dataIndex: 'accountType',
+      width: 120,
+      render: (text) => (
+        <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
+      )
+    }, {
       title: '收款账户名称',
       dataIndex: 'receiptName',
       width: 120,
@@ -371,7 +378,7 @@ class Payment extends React.PureComponent {
         <span>
           {
             Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record} templateType={0}>
+              <PayModal onOk={() => this.onOk()} data={record} templateType={0} selectKey={[record]}>
                 <a>发起支付</a>
               </PayModal>
           }

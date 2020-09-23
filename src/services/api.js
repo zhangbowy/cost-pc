@@ -63,4 +63,6 @@ export default {
   approvalList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 审批流列表
   initNodeList: `${APP_API}/cost/approve/apProcessPerson/defaultProcess`, // 初始化
   getAliAccounts: `${APP_API}/cost/batch/getAliAccounts`, // 支付宝账户列表
+  addBatch: `${APP_API}/cost/alipay/fundBatch/createOrder`, // 标记已付
+  batchPay: `${APP_API}/cost/alipay/fundBatch/payOrder`, // 发起支付
 };
