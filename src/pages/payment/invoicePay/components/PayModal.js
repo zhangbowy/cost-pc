@@ -114,7 +114,7 @@ class PayModal extends React.PureComponent {
         }
         let payList = payAccount.filter(it => it.id === values.account);
         if (status !== '1') {
-          payList = getAliAccounts.filter(it => it.account === values.account);
+          payList = getAliAccounts.filter(it => it.payId === values.account);
         }
         const url = status !== '1' ? 'global/addBatch' : 'global/send';
         let params = {
@@ -128,7 +128,8 @@ class PayModal extends React.PureComponent {
         if (status !== '1') {
           params = {
             invoiceIds,
-            'account': values.account,
+            'account': payList[0].account,
+            'payId': values.account,
             templateType
           };
         }
@@ -264,7 +265,7 @@ class PayModal extends React.PureComponent {
                     >
                       {
                         getAliAccounts.map(item => (
-                          <Option key={item.account}>
+                          <Option key={item.payId}>
                             {item.account}
                             (<span>{getArrayValue(item.status, signStatus)}</span>)
                           </Option>
