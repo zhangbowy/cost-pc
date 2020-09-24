@@ -17,6 +17,7 @@ import BorrowTable from './BorrowTable';
 import AddBorrow from './AddBorrow';
 import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
+import { numAdd } from '../../../utils/float';
 
 const {Option} = Select;
 const { TreeNode } = TreeSelect;
@@ -332,7 +333,7 @@ class AddInvoice extends Component {
     const loanEntities = [];
     const categorySumEntities = [];
     share.forEach(it => {
-      mo+=it.costSum;
+      mo=numAdd(it.costSum, mo);
       if (it.costDetailShareVOS) {
         it.costDetailShareVOS.forEach(item => {
           loanEntities.push({
@@ -356,13 +357,13 @@ class AddInvoice extends Component {
       loanDeptId: detail.deptId || '',
       processPersonId: detail.processPersonId,
       createDingUserId: detail.createDingUserId,
-      total: (mo * 1000)/10,
+      total: ((mo * 1000)/10).toFixed(0),
       projectId: detail.projectId || '',
       supplierId: detail.supplierId || ''
     });
     this.setState({
       costDetailsVo: share,
-      total: mo,
+      total: mo.toFixed(2),
       details: {
         ...detail,
         loanEntities,
@@ -395,7 +396,7 @@ class AddInvoice extends Component {
     }
     this.setState({
       borrowArr: detailList,
-      assessSum,
+      assessSum: assessSum.toFixed(2),
     });
   }
 
@@ -520,7 +521,7 @@ class AddInvoice extends Component {
           supplierId: val.supplier ? val.supplier.split('_')[1] : '',
           imgUrl,
           fileUrl,
-          submitSum: (total * 1000)/10,
+          submitSum: ((total * 1000)/10).toFixed(0),
           expandSubmitFieldVos
         };
         const arr = [];
@@ -528,7 +529,7 @@ class AddInvoice extends Component {
           arr.push({
             'categoryId': item.categoryId,
             'categoryName': item.categoryName,
-            'costSum': ((item.costSum) * 1000)/10,
+            'costSum': (((item.costSum) * 1000)/10).toFixed(0),
             'note': item.note,
             'costDate':item.costDate,
             'startTime':item.startTime || '',
