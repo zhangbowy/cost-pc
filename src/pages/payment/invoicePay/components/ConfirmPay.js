@@ -1,6 +1,7 @@
 import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import React, { Component } from 'react';
+import { ddOpenLink } from '@/utils/ddApi';
 import style from './index.scss';
 
 @connect(({ global, loading }) => ({
@@ -29,12 +30,15 @@ class ConfirmPay extends Component {
       type: 'global/batchPay',
       payload: {
         fundBatchOrderId: batchDetails && batchDetails.batchOrderId,
-        returnUrl: encodeURI(`${window.location.href}/_aliPayConfirms`),
+        returnUrl: `${window.location.href}/_aliPayConfirms`,
       }
     }).then(() => {
       const { alipayUrl } = this.props;
+      // const urls = decodeURIComponent(alipayUrl);
+      // const returnUrl = urls.substring();
       if (alipayUrl) {
-        window.location.href = alipayUrl;
+        ddOpenLink(`${alipayUrl}`);
+        // window.location.href = `${alipayUrl}&ddtab=true`;
       }
     });
   }
@@ -59,7 +63,7 @@ class ConfirmPay extends Component {
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
-                <i className="iconfont iconiconinfo-cirlce fs-14 sub-color m-r-8 m-l-16" />
+                <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" />
                 <span className="c-black-65">
                   支付完成后可返回
                   <span className="c-black-85" style={{fontWeight: 'bold'}}>付款批次页面</span>
