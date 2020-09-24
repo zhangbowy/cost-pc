@@ -59,7 +59,7 @@ class ConfirmPay extends Component {
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
-                <i className="iconfont iconIcon-yuangongshouce fs-14 sub-color m-r-8 m-l-16" />
+                <i className="iconfont iconiconinfo-cirlce fs-14 sub-color m-r-8 m-l-16" />
                 <span className="c-black-65">
                   支付完成后可返回
                   <span className="c-black-85" style={{fontWeight: 'bold'}}>付款批次页面</span>
@@ -69,7 +69,7 @@ class ConfirmPay extends Component {
               <div className="m-l-32 m-t-18 m-b-47">
                 <p className="c-black-65 m-b-24">付款批次：{batchDetails && batchDetails.batchOrderId}</p>
                 <p className="c-black-65 m-b-24">单据条数：{batchDetails && batchDetails.availableOrderCount}</p>
-                <p className="c-black-65 m-b-24">金额共计：{batchDetails && batchDetails.totalAmount/100}</p>
+                <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{batchDetails && batchDetails.totalAmount/100}</span></p>
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>

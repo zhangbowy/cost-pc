@@ -22,6 +22,7 @@ class PayTemp extends React.PureComponent {
       sumAmount: 0,
       searchContent: '',
       selectedRows: [],
+      accountType: [],
     };
   }
 
@@ -151,6 +152,7 @@ class PayTemp extends React.PureComponent {
   }
 
   onQuery = (payload) => {
+    console.log('模板', payload);
     this.props.onQuerys(payload);
   }
 
@@ -170,7 +172,7 @@ class PayTemp extends React.PureComponent {
 
   onSearch = (val) => {
     const { query } = this.props;
-    const { status } = this.state;
+    const { status, accountTypes } = this.state;
     const createTime = this.props.form.getFieldValue('createTime');
     let startTime = '';
     let endTime = '';
@@ -187,11 +189,12 @@ class PayTemp extends React.PureComponent {
       status,
       startTime,
       endTime,
+      accountTypes
     });
   }
 
   export = (key) => {
-    const { selectedRowKeys, status, searchContent } = this.state;
+    const { selectedRowKeys, status, searchContent, accountTypes } = this.state;
     const { namespace } = this.props;
     if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
@@ -224,6 +227,7 @@ class PayTemp extends React.PureComponent {
       type: url,
       payload: {
         ...params,
+        accountTypes,
       }
     }).then(() => {
       message.success('导出成功');
@@ -273,8 +277,28 @@ class PayTemp extends React.PureComponent {
   handleTableChange = (pagination, filters) => {
     console.log('pagination', pagination);
     console.log('filters', filters);
+    const createTime = this.props.form.getFieldValue('createTime');
+    let startTime = '';
+    let endTime = '';
+    if (createTime && createTime.length > 0) {
+      startTime = moment(createTime[0]).format('x');
+      endTime = moment(createTime[1]).format('x');
+    }
+    const { searchContent, status } = this.state;
+    this.setState({
+      accountTypes: filters.accountType,
+    });
+    console.log('筛选', filters.accountType);
+    this.onQuery({
+      pageNo: 1,
+      pageSize: pagination.pageSize,
+      accountTypes: filters.accountType || [],
+      searchContent,
+      status,
+      endTime,
+      startTime,
+    });
   };
-
 
   render() {
     const {
@@ -282,6 +306,7 @@ class PayTemp extends React.PureComponent {
       selectedRowKeys,
       sumAmount,
       selectedRows,
+      accountTypes
     } = this.state;
     const {
       list,
@@ -299,7 +324,8 @@ class PayTemp extends React.PureComponent {
       selectedRowKeys,
       onSelect: this.onSelect,
       onSelectAll: this.onSelectAll,
-      columnWidth: '24px'
+      columnWidth: '24px',
+      fixed: true
     };
     return (
       <div className="content-dt" style={{padding: 0}}>
@@ -360,9 +386,10 @@ class PayTemp extends React.PureComponent {
             columns={columns}
             dataSource={list}
             rowSelection={rowSelection}
-            scroll={{ x: 2100 }}
+            scroll={{ x: 2300 }}
             rowKey="id"
             loading={loading}
+            onChange={this.handleTableChange}
             pagination={{
               current: query.pageNo,
               onChange: (pageNumber) => {
@@ -381,6 +408,7 @@ class PayTemp extends React.PureComponent {
                   status,
                   endTime,
                   startTime,
+                  accountTypes
                 });
               },
               total,
@@ -404,6 +432,7 @@ class PayTemp extends React.PureComponent {
                   status,
                   endTime,
                   startTime,
+                  accountTypes
                 });
               }
             }}

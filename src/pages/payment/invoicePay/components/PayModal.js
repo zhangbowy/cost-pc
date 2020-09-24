@@ -290,7 +290,7 @@ class PayModal extends React.PureComponent {
             }
           </Form>
           <div style={{ marginLeft: '12.5%' }}>
-            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">保存</Button>
+            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
             <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
           </div>
         </Modal>

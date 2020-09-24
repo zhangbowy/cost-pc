@@ -9,7 +9,7 @@ import { rowSelect } from '@/utils/common';
 import constants from '@/utils/constants';
 import PayTemp from '../invoicePay/components/PayTemp';
 import { JsonParse } from '../../../utils/common';
-import { getArrayValue, accountType } from '../../../utils/constants';
+import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
 import PayModal from '../invoicePay/components/payModal';
 import ConfirmPay from '../invoicePay/components/ConfirmPay';
 
@@ -161,9 +161,13 @@ class BorrowPay extends React.PureComponent {
   }
 
   onQuery = (payload) => {
+    console.log('借款', payload);
     this.props.dispatch({
       type: 'borrowPay/list',
-      payload,
+      payload: {
+        ...payload,
+        accountTypes: payload.accountTypes || []
+      },
     });
   }
 
@@ -342,6 +346,7 @@ class BorrowPay extends React.PureComponent {
     }, {
       title: '账户类型',
       dataIndex: 'accountType',
+      filters: filterAccount,
       width: 120,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
