@@ -104,6 +104,7 @@ class PayModal extends React.PureComponent {
     const { status } = this.state;
     // const _this = this;
     form.validateFieldsAndScroll((err, values) => {
+      console.log(err);
       if (!err) {
         console.log(moment(values.time).format('x'));
         let invoiceIds = [];
@@ -162,10 +163,11 @@ class PayModal extends React.PureComponent {
   }
 
   check = (rule, value, callback) => {
+    console.log('check');
     if (value) {
       const { getAliAccounts } = this.props;
-      const arr = getAliAccounts.filter(it => it.account === value);
-      if (arr[0].status !== 3) {
+      const arr = getAliAccounts.filter(it => it.payId === value);
+      if (arr && arr.length && arr[0].status !== 3) {
         callback('请先对公司付款支付宝账户签约授权');
       }
       callback();
