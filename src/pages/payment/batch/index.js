@@ -126,6 +126,9 @@ class Batch extends PureComponent {
       case 4:
         value = '已关闭';
         break;
+      case 5:
+        value = '已发放';
+        break;
       default:
         value = '无';
     }
@@ -177,7 +180,7 @@ class Batch extends PureComponent {
     const columns = [{
       title: '付款批次',
       dataIndex: 'outBatchNo',
-      width: 150,
+      width: 250,
     }, {
       title: '总金额',
       dataIndex: 'totalTransAmount',
@@ -191,7 +194,7 @@ class Batch extends PureComponent {
       dataIndex: 'totalCount',
       width: 120,
       render: (text, record) => (
-        <Button type="link" onClick={() => {this.openCost(record,false);}}>{text}</Button>
+        <Button style={{display:'right'}} type="link" onClick={() => {this.openCost(record,false);}}>{text}</Button>
       )
     }, {
       title: '支付状态',
@@ -208,7 +211,7 @@ class Batch extends PureComponent {
       render: (_, record) => (
         <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD hh:mm:ss') : '-'}</span>
       ),
-      width: 150,
+      width: 200,
     }];
     if(status === '3'){
       columns.splice(3,0, {
@@ -224,7 +227,7 @@ class Batch extends PureComponent {
         dataIndex: 'failCount',
         width: 120,
         render: (text, record) => (
-          <Button type="link" onClick={() => {this.openCost(record,true);}}>{text}</Button>
+          <Button style={{float:'right'}} type="link" onClick={() => {this.openCost(record,true);}}>{text}</Button>
         )
       });
     }
@@ -289,7 +292,7 @@ class Batch extends PureComponent {
                     tableLayout="fixed"
                     scroll={{ x: 1300 }}
                     loading={loading}
-                    pagination={{
+                    pagination={status==='0'?{
                       current: query.pageNo,
                       onChange: (pageNumber) => {
                         const { search } = this.state;
@@ -314,7 +317,7 @@ class Batch extends PureComponent {
                           pageSize: size
                         });
                       }
-                    }}
+                    }:false}
                   />
                 </div>
               </div>
@@ -328,35 +331,38 @@ class Batch extends PureComponent {
             padding: 0,
             height: '342px',
             overflowY: 'scroll',
-            marginTop: '32px'
           }}
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>关闭</Button>,
           ]}
-          width='582px'
+          width='980px'
         >
           <CostTable status={costStatus} list={detailList}  />
         </Modal>
         <Modal
           visible={cancelVisible}
           onCancel={() => this.setState({cancelVisible: false})}
-          title="取消支付"
+          title={null}
+          footer={null}
           bodyStyle={{
-            padding: 0,
-            height: '160px',
-            marginTop: '32px'
+            height: '300px',
+            padding: '38px 40px'
           }}
-          footer={[
-            <Button key="save" type="primary" onClick={() => this.configCancel()}>确定取消</Button>
-          ]}
+          // footer={[
+          //   <Button key="save" type="primary" onClick={() => this.configCancel()}>确定取消</Button>
+          // ]}
           width='580px'
         >
+          <h1 className="fs-24 c-black-85 m-b-16">取消支付</h1>
           <div className={style.modalTit}>
             本次取消{ valueObj.totalCount }条单据的支付，共计
             <span style={{fontSize:'20px',fontWeight:'500'}}>{ valueObj.totalTransAmount/100 }</span>元
           </div>
           <div className={style.modalText} style={{marginTop:'20px'}}>
             取消后，单据将释放回待发放单据列表
+          </div>
+          <div style={{ marginTop: '70px' }}>
+            <Button key="save" type="primary" onClick={() => this.configCancel()}>确定取消</Button>
           </div>
         </Modal>
         <Modal
@@ -367,7 +373,6 @@ class Batch extends PureComponent {
             padding: 0,
             height: '360px',
             overflowY: 'scroll',
-            marginTop: '32px'
           }}
           footer={[
             <Button key="cancel" onClick={() => this.setState({payVisible: false})}>关闭</Button>,

@@ -53,7 +53,7 @@ class ComfirmPay extends React.PureComponent {
     const nowTime = new Date().getTime();
     const hour =  Math.floor((time - nowTime)/(60*60*1000));
     const minute =  Math.floor((time - nowTime)%(60*60*1000)/(60*1000));
-    this.setState({tiemStr:`${hour  }小时${  minute  }分钟，`});
+    this.setState({tiemStr:`${hour  }小时${  minute  }分钟`});
   }
 
   render(){
@@ -74,18 +74,24 @@ class ComfirmPay extends React.PureComponent {
               message={(
                 <span className="c-black-65">
                   剩余支付时间：
-                  <span className="c-black-85" style={{color: '#F25643'}}>{this.state.tiemStr}</span>
-                  超时未支付批次将自动关闭
+                  <span style={{color: '#F25643'}}>{this.state.tiemStr}</span>
+                  ，超时未支付批次将自动关闭
                 </span>
               )}
               icon={(
-                <i className="iconfont iconIcon-yuangongshouce fs-14 sub-color m-l-8" />
+                <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" />
               )}
             />
-            <span className="c-black-65 m-b-24 m-t-24">付款批次：{ this.props.selectKey.batchTransId }</span>
+            {/* <span className="c-black-65 m-b-24 m-t-24">付款批次：{ this.props.selectKey.batchTransId }</span>
             <span className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</span>
             <span className="c-black-65 m-b-24">金额共计：{ this.props.selectKey.totalTransAmount/100 }</span>
-            <span className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></span>
+            <span className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></span> */}
+            <div className="m-l-32 m-t-18 m-b-47">
+              <p className="c-black-65 m-b-24">付款批次：{ this.props.selectKey.batchTransId }</p>
+              <p className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</p>
+              <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span></p>
+              <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
+            </div>
             <Button key="save" onClick={() => this.onSave()}>去支付</Button>
           </div>
         </Modal>

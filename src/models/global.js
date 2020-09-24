@@ -392,6 +392,16 @@ export default {
         },
       });
     },
+    // 重新下单
+    *reCreate({ payload }, { call, put }) {
+      const response = yield call(get, api.reCreate, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          batchDetails: response || {},
+        },
+      });
+    },
     // 发起支付
     *batchPay({ payload }, { call, put }) {
       const response = yield call(post, api.batchPay, payload);

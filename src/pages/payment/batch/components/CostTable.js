@@ -15,9 +15,13 @@ class CostTable extends Component {
     }, {
       title: '单号',
       dataIndex: 'outBizNo',
+      width: 200
     }, {
       title: '付款金额',
       dataIndex: 'amount',
+      render(text){
+        return text/100;
+      }
     }, {
       title: '事由',
       dataIndex: 'reason',
@@ -42,7 +46,7 @@ class CostTable extends Component {
     }
     
     return (
-      <div style={{ marginTop: '24px' }}>
+      <div style={{ padding: '24px 32px' }}>
         <Table
           dataSource={list}
           columns={columns}
