@@ -145,6 +145,9 @@ class PayModal extends React.PureComponent {
             message.success('标记已付成功');
             onOk();
           }
+          this.setState({
+            visible: false,
+          });
         });
       }
     });
