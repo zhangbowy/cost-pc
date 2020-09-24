@@ -22,39 +22,24 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      console.log(call);
       console.log(23123123123,payload);
-      const response = yield call(post, api.list, payload);
-      // const response = {
-      //   list:[
-      //     {
-      //       id:'469137540827451392',
-      //       outBatchNo:'12345678',
-      //       batchTransId:'qwqwq',
-      //       totalTransAmount:23.32,
-      //       totalCount:32,
-      //       failTransAmount:23.32,
-      //       failCount:32,
-      //       status:1,
-      //       createTime:1600838980921
-      //     }
-      //   ],
-      //   page:{
-      //     current_page:4,
-      //     next_page:0,
-      //     pre_page:3,
-      //     total:1,
-      //     total_page:4
-      //   },
-      // };
+      let isQuery = true;
+      const obj = {...payload};
+      if(payload.status === '1' || payload.status === '3'){
+        obj.pageSize = 10000;
+        obj.pageNo = 1;
+        isQuery = false;
+      }
+      
+      const response = yield call(post, api.list, obj);
       yield put({
         type: 'save',
         payload: {
           list: response.list || [],
-          query: {
+          query: isQuery?{
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
-          },
+          }:{},
           total: response.page.total || 0,
         },
       });
@@ -123,18 +108,6 @@ export default {
         type: 'save',
         payload: {
           huaVisible: response.type === 1,
-        },
-      });
-    },
-    *reCreate({ payload, callback }, { call, put }) {
-      const response = yield call(get, api.reCreate, payload);
-      if(callback){
-        callback(response);
-      }
-      yield put({
-        type: 'save',
-        payload: {
-          batchDetails: response,
         },
       });
     },

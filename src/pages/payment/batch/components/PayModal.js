@@ -18,7 +18,7 @@ const accountType = [{
   payAccount: global.payAccount,
   userInfo: session.userInfo,
   getAliAccounts: global.getAliAccounts,
-  // batchDetails: global.batchDetails,
+  batchDetails: global.batchDetails,
   alipayUrl: global.alipayUrl,
   loading: loading.effects['global/addBatch'] || loading.effects['global/send'] || false,
 }))
@@ -33,7 +33,6 @@ class PayModal extends React.PureComponent {
       flag: false,
       status: '1',
       visibleConfirm: false,
-      batchDetails: {}
     };
   }
 
@@ -117,7 +116,8 @@ class PayModal extends React.PureComponent {
         if (status !== '1') {
           payList = getAliAccounts.filter(it => it.account === values.account);
         }
-        const url = status !== '1' ? 'batch/reCreate' : 'batch/rePayment';
+        const url = status !== '1' ? 'global/reCreate' : 'batch/rePayment';
+        console.log('payList======',payList);
         let params = {
           outBatchNo: selectKey[0].outBatchNo,
           'payId': values.account,
@@ -129,7 +129,8 @@ class PayModal extends React.PureComponent {
         if (status !== '1') {
           params = {
             'account': values.account,
-            outBatchNo: selectKey[0].outBatchNo
+            outBatchNo: selectKey[0].outBatchNo,
+            payId: payList[0] && payList[0].payId
           };
         }
         dispatch({
@@ -137,18 +138,6 @@ class PayModal extends React.PureComponent {
           payload: {
             ...params,
           },
-          callback: (data) => {
-            if (status !== '1') {
-              message.success('批量下单成功');
-              this.setState({
-                visibleConfirm: true,
-              });
-            } else {
-              message.success('标记已付成功');
-              onOk();
-            }
-            this.setState({ batchDetails: data });
-          }
         }).then(() => {
           if (status !== '1') {
             message.success('批量下单成功');
@@ -180,7 +169,7 @@ class PayModal extends React.PureComponent {
       dispatch,
       loading
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status, visibleConfirm, batchDetails } = this.state;
+    const { visible, defAcc, count, amount, flag, status, visibleConfirm } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -293,8 +282,8 @@ class PayModal extends React.PureComponent {
           </div>
         </Modal>
         <ConfirmPay
-          batchDetails={batchDetails}
           visible={visibleConfirm}
+          batchDetails={this.props.batchDetails}
           onOk={() => this.props.onOk()}
           dispatch={dispatch}
         />
