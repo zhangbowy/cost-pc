@@ -9,6 +9,7 @@ export default {
   // 获取左侧菜单
   getLeftMenu: `${APP_API}/cost/menu/nav`,
   login: `${APP_API}/cost/user/login`,
+  mockLogin: `${APP_API}/cost/user/mockLogin`,
 
   /* ---------- 费用类别 ----------*/
   costCategoryList: `${APP_API}/cost/category/list`,
