@@ -11,7 +11,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
-import { numAdd } from '../../../utils/float';
+import { numAdd, numMulti } from '../../../utils/float';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -300,17 +300,16 @@ class AddCost extends Component {
     if (Object.keys(amm)) {
       Object.keys(amm).forEach(it => {
         if (it !== key) {
-          amount+=amm[it];
+          amount=numAdd(amm[it], amount);
         }
       });
     }
     amount = numAdd(val, amount);
-    console.log(amount);
     this.setState({
-      shareAmount: amount,
+      shareAmount: amount.toFixed(2),
     });
     if (costSum && (val || val === 0)) {
-      const scale = ((val / costSum).toFixed(4) * 100).toFixed(2);
+      const scale = ((val / costSum) * 100).toFixed(2);
       this.props.form.setFieldsValue({
         [`shareScale[${key}]`]: scale,
       });
@@ -340,8 +339,8 @@ class AddCost extends Component {
       return;
     }
     if (costSum && (val || val === 0)) {
-      const amounts = ((val * costSum).toFixed(4) / 100);
-      // const amounts = numMulti(val, costSum)/100;
+      // const amounts = ((val * costSum * 10000).toFixed(0) / 100);
+      const amounts = (numMulti(val, costSum)/100).toFixed(2);
       this.props.form.setFieldsValue({
         [`shareAmount[${key}]`]: amounts,
       });
@@ -350,13 +349,13 @@ class AddCost extends Component {
       if (Object.keys(amm)) {
         Object.keys(amm).forEach(it => {
           if (it !== key) {
-            amount+=amm[it];
+            amount= numAdd(amm[it], amount);
           }
         });
       }
-      amount+=amounts;
+      amount=numAdd(amounts, amount);
       this.setState({
-        shareAmount: amount,
+        shareAmount: amount.toFixed(2),
       });
     }
   }

@@ -10,7 +10,7 @@ import constants from '@/utils/constants';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/payModal';
 import { JsonParse } from '../../../utils/common';
-import { getArrayValue, accountType } from '../../../utils/constants';
+import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
 import ConfirmPay from './components/ConfirmPay';
 
 const { confirm } = Modal;
@@ -336,6 +336,7 @@ class Payment extends React.PureComponent {
       title: '账户类型',
       dataIndex: 'accountType',
       width: 120,
+      filters: filterAccount,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
       )

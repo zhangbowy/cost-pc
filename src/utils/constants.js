@@ -72,13 +72,27 @@ export const batchStatus = [
 
 export const accountType = [{
   key: 0,
+  text: 0,
   value: '银行卡'
 }, {
   key: 1,
+  text: 1,
   value: '支付宝'
 }, {
   key: 2,
+  text: 2,
   value: '现金'
+}];
+
+export const filterAccount = [{
+  value: 0,
+  text: '银行卡'
+}, {
+  value: 1,
+  text: '支付宝'
+}, {
+  value: 2,
+  text: '现金'
 }];
 
 export const isAllUse = [{

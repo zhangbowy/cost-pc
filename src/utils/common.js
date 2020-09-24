@@ -231,3 +231,16 @@ export const sortBy = (attr,rev) => {
       return 0;
   };
 };
+
+
+// jsapi鉴权地址
+export const PROJECTURL = {
+  url: '',
+  getURL () {
+    if (this.url) return this.url;
+    const pathname = process.env.NODE_ENV === 'production' ? '/msn' : '';
+    const { origin } = window.location;
+    // eslint-disable-next-line no-return-assign
+    return this.url = origin + pathname;
+  }
+};

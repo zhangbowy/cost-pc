@@ -1,10 +1,11 @@
 import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import React, { Component } from 'react';
+import { ddOpenLink } from '@/utils/ddApi';
 import style from './index.scss';
 
 @connect(({ global, loading }) => ({
-  // batchDetails: global.batchDetails,
+  batchDetails: global.batchDetails,
   alipayUrl: global.alipayUrl,
   loading: loading.effects['global/batchPay'] || false,
 }))
@@ -29,12 +30,15 @@ class ConfirmPay extends Component {
       type: 'global/batchPay',
       payload: {
         fundBatchOrderId: batchDetails && batchDetails.batchOrderId,
-        returnUrl: encodeURI(`${window.location.href}/_aliPayConfirms`),
+        returnUrl: `${window.location.href}/_aliPayConfirms`,
       }
     }).then(() => {
       const { alipayUrl } = this.props;
+      // const urls = decodeURIComponent(alipayUrl);
+      // const returnUrl = urls.substring();
       if (alipayUrl) {
-        window.location.href = alipayUrl;
+        ddOpenLink(`${alipayUrl}`);
+        // window.location.href = `${alipayUrl}&ddtab=true`;
       }
     });
   }
@@ -59,7 +63,7 @@ class ConfirmPay extends Component {
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
-                <i className="iconfont iconIcon-yuangongshouce fs-14 sub-color m-r-8 m-l-16" />
+                <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" />
                 <span className="c-black-65">
                   支付完成后可返回
                   <span className="c-black-85" style={{fontWeight: 'bold'}}>付款批次页面</span>
@@ -69,7 +73,7 @@ class ConfirmPay extends Component {
               <div className="m-l-32 m-t-18 m-b-47">
                 <p className="c-black-65 m-b-24">付款批次：{batchDetails && batchDetails.batchOrderId}</p>
                 <p className="c-black-65 m-b-24">单据条数：{batchDetails && batchDetails.availableOrderCount}</p>
-                <p className="c-black-65 m-b-24">金额共计：{batchDetails && batchDetails.totalAmount/100}</p>
+                <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{batchDetails && batchDetails.totalAmount/100}</span></p>
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
