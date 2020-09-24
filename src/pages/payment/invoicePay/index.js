@@ -165,7 +165,10 @@ class Payment extends React.PureComponent {
   onQuery = (payload) => {
     this.props.dispatch({
       type: 'payment/list',
-      payload,
+      payload: {
+        ...payload,
+        accountTypes: payload.accountTypes || []
+      },
     });
   }
 
