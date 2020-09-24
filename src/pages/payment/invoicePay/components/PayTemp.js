@@ -270,6 +270,12 @@ class PayTemp extends React.PureComponent {
     });
   }
 
+  handleTableChange = (pagination, filters) => {
+    console.log('pagination', pagination);
+    console.log('filters', filters);
+  };
+
+
   render() {
     const {
       status,

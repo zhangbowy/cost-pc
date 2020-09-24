@@ -28,11 +28,11 @@ class BasicLayout extends React.PureComponent {
     if (!isInDingTalk) {
       return <NoDing type="500" />;
     }
-    let url = this.props.menuKey || this.props.location.pathname;
+    let url = window.location.href;
     if (url.indexOf('/_aliPayConfirms') !== -1) {
       const indexs = url.indexOf('/_aliPayConfirms');
       url = url.substring(0, indexs);
-      window.location.href = `${window.location.origin + window.location.search  }#${  url}`;
+      window.location.href = url;
     }
     return (
       <Main>
