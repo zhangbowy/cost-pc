@@ -27,7 +27,7 @@ class ComfirmPay extends React.PureComponent {
       type: 'batch/pay',
       payload: {
         fundBatchOrderId: this.props.selectKey.id,
-        returnUrl: '/batch'
+        returnUrl: encodeURI(`${window.location.href}/_aliPayConfirms`)
       },
      }).then(()=>{
       this.close();

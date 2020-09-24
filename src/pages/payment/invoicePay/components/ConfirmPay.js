@@ -69,7 +69,7 @@ class ConfirmPay extends Component {
               <div className="m-l-32 m-t-18 m-b-47">
                 <p className="c-black-65 m-b-24">付款批次：{batchDetails && batchDetails.batchOrderId}</p>
                 <p className="c-black-65 m-b-24">单据条数：{batchDetails && batchDetails.availableOrderCount}</p>
-                <p className="c-black-65 m-b-24">金额共计：{batchDetails && batchDetails.totalAmount}</p>
+                <p className="c-black-65 m-b-24">金额共计：{batchDetails && batchDetails.totalAmount/100}</p>
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
