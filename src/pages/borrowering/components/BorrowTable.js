@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Table, Button, Tooltip } from 'antd';
 import moment from 'moment';
+// import style from '../index.scss';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+
 
 class BorrowTable extends Component {
   constructor(props) {
@@ -11,7 +13,6 @@ class BorrowTable extends Component {
 
   render() {
     const { list } = this.props;
-    console.log('list=============', list);
     const columns = [{
       title: '类型',
       dataIndex: 'typeStr',
@@ -65,8 +66,8 @@ class BorrowTable extends Component {
         <Table
           dataSource={list}
           columns={columns}
-          scroll={{x: list.length > 6 ? '1200px' : '1000px'}}
-          rowKey="invoiceSubmitId"
+          scroll={{ x: 1200 }}
+          rowKey="createTime"
           pagination={false}
         />
       </div>

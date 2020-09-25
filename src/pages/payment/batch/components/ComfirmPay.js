@@ -31,6 +31,14 @@ class ComfirmPay extends React.PureComponent {
       },
      }).then(()=>{
       this.close();
+      Modal.confirm({
+        title: '是否已完成支付',
+        cancelText: '未完成',
+        okText: '已完成',
+        onOk: () => {
+          this.props.onOk();
+        }
+      });
     });
   };
 

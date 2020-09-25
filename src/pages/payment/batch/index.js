@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Divider, Modal, Button, Message } from 'antd';
+import { Table, Divider, Modal, Button, Message, Icon } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
@@ -193,8 +193,9 @@ class Batch extends PureComponent {
       title: '单据数量',
       dataIndex: 'totalCount',
       width: 120,
+      className: 'moneyCol',
       render: (text, record) => (
-        <Button style={{display:'right'}} type="link" onClick={() => {this.openCost(record,false);}}>{text}</Button>
+        <Button type="link" onClick={() => {this.openCost(record,false);}}>{text}</Button>
       )
     }, {
       title: '支付状态',
@@ -225,9 +226,10 @@ class Batch extends PureComponent {
       }, {
         title: '失败单据',
         dataIndex: 'failCount',
+        className: 'moneyCol',
         width: 120,
         render: (text, record) => (
-          <Button style={{float:'right'}} type="link" onClick={() => {this.openCost(record,true);}}>{text}</Button>
+          <Button type="link" onClick={() => {this.openCost(record,true);}}>{text}</Button>
         )
       });
     }
@@ -239,7 +241,7 @@ class Batch extends PureComponent {
           <span>
             {status === '3' &&
               <PayModal selectKey={[record]} onOk={() => this.onOk()} templateType={1}>
-                <Button type="link" >发起支付</Button>
+                <Button style={{padding: '0'}} type="link" >发起支付</Button>
               </PayModal>}
             {status === '1' &&
               <ComfirmPay 
@@ -249,10 +251,10 @@ class Batch extends PureComponent {
                 close={this.closeComfirmPay}
                 templateType={0}
               >
-                <Button type="link" onClick={this.resetPay} >发起支付</Button>
+                <Button style={{padding: '0'}} type="link" onClick={this.resetPay} >发起支付</Button>
               </ComfirmPay>}
             <Divider type="vertical" />
-            <Button type="link" onClick={() => this.batchCancel(record)} >取消</Button>
+            <Button style={{padding: '0'}} type="link" onClick={() => this.batchCancel(record)} >取消</Button>
           </span>
         ),
         width: 200,
@@ -268,7 +270,8 @@ class Batch extends PureComponent {
             :
             <>
               <div className="content-dt" style={{ padding: 0 }}>
-                <div style={{ marginBottom: '24px' }}>
+                <div style={{ marginBottom: '24px',position: 'relative' }}>  
+                  <Button style={{padding: 0}} onClick={this.onOk} type="link" className={style.reload}><Icon type="sync" />刷新</Button>
                   <MenuItems
                     lists={batchStatus}
                     onHandle={(val) => this.handleClick(val)}
@@ -362,7 +365,7 @@ class Batch extends PureComponent {
             取消后，单据将释放回待发放单据列表
           </div>
           <div style={{ marginTop: '70px' }}>
-            <Button key="save" type="primary" onClick={() => this.configCancel()}>确定取消</Button>
+            <Button key="save" type="primary" onClick={() => this.configCancel()}>确定</Button>
           </div>
         </Modal>
         <Modal

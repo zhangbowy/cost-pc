@@ -1,6 +1,6 @@
 import { get, post } from '@/utils/request';
 import constants from '@/utils/constants';
-// import { ddOpenLink } from '@/utils/ddApi';
+import { ddOpenLink } from '@/utils/ddApi';
 import api from './services';
 
 const { PAGE_SIZE } = constants;
@@ -23,12 +23,10 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       console.log(23123123123,payload);
-      let isQuery = true;
       const obj = {...payload};
       if(payload.status === '1' || payload.status === '3'){
         obj.pageSize = 10000;
         obj.pageNo = 1;
-        isQuery = false;
       }
       
       const response = yield call(post, api.list, obj);
@@ -36,10 +34,10 @@ export default {
         type: 'save',
         payload: {
           list: response.list || [],
-          query: isQuery?{
+          query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
-          }:{},
+          },
           total: response.page.total || 0,
         },
       });
@@ -90,9 +88,11 @@ export default {
         },
       });
       if(response){
-        window.location.href = response;
+        // window.location.href = response;
         // http://targetpage.com?ddtab=true&redirect=[要转码:http://www.zhifubao.com]
-        // ddOpenLink('/redirect?ddtab=true&redirect='+response);
+        console.log(1111111111,window.location.href);
+        console.log(1111111111,window.location.href.replace('/payment/batch','/redirect'));
+        ddOpenLink(`${window.location.href.replace('/payment/batch','/redirect')}?ddtab=true&redirect=${response}`);
         // ddOpenLink(response);
       }
     },

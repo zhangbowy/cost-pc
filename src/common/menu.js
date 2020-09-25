@@ -9,6 +9,11 @@ const menuData = [
     name: '借款管理',
     myIcon: 'icongongzuotai',
     path: 'borrowering',
+  },{
+    id: 'redirect',
+    name: '中转页',
+    myIcon: 'icongongzuotai',
+    path: 'redirect',
   },
   {
     id: 'payment',
