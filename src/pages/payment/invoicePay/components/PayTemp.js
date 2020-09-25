@@ -290,7 +290,7 @@ class PayTemp extends React.PureComponent {
     });
     console.log('筛选', filters.accountType);
     this.onQuery({
-      pageNo: 1,
+      pageNo: pagination.current,
       pageSize: pagination.pageSize,
       accountTypes: filters.accountType || [],
       searchContent,

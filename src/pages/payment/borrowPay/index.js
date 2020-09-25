@@ -302,6 +302,12 @@ class BorrowPay extends React.PureComponent {
     });
   }
 
+  onChangeVisible = () => {
+    this.setState({
+      visibleConfirm: false,
+    });
+  }
+
   render() {
     const {
       list,
@@ -495,6 +501,7 @@ class BorrowPay extends React.PureComponent {
           onOk={() => this.props.onOk()}
           onCancels={() => this.onCancel()}
           dispatch={dispatch}
+          gotoPay={() => this.onChangeVisible()}
         />
       </>
     );
