@@ -62,7 +62,6 @@ class PayModal extends React.PureComponent {
       const defaultAccount = accountList.filter(it => it.isDefault);
       let acc = '';
       // let cout = 1;
-      const flags = false;
       // let amount = 0;
       if (defaultAccount && defaultAccount.length > 0) {
         acc = defaultAccount[0].id;
@@ -86,7 +85,7 @@ class PayModal extends React.PureComponent {
         defAcc: acc,
         count,
         amount,
-        flag: flags,
+        flag: true,
       });
     });
   }
@@ -206,7 +205,7 @@ class PayModal extends React.PureComponent {
                   <Radio.Group onChange={e => this.onChange(e)}>
                     {
                       accountType.map(it => (
-                        <Radio key={it.key} value={it.key} disabled={flag && it.key === '2'}>{it.value}</Radio>
+                        <Radio key={it.key} value={it.key} disabled={(flag && it.key === '2')}>{it.value}</Radio>
                       ))
                     }
                   </Radio.Group>
@@ -214,7 +213,7 @@ class PayModal extends React.PureComponent {
               }
               {
                 flag &&
-                <Tooltip title="已选单据有非支付宝收款账户，不支持线上支付">
+                <Tooltip title={`已失败的${count}条单据收款账户有误，请线下支付`} >
                   <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
                 </Tooltip>
               }
@@ -277,7 +276,7 @@ class PayModal extends React.PureComponent {
             }
           </Form>
           <div style={{ marginLeft: '12.5%' }}>
-            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">保存</Button>
+            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
             <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
           </div>
         </Modal>

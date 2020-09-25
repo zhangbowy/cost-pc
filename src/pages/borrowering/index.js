@@ -373,7 +373,7 @@ class Payments extends React.PureComponent {
           {
             Number(status) === 2 &&
             <AddModal title="add" onOk={() => this.onOk()} detail={record}>
-              <Button type="link">还款</Button>
+              <Button style={{padding:'0'}} type="link">还款</Button>
             </AddModal>
           }
           {

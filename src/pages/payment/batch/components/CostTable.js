@@ -14,7 +14,7 @@ class CostTable extends Component {
       dataIndex: 'xh',
     }, {
       title: '单号',
-      dataIndex: 'outBizNo',
+      dataIndex: 'invoiceNo',
       width: 200
     }, {
       title: '付款金额',

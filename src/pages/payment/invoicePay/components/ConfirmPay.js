@@ -37,7 +37,9 @@ class ConfirmPay extends Component {
       // const urls = decodeURIComponent(alipayUrl);
       // const returnUrl = urls.substring();
       if (alipayUrl) {
-        ddOpenLink(`${alipayUrl}`);
+        // ddOpenLink(`${alipayUrl}`);
+        const url = window.location.href.replace('/payment/invoicePay','/redirect').replace('/payment/borrowPay','/redirect');
+        ddOpenLink(`${url  }?ddtab=true&redirect=${  alipayUrl}`);
         // window.location.href = `${alipayUrl}&ddtab=true`;
       }
     });

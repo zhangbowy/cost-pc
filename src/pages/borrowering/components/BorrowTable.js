@@ -61,7 +61,7 @@ class BorrowTable extends Component {
       dataIndex: 'accountVo',
     }];
     return (
-      <div style={{ marginTop: '24px' }}>
+      <div style={{ marginTop: '24px',background: '#fff' }}>
         <Table
           dataSource={list}
           columns={columns}
