@@ -10,6 +10,9 @@
     align-items: center;
     margin-bottom: 0;
   }
+  // :global(.ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td) {
+  //   background: #fff;
+  // }
 
 }
 .tit{
