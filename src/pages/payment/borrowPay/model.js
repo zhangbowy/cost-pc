@@ -17,8 +17,8 @@ export default {
     *list({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
       // eslint-disable-next-line no-return-assign
-      const lists = response.list && response.list.map(it => { return {...it, id: it.invoiceId, submitSum: it.loanSum}; });
-      console.log(lists);
+      const lists = response.list && response.list.length ? response.list.map(it => { return {...it, id: it.invoiceId, submitSum: it.loanSum}; }) : [];
+      console.log('lists', lists);
       yield put({
         type: 'save',
         payload: {

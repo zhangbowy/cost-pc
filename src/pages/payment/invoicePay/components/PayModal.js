@@ -157,9 +157,26 @@ class PayModal extends React.PureComponent {
   }
 
   onChange = (e) => {
-    this.props.form.setFields({
+    const { payAccount, getAliAccounts } = this.props;
+    this.props.form.setFieldsValue({
       account: '',
     });
+    if (e.target.value === '1') {
+      const accountList = payAccount.filter(it => (Number(it.status) === 1));
+      const defaultAccount = accountList.filter(it => it.isDefault);
+      if (defaultAccount && defaultAccount.length) {
+        this.props.form.setFieldsValue({
+          account: defaultAccount[0].id,
+        });
+      }
+    } else {
+      const defa = getAliAccounts.filter(it => it.isDefault);
+      if (defa && defa.length) {
+        this.props.form.setFieldsValue({
+          account: defa[0].payId,
+        });
+      }
+    }
     this.setState({
       status: e.target.value,
     });

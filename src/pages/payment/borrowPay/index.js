@@ -480,6 +480,7 @@ class BorrowPay extends React.PureComponent {
         width: 140,
       });
     };
+    console.log('list', list);
     return (
       <>
         <PayTemp
