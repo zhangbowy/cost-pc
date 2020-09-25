@@ -326,10 +326,12 @@ class InvoiceDetail extends Component {
             <div className={style.line} />
             <span>单据基础信息</span>
           </div>
-          <Row className="fs-14">
+          <Row className="fs-14 m-l-10">
             <Col span={8}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
-              <span className="fs-14 c-black-65">{details.reason}</span>
+              <div style={{display: 'flex'}}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
+                <span className="fs-14 c-black-65" style={{flex: 1}}>{details.reason}</span>
+              </div>
             </Col>
             <Col span={8}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据类型：</span>
@@ -340,7 +342,7 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.invoiceNo}</span>
             </Col>
           </Row>
-          <Row>
+          <Row className="m-l-10">
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{ Number(templateType) ? '借款总额(元)' : '报销总额(元)' }：</span>
               <span className="fs-14 c-black-65">¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
@@ -418,99 +420,125 @@ class InvoiceDetail extends Component {
             {
               showFields.note && showFields.note.status &&
               <Col span={8} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
-                <span className="fs-14 c-black-65">{details.note}</span>
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
+                  <span className="fs-14 c-black-65">{details.note}</span>
+                </div>
               </Col>
             }
             {
               showFields.receiptId && showFields.receiptId.status &&
               <Col span={8} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
-                <span className="fs-14 c-black-65">
-                  { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
-                  <span className="m-r-8">{ receipt.bankName }</span>
-                  {receipt.account}
-                </span>
-              </Col>
-            }
-            {
-              showFields.imgUrl && showFields.imgUrl.status &&
-              <Col span={8} style={{display: 'flex'}} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
-                <span className={cs(style.imgUrl, style.wraps)}>
-                  {details.imgUrl && details.imgUrl.map((it, index) => (
-                    <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.imgUrl, index)}>
-                      <img alt="图片" src={it.imgUrl} className={style.images} />
-                    </div>
-                  ))}
-                </span>
-              </Col>
-            }
-            {
-              showFields.fileUrl && showFields.fileUrl.status &&
-              <Col span={8} style={{display: 'flex'}} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
-                <span className={cs('fs-14', 'c-black-65', style.file)}>
-                  {details.fileUrl && details.fileUrl.map(it => (
-                    <div className={style.files}>
-                      <img
-                        className='attachment-icon'
-                        src={fileIcon[it.fileType]}
-                        alt='attachment-icon'
-                      />
-                      <p key={it.fileId} style={{marginBottom: '8px'}} onClick={() => this.previewFiles(it)}>{it.fileName}</p>
-                    </div>
-                  ))}
-                </span>
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
+                  <span className="fs-14 c-black-65" style={{flex: 1}}>
+                    { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
+                    <span className="m-r-8">{ receipt.bankName }</span>
+                    {receipt.account}
+                  </span>
+                </div>
               </Col>
             }
             {
               showFields.project && showFields.project.status &&
-              <Col span={8} style={{display: 'flex'}} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
-                <span className="fs-14 c-black-65">
-                  {details.projectName}
-                </span>
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
+                  <span className="fs-14 c-black-65" style={{flex: 1}}>
+                    {details.projectName}
+                  </span>
+                </div>
               </Col>
             }
             {
               showFields.supplier && showFields.supplier.status &&
-              <Col span={8} style={{display: 'flex'}} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
-                <span className="fs-14 c-black-65">
-                  {details.supplierName}
-                </span>
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
+                  <span className="fs-14 c-black-65" style={{flex: 1}}>
+                    {details.supplierName}
+                  </span>
+                </div>
               </Col>
             }
             {
               showFields.supplier && showFields.supplier.status &&
-              <Col span={8} style={{display: 'flex'}} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
-                <span className="fs-14 c-black-65">
-                  {supplierAccountVo.supplierAccountName} {supplierAccountVo.supplierAccount}
-                </span>
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
+                  <span className="fs-14 c-black-65" style={{flex: 1}}>
+                    {supplierAccountVo.supplierAccountName} {supplierAccountVo.supplierAccount}
+                  </span>
+                </div>
               </Col>
             }
             {
               details.reasonForRejection &&
-              <Col span={8} style={{display: 'flex'}} className="m-t-16">
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>拒绝原因：</span>
-                <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                  {details.reasonForRejection}
-                </span>
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>拒绝原因：</span>
+                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                    {details.reasonForRejection}
+                  </span>
+                </div>
               </Col>
             }
             {
               details.expandSubmitFieldVos &&
               (details.expandSubmitFieldVos.length > 0) &&
               details.expandSubmitFieldVos.map(it => (
-                <Col span={8} style={{display: 'flex'}} className="m-t-16" key={it.field}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
-                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                    {it.msg}
-                  </span>
+                <Col span={8} className="m-t-16" key={it.field}>
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
+                    <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                      {it.msg}
+                    </span>
+                  </div>
                 </Col>
               ))
+            }
+            {
+              showFields.imgUrl && showFields.imgUrl.status &&
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
+                  <span className={cs(style.imgUrl, style.wraps)}>
+                    {
+                      details.imgUrl && details.imgUrl.length ? details.imgUrl.map((it, index) => (
+                        <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.imgUrl, index)}>
+                          <img alt="图片" src={it.imgUrl} className={style.images} />
+                        </div>
+                      ))
+                      :
+                      '-'
+                    }
+                  </span>
+                </div>
+              </Col>
+            }
+            {
+              showFields.fileUrl && showFields.fileUrl.status &&
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
+                  <span className={cs('fs-14', 'c-black-65', style.file)}>
+                    {
+                      details.fileUrl && details.fileUrl.length ? details.fileUrl.map(it => (
+                        <div className={style.files} onClick={() => this.previewFiles(it)}>
+                          <img
+                            className='attachment-icon'
+                            src={fileIcon[it.fileType]}
+                            alt='attachment-icon'
+                          />
+                          <p key={it.fileId} style={{marginBottom: '8px'}}>{it.fileName}</p>
+                        </div>
+                      ))
+                      :
+                      <span>-</span>
+                    }
+                  </span>
+                </div>
+              </Col>
             }
           </Row>
           {

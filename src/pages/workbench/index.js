@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover, Radio } from 'antd';
+import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover, Radio, Tooltip } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import moment from 'moment';
@@ -163,6 +163,13 @@ class Workbench extends PureComponent {
       title: '事由',
       dataIndex: 'reason',
       width: 150,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''}>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       // eslint-disable-next-line no-nested-ternary
       title: `${Number(type) === 7 || (Number(type) === 0 && Number(typeLeft) === 9) ? '借款金额(元)' : Number(type) === 0 ? '报销金额(元)': '金额(元)'}`,

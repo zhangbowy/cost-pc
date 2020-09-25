@@ -321,13 +321,15 @@ class AddInvoice extends Component {
   }
 
   //  添加费用成功
-  onAddCost = (val, index) => {
+  onAddCost = (val, index, flag) => {
     const  share = this.state.costDetailsVo;
     const detail = this.state.details;
-    if (index === 0 || index) {
-      share.splice(index, 1, val);
-    } else {
-      share.push(val);
+    if (!flag) {
+      if (index === 0 || index) {
+        share.splice(index, 1, val);
+      } else {
+        share.push(val);
+      }
     }
     let mo = 0;
     const loanEntities = [];
@@ -617,8 +619,11 @@ class AddInvoice extends Component {
   }
 
   onChangeData = (val) => {
+
     this.setState({
       costDetailsVo: val,
+    }, () => {
+      this.onAddCost(val, 0, true);
     });
   }
 

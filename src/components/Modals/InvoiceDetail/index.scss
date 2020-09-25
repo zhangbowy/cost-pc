@@ -16,8 +16,8 @@
 }
 
 .nameTil{
-  width: 98px;
-  text-align: right;
+  // width: 98px;
+  text-align: left;
   display: inline-block;
 }
 .share_cnt{
@@ -44,6 +44,7 @@
 .files {
   display: flex;
   overflow: hidden;
+  cursor: pointer;
   img{
     height: 20px;
     // width: 16px;
