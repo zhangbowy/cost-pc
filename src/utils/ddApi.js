@@ -332,7 +332,7 @@ export const previewFile = (options) => {
       console.log(result);
     },
     onFail: (err) => {
-      console.log(err);
+      message.error(err);
     }
   });
 };

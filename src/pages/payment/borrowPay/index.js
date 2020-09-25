@@ -302,6 +302,12 @@ class BorrowPay extends React.PureComponent {
     });
   }
 
+  onChangeVisible = () => {
+    this.setState({
+      visibleConfirm: false,
+    });
+  }
+
   render() {
     const {
       list,
@@ -337,19 +343,19 @@ class BorrowPay extends React.PureComponent {
       dataIndex: 'invoiceNo',
       width: 130,
     }, {
-      title: '单据类型',
-      dataIndex: 'invoiceTemplateName',
-      width: 120,
-      render: (text) => (
-        <span>{text || '-'}</span>
-      )
-    }, {
       title: '账户类型',
       dataIndex: 'accountType',
       filters: filterAccount,
       width: 120,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
+      )
+    }, {
+      title: '单据类型',
+      dataIndex: 'invoiceTemplateName',
+      width: 120,
+      render: (text) => (
+        <span>{text || '-'}</span>
       )
     }, {
       title: '收款账户名称',
@@ -474,6 +480,7 @@ class BorrowPay extends React.PureComponent {
         width: 140,
       });
     };
+    console.log('list', list);
     return (
       <>
         <PayTemp
@@ -495,6 +502,7 @@ class BorrowPay extends React.PureComponent {
           onOk={() => this.props.onOk()}
           onCancels={() => this.onCancel()}
           dispatch={dispatch}
+          gotoPay={() => this.onChangeVisible()}
         />
       </>
     );

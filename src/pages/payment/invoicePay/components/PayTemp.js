@@ -75,7 +75,7 @@ class PayTemp extends React.PureComponent {
     this.setState({
         selectedRows: _selectedRows,
         selectedRowKeys,
-        sumAmount: amount,
+        sumAmount: amount.toFixed(2),
     });
   };
 
@@ -92,7 +92,7 @@ class PayTemp extends React.PureComponent {
       this.setState({
           selectedRows,
           selectedRowKeys,
-          sumAmount: amount,
+          sumAmount: amount.toFixed(2),
       });
   };
 
@@ -287,17 +287,18 @@ class PayTemp extends React.PureComponent {
     const { searchContent, status } = this.state;
     this.setState({
       accountTypes: filters.accountType,
+    }, () => {
+      this.onQuery({
+        pageNo: pagination.current,
+        pageSize: pagination.pageSize,
+        accountTypes: filters.accountType || [],
+        searchContent,
+        status,
+        endTime,
+        startTime,
+      });
     });
-    console.log('筛选', filters.accountType);
-    this.onQuery({
-      pageNo: 1,
-      pageSize: pagination.pageSize,
-      accountTypes: filters.accountType || [],
-      searchContent,
-      status,
-      endTime,
-      startTime,
-    });
+
   };
 
   render() {
@@ -400,6 +401,7 @@ class PayTemp extends React.PureComponent {
                   startTime = moment(createTime[0]).format('x');
                   endTime = moment(createTime[1]).format('x');
                 }
+                console.log('分页信息');
                 const { searchContent } = this.state;
                 this.onQuery({
                   pageNo: pageNumber,
@@ -417,6 +419,7 @@ class PayTemp extends React.PureComponent {
               showSizeChanger: true,
               showQuickJumper: true,
               onShowSizeChange: (cur, size) => {
+                console.log('分页改变');
                 const createTime = this.props.form.getFieldValue('createTime');
                 let startTime = '';
                 let endTime = '';

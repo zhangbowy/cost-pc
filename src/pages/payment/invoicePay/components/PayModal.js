@@ -157,6 +157,26 @@ class PayModal extends React.PureComponent {
   }
 
   onChange = (e) => {
+    const { payAccount, getAliAccounts } = this.props;
+    this.props.form.setFieldsValue({
+      account: '',
+    });
+    if (e.target.value === '1') {
+      const accountList = payAccount.filter(it => (Number(it.status) === 1));
+      const defaultAccount = accountList.filter(it => it.isDefault);
+      if (defaultAccount && defaultAccount.length) {
+        this.props.form.setFieldsValue({
+          account: defaultAccount[0].id,
+        });
+      }
+    } else {
+      const defa = getAliAccounts.filter(it => it.isDefault);
+      if (defa && defa.length) {
+        this.props.form.setFieldsValue({
+          account: defa[0].payId,
+        });
+      }
+    }
     this.setState({
       status: e.target.value,
     });
@@ -240,7 +260,7 @@ class PayModal extends React.PureComponent {
                     initialValue: defAcc || '',
                     rules: [{ required: true, message: '请选择付款账户' }]
                   })(
-                    <Select>
+                    <Select placeholder="请选择">
                       {
                         payAccount.map(item => (
                           <Option key={item.id}>{item.name}</Option>
@@ -264,6 +284,7 @@ class PayModal extends React.PureComponent {
                   })(
                     <Select
                       notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
+                      placeholder="请选择"
                     >
                       {
                         getAliAccounts.map(item => (
