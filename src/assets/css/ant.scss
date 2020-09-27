@@ -125,4 +125,11 @@
   .ant-tag{
     background:rgba(245,245,245,1);
   }
+  .ant-dropdown .ant-table-filter-dropdown{
+    .ant-dropdown-menu{
+      // text-align: left!important;
+      align-items: flex-start!important;
+      padding: 4px 16px;
+    }
+  }
 }

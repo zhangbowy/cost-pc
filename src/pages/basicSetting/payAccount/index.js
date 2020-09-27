@@ -138,7 +138,7 @@ class Account extends Component {
       width: 160,
       render: (text) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
+          <Tooltip placement="topLeft" title={text || ''}>
             <span className="eslips-2">{text}</span>
           </Tooltip>
         </span>
@@ -162,7 +162,7 @@ class Account extends Component {
            }
         </span>
       ),
-      width: 80,
+      width: 100,
       className: 'fixCenter'
     }];
     return (
