@@ -39,7 +39,7 @@ class ConfirmPay extends Component {
       if (gotoPay) {
         gotoPay();
       }
-      this.onCancel();
+      // this.onCancel();
       if (alipayUrl) {
         // ddOpenLink(`${alipayUrl}`);
         const url = window.location.href.replace('/payment/invoicePay','/redirect').replace('/payment/borrowPay','/redirect');

@@ -322,7 +322,7 @@ class BorrowPay extends React.PureComponent {
     const columns = [{
       title: '借款事由',
       dataIndex: 'reason',
-      width: 150,
+      width: 140,
       render: (text) => (
         <span>
           <Tooltip placement="topLeft" title={text || ''}>
@@ -346,7 +346,7 @@ class BorrowPay extends React.PureComponent {
       title: '账户类型',
       dataIndex: 'accountType',
       filters: filterAccount,
-      width: 120,
+      width: 80,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
       )

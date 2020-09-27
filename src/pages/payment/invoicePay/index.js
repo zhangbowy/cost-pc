@@ -314,7 +314,7 @@ class Payment extends React.PureComponent {
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
-      width: 150,
+      width: 140,
       render: (text) => (
         <span>
           <Tooltip placement="topLeft" title={text || ''}>
@@ -328,7 +328,6 @@ class Payment extends React.PureComponent {
       render: (text) => (
         <span>{text/100}</span>
       ),
-      className: 'moneyCol',
       width: 100,
     }, {
       title: '单号',
@@ -337,11 +336,12 @@ class Payment extends React.PureComponent {
     }, {
       title: '账户类型',
       dataIndex: 'accountType',
-      width: 120,
+      width: 80,
       filters: filterAccount,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
-      )
+      ),
+      className: 'moneyCol',
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
