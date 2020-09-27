@@ -39,6 +39,7 @@ class ConfirmPay extends Component {
       if (gotoPay) {
         gotoPay();
       }
+      this.onCancel();
       if (alipayUrl) {
         // ddOpenLink(`${alipayUrl}`);
         const url = window.location.href.replace('/payment/invoicePay','/redirect').replace('/payment/borrowPay','/redirect');
@@ -46,6 +47,12 @@ class ConfirmPay extends Component {
         // window.location.href = `${alipayUrl}&ddtab=true`;
       }
     });
+  }
+
+  onCancel = () => {
+    const { gotoPay } =this.props;
+    this.setState({ visible: false });
+    if (gotoPay) gotoPay();
   }
 
   render() {
@@ -58,7 +65,7 @@ class ConfirmPay extends Component {
           footer={null}
           width="680px"
           visible={visible}
-          onCancel={() => { const { gotoPay } =this.props; this.setState({ visible: false }); if (gotoPay) gotoPay(); }}
+          onCancel={() => this.onCancel()}
           bodyStyle={{
             height: '450px',
             padding: '40px'

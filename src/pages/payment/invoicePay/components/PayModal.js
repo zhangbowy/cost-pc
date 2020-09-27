@@ -78,14 +78,24 @@ class PayModal extends React.PureComponent {
         count: cout,
         amount,
         flag: flags,
+      }, () => {
+        if (acc) {
+          this.props.form.setFieldsValue({
+            account: acc,
+          });
+        }
       });
     });
   }
 
   onCancel = () => {
     this.props.form.resetFields();
+    this.props.form.setFieldsValue({
+      account: '',
+    });
     this.setState({
       visible: false,
+      status: '1',
     });
   }
 
