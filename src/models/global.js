@@ -43,6 +43,7 @@ export default {
     getAliAccounts: [], // 签约账号
     batchDetails: {}, // 批次的详细信息
     alipayUrl: '', // 跳转支付宝链接地址
+    serviceTime: ''
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -409,6 +410,16 @@ export default {
         type: 'save',
         payload: {
           alipayUrl: response || '',
+        }
+      });
+    },
+    // 获取服务器时间
+    *getServiceTime({ payload }, { call, put }) {
+      const response = yield call(get, api.getServiceTime, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          serviceTime: response || '',
         }
       });
     },

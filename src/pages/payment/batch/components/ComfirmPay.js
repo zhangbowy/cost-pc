@@ -1,7 +1,11 @@
 import React from 'react';
 import { Modal, Button, Alert } from 'antd';
+import { connect } from 'dva';
 import style from './index.scss';
 
+@connect(({ global }) => ({
+  serviceTime: global.serviceTime
+}))
 class ComfirmPay extends React.PureComponent {
   // useEffect(() => {
   //   props.dispatch({
@@ -49,16 +53,20 @@ class ComfirmPay extends React.PureComponent {
   }
 
   onShow = () => {
-    this.timer = setInterval(() => {
-      this.loadTime();
-    },1000);
-    console.log(this.props.selectKey);
-    this.setState({visible:true});
+    this.props.dispatch({
+      type: 'global/getServiceTime',
+      payload:{}
+    }).then(()=>{
+      this.timer = setInterval(() => {
+        this.loadTime();
+      },1000);
+      this.setState({visible:true});
+    });
   }
 
   loadTime = () => {
-    const time = this.props.selectKey.createTime+24*60*60*1000;
-    const nowTime = new Date().getTime();
+    const time = this.props.selectKey.timeExpire;
+    const nowTime = this.props.serviceTime || new Date().getTime();
     const hour =  Math.floor((time - nowTime)/(60*60*1000));
     const minute =  Math.floor((time - nowTime)%(60*60*1000)/(60*1000));
     this.setState({tiemStr:`${ hour<0?0:hour }小时${ minute<0?0:minute }分钟`});
