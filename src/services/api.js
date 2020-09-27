@@ -66,5 +66,6 @@ export default {
   getAliAccounts: `${APP_API}/cost/batch/getAliAccounts`, // 支付宝账户列表
   addBatch: `${APP_API}/cost/alipay/fundBatch/createOrder`, // 标记已付
   batchPay: `${APP_API}/cost/alipay/fundBatch/payOrder`, // 发起支付
+  getServiceTime: `${APP_API}/cost/common/getServiceTime`, // 获取服务器时间
   reCreate: `${APP_API}/cost/alipay/fundBatch/reCreate`, // 重新下单
 };
