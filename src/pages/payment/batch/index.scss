@@ -149,4 +149,6 @@
   right: 32px;
   top: 8px;
 }
-
+:global(.ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td) {
+  background: #fafafa;
+}

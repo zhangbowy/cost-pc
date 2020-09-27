@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import { Table, Divider, Modal, Button, Message, Icon } from 'antd';
 import { connect } from 'dva';
-import moment from 'moment';
+import getDateUtil from '@/utils/tool';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { batchStatus, invoiceStatus } from '@/utils/constants';
 import Search from 'antd/lib/input/Search';
@@ -180,7 +180,7 @@ class Batch extends PureComponent {
     const columns = [{
       title: '付款批次',
       dataIndex: 'outBatchNo',
-      width: 250,
+      width: 200,
     }, {
       title: '总金额',
       dataIndex: 'totalTransAmount',
@@ -210,7 +210,7 @@ class Batch extends PureComponent {
       title: '提交时间',
       dataIndex: 'createTime',
       render: (_, record) => (
-        <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD hh:mm:ss') : '-'}</span>
+        <span>{record.createTime ? getDateUtil(record.createTime,'yyyy-MM-dd hh:mm:ss') : '-'}</span>
       ),
       width: 200,
     }];
@@ -241,7 +241,7 @@ class Batch extends PureComponent {
           <span>
             {status === '3' &&
               <PayModal selectKey={[record]} onOk={() => this.onOk()} templateType={1}>
-                <Button style={{padding: '0'}} type="link" >发起支付</Button>
+                <a style={{padding: '0'}} type="link" >发起支付</a>
               </PayModal>}
             {status === '1' &&
               <ComfirmPay 
@@ -251,25 +251,31 @@ class Batch extends PureComponent {
                 close={this.closeComfirmPay}
                 templateType={0}
               >
-                <Button style={{padding: '0'}} type="link" onClick={this.resetPay} >发起支付</Button>
+                <a style={{padding: '0'}} type="link" onClick={this.resetPay} >发起支付</a>
               </ComfirmPay>}
             <Divider type="vertical" />
-            <Button style={{padding: '0'}} type="link" onClick={() => this.batchCancel(record)} >取消</Button>
+            <a style={{padding: '0'}} type="link" onClick={() => this.batchCancel(record)} >取消</a>
           </span>
         ),
         width: 200,
         fixed: 'right',
         className: 'fixCenter'
       });
+    }else{
+      columns.splice(columns.length-1,0,{
+        title: '发放人',
+        dataIndex: 'grantUserName',
+        width: 150,
+      });
     }
     return (
-      <div>
+      <div className="content-dt" style={{ padding: 0 }}>
         {
           userInfo.isSupperAdmin && (localStorage.getItem('initShow') !== 'true') ?
             <StepShow {...this.props} userInfo={userInfo} />
             :
             <>
-              <div className="content-dt" style={{ padding: 0 }}>
+              <div>
                 <div style={{ marginBottom: '24px',position: 'relative' }}>  
                   <Button style={{padding: 0}} onClick={this.onOk} type="link" className={style.reload}><Icon type="sync" />刷新</Button>
                   <MenuItems
@@ -293,7 +299,7 @@ class Batch extends PureComponent {
                     dataSource={list}
                     rowKey="id"
                     tableLayout="fixed"
-                    scroll={{ x: 1300 }}
+                    scroll={{ x: columns.length>6?1300:0 }}
                     loading={loading}
                     pagination={status==='0'?{
                       current: query.pageNo,
