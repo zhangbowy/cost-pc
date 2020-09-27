@@ -138,7 +138,7 @@ class AccountSetting extends Component {
                     message: '长度不能超过20个字符'
                   }]
                 })(
-                  <Input placeholder="请输入" />
+                  <Input placeholder={data.type === 1 ? '请输入与账号匹配的已实名姓名' : '请输入'} />
                 )
               }
             </Form.Item>

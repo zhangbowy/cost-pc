@@ -23,6 +23,7 @@ class PayTemp extends React.PureComponent {
       searchContent: '',
       selectedRows: [],
       accountType: [],
+      pageNo: 1,
     };
   }
 
@@ -275,8 +276,7 @@ class PayTemp extends React.PureComponent {
   }
 
   handleTableChange = (pagination, filters) => {
-    console.log('pagination', pagination);
-    console.log('filters', filters);
+
     const createTime = this.props.form.getFieldValue('createTime');
     let startTime = '';
     let endTime = '';
@@ -287,6 +287,7 @@ class PayTemp extends React.PureComponent {
     const { searchContent, status } = this.state;
     this.setState({
       accountTypes: filters.accountType,
+      pageNo: pagination.current,
     }, () => {
       this.onQuery({
         pageNo: pagination.current,
@@ -393,26 +394,26 @@ class PayTemp extends React.PureComponent {
             onChange={this.handleTableChange}
             pagination={{
               current: query.pageNo,
-              onChange: (pageNumber) => {
-                const createTime = this.props.form.getFieldValue('createTime');
-                let startTime = '';
-                let endTime = '';
-                if (createTime && createTime.length > 0) {
-                  startTime = moment(createTime[0]).format('x');
-                  endTime = moment(createTime[1]).format('x');
-                }
-                console.log('分页信息');
-                const { searchContent } = this.state;
-                this.onQuery({
-                  pageNo: pageNumber,
-                  pageSize: query.pageSize,
-                  searchContent,
-                  status,
-                  endTime,
-                  startTime,
-                  accountTypes
-                });
-              },
+              // onChange: (pageNumber) => {
+              //   const createTime = this.props.form.getFieldValue('createTime');
+              //   let startTime = '';
+              //   let endTime = '';
+              //   if (createTime && createTime.length > 0) {
+              //     startTime = moment(createTime[0]).format('x');
+              //     endTime = moment(createTime[1]).format('x');
+              //   }
+              //   console.log('分页信息');
+              //   const { searchContent } = this.state;
+              //   this.onQuery({
+              //     pageNo: pageNumber,
+              //     pageSize: query.pageSize,
+              //     searchContent,
+              //     status,
+              //     endTime,
+              //     startTime,
+              //     accountTypes
+              //   });
+              // },
               total,
               size: 'small',
               showTotal: () => (`共${total}条数据`),

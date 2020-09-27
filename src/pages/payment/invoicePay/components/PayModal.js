@@ -78,14 +78,24 @@ class PayModal extends React.PureComponent {
         count: cout,
         amount,
         flag: flags,
+      }, () => {
+        if (acc) {
+          this.props.form.setFieldsValue({
+            account: acc,
+          });
+        }
       });
     });
   }
 
   onCancel = () => {
     this.props.form.resetFields();
+    this.props.form.setFieldsValue({
+      account: '',
+    });
     this.setState({
       visible: false,
+      status: '1',
     });
   }
 
@@ -191,6 +201,8 @@ class PayModal extends React.PureComponent {
         callback('请先对公司付款支付宝账户签约授权');
       }
       callback();
+    } else {
+      callback('请选择付款账户');
     }
   }
 
@@ -278,7 +290,6 @@ class PayModal extends React.PureComponent {
                   getFieldDecorator('account', {
                     initialValue: defAcc || '',
                     rules: [
-                      { required: true, message: '请选择付款账户' },
                       { validator: this.check }
                     ]
                   })(
