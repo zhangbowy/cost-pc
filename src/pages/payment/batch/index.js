@@ -127,7 +127,7 @@ class Batch extends PureComponent {
         value = '已关闭';
         break;
       case 5:
-        value = '已发放';
+        value = '已支付';
         break;
       default:
         value = '无';
@@ -195,7 +195,7 @@ class Batch extends PureComponent {
       width: 120,
       className: 'moneyCol',
       render: (text, record) => (
-        <Button type="link" onClick={() => {this.openCost(record,false);}}>{text}</Button>
+        <Button style={{padding: '0'}} type="link" onClick={() => {this.openCost(record,false);}}>{text}</Button>
       )
     }, {
       title: '支付状态',
@@ -229,7 +229,7 @@ class Batch extends PureComponent {
         className: 'moneyCol',
         width: 120,
         render: (text, record) => (
-          <Button type="link" onClick={() => {this.openCost(record,true);}}>{text}</Button>
+          <Button style={{padding: '0'}} type="link" onClick={() => {this.openCost(record,true);}}>{text}</Button>
         )
       });
     }

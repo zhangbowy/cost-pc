@@ -61,7 +61,7 @@ class ComfirmPay extends React.PureComponent {
     const nowTime = new Date().getTime();
     const hour =  Math.floor((time - nowTime)/(60*60*1000));
     const minute =  Math.floor((time - nowTime)%(60*60*1000)/(60*1000));
-    this.setState({tiemStr:`${hour  }小时${  minute  }分钟`});
+    this.setState({tiemStr:`${ hour<0?0:hour }小时${ minute<0?0:minute }分钟`});
   }
 
   render(){
