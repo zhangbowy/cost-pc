@@ -1,10 +1,11 @@
 import React from 'react';
-import { Modal, Button, Alert } from 'antd';
+import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
 
-@connect(({ global }) => ({
-  serviceTime: global.serviceTime
+@connect(({ global, loading }) => ({
+  serviceTime: global.serviceTime,
+  loading: loading.effects['global/batchPay'] || false
 }))
 class ComfirmPay extends React.PureComponent {
   // useEffect(() => {
@@ -82,8 +83,12 @@ class ComfirmPay extends React.PureComponent {
           visible={this.state.visible}
           onCancel={this.close}
           width="680px"
+          bodyStyle={{
+            height: '450px',
+            padding: '40px'
+          }}
         >
-          <h1>确认支付</h1>
+          {/* <h1>确认支付</h1>
           <div className={style.confirm}>
             <Alert
               type="success"
@@ -98,10 +103,6 @@ class ComfirmPay extends React.PureComponent {
                 <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" />
               )}
             />
-            {/* <span className="c-black-65 m-b-24 m-t-24">付款批次：{ this.props.selectKey.batchTransId }</span>
-            <span className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</span>
-            <span className="c-black-65 m-b-24">金额共计：{ this.props.selectKey.totalTransAmount/100 }</span>
-            <span className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></span> */}
             <div className="m-l-32 m-t-18 m-b-47">
               <p className="c-black-65 m-b-24">付款批次：{ this.props.selectKey.batchTransId }</p>
               <p className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</p>
@@ -109,6 +110,26 @@ class ComfirmPay extends React.PureComponent {
               <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
             </div>
             <Button key="save" onClick={() => this.onSave()}>去支付</Button>
+          </div> */}
+          <h1 className="fs-24 c-black-85 m-b-16">确认支付</h1>
+          <div className={style.confirm}>
+            <div className={style.content}>
+              <div className={style.alert}>
+                <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" style={{marginTop: '-4px'}} />
+                <span className="c-black-65">
+                  剩余支付时间：
+                  <span style={{color: '#F25643'}}>{this.state.tiemStr}</span>
+                  ，超时未支付批次将自动关闭
+                </span>
+              </div>
+              <div className="m-l-32 m-t-18 m-b-47">
+                <p className="c-black-65 m-b-24">付款批次：{ this.props.selectKey.batchTransId }</p>
+                <p className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</p>
+                <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span></p>
+                <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
+              </div>
+            </div>
+            <Button key="save" onClick={() => this.onSave()} loading={this.props.loading} disabled={this.props.loading} type="primary">去支付</Button>
           </div>
         </Modal>
       </div>
