@@ -211,7 +211,8 @@ class AddCost extends Component {
     } = this.state;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
-        if (costDetailShareVOS.length !== 0 && shareAmount !== val.costSum) {
+        // eslint-disable-next-line eqeqeq
+        if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
           message.error('分摊明细金额合计不等于费用金额，请修改');
           return;
         }
