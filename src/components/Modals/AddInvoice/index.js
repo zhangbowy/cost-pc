@@ -380,7 +380,7 @@ class AddInvoice extends Component {
   //  选择借款
   onAddBorrow = (val) => {
     const detailList = [...val];
-    let money = this.state.total;
+    let money = Number(this.state.total);
     let assessSum = 0;
     if (money || (money === 0)) {
       detailList.forEach(it => {
@@ -398,7 +398,7 @@ class AddInvoice extends Component {
     }
     this.setState({
       borrowArr: detailList,
-      assessSum: assessSum.toFixed(2),
+      assessSum: Number(assessSum.toFixed(2)),
     });
   }
 

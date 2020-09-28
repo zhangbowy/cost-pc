@@ -109,6 +109,8 @@ class AddCost extends Component {
       costDate: 0, // 没有指定日期
       visible: false,
       showField: {}, // 是否展示
+      shareAmount: 0,
+      costSum: 0,
     });
   }
 
@@ -211,7 +213,8 @@ class AddCost extends Component {
     } = this.state;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
-        if (costDetailShareVOS.length !== 0 && shareAmount !== val.costSum) {
+        // eslint-disable-next-line eqeqeq
+        if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
           message.error('分摊明细金额合计不等于费用金额，请修改');
           return;
         }
@@ -290,6 +293,17 @@ class AddCost extends Component {
     detail.splice(index, 1);
     this.setState({
       costDetailShareVOS: detail,
+    }, () => {
+      const { costDetailShareVOS } = this.state;
+      let shareMount = 0;
+      if (costDetailShareVOS && costDetailShareVOS.length) {
+        costDetailShareVOS.forEach(it => {
+          shareMount = numAdd(it.shareAmount, shareMount);
+        });
+      }
+      this.setState({
+        shareAmount: shareMount.toFixed(2),
+      });
     });
   }
 
@@ -420,6 +434,18 @@ class AddCost extends Component {
   onChangeAmm = (val) => {
     this.setState({
       costSum: val,
+    }, () => {
+      const details = [...this.state.costDetailShareVOS];
+      if (details && details.length) {
+        const amm = this.props.form.getFieldValue('shareAmount');
+        details.forEach(it => {
+          if (amm[it.key]) {
+            this.props.form.setFieldsValue({
+              [`shareScale[${it.key}]`]: ((amm[it.key]/val) * 100).toFixed(2),
+            });
+          }
+        });
+      }
     });
   }
 
