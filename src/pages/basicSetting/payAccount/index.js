@@ -110,7 +110,7 @@ class Account extends Component {
           { record.status === 0 && <Tag color="red">已停用</Tag> }
         </span>
       ),
-      width: 140
+      width: 180
     }, {
       title: '账户类型',
       dataIndex: 'type',

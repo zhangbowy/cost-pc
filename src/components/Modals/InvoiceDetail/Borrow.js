@@ -56,6 +56,7 @@ function Borrow(props) {
     }, {
       title: '本次核销',
       dataIndex: 'waitAssessSum',
+      className: 'moneyCol',
       render: (_, record) => (
         <span>{record.waitAssessSum ? record.waitAssessSum/100 : ''}</span>
       ),
