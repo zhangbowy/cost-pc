@@ -123,7 +123,7 @@ class Payment extends React.PureComponent {
       });
   };
 
-  onOk = () => {
+  onOk = (val) => {
     const {
       query,
     } = this.props;
@@ -134,9 +134,17 @@ class Payment extends React.PureComponent {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
     }
+    if (val) {
+      this.setState({
+        selectedRows: [],
+        selectedRowKeys: [],
+        sumAmount: 0,
+      });
+    }
     const { status, searchContent } = this.state;
     this.onQuery({
-      ...query,
+      pageSize: query.pageSize,
+      pageNo: 1,
       status,
       startTime,
       endTime,
@@ -310,7 +318,7 @@ class Payment extends React.PureComponent {
       batchDetails,
       dispatch,
     } = this.props;
-    const { status, visibleConfirm } = this.state;
+    const { status, visibleConfirm, selectedRowKeys, selectedRows } = this.state;
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -402,7 +410,7 @@ class Payment extends React.PureComponent {
         <span>
           {
             Number(record.status) === 2 &&
-              <PayModal onOk={() => this.onOk()} data={record} templateType={0} selectKey={[record]} confirms={() => this.onConfirm()}>
+              <PayModal onOk={(val) => this.onOk(val)} data={record} templateType={0} selectKey={[record]} confirms={() => this.onConfirm()}>
                 <a>发起支付</a>
               </PayModal>
           }
@@ -479,6 +487,8 @@ class Payment extends React.PureComponent {
           columns={columns}
           onChangeStatus={(val) => this.onChangeStatus(val)}
           confirm={() => this.onConfirm()}
+          selectedRowKeys={selectedRowKeys}
+          selectedRows={selectedRows}
         />
         <ConfirmPay
           batchDetails={batchDetails}

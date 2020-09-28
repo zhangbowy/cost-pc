@@ -113,7 +113,7 @@ class PayTemp extends React.PureComponent {
       });
   };
 
-  onOk = () => {
+  onOk = (val) => {
     const {
       query,
     } = this.props;
@@ -123,6 +123,13 @@ class PayTemp extends React.PureComponent {
     if (createTime && createTime.length > 0) {
       startTime = moment(createTime[0]).format('x');
       endTime = moment(createTime[1]).format('x');
+    }
+    if (val) {
+      this.setState({
+        selectedRows: [],
+        selectedRowKeys: [],
+        sumAmount: 0,
+      });
     }
     const { status, searchContent } = this.state;
     this.onQuery({
@@ -345,7 +352,7 @@ class PayTemp extends React.PureComponent {
             <div className="head_lf">
               {
                 Number(status) === 2 &&
-                <PayModal selectKey={selectedRows} onOk={() => this.onOk()} templateType={templateType} confirms={() => confirm()}>
+                <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
                   <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
                 </PayModal>
               }
