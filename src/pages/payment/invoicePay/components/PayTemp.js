@@ -127,6 +127,7 @@ class PayTemp extends React.PureComponent {
     const { status, searchContent } = this.state;
     this.onQuery({
       ...query,
+      pageNo: 1,
       status,
       startTime,
       endTime,
