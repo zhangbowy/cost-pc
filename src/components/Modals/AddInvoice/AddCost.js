@@ -734,7 +734,7 @@ class AddCost extends Component {
                 {
                   currencyShow ?
                     <Col span={12}>
-                      <Form.Item label="汇率" {...formItemLayouts}>
+                      <Form.Item label="币种" {...formItemLayouts}>
                         {
                           getFieldDecorator('currencyId', {
                             initialValue: details.currencyId || '-1',
