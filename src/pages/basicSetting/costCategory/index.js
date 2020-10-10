@@ -145,9 +145,14 @@ class CostCategory extends React.PureComponent {
       width: 360,
       render: (text) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
+          {
+            text && text.length > 48 ?
+              <Tooltip placement="top" title={text || ''}>
+                <span className="eslips-2">{text}</span>
+              </Tooltip>
+              :
+              <span className="eslips-2">{text}</span>
+          }
         </span>
       ),
     }, {

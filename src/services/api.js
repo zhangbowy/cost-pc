@@ -37,6 +37,8 @@ export default {
   print: `${APP_API}/cost/export/pdfDetail`,
   approverRoleList: `${APP_API}/cost/approve/role/list`, // 审批角色
   approvePersonList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 获取所有的审批模版
+  // 汇率
+  configuration: `${APP_API}/cost/currency/configuration`,
   /* ---------- 项目/供应商 ----------*/
   // 项目
   addProject: `${APP_API}/cost/project/add`, // 新增

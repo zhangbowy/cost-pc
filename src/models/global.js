@@ -43,7 +43,9 @@ export default {
     getAliAccounts: [], // 签约账号
     batchDetails: {}, // 批次的详细信息
     alipayUrl: '', // 跳转支付宝链接地址
-    serviceTime: ''
+    serviceTime: '',
+    currencyShow: false, // 是否显示企业外币
+    currencyList: [], // 企业外币的列表
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -468,6 +470,16 @@ export default {
         type: 'save',
         payload: {
           getAliAccounts: response || [],
+        },
+      });
+    },
+    *getCurrency({ payload }, { call, put }) {
+      const response = yield call(get, api.configuration, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          currencyShow: response.isShow || false,
+          currencyList: response.currencyList || [],
         },
       });
     },

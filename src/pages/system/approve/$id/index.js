@@ -84,7 +84,7 @@ class SettingPeople extends Component {
           {
             !record.isSupperAdmin &&
             <Popconfirm
-              title="确认删除该角色吗?"
+              title="确认删除该人员吗?"
               onConfirm={() => this.onDelete(record.id)}
             >
               <span className="deleteColor">删除</span>

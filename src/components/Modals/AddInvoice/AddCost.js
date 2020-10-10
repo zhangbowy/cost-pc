@@ -29,6 +29,8 @@ const labelInfo = {
   userId: global.userId,
   usableProject: global.usableProject,
   lbDetail: global.lbDetail,
+  currencyList: global.currencyList,
+  currencyShow: global.currencyShow,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -45,6 +47,10 @@ class AddCost extends Component {
       shareAmount: 0,
       project: {},
       expandField: [],
+      currencyId: '-1',
+      currencyName: '',
+      exchangeRate: '1',
+      currencySymbol: '¥',
     };
   }
 
@@ -56,6 +62,10 @@ class AddCost extends Component {
           details: this.props.detail,
           costDetailShareVOS: this.props.detail.costDetailShareVOS || [],
           imgUrl: this.props.detail.imgUrl,
+          currencyId: this.props.detail.currencyId,
+          currencyName: this.props.detail.currencyName,
+          exchangeRate: this.props.detail.exchangeRate,
+          currencySymbol: this.props.detail.currencySymbol,
         });
       }
     }
@@ -210,6 +220,10 @@ class AddCost extends Component {
       imgUrl,
       shareAmount,
       expandField,
+      currencyId,
+      currencyName,
+      exchangeRate,
+      currencySymbol
     } = this.state;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -281,6 +295,10 @@ class AddCost extends Component {
           ...detail,
           expandCostDetailFieldVos,
           costDetailShareVOS: arr,
+          currencyId,
+          currencyName,
+          exchangeRate,
+          currencySymbol
         };
         this.props.onAddCost(detail, index);
         this.onCancel();
@@ -494,6 +512,17 @@ class AddCost extends Component {
     }
   }
 
+  onChangeCurr = (option) => {
+    console.log(option);
+    const lists = this.props.currencyList.filter(it => it.id === option);
+    this.setState({
+      currencyId: option,
+      currencyName: lists[0].name,
+      exchangeRate: lists[0].exchangeRate,
+      currencySymbol: lists[0].currencySymbol
+    });
+  }
+
   render() {
     const {
       children,
@@ -501,6 +530,8 @@ class AddCost extends Component {
       // expenseList,
       userInfo,
       usableProject,
+      currencyList,
+      currencyShow
     } = this.props;
     const list = this.onSelectTree();
     const {
@@ -513,7 +544,10 @@ class AddCost extends Component {
       costSum,
       shareAmount,
       project,
-      expandField
+      expandField,
+      exchangeRate,
+      currencySymbol,
+      currencyId
     } = this.state;
     console.log('费用类别自定义', expandField);
     const formItemLayout = {
@@ -524,6 +558,16 @@ class AddCost extends Component {
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 16 },
+      },
+    };
+    const formItemLayouts = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 9 },
       },
     };
     const columns = [{
@@ -678,6 +722,36 @@ class AddCost extends Component {
                     }
                   </Form.Item>
                 </Col>
+                {
+                  currencyShow ?
+                    <Col span={12}>
+                      <Form.Item label="汇率" {...formItemLayouts}>
+                        {
+                          getFieldDecorator('currencyId', {
+                            initialValue: details.currencyId || '-1',
+                            rules: [{ required: true, message: '请选择币种' }]
+                          })(
+                            <Select placeholder="请选择" onChange={this.onChangeCurr}>
+                              <Option key="-1">人民币</Option>
+                              {
+                                currencyList && currencyList.map(it => (
+                                  <Option key={it.id}>{it.name}</Option>
+                                ))
+                              }
+                            </Select>
+                          )
+                        }
+                      </Form.Item>
+                      {
+                        exchangeRate && exchangeRate !== '1' ?
+                          <span style={{float: 'left', margin: '-55px 24px 0 271px'}} className="c-black-36">汇率{exchangeRate}</span>
+                          :
+                          null
+                      }
+                    </Col>
+                    :
+                    null
+                }
                 <Col span={12}>
                   <Form.Item label={labelInfo.costSum} {...formItemLayout}>
                     {
@@ -693,116 +767,116 @@ class AddCost extends Component {
                     }
                   </Form.Item>
                 </Col>
-              </Row>
-              {/* <Row> */}
-              {
-                showField.costNote && showField.costNote.status &&
-                <Col span={12}>
-                  <Form.Item label={labelInfo.costNote} {...formItemLayout}>
-                    {
-                      getFieldDecorator('note', {
-                        initialValue: details.note || '',
-                        rules: [{ required: !!(showField.costNote.isWrite), message: '请输入备注' }]
-                      })(
-                        <Input placeholder="请输入" />
-                      )
-                    }
-                  </Form.Item>
-                </Col>
-              }
-              {
-                showField.happenTime && showField.happenTime.status &&
-                <Col span={12}>
-                  <Form.Item label={labelInfo.happenTime} {...formItemLayout}>
-                    {
-                      costDate === 1 &&
-                      getFieldDecorator('time', {
-                        initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
-                        rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                      })(
-                        <DatePicker style={{width: '100%'}} />
-                      )
-                    }
-                    {
-                      costDate === 2 &&
-                      getFieldDecorator('time', {
-                        initialValue: details.startTime && details.endTime ?
-                          [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
-                          :
-                          [],
-                        rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                      })(
-                        <RangePicker
-                          style={{width: '280px' }}
-                          placeholder="请选择时间"
-                          format="YYYY-MM-DD"
-                          showTime={{
-                            hideDisabledOptions: true,
-                            defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                          }}
-                        />
-                      )
-                    }
-                  </Form.Item>
-                </Col>
-              }
-              {
-                showField.imgUrl && showField.imgUrl.status &&
-                <Col span={12}>
-                  <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                    <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
-                  </Form.Item>
-                </Col>
-              }
-              {
-                expandField && (expandField.length > 0) &&
-                expandField.map(it => {
-                  let renderForm = null;
-                  let rule = [];
-                  if (Number(it.fieldType) === 0) {
-                    renderForm = (<Input placeholder='请输入' />);
-                    rule = [{ max: 20, message: '限制20个字' }];
-                  } else if (Number(it.fieldType) === 1) {
-                    renderForm = (<TextArea placeholder='请输入' />);
-                    rule = [{ max: 128, message: '限制128个字' }];
-                  } else {
-                    renderForm = (
-                      <Select placeholder='请选择'>
+                {
+                  showField.costNote && showField.costNote.status ?
+                    <Col span={12}>
+                      <Form.Item label={labelInfo.costNote} {...formItemLayout}>
                         {
-                          it.options && it.options.map(iteems => (
-                            <Select.Option key={iteems}>{iteems}</Select.Option>
-                          ))
+                          getFieldDecorator('note', {
+                            initialValue: details.note || '',
+                            rules: [{ required: !!(showField.costNote.isWrite), message: '请输入备注' }]
+                          })(
+                            <Input placeholder="请输入" />
+                          )
                         }
-                      </Select>
-                    );
-                  }
-                    return (
-                      <>
-                        {
-                          it.status ?
-                            <Col span={12}>
-                              <Form.Item label={it.name} {...formItemLayout}>
-                                {
-                                  getFieldDecorator(it.field, {
-                                    initialValue: it.msg,
-                                    rules: [
-                                      { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
-                                      ...rule,
-                                    ]
-                                  })(
-                                    renderForm
-                                  )
-                                }
-                              </Form.Item>
-                            </Col>
+                      </Form.Item>
+                    </Col>
+                  :
+                  null
+                }
+                {
+                  showField.happenTime && showField.happenTime.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.happenTime} {...formItemLayout}>
+                      {
+                        costDate === 1 &&
+                        getFieldDecorator('time', {
+                          initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                          rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                        })(
+                          <DatePicker style={{width: '100%'}} />
+                        )
+                      }
+                      {
+                        costDate === 2 &&
+                        getFieldDecorator('time', {
+                          initialValue: details.startTime && details.endTime ?
+                            [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
                             :
-                            null
-                        }
-                      </>
-                    );
-                })
-              }
-              {/* </Row> */}
+                            [],
+                          rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                        })(
+                          <RangePicker
+                            style={{width: '280px' }}
+                            placeholder="请选择时间"
+                            format="YYYY-MM-DD"
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                            }}
+                          />
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  showField.imgUrl && showField.imgUrl.status &&
+                  <Col span={12}>
+                    <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
+                      <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
+                    </Form.Item>
+                  </Col>
+                }
+                {
+                  expandField && (expandField.length > 0) &&
+                  expandField.map(it => {
+                    let renderForm = null;
+                    let rule = [];
+                    if (Number(it.fieldType) === 0) {
+                      renderForm = (<Input placeholder='请输入' />);
+                      rule = [{ max: 20, message: '限制20个字' }];
+                    } else if (Number(it.fieldType) === 1) {
+                      renderForm = (<TextArea placeholder='请输入' />);
+                      rule = [{ max: 128, message: '限制128个字' }];
+                    } else {
+                      renderForm = (
+                        <Select placeholder='请选择'>
+                          {
+                            it.options && it.options.map(iteems => (
+                              <Select.Option key={iteems}>{iteems}</Select.Option>
+                            ))
+                          }
+                        </Select>
+                      );
+                    }
+                      return (
+                        <>
+                          {
+                            it.status ?
+                              <Col span={12}>
+                                <Form.Item label={it.name} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator(it.field, {
+                                      initialValue: it.msg,
+                                      rules: [
+                                        { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
+                                        ...rule,
+                                      ]
+                                    })(
+                                      renderForm
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                        </>
+                      );
+                  })
+                }
+              </Row>
               <Divider type="horizontal" />
               <div style={{paddingTop: '24px'}}>
                 <div className={style.header}>
@@ -814,7 +888,7 @@ class AddCost extends Component {
                 </div>
                 {
                   costDetailShareVOS && costDetailShareVOS.length > 0 &&
-                  <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500"> ¥{costSum}  已分摊：¥{shareAmount}</p>
+                  <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500"> ¥{ currencyShow && currencyId !== '-1' ? `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}  已分摊：¥{ currencyShow && currencyId !== '-1' ? `${Number(numMulti(shareAmount, exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}</p>
                 }
                 {
                   costDetailShareVOS && costDetailShareVOS.length > 0 &&

@@ -9,12 +9,20 @@ export const numAdd = (num1, num2) => {
     let baseNum1;
     let baseNum2;
     try {
-    baseNum1 = num1.toString().split('.')[1].length;
+      if (num1.toString().split('.')[1]) {
+        baseNum1 = num1.toString().split('.')[1].length;
+      } else {
+        baseNum1 = 0;
+      }
     } catch (e) {
     baseNum1 = 0;
     }
     try {
-    baseNum2 = num2.toString().split('.')[1].length;
+      if (num2.toString().split('.')[1]) {
+        baseNum2 = num2.toString().split('.')[1].length;
+      } else {
+        baseNum2 = 0;
+      }
     } catch (e) {
     baseNum2 = 0;
     }
@@ -33,12 +41,20 @@ export const numSub = (num1, num2) => {
   let baseNum2;
   let precision = 0;// 精度
   try {
-  baseNum1 = num1.toString().split('.')[1].length;
+    if (num1.toString().split('.')[1]) {
+      baseNum1 = num1.toString().split('.')[1].length;
+    } else {
+      baseNum1 = 0;
+    }
   } catch (e) {
-  baseNum1 = 0;
+    baseNum1 = 0;
   }
   try {
-  baseNum2 = num2.toString().split('.')[1].length;
+    if (num2.toString().split('.')[1]) {
+      baseNum2 = num2.toString().split('.')[1].length;
+    } else {
+      baseNum2 = 0;
+    }
   } catch (e) {
   baseNum2 = 0;
   }
@@ -55,10 +71,14 @@ export const numSub = (num1, num2) => {
 export const numMulti = (num1, num2) => {
   let baseNum = 0;
   try {
-  baseNum += num1.toString().split('.')[1].length;
+    if (num1.toString().split('.')[1]) {
+      baseNum += num1.toString().split('.')[1].length;
+    }
   } catch (e) { console.log(e); }
   try {
-  baseNum += num2.toString().split('.')[1].length;
+    if (num2.toString().split('.')[1]) {
+      baseNum += num2.toString().split('.')[1].length;
+    }
   } catch (e) { console.log(e); }
   return Number(num1.toString().replace('.', ''))
   * Number(num2.toString().replace('.', '')) / Math.pow(10, baseNum);

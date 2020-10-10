@@ -5,6 +5,7 @@ import AddCost from './AddCost';
 import style from './index.scss';
 import { getArrayColor, classifyIcon } from '../../../utils/constants';
 import { ddPreviewImage } from '../../../utils/ddApi';
+import { numMulti } from '../../../utils/float';
 
 class CostTable extends Component {
   constructor(props) {
@@ -56,13 +57,13 @@ class CostTable extends Component {
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span>¥{(record.costSum || 0)}</span>
+          <span>¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(record.costSum), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${record.costSum})` : record.costSum}</span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover
               content={(
                 <div className={style.share_cnt}>
-                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">分摊明细：金额 ¥{record.costSum}</p>
+                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">分摊明细：金额 ¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(record.costSum), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${record.costSum})` : record.costSum}</p>
                   {
                     record.costDetailShareVOS.map(it => (
                       <p key={it.id} className="c-black-36 fs-13">
@@ -71,7 +72,7 @@ class CostTable extends Component {
                           it.projectName &&
                           <span className="m-r-8">{it.projectName}</span>
                         }
-                        <span>¥{it.shareAmount}</span>
+                        <span>¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(it.shareAmount), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${it.shareAmount})` : it.shareAmount}</span>
                       </p>
                     ))
                   }
