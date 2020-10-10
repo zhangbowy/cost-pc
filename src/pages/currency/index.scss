@@ -1,0 +1,36 @@
+.circleGreen{
+    width: 6px;
+    height: 6px;
+    background: #00C795;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+.circleRed{
+    width: 6px;
+    height: 6px;
+    background: #F25643;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+.editImg{
+    width:16px;
+    cursor: pointer;
+    height: 16px;
+    vertical-align: text-bottom;
+    margin-left: 8px;
+}
+.alert{
+    width: 420px;
+    height: 40px;
+    background: rgba(0, 199, 149, 0.04);
+    border: 1px solid rgba(0, 199, 149, 0.65);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    margin-top: 11px;
+  }
+

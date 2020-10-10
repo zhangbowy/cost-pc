@@ -14,6 +14,11 @@ const menuData = [
     name: '中转页',
     myIcon: 'icongongzuotai',
     path: 'redirect',
+  },{
+    id: 'currency',
+    name: '多币种与汇率',
+    myIcon: 'icongongzuotai',
+    path: 'currency',
   },
   {
     id: 'payment',
