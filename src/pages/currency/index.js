@@ -226,8 +226,10 @@ class ApproveIndex extends Component {
                 rules: [
                   {
                     required: true,
+                    message: '请输入汇率!',
+                  },{
                     pattern: /^((\d{1,10}(\.{1}\d{1,4}))|\d{1,10})$/g,
-                    message: '请输入正确的汇率!',
+                    message: '汇率不能超过十位，最多保留4位小数!',
                   },
                 ],
               })(<Input defaultValue={this.state.defaultValue} />)}
