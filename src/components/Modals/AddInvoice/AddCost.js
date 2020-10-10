@@ -514,13 +514,22 @@ class AddCost extends Component {
 
   onChangeCurr = (option) => {
     console.log(option);
-    const lists = this.props.currencyList.filter(it => it.id === option);
-    this.setState({
-      currencyId: option,
-      currencyName: lists[0].name,
-      exchangeRate: lists[0].exchangeRate,
-      currencySymbol: lists[0].currencySymbol
-    });
+    if (option !== '-1') {
+      const lists = this.props.currencyList.filter(it => it.id === option);
+      this.setState({
+        currencyId: option,
+        currencyName: lists[0].name,
+        exchangeRate: lists[0].exchangeRate,
+        currencySymbol: lists[0].currencySymbol
+      });
+    } else {
+      this.setState({
+        currencyId: '-1',
+        currencyName: '人民币',
+        exchangeRate: '1',
+        currencySymbol: '¥'
+      });
+    }
   }
 
   render() {
@@ -732,10 +741,10 @@ class AddCost extends Component {
                             rules: [{ required: true, message: '请选择币种' }]
                           })(
                             <Select placeholder="请选择" onChange={this.onChangeCurr}>
-                              <Option key="-1">人民币</Option>
+                              <Option key="-1">RMB 人民币</Option>
                               {
                                 currencyList && currencyList.map(it => (
-                                  <Option key={it.id}>{it.name}</Option>
+                                  <Option key={it.id}>{it.currencyCode} {it.name}</Option>
                                 ))
                               }
                             </Select>
