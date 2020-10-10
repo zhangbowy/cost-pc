@@ -223,7 +223,7 @@ class InvoiceDetail extends Component {
                           it.projectName &&
                           <span className="m-r-8">{it.projectName}</span>
                         }
-                        <span>¥{it.shareAmount/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}</span>
+                        <span>¥{it.shareAmount/100}{it.currencySumStr ? `(${it.currencySumStr})` : ''}</span>
                       </p>
                     ))
                   }
