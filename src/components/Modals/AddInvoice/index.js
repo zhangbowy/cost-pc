@@ -17,7 +17,7 @@ import BorrowTable from './BorrowTable';
 import AddBorrow from './AddBorrow';
 import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
-import { numAdd, numSub } from '../../../utils/float';
+import { numAdd, numSub, numMulti } from '../../../utils/float';
 
 const {Option} = Select;
 const { TreeNode } = TreeSelect;
@@ -77,6 +77,10 @@ class AddInvoice extends Component {
     let detail = this.state.details;
     const { id, userInfo, templateType } = this.props;
     const _this = this;
+    this.props.dispatch({
+      type: 'global/getCurrency',
+      payload: {},
+    });
     if (!Number(templateType)) {
       this.props.dispatch({
         type: 'workbench/waitLists',
@@ -335,7 +339,9 @@ class AddInvoice extends Component {
     const loanEntities = [];
     const categorySumEntities = [];
     share.forEach(it => {
-      mo=numAdd(it.costSum, mo);
+      const moneys = it.exchangeRate ? Number(numMulti(it.exchangeRate, it.costSum)) : it.costSum;
+      console.log(moneys);
+      mo=numAdd(moneys, mo);
       if (it.costDetailShareVOS) {
         it.costDetailShareVOS.forEach(item => {
           loanEntities.push({
@@ -539,6 +545,8 @@ class AddInvoice extends Component {
             'imgUrl':item.imgUrl,
             'invoiceBaseId':id,
             costDetailShareVOS: [],
+            currencyId: item.currencyId,
+            currencyName: item.currencyName,
             expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
           });
           if (item.costDetailShareVOS) {

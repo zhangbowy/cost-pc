@@ -214,7 +214,7 @@ class InvoiceDetail extends Component {
             <Popover
               content={(
                 <div className={style.share_cnt}>
-                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">分摊明细：金额 ¥{record.costSum/100}</p>
+                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}</p>
                   {
                     record.costDetailShareVOS.map(it => (
                       <p key={it.id} className="c-black-36 fs-13">
@@ -223,7 +223,7 @@ class InvoiceDetail extends Component {
                           it.projectName &&
                           <span className="m-r-8">{it.projectName}</span>
                         }
-                        <span>¥{it.shareAmount/100}</span>
+                        <span>¥{it.shareAmount/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}</span>
                       </p>
                     ))
                   }
