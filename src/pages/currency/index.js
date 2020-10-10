@@ -226,7 +226,7 @@ class ApproveIndex extends Component {
                 rules: [
                   {
                     required: true,
-                    pattern: /^((\d{1,10}(\.{1}\d{1,4}))|\d+)$/g,
+                    pattern: /^((\d{1,10}(\.{1}\d{1,4}))|\d{1,10})$/g,
                     message: '请输入正确的汇率!',
                   },
                 ],
