@@ -17,7 +17,7 @@ import BorrowTable from './BorrowTable';
 import AddBorrow from './AddBorrow';
 import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
-import { numAdd } from '../../../utils/float';
+import { numAdd, numSub } from '../../../utils/float';
 
 const {Option} = Select;
 const { TreeNode } = TreeSelect;
@@ -380,7 +380,7 @@ class AddInvoice extends Component {
   //  选择借款
   onAddBorrow = (val) => {
     const detailList = [...val];
-    let money = this.state.total;
+    let money = Number(this.state.total);
     let assessSum = 0;
     if (money || (money === 0)) {
       detailList.forEach(it => {
@@ -398,7 +398,7 @@ class AddInvoice extends Component {
     }
     this.setState({
       borrowArr: detailList,
-      assessSum: assessSum.toFixed(2),
+      assessSum: Number(assessSum.toFixed(2)),
     });
   }
 
@@ -971,7 +971,7 @@ class AddInvoice extends Component {
                       <Divider type="vertical" />
                       <span className={cs('fs-15', 'c-black-50', style.moneyList)}>核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span></span>
                       <Divider type="vertical" />
-                      <span className={cs('fs-15', 'c-black-50', style.moneyList, 'm-r-8')}>收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum > 0 ? (total-assessSum) : 0}</span></span>
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList, 'm-r-8')}>收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum > 0 ? (numSub(total,assessSum)) : 0}</span></span>
                     </>
                   :
                     <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span></span>

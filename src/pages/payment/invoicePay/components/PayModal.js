@@ -31,6 +31,7 @@ class PayModal extends React.PureComponent {
       amount: 0,
       flag: false,
       status: '1',
+      prod: '已选单据有非支付宝收款账户，不支持线上支付',
     };
   }
 
@@ -55,6 +56,7 @@ class PayModal extends React.PureComponent {
       let cout = 1;
       let flags = false;
       let amount = 0;
+      let prod = '已选单据有非支付宝收款账户，不支持线上支付';
       if (defaultAccount && defaultAccount.length > 0) {
         acc = defaultAccount[0].id;
       }
@@ -70,6 +72,11 @@ class PayModal extends React.PureComponent {
             flags = true;
           }
         });
+        // eslint-disable-next-line eqeqeq
+        if (Number(amount) < 100) {
+          flags = true;
+          prod='已选单据付款金额小于1元，请线下支付并标记';
+        }
       }
 
       this.setState({
@@ -78,6 +85,7 @@ class PayModal extends React.PureComponent {
         count: cout,
         amount,
         flag: flags,
+        prod,
       }, () => {
         if (acc) {
           this.props.form.setFieldsValue({
@@ -96,6 +104,7 @@ class PayModal extends React.PureComponent {
     this.setState({
       visible: false,
       status: '1',
+      prod: '已选单据有非支付宝收款账户，不支持线上支付'
     });
   }
 
@@ -155,8 +164,9 @@ class PayModal extends React.PureComponent {
             confirms();
           } else {
             message.success('标记已付成功');
-            onOk();
           }
+          this.onCancel();
+          onOk(true);
           this.setState({
             visible: false,
           });
@@ -193,7 +203,6 @@ class PayModal extends React.PureComponent {
   }
 
   check = (rule, value, callback) => {
-    console.log('check');
     if (value) {
       const { getAliAccounts } = this.props;
       const arr = getAliAccounts.filter(it => it.payId === value);
@@ -214,7 +223,7 @@ class PayModal extends React.PureComponent {
       getAliAccounts,
       loading
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status } = this.state;
+    const { visible, defAcc, count, amount, flag, status, prod } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -259,8 +268,8 @@ class PayModal extends React.PureComponent {
               }
               {
                 flag &&
-                <Tooltip title="已选单据有非支付宝收款账户，不支持线上支付">
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                <Tooltip title={prod}>
+                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45" style={{ marginLeft: '-5px' }} />
                 </Tooltip>
               }
             </Form.Item>
