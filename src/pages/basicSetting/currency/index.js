@@ -5,7 +5,7 @@ import { Table, Form, Modal, Button, message, Input } from 'antd';
 import SubHeader from '@/components/SubHeader';
 import getDateUtil from '@/utils/tool';
 import addAvatar from '@/assets/img/allAvatars.png';
-import { formItemLayout } from '../../utils/constants';
+import { formItemLayout } from '@/utils/constants';
 import style from './index.scss';
 
 const { confirm } = Modal;
@@ -28,7 +28,6 @@ class ApproveIndex extends Component {
     visible: false,
     isOpen: false,
     currencyData:{},
-    defaultValue: ''
   }
 
   componentDidMount() {
@@ -59,10 +58,21 @@ class ApproveIndex extends Component {
   showModel = (record,isEdit) => {
     if(isEdit){
       this.setState({isOpen:false, currencyData: record, visible: true });
+      console.log(record.exchangeRate);
+      this.props.form.setFields({
+        exchangeRate: {
+          value: record.exchangeRate,
+        },
+      });
       return;
     }
     if(record.status){
       this.setState({isOpen:true, currencyData: record, visible: true });
+      this.props.form.setFields({
+        exchangeRate: {
+          value: '',
+        },
+      });
     }else{
       const payload = {
         currencyType: record.currencyType,
@@ -205,7 +215,6 @@ class ApproveIndex extends Component {
           onOk={this.handleOk}
           onCancel={() => { this.setState({visible: false}); }}
           okText="确认"
-          destroyOnClose
           width="480px"
           cancelText="取消"
           bodyStyle={{
@@ -228,11 +237,14 @@ class ApproveIndex extends Component {
                     required: true,
                     message: '请输入汇率!',
                   },{
-                    pattern: /^((\d{1,10}(\.{1}\d{1,4}))|\d{1,10})$/g,
-                    message: '汇率不能超过十位，最多保留4位小数!',
-                  },
+                    pattern: /^((\d{1,10}(\.{1}\d{1,4}))|([1-9]\d{0,9}))$/g,
+                    message: '汇率不能为0，最多保留4位小数!',
+                  },{
+                    max:10,
+                    message: '汇率不能超过十位'
+                  }
                 ],
-              })(<Input defaultValue={this.state.defaultValue} />)}
+              })(<Input />)}
             </Form.Item>
           </Form>
         </Modal>

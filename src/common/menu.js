@@ -14,11 +14,6 @@ const menuData = [
     name: '中转页',
     myIcon: 'icongongzuotai',
     path: 'redirect',
-  },{
-    id: 'currency',
-    name: '多币种与汇率',
-    myIcon: 'icongongzuotai',
-    path: 'currency',
   },
   {
     id: 'payment',
@@ -89,6 +84,10 @@ const menuData = [
       id: 'basicSetting_workpay',
       name: '花呗工作花',
       path: 'workpay',
+    },{
+      id: 'basicSetting_currency',
+      name: '多币种与汇率',
+      path: 'currency',
     }, {
       id: 'basicSetting_controller',
       name: '控制中心',
