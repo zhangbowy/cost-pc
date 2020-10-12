@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Table, Form, Modal, Button, message, Input } from 'antd';
+import { Table, Form, Modal, Button, message, Input, Icon } from 'antd';
 import SubHeader from '@/components/SubHeader';
 import getDateUtil from '@/utils/tool';
-import addAvatar from '@/assets/img/allAvatars.png';
 import { formItemLayout } from '@/utils/constants';
+// import addAvatar from '@/assets/img/allAvatars.png';
 import style from './index.scss';
 
 const { confirm } = Modal;
@@ -157,7 +157,7 @@ class ApproveIndex extends Component {
       render: (text,record) => (
         <span>
           {(!record.status&&text)?text:''}
-          {(!record.status&&text)?<img className={style.editImg} src={addAvatar} onClick={()=>{ this.showModel(record,true); }} alt="..." />:''}
+          {(!record.status&&text)?<Icon type="form" className="sub-color m-l-8" onClick={()=>{ this.showModel(record,true); }} />:''}
         </span>
       ),
     }, {
@@ -221,7 +221,7 @@ class ApproveIndex extends Component {
             height: '220px',
           }}
         >
-          { isOpen && 
+          { isOpen &&
             <div className={style.alert}>
               <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" style={{marginTop: '-4px'}} />
               <span className="c-black-65">

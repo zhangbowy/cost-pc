@@ -287,6 +287,7 @@ export const costClassify = [{
   status: true,
   isWrite: false,
   note: '',
+  dateType: '1',
 }, {
   key: 'costNote',
   field: 'costNote',

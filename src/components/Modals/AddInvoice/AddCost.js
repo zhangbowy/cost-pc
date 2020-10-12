@@ -121,6 +121,10 @@ class AddCost extends Component {
       showField: {}, // 是否展示
       shareAmount: 0,
       costSum: 0,
+      currencyId: '-1',
+      currencyName: '',
+      exchangeRate: '1',
+      currencySymbol: '¥',
     });
   }
 
@@ -734,7 +738,7 @@ class AddCost extends Component {
                 {
                   currencyShow ?
                     <Col span={12}>
-                      <Form.Item label="汇率" {...formItemLayouts}>
+                      <Form.Item label="币种" {...formItemLayouts}>
                         {
                           getFieldDecorator('currencyId', {
                             initialValue: details.currencyId || '-1',
