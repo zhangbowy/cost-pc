@@ -208,7 +208,7 @@ class InvoiceDetail extends Component {
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span>¥{(record.costSum || 0)/100}</span>
+          <span>{record.currencySumStr ? `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}</span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover
@@ -236,7 +236,7 @@ class InvoiceDetail extends Component {
         </span>
       ),
       className: 'moneyCol',
-      width: 200
+      width: '250px'
     }, {
       title: '发生日期',
       dataIndex: 'happenTime',

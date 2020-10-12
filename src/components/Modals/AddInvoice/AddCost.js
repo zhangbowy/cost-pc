@@ -121,6 +121,10 @@ class AddCost extends Component {
       showField: {}, // 是否展示
       shareAmount: 0,
       costSum: 0,
+      currencyId: '-1',
+      currencyName: '',
+      exchangeRate: '1',
+      currencySymbol: '¥',
     });
   }
 

@@ -83,7 +83,8 @@ class CostTable extends Component {
             </Popover>
           }
         </span>
-      )
+      ),
+      width: '250px'
     }, {
       title: '发生日期',
       dataIndex: 'happenTime',
@@ -136,6 +137,7 @@ class CostTable extends Component {
           </AddCost>
         </span>
       ),
+      fixed: 'right'
     }];
     if (list && list[0].expandCostDetailFieldVos) {
       const arr = [];
@@ -173,7 +175,7 @@ class CostTable extends Component {
         <Table
           dataSource={newList}
           columns={columns}
-          scroll={{x: newList.length > 6 ? '1200px' : '1000px'}}
+          scroll={{x: newList.length > 6 ? '1400px' : '1200px'}}
           rowKey="field"
           pagination={false}
         />
