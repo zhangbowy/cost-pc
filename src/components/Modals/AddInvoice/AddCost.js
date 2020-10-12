@@ -745,7 +745,7 @@ class AddCost extends Component {
                             rules: [{ required: true, message: '请选择币种' }]
                           })(
                             <Select placeholder="请选择" onChange={this.onChangeCurr}>
-                              <Option key="-1">RMB 人民币</Option>
+                              <Option key="-1">CNY 人民币</Option>
                               {
                                 currencyList && currencyList.map(it => (
                                   <Option key={it.id}>{it.currencyCode} {it.name}</Option>
