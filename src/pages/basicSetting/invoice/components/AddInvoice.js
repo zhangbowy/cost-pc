@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, message } from 'antd';
-import constants, { defaultTitle, costCategoryJson, templateTypeList } from '@/utils/constants';
+import constants, { defaultTitle, invoiceJson, templateTypeList, costCategoryJson } from '@/utils/constants';
 import cs from 'classnames';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
@@ -8,7 +8,7 @@ import { JsonParse } from '@/utils/common';
 import styles from './classify.scss';
 import Basic from './Basic';
 import Field from './Field';
-import { borrowJson } from '../../../../utils/constants';
+// import { borrowJson, applyJson } from '../../../../utils/constants';
 
 @connect(({ global, session, invoice }) => ({
   costCategoryList: global.costCategoryList,
@@ -26,9 +26,8 @@ class AddInvoice extends React.PureComponent {
       visible: false,
       left: 'basic',
       categoryList: [],
-
       data: {
-        showFields: Number(props.templateType) ? borrowJson : costCategoryJson,
+        showFields: props.templateType ? invoiceJson[props.templateType].jsonStr : costCategoryJson,
         expandField: []
       }
     };
@@ -144,7 +143,7 @@ class AddInvoice extends React.PureComponent {
             },
           }).then(() => {
             const { expandLists } = this.props;
-            const showDefault = templateType && Number(templateType) ? [...borrowJson] : [...costCategoryJson];
+            const showDefault = templateType && Number(templateType) ? invoiceJson[templateType].jsonStr : [...costCategoryJson];
             if (expandLists && expandLists.length > 0) {
               const oldArr = [...expandLists];
               oldArr.unshift(2,0);

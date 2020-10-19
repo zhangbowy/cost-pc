@@ -7,7 +7,6 @@
 import React, { PureComponent } from 'react';
 import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover, Radio, Tooltip } from 'antd';
 import { connect } from 'dva';
-import cs from 'classnames';
 import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { workbenchStatus, getArrayValue, invoiceStatus, approveStatus } from '@/utils/constants';
@@ -16,8 +15,7 @@ import Search from 'antd/lib/input/Search';
 import banner from '@/assets/img/banner.png';
 import adCode from '@/assets/img/adCode.png';
 import style from './index.scss';
-import AddCategory from '../../components/AddCategory';
-import AddInvoice from '../../components/Modals/AddInvoice';
+import Header from './components/Header';
 import StepShow from '../../components/StepShow';
 import { accountType, loanStatus } from '../../utils/constants';
 
@@ -157,7 +155,7 @@ class Workbench extends PureComponent {
   }
 
   render() {
-    const { list, OftenTemplate, total, query, UseTemplate, userInfo, loading, loanSum } = this.props;
+    const { list, total, query, userInfo, loading, loanSum } = this.props;
     const { huaVisible, typeLeft, type } = this.state;
     const columns = [{
       title: '事由',
@@ -364,38 +362,7 @@ class Workbench extends PureComponent {
             :
             <>
               <div className={style.app_header}>
-                <p className="fs-14 fw-500 c-black-85 m-b-8">常用单据（点击直接新建）</p>
-                <div className={style.header_cnt}>
-                  <AddCategory
-                    OftenTemplate={OftenTemplate}
-                    UseTemplate={UseTemplate}
-                    onHandleOk={this.onHandleOk}
-                  >
-                    <div className={style.header_add}>
-                      <div className={style.header_add_mc} />
-                      <i className="iconfont iconxinzengbaoxiao" />
-                      <p>我要报销</p>
-                    </div>
-                  </AddCategory>
-                  {
-                    OftenTemplate.map(item => (
-                      <AddInvoice
-                        id={item.id}
-                        onHandleOk={this.onHandleOk}
-                        key={item.id}
-                        templateType={item.templateType}
-                      >
-                        <div key={item.id} className={cs(style.offten, 'm-l-20')}>
-                          <i className="iconfont icondanju" style={{color: item.templateType && Number(item.templateType) ? 'rgba(38, 128, 242, 0.37)' : 'rgba(0, 199, 149, 0.37)'}} />
-                          <div className={style.cost_cnt}>
-                            <span className="fw-500 fs-14 c-black-85 li-22 m-b-2 eslips-1">{item.name}</span>
-                            <span className="fs-12 c-black-45 eslips-1">{item.note || '暂无备注'}</span>
-                          </div>
-                        </div>
-                      </AddInvoice>
-                    ))
-                  }
-                </div>
+                <Header />
               </div>
               <div className="content-dt" style={{ padding: 0 }}>
                 <div style={{ marginBottom: '24px' }}>

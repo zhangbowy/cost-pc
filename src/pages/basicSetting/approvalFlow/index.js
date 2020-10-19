@@ -14,6 +14,9 @@ const approvePersonList = [{
 }, {
   key: '1',
   value: '借款单审批流'
+}, {
+  key: '2',
+  value: '申请单审批流'
 }];
 function ApprovalFlow(props) {
 

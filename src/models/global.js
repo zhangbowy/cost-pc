@@ -384,6 +384,10 @@ export default {
     *addLoan({ payload }, { call }) {
       yield call(post, api.addLoan, payload);
     },
+    // 添加申请单(单据)
+    *addApply({ payload }, { call }) {
+      yield call(post, api.addApply, payload);
+    },
     // 批量下单
     *addBatch({ payload }, { call, put }) {
       const response = yield call(post, api.addBatch, payload);
@@ -480,6 +484,16 @@ export default {
         payload: {
           currencyShow: response.isShow || false,
           currencyList: response.currencyList || [],
+        },
+      });
+    },
+    // 获取可关联的申请单
+    *getApplyList({ payload }, { call, put }) {
+      const response = yield call(get, api.applyList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          applyList: response || false,
         },
       });
     },

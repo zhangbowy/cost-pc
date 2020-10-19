@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Table, TreeSelect, InputNumber, Select, DatePicker, message } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, Button, Table, InputNumber, Select, DatePicker, message, TreeSelect, Tree } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
@@ -12,8 +12,10 @@ import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import { numAdd, numMulti } from '../../../utils/float';
+// import TreeCatogory from './TreeCatogory';
 
 const { Option } = Select;
+const { TreeNode } = Tree;
 const { RangePicker } = DatePicker;
 const labelInfo = {
   costName: '费用类别',
@@ -136,7 +138,7 @@ class AddCost extends Component {
       name: 'costName',
       tId: 'value',
       tName: 'title',
-      otherKeys: ['type','showField']
+      otherKeys: ['type','showField', 'icon']
     }, expenseList);
     function addParams(lists){
       lists.forEach(it => {
@@ -396,8 +398,53 @@ class AddCost extends Component {
     }
   }
 
+  // 循环渲染树结构
+  loop = data => data.map(item => {
+    if (item.children && item.children.length) {
+      return (
+        <TreeNode
+          key={item.value}
+          label={item.title}
+          value={item.value}
+          disabled={item.disabled}
+          title={(
+            <div>
+              {
+                item.type ?
+                  <i className={cs(`icon${item.icon}`, 'iconfont')} />
+                  :
+                  null
+              }
+              <span>{item.title}</span>
+            </div>
+          )}
+        >
+          {this.loop(item.children)}
+        </TreeNode>
+      );
+    }
+    return <TreeNode
+      key={item.value}
+      label={item.title}
+      value={item.value}
+      disabled={item.disabled}
+      title={(
+        <div className="icons">
+          {
+            item.type ?
+              <i className={cs(`icon${item.icon}`, 'iconfont')} />
+              :
+              null
+          }
+          <span>{item.title}</span>
+        </div>
+      )}
+    />;
+  });
+
   // 选择费用类别
   onChange = (val, types) => {
+    console.log(val, types);
     let detail = this.state.details;
     const showFields = {};
     let costDate = 0;
@@ -724,13 +771,14 @@ class AddCost extends Component {
                         rules: [{ required: true, message: '请选择费用类别' }]
                       })(
                         <TreeSelect
-                          treeData={list}
                           placeholder="请选择"
                           onChange={this.onChange}
                           style={{width: '100%'}}
                           treeDefaultExpandAll
                           dropdownStyle={{height: '300px'}}
-                        />
+                        >
+                          {this.loop(list)}
+                        </TreeSelect>
                       )
                     }
                   </Form.Item>

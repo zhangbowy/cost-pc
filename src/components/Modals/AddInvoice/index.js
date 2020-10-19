@@ -18,6 +18,8 @@ import AddBorrow from './AddBorrow';
 import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
+import AddApply from './AddApply';
+import { invoiceJson } from '../../../utils/constants';
 
 const {Option} = Select;
 const { TreeNode } = TreeSelect;
@@ -101,6 +103,10 @@ class AddInvoice extends Component {
       payload: {
         userJson: JSON.stringify(userJson),
       }
+    });
+    await this.props.dispatch({
+      type: 'global/getApplyList',
+      payload: {}
     });
     const create = await _this.props.deptInfo;
     await this.setState({
@@ -568,9 +574,14 @@ class AddInvoice extends Component {
           ...params,
           costDetailsVo: arr,
         };
-        if(Number(templateType)) {
+        if(Number(templateType) === 1) {
           Object.assign(params, {
             loanSum: (val.loanSum*1000)/10,
+            repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
+          });
+        } else if (Number(templateType) === 2) {
+          Object.assign(params, {
+            applicationSum: (val.applicationSum*1000)/10,
             repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
           });
         }
@@ -591,7 +602,7 @@ class AddInvoice extends Component {
   onSubmit = (params) => {
     const { dispatch, templateType } = this.props;
     dispatch({
-      type: Number(templateType) ? 'global/addLoan' : 'global/addInvoice',
+      type: templateType ? invoiceJson[templateType].addUrl : 'global/addInvoice',
       payload : {
         ...params,
         templateType
@@ -1138,6 +1149,30 @@ class AddInvoice extends Component {
                   </Col>
                 }
                 {
+                  showField.applicationSum && showField.applicationSum.status &&
+                  <Col span={12}>
+                    <Form.Item label={showField.applicationSum && showField.applicationSum.name} {...formItemLayout}>
+                      {
+                        getFieldDecorator('applicationSum', {
+                          initialValue: details.applicationSum || '',
+                          rules: [{
+                            required: !!(showField.applicationSum && showField.applicationSum.isWrite),
+                            message: `请输入${showField.applicationSum && showField.applicationSum.name}`
+                          }, {
+                            validator: this.checkMoney
+                          }]
+                        })(
+                          <InputNumber
+                            onChange={val => this.inputMoney(val)}
+                            placeholder={`请输入${showField.applicationSum && showField.applicationSum.name}`}
+                            style={{width: '100%'}}
+                          />
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                }
+                {
                   showField.repaymentTime && showField.repaymentTime.status &&
                   <Col span={12}>
                     <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
@@ -1358,6 +1393,21 @@ class AddInvoice extends Component {
                   </div>
                 </div>
               </>
+            }
+            {
+              Number(templateType) !== 2 ?
+                <>
+                  <Divider type="horizontal" />
+                  <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                    <div className={style.header} style={{padding: 0}}>
+                      <div className={style.line} />
+                      <span>关联申请单</span>
+                    </div>
+                    <AddApply />
+                  </div>
+                </>
+                :
+                null
             }
             <Divider type="horizontal" />
             <div style={{paddingTop: '24px', paddingBottom: '30px'}}>

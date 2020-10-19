@@ -1,9 +1,11 @@
 /* eslint-disable react/no-access-state-in-setstate */
 import React from 'react';
-import { Table, Switch, Form, Button, Divider, Popconfirm, message } from 'antd';
+import { Table, Switch, Form, Button, Divider, Popconfirm, message, Select } from 'antd';
 import style from './classify.scss';
 import AddFieldStr from '../../../../components/Modals/AddFieldStr/add';
+import { dataType } from '../../../../utils/constants';
 
+const Option = { Select };
 @Form.create()
 class Field extends React.PureComponent {
   constructor(props) {
@@ -47,6 +49,11 @@ class Field extends React.PureComponent {
             isWrite: values[`isWrite_${item.field}`],
             note: values[`note_${item.field}`],
           });
+          if (item.dateType) {
+            Object.assign(item, {
+              dateType: values[`dateType_${item.field}`],
+            });
+          }
         });
         expandList = list.filter(it => (it.field.indexOf('expand_field')> -1));
       } else {
@@ -158,6 +165,24 @@ class Field extends React.PureComponent {
       render: (_, record) => {
         return (
           <span>
+            {
+              record.dateType &&
+              <Form.Item key="dateType">
+                {
+                  getFieldDecorator(`dateType_${record.field}`, {
+                    initialValue: record.dateType || '1',
+                  })(
+                    <Select style={{width: '100px'}}>
+                      {
+                        dataType.map(item => (
+                          <Option key={item.key}>{item.value}</Option>
+                        ))
+                      }
+                    </Select>
+                  )
+                }
+              </Form.Item>
+            }
             {
               (record.expand) || (record.field && record.field.indexOf('expand_field') > -1) &&
               <span>

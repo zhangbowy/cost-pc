@@ -182,6 +182,80 @@ export const costCategoryJson = [{
   note: '',
 }];
 
+export const applyJson = [{
+  key: 'reason',
+  field: 'reason',
+  name: '事由',
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'userJson',
+  field: 'userJson',
+  name: '申请人',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'deptId',
+  field: 'deptId',
+  name: '申请部门',
+  status: true,
+  isWrite: true,
+  note: '',
+}, {
+  key: 'applicationSum',
+  field: 'applicationSum',
+  name: '申请金额',
+  status: true,
+  isWrite: true,
+  note: '',
+  disabled: false,
+}, {
+  key: 'repaymentTime',
+  field: 'repaymentTime',
+  name: '发生日期',
+  status: true,
+  isWrite: true,
+  note: '',
+  dateType: '1',
+}, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'supplier',
+  field: 'supplier',
+  name: '供应商',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'note',
+  field: 'note',
+  name: '单据备注',
+  status: false,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'imgUrl',
+  field: 'imgUrl',
+  name: '图片',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
+  key: 'fileUrl',
+  field: 'fileUrl',
+  name: '附件',
+  status: true,
+  isWrite: false,
+  note: '',
+}];
+
 export const borrowJson = [{
   key: 'reason',
   field: 'reason',
@@ -817,5 +891,21 @@ export const workbenchStatus = [{
 // 单据类型
 export const templateTypeList = {
   '0': '报销单',
-  '1': '借款单'
+  '1': '借款单',
+  '2': '申请单'
+};
+
+export const invoiceJson = {
+  '0': {
+    jsonStr: costCategoryJson,
+    addUrl: 'global/addInvoice',
+  },
+  '1': {
+    jsonStr: borrowJson,
+    addUrl: 'global/addLoan',
+  },
+  '2': {
+    jsonStr: applyJson,
+    addUrl: 'global/addApply',
+  }
 };
