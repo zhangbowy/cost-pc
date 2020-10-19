@@ -551,7 +551,9 @@ export const bankList = [
   '浦发银行',
   '招商银行',
   '中国工商银行',
-  '广发银行'
+  '广发银行',
+  '北京银行',
+  '其他'
 ];
 
 export const repeatMethod = [{
