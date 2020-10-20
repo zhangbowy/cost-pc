@@ -45,7 +45,9 @@ class Workbench extends PureComponent {
   }
 
   componentDidMount() {
-    wave.init();
+    if (document.querySelector('#svg-area')) {
+      wave.init();
+    }
     this.onQuery({
       type: '1',
       pageNo: 1,
