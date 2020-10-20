@@ -140,4 +140,12 @@
 .onreset{
   color: rgba(0, 0, 0, 0.45);
   cursor: pointer;
+  line-height: 40px;
+}
+.searchs{
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
 }

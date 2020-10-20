@@ -18,9 +18,10 @@ import style from './index.scss';
 import Header from './components/Header';
 import HeadLeft from './components/HeadLeft';
 import StepShow from '../../components/StepShow';
-import { accountType, loanStatus, formItemLayout } from '../../utils/constants';
+import { accountType, loanStatus } from '../../utils/constants';
 import wave from '../../utils/wave';
 
+@Form.create()
 @connect(({ loading, workbench, session }) => ({
   loading: loading.effects['workbench/list'] || false,
   list: workbench.list,
@@ -33,7 +34,6 @@ import wave from '../../utils/wave';
   huaVisible: workbench.huaVisible
 }))
 class Workbench extends PureComponent {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -379,21 +379,24 @@ class Workbench extends PureComponent {
               </div>
               <div className="content-dt" style={{ padding: 0 }}>
                 <div style={{ margin: '0 32px' }}>
-                  <div className="m-b-16" style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <Form layout="inline">
-                      <Form.Item label="单据状态" {...formItemLayout}>
-                        <Select>
+                  <p className="fw-500 fs-14 c-black-85 m-t-16 m-b-16">我发起的单据</p>
+                  <div className={style.searchs}>
+                    <Form layout="inline" style={{display: 'flex'}}>
+                      <Form.Item label="单据状态" style={{marginRight: '24px'}}>
+                        <Select style={{width: '160px'}}>
                           <Select.Option value="false">未完成</Select.Option>
+                          <Select.Option value="true">已完成</Select.Option>
+                          <Select.Option value="all">全部</Select.Option>
                         </Select>
                       </Form.Item>
-                      <Form.Item label="单据类型" {...formItemLayout}>
-                        <Select>
+                      <Form.Item label="单据类型" style={{marginRight: '24px'}}>
+                        <Select style={{width: '160px'}}>
                           <Select.Option value="false">未完成</Select.Option>
                         </Select>
                       </Form.Item>
                       <div className={style.onreset}>
                         <Icon type="sync" />
-                        <span>重置</span>
+                        <span className="m-l-4">重置</span>
                       </div>
                     </Form>
                     <Search
@@ -416,6 +419,7 @@ class Workbench extends PureComponent {
                       current: query.pageNo,
                       onChange: (pageNumber) => {
                         const { reason } = this.state;
+                        console.log('onChange');
                         this.onQuery({
                           pageNo: pageNumber,
                           pageSize: query.pageSize,
@@ -430,6 +434,7 @@ class Workbench extends PureComponent {
                       showQuickJumper: true,
                       onShowSizeChange: (cur, size) => {
                         const { reason } = this.state;
+                        console.log('翻页');
                         this.onQuery({
                           type: Number(type) === 0 ? typeLeft : type,
                           reason,

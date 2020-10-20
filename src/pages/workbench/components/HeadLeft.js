@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 // import PropTypes from 'prop-types';
 import style from './index.scss';
+import SelectInvoice from '../../../components/Modals/SelectInvoice';
 
 function HeadLeft() {
   return (
@@ -9,7 +10,9 @@ function HeadLeft() {
       <div className={style.btns}>
         <Button type="primary" className="m-r-8">
           <i className="iconfont iconPCxinzengdanju fs-18" />
-          <span className="m-l-4">提单据</span>
+          <SelectInvoice>
+            <span className="m-l-4">提单据</span>
+          </SelectInvoice>
         </Button>
         <Button type="primary" ghost>
           <i className="iconfont iconjiyibi fs-14 sub-color" />

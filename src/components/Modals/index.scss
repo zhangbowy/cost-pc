@@ -1,0 +1,51 @@
+.slInLeft{
+  width: 184px;
+  p{
+    margin-bottom: 0px;
+  }
+  .namePro{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    .name{
+      width: 140px;
+    }
+  }
+  .active{
+    color: rgba(0, 0, 0, 0.85)!important;
+  }
+  .scroll{
+    height: 350px;
+    overflow: scroll;
+    margin-top: 12px;
+  }
+}
+.slRight{
+  height: 372px;
+  overflow: scroll;
+  margin-left: 32px;
+  .tags{
+    width: 242px;
+    height: 60px;
+    background: #FAFBFB;
+    border-radius: 4px;
+    display: flex;
+    padding: 12px;
+    margin-bottom: 12px;
+    margin-right: 12px;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    border: 1px solid #fff;
+    p{
+      margin-bottom: 0;
+    }
+  }
+  .tags:hover{
+    border: 1px solid #E9E9E9;
+  }
+}
+.scrollCont{
+  display: flex;
+}
