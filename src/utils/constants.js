@@ -19,6 +19,7 @@ export default {
   DEVICEID_KEY: 'framework_deviceId',
   APP_API,
   APP_NAME,
+  APP_VER,
   isInDingTalk: typeof version === 'string',
   classify: [{
     key: 'basic',
@@ -538,6 +539,10 @@ export const invoiceStatus = [
 {
   key: '5',
   value: '已拒绝'
+},
+{
+  key: '6',
+  value: '已还款'
 }];
 
 // 审批状态
@@ -909,3 +914,8 @@ export const invoiceJson = {
     addUrl: 'global/addApply',
   }
 };
+
+export const newInvoiceStatus = [{
+  key: '',
+  value: ''
+}];

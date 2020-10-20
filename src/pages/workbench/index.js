@@ -5,19 +5,21 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover, Radio, Tooltip } from 'antd';
+import { Table, Badge, Popconfirm, Divider, Modal, Button, Icon, Popover, Tooltip, Form, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import MenuItems from '@/components/AntdComp/MenuItems';
-import { workbenchStatus, getArrayValue, invoiceStatus, approveStatus } from '@/utils/constants';
+import { getArrayValue, invoiceStatus, approveStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
 import banner from '@/assets/img/banner.png';
 import adCode from '@/assets/img/adCode.png';
+import HeadRight from '@/pages/workbench/components/HeadRight';
 import style from './index.scss';
 import Header from './components/Header';
+import HeadLeft from './components/HeadLeft';
 import StepShow from '../../components/StepShow';
-import { accountType, loanStatus } from '../../utils/constants';
+import { accountType, loanStatus, formItemLayout } from '../../utils/constants';
+import wave from '../../utils/wave';
 
 @connect(({ loading, workbench, session }) => ({
   loading: loading.effects['workbench/list'] || false,
@@ -43,10 +45,15 @@ class Workbench extends PureComponent {
   }
 
   componentDidMount() {
+    wave.init();
     this.onQuery({
       type: '1',
       pageNo: 1,
       pageSize: 10,
+    });
+    this.props.dispatch({
+      type: 'workbench/personal',
+      payload: {}
     });
     this.props.dispatch({
       type: 'workbench/costList',
@@ -364,32 +371,34 @@ class Workbench extends PureComponent {
               <div className={style.app_header}>
                 <Header />
               </div>
+              <div className={style.ad}>
+                <HeadLeft />
+                <HeadRight />
+              </div>
               <div className="content-dt" style={{ padding: 0 }}>
-                <div style={{ marginBottom: '24px' }}>
-                  <MenuItems
-                    lists={workbenchStatus}
-                    onHandle={(val) => this.handleClick(val)}
-                    status="1"
-                  />
-                </div>
                 <div style={{ margin: '0 32px' }}>
                   <div className="m-b-16" style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <Form layout="inline">
+                      <Form.Item label="单据状态" {...formItemLayout}>
+                        <Select>
+                          <Select.Option value="false">未完成</Select.Option>
+                        </Select>
+                      </Form.Item>
+                      <Form.Item label="单据类型" {...formItemLayout}>
+                        <Select>
+                          <Select.Option value="false">未完成</Select.Option>
+                        </Select>
+                      </Form.Item>
+                      <div className={style.onreset}>
+                        <Icon type="sync" />
+                        <span>重置</span>
+                      </div>
+                    </Form>
                     <Search
                       placeholder="单号、事由、收款账户名称"
                       style={{ width: '272px' }}
                       onSearch={(e) => this.onSearch(e)}
                     />
-                    {
-                      !Number(type) &&
-                      <Radio.Group
-                        onChange={e => this.onChangeType(e)}
-                        className="m-r-16"
-                        value={typeLeft}
-                      >
-                        <Radio.Button value="8">报销单</Radio.Button>
-                        <Radio.Button value="9">借款单</Radio.Button>
-                      </Radio.Group>
-                    }
                   </div>
                   {
                     Number(type) === 7 &&

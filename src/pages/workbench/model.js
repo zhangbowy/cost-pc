@@ -20,6 +20,7 @@ export default {
     waitLoanSum: {},
     waitLists: [],
     waitLoanSums: {},
+    personal: {}, // 个人信息
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -35,6 +36,15 @@ export default {
           },
           total: res.page.total || 0,
           loanSum: response.loanSum || {}
+        },
+      });
+    },
+    *personal({ payload }, { call, put }) {
+      const response = yield call(get, api.personal, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          personal: response || {},
         },
       });
     },

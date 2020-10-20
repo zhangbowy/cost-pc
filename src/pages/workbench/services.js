@@ -11,4 +11,5 @@ export default {
   waitList: `${APP_API}/cost/invoice/loan/waitAssessList`, // 我的待核销列表
   ejectFrame: `${APP_API}/cost/eject/frame`,
   unRemind: `${APP_API}/cost/eject/unRemind`,
+  personal:  `${APP_API}/cost/invoice/base/personal`,
 };

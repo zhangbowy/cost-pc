@@ -4,7 +4,110 @@
   background-size: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  position: relative;
+  .wave-container{
+    position: absolute;
+    background-color: #ffffff!important;
+    width: 100%;
+    height: 150px;
+  }
   p{
     margin-bottom: 0px;
+  }
+  .headerLeft{
+    display: flex;
+    margin-left: 32px;
+    height: 72px;
+    position: relative;
+    z-index: 100;
+    align-items: center;
+  }
+  .headerRight{
+    height: 118px;
+    margin-right: 32px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+  }
+  .headTag{
+    height: 118px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    cursor: pointer;
+    justify-content: center;
+  }
+  .hdLoan:hover{
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+  .loan{
+    color: rgba(255, 90, 95, 1);
+  }
+  .lines{
+    width: 1px;
+    height: 40px;
+    display: block;
+    background-color: rgba(233, 233, 233, 1);
+    margin: 0 14px;
+  }
+  .cost{
+    color: rgba(57, 123, 254, 1);
+  }
+  .caogao{
+    color: rgba(255, 204, 12, 1);
+  }
+}
+
+// 广告的左侧操作栏
+.headLeftC{
+  background-color: #ffffff;
+  height: 182px;
+  border-radius: 4px;
+  padding: 32px;
+  flex: 1;
+  .btns{
+    margin-bottom: 24px;
+  }
+  .tags{
+    height: 40px;
+    background: #F7F8FA;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 12px;
+    cursor: pointer;
+  }
+  .iconfonts{
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.1);
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    :global(.iconfont){
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+}
+// 广告
+.banner{
+  width: 494px;
+  height: 185px;
+  border-radius: 4px;
+  margin-left: 24px;
+  img{
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
   }
 }
