@@ -1,17 +1,16 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, Button, Table, InputNumber, Select, DatePicker, message, TreeSelect, Tree } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
 import moment from 'moment';
 import { JsonParse } from '@/utils/common';
 import TextArea from 'antd/lib/input/TextArea';
-import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
-import { numAdd, numMulti } from '../../../utils/float';
+import AddCostTable from './AddCostTable';
 // import TreeCatogory from './TreeCatogory';
 
 const { Option } = Select;
@@ -25,7 +24,7 @@ const labelInfo = {
   happenTime: '发生日期'
 };
 @Form.create()
-@connect(({ global }) => ({
+@connect(({ global, costGlobal }) => ({
   expenseList: global.expenseList,
   deptInfo: global.deptInfo,
   userId: global.userId,
@@ -33,6 +32,8 @@ const labelInfo = {
   lbDetail: global.lbDetail,
   currencyList: global.currencyList,
   currencyShow: global.currencyShow,
+  costCategoryList: global.costCategoryList,
+  detailFolder: costGlobal.detailFolder,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -75,6 +76,7 @@ class AddCost extends Component {
 
   onShow = async() => {
     const _this = this;
+    const { costType, id } = this.props;
     await this.props.dispatch({
       type: 'global/users',
       payload: {
@@ -85,31 +87,75 @@ class AddCost extends Component {
     this.setState({
       initDep: dep,
     });
-    this.props.dispatch({
-      type: 'global/expenseList',
-      payload: {
-        id: this.props.invoiceId
-      }
-    }).then(() => {
-      const { index, detail, expandField } = this.props;
-      console.log(index, detail);
-      if (index === 0 || index) {
+    if (costType) {
+      this.props.dispatch({
+        type: 'global/costList',
+        payload: {},
+      }).then(() => {
+        if (id) {
+          this.props.dispatch({
+            type: 'costGlobal/detailFolder',
+            payload: {
+              id,
+            }
+          }).then(() => {
+            const { detailFolder } = this.props;
+            let shareAmount = 0;
+            const arr = detailFolder.costDetailShareVOS.map(it => {
+              shareAmount+=it.shareAmount;
+              return {
+                ...it,
+                key: it.id,
+                shareScale: it.shareScale/100,
+                shareAmount: it.shareAmount/100,
+              };
+            });
+            this.setState({
+              details: {
+                ...detailFolder,
+                costSum: detailFolder.costSum/100,
+              },
+              shareAmount: shareAmount/100,
+              costDetailShareVOS: arr,
+              currencyId: detailFolder.currencyId,
+              currencyName: detailFolder.currencyName,
+              exchangeRate: detailFolder.exchangeRate,
+              currencySymbol: detailFolder.currencySymbol,
+            }, () => {
+              this.onChange(detailFolder.categoryId, 'edit');
+            });
+          });
+        }
         this.setState({
-          details: detail,
-          costDetailShareVOS: detail.costDetailShareVOS,
-          expandField,
-          imgUrl: detail.imgUrl || [],
-          costSum: detail.costSum,
-          shareAmount: detail.shareTotal,
-        }, () => {
-          this.onChange(this.props.detail.categoryId, 'edit');
+          visible: true,
         });
-      }
-      this.setState({
-        visible: true,
       });
-    });
-
+    } else {
+      this.props.dispatch({
+        type: 'global/expenseList',
+        payload: {
+          id: this.props.invoiceId
+        }
+      }).then(() => {
+        const { index, detail, expandField } = this.props;
+        console.log(index, detail);
+        if (index === 0 || index) {
+          this.setState({
+            details: detail,
+            costDetailShareVOS: detail.costDetailShareVOS,
+            expandField,
+            imgUrl: detail.imgUrl || [],
+            costSum: detail.costSum,
+            shareAmount: detail.shareTotal,
+          }, () => {
+            this.onChange(this.props.detail.categoryId, 'edit');
+          });
+        }
+        this.setState({
+          visible: true,
+        });
+      });
+    }
   }
 
   onCancel = () => {
@@ -131,7 +177,8 @@ class AddCost extends Component {
   }
 
   onSelectTree = () => {
-    const { expenseList } = this.props;
+    const { expenseList, costCategoryList, costType } = this.props;
+    const newList = costType ? costCategoryList : expenseList;
     const list = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -139,7 +186,7 @@ class AddCost extends Component {
       tId: 'value',
       tName: 'title',
       otherKeys: ['type','showField', 'icon']
-    }, expenseList);
+    }, newList);
     function addParams(lists){
       lists.forEach(it => {
         if (it.type === 0) {
@@ -157,67 +204,11 @@ class AddCost extends Component {
     return list;
   }
 
-  onAdd = () => {
-    const { costDetailShareVOS, initDep } = this.state;
-    const details = costDetailShareVOS;
-    details.push({
-      key: `a${costDetailShareVOS.length}`,
-      shareAmount: 0,
-      shareScale: 0,
-      deptName: '',
-      deptId: '',
-      depList: initDep,
-      invoiceBaseId: details.invoiceBaseId,
-      users: [],
-    });
-    this.setState({
-      costDetailShareVOS: details,
-    });
-  }
-
-  //  选择承担人
-  selectPle = (val, index, key) => {
-    const detail = this.state.costDetailShareVOS;
-    if (val.users) {
-      this.props.dispatch({
-        type: 'global/users',
-        payload: {
-          userJson: JSON.stringify(val.users),
-        }
-      }).then(() => {
-        const { deptInfo, userId } = this.props;
-        detail.splice(index, 1, {
-          ...detail[index],
-          users: val.users,
-          depList: deptInfo,
-          userName: val.users[0].userName,
-          userId,
-          loanUserId: val.users[0].userId,
-          deptId: ''
-        });
-        if (deptInfo && deptInfo.length === 1) {
-          this.props.form.setFieldsValue({
-            [`deptId[${key}]`]: `${deptInfo[0].deptId}`,
-          });
-        } else {
-          this.props.form.setFieldsValue({
-            [`deptId[${key}]`]: '',
-          });
-        }
-
-        this.setState({
-          costDetailShareVOS: detail,
-        });
-      });
-    }
-  }
-
   //  提交
   handleOk = () => {
     const {
-      invoiceId,
       index,
-      usableProject,
+      costType,
     } = this.props;
     const {
       costDate,
@@ -231,6 +222,7 @@ class AddCost extends Component {
       exchangeRate,
       currencySymbol
     } = this.state;
+    const _this = this;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         // eslint-disable-next-line eqeqeq
@@ -274,29 +266,7 @@ class AddCost extends Component {
             };
           }
         }
-        const arr = [];
-        costDetailShareVOS.forEach(item => {
-          // eslint-disable-next-line eqeqeq
-          const deptList = item.depList.filter(it => it.deptId == val.deptId[item.key]);
-          const projectName = val.projectId && val.projectId[item.key] ?
-              usableProject.filter(it => it.id === val.projectId[item.key])[0].name : '';
-          arr.push({
-            key: item.key,
-            shareAmount: val.shareAmount[item.key],
-            shareScale: val.shareScale[item.key],
-            deptId: val.deptId[item.key],
-            projectId: val.projectId && val.projectId[item.key] ? val.projectId[item.key] : '',
-            projectName,
-            userId: item.userId,
-            deptName: deptList ? deptList[0].name : '',
-            userName: item.userName,
-            userJson: item.users,
-            users: item.users,
-            invoiceBaseId: invoiceId,
-            depList: item.depList,
-            loanUserId: item.loanUserId,
-          });
-        });
+        const arr = _this.onGetForm('submit', val.categoryId);
         detail = {
           ...detail,
           expandCostDetailFieldVos,
@@ -306,52 +276,41 @@ class AddCost extends Component {
           exchangeRate,
           currencySymbol
         };
-        this.props.onAddCost(detail, index);
-        this.onCancel();
-      }
-    });
-  }
-
-  onDelete = (index) => {
-    const detail = this.state.costDetailShareVOS;
-    detail.splice(index, 1);
-    this.setState({
-      costDetailShareVOS: detail,
-    }, () => {
-      const { costDetailShareVOS } = this.state;
-      let shareMount = 0;
-      if (costDetailShareVOS && costDetailShareVOS.length) {
-        costDetailShareVOS.forEach(it => {
-          shareMount = numAdd(it.shareAmount, shareMount);
-        });
-      }
-      this.setState({
-        shareAmount: shareMount.toFixed(2),
-      });
-    });
-  }
-
-  onInputAmount = (val, key) => {
-    const costSum = this.props.form.getFieldValue('costSum');
-    const amm = this.props.form.getFieldValue('shareAmount');
-    let amount = 0;
-    if (Object.keys(amm)) {
-      Object.keys(amm).forEach(it => {
-        if (it !== key) {
-          amount=numAdd(amm[it], amount);
+        if (costType) {
+          const newArr = [];
+          arr.forEach(it => {
+            newArr.push({
+              costDetailId: val.categoryId,
+              totalAmount: (((val.costSum) * 1000)/10).toFixed(0),
+              'shareAmount': (it.shareAmount * 1000)/10,
+              'shareScale': (it.shareScale * 1000)/10,
+              'deptId': it.deptId,
+              'userId': it.userId,
+              'userJson':it.users,
+              deptName: it.deptName,
+              userName: it.userName,
+              projectId: it.projectId,
+            });
+          });
+          this.props.dispatch({
+            type: 'costGlobal/addFolder',
+            payload: {
+              ...detail,
+              costDetailShareVOS: newArr,
+              costSum: (((val.costSum) * 1000)/10).toFixed(0),
+            }
+          }).then(() => {
+            this.onCancel();
+            if (this.props.onCallback) {
+              this.props.onCallback();
+            }
+          });
+        } else {
+          this.props.onAddCost(detail, index);
+          this.onCancel();
         }
-      });
-    }
-    amount = numAdd(val, amount);
-    this.setState({
-      shareAmount: amount.toFixed(2),
+      }
     });
-    if (costSum && (val || val === 0)) {
-      const scale = ((val / costSum) * 100).toFixed(2);
-      this.props.form.setFieldsValue({
-        [`shareScale[${key}]`]: scale,
-      });
-    }
   }
 
   toFixed = (num, s) => {
@@ -360,42 +319,6 @@ class AddCost extends Component {
     let des = num * times + 0.5;
     des = parseInt(des, 10) / times;
     return `${des  }`;
-  }
-
-  onInputScale = (val, key) => {
-    const costSum = this.props.form.getFieldValue('costSum');
-    if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(val)) {
-      return;
-    }
-    if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(val)) {
-      return;
-    }
-    if (val > 100000000 || val === 100000000) {
-      return;
-    }
-    if (val < 0) {
-      return;
-    }
-    if (costSum && (val || val === 0)) {
-      // const amounts = ((val * costSum * 10000).toFixed(0) / 100);
-      const amounts = (numMulti(val, costSum)/100).toFixed(2);
-      this.props.form.setFieldsValue({
-        [`shareAmount[${key}]`]: amounts,
-      });
-      const amm = this.props.form.getFieldValue('shareAmount');
-      let amount = 0;
-      if (Object.keys(amm)) {
-        Object.keys(amm).forEach(it => {
-          if (it !== key) {
-            amount= numAdd(amm[it], amount);
-          }
-        });
-      }
-      amount=numAdd(amounts, amount);
-      this.setState({
-        shareAmount: amount.toFixed(2),
-      });
-    }
   }
 
   // 循环渲染树结构
@@ -494,6 +417,7 @@ class AddCost extends Component {
 
   }
 
+
   onChangeImg = (val) => {
     this.setState({
       imgUrl: val,
@@ -506,14 +430,7 @@ class AddCost extends Component {
     }, () => {
       const details = [...this.state.costDetailShareVOS];
       if (details && details.length) {
-        const amm = this.props.form.getFieldValue('shareAmount');
-        details.forEach(it => {
-          if (amm[it.key]) {
-            this.props.form.setFieldsValue({
-              [`shareScale[${it.key}]`]: ((amm[it.key]/val) * 100).toFixed(2),
-            });
-          }
-        });
+        this.onGetForm('setScale', details, val);
       }
     });
   }
@@ -531,31 +448,6 @@ class AddCost extends Component {
       }
       if (value < 0) {
         callback('金额不能小于零');
-      }
-      callback();
-    } else {
-      callback();
-    }
-  }
-
-  check = (rule, value, callback) => {
-    if (value) {
-      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-        callback('请输入正确的金额');
-      }
-      callback();
-    } else {
-      callback();
-    }
-  }
-
-  checkSale = (rule, value, callback) => {
-    if (value) {
-      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-        callback('请输入正确的比例');
-      }
-      if(value > 100) {
-        callback('承担比例不超过100');
       }
       callback();
     } else {
@@ -583,13 +475,18 @@ class AddCost extends Component {
     }
   }
 
+  onChangeState = (type, val) => {
+    this.setState({
+      [type]: val,
+    });
+  }
+
   render() {
     const {
       children,
       form: { getFieldDecorator },
       // expenseList,
       userInfo,
-      usableProject,
       currencyList,
       currencyShow
     } = this.props;
@@ -630,124 +527,6 @@ class AddCost extends Component {
         sm: { span: 9 },
       },
     };
-    const columns = [{
-      title: '承担人员',
-      dataIndex: 'userId',
-      render: (_, record, index) => (
-        <div>
-          <SelectPeople
-            users={record.users}
-            placeholder='请选择'
-            onSelectPeople={(val) => this.selectPle(val, index, record.key)}
-            invalid={false}
-            disabled={false}
-            flag="users"
-            multiple={false}
-          />
-        </div>
-      )
-    }, {
-      title: '承担部门',
-      dataIndex: 'deptId',
-      render: (_, record) => (
-        <Form>
-          <Form.Item>
-            {
-              getFieldDecorator(`deptId[${record.key}]`, {
-                initialValue: record.deptId,
-                rules:[{ required: true, message: '请选择承担部门' }]
-              })(
-                <Select>
-                  {
-                    record.depList && record.depList.map(it => (
-                      <Option key={it.deptId}>{it.name}</Option>
-                    ))
-                  }
-                </Select>
-              )
-            }
-          </Form.Item>
-        </Form>
-      ),
-      width: '230px'
-    }, {
-      title: '承担金额(元)',
-      dataIndex: 'shareAmount',
-      render: (_, record) => (
-        <Form>
-          <Form.Item>
-            {
-              getFieldDecorator(`shareAmount[${record.key}]`, {
-                initialValue: record.shareAmount,
-                rules:[{ validator: this.check }]
-              })(
-                <InputNumber
-                  placeholder="请输入"
-                  onChange={(val) => this.onInputAmount(val, record.key)}
-                />
-              )
-            }
-          </Form.Item>
-        </Form>
-      )
-    }, {
-      title: '承担比例(%)',
-      dataIndex: 'shareScale',
-      render: (_, record) => (
-        <Form>
-          <Form.Item>
-            {
-              getFieldDecorator(`shareScale[${record.key}]`, {
-                initialValue: record.shareScale,
-                rules: [{ validator: this.checkSale }]
-              })(
-                <InputNumber
-                  placeholder="请输入"
-                  onChange={(val) => this.onInputScale(val, record.key)}
-                />
-              )
-            }
-          </Form.Item>
-        </Form>
-      )
-    }, {
-      title: '操作',
-      dataIndex: 'ope',
-      render: (_, record, index) => (
-        <span className="deleteColor" onClick={() => this.onDelete(index)} id={record.id}>删除</span>
-      ),
-      width: '70px'
-    }];
-    if (project.status) {
-      columns.splice(2, 0, {
-        title: '项目',
-        dataIndex: 'projectId',
-        render: (_, record) => (
-          <Form>
-            <Form.Item>
-              {
-                getFieldDecorator(`projectId[${record.key}]`, {
-                  initialValue: record.projectId,
-                  rules: [{ required: !!(project.isWrite), message: '请选择项目' }]
-                })(
-                  <Select>
-                    {
-                      usableProject.map(it => (
-                        <Option key={it.id}>{it.name}</Option>
-                      ))
-                    }
-                  </Select>
-                )
-              }
-            </Form.Item>
-          </Form>
-        ),
-        width: '180px'
-      });
-    } else if (columns.length > 5) {
-      columns.splice(2,1);
-    }
-
     return (
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -939,30 +718,19 @@ class AddCost extends Component {
                 }
               </Row>
               <Divider type="horizontal" />
-              <div style={{paddingTop: '24px'}}>
-                <div className={style.header}>
-                  <div className={style.line} />
-                  <span>分摊</span>
-                </div>
-                <div style={{textAlign: 'center'}} className={style.addbtn}>
-                  <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
-                </div>
-                {
-                  costDetailShareVOS && costDetailShareVOS.length > 0 &&
-                  <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500"> ¥{ currencyShow && currencyId !== '-1' ? `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}  已分摊：¥{ currencyShow && currencyId !== '-1' ? `${Number(numMulti(shareAmount, exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}</p>
-                }
-                {
-                  costDetailShareVOS && costDetailShareVOS.length > 0 &&
-                  <div className={style.addTable}>
-                    <Table
-                      columns={columns}
-                      dataSource={costDetailShareVOS}
-                      pagination={false}
-                      rowKey="key"
-                    />
-                  </div>
-                }
-              </div>
+              <AddCostTable
+                costDetailShareVOS={costDetailShareVOS}
+                costSum={costSum}
+                shareAmount={shareAmount}
+                project={project}
+                currencySymbol={currencySymbol}
+                currencyId={currencyId}
+                initDep={this.state.initDep}
+                onChange={(type, val) => this.onChangeState(type, val)}
+                invoiceId={this.props.invoiceId}
+                costType={this.props.costType}
+                onGetForm={fn=> { this.onGetForm = fn; }}
+              />
             </Form>
           </div>
         </Modal>

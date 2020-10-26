@@ -1,94 +1,166 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
+import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
 import { Modal } from 'antd';
+import { debounce } from 'lodash-decorators';
 import style from './index.scss';
+import AddInvoice from './AddInvoice';
 
-function SelectInvoice(props) {
-  const [visible, setVisible] = useState(true);
-  useEffect(() => {
+class SelectInvoice extends Component {
+  static propTypes = {
 
+  }
 
-    // return;
-  }, []);
+  state = {
+    visible: false,
+    scrollCancel: false,
+    list: [],
+    id: 'often'
+  }
 
-  return (
-    <span>
-      <span>{props.children}</span>
-      <Modal
-        title={null}
-        footer={null}
-        onCancel={() => setVisible(false)}
-        visible={visible}
-        width="780px"
-        bodyStyle={{
-          height: '500px',
-          padding: '38px 40px 34px'
-        }}
-      >
-        <p className="fs-24 fw-500 m-b-24 c-black-85">选择单据模板</p>
-        <div className={style.scrollCont}>
-          <div className={style.slInLeft}>
-            <p className="c-black-25 fs-14">选择分组</p>
-            <div className={style.scroll}>
-              <p className={cs(style.namePro, 'm-b-16')}>
-                <span className={cs(style.name, 'c-black-65')}>这里是分组名称</span>
-                <span className="c-black-25">10</span>
-              </p>
-            </div>
-          </div>
-          <div className={style.slRight}>
-            <div className="m-b-20">
-              <p className="c-black-85 fs-16 fw-500">常用单据</p>
-              <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                <div className={style.tags}>
-                  <p className="c-black-85 fs-14">XX报销单据模板</p>
-                  <p className="fs-12 c-black-36">这里是简介，最多展示一行</p>
-                </div>
-                <div className={style.tags}>
-                  <p className="c-black-85 fs-14">XX报销单据模板</p>
-                  <p className="fs-12 c-black-36">这里是简介，最多展示一行</p>
-                </div>
-                <div className={style.tags}>
-                  <p className="c-black-85 fs-14">XX报销单据模板</p>
-                  <p className="fs-12 c-black-36">这里是简介，最多展示一行</p>
-                </div>
-              </div>
-            </div>
-            <div className="m-b-20">
-              <p className="c-black-85 fs-16 fw-500">常用单据</p>
-              <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                <div className={style.tags}>
-                  <p className="c-black-85 fs-14">XX报销单据模板</p>
-                  <p className="fs-12 c-black-36">这里是简介，最多展示一行</p>
-                </div>
-                <div className={style.tags}>
-                  <p className="c-black-85 fs-14">XX报销单据模板</p>
-                  <p className="fs-12 c-black-36">这里是简介，最多展示一行</p>
-                </div>
-                <div className={style.tags}>
-                  <p className="c-black-85 fs-14">XX报销单据模板</p>
-                  <p className="fs-12 c-black-36">这里是简介，最多展示一行</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </span>
+  onShow = () => {
+    this.props.dispatch({
+      type: 'global/oftenList',
+      payload: {}
+    }).then(() => {
+      const { useTemplate, oftenTemplate  } = this.props;
+      const others = useTemplate.filter(it => (it.type === 1 && it.parentId === 0));
+      let lists = treeConvert({
+        pId: 'parentId',
+        rootId: 0,
+        otherKeys: ['note', 'type', 'parentId', 'createTime', 'templateType']
+      }, useTemplate.filter(it => !(it.type === 1 && it.parentId === 0))).filter(({children = [], type}) => {
+        if(type === 1) return true;
+        return children.length > 0 ? children.map(it => it.type === 1).length : false;
+      });
+      lists = [
+        { id: 'often', name: '常用单据', children: oftenTemplate },
+        ...lists,
+        { id: 'qita', name: '其他单据模板（未分组）', children: others }];
+      this.setState({
+        list: lists,
+        visible: true,
+      });
+    });
+  }
+
+  scrollToAnchor = (anchorName) => {
+    this.setState({
+      id: anchorName,
+    });
+    if (anchorName) {
+      // 找到锚点
+      const anchorElement = document.getElementById(anchorName);
+      // 如果对应id的锚点存在，就跳转到锚点
+      if(anchorElement) { anchorElement.scrollIntoView({block: 'start', behavior: 'smooth'}); }
+    }
+  };
+
+  handleScroll = () => debounce(
+    el => {
+      const { scrollCancel } = this.state;
+      if (scrollCancel) {
+        this.setState({
+          scrollCancel: false,
+        });
+      } else if (el && el.children) {
+        const lastChild = el.children.length - 1;
+        const top = el.scrollTop + 760;
+        const index = Array.prototype.findIndex.call(
+          el.children, v => v.offsetTop > top
+        ) - 1;
+        const i = index < -1 ? lastChild : index;
+        const elChild = el.children[i];
+        this.setState({
+          id: elChild.dataset ? elChild.dataset.id : 'often'
+        });
+      }
+    }, 100, { maxWait: 200 }
   );
+
+  onCancel = () => {
+    this.setState({
+      visible: false,
+    });
+  }
+
+  render() {
+    const { list, visible, id } = this.state;
+    return (
+      <span>
+        <span onClick={() => this.onShow(true)}>{this.props.children}</span>
+        <Modal
+          title={null}
+          footer={null}
+          onCancel={this.onCancel}
+          visible={visible}
+          width="780px"
+          bodyStyle={{
+            height: '500px',
+            padding: '38px 40px 34px'
+          }}
+        >
+          <p className="fs-24 fw-500 m-b-24 c-black-85">选择单据模板</p>
+          <div className={style.scrollCont}>
+            <div className={style.slInLeft}>
+              <p className="c-black-25 fs-14">选择分组</p>
+              <div className={style.scroll}>
+                {
+                  list.map(it => (
+                    <p className={cs(style.namePro, 'm-b-16')} key={it.id} onClick={() => this.scrollToAnchor(it.id)}>
+                      <span className={id ===it.id ? cs(style.name, 'c-black-85', 'fw-500') : cs(style.name, 'c-black-65')}>{it.name}</span>
+                      <span className="c-black-25">{it.children ? it.children.length : 0}</span>
+                    </p>
+                  ))
+                }
+              </div>
+            </div>
+            <div
+              className={style.slRight}
+              onScroll={({target}) => this.handleScroll(target)}
+            >
+              {
+                list.map(it => {
+                  let childrens = null;
+                  if (it.children) {
+                    childrens = it.children.map(item => (
+                      <AddInvoice
+                        templateType={item.templateType}
+                        id={item.id}
+                        onHandelOk={this.props.onOk}
+                      >
+                        <div className={style.tags} key={item.id}>
+                          <p className="c-black-85 fs-14">{item.name}</p>
+                          <p className="fs-12 c-black-36">{item.note}</p>
+                        </div>
+                      </AddInvoice>
+                    ));
+                  }
+                  return (
+                    <div className="m-b-20" key={it.id} id={it.id} data-id={it.id}>
+                      <p className="c-black-85 fs-16 fw-500">{it.name}</p>
+                      <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                        {childrens}
+                      </div>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </div>
+        </Modal>
+      </span>
+    );
+  }
 }
-
-SelectInvoice.propTypes = {
-
-};
 
 const mapStateToProps = (state) => {
   return {
-    prop: state.prop
+    useTemplate: state.global.UseTemplate, // 普通列表
+    oftenTemplate: state.global.OftenTemplate, // 常用单据列表
   };
 };
 
 export default connect(mapStateToProps)(SelectInvoice);
-

@@ -81,6 +81,18 @@
     transform: translateY(-6px);
   }
 }
+.applyType{
+  background: url('../../../../assets/img/apply.png') no-repeat center / 100%;
+  box-shadow: 0 0 0 2px transparent inset;
+  transition:all .4s ease;
+  cursor: pointer;
+  margin-left: 12px;
+  margin-right: 12px;
+  &:hover{
+    background-size: 120%;
+    transform: translateY(-6px);
+  }
+}
 .invoiceType{
   background: url('../../../../assets/img/borrow.png') no-repeat center / 100%;
   box-shadow: 0 0 0 2px transparent inset;

@@ -70,7 +70,7 @@ class UploadImg extends Component {
           action={imgPath}
           beforeUpload={this.beforeUpload}
           onSuccess={this.handleChange}
-          data={{ companyId: userInfo.companyId }}
+          data={{ companyId: userInfo ? userInfo.companyId : '' }}
           multiple
           headers={{
             token: localStorage.getItem('token') || ''

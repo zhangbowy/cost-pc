@@ -36,10 +36,9 @@ export default function JudgeType(props) {
             </div>
           </AddInvoice>
           <AddInvoice title={props.title} onOk={props.onOk} data={props.data} templateType={2} changeVisible={() => cancel()}>
-            <div className={style.borrowType}>
+            <div className={style.applyType}>
               <p className="fs-20 c-black-85 m-l-24 m-b-10" style={{paddingTop: '45px'}}>申请单</p>
-              <p className="c-black-36 fs-12 m-l-24">· 适用于备用金借款等场景</p>
-              <p className="c-black-36 fs-12 m-l-24">· 可通过报销单核销或线下还款</p>
+              <p className="c-black-36 fs-12 m-l-24">· 适用于出差、采购事前申请</p>
             </div>
           </AddInvoice>
         </div>

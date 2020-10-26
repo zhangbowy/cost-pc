@@ -48,6 +48,7 @@ const { confirm } = Modal;
   usableProject: global.usableProject,
   waitLists: workbench.waitLists,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
+  draftLoading: loading.effects['costGlobal/addDraft'] || false,
 }))
 @Form.create()
 class AddInvoice extends Component {
@@ -211,6 +212,28 @@ class AddInvoice extends Component {
       payload: {
         type: 1,
       },
+    });
+  }
+
+  // 编辑初始化数据
+  onInit = (detail) => {
+    this.setState({
+      depList: detail.depList, // 所在部门
+      createDepList: detail.createDepList, // 报销部门
+      accountList: detail.accountList, // 收款账户
+      details: detail.details, // 详情
+      inDetails: detail.inDetails,
+      users: detail.users,
+      costDetailsVo: detail.costDetailsVo, // 分摊
+      nodes: detail.nodes,
+      fileUrl: detail.fileUrl, // 附件
+      showField: detail.showField, // 是否显示输入框
+      total: detail.total, // 报销金额
+      loanUserId: detail.loanUserId, // 审批人的userId
+      expandField: detail.expandField, // 扩展字段
+      // loading: false,
+      borrowArr:detail.borrowArr,
+      assessSum: detail.assessSum, // 核销金额
     });
   }
 
@@ -599,6 +622,57 @@ class AddInvoice extends Component {
     });
   }
 
+  handelOkDraft = () => {
+    const val = this.props.form.getFieldsValue();
+    if (!val.reason) {
+      message.error('请输入事由');
+    }
+    const { djDetail } = this.props;
+    const {
+      imgUrl,
+      fileUrl,
+      nodes,
+      costDetailsVo,
+      depList,
+      users,
+      details,
+      createDepList,
+      total,
+      expandField,
+      showField,
+      borrowArr,
+    } = this.state;
+    const params = {
+      ...val,
+      imgUrl,
+      fileUrl,
+      nodes,
+      costDetailsVo,
+      depList,
+      users,
+      ...details,
+      createDepList,
+      total,
+      expandField,
+      showField,
+      borrowArr,
+      supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
+      supplierId: val.supplier ? val.supplier.split('_')[1] : '',
+    };
+    const { templateType } = this.props;
+    this.props.dispatch({
+      type: 'costGlobal/addDraft',
+      payload: {
+        contentJson: JSON.stringify(params),
+        costSum: ((total * 1000)/10).toFixed(0),
+        templateType,
+        reason: val.reason,
+        invoiceName: djDetail.name,
+        invoiceId: djDetail.id,
+      }
+    });
+  }
+
   onSubmit = (params) => {
     const { dispatch, templateType } = this.props;
     dispatch({
@@ -761,7 +835,6 @@ class AddInvoice extends Component {
   }
 
   treeNodeRender = (treeNode) => {
-
   if(!treeNode || !treeNode.length){
     return;
   }
@@ -928,6 +1001,7 @@ class AddInvoice extends Component {
       loading,
       usableProject,
       templateType,
+      draftLoading,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -995,6 +1069,7 @@ class AddInvoice extends Component {
                   :
                     <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span></span>
                 }
+                <Button key="save" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>

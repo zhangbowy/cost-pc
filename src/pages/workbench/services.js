@@ -4,7 +4,6 @@ const { APP_API } = constants;
 
 export default {
   list: `${APP_API}/cost/invoice/base/list`,
-  myList: `${APP_API}/cost/invoice/template/listForUser`,
   costCateList: `${APP_API}/cost/invoice/template/listForUser`,
   del: `${APP_API}/cost/invoice/submit/del`,
   loanDel: `${APP_API}/cost/invoice/loan/del`, // 借款单删除

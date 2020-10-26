@@ -5,10 +5,15 @@ import { connect } from 'dva';
 import constants from '@/utils/constants';
 import Avatar from '../../../components/AntdComp/Avatar';
 import style from './index.scss';
+import CostFolder from '../../../components/Modals/AddInvoice/InvoiceTable/CostFolder';
+import Draft from '../../../components/Modals/AddInvoice/InvoiceTable/Draft';
 
 function Header(props) {
   const { APP_VER } = constants;
-  const { personal } = props;
+  const {
+    personal
+  } = props;
+
   return (
     <div className={style.header}>
       <section className={style['wave-container']} style={{background: '#F6F9FB'}}>
@@ -30,34 +35,38 @@ function Header(props) {
           <p>
             <i className={cs(style.loan, 'iconfont', 'icondaihuankuan')} />
             <span className="c-black-45 fs-14 m-l-4">
-              待还款<span className={style.loan}>{personal.loanCount || 0}</span>单
+              待还款<span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
             </span>
           </p>
-          <p className="c-black-85 fs-30 fw-400">¥{props.loanSum || 0}</p>
+          <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum : 0}</p>
         </div>
         <i className={style.lines} />
-        <div className={cs(style.headTag, style.hdLoan)}>
-          <p>
-            <i className={cs(style.cost, 'iconfont', 'iconfeiyongjia')} />
-            <span className="c-black-45 fs-14 m-l-4">
-              费用夹<span className="c-black-85 fs-14">{props.folderCount || 0}</span>笔
-            </span>
-          </p>
-          <p className="c-black-85 fs-30 fw-400">¥{props.folderSum || 0}</p>
-        </div>
+        <CostFolder onPerson={() => props.onOk()}>
+          <div className={cs(style.headTag, style.hdLoan)}>
+            <p>
+              <i className={cs(style.cost, 'iconfont', 'iconfeiyongjia')} />
+              <span className="c-black-45 fs-14 m-l-4">
+                费用夹<span className="c-black-85 fs-14">{personal.folderCount ? personal.folderCount : 0}</span>笔
+              </span>
+            </p>
+            <p className="c-black-85 fs-30 fw-400">¥{personal.folderSum ? personal.folderSum/100 : 0}</p>
+          </div>
+        </CostFolder>
         <i className={style.lines} />
-        <div className={cs(style.headTag, style.hdLoan)}>
-          <p>
-            <i className={cs(style.caogao, 'iconfont', 'iconcaogaoxiang')} />
-            <span className="c-black-45 fs-14 m-l-4">
-              草稿箱
-            </span>
-          </p>
-          <p className="c-black-85 fs-30 fw-400">
-            {props.draftCount || 0}
-            <span className="fs-14 c-black-45 m-l-4">笔</span>
-          </p>
-        </div>
+        <Draft onPerson={() => props.onOk()}>
+          <div className={cs(style.headTag, style.hdLoan)}>
+            <p>
+              <i className={cs(style.caogao, 'iconfont', 'iconcaogaoxiang')} />
+              <span className="c-black-45 fs-14 m-l-4">
+                草稿箱
+              </span>
+            </p>
+            <p className="c-black-85 fs-30 fw-400">
+              {personal.draftCount ? personal.draftCount : 0}
+              <span className="fs-14 c-black-45 m-l-4">笔</span>
+            </p>
+          </div>
+        </Draft>
       </div>
     </div>
   );
@@ -70,7 +79,6 @@ function Header(props) {
 const mapStateToProps = (state) => {
   return {
     userInfo: state.session.userInfo,
-    personal: state.workbench.personal,
   };
 };
 

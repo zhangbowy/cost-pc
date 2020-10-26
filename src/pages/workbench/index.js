@@ -31,7 +31,8 @@ import wave from '../../utils/wave';
   total: workbench.total,
   userInfo: session.userInfo,
   loanSum: workbench.loanSum,
-  huaVisible: workbench.huaVisible
+  huaVisible: workbench.huaVisible,
+  personal: workbench.personal,
 }))
 class Workbench extends PureComponent {
   constructor(props) {
@@ -40,7 +41,8 @@ class Workbench extends PureComponent {
       type: '1',
       reason: '',
       huaVisible: false,
-      typeLeft: '8'
+      typeLeft: '8',
+      personal: {},
     };
   }
 
@@ -56,6 +58,11 @@ class Workbench extends PureComponent {
     this.props.dispatch({
       type: 'workbench/personal',
       payload: {}
+    }).then(() => {
+      const { personal } = this.props;
+      this.setState({
+        personal,
+      });
     });
     this.props.dispatch({
       type: 'workbench/costList',
@@ -126,6 +133,18 @@ class Workbench extends PureComponent {
     });
   }
 
+  onPersonal = () => {
+    this.props.dispatch({
+      type: 'workbench/personal',
+      payload: {},
+    }).then(() => {
+      const { personal } = this.props;
+      this.setState({
+        personal
+      });
+    });
+  }
+
   handleClick = val => {
     const { query } = this.props;
     this.setState({
@@ -165,7 +184,7 @@ class Workbench extends PureComponent {
 
   render() {
     const { list, total, query, userInfo, loading, loanSum } = this.props;
-    const { huaVisible, typeLeft, type } = this.state;
+    const { huaVisible, typeLeft, type, personal } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -371,11 +390,11 @@ class Workbench extends PureComponent {
             :
             <>
               <div className={style.app_header}>
-                <Header />
+                <Header personal={personal || {}} />
               </div>
               <div className={style.ad}>
-                <HeadLeft />
-                <HeadRight />
+                <HeadLeft onOk={() => this.onPersonal()} />
+                <HeadRight onOk={() => this.onPersonal()} />
               </div>
               <div className="content-dt" style={{ padding: 0 }}>
                 <div style={{ margin: '0 32px' }}>

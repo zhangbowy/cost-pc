@@ -46,6 +46,8 @@ export default {
     serviceTime: '',
     currencyShow: false, // 是否显示企业外币
     currencyList: [], // 企业外币的列表
+    UseTemplate: [], // 普通列表
+    OftenTemplate: [], // 常用单据列表
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -494,6 +496,17 @@ export default {
         type: 'save',
         payload: {
           applyList: response || false,
+        },
+      });
+    },
+    // 常用单据列表
+    *oftenList({ payload }, { call, put }) {
+      const response = yield call(get, api.costCateList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          UseTemplate: response.UseTemplate || [],
+          OftenTemplate: response.OftenTemplate || [],
         },
       });
     },
