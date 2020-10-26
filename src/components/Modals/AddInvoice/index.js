@@ -132,7 +132,6 @@ class AddInvoice extends Component {
     } else {
       message.error('部门无法同步，请联系管理员检查应用可见范围设置');
     }
-
     await this.props.dispatch({
       type: 'global/users',
       payload: {}
@@ -156,18 +155,7 @@ class AddInvoice extends Component {
         templateType,
       }
     });
-    const djDetails = await this.props.djDetail;
-    const obj = {};
-    if (djDetails.showField && djDetails.showField.length > 5) {
-      JSON.parse(djDetails.showField).forEach(item => {
-        obj[item.field] = {...item};
-      });
-    }
-    this.setState({
-      inDetails: djDetails,
-      showField: obj,
-      expandField: djDetails.expandField,
-    });
+
     await this.props.dispatch({
       type: 'global/receiptAcc',
       payload: {
@@ -175,6 +163,23 @@ class AddInvoice extends Component {
         pageSize: 100,
       }
     });
+    await this.props.dispatch({
+      type: 'global/usableSupplier',
+      payload: {},
+    });
+    await this.props.dispatch({
+      type: 'global/usableProject',
+      payload: {
+        type: 1,
+      },
+    });
+    const djDetails = await this.props.djDetail;
+    const obj = {};
+    if (djDetails.showField && djDetails.showField.length > 5) {
+      JSON.parse(djDetails.showField).forEach(item => {
+        obj[item.field] = {...item};
+      });
+    }
     const account = await _this.props.receiptAcc;
     const arr = account.filter(it => it.isDefault);
 
@@ -195,56 +200,43 @@ class AddInvoice extends Component {
     };
     if (!contentJson) {
       this.getNode(params);
+      this.setState({
+        details: {
+          ...detail,
+          processPersonId: djDetails.approveId
+        },
+        showField: obj,
+        expandField: djDetails.expandField,
+      });
+    } else {
+      const contents = JsonParse(contentJson);
+      this.onInit(contents);
     }
     this.setState({
       accountList: account,
-      details: {
-        ...detail,
-        processPersonId: djDetails.approveId
-      },
-    });
-    this.setState({
+      inDetails: djDetails,
       visible: true
-    }, () => {
-      if (contentJson) {
-        const contents = JsonParse(contentJson);
-        this.setState({
-          depList: contents.depList, // 所在部门
-          createDepList: contents.createDepList, // 报销部门
-          details: contents.details, // 详情
-          users: contents.users,
-          costDetailsVo: contents.costDetailsVo, // 分摊
-          nodes: contents.nodes,
-          fileUrl: contents.fileUrl, // 附件
-          showField: contents.showField, // 是否显示输入框
-          total: contents.total, // 报销金额
-          loanUserId: contents.loanUserId, // 审批人的userId
-          expandField: contents.expandField, // 扩展字段
-          // loading: false,
-          borrowArr:contents.borrowArr,
-          assessSum: contents.assessSum || 0, // 核销金额
-        });
-      }
     });
-    this.props.dispatch({
-      type: 'global/usableSupplier',
-      payload: {},
-    });
-    this.props.dispatch({
-      type: 'global/usableProject',
-      payload: {
-        type: 1,
-      },
-    });
+
   }
 
   // 编辑初始化数据
   onInit = (detail) => {
-    console.log('AddInvoice -> onInit -> detail', detail);
+    console.log('AddInvoice -> onInit -> detail', detail.details);
+    const { details } = detail;
+    if (details.supplier) {
+      const ids = details.supplier.split('_');
+      Object.assign(details, {
+        supplierAccountId: ids[0],
+        supplierId: ids[1],
+      });
+    }
     this.setState({
       depList: detail.depList, // 所在部门
       createDepList: detail.createDepList, // 报销部门
-      details: detail.details, // 详情
+      details: {
+        ...details,
+      }, // 详情
       users: detail.users,
       costDetailsVo: detail.costDetailsVo, // 分摊
       nodes: detail.nodes,
@@ -1099,7 +1091,7 @@ class AddInvoice extends Component {
                   :
                     <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span></span>
                 }
-                <Button key="save" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
+                <Button key="draft" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>
@@ -1364,6 +1356,7 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.supplier} {...formItemLayout}>
                       {
                         getFieldDecorator('supplier', {
+                          initialValue: details.supplierAccountId ? [details.supplierId, details.supplierAccountId] : [],
                           rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
                         })(
                           <TreeSelect

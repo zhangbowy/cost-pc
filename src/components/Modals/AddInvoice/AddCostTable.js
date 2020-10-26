@@ -257,6 +257,7 @@ class AddCostTable extends Component {
       currencySymbol,
     } = this.props;
     const { costDetailShareVOS, shareAmount } = this.state;
+    console.log('render -> costDetailShareVOS', costDetailShareVOS);
     const columns = [{
       title: '承担人员',
       dataIndex: 'userId',
@@ -281,7 +282,7 @@ class AddCostTable extends Component {
           <Form.Item>
             {
               getFieldDecorator(`deptId[${record.key}]`, {
-                initialValue: record.deptId,
+                initialValue: record.deptId ? [record.deptId] :  null,
                 rules:[{ required: true, message: '请选择承担部门' }]
               })(
                 <Select>
