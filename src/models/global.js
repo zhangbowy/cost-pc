@@ -177,11 +177,11 @@ export default {
     },
     *grantUpload({ payload }, { call, put }) {
       const response = yield call(post, api.grantUpload, payload);
-      console.log(response);
+      const spaceId = response.spaceId ? Number(response.spaceId) : '';
       yield put({
         type: 'save',
         payload: {
-          uploadSpace: response.spaceId || '',
+          uploadSpace: spaceId || '',
         }
       });
     },
