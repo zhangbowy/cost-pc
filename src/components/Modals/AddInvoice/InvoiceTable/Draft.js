@@ -168,7 +168,7 @@ class Draft extends Component {
           <Divider type="vertical" />
           <AddInvoice
             templateType={record.templateType}
-            id={record.id}
+            id={record.invoiceTemplateId}
             contentJson={record.contentJson}
           >
             <a>编辑</a>

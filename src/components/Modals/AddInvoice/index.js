@@ -622,6 +622,7 @@ class AddInvoice extends Component {
     });
   }
 
+  // 保存草稿
   handelOkDraft = () => {
     const val = this.props.form.getFieldsValue();
     if (!val.reason) {
@@ -668,8 +669,12 @@ class AddInvoice extends Component {
         templateType,
         reason: val.reason,
         invoiceName: djDetail.name,
-        invoiceId: djDetail.id,
+        invoiceTemplateId: djDetail.id,
       }
+    }).then(() => {
+      this.onCancel();
+      message.success('发起单据成功');
+      this.props.onHandleOk();
     });
   }
 
