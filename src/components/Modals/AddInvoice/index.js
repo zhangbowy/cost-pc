@@ -20,6 +20,7 @@ import ReceiptModal from '../ReceiptModal';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
 import AddApply from './AddApply';
 import { invoiceJson } from '../../../utils/constants';
+import { JsonParse } from '../../../utils/common';
 
 const {Option} = Select;
 const { TreeNode } = TreeSelect;
@@ -78,7 +79,7 @@ class AddInvoice extends Component {
 
   onShowHandle = async() => {
     let detail = this.state.details;
-    const { id, userInfo, templateType } = this.props;
+    const { id, userInfo, templateType, contentJson } = this.props;
     const _this = this;
     this.props.dispatch({
       type: 'global/getCurrency',
@@ -192,7 +193,9 @@ class AddInvoice extends Component {
       loanDeptId: detail.loanDeptId,
       createDingUserId: detail.createDingUserId,
     };
-    this.getNode(params);
+    if (!contentJson) {
+      this.getNode(params);
+    }
     this.setState({
       accountList: account,
       details: {
@@ -202,6 +205,26 @@ class AddInvoice extends Component {
     });
     this.setState({
       visible: true
+    }, () => {
+      if (contentJson) {
+        const contents = JsonParse(contentJson);
+        this.setState({
+          depList: contents.depList, // 所在部门
+          createDepList: contents.createDepList, // 报销部门
+          details: contents.details, // 详情
+          users: contents.users,
+          costDetailsVo: contents.costDetailsVo, // 分摊
+          nodes: contents.nodes,
+          fileUrl: contents.fileUrl, // 附件
+          showField: contents.showField, // 是否显示输入框
+          total: contents.total, // 报销金额
+          loanUserId: contents.loanUserId, // 审批人的userId
+          expandField: contents.expandField, // 扩展字段
+          // loading: false,
+          borrowArr:contents.borrowArr,
+          assessSum: contents.assessSum || 0, // 核销金额
+        });
+      }
     });
     this.props.dispatch({
       type: 'global/usableSupplier',
@@ -217,12 +240,11 @@ class AddInvoice extends Component {
 
   // 编辑初始化数据
   onInit = (detail) => {
+    console.log('AddInvoice -> onInit -> detail', detail);
     this.setState({
       depList: detail.depList, // 所在部门
       createDepList: detail.createDepList, // 报销部门
-      accountList: detail.accountList, // 收款账户
       details: detail.details, // 详情
-      inDetails: detail.inDetails,
       users: detail.users,
       costDetailsVo: detail.costDetailsVo, // 分摊
       nodes: detail.nodes,
@@ -233,7 +255,7 @@ class AddInvoice extends Component {
       expandField: detail.expandField, // 扩展字段
       // loading: false,
       borrowArr:detail.borrowArr,
-      assessSum: detail.assessSum, // 核销金额
+      assessSum: detail.assessSum || 0, // 核销金额
     });
   }
 
@@ -651,7 +673,10 @@ class AddInvoice extends Component {
       costDetailsVo,
       depList,
       users,
-      ...details,
+      details: {
+        ...details,
+        ...val,
+      },
       createDepList,
       total,
       expandField,

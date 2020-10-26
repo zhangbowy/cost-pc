@@ -506,7 +506,6 @@ class AddCost extends Component {
       currencySymbol,
       currencyId
     } = this.state;
-    console.log('费用类别自定义', expandField);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

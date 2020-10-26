@@ -129,7 +129,7 @@ class SelectInvoice extends Component {
                       <AddInvoice
                         templateType={item.templateType}
                         id={item.id}
-                        onHandelOk={this.props.onOk}
+                        onHandleOk={this.props.onOk}
                       >
                         <div className={style.tags} key={item.id}>
                           <p className="c-black-85 fs-14">{item.name}</p>
