@@ -18,6 +18,11 @@ export default {
   invoiceDetail: `${APP_API}/cost/invoice/submit/detail`,
   // 下载附件
   grantDownload: `${APP_API}/cost/space/grantDownload`,
+  // 下载附件
+  newGrantDownload: `${APP_API}/cost/space/grantDownload4Approval`,
+  // 判断附件
+  isApproval: `${APP_API}/cost/space/isApproval`,
+
   // grantDownload: `${APP_API}/cost/space/grantUpload4Approval`,
   approvedUrl: `${APP_API}/cost/invoice/submit/selectApprovedUrl`,
   // grantUpload: `${APP_API}/cost/space/grantUpload`,
