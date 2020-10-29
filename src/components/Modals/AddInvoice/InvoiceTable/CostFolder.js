@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Tooltip, Divider, Popover, Tag, Button } from 'antd';
+import { Modal, Tooltip, Divider, Popover, Tag, Button, Popconfirm } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
@@ -109,6 +109,12 @@ class CostFolder extends Component {
     }).then(() => {
       const { page } = this.props;
       const { searchContent } = this.state;
+      if (!id) {
+        this.setState({
+          selectedRowKeys: [],
+          selectedRows: [],
+        });
+      }
       this.onQuery({
         ...page,
         searchContent,
@@ -213,7 +219,12 @@ class CostFolder extends Component {
       dataIndex: 'opea',
       render: (_, record) => (
         <span>
-          <span className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</span>
+          <Popconfirm
+            title="确认删除吗？"
+            onConfirm={() => this.onDelete(record.id)}
+          >
+            <span className="deleteColor">删除</span>
+          </Popconfirm>
           <Divider type="vertical" />
           <AddCost
             costType={1}

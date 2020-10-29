@@ -326,6 +326,9 @@ class AddCost extends Component {
             if (this.props.onCallback) {
               this.props.onCallback();
             }
+            if (this.props.invoiceId) {
+              this.props.onAddCost(detail, index);
+            }
           });
         } else {
           this.props.onAddCost(detail, index);

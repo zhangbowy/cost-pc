@@ -12,7 +12,7 @@ import FlowCard from './FlowCard';
 import { NodeUtils } from './FlowCard/util.js';
 import style from './index.scss';
 import PropPanel from './PropPanel';
-import { getObjValue, condition } from '../../../../../utils/constants';
+import { getObjValue, conditionObj } from '../../../../../utils/constants';
 
 
 class Process extends Component {
@@ -74,6 +74,7 @@ class Process extends Component {
    * @param { Object } data - 含有event(事件名称)/args(参数)两个属性
    */
   eventReciver = ({ event, args }) => {
+    const { templateType } = this.props;
     if (event === 'edit') {
       console.log(args[0]);
       const data = args[0];
@@ -88,7 +89,7 @@ class Process extends Component {
         conditions.forEach((item, index) => {
           let obj = {
             id: `a_${index}`,
-            ...getObjValue(condition,item.type),
+            ...getObjValue(conditionObj[templateType],item.type),
             methods: item.rule.method,
           };
           if (item.rule && item.rule.values) {
@@ -216,7 +217,7 @@ class Process extends Component {
     newData.bizData = value.bizData;
     newData.priority = value.priority || '';
     newData.name = value.name || '条件';
-    console.log(newData);
+    console.log('newData', newData);
     // 修改优先级
     if (NodeUtils.isConditionNode(newData) && (Number(value.priority) !== Number(oldProp.priority))) {
       console.log('编辑节点');
@@ -232,9 +233,14 @@ class Process extends Component {
       this.forceUpdate();
     }
     const nodes = NodeUtils.getMockData(data, newData, 'edit');
+    console.log('Process -> onPropEditConfirm -> nodes', nodes);
     this.setState({
       activeData: newData,
       data: nodes,
+    }, () => {
+      if (this.props.startNodeChange) {
+        this.props.startNodeChange(nodes);
+      }
     });
     this.onClosePanel();
     this.forceUpdate();

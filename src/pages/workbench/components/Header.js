@@ -40,7 +40,7 @@ function Header(props) {
                 待还款<span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
               </span>
             </p>
-            <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum : 0}</p>
+            <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum/100 : 0}</p>
           </div>
         </LoanTable>
         <i className={style.lines} />

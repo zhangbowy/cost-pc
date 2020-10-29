@@ -134,6 +134,7 @@ class CostTable extends Component {
             id={record.detailFolderId}
             onAddCost={this.addCost}
             expandField={record.expandCostDetailFieldVos}
+            costTitle="edit"
           >
             <a>编辑</a>
           </AddCost>

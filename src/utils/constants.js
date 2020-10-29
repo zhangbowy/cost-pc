@@ -154,6 +154,13 @@ export const costCategoryJson = [{
   isWrite: false,
   note: '',
 }, {
+  key: 'apply',
+  field: 'apply',
+  name: '关联申请单',
+  status: true,
+  isWrite: false,
+  note: '',
+}, {
   key: 'note',
   field: 'note',
   name: '单据备注',
@@ -295,6 +302,13 @@ export const borrowJson = [{
   name: '预计还款时间',
   status: true,
   isWrite: true,
+  note: '',
+}, {
+  key: 'apply',
+  field: 'apply',
+  name: '关联申请单',
+  status: true,
+  isWrite: false,
   note: '',
 }, {
   key: 'project',
@@ -788,11 +802,11 @@ export const conditionObj = {
     type: 'people',
     ruleType: 'people',
   }, {
-    key: 'loan_detail',
+    key: 'application_detail',
     value: '申请金额',
     sel: condThan,
     type: 'inputNumber',
-    ruleType: 'loan_amount',
+    ruleType: 'application_amount',
   }, {
     key: 'project',
     value: '项目',

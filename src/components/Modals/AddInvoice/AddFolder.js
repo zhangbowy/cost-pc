@@ -84,8 +84,8 @@ class AddFolder extends Component {
       const { list } = this.props;
       this.setState({
         visible: true,
-        selectedRowKeys: list.map(it => it.id) || [],
-        selectedRows: list || [],
+        selectedRowKeys: list.map(it => it.detailFolderId) || [],
+        selectedRows: list.filter(it => it.detailFolderId) || [],
         details: list,
         folderList: arr,
       });
@@ -107,9 +107,9 @@ class AddFolder extends Component {
     console.log(selectedRowKeys);
     console.log(selectedRows);
     const arr = [];
-    const costDetailShareVOS = [];
     selectedRows.forEach(it => {
       let currency = {};
+      const costDetailShareVOS = [];
       if (it.currencyId && it.currencyId !== '-1') {
         // eslint-disable-next-line prefer-destructuring
         currency = currencyList.filter(its => its.id === it.currencyId)[0];
@@ -121,8 +121,8 @@ class AddFolder extends Component {
         costSum: currency.id ? it.currencySum/100 : it.costSum/100,
         detailFolderId: it.id,
       };
-      if (arr.costDetailShareVOS) {
-        arr.costDetailShareVOS.forEach(item => {
+      if (it.costDetailShareVOS) {
+        it.costDetailShareVOS.forEach(item => {
           costDetailShareVOS.push({
             ...item,
             shareAmount: currency.id ? item.currencySum/100 : item.shareAmount/100,

@@ -78,7 +78,7 @@ class ConfirmPay extends Component {
                 <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" style={{marginTop: '1px'}} />
                 <span className="c-black-65">
                   支付完成后可返回
-                  <span className="c-black-85" style={{fontWeight: 'bold'}}>付款批次页面</span>
+                  <span className="c-black-85" style={{fontWeight: 'bold'}}>对账批次页面</span>
                   查看支付结果
                 </span>
               </div>

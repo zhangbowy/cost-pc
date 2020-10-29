@@ -78,7 +78,6 @@ class AddInvoice extends Component {
       borrowArr:[],
       assessSum: 0, // 核销金额
       applyArr: [], // 申请单
-      folderArr: [], // 费用夹
     };
   }
 
@@ -262,6 +261,7 @@ class AddInvoice extends Component {
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr: detail.applyArr,
     });
+    this.onAddBorrow(detail.borrowArr);
   }
 
   onCancel = () => {
@@ -285,7 +285,6 @@ class AddInvoice extends Component {
       expandField: [],
       assessSum: 0,
       applyArr: [], // 申请单
-      folderArr: [], // 费用夹
     });
   }
 
@@ -395,6 +394,7 @@ class AddInvoice extends Component {
         share.push(val);
       }
     }
+    console.log('AddInvoice -> onAddCost -> share', share);
     let mo = 0;
     const loanEntities = [];
     const categorySumEntities = [];
@@ -404,7 +404,7 @@ class AddInvoice extends Component {
       if (it.costDetailShareVOS) {
         it.costDetailShareVOS.forEach(item => {
           loanEntities.push({
-            loanUserId: item.loanUserId || '',
+            loanUserId: item.loanUserId || item.dingUserId || '',
             loanDeptId: item.deptId,
             projectId: item.projectId,
           });
@@ -615,6 +615,7 @@ class AddInvoice extends Component {
             currencyId: item.currencyId,
             currencyName: item.currencyName,
             expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+            detailFolderId: item.detailFolderId || '',
           });
           if (item.costDetailShareVOS) {
             item.costDetailShareVOS.forEach(it => {
@@ -665,7 +666,11 @@ class AddInvoice extends Component {
             invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
           });
         }
-        if (applyArr) {
+        if (showField.apply && showField.apply.status) {
+          if (showField.apply.isWrite && (applyArr.length === 0)) {
+            message.error('请选择关联申请单');
+            return;
+          }
           Object.assign(params, {
             applicationIds: applyArr.map(it => it.id),
           });
@@ -682,7 +687,7 @@ class AddInvoice extends Component {
       message.error('请输入事由');
       return;
     }
-    const { djDetail } = this.props;
+    const { djDetail, draftId } = this.props;
     const {
       imgUrl,
       fileUrl,
@@ -735,8 +740,9 @@ class AddInvoice extends Component {
       });
     }
     const { templateType } = this.props;
+    const url = draftId ? 'costGlobal/editDraft' : 'costGlobal/addDraft';
     this.props.dispatch({
-      type: 'costGlobal/addDraft',
+      type: url,
       payload: {
         contentJson: JSON.stringify(params),
         costSum: ((total * 1000)/10).toFixed(0),
@@ -744,21 +750,23 @@ class AddInvoice extends Component {
         reason: val.reason,
         invoiceName: djDetail.name,
         invoiceTemplateId: djDetail.id,
+        id: draftId || '',
       }
     }).then(() => {
       this.onCancel();
-      message.success('发起单据成功');
+      message.success('保存草稿成功');
       this.props.onHandleOk();
     });
   }
 
   onSubmit = (params) => {
-    const { dispatch, templateType } = this.props;
+    const { dispatch, templateType, draftId } = this.props;
     dispatch({
       type: templateType ? invoiceJson[templateType].addUrl : 'global/addInvoice',
       payload : {
         ...params,
-        templateType
+        templateType,
+        draftId: draftId || ''
       }
     }).then(() => {
       this.onCancel();
@@ -1102,7 +1110,6 @@ class AddInvoice extends Component {
       borrowArr,
       assessSum,
       applyArr,
-      folderArr
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -1542,7 +1549,13 @@ class AddInvoice extends Component {
                     <AddCost userInfo={userInfo} invoiceId={id} onAddCost={this.onAddCost} key="handle">
                       <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加费用</Button>
                     </AddCost>
-                    <AddFolder userInfo={userInfo} invoiceId={id} onAddCost={this.onAddCost} key="export" list={folderArr}>
+                    <AddFolder
+                      userInfo={userInfo}
+                      invoiceId={id}
+                      onAddCost={this.onAddCost}
+                      key="export"
+                      list={costDetailsVo}
+                    >
                       <Button icon="plus" style={{ width: '231px' }} key="export">费用夹导入</Button>
                     </AddFolder>
                     {
@@ -1591,7 +1604,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              Number(templateType) !== 2 ?
+              showField.apply && showField.apply.status  ?
                 <>
                   <Divider type="horizontal" />
                   <div style={{paddingTop: '24px', paddingBottom: '30px'}}>

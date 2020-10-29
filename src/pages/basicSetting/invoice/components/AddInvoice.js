@@ -114,6 +114,20 @@ class AddInvoice extends React.PureComponent {
                   });
                 }
               }
+              if ((Number(templateType) === 0 || Number(templateType) === 1)
+              && arr.filter(it => it.field === 'apply')) {
+                const newArrs = arr.filter(it => it.field === 'apply');
+                if (newArrs && newArrs.length === 0) {
+                  arr.splice(4, 0, {
+                    key: 'apply',
+                    field: 'apply',
+                    name: '关联申请单',
+                    status: false,
+                    isWrite: false,
+                    note: '',
+                  });
+                }
+              }
               Object.assign(datas, {
                 showFields: arr,
               });

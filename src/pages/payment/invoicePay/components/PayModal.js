@@ -62,7 +62,7 @@ class PayModal extends React.PureComponent {
       }
       if (selectKey) {
         if(selectKey.length === 0) {
-          message.error('请至少选择一个标记已付');
+          message.error('请至少选择一个发起支付');
           return;
         }
         cout = selectKey.length;

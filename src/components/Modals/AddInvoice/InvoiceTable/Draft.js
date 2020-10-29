@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Divider, Button } from 'antd';
+import { Modal, Divider, Button, Popconfirm } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
@@ -147,9 +147,9 @@ class Draft extends Component {
       width: '250px'
     }, {
       title: '单据类型',
-      dataIndex: 'invoiceName',
+      dataIndex: 'invoiceTemplateName',
       render: (_, record) => (
-        <span>{record.invoiceName}</span>
+        <span>{record.invoiceTemplateName}</span>
       )
     }, {
       title: '提交时间',
@@ -164,12 +164,19 @@ class Draft extends Component {
       dataIndex: 'opea',
       render: (_, record) => (
         <span>
-          <span className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</span>
+          <Popconfirm
+            title="确认删除吗？"
+            onConfirm={() => this.onDelete(record.id)}
+          >
+            <span className="deleteColor">删除</span>
+          </Popconfirm>
           <Divider type="vertical" />
           <AddInvoice
             templateType={record.templateType}
             id={record.invoiceTemplateId}
             contentJson={record.contentJson}
+            onHandleOk={this.props.onPerson}
+            draftId={record.id}
           >
             <a>编辑</a>
           </AddInvoice>

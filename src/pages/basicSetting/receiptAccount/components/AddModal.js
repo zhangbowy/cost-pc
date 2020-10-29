@@ -210,7 +210,12 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('bankName', {
                     initialValue: data && data.bankName,
-                    rules: [{ validator: this.check }]
+                    rules: [
+                      {
+                        required: Number(type) === 0,
+                        message: '请选择开户行'
+                      }
+                    ]
                   })(
                     <Select
                       showSearch
@@ -252,7 +257,7 @@ class AddAccount extends React.PureComponent {
                   initialValue: data && data.isDefault,
                   valuePropName: 'checked'
                 })(
-                  <Checkbox>设置为收款默认账号</Checkbox>
+                  <Checkbox>设为默认</Checkbox>
                 )
               }
             </Form.Item>
