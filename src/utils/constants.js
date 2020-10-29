@@ -213,8 +213,8 @@ export const applyJson = [{
   note: '',
   disabled: false,
 }, {
-  key: 'repaymentTime',
-  field: 'repaymentTime',
+  key: 'happenTime',
+  field: 'happenTime',
   name: '发生日期',
   status: true,
   isWrite: true,
@@ -765,6 +765,31 @@ export const conditionObj = {
   }, {
     key: 'loan_detail',
     value: '借款金额',
+    sel: condThan,
+    type: 'inputNumber',
+    ruleType: 'loan_amount',
+  }, {
+    key: 'project',
+    value: '项目',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'project',
+  }, {
+    key: 'supplier',
+    value: '供应商',
+    sel: condExclude,
+    type: 'selectTree',
+    ruleType: 'supplier',
+  }],
+  '2': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    ruleType: 'people',
+  }, {
+    key: 'loan_detail',
+    value: '申请金额',
     sel: condThan,
     type: 'inputNumber',
     ruleType: 'loan_amount',

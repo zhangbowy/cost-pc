@@ -7,6 +7,7 @@ import Avatar from '../../../components/AntdComp/Avatar';
 import style from './index.scss';
 import CostFolder from '../../../components/Modals/AddInvoice/InvoiceTable/CostFolder';
 import Draft from '../../../components/Modals/AddInvoice/InvoiceTable/Draft';
+import LoanTable from '../../../components/Modals/AddInvoice/InvoiceTable/LoanTable';
 
 function Header(props) {
   const { APP_VER } = constants;
@@ -31,15 +32,17 @@ function Header(props) {
         </p>
       </div>
       <div className={style.headerRight}>
-        <div className={cs(style.headTag, style.hdLoan)}>
-          <p>
-            <i className={cs(style.loan, 'iconfont', 'icondaihuankuan')} />
-            <span className="c-black-45 fs-14 m-l-4">
-              待还款<span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
-            </span>
-          </p>
-          <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum : 0}</p>
-        </div>
+        <LoanTable>
+          <div className={cs(style.headTag, style.hdLoan)}>
+            <p>
+              <i className={cs(style.loan, 'iconfont', 'icondaihuankuan')} />
+              <span className="c-black-45 fs-14 m-l-4">
+                待还款<span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
+              </span>
+            </p>
+            <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum : 0}</p>
+          </div>
+        </LoanTable>
         <i className={style.lines} />
         <CostFolder onPerson={() => props.onOk()}>
           <div className={cs(style.headTag, style.hdLoan)}>

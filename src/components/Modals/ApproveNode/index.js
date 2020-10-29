@@ -23,6 +23,7 @@ class ApproveNode extends Component {
 
   componentDidMount() {
     const { approveNodes } = this.props;
+    console.log('ApproveNode -> componentDidMount -> approveNodes', approveNodes);
     if (approveNodes.nodes) {
       this.traverseNodeList(approveNodes);
     }
@@ -162,7 +163,7 @@ class ApproveNode extends Component {
 
   render() {
     const { approveNodesList } = this.state;
-    console.log(approveNodesList);
+    // console.log(approveNodesList);
     return (
       <div className={style.component_approve_node}>
         {/* <span className="title">审批流程</span> */}

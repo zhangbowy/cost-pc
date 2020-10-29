@@ -156,7 +156,9 @@ class AddInvoice extends React.PureComponent {
             this.setState({
               visible: true,
             });
-            changeVisible();
+            if(changeVisible) {
+              changeVisible();
+            }
           });
         }
       });

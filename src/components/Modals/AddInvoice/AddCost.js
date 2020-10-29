@@ -65,10 +65,10 @@ class AddCost extends Component {
           details: this.props.detail,
           costDetailShareVOS: this.props.detail.costDetailShareVOS || [],
           imgUrl: this.props.detail.imgUrl,
-          currencyId: this.props.detail.currencyId,
-          currencyName: this.props.detail.currencyName,
-          exchangeRate: this.props.detail.exchangeRate,
-          currencySymbol: this.props.detail.currencySymbol,
+          currencyId: this.props.detail.currencyId || '-1',
+          currencyName: this.props.detail.currencyName || '',
+          exchangeRate: this.props.detail.exchangeRate || 1,
+          currencySymbol: this.props.detail.currencySymbol || '¥',
         });
       }
     }
@@ -87,8 +87,12 @@ class AddCost extends Component {
     this.setState({
       initDep: dep,
     });
+    this.props.dispatch({
+      type: 'global/getCurrency',
+      payload: {},
+    });
     if (costType) {
-      this.props.dispatch({
+      await this.props.dispatch({
         type: 'global/costList',
         payload: {},
       }).then(() => {
@@ -99,28 +103,41 @@ class AddCost extends Component {
               id,
             }
           }).then(() => {
-            const { detailFolder } = this.props;
-            let shareAmount = 0;
-            const arr = detailFolder.costDetailShareVOS.map(it => {
-              shareAmount+=it.shareAmount;
-              return {
+            const { detailFolder, currencyList } = this.props;
+            console.log('AddCost -> onShow -> currencyList', currencyList);
+            let currency = {};
+            if (detailFolder.currencyId && detailFolder.currencyId !== '-1') {
+              // eslint-disable-next-line prefer-destructuring
+              currency = currencyList.filter(it => it.id === detailFolder.currencyId)[0];
+            }
+            const arr = [];
+            detailFolder.costDetailShareVOS.forEach((it, i) => {
+              const obj = {
                 ...it,
                 key: it.id,
                 shareScale: it.shareScale/100,
-                shareAmount: it.shareAmount/100,
+                shareAmount: currency.id ? it.currencySum/100 : it.shareAmount/100,
               };
+              if (!i.userId) {
+                Object.assign(obj, {
+                  depList: dep,
+                });
+              }
+              arr.push(obj);
             });
             this.setState({
               details: {
                 ...detailFolder,
-                costSum: detailFolder.costSum/100,
+                costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
               },
-              shareAmount: shareAmount/100,
+              shareAmount: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
+              costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
               costDetailShareVOS: arr,
-              currencyId: detailFolder.currencyId,
-              currencyName: detailFolder.currencyName,
-              exchangeRate: detailFolder.exchangeRate,
-              currencySymbol: detailFolder.currencySymbol,
+              currencyId: currency.id || '-1',
+              currencyName: currency.name || '',
+              exchangeRate: currency.exchangeRate || 1,
+              currencySymbol: currency.currencySymbol || '¥',
+              visible: true,
             }, () => {
               this.onChange(detailFolder.categoryId, 'edit');
             });
@@ -131,7 +148,7 @@ class AddCost extends Component {
         });
       });
     } else {
-      this.props.dispatch({
+      await this.props.dispatch({
         type: 'global/expenseList',
         payload: {
           id: this.props.invoiceId
@@ -209,6 +226,8 @@ class AddCost extends Component {
     const {
       index,
       costType,
+      costTitle,
+      id
     } = this.props;
     const {
       costDate,
@@ -224,6 +243,7 @@ class AddCost extends Component {
     } = this.state;
     const _this = this;
     this.props.form.validateFieldsAndScroll((err, val) => {
+      console.log('AddCost -> handleOk -> val', val);
       if (!err) {
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
@@ -292,12 +312,14 @@ class AddCost extends Component {
               projectId: it.projectId,
             });
           });
+          const url = costTitle === 'edit' ? 'costGlobal/editFolder' : 'costGlobal/addFolder';
           this.props.dispatch({
-            type: 'costGlobal/addFolder',
+            type: url,
             payload: {
               ...detail,
               costDetailShareVOS: newArr,
               costSum: (((val.costSum) * 1000)/10).toFixed(0),
+              id: costTitle === 'edit' ? id : '',
             }
           }).then(() => {
             this.onCancel();
@@ -367,7 +389,6 @@ class AddCost extends Component {
 
   // 选择费用类别
   onChange = (val, types) => {
-    console.log(val, types);
     let detail = this.state.details;
     const showFields = {};
     let costDate = 0;
@@ -456,7 +477,6 @@ class AddCost extends Component {
   }
 
   onChangeCurr = (option) => {
-    console.log(option);
     if (option !== '-1') {
       const lists = this.props.currencyList.filter(it => it.id === option);
       this.setState({
@@ -724,6 +744,7 @@ class AddCost extends Component {
                 project={project}
                 currencySymbol={currencySymbol}
                 currencyId={currencyId}
+                exchangeRate={exchangeRate}
                 initDep={this.state.initDep}
                 onChange={(type, val) => this.onChangeState(type, val)}
                 invoiceId={this.props.invoiceId}

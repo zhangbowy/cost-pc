@@ -23,13 +23,35 @@ class AddCostTable extends Component {
     this.state = {
       costDetailShareVOS: this.props.costDetailShareVOS,
       shareAmount: this.props.shareAmount,
+      costSum: this.props.costSum,
+      initDep: this.props.initDep,
+      currencyId: '-1',
+      exchangeRate: '1',
     };
     props.onGetForm(this.onGetForm);
   }
 
+  componentDidUpdate(prevProps){
+    if ((prevProps.costDetailShareVOS !== this.props.costDetailShareVOS)
+      || (prevProps.costSum !== this.props.costSum)
+      || (prevProps.currencyId !== this.props.currencyId)
+      || (prevProps.exchangeRate !== this.props.exchangeRate)) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        costDetailShareVOS: this.props.costDetailShareVOS || [],
+        shareAmount: this.props.shareAmount,
+        costSum: this.props.costSum,
+        initDep: this.props.initDep,
+        currencyId: this.props.currencyId || '-1',
+        exchangeRate: this.props.exchangeRate || 1,
+        currencySymbol: this.props.currencySymbol || '',
+      });
+    }
+  }
+
   onAdd = () => {
     const { costDetailShareVOS } = this.state;
-    const { initDep } = this.props;
+    const { initDep } = this.state;
     const details = costDetailShareVOS;
     console.log('initDep', initDep);
     details.push({
@@ -90,7 +112,7 @@ class AddCostTable extends Component {
   }
 
   onInputAmount = (val, key) => {
-    const { costSum } = this.props;
+    const { costSum } = this.state;
     const amm = this.props.form.getFieldValue('shareAmount');
     let amount = 0;
     if (Object.keys(amm)) {
@@ -115,7 +137,7 @@ class AddCostTable extends Component {
   }
 
   onInputScale = (val, key) => {
-    const costSum = this.props.form.getFieldValue('costSum');
+    const { costSum } = this.state;
     if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(val)) {
       return;
     }
@@ -250,14 +272,9 @@ class AddCostTable extends Component {
       form: { getFieldDecorator },
       project,
       usableProject,
-      currencyShow,
-      currencyId,
-      costSum,
-      exchangeRate,
-      currencySymbol,
     } = this.props;
-    const { costDetailShareVOS, shareAmount } = this.state;
-    console.log('render -> costDetailShareVOS', costDetailShareVOS);
+    const { costDetailShareVOS, shareAmount, costSum, currencyId, currencySymbol, exchangeRate } = this.state;
+    console.log('render -> exchangeRate', exchangeRate);
     const columns = [{
       title: '承担人员',
       dataIndex: 'userId',
@@ -282,13 +299,13 @@ class AddCostTable extends Component {
           <Form.Item>
             {
               getFieldDecorator(`deptId[${record.key}]`, {
-                initialValue: record.deptId ? [record.deptId] :  null,
+                initialValue: record.deptId ? `${record.deptId}` :  null,
                 rules:[{ required: true, message: '请选择承担部门' }]
               })(
                 <Select>
                   {
                     record.depList && record.depList.map(it => (
-                      <Option key={it.deptId}>{it.name}</Option>
+                      <Option key={`${it.deptId}`} value={`${it.deptId}`}>{it.name}</Option>
                     ))
                   }
                 </Select>
@@ -387,7 +404,7 @@ class AddCostTable extends Component {
         {
           costDetailShareVOS && costDetailShareVOS.length > 0 &&
           <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500">
-            ¥{ currencyShow && currencyId !== '-1' ? `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}  已分摊：¥{ currencyShow && currencyId !== '-1' ? `${Number(numMulti(shareAmount, exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}
+            ¥{ currencyId && currencyId !== '-1' ? `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}  已分摊：¥{ currencyId && currencyId !== '-1' ? `${Number(numMulti(Number(shareAmount), exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}
           </p>
         }
         {

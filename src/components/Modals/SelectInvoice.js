@@ -8,6 +8,9 @@ import { debounce } from 'lodash-decorators';
 import style from './index.scss';
 import AddInvoice from './AddInvoice';
 
+@connect(({ global }) => ({
+  currencyList: global.currencyList,
+}))
 class SelectInvoice extends Component {
   static propTypes = {
 
@@ -17,15 +20,20 @@ class SelectInvoice extends Component {
     visible: false,
     scrollCancel: false,
     list: [],
-    id: 'often'
+    id: 'often',
+    selectCost: [],
   }
 
-  onShow = () => {
-    this.props.dispatch({
+  onShow = async() => {
+    await this.props.dispatch({
+      type: 'global/getCurrency',
+      payload: {},
+    });
+    await this.props.dispatch({
       type: 'global/oftenList',
       payload: {}
     }).then(() => {
-      const { useTemplate, oftenTemplate  } = this.props;
+      const { useTemplate, oftenTemplate, selectInvoice, currencyList  } = this.props;
       const others = useTemplate.filter(it => (it.type === 1 && it.parentId === 0));
       let lists = treeConvert({
         pId: 'parentId',
@@ -39,9 +47,44 @@ class SelectInvoice extends Component {
         { id: 'often', name: '常用单据', children: oftenTemplate },
         ...lists,
         { id: 'qita', name: '其他单据模板（未分组）', children: others }];
+      if (selectInvoice) {
+        const costDetailShareVOS = [];
+        const arr = [];
+        selectInvoice.forEach(it => {
+          let currency = {};
+          if (it.currencyId && it.currencyId !== '-1') {
+            // eslint-disable-next-line prefer-destructuring
+            currency = currencyList.filter(its => its.id === it.currencyId)[0];
+          }
+          const obj = {
+            ...it,
+            key: it.id,
+            folderType: 'folder',
+            costSum: currency.id ? it.currencySum/100 : it.costSum/100,
+            detailFolderId: it.id,
+          };
+          if (arr.costDetailShareVOS) {
+            arr.costDetailShareVOS.forEach(item => {
+              costDetailShareVOS.push({
+                ...item,
+                shareAmount: currency.id ? item.currencySum/100 : item.shareAmount/100,
+              });
+            });
+          }
+          arr.push({
+            ...obj,
+            costDetailShareVOS,
+            currencyId: it.currencyId || '-1',
+            currencyName: currency.name || '',
+            exchangeRate: currency.exchangeRate || 1,
+            currencySymbol: currency.currencySymbol || '¥',
+          });
+        });
+      }
       this.setState({
         list: lists,
         visible: true,
+        selectCost: [],
       });
     });
   }
@@ -87,7 +130,7 @@ class SelectInvoice extends Component {
   }
 
   render() {
-    const { list, visible, id } = this.state;
+    const { list, visible, id, selectCost } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
@@ -130,6 +173,7 @@ class SelectInvoice extends Component {
                         templateType={item.templateType}
                         id={item.id}
                         onHandleOk={this.props.onOk}
+                        costSelect={selectCost}
                       >
                         <div className={style.tags} key={item.id}>
                           <p className="c-black-85 fs-14">{item.name}</p>

@@ -144,6 +144,7 @@ class AddGroup extends React.PureComponent {
                     <Radio.Group>
                       <Radio value={0}>报销单</Radio>
                       <Radio value={1}>借款单</Radio>
+                      <Radio value={2}>申请单</Radio>
                     </Radio.Group>
                   )
                 }

@@ -4,8 +4,10 @@ import { Button } from 'antd';
 import style from './index.scss';
 import SelectInvoice from '../../../components/Modals/SelectInvoice';
 import AddCost from '../../../components/Modals/AddInvoice/AddCost';
+import AddInvoice from '../../../components/Modals/AddInvoice';
 
 function HeadLeft(props) {
+  const { OftenTemplate } = props;
   return (
     <div className={style.headLeftC}>
       <div className={style.btns}>
@@ -23,13 +25,19 @@ function HeadLeft(props) {
         </AddCost>
       </div>
       <p className="fs-12 c-black-25 m-b-6">常用单据</p>
-      <div>
-        <div className={style.tags}>
-          <span className={style.iconfonts}>
-            <i className="iconfont iconorder_fill" />
-          </span>
-          <span className="m-l-8">借款单据</span>
-        </div>
+      <div style={{ display: 'flex' }}>
+        {
+          OftenTemplate.map(it => (
+            <AddInvoice key={it.id} id={it.id} templateType={it.templateType} onHandleOk={props.onOk}>
+              <div className={style.tags} key={it.id}>
+                <span className={style.iconfonts}>
+                  <i className="iconfont iconorder_fill" />
+                </span>
+                <span className="m-l-8">{it.name}</span>
+              </div>
+            </AddInvoice>
+          ))
+        }
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ class AddFlow extends Component {
     console.log('点击了');
     // e.preventDefault();
     // e.stopPropagation();
-    const { title, processPersonId, name } = this.props;
+    const { title, processPersonId, name, templateType } = this.props;
     this.props.dispatch({
       type: 'global/costList',
       payload: {}
@@ -66,7 +66,9 @@ class AddFlow extends Component {
     if (title === 'add') {
       await this.props.dispatch({
         type: 'global/initNode',
-        payload: {}
+        payload: {
+          type: templateType,
+        }
       }).then(() => {
         const { initNode, initDetailNode } = this.props;
         this.setState({

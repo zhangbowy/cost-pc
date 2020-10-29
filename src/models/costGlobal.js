@@ -14,8 +14,28 @@ export default {
     total: 1,
     draftList: [],
     draftDetail: {},
+    loanList: [], // 我的待还款列表
+    waitLoanSumAll: {},
+    userDeps: [], // 通过userId获取数据
+    folderSum: {}, // 详细信息
   },
   effects: {
+    *loanList({ payload }, { call, put }) {
+      const response = yield call(get, api.loanList, payload);
+      const lists = response.pageResult.list || [];
+      yield put({
+        type: 'save',
+        payload: {
+          loanList: lists || [],
+          waitLoanSumAll: response || {},
+          total: response.pageResult.page.total || 1,
+          page: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize
+          }
+        },
+      });
+    },
     *addFolder({ payload }, { call }) {
       yield call(post, api.addFolder, payload);
     },
@@ -33,6 +53,7 @@ export default {
         payload: {
           folderList: lists || [],
           total: response.costDetailVos.page.total || 1,
+          folderSum: response || {},
           page: {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize
@@ -88,6 +109,16 @@ export default {
         type: 'save',
         payload: {
           detailDraft: response || {},
+        },
+      });
+    },
+    *userDep({ payload }, { call, put }) {
+      const response = yield call(get, api.userDep, payload);
+      console.log(response);
+      yield put({
+        type: 'save',
+        payload: {
+          userDeps: response || {},
         },
       });
     },

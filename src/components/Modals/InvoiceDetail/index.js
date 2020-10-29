@@ -11,6 +11,7 @@ import style from './index.scss';
 import constants, { accountType } from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
 import Borrow from './Borrow';
+import Apply from './Apply';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -18,7 +19,8 @@ const { APP_API } = constants;
   invoiceDetail: global.invoiceDetail,
   approvedUrl: global.approvedUrl,
   djDetail: global.djDetail,
-  loanDetail: global.loanDetail
+  loanDetail: global.loanDetail,
+  applyDetail: global.applyDetail
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -32,23 +34,32 @@ class InvoiceDetail extends Component {
       invoiceLoanRepayRecords: [],
       invoiceLoanAssessVos: [],
       supplierAccountVo: {},
+      applicationAssociageVOS: [],
     };
   }
 
   onShow = () => {
     const { id, templateType } = this.props;
     let url = 'global/invoiceDetail';
-      let params = { id };
-      if (Number(templateType)) {
-        url = 'global/loanDetail';
-        params = { loanId: id };
+    let params = { id };
+    if (Number(templateType) === 1) {
+      url = 'global/loanDetail';
+      params = { loanId: id };
+    } else if (Number(templateType) === 2) {
+      url = 'global/applyDetail';
+      params = { applicationId: id };
     }
     this.props.dispatch({
       type: url,
       payload: params
     }).then(() => {
-      const { invoiceDetail, loanDetail } = this.props;
-      const details = Number(templateType) ? loanDetail : invoiceDetail;
+      const { invoiceDetail, loanDetail, applyDetail } = this.props;
+      let details = invoiceDetail;
+      if (Number(templateType) === 1) {
+        details = loanDetail;
+      } else if (Number(templateType) === 2) {
+        details = applyDetail;
+      }
       console.log(details);
       if (details.costDetailsVo) {
         this.setState({
@@ -69,6 +80,11 @@ class InvoiceDetail extends Component {
       if (details.invoiceLoanAssessVos) {
         this.setState({
           invoiceLoanAssessVos: details.invoiceLoanAssessVos,
+        });
+      }
+      if (details.applicationAssociageVOS) {
+        this.setState({
+          applicationAssociageVOS: details.applicationAssociageVOS,
         });
       }
       if (details.supplierAccountVo) {
@@ -176,7 +192,17 @@ class InvoiceDetail extends Component {
   }
 
   render() {
-    const { visible,  category, receipt, showFields, details, invoiceLoanRepayRecords, invoiceLoanAssessVos, supplierAccountVo } = this.state;
+    const {
+      visible,
+      category,
+      receipt,
+      showFields,
+      details,
+      invoiceLoanRepayRecords,
+      invoiceLoanAssessVos,
+      supplierAccountVo,
+      applicationAssociageVOS
+    } = this.state;
     const {
       children,
       canRefuse,
@@ -329,7 +355,7 @@ class InvoiceDetail extends Component {
           <Row className="fs-14 m-l-10">
             <Col span={8}>
               <div style={{display: 'flex'}}>
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name}：</span>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name ? showFields.reason.name : '事由'}：</span>
                 <span className="fs-14 c-black-65" style={{flex: 1}}>{details.reason}</span>
               </div>
             </Col>
@@ -343,10 +369,18 @@ class InvoiceDetail extends Component {
             </Col>
           </Row>
           <Row className="m-l-10">
-            <Col span={8} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{ Number(templateType) ? '借款总额(元)' : '报销总额(元)' }：</span>
-              <span className="fs-14 c-black-65">¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
-            </Col>
+            {
+              Number(templateType) === 0 || Number(templateType) === 1 ?
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{ Number(templateType) ? '借款总额(元)' : '报销总额(元)' }：</span>
+                  <span className="fs-14 c-black-65">¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}</span>
+                </Col>
+                :
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>申请金额：</span>
+                  <span className="fs-14 c-black-65">¥{ details.applicationSum ? details.applicationSum/100 : 0}</span>
+                </Col>
+            }
             {
               !Number(templateType) &&
               <>
@@ -368,10 +402,24 @@ class InvoiceDetail extends Component {
               </Col>
             }
             {
+              Number(templateType) === 2 &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>申请人：</span>
+                <span className="fs-14 c-black-65">{details.userName}</span>
+              </Col>
+            }
+            {
               !Number(templateType) &&
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人部门：</span>
                 <span className="fs-14 c-black-65">{details.createDeptName}</span>
+              </Col>
+            }
+            {
+              Number(templateType) === 2 &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>申请人部门：</span>
+                <span className="fs-14 c-black-65">{details.deptName}</span>
               </Col>
             }
             <Col span={8} className="m-t-16">
@@ -390,7 +438,7 @@ class InvoiceDetail extends Component {
               </span>
             </Col>
             {
-              Number(templateType) ?
+              Number(templateType) === 1 ?
                 <Col span={8} className="m-t-16">
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>还款状态：</span>
                   <span className="fs-14 c-black-65">
@@ -401,10 +449,20 @@ class InvoiceDetail extends Component {
                 null
             }
             {
-              Number(templateType) ?
+              Number(templateType) === 1 ?
                 <Col span={8} className="m-t-16">
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款时间：</span>
                   <span className="fs-14 c-black-65">{details.repaymentTime ? moment(details.repaymentTime).format('YYYY-MM-DD') : '-'}</span>
+                </Col>
+                :
+                null
+            }
+            {
+              showFields.happenTime && showFields.happenTime.status ?
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发生时间：</span>
+                  <span className="fs-14 c-black-65">{details.startTime ? moment(details.startTime).format('YYYY-MM-DD') : '-'}</span>
+                  <span className="fs-14 c-black-65">{details.endTime ? `-${moment(details.endTime).format('YYYY-MM-DD')}` : ''}</span>
                 </Col>
                 :
                 null
@@ -575,6 +633,16 @@ class InvoiceDetail extends Component {
                 <span>借款核销</span>
               </div>
               <Borrow list={invoiceLoanAssessVos} type={1} />
+            </>
+          }
+          {
+            applicationAssociageVOS && applicationAssociageVOS.length > 0 &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>关联申请单</span>
+              </div>
+              <Apply list={applicationAssociageVOS} type={1} />
             </>
           }
         </Modal>

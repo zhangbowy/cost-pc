@@ -7,6 +7,7 @@ import { Table, Button, Divider, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
 import AddFlow from './components/AddFlow';
+import { getArrayValue } from '../../../utils/constants';
 
 const approvePersonList = [{
   key: '0',
@@ -142,7 +143,7 @@ function ApprovalFlow(props) {
             title="add"
             templateType={status}
             onOk={() => onQuery()}
-            name={Number(status) ? '借款审批流' : '报销审批流'}
+            name={getArrayValue(status, approvePersonList)}
           >
             <Button type="primary" className="m-t-16 m-b-16">新增</Button>
           </AddFlow>

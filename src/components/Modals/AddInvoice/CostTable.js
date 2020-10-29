@@ -127,9 +127,11 @@ class CostTable extends Component {
           <Divider type="vertical" />
           <AddCost
             detail={record}
+            costType={record.detailFolderId ? 1 : 0}
             invoiceId={invoiceId}
             userInfo={userInfo}
             index={index}
+            id={record.detailFolderId}
             onAddCost={this.addCost}
             expandField={record.expandCostDetailFieldVos}
           >

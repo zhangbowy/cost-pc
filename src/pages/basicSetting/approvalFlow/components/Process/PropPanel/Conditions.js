@@ -30,6 +30,14 @@ const defaultList = {
     type: 'people',
     id,
     ruleType: 'people',
+  }],
+  '2': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    id,
+    ruleType: 'people',
   }]
 };
 @Form.create()

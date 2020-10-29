@@ -48,6 +48,7 @@ export default {
     currencyList: [], // 企业外币的列表
     UseTemplate: [], // 普通列表
     OftenTemplate: [], // 常用单据列表
+    applyDetail: {}, // 申请单详情
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -143,6 +144,15 @@ export default {
         type: 'save',
         payload: {
           djDetail: response || {},
+        },
+      });
+    },
+    *applyDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.applyDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          applyDetail: response || {},
         },
       });
     },

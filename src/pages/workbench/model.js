@@ -21,11 +21,13 @@ export default {
     waitLists: [],
     waitLoanSums: {},
     personal: {}, // 个人信息
+    associateLists: [],
   },
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
-      const res = response.pageResult || {};
+      console.log('*list -> response', response);
+      const res = response || {};
       yield put({
         type: 'save',
         payload: {
@@ -103,12 +105,24 @@ export default {
     },
     *ejectFrame({ payload }, { call, put }) {
       const response = yield call(get, api.ejectFrame, payload);
-      console.log(1111111111111,response);
       yield put({
         type: 'save',
         payload: {
           huaVisible: response.type === 1,
         },
+      });
+    },
+    *associateLists({ payload }, { call, put }) {
+      const response = yield call(get, api.associateLists, payload);
+      console.log(response);
+
+      const res = response;
+      const lists = res.list ? res.list.map(it => { return { ...it, id: it.applicationId }; }) : [];
+      yield put({
+        type: 'save',
+        payload: {
+          associateLists: lists || [],
+        }
       });
     },
   },

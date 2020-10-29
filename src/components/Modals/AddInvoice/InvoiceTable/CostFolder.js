@@ -8,6 +8,7 @@ import AddCost from '../AddCost';
 import style from './index.scss';
 import { getArrayColor, classifyIcon } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
+import SelectInvoice from '../../SelectInvoice';
 
 @connect(({ costGlobal, loading }) => ({
   folderList: costGlobal.folderList,
@@ -61,7 +62,7 @@ class CostFolder extends Component {
       selectedRows: _selectedRows,
       selectedRowKeys,
       details: _selectedRows,
-      money,
+      money: Number(((money*1000)/10).toFixed(0))/100,
     });
   };
 
@@ -77,7 +78,7 @@ class CostFolder extends Component {
       selectedRows,
       selectedRowKeys,
       details: selectedRows,
-      money,
+      money: Number(((money*1000)/10).toFixed(0))/100,
     });
   };
 
@@ -217,6 +218,11 @@ class CostFolder extends Component {
           <AddCost
             costType={1}
             id={record.id}
+            costTitle="edit"
+            onCallback={() => {
+              this.onQuery({ searchContent, ...page });
+              this.props.onPerson();
+            }}
           >
             <a>编辑</a>
           </AddCost>
@@ -245,7 +251,9 @@ class CostFolder extends Component {
                         已选{selectedRowKeys.length}笔 合计¥
                         <span className="fs-20 fw-500">{money}</span>
                       </span>
-                      <Button type="primary">生成单据</Button>
+                      <SelectInvoice selectInvoice={selectedRows}>
+                        <Button type="primary">生成单据</Button>
+                      </SelectInvoice>
                     </div>
                   </div>
                 :

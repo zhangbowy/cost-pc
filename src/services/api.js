@@ -86,4 +86,7 @@ export default {
    delDraft: `${APP_API}/cost/draft/del`, // 删除费用夹
    detailDraft: `${APP_API}/cost/draft/detail`, // 费用夹详情
    listDraft: `${APP_API}/cost/draft/list`, // 费用夹列表
+   loanList: `${APP_API}/cost/invoice/base/loanList`,
+   applyDetail: `${APP_API}/cost/invoice/application/detail`, // 申请单详情
+   userDep:  `${APP_API}/cost/user/userInfo4UserIds`,
 };
