@@ -17,9 +17,18 @@ export default {
   authApi: `${APP_API}/cost/user/jsapiAuth`,
   payAccount: `${APP_API}/cost/account/payment/list/on`,
   invoiceDetail: `${APP_API}/cost/invoice/submit/detail`,
+  // 下载附件
   grantDownload: `${APP_API}/cost/space/grantDownload`,
+  // 下载附件
+  newGrantDownload: `${APP_API}/cost/space/grantDownload4Approval`,
+  // 判断附件
+  isApproval: `${APP_API}/cost/space/isApproval`,
+
+  // grantDownload: `${APP_API}/cost/space/grantUpload4Approval`,
   approvedUrl: `${APP_API}/cost/invoice/submit/selectApprovedUrl`,
-  grantUpload: `${APP_API}/cost/space/grantUpload`,
+  // grantUpload: `${APP_API}/cost/space/grantUpload`,
+  // 上传附件
+  grantUpload: `${APP_API}/cost/space/grantUpload4Approval`,
   userInfo: `${APP_API}/cost/user/userInfo`,
   expenseList: `${APP_API}/cost/invoice/submit/expense/list`,
   invoiceDet: `${APP_API}/cost/invoice/template/detail`,

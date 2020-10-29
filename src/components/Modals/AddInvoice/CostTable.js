@@ -137,6 +137,7 @@ class CostTable extends Component {
           </AddCost>
         </span>
       ),
+      className: 'fixCenter',
       fixed: 'right'
     }];
     if (list && list[0].expandCostDetailFieldVos) {
