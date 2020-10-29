@@ -15,6 +15,7 @@ export default {
     phone: '',
     token: '',
     menus: [], // 左侧菜单
+    BasicSettingMenus: [], // 设置菜单
     isMenuReady: false, // 左侧单点数据获取标识
     isLogin: false, // 登录标识
     userInfo: {},
@@ -45,6 +46,9 @@ export default {
         tName: 'name',
         otherKeys: ['url'],
       }, response);
+      console.log(111111,menus);
+      console.log(localMenu);
+      console.log(menuFilter(menus, localMenu));
       yield put({
         type: 'save',
         payload: {
@@ -52,6 +56,22 @@ export default {
           menus: menuFilter(menus, localMenu),
           // menus: localMenu,
           isMenuReady: true,
+        },
+      });
+    },
+    * getBasicSettingMenus({ payload }, { call, put }) {
+      const response = yield call(
+        get,
+        api.BasicSettingMenus,
+        payload,
+      );
+      yield put({
+        type: 'save',
+        payload: {
+          // newmenus: response,
+          BasicSettingMenus: response,
+          // menus: localMenu,
+          // isMenuReady: true,
         },
       });
     },

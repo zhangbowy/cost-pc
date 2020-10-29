@@ -25,6 +25,7 @@ class PeopleSetting extends Component {
   }
 
   componentDidMount() {
+    console.log(55555555,this.props);
     this.onInit();
   }
 
@@ -129,7 +130,7 @@ class PeopleSetting extends Component {
       <div>
         <div className="p-l-32" style={{backgroundColor: '#fff', minWidth: '1102px'}}>
           <p className="p-t-24 m-b-8 fs-20 c-black-85 fw-600">名额配置</p>
-          <p className="p-b-24 fs-14 c-black-65">您可以在这里配置可用鑫支出的人员</p>
+          <p className="p-b-24 fs-14 c-black-65">你可以在这里配置可用鑫支出的人员</p>
         </div>
         <div className="content-dt" style={{height: '500px'}}>
           <div className={style.cnt_foot}>

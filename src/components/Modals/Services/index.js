@@ -27,12 +27,12 @@ function Services(props) {
         <div className={style.modals}>
           <p className="fs-26 fw-600 c-black-85 m-b-18">{props.isDelay ? '已到期，请扫码购买' : '升级享受更多服务'}</p>
           <p className="m-b-13 fs-14">
-            <span>您当前试用的版本规格为：</span>
+            <span>你当前试用的版本规格为：</span>
             <span className="cl-tip">{costConfigCheckVo.version}</span>
             <span className="m-l-8">有限期至：</span>
             <span className="cl-tip">{costConfigCheckVo.serviceStopTime && moment(costConfigCheckVo.serviceStopTime).format('YYYY-MM-DD')}</span>
           </p>
-          <p className="c-black-65 m-b-28">升级后您可以享受更多服务</p>
+          <p className="c-black-65 m-b-28">升级后你可以享受更多服务</p>
           <img alt="说明" src={group} style={{width: '612px'}} />
           <Popover
             content={(

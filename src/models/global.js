@@ -49,6 +49,8 @@ export default {
     UseTemplate: [], // 普通列表
     OftenTemplate: [], // 常用单据列表
     applyDetail: {}, // 申请单详情
+    BasicSettingMenus:[], // 获取设置内容
+    isApproval: false, // 判断是否是钉钉空间
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -178,6 +180,19 @@ export default {
     *grantDownload({ payload }, { call }) {
       yield call(post, api.grantDownload, payload);
     },
+    *newGrantDownload({ payload }, { call }) {
+      yield call(post, api.newGrantDownload, payload);
+    },
+    *isApproval({ payload }, { call, put }) {
+      const response = yield call(get, api.isApproval, payload);
+      // const spaceId = response.spaceId ? Number(response.spaceId) : '';
+      yield put({
+        type: 'save',
+        payload: {
+          isApproval: response || false,
+        }
+      });
+    },
     *addInvoice({ payload }, { call }) {
       yield call(post, api.addInvoice, payload);
     },
@@ -189,7 +204,7 @@ export default {
     },
     *grantUpload({ payload }, { call, put }) {
       const response = yield call(post, api.grantUpload, payload);
-      console.log(response);
+      // const spaceId = response.spaceId ? Number(response.spaceId) : '';
       yield put({
         type: 'save',
         payload: {
