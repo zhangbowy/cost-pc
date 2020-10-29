@@ -20,7 +20,8 @@ const { APP_API } = constants;
   approvedUrl: global.approvedUrl,
   djDetail: global.djDetail,
   loanDetail: global.loanDetail,
-  applyDetail: global.applyDetail
+  applyDetail: global.applyDetail,
+  isApproval: global.isApproval,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -180,9 +181,33 @@ class InvoiceDetail extends Component {
 
   previewFiles = (options) => {
     this.props.dispatch({
-      type: 'global/grantDownload',
+      type: 'global/isApproval',
       payload: {
-        fileIds: options.fileId
+        spaceId: options.spaceId
+      }
+    }).then(() => {
+      const { isApproval } = this.props;
+      if (isApproval) {
+        this.preview(options, 'global/newGrantDownload', true);
+      } else {
+        this.preview(options, 'global/grantDownload');
+      }
+    });
+
+  }
+
+  preview = (options, url, flag) => {
+    const { details } = this.state;
+    const params = {
+      fileIds: options.fileId
+    };
+    if (flag) {
+      Object.assign(params, { processInstanceId: details.proInsId });
+    }
+    this.props.dispatch({
+      type: url,
+      payload: {
+        ...params
       }
     }).then(() => {
       console.log(options);

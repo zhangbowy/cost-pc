@@ -3,12 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'umi/link';
 import { connect } from 'dva';
-import {
+import { Dropdown, Avatar, Icon, Menu ,
   // Dropdown,
   // Menu,
   // Icon,
   Breadcrumb,
 } from 'antd';
+
 import styles from './index.scss';
 
 @connect(({ session, global }) => ({
@@ -62,26 +63,24 @@ class App extends React.PureComponent {
     } = this.props;
     // const breadcrumbList = this.setBreadcrumb();
     // const sysList = [];
-    // const menu = (
-    //   <Menu style={{ minWidth: 120 }}>
-    //     <Menu.Item
-    //       key="logout"
-    //       onClick={this.logout}
-    //     >
-    //       <Icon type="logout" />
-    //       <span>退出登录</span>
-    //     </Menu.Item>
-    //     <Menu.Divider />
-    //     {
-    //       sysList.map((el) => (
-    //         <Menu.Item key={el.sysId}>
-    //           <a href={el.url}>{el.name}</a>
-    //         </Menu.Item>
-    //       ))
-    //     }
-    //   </Menu>
-    // );
-
+    const menu = (
+      <Menu style={{ minWidth: 120 }}>
+        <Menu.Item 
+          key="basicSetting_receiptAccount"
+        >
+          <Link to="/basicSetting/receiptAccount">个人收款账户</Link>
+        </Menu.Item>
+        {/* <Menu.Divider />
+        {
+          sysList.map((el) => (
+            <Menu.Item key={el.sysId}>
+              <a href={el.url}>{el.name}</a>
+            </Menu.Item>
+          ))
+        } */}
+      </Menu>
+    );
+    console.log('11111',userInfo);
     return (
       <div className={styles.header}>
         {/* <div className="app-left">
@@ -97,15 +96,24 @@ class App extends React.PureComponent {
           style={{ marginRight: 12 }}
         >
           <a href="https://www.yuque.com/ed3xn3/lbawoz" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
-          {/* <Dropdown overlay={menu}> */}
-          <a style={{ color: '#333' }}>
-            <span>{userInfo.name || ''}</span>
-            {/* <Icon
-              type="down"
-              style={{ marginLeft: 5 }}
-            /> */}
-          </a>
-          {/* </Dropdown> */}
+          <Dropdown overlay={menu}>
+            <a style={{ color: '#333' }}>
+              {
+                userInfo.avatar?
+                  <Avatar src={userInfo.avatar} />
+                : (
+                  <Avatar style={{ background: '#2680F2',color: '#fff',marginRight:'10px',fontSize: '' }} >
+                    {userInfo.name.substring(userInfo.name.length-2<0?0:userInfo.name.length-2,userInfo.name.length) || ''}
+                  </Avatar>
+                )
+              }
+              <span>{userInfo.name || ''}</span>
+              <Icon
+                type="down"
+                style={{ marginLeft: 5 }}
+              />
+            </a>
+          </Dropdown>
         </div>
       </div>
     );

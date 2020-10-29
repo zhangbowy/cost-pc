@@ -11,7 +11,7 @@ import style from './index.scss';
 import AddCost from './AddCost';
 import UploadImg from '../../UploadImg';
 import SelectPeople from '../SelectPeople';
-import { fileUpload, previewFile } from '../../../utils/ddApi';
+import { fileUpload } from '../../../utils/ddApi';
 import CostTable from './CostTable';
 import BorrowTable from './BorrowTable';
 import AddBorrow from './AddBorrow';
@@ -493,15 +493,16 @@ class AddInvoice extends Component {
   }
 
   //  预览附件
-  previewFiless = (options) => {
-    this.props.dispatch({
-      type: 'global/grantDownload',
-      payload: {
-        fileIds: options.fileId
-      }
-    }).then(() => {
-      previewFile(options);
-    });
+  previewFiless = () => {
+    message.error('钉钉暂时不支持未提交单据附件的预览，请提交后预览/下载');
+    // this.props.dispatch({
+    //   type: 'global/grantDownload',
+    //   payload: {
+    //     fileIds: options.fileId
+    //   }
+    // }).then(() => {
+    //   previewFile(options);
+    // });
   }
 
   getNode = (payload) => {

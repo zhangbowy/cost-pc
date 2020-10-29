@@ -5,7 +5,7 @@ import group1 from '@/assets/img/group1.png';
 import { Divider } from 'antd';
 
 const config = {
-  403: '尊敬的用户！ 您当前暂无鑫支出的使用权限',
+  403: '尊敬的用户！ 你当前暂无鑫支出的使用权限',
   500: '无法进入鑫支出',
 };
 
@@ -22,7 +22,7 @@ const NoDing = ({ type, configs }) => (
     }
     {
       type === '403' &&
-      <p className="c-black-85 fs-14">请联系以下任意一位管理员给您添加权限：{configs.adminNames && configs.adminNames.join('/')}</p>
+      <p className="c-black-85 fs-14">请联系以下任意一位管理员给你添加权限：{configs.adminNames && configs.adminNames.join('/')}</p>
     }
     <Divider type="horizontal" />
     {

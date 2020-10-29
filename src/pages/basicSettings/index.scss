@@ -1,0 +1,99 @@
+.h3{
+  width: 100%;
+  height: 24px;
+  font-size: 16px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 24px;
+  margin-top: 40px;
+  margin-bottom: 0;
+  float: left;
+}
+.card{
+  width: 304px;
+  height: 104px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #E9E9E9;
+  padding: 0 22px 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  float: left;
+  margin-right: 20px;
+  margin-top: 16px;
+  .card_left{
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    text-align: center;
+    line-height: 56px;
+    .iconImg{
+      width: 56px;
+      height: 56px;
+    }
+    .fylbsz{
+      background: url(@/assets/img/menuImg/fylbsz.png) no-repeat 100% 100%/100% 100%;
+    }
+    .dbzyhl{
+      background: url(@/assets/img/menuImg/dbzyhl.png) no-repeat 100% 100%/100% 100%;
+    }
+    .djmbsz{
+      background: url(@/assets/img/menuImg/djmbsz.png) no-repeat 100% 100%/100% 100%;
+    }
+    .gsfkzhsz{
+      background: url(@/assets/img/menuImg/gsfkzhsz.png) no-repeat 100% 100%/100% 100%;
+    }
+    .gysgl{
+      background: url(@/assets/img/menuImg/gysgl.png) no-repeat 100% 100%/100% 100%;
+    }
+    .hbgzh{
+      background: url(@/assets/img/menuImg/hbgzh.png) no-repeat 100% 100%/100% 100%;
+    }
+    .jsgl{
+      background: url(@/assets/img/menuImg/jsgl.png) no-repeat 100% 100%/100% 100%;
+    }
+    .rypz{
+      background: url(@/assets/img/menuImg/rypz.png) no-repeat 100% 100%/100% 100%;
+    }
+    .sjcsh{
+      background: url(@/assets/img/menuImg/sjcsh.png) no-repeat 100% 100%/100% 100%;
+    }
+    .splsz{
+      background: url(@/assets/img/menuImg/splsz.png) no-repeat 100% 100%/100% 100%;
+    }
+    .xmgl{
+      background: url(@/assets/img/menuImg/xmgl.png) no-repeat 100% 100%/100% 100%;
+    }
+  }
+  .card_right{
+    width: 192px;
+    height: 100%;
+    padding: 24px 0 18px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .card_right_title{
+      height: 22px;
+      font-size: 18px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 22px;
+    }
+    .card_right_content{
+      font-size: 12px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.45);
+      line-height: 17px;
+      margin-top: 6px;
+    }
+  }
+}
+
+.card:hover{
+  box-shadow: 0px 10px 32px 0px rgba(157, 163, 180, 0.2);
+  cursor: pointer;
+}

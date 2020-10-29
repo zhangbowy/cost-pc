@@ -142,7 +142,7 @@ function Controller(props) {
         <div>
           <p className={style.testMessage}>
             <span className={style.btn}>i</span>
-            <span style={{fontWeight:'400'}}>如您已线下签约花呗工作花，请使用</span>
+            <span style={{fontWeight:'400'}}>如你已线下签约花呗工作花，请使用</span>
             <span style={{fontWeight:'650'}}>企业支付宝账号</span>
             <span style={{fontWeight:'400'}}>扫码授权</span>
           </p>
@@ -241,9 +241,9 @@ function Controller(props) {
 
   const getTextTit = () => {
     if(visible){
-      return '您的企业已成功开通花呗工作花，请及时告知员工到鑫支出开通该业务，即刻享受花呗提额';
+      return '你的企业已成功开通花呗工作花，请及时告知员工到鑫支出开通该业务，即刻享受花呗提额';
     }
-      return '如您已线下签约花呗工作花，请及时扫码授权，并录入员工信息，员工方可正常开通使用';
+      return '如你已线下签约花呗工作花，请及时扫码授权，并录入员工信息，员工方可正常开通使用';
     
   };
 
