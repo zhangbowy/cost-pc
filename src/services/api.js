@@ -7,7 +7,8 @@ const {
 export default {
   /* ---------- sso ----------*/
   // 获取左侧菜单
-  getLeftMenu: `${APP_API}/cost/menu/nav`,
+  getLeftMenu: `${APP_API}/cost/menu/v2/nav`,
+  BasicSettingMenus: `${APP_API}/cost/menu/v2/navByParentId`,
   login: `${APP_API}/cost/user/login`,
   mockLogin: `${APP_API}/cost/user/mockLogin`,
 

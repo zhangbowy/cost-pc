@@ -162,7 +162,7 @@ class ApprovalFlow extends Component {
       <div style={{ height: '100%' }}>
         <div className="app_header">
           <p className="app_header_title">审批设置</p>
-          <p className="app_header_line">默认为您提供5种类型的审批流程，您也可以自定义设置审批人</p>
+          <p className="app_header_line">默认为你提供5种类型的审批流程，你也可以自定义设置审批人</p>
         </div>
         <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto' }}>
           <MenuItems

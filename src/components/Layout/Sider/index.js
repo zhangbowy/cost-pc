@@ -17,10 +17,14 @@ import InitModal from '../../Modals/InitModal';
 import Services from '../../Modals/Services';
 
 const getMenuKey = (props) => {
+  console.log(3415234235423,props);
   let url = props.menuKey || props.location.pathname;
   if (url.indexOf('/_aliPayConfirms') !== -1) {
     const indexs = url.indexOf('/_aliPayConfirms');
     url = url.substring(0, indexs);
+  }
+  if(props.location.state&&props.location.state.selectUrl){
+    url = props.location.state.selectUrl;
   }
   console.log(url);
   return urlToList(url);
@@ -29,6 +33,7 @@ const getMenuKey = (props) => {
 // icon: 'setting',
 // myIcon: 'user',
 const getIcon = (menu) => {
+  console.log(222222222222,menu);
   if (menu.icon) {
     return <Icon type={menu.icon} />;
   }

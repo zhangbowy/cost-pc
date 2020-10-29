@@ -167,7 +167,7 @@ function Controller(props) {
     <div>
       <div className={style.app_header}>
         <p className="c-black-85 fs-20 fw-600 m-b-8">控制中心</p>
-        <p className="c-black-45 fs-14" style={{marginBottom: 0}}>您可以在此进行单据清空的设置</p>
+        <p className="c-black-45 fs-14" style={{marginBottom: 0}}>你可以在此进行单据清空的设置</p>
       </div>
       <div className="content-dt">
         <Lines name="单据清空">

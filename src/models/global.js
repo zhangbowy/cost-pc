@@ -46,6 +46,7 @@ export default {
     serviceTime: '',
     currencyShow: false, // 是否显示企业外币
     currencyList: [], // 企业外币的列表
+    BasicSettingMenus:[] // 获取设置内容
   },
   effects: {
     *costList({ payload }, { call, put }) {

@@ -121,7 +121,7 @@ function ApprovalFlow(props) {
       <div className="app_header">
         <p className="app_header_title">审批设置</p>
         <p className="app_header_line">
-          { status === '0' ? '默认为您提供了一些模版，您也可以按单据类型自行添加' : '默认为您提供1个审批流模版，您也可以自行添加' }
+          { status === '0' ? '默认为你提供了一些模版，你也可以按单据类型自行添加' : '默认为你提供1个审批流模版，你也可以自行添加' }
         </p>
       </div>
       <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto', paddingBottom: '32px' }}>
