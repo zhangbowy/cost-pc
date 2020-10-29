@@ -85,6 +85,7 @@ class AddInvoice extends Component {
     let detail = this.state.details;
     const { id, userInfo, templateType, contentJson } = this.props;
     const _this = this;
+
     this.props.dispatch({
       type: 'global/getCurrency',
       payload: {},
@@ -203,7 +204,6 @@ class AddInvoice extends Component {
       createDingUserId: detail.createDingUserId,
     };
     if (!contentJson) {
-      this.getNode(params);
       this.setState({
         details: {
           ...detail,
@@ -211,16 +211,30 @@ class AddInvoice extends Component {
         },
         showField: obj,
         expandField: djDetails.expandField,
+        accountList: account,
+        inDetails: djDetails,
+        visible: true
+      }, () => {
+        if (this.props.costSelect) {
+          // if (this.props.onFolder) {
+          //   this.props.onFolder();
+          // }
+          this.onAddCost(this.props.costSelect);
+          console.log('AddInvoice -> onShowHandle -> costSelect', this.props.costSelect);
+        }
       });
+      if (!this.props.costSelect) {
+        this.getNode(params);
+      }
     } else {
       const contents = JsonParse(contentJson);
       await this.onInit(contents, djDetails);
+      this.setState({
+        accountList: account,
+        inDetails: djDetails,
+        visible: true
+      });
     }
-    this.setState({
-      accountList: account,
-      inDetails: djDetails,
-      visible: true
-    });
 
   }
 
@@ -505,8 +519,10 @@ class AddInvoice extends Component {
   }
 
   getNode = (payload) => {
+    const { id } = this.props;
     Object.assign(payload, {
       deepQueryFlag: true,
+      invoiceTemplateId: id,
     });
     const { templateType } = this.props;
     const { total } = this.state;
@@ -1221,6 +1237,7 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.note} {...formItemLayout}>
                       {
                         getFieldDecorator('note',{
+                          initialValue: details.note || '',
                           rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
                         })(
                           <Input placeholder="请输入"  />

@@ -64,8 +64,8 @@ class AddFolder extends Component {
         id: this.props.invoiceId
       }
     }).then(() => {
-      const { expenseList, listFolder } = this.props;
-      console.log('AddFolder -> onShow -> listFolder', listFolder);
+      const { expenseList, listFolder, list } = this.props;
+      console.log('AddFolder -> onShow -> list', list);
       const ids = expenseList.map(it => it.id);
       const arr = [];
       console.log(listFolder);
@@ -81,7 +81,6 @@ class AddFolder extends Component {
           });
         }
       });
-      const { list } = this.props;
       this.setState({
         visible: true,
         selectedRowKeys: list.map(it => it.detailFolderId) || [],
@@ -304,6 +303,7 @@ class AddFolder extends Component {
             userInfo={userInfo}
             onAddCost={this.addCost}
             expandField={record.expandCostDetailFieldVos}
+            onHandleOk={() => this.onCancel()}
           >
             <a>编辑</a>
           </AddCost>

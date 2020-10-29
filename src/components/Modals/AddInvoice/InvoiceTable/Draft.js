@@ -175,7 +175,15 @@ class Draft extends Component {
             templateType={record.templateType}
             id={record.invoiceTemplateId}
             contentJson={record.contentJson}
-            onHandleOk={this.props.onPerson}
+            onHandleOk={() => {
+              if (this.props.onPerson) {
+                this.props.onPerson();
+              }
+              this.onQuery({
+                ...page,
+                searchContent,
+              });
+            }}
             draftId={record.id}
           >
             <a>编辑</a>

@@ -218,7 +218,6 @@ export const applyJson = [{
   status: true,
   isWrite: true,
   note: '',
-  disabled: false,
 }, {
   key: 'happenTime',
   field: 'happenTime',
@@ -802,11 +801,11 @@ export const conditionObj = {
     type: 'people',
     ruleType: 'people',
   }, {
-    key: 'application_detail',
+    key: 'application_sum',
     value: '申请金额',
     sel: condThan,
     type: 'inputNumber',
-    ruleType: 'application_amount',
+    ruleType: 'application_sum',
   }, {
     key: 'project',
     value: '项目',

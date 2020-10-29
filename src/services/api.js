@@ -89,4 +89,5 @@ export default {
    loanList: `${APP_API}/cost/invoice/base/loanList`,
    applyDetail: `${APP_API}/cost/invoice/application/detail`, // 申请单详情
    userDep:  `${APP_API}/cost/user/userInfo4UserIds`,
+   queryTemplateIds: `${APP_API}/cost/category/queryTemplateIds`, // 单据模板
 };

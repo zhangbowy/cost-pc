@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Tooltip } from 'antd';
 import moment from 'moment';
+import InvoiceDetail from '.';
 
 function Apply(props) {
 
@@ -32,6 +33,16 @@ function Apply(props) {
     render: (text) => (
       <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
     )
+  }, {
+    title: '查看',
+    dataIndex: 'operate',
+    render: (_, record) => (
+      <span>
+        <InvoiceDetail id={record.loanId} templateType={1}>
+          <a>查看</a>
+        </InvoiceDetail>
+      </span>
+    ),
   }];
   return (
     <div>

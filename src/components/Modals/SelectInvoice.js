@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
-import { Modal } from 'antd';
+import { Modal, Tooltip } from 'antd';
 import { debounce } from 'lodash-decorators';
 import style from './index.scss';
 import AddInvoice from './AddInvoice';
 
-@connect(({ global }) => ({
+@connect(({ global, costGlobal }) => ({
   currencyList: global.currencyList,
+  queryTemplateIds: costGlobal.queryTemplateIds,
 }))
 class SelectInvoice extends Component {
   static propTypes = {
@@ -29,29 +30,63 @@ class SelectInvoice extends Component {
       type: 'global/getCurrency',
       payload: {},
     });
+    const { selectInvoice } = this.props;
+    const arr = [];
+    console.log('SelectInvoice -> onShow -> selectInvoice', selectInvoice);
+    if (selectInvoice) {
+      const costCategoryIds = selectInvoice.map(it => it.categoryId);
+      await this.props.dispatch({
+        type: 'costGlobal/queryTemplateIds',
+        payload: {
+          costCategoryIds
+        }
+      });
+    }
     await this.props.dispatch({
       type: 'global/oftenList',
       payload: {}
     }).then(() => {
-      const { useTemplate, oftenTemplate, selectInvoice, currencyList  } = this.props;
-      const others = useTemplate.filter(it => (it.type === 1 && it.parentId === 0));
+      const { useTemplate, oftenTemplate, currencyList, queryTemplateIds  } = this.props;
+      console.log('SelectInvoice -> onShow -> queryTemplateIds', queryTemplateIds);
+      const users = useTemplate.map(it => {
+        const obj = {
+          ...it,
+        };
+        if (!queryTemplateIds.includes(it.id)) {
+          Object.assign(obj, {
+            disabled: true
+          });
+        }
+        return obj;
+      });
+      const often = oftenTemplate.map(it => {
+        const obj = {
+          ...it,
+        };
+        if (!queryTemplateIds.includes(it.id)) {
+          Object.assign(obj, {
+            disabled: true
+          });
+        }
+        return obj;
+      });
+      const others = users.filter(it => (it.type === 1 && it.parentId === 0));
       let lists = treeConvert({
         pId: 'parentId',
         rootId: 0,
-        otherKeys: ['note', 'type', 'parentId', 'createTime', 'templateType']
-      }, useTemplate.filter(it => !(it.type === 1 && it.parentId === 0))).filter(({children = [], type}) => {
+        otherKeys: ['note', 'type', 'parentId', 'createTime', 'templateType', 'disabled']
+      }, users.filter(it => !(it.type === 1 && it.parentId === 0))).filter(({children = [], type}) => {
         if(type === 1) return true;
         return children.length > 0 ? children.map(it => it.type === 1).length : false;
       });
       lists = [
-        { id: 'often', name: '常用单据', children: oftenTemplate },
+        { id: 'often', name: '常用单据', children: often },
         ...lists,
         { id: 'qita', name: '其他单据模板（未分组）', children: others }];
       if (selectInvoice) {
-        const costDetailShareVOS = [];
-        const arr = [];
         selectInvoice.forEach(it => {
           let currency = {};
+          const costDetailShareVOS = [];
           if (it.currencyId && it.currencyId !== '-1') {
             // eslint-disable-next-line prefer-destructuring
             currency = currencyList.filter(its => its.id === it.currencyId)[0];
@@ -63,8 +98,8 @@ class SelectInvoice extends Component {
             costSum: currency.id ? it.currencySum/100 : it.costSum/100,
             detailFolderId: it.id,
           };
-          if (arr.costDetailShareVOS) {
-            arr.costDetailShareVOS.forEach(item => {
+          if (it.costDetailShareVOS) {
+            it.costDetailShareVOS.forEach(item => {
               costDetailShareVOS.push({
                 ...item,
                 shareAmount: currency.id ? item.currencySum/100 : item.shareAmount/100,
@@ -84,7 +119,7 @@ class SelectInvoice extends Component {
       this.setState({
         list: lists,
         visible: true,
-        selectCost: [],
+        selectCost: arr,
       });
     });
   }
@@ -169,17 +204,34 @@ class SelectInvoice extends Component {
                   let childrens = null;
                   if (it.children) {
                     childrens = it.children.map(item => (
-                      <AddInvoice
-                        templateType={item.templateType}
-                        id={item.id}
-                        onHandleOk={this.props.onOk}
-                        costSelect={selectCost}
-                      >
-                        <div className={style.tags} key={item.id}>
-                          <p className="c-black-85 fs-14">{item.name}</p>
-                          <p className="fs-12 c-black-36">{item.note}</p>
-                        </div>
-                      </AddInvoice>
+                      <>
+                        {
+                          item.disabled ?
+                            <Tooltip
+                              title="已选的费用类别不支持该单据模版"
+                              placement="bottom"
+                            >
+                              <div className={style.tags} key={item.id} style={{ background: '#F5F5F6', border: '1px solid #F5F5F6' }}>
+                                <p className="c-black-25 fs-14">{item.name}</p>
+                                <p className="fs-12 c-black-25 eslips-1">{item.note}</p>
+                              </div>
+                            </Tooltip>
+                            :
+                            <AddInvoice
+                              templateType={item.templateType}
+                              id={item.id}
+                              onHandleOk={this.props.onOk}
+                              costSelect={selectCost}
+                              onFolder={() => { this.setState({ visible: false }); if (this.props.onHandle) this.props.onHandle(); }}
+                            >
+                              <div className={style.tags} key={item.id}>
+                                <p className="c-black-85 fs-14">{item.name}</p>
+                                <p className="fs-12 c-black-36 eslips-1">{item.note}</p>
+                              </div>
+                            </AddInvoice>
+                        }
+                      </>
+
                     ));
                   }
                   return (
