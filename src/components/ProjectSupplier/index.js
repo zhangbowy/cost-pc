@@ -8,6 +8,7 @@ import Search from 'antd/lib/input/Search';
 import Setting from '@/components/Setting';
 import BatchImport from '@/components/BatchImport/index';
 import Sort from '@/components/TreeSort/index';
+import PageHead from '@/components/PageHead';
 
 const { confirm } = Modal;
 const typeEnum = {
@@ -255,41 +256,44 @@ class Product extends React.PureComponent {
     this.sortData(lists);
 
     return (
-      <div className="content-dt">
-        <div className="cnt-header">
-          <div className="head_lf">
-            <Setting type="item" target={type} list={list} onOk={this.onOk}>
-              <Button type="primary" style={{ marginRight: '8px' }}>{`新增${typeEnum[type]}`}</Button>
-            </Setting>
-            <Setting type="group" target={type} list={list} onOk={this.onOk}>
-              <Button style={{ marginRight: '8px' }}>新增分组</Button>
-            </Setting>
-            <BatchImport callback={this.onQuery} type={type}>
-              <Button style={{ marginRight: '8px' }}>批量导入</Button>
-            </BatchImport>
-            <Form style={{ display: 'inline-block' }}>
-              <Form.Item>
-                <Search
-                  value={searchValue}
-                  onChange={this.setSearchValue}
-                  placeholder="输入关键字，按回车搜索"
-                  style={{ width: '272px' }}
-                  onSearch={(e) => this.onSearch(e)}
-                />
-              </Form.Item>
-            </Form>
+      <div>
+        <PageHead title={`${typeEnum[type]}管理`} />
+        <div className="content-dt">
+          <div className="cnt-header">
+            <div className="head_lf">
+              <Setting type="item" target={type} list={list} onOk={this.onOk}>
+                <Button type="primary" style={{ marginRight: '8px' }}>{`新增${typeEnum[type]}`}</Button>
+              </Setting>
+              <Setting type="group" target={type} list={list} onOk={this.onOk}>
+                <Button style={{ marginRight: '8px' }}>新增分组</Button>
+              </Setting>
+              <BatchImport callback={this.onQuery} type={type}>
+                <Button style={{ marginRight: '8px' }}>批量导入</Button>
+              </BatchImport>
+              <Form style={{ display: 'inline-block' }}>
+                <Form.Item>
+                  <Search
+                    value={searchValue}
+                    onChange={this.setSearchValue}
+                    placeholder="输入关键字，按回车搜索"
+                    style={{ width: '272px' }}
+                    onSearch={(e) => this.onSearch(e)}
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+            <Sort style={{ justifyContent: 'flex-end' }} list={searchName ? historyList : list} callback={this.getSort}>
+              <Button>排序</Button>
+            </Sort>
           </div>
-          <Sort style={{ justifyContent: 'flex-end' }} list={searchName ? historyList : list} callback={this.getSort}>
-            <Button>排序</Button>
-          </Sort>
+          <Table
+            rowKey="id"
+            loading={loading}
+            columns={columns}
+            dataSource={lists}
+            pagination={false}
+          />
         </div>
-        <Table
-          rowKey="id"
-          loading={loading}
-          columns={columns}
-          dataSource={lists}
-          pagination={false}
-        />
       </div>
     );
   }

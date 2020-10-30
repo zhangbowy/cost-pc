@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Tooltip, Button, message, Modal, Divider,Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import { choosePeople } from '../../../utils/ddApi';
-import Lines from '../../../components/StyleCom/Lines';
+import { choosePeople } from '@/utils/ddApi';
+import Lines from '@/components/StyleCom/Lines';
+import Avatar from '@/components/AntdComp/Avatar';
 import style from './index.scss';
-import Avatar from '../../../components/AntdComp/Avatar';
 
 
-function Controller(props) {
+function ControllerCom(props) {
 
   const { Option } = Select;
   const { dispatch, userInfo, synCompanyTime,queryUsers } = props;
@@ -204,6 +204,7 @@ function Controller(props) {
   );
 }
 const mapStateToProps = (state) => {
+  console.log(1111111,state);
   return {
     removeDataTime: state.controller.removeDataTime,
     userInfo: state.session.userInfo,
@@ -212,5 +213,5 @@ const mapStateToProps = (state) => {
     modifyGrant: state.controller.modifyGrant,
   };
 };
-export default connect(mapStateToProps)(Controller);
+export default connect(mapStateToProps)(ControllerCom);
 

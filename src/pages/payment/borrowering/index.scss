@@ -1,0 +1,33 @@
+.payContent{
+
+  padding: 24px 32px;
+
+  :global(.cnt-header .head_lf) {
+    display: flex;
+  }
+  :global(.ant-form-item) {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  // :global(.ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td) {
+  //   background: #fff;
+  // }
+
+}
+.tit{
+  height: 22px;
+  line-height: 22px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  margin-bottom: 24px;
+  .h2{
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.5);
+  }
+  .num{
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.85);
+  }
+}

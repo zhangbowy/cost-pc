@@ -8,10 +8,10 @@ import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 // import { JsonParse } from '@/utils/common';
+import constants, { getArrayValue, approveStatus, invoiceStatus } from '@/utils/constants';
+import LevelSearch from '@/components/LevelSearch';
+import DropBtn from '@/components/DropBtn';
 import style from './index.scss';
-import constants, { getArrayValue, approveStatus, invoiceStatus } from '../../utils/constants';
-import LevelSearch from '../../components/LevelSearch';
-import DropBtn from '../../components/DropBtn';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;

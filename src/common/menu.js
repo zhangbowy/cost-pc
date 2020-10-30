@@ -142,7 +142,7 @@ const menuData = [
     },{
       id: 'payment_borrowering',
       name: '借款管理',
-      myIcon: 'icongongzuotai',
+      myIcon: '',
       path: 'borrowering',
     }]
   },{
@@ -156,9 +156,9 @@ const menuData = [
     myIcon: 'iconzhichufeiyongtongji',
     path: 'statistics',
     children: [{
-      id: 'costDetail',
+      id: 'statistics_costDetail',
       name: '支出费用明细',
-      myIcon: 'iconzhichufeiyongtongji',
+      myIcon: '',
       path: 'costDetail',
     }]
   },{
@@ -230,16 +230,16 @@ const menuData = [
     }],
   },
   {
-    id: 'product_supplier',
+    id: 'productSupplier',
     name: '项目/供应商',
     myIcon: 'xiangmugongyingshang',
-    path: 'project_supplier',
+    path: 'projectSupplier',
     children: [{
-      id: 'product_supplier_product',
+      id: 'productSupplier_product',
       name: '项目',
       path: 'project'
     }, {
-      id: 'product_supplier_supplier',
+      id: 'productSupplier_supplier',
       name: '供应商',
       path: 'supplier'
     }]

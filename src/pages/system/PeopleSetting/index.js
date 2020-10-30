@@ -6,6 +6,7 @@ import PageHead from '@/components/PageHead';
 import style from './index.scss';
 import { choosePeople } from '../../../utils/ddApi';
 import LookAll from './components/LookAll';
+// import ControllerCom from '@/components/ControllerCom';
 
 @connect(({ peopleSet }) => ({
   detail: peopleSet.detail,
@@ -173,6 +174,7 @@ class PeopleSetting extends Component {
               <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
             </LookAll>
           </span>
+          {/* <ControllerCom></ControllerCom> */}
         </div>
       </div>
     );
