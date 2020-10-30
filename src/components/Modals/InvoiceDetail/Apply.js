@@ -38,7 +38,7 @@ function Apply(props) {
     dataIndex: 'operate',
     render: (_, record) => (
       <span>
-        <InvoiceDetail id={record.loanId} templateType={1}>
+        <InvoiceDetail id={record.applicationId} templateType={2}>
           <a>查看</a>
         </InvoiceDetail>
       </span>

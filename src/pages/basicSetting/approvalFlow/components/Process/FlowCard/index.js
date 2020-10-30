@@ -44,10 +44,11 @@ function FlowCard(props) {
     const isGrant = afterTrue(NodeUtils.isGrant(conf), 'grant');
     const isOnlyApprove = conf && conf.nodeType === 'approver' &&
                           (
-                            ((conf.prevId.indexOf('START') > -1) ||
+                            ((conf.prevId.indexOf('START') > -1 || (conf.prevId.indexOf('start') > -1) ) ||
                             conf.childNode && (conf.childNode.nodeType === 'grant')) &&
                             (count === 1)
                           ); // 唯一的一个审批节点
+    console.log('createNormalCard -> isOnlyApprove', isOnlyApprove);
     return (
       <section className={cs(style['flow-path-card'], style[classList[1]])} onClick={(e) => eventLancher(e, 'edit', conf)} >
         <header className={style.header}>

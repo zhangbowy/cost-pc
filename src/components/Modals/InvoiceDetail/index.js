@@ -156,10 +156,12 @@ class InvoiceDetail extends Component {
 
   handelOk = () => {
     const { id, templateType } = this.props;
-    if (Number(templateType)) {
+    if (Number(templateType) === 1) {
       window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${id}`;
-    } else {
+    } else if (Number(templateType) === 0) {
       window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
+    } else {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Application?token=${localStorage.getItem('token')}&id=${id}`;
     }
   }
 
@@ -485,7 +487,7 @@ class InvoiceDetail extends Component {
             {
               showFields.happenTime && showFields.happenTime.status ?
                 <Col span={8} className="m-t-16">
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发生时间：</span>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发生日期：</span>
                   <span className="fs-14 c-black-65">{details.startTime ? moment(details.startTime).format('YYYY-MM-DD') : '-'}</span>
                   <span className="fs-14 c-black-65">{details.endTime ? `-${moment(details.endTime).format('YYYY-MM-DD')}` : ''}</span>
                 </Col>

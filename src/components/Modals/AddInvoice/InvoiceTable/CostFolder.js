@@ -142,10 +142,11 @@ class CostFolder extends Component {
             style={{
               color: getArrayColor(record.icon, classifyIcon),
               fontSize: '24px',
-              marginRight: '4px'
+              marginRight: '4px',
+              verticalAlign: 'middle'
             }}
           />
-          <span>{record.categoryName}</span>
+          <span style={{verticalAlign: 'middle'}}>{record.categoryName}</span>
         </span>
       )
     }, {
