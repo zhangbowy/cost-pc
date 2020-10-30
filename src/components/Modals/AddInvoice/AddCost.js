@@ -259,6 +259,7 @@ class AddCost extends Component {
           shareTotal: shareAmount,
           categoryName: details.categoryName,
           icon: details.icon,
+          detailFolderId: costTitle === 'edit' ? id : '',
         };
         const expandCostDetailFieldVos = [];
         if (expandField && expandField.length > 0) {

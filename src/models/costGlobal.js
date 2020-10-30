@@ -18,6 +18,7 @@ export default {
     waitLoanSumAll: {},
     userDeps: [], // 通过userId获取数据
     folderSum: {}, // 详细信息
+    queryTemplateIds: [],
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -33,6 +34,15 @@ export default {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize
           }
+        },
+      });
+    },
+    *queryTemplateIds({ payload }, { call, put }) {
+      const response = yield call(post, api.queryTemplateIds, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          queryTemplateIds: response || [],
         },
       });
     },

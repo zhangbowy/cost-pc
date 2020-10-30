@@ -14,6 +14,12 @@ export default {
     menuList: [],
     detailRoleList: [],
     total: 0,
+    approveList: [],
+    approveQuery: {
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+    },
+    approveTotal: 0,
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -57,6 +63,39 @@ export default {
           rolePurviewDataVos: response.rolePurviewDataVos || [],
         },
       });
+    },
+    *approveList({ payload }, { call, put }) {
+      const response = yield call(get, api.approveList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          approveList: response.list || [],
+          query: {
+            pageSize: payload.pageSize,
+            pageNo: payload.pageNo,
+          },
+          approveTotal: response.page ? response.page.total : 0,
+        },
+      });
+    },
+    *approveDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.approveDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          detailRoleList: response.rolePurviewOperateVOS || [],
+          rolePurviewDataVos: response.rolePurviewDataVos || [],
+        },
+      });
+    },
+    *approveDel({ payload }, { call }) {
+      yield call(get, api.approveDel, payload);
+    },
+    *approveAdd({ payload }, { call }) {
+      yield call(post, api.approveAdd, payload);
+    },
+    *approveEdit({ payload }, { call }) {
+      yield call(post, api.approveEdit, payload);
     },
   },
   reducers: {

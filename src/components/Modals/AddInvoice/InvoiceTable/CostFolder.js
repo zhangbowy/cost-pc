@@ -262,7 +262,7 @@ class CostFolder extends Component {
                         已选{selectedRowKeys.length}笔 合计¥
                         <span className="fs-20 fw-500">{money}</span>
                       </span>
-                      <SelectInvoice selectInvoice={selectedRows}>
+                      <SelectInvoice selectInvoice={selectedRows} onHandle={() => this.onCancel()} onOk={this.props.onPerson}>
                         <Button type="primary">生成单据</Button>
                       </SelectInvoice>
                     </div>

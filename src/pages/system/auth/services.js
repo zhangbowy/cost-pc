@@ -13,4 +13,9 @@ export default {
   roleUserList: `${APP_API}/cost/role/roleUserList`,
   roleUserDel: `${APP_API}/cost/role/roleUserDel`,
   menu: `${APP_API}/cost/menu/nav`,
+  approveList: `${APP_API}/cost/approve/role/list`,
+  approveDel: `${APP_API}/cost/approve/role/del`,
+  approveAdd: `${APP_API}/cost/approve/role/add`,
+  approveEdit: `${APP_API}/cost/approve/role/edit`,
+  approveDetail: `${APP_API}/cost/approve/role/detail`,
 };

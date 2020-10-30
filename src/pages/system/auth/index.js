@@ -1,9 +1,10 @@
 
 
 import React from 'react';
-import { Button, Table, Divider, Popconfirm, message, Tooltip } from 'antd';
+import { message, Menu } from 'antd';
 import { connect } from 'dva';
-import AddAuth from './components/AddAuth';
+import Auth from './auth';
+import ApproveIndex from './approve';
 
 @connect(({ loading, auth }) => ({
   loading: loading.effects['auth/list'] || false,
@@ -11,11 +12,11 @@ import AddAuth from './components/AddAuth';
   query: auth.query,
   total: auth.total,
 }))
-class Auth extends React.PureComponent {
+class AuthIndex extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
+      current: 'auth'
     };
   }
 
@@ -36,7 +37,11 @@ class Auth extends React.PureComponent {
   }
 
   onLink = (id) => {
-    this.props.history.push(`/system/auth/${id}`);
+    if (this.state.current === 'auth') {
+      this.props.history.push(`/system/auth/${id}`);
+    } else {
+      this.props.history.push(`/system/auth/approve/${id}`);
+    }
   }
 
   onQuery = (payload) => {
@@ -64,104 +69,38 @@ class Auth extends React.PureComponent {
     });
   }
 
+  handleClick = e => {
+    console.log('click ', e);
+    this.setState({
+      current: e.key,
+    });
+  };
+
   render() {
-    const {
-      visible,
-    } = this.state;
-    const {
-      list,
-      query,
-      total,
-      loading,
-    } = this.props;
-    const columns = [{
-      title: '角色名称',
-      dataIndex: 'roleName',
-    }, {
-      title: '角色简介',
-      dataIndex: 'note',
-      width: 560,
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
-    }, {
-      title: '操作',
-      dataIndex: 'ope',
-      render: (_, record) => (
-        <span>
-          {
-            !record.isSupperAdmin &&
-            <Popconfirm
-              title="确认删除该角色吗?"
-              onConfirm={() => this.onDelete(record.id)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
-          }
-          {
-            !record.isSupperAdmin &&
-            <Divider type="vertical" />
-          }
-          <AddAuth isSupperAdmin={record.isSupperAdmin} onOk={this.onOk} data={record} visible={visible}>
-            {
-              record.isSupperAdmin ?
-                <a>查看</a>
-              :
-                <a>编辑</a>
-            }
-          </AddAuth>
-          <Divider type="vertical" />
-          <a onClick={() => this.onLink(record.id)}>设置人员</a>
-        </span>
-      ),
-      width: '190px',
-      className: 'fixCenter'
-    }];
     return (
-      <div className="content-dt">
-        <div className="cnt-header">
-          <div className="head_lf">
-            <AddAuth onOk={this.onOk} visible={visible}>
-              <Button type="primary">新增角色</Button>
-            </AddAuth>
-          </div>
-          {/* <div className="head_rg">
-            <span>排序</span>
-          </div> */}
+      <div>
+        <div style={{background: '#fff', paddingTop: '16px'}}>
+          <p className="m-l-32 p-t-16 m-b-16"><span className="c-black-36 fs-14">返回上一级</span> / <span className="c-black-65 fs-14">角色管理</span></p>
+          <p className="m-l-32 m-b-16 c-black-85 fs-20">角色管理</p>
+          <Menu
+            onClick={this.handleClick}
+            mode="horizontal"
+            selectedKeys={[this.state.current]}
+            className="m-l-32 titleMenu"
+          >
+            <Menu.Item key="auth">系统角色</Menu.Item>
+            <Menu.Item key="approve">审批角色</Menu.Item>
+          </Menu>
         </div>
-        <Table
-          columns={columns}
-          dataSource={list}
-          loading={loading}
-          rowKey="id"
-          pagination={{
-            current: query.pageNo,
-            total,
-            showTotal: () => (`共${total}条数据`),
-            onChange: (pageNumber) => {
-              this.onQuery({
-                pageNo: pageNumber,
-                pageSize: query.pageSize
-              });
-            },
-            size:'small',
-            showSizeChanger: true,
-            showQuickJumper: true,
-            onShowSizeChange: (cur, size) => {
-              this.onQuery({
-                pageNo: cur,
-                pageSize: size
-              });
-            }
-          }}
-        />
+        {
+          this.state.current === 'auth' ?
+            <Auth onLink={this.onLink} />
+            :
+            <ApproveIndex onLink={this.onLink} />
+        }
       </div>
     );
   }
 }
 
-export default Auth;
+export default AuthIndex;

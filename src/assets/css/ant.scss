@@ -144,4 +144,11 @@
   .ant-dropdown-menu-item{
     line-height: 28px!important;
   }
+  .titleMenu{
+    border-bottom: none;
+  }
+  .titleMenu .ant-menu-item{
+    padding: 0;
+    margin-right: 42px;
+  }
 }
