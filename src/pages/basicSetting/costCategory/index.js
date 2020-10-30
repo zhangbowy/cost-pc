@@ -8,6 +8,7 @@ import treeConvert from '@/utils/treeConvert';
 import { classifyIcon, getArrayColor } from '@/utils/constants';
 import Search from 'antd/lib/input/Search';
 // import SortModal from './components/SortModal';
+import PageHead from '@/components/PageHead';
 import AddClassify from './components/AddClassfy';
 import AddGroup from './components/AddGroup';
 
@@ -262,39 +263,42 @@ class CostCategory extends React.PureComponent {
       className: 'fixCenter'
     }];
     return (
-      <div className="content-dt">
-        <div className="cnt-header">
-          <div className="head_lf">
-            <AddClassify title="add" onOk={() => this.onOk()} list={list}>
-              <Button type="primary" style={{marginRight: '8px'}}>新增费用类别</Button>
-            </AddClassify>
-            <AddGroup onOk={this.onOk} title="add" list={list}>
-              <Button style={{marginRight: '8px'}}>新增分组</Button>
-            </AddGroup>
-            <Form style={{display: 'inline-block'}}>
-              <Form.Item>
-                <Search
-                  placeholder="输入关键字，按回车搜索"
-                  style={{ width: '272px' }}
-                  onSearch={(e) => this.onSearch(e)}
-                />
-              </Form.Item>
-            </Form>
+      <div>
+        <PageHead title="费用类别设置" />
+        <div className="content-dt ">
+          <div className="cnt-header">
+            <div className="head_lf">
+              <AddClassify title="add" onOk={() => this.onOk()} list={list}>
+                <Button type="primary" style={{marginRight: '8px'}}>新增费用类别</Button>
+              </AddClassify>
+              <AddGroup onOk={this.onOk} title="add" list={list}>
+                <Button style={{marginRight: '8px'}}>新增分组</Button>
+              </AddGroup>
+              <Form style={{display: 'inline-block'}}>
+                <Form.Item>
+                  <Search
+                    placeholder="输入关键字，按回车搜索"
+                    style={{ width: '272px' }}
+                    onSearch={(e) => this.onSearch(e)}
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+            {/* <div style={{float: 'right', marginTop: '-30px'}}>
+              <SortModal>
+                <span>排序</span>
+              </SortModal>
+            </div> */}
           </div>
-          {/* <div style={{float: 'right', marginTop: '-30px'}}>
-            <SortModal>
-              <span>排序</span>
-            </SortModal>
-          </div> */}
+          <Table
+            rowKey="id"
+            loading={loading}
+            columns={columns}
+            dataSource={lists}
+            pagination={false}
+            defaultExpandAllRows
+          />
         </div>
-        <Table
-          rowKey="id"
-          loading={loading}
-          columns={columns}
-          dataSource={lists}
-          pagination={false}
-          defaultExpandAllRows
-        />
       </div>
     );
   }

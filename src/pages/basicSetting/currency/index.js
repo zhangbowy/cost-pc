@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Table, Form, Modal, Button, message, Input, Icon } from 'antd';
-import SubHeader from '@/components/SubHeader';
+// import SubHeader from '@/components/SubHeader';
 import getDateUtil from '@/utils/tool';
 import { formItemLayout } from '@/utils/constants';
 // import addAvatar from '@/assets/img/allAvatars.png';
+import PageHead from '@/components/PageHead';
 import style from './index.scss';
 
 const { confirm } = Modal;
@@ -191,14 +192,15 @@ class ApproveIndex extends Component {
     }];
     return (
       <div>
-        <SubHeader
+        {/* <SubHeader
           type="role"
           content={{
             roleName: '多币种与汇率',
             note: '本币默认CNY人民币，开启其他币种后，所有报销单均需选择币种才可发起申请（声明：人民币的核算均以当前已输入汇率进行计算）',
           }}
           {...this.props}
-        />
+        /> */}
+        <PageHead title="多币种与汇率" note="本币默认CNY人民币，开启其他币种后，所有报销单均需选择币种才可发起申请（声明：人民币的核算均以当前已输入汇率进行计算）" />
         <div className="content-dt">
           <Table
             rowKey="currencyType"

@@ -9,6 +9,7 @@ import QrCodeModal from '@/components/QrCodeModal';
 import treeConvert from '@/utils/treeConvert';
 import Search from 'antd/lib/input/Search';
 // import SortModal from './components/SortModal';
+import PageHead from '@/components/PageHead';
 import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
@@ -273,43 +274,46 @@ class Invoice extends React.PureComponent {
       className: 'fixCenter'
     }];
     return (
-      <div className="content-dt">
-        <div className="cnt-header">
-          <div className="head_lf">
-            <JudgeType title="add" data={{}} onOk={this.onOk} visible={typeVisible} changeVisible={this.changeVisible}>
-              <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
-            </JudgeType>
-            <AddGroup title="add" onOk={this.onOk}>
-              <Button style={{marginRight: '8px'}}>新增分组</Button>
-            </AddGroup>
-            <Form style={{display: 'inline-block'}}>
-              <Form.Item>
-                <Search
-                  placeholder="输入关键字，按回车搜索"
-                  style={{ width: '272px' }}
-                  onSearch={(e) => this.onSearch(e)}
-                />
-              </Form.Item>
-            </Form>
+      <div>
+        <PageHead title="单据模板设置" />
+        <div className="content-dt">
+          <div className="cnt-header">
+            <div className="head_lf">
+              <JudgeType title="add" data={{}} onOk={this.onOk} visible={typeVisible} changeVisible={this.changeVisible}>
+                <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
+              </JudgeType>
+              <AddGroup title="add" onOk={this.onOk}>
+                <Button style={{marginRight: '8px'}}>新增分组</Button>
+              </AddGroup>
+              <Form style={{display: 'inline-block'}}>
+                <Form.Item>
+                  <Search
+                    placeholder="输入关键字，按回车搜索"
+                    style={{ width: '272px' }}
+                    onSearch={(e) => this.onSearch(e)}
+                  />
+                </Form.Item>
+              </Form>
+            </div>
           </div>
+          <Table
+            columns={columns}
+            rowKey="id"
+            loading={loading}
+            dataSource={lists}
+            pagination={false}
+            defaultExpandAllRows
+            scroll={{ y: '600px' }}
+            expandable={{
+              expandIcon: ({ expanded, onExpand, record }) =>
+              expanded ? (
+                <i className="iconfont iconenter" onClick={e => onExpand(record, e)} />
+              ) : (
+                <i className="iconfont icondown" onClick={e => onExpand(record, e)} />
+              )
+            }}
+          />
         </div>
-        <Table
-          columns={columns}
-          rowKey="id"
-          loading={loading}
-          dataSource={lists}
-          pagination={false}
-          defaultExpandAllRows
-          scroll={{ y: '600px' }}
-          expandable={{
-            expandIcon: ({ expanded, onExpand, record }) =>
-            expanded ? (
-              <i className="iconfont iconenter" onClick={e => onExpand(record, e)} />
-            ) : (
-              <i className="iconfont icondown" onClick={e => onExpand(record, e)} />
-            )
-          }}
-        />
       </div>
     );
   }

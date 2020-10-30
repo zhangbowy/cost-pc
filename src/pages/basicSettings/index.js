@@ -38,12 +38,19 @@ class basicSetting extends Component {
 			});
 			console.log(menus);
 			this.props.BasicSettingMenus.map((item) => {
+				const obj = {...item};
+				if(item.menuName === '数据初始化'){
+					obj.url = 'basicSetting_Initialization';
+				}
+				// if(item.menuName === "角色管理"){
+				// 	obj.url = 'basicSetting_Initialization'
+				// }
 				if(item.type === 4){
 					const index = menusMap.get(item.parentId);
 					console.log(index);
 					if(index || index === 0){
 						if(menus[index].children){
-							menus[index].children.push(item);
+							menus[index].children.push(obj);
 						}
 					}
 				}

@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import constants from '@/utils/constants';
 import getDateUtil from '@/utils/tool';
 import QRCode from 'qrcode.react';
+import PageHead from '@/components/PageHead';
 import style from './index.scss';
 import Lines from '../../../components/StyleCom/Lines';
 
@@ -244,15 +245,15 @@ function Controller(props) {
       return '你的企业已成功开通花呗工作花，请及时告知员工到鑫支出开通该业务，即刻享受花呗提额';
     }
       return '如你已线下签约花呗工作花，请及时扫码授权，并录入员工信息，员工方可正常开通使用';
-    
   };
 
   return (
     <div style={{minHeight:'100%'}}>
-      <div className={style.app_header}>
+      {/* <div className={style.app_header}>
         <p className="c-black-85 fs-20 fw-600 m-b-8">花呗工作花</p>
         <p className="c-black-45 fs-14" style={{marginBottom: 0}}>{getTextTit()}</p>
-      </div>
+      </div> */}
+      <PageHead title="费用类别设置" note={getTextTit()}  />
       <div className="content-dt" style={{overflowY:'auto',padding: visible?'24px 32px':'24px 10%',minHeight: 'calc(100% - 120px)' }} >
         <>
           <div className={visible?style.hide:''}>

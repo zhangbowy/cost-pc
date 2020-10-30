@@ -35,21 +35,21 @@
 //       path: 'batch',
 //     }],
 //   },
-//   {
-//     id: 'product_supplier',
-//     name: '项目/供应商',
-//     myIcon: 'xiangmugongyingshang',
-//     path: 'project_supplier',
-//     children: [{
-//       id: 'product_supplier_product',
-//       name: '项目',
-//       path: 'project'
-//     }, {
-//       id: 'product_supplier_supplier',
-//       name: '供应商',
-//       path: 'supplier'
-//     }]
-//   },
+  // {
+  //   id: 'product_supplier',
+  //   name: '项目/供应商',
+  //   myIcon: 'xiangmugongyingshang',
+  //   path: 'project_supplier',
+  //   children: [{
+  //     id: 'product_supplier_product',
+  //     name: '项目',
+  //     path: 'project'
+  //   }, {
+  //     id: 'product_supplier_supplier',
+  //     name: '供应商',
+  //     path: 'supplier'
+  //   }]
+  // },
 //   {
 //     id: 'statistics',
 //     name: '支出费用明细',
@@ -204,6 +204,10 @@ const menuData = [
       id: 'basicSetting_controller',
       name: '控制中心',
       path: 'controller',
+    }, {
+      id: 'basicSetting_Initialization',
+      name: '数据初始化',
+      path: 'Initialization',
     }],
   },
   {
@@ -224,7 +228,22 @@ const menuData = [
       name: '审批角色',
       path: 'approve',
     }],
-  }
+  },
+  {
+    id: 'product_supplier',
+    name: '项目/供应商',
+    myIcon: 'xiangmugongyingshang',
+    path: 'project_supplier',
+    children: [{
+      id: 'product_supplier_product',
+      name: '项目',
+      path: 'project'
+    }, {
+      id: 'product_supplier_supplier',
+      name: '供应商',
+      path: 'supplier'
+    }]
+  },
 ];
 // 菜单访问路径解析
 function formatter(data, parentPath = '/') {

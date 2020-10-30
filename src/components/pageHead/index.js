@@ -7,6 +7,7 @@ import {
   // Dropdown,
   // Menu,
   // Icon,
+  Tooltip,
   Breadcrumb,
 } from 'antd';
 import styles from './index.scss';
@@ -38,7 +39,11 @@ class App extends React.PureComponent {
           <Breadcrumb.Item>{title}</Breadcrumb.Item>
         </Breadcrumb>
         <div className={styles.title}>
-          {title}{note?<i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />:''}
+          {title}{note?(
+            <Tooltip title={note}>
+              <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+            </Tooltip>
+          ):''}
         </div>
       </div>
     );

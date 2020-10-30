@@ -5,6 +5,7 @@ import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { Table, Button, Divider, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
+import PageHead from '@/components/PageHead';
 import style from './index.scss';
 import AddFlow from './components/AddFlow';
 import { getArrayValue } from '../../../utils/constants';
@@ -122,12 +123,16 @@ function ApprovalFlow(props) {
 
   return (
     <div>
-      <div className="app_header">
+      {/* <div className="app_header">
         <p className="app_header_title">审批设置</p>
         <p className="app_header_line">
           { status === '0' ? '默认为你提供了一些模版，你也可以按单据类型自行添加' : '默认为你提供1个审批流模版，你也可以自行添加' }
         </p>
-      </div>
+      </div> */}
+      <PageHead
+        title="单据模板设置" 
+        note={status === '0' ? '默认为你提供了一些模版，你也可以按单据类型自行添加' : '默认为你提供1个审批流模版，你也可以自行添加'}
+      />
       <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto', paddingBottom: '32px' }}>
         <MenuItems
           lists={approvePersonList || []}

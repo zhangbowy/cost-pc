@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Table, Divider, Button, Tag, message, Modal, Tooltip } from 'antd';
 import { connect } from 'dva';
 import { accountType, getArrayValue } from '@/utils/constants';
+import PageHead from '@/components/PageHead';
 import AddAccount from './components/AddModal';
 import { signStatus } from '../../../utils/constants';
 
@@ -166,39 +167,42 @@ class Account extends Component {
       className: 'fixCenter'
     }];
     return (
-      <div className="content-dt">
-        <div className="cnt-header">
-          <div className="head_lf">
-            <AddAccount onOk={this.onOk} title="add">
-              <Button type="primary">新增付款账户</Button>
-            </AddAccount>
+      <div>
+        <PageHead title="公司付款账户设置" />
+        <div className="content-dt">
+          <div className="cnt-header">
+            <div className="head_lf">
+              <AddAccount onOk={this.onOk} title="add">
+                <Button type="primary">新增付款账户</Button>
+              </AddAccount>
+            </div>
           </div>
+          <Table
+            columns={columns}
+            dataSource={list}
+            loading={loading}
+            pagination={{
+              current: query.pageNo,
+              total,
+              onChange: (pageNumber) => {
+                this.onQuery({
+                  pageNo: pageNumber,
+                  pageSize: query.pageSize
+                });
+              },
+              size: 'small',
+              showTotal: () => (`共${total}条数据`),
+              showSizeChanger: true,
+              showQuickJumper: true,
+              onShowSizeChange: (cur, size) => {
+                this.onQuery({
+                  pageNo: cur,
+                  pageSize: size
+                });
+              }
+            }}
+          />
         </div>
-        <Table
-          columns={columns}
-          dataSource={list}
-          loading={loading}
-          pagination={{
-            current: query.pageNo,
-            total,
-            onChange: (pageNumber) => {
-              this.onQuery({
-                pageNo: pageNumber,
-                pageSize: query.pageSize
-              });
-            },
-            size: 'small',
-            showTotal: () => (`共${total}条数据`),
-            showSizeChanger: true,
-            showQuickJumper: true,
-            onShowSizeChange: (cur, size) => {
-              this.onQuery({
-                pageNo: cur,
-                pageSize: size
-              });
-            }
-          }}
-        />
       </div>
     );
   }
