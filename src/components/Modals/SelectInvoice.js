@@ -7,6 +7,7 @@ import { Modal, Tooltip } from 'antd';
 import { debounce } from 'lodash-decorators';
 import style from './index.scss';
 import AddInvoice from './AddInvoice';
+import Tags from '../Tags';
 
 @connect(({ global, costGlobal }) => ({
   currencyList: global.currencyList,
@@ -52,7 +53,7 @@ class SelectInvoice extends Component {
         const obj = {
           ...it,
         };
-        if (!queryTemplateIds.includes(it.id)) {
+        if (selectInvoice && !queryTemplateIds.includes(it.id)) {
           Object.assign(obj, {
             disabled: true
           });
@@ -63,7 +64,7 @@ class SelectInvoice extends Component {
         const obj = {
           ...it,
         };
-        if (!queryTemplateIds.includes(it.id)) {
+        if (selectInvoice && !queryTemplateIds.includes(it.id)) {
           Object.assign(obj, {
             disabled: true
           });
@@ -236,7 +237,31 @@ class SelectInvoice extends Component {
                   }
                   return (
                     <div className="m-b-20" key={it.id} id={it.id} data-id={it.id}>
-                      <p className="c-black-85 fs-16 fw-500">{it.name}</p>
+                      <div style={{display: 'flex', alignItems: 'center'}} className="m-b-12">
+                        <p className="c-black-85 fs-16 fw-500" style={{marginBottom: '0'}}>
+                          {it.name}
+                        </p>
+                        <span style={{ marginLeft: '6px' }}>
+                          {
+                            (it.type === 0) && it.templateType === 0 &&
+                            <Tags color='rgba(38, 128, 242, 0.08)'>
+                              报销
+                            </Tags>
+                          }
+                          {
+                            (it.type === 0) && it.templateType === 1 &&
+                            <Tags color='rgba(0, 199, 149, 0.08)'>
+                              借款
+                            </Tags>
+                          }
+                          {
+                            (it.type === 0) && it.templateType === 2 &&
+                            <Tags color='rgba(255, 159, 0, 0.08)'>
+                              申请
+                            </Tags>
+                          }
+                        </span>
+                      </div>
                       <div style={{display: 'flex', flexWrap: 'wrap'}}>
                         {childrens}
                       </div>

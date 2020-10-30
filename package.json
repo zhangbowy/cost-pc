@@ -4,7 +4,7 @@
   "description": "鑫支出",
   "author": "Tan Wei",
   "scripts": {
-    "start": "umi dev",
+    "start": "PORT=8088 umi dev",
     "build": "umi build",
     "test": "umi test",
     "lint": "eslint --ext .js src",

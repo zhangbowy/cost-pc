@@ -527,8 +527,10 @@ class AddInvoice extends Component {
     });
     const { templateType } = this.props;
     const { total } = this.state;
-    if (Number(templateType)) {
+    if (Number(templateType) === 1) {
       Object.assign(payload, { borrowAmount: (total*1000)/10 });
+    } else if (Number(templateType) === 2) {
+      Object.assign(payload, { applicationSum: (total*1000)/10 });
     }
     this.props.dispatch({
       type: 'global/approveList',
