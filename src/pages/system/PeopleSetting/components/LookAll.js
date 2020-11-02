@@ -79,17 +79,17 @@ class LookAll extends Component {
           onCancel={this.onCancel}
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
-            <Button key="save" onClick={() => this.onSave()} type="primary">保存</Button>
+            // <Button key="save" onClick={() => this.onSave()} type="primary">保存</Button>
           ]}
         >
           <div className="m-b-16">
-            <Button
+            {/* <Button
               type="default"
               className="m-r-15"
               onClick={() => this.selectPeople()}
             >
               添加人员
-            </Button>
+            </Button> */}
             <span>已授权{userVos.length}人，还可以授权{checkAll ? (allUserCount-userVos.length) : (payUserCount-userVos.length)}人</span>
           </div>
           {
@@ -97,11 +97,11 @@ class LookAll extends Component {
               <Tag
                 className="m-b-8"
                 key={it.userId}
-                closable
-                onClose={e => {
-                  e.preventDefault();
-                  this.handleClose(it.userId);
-                }}
+                // closable
+                // onClose={e => {
+                //   e.preventDefault();
+                //   this.handleClose(it.userId);
+                // }}
               >
                 {it.userName}
               </Tag>

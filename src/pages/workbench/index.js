@@ -18,7 +18,7 @@ import style from './index.scss';
 import Header from './components/Header';
 import HeadLeft from './components/HeadLeft';
 import StepShow from '../../components/StepShow';
-import { accountType } from '../../utils/constants';
+// import { accountType } from '../../utils/constants';
 import wave from '../../utils/wave';
 
 @Form.create()
@@ -222,41 +222,6 @@ class Workbench extends PureComponent {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
       width: 160,
-    }, {
-      title: '收款账户名称',
-      dataIndex: 'receiptName',
-      width: 150,
-      render: (_, record) => {
-        let name = record.accountVo;
-        if (name) {
-          name = name.accountName;
-        }
-        return (
-          <span>{name || '-'}</span>
-        );
-      }
-    }, {
-      title: '个人/供应商收款账户',
-      dataIndex: 'receiptId',
-      render: (_, record) => {
-        let account = record.accountVo;
-        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
-          account = [{
-            ...record.supplierAccountVo,
-            type: record.supplierAccountVo.accountType,
-            account: record.supplierAccountVo.supplierAccount,
-          }];
-        }
-        return (
-          <span>
-            {account && account.accountType ? getArrayValue(account.accountType, accountType) : ''}
-            <span className="m-r-8">{account && account.bankName}</span>
-            {account && account.account}
-            {!account && '-'}
-          </span>
-        );
-      },
-      width: 180,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',

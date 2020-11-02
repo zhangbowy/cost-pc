@@ -4,7 +4,7 @@ import { Modal, Divider, Button, Popconfirm } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
-import style from './index.scss';
+// import style from './index.scss';
 import { rowSelect } from '../../../../utils/common';
 import AddInvoice from '..';
 
@@ -123,7 +123,7 @@ class Draft extends Component {
 
   render() {
     const { draftList, total, loading, page } = this.props;
-    const { selectedRowKeys, selectedRows, visible, money, searchContent } = this.state;
+    const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     const columns = [{
       title: '序号',
       dataIndex: 'index',
@@ -176,13 +176,13 @@ class Draft extends Component {
             id={record.invoiceTemplateId}
             contentJson={record.contentJson}
             onHandleOk={() => {
-              if (this.props.onPerson) {
-                this.props.onPerson();
-              }
               this.onQuery({
                 ...page,
                 searchContent,
               });
+              if (this.props.onPerson) {
+                this.props.onPerson();
+              }
             }}
             draftId={record.id}
           >
@@ -197,28 +197,14 @@ class Draft extends Component {
       <div>
         <div onClick={() => this.onShow()}>{this.props.children}</div>
         <Modal
-          title="费用夹"
+          title="草稿箱"
           visible={visible}
           onCancel={() => this.onCancel()}
           width="980px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
           footer={(
             <>
-              {
-                selectedRowKeys.length ?
-                  <div key="dull" className={style.costMoney}>
-                    <Button type="default" key="cancel" onClick={this.onCancel}>取消</Button>
-                    <div>
-                      <span className="fs-15 c-black-85 m-r-8">
-                        已选{selectedRowKeys.length}笔 合计¥
-                        <span className="fs-20 fw-500">{money}</span>
-                      </span>
-                      <Button type="primary">生成单据</Button>
-                    </div>
-                  </div>
-                :
-                  <Button type="default" key="cen" onClick={this.onCancel}>取消</Button>
-              }
+              <Button type="default" key="cen" onClick={this.onCancel}>取消</Button>
             </>
           )}
         >

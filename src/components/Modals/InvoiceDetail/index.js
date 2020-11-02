@@ -129,8 +129,13 @@ class InvoiceDetail extends Component {
   // 审批详情跳转
   onLinkDetail = () => {
     const { templateType } = this.props;
-    const { invoiceDetail, loanDetail } = this.props;
-    const details = Number(templateType) ? loanDetail : invoiceDetail;
+    const { invoiceDetail, loanDetail, applyDetail } = this.props;
+    let details = invoiceDetail;
+    if (Number(templateType) === 1) {
+      details = loanDetail;
+    } else if (Number(templateType) === 2) {
+      details = applyDetail;
+    }
     if (details.proInsId) {
       this.props.dispatch({
         type: 'global/approveUrl',
@@ -453,10 +458,13 @@ class InvoiceDetail extends Component {
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交日期：</span>
               <span className="fs-14 c-black-65">{details.createTime && moment(details.createTime).format('YYYY-MM-DD')}</span>
             </Col>
-            <Col span={8} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
-              <span className="fs-14 c-black-65">{Number(templateType) ? getArrayValue(details.grantStatus, invoiceStatus) : getArrayValue(details.status, invoiceStatus)}</span>
-            </Col>
+            {
+              Number(templateType) !== 2 &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
+                <span className="fs-14 c-black-65">{Number(templateType) ? getArrayValue(details.grantStatus, invoiceStatus) : getArrayValue(details.status, invoiceStatus)}</span>
+              </Col>
+            }
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
               <span className="fs-14 c-black-65">
