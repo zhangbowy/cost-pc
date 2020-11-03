@@ -130,7 +130,7 @@ function ApprovalFlow(props) {
         </p>
       </div> */}
       <PageHead
-        title="单据模板设置" 
+        title="审批流设置" 
         note={status === '0' ? '默认为你提供了一些模版，你也可以按单据类型自行添加' : '默认为你提供1个审批流模版，你也可以自行添加'}
       />
       <div className={cs('content-dt', style.approval_cnt)} style={{ height: 'auto', paddingBottom: '32px' }}>

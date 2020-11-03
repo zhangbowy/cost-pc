@@ -253,7 +253,7 @@ function Controller(props) {
         <p className="c-black-85 fs-20 fw-600 m-b-8">花呗工作花</p>
         <p className="c-black-45 fs-14" style={{marginBottom: 0}}>{getTextTit()}</p>
       </div> */}
-      <PageHead title="费用类别设置" note={getTextTit()}  />
+      <PageHead title="花呗工作花" note={getTextTit()}  />
       <div className="content-dt" style={{overflowY:'auto',padding: visible?'24px 32px':'24px 10%',minHeight: 'calc(100% - 120px)' }} >
         <>
           <div className={visible?style.hide:''}>

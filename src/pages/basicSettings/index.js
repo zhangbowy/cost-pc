@@ -99,7 +99,7 @@ class basicSetting extends Component {
 	render() {
 		console.log(this.state.menus);
 		return (
-  <div style={{padding:'0 20px 40px 40px'}}>
+  <div style={{padding:'0 20px 40px 24px',marginTop:'-16px'}}>
     {
 					this.state.menus.map(item => {
 						return (
