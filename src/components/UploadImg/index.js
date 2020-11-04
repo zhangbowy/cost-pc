@@ -16,6 +16,7 @@ class UploadImg extends Component {
   }
 
   handleChange = (info) => {
+    console.log('UploadImg -> handleChange -> info', info);
     const img = this.state.imgUrl;
     if (info.result.imgUrl) {
       this.setState({

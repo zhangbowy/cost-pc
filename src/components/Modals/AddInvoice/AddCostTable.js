@@ -188,6 +188,7 @@ class AddCostTable extends Component {
           shareMount = numAdd(it.shareAmount, shareMount);
         });
       }
+      this.props.onChange('costDetailShareVOS', detail);
       this.setState({
         shareAmount: shareMount.toFixed(2),
       }, () => {
@@ -318,6 +319,7 @@ class AddCostTable extends Component {
     }, {
       title: '承担金额(元)',
       dataIndex: 'shareAmount',
+      className: 'moneyCol',
       render: (_, record) => (
         <Form>
           <Form.Item>

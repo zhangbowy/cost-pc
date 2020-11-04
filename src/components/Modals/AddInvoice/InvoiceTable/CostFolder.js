@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Tooltip, Divider, Popover, Tag, Button, Popconfirm } from 'antd';
+import { Modal, Tooltip, Divider, Popover, Tag, Button, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
@@ -27,6 +27,7 @@ class CostFolder extends Component {
     visible: false,
     searchContent: '',
     money: 0,
+    slVisible: false,
   }
 
   onShow = () => {
@@ -96,10 +97,26 @@ class CostFolder extends Component {
     });
   }
 
+  slInvoice = () => {
+    this.setState({
+      slVisible: true,
+    });
+  }
+
+  onChangeVisible = () => {
+    this.setState({
+      slVisible: false,
+    });
+  }
+
   onDelete = (id) => {
     let ids = this.state.selectedRowKeys;
     if (id) {
       ids = [id];
+    }
+    if (!ids.length) {
+      message.error('请勾选费用');
+      return;
     }
     this.props.dispatch({
       type: 'costGlobal/delFolder',
@@ -131,7 +148,7 @@ class CostFolder extends Component {
 
   render() {
     const { folderList, total, loading, page } = this.props;
-    const { selectedRowKeys, selectedRows, visible, money, searchContent } = this.state;
+    const { selectedRowKeys, selectedRows, visible, money, searchContent, slVisible } = this.state;
     const columns = [{
       title: '费用类别',
       dataIndex: 'categoryName',
@@ -181,6 +198,7 @@ class CostFolder extends Component {
           }
         </span>
       ),
+      className: 'moneyCol',
       width: '250px'
     }, {
       title: '发生日期',
@@ -232,9 +250,14 @@ class CostFolder extends Component {
             id={record.id}
             costTitle="edit"
             onCallback={() => {
+              this.setState({
+                selectedRowKeys:[],
+                selectedRows: [],
+              });
               this.onQuery({ searchContent, ...page });
               this.props.onPerson();
             }}
+            isDelete4Category={record.isDelete4Category}
           >
             <a>编辑</a>
           </AddCost>
@@ -263,9 +286,7 @@ class CostFolder extends Component {
                         已选{selectedRowKeys.length}笔 合计¥
                         <span className="fs-20 fw-500">{money}</span>
                       </span>
-                      <SelectInvoice selectInvoice={selectedRows} onHandle={() => this.onCancel()} onOk={this.props.onPerson}>
-                        <Button type="primary">生成单据</Button>
-                      </SelectInvoice>
+                      <Button type="primary" onClick={() => this.slInvoice()}>生成单据</Button>
                     </div>
                   </div>
                 :
@@ -302,6 +323,18 @@ class CostFolder extends Component {
                 <Button type='default' onClick={() => this.onDelete()} className="m-r-8">批量删除</Button>
               </>
             )}
+          />
+          <SelectInvoice
+            selectInvoice={selectedRows}
+            onHandle={() => this.onCancel()}
+            onOk={this.props.onPerson}
+            onCloseInvoice={() => this.onCancel()}
+            visible={slVisible}
+            onCancel={() => this.onChangeVisible()}
+            onCallback={() => {
+              this.onQuery({ searchContent, ...page });
+              this.props.onPerson();
+            }}
           />
         </Modal>
       </div>

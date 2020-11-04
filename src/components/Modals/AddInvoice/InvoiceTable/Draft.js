@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Divider, Button, Popconfirm } from 'antd';
+import { Modal, Divider, Button, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
@@ -12,6 +12,7 @@ import AddInvoice from '..';
   draftList: costGlobal.draftList,
   total: costGlobal.total,
   page: costGlobal.page,
+  draftTotal: costGlobal.draftTotal,
   loading: loading.effects['costGlobal/listDraft'] || false,
 }))
 class Draft extends Component {
@@ -99,6 +100,10 @@ class Draft extends Component {
     if (id) {
       ids = [id];
     }
+    if (!ids.length) {
+      message.error('请勾选草稿');
+      return;
+    }
     this.props.dispatch({
       type: 'costGlobal/delDraft',
       payload: {
@@ -122,7 +127,7 @@ class Draft extends Component {
   }
 
   render() {
-    const { draftList, total, loading, page } = this.props;
+    const { draftList, total, loading, page, draftTotal } = this.props;
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     const columns = [{
       title: '序号',
@@ -144,6 +149,7 @@ class Draft extends Component {
           <span>{record.costSum ? record.costSum/100 : 0}</span>
         </span>
       ),
+      className: 'moneyCol',
       width: '250px'
     }, {
       title: '单据类型',
@@ -216,7 +222,7 @@ class Draft extends Component {
             onSelect={this.onSelect}
             onSelectAll={this.onSelectAll}
             onSearch={this.onSearch}
-            searchPro="请输入单号、事由、收款账户"
+            searchPro="请输入事由、收款账户"
             total={total}
             loading={loading}
             onQuery={this.onQuery}
@@ -226,6 +232,12 @@ class Draft extends Component {
               <>
                 <Button type='default' onClick={() => this.onDelete()} className="m-r-8">批量删除</Button>
               </>
+            )}
+            production={(
+              <span>
+                草稿箱共计{draftTotal.count ? draftTotal.count : 0}单，
+                ¥{draftTotal.totalSum ? draftTotal.totalSum/100 : 0}
+              </span>
             )}
           />
         </Modal>

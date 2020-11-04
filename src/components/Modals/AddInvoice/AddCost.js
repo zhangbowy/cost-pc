@@ -24,7 +24,7 @@ const labelInfo = {
   happenTime: '发生日期'
 };
 @Form.create()
-@connect(({ global, costGlobal }) => ({
+@connect(({ global, costGlobal, session }) => ({
   expenseList: global.expenseList,
   deptInfo: global.deptInfo,
   userId: global.userId,
@@ -34,6 +34,8 @@ const labelInfo = {
   currencyShow: global.currencyShow,
   costCategoryList: global.costCategoryList,
   detailFolder: costGlobal.detailFolder,
+  userInfo: session.userInfo,
+  userDeps: costGlobal.userDeps,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -64,7 +66,7 @@ class AddCost extends Component {
         this.setState({
           details: this.props.detail,
           costDetailShareVOS: this.props.detail.costDetailShareVOS || [],
-          imgUrl: this.props.detail.imgUrl,
+          imgUrl: this.props.detail.imgUrl || [],
           currencyId: this.props.detail.currencyId || '-1',
           currencyName: this.props.detail.currencyName || '',
           exchangeRate: this.props.detail.exchangeRate || 1,
@@ -76,7 +78,11 @@ class AddCost extends Component {
 
   onShow = async() => {
     const _this = this;
-    const { costType, id } = this.props;
+    const { costType, id, isDelete4Category } = this.props;
+    if (isDelete4Category) {
+      message.error('该费用类别已被管理员删除');
+      return;
+    }
     await this.props.dispatch({
       type: 'global/users',
       payload: {
@@ -102,30 +108,59 @@ class AddCost extends Component {
             payload: {
               id,
             }
-          }).then(() => {
+          }).then(async() => {
             const { detailFolder, currencyList } = this.props;
             console.log('AddCost -> onShow -> currencyList', currencyList);
+            const userIds = detailFolder.costDetailShareVOS.map(it => it.userId).filter(item => item);
+            const arr = [];
             let currency = {};
             if (detailFolder.currencyId && detailFolder.currencyId !== '-1') {
               // eslint-disable-next-line prefer-destructuring
               currency = currencyList.filter(it => it.id === detailFolder.currencyId)[0];
             }
-            const arr = [];
-            detailFolder.costDetailShareVOS.forEach((it, i) => {
-              const obj = {
-                ...it,
-                key: it.id,
-                shareScale: it.shareScale/100,
-                shareAmount: currency.id ? it.currencySum/100 : it.shareAmount/100,
-              };
-              if (!i.userId) {
-                Object.assign(obj, {
-                  depList: dep,
+            if (userIds && userIds.length) {
+              this.props.dispatch({
+                type: 'costGlobal/userDep',
+                payload: {
+                  userIds: [...new Set(userIds)],
+                }
+              }).then(() => {
+                detailFolder.costDetailShareVOS.forEach((it) => {
+                  const { userDeps } = this.props;
+                  console.log('AddCost -> onShow -> userDeps', userDeps);
+                  const obj = {
+                    ...it,
+                    key: it.id,
+                    shareScale: it.shareScale/100,
+                    shareAmount: currency.id ? it.currencySum/100 : it.shareAmount/100,
+                  };
+                  if (!it.userId) {
+                    Object.assign(obj, {
+                      depList: dep,
+                    });
+                  } else {
+                    Object.assign(obj, {
+                      users: it.userJson,
+                      depList: userDeps[`${it.userId}`],
+                    });
+                  }
+                  console.log(obj);
+                  arr.push(obj);
                 });
-              }
-              arr.push(obj);
-            });
-            this.setState({
+              });
+            } else {
+              detailFolder.costDetailShareVOS.forEach((it) => {
+                const obj = {
+                  ...it,
+                  key: it.id,
+                  shareScale: it.shareScale/100,
+                  shareAmount: currency.id ? it.currencySum/100 : it.shareAmount/100,
+                  depList: dep,
+                };
+                arr.push(obj);
+              });
+            }
+            await this.setState({
               details: {
                 ...detailFolder,
                 costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
@@ -137,9 +172,12 @@ class AddCost extends Component {
               currencyName: currency.name || '',
               exchangeRate: currency.exchangeRate || 1,
               currencySymbol: currency.currencySymbol || '¥',
-              visible: true,
+              imgUrl: detailFolder.imgUrl,
             }, () => {
               this.onChange(detailFolder.categoryId, 'edit');
+            });
+            await this.setState({
+              visible: true,
             });
           });
         }

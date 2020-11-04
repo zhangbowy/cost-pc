@@ -117,7 +117,7 @@ class setUser extends React.PureComponent {
     }];
     return (
       <div>
-        <SubHeader type="role" content={role} {...this.props} />
+        <SubHeader type="role" content={role} {...this.props} sub />
         <div className="content-dt">
           <Button type="primary" style={{marginBottom: '15px'}} onClick={this.handleClick}>新增人员</Button>
           <Table

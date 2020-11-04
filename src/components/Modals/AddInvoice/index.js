@@ -40,7 +40,7 @@ const labelInfo = {
   supplier: '供应商'
 };
 const { confirm } = Modal;
-@connect(({ session, global, loading, workbench }) => ({
+@connect(({ session, global, loading, workbench, costGlobal }) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
@@ -51,6 +51,9 @@ const { confirm } = Modal;
   usableSupplier: global.usableSupplier,
   usableProject: global.usableProject,
   waitLists: workbench.waitLists,
+  applyIds: costGlobal.applyIds,
+  waitAssessIds: costGlobal.waitAssessIds,
+  folderIds: costGlobal.folderIds,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
 }))
@@ -79,6 +82,19 @@ class AddInvoice extends Component {
       assessSum: 0, // 核销金额
       applyArr: [], // 申请单
     };
+  }
+
+  componentDidUpdate(prevProps){
+    if(prevProps.visible !==  this.props.visible) {
+      if (this.props.visible) {
+        this.onShowHandle();
+      } else {
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          visible: this.props.visible
+        });
+      }
+    }
   }
 
   onShowHandle = async() => {
@@ -188,7 +204,7 @@ class AddInvoice extends Component {
     const account = await _this.props.receiptAcc;
     const arr = account.filter(it => it.isDefault);
 
-    if (arr && arr.length > 0) {
+    if (arr && arr.length > 0 && (Number(templateType) !== 2)) {
       detail = {
         ...detail,
         receiptId: arr[0].id,
@@ -219,8 +235,21 @@ class AddInvoice extends Component {
           // if (this.props.onFolder) {
           //   this.props.onFolder();
           // }
-          this.onAddCost(this.props.costSelect);
-          console.log('AddInvoice -> onShowHandle -> costSelect', this.props.costSelect);
+          const { costSelect } = this.props;
+          const arrs = [];
+          const category = [];
+          costSelect.forEach(it => {
+            if (it.isDelete4Category) {
+              category.push(it.categoryName);
+            } else {
+              arrs.push(it);
+            }
+          });
+          if (category && category.length) {
+            const msg = Array.from(new Set(category)).join('、');
+            message.error(`${msg}费用类别被删除，请重新选择`);
+          }
+          this.onAddCost(arrs);
         }
       });
       if (!this.props.costSelect) {
@@ -228,8 +257,8 @@ class AddInvoice extends Component {
       }
     } else {
       const contents = JsonParse(contentJson);
-      await this.onInit(contents, djDetails);
-      this.setState({
+      this.onInit(contents, djDetails);
+      await this.setState({
         accountList: account,
         inDetails: djDetails,
         visible: true
@@ -241,20 +270,27 @@ class AddInvoice extends Component {
   // 编辑初始化数据
   onInit = async(detail, djDetails) => {
     const { details } = detail;
-    const params = {
-      creatorDeptId: detail.createDeptId || '',
-      processPersonId: djDetails.approveId,
-      loanUserId: detail.loanUserId,
-      loanDeptId: detail.loanDeptId,
-      createDingUserId: detail.createDingUserId,
-      loanEntities: detail.loanEntities,
-      categorySumEntities: detail.categorySumEntities,
-      total: detail.total ? (detail.total * 1000)/10 : 0,
-      projectId: detail.projectId || '',
-      supplierId: detail.supplierId || ''
-    };
-    console.log('detail.repaymentTime', detail.repaymentTime);
-    await this.getNode(params);
+    // const params = {
+    //   creatorDeptId: detail.createDeptId || '',
+    //   processPersonId: djDetails.approveId,
+    //   loanUserId: detail.loanUserId,
+    //   loanDeptId: detail.loanDeptId,
+    //   createDingUserId: detail.createDingUserId,
+    //   loanEntities: detail.loanEntities,
+    //   categorySumEntities: detail.categorySumEntities,
+    //   total: detail.total ? (detail.total * 1000)/10 : 0,
+    //   projectId: detail.projectId || '',
+    //   supplierId: detail.supplierId || '',
+    //   applicationSum: detail.total ? (detail.total * 1000)/10 : 0,
+    //   borrowAmount: detail.total ? (detail.total * 1000)/10 : 0,
+    // };
+    const borrowArr = detail.borrowArr && detail.borrowArr.length ? this.onInitBorrow(detail.borrowArr) : [];
+    console.log('AddInvoice -> onInit -> borrowArr', borrowArr);
+    const applyArr = detail.applyArr && detail.applyArr.length ? this.onInitApply(detail.applyArr) : [];
+    console.log('AddInvoice -> onInit -> applyArr', applyArr);
+    // console.log('AddInvoice -> onInit -> costDetailsVo', costDetailsVo);
+    // await this.getNode(params);
+    // this.onAddBorrow(borrowArr || []);
     this.setState({
       depList: detail.depList, // 所在部门
       createDepList: detail.createDepList, // 报销部门
@@ -263,23 +299,96 @@ class AddInvoice extends Component {
         receiptId: details.receiptId ? details.receiptId[0] : '',
         processPersonId: djDetails.approveId,
         repaymentTime: detail.repaymentTime,
+        startTime: detail.startTime,
+        endTime: detail.endTime,
       }, // 详情
       users: detail.users,
-      costDetailsVo: detail.costDetailsVo, // 分摊
-      fileUrl: detail.fileUrl, // 附件
+      fileUrl: detail.fileUrl || [], // 附件
+      imgUrl: detail.imgUrl || [],
       showField: detail.showField, // 是否显示输入框
       total: detail.total, // 报销金额
       loanUserId: detail.loanUserId, // 审批人的userId
       expandField: detail.expandField, // 扩展字段
-      borrowArr:detail.borrowArr,
       assessSum: detail.assessSum || 0, // 核销金额
-      applyArr: detail.applyArr,
+      applyArr,
+      borrowArr
+    }, () => {
+      this.onInitFolder(detail.costDetailsVo || []);
     });
-    this.onAddBorrow(detail.borrowArr);
+  }
+
+  onInitBorrow = (arrs) => {
+    console.log('AddInvoice -> onInitBorrow -> arrs', arrs);
+    const ids = arrs.map(it => it.loanId);
+    const arr = [];
+    this.props.dispatch({
+      type: 'costGlobal/waitAssessIds',
+      payload: {
+        ids
+      }
+    }).then(() => {
+      const { waitAssessIds } = this.props;
+      console.log('AddInvoice -> onInitBorrow -> waitAssessIds', waitAssessIds);
+      arrs.forEach(it => {
+        const index = waitAssessIds.findIndex(item => item.loanId === it.loanId);
+        if (index > -1) {
+          arr.push({...it});
+        }
+      });
+    });
+    return arr;
+  }
+
+  onInitFolder = (arrs) => {
+    const ids = arrs.map(it => it.detailFolderId);
+    const arr = [];
+    this.props.dispatch({
+      type: 'costGlobal/folderIds',
+      payload: {
+        ids
+      }
+    }).then(() => {
+      const { folderIds } = this.props;
+      arrs.forEach(it => {
+        const index = folderIds.findIndex(item => item.id === it.detailFolderId);
+        if (index > -1) {
+          arr.push({
+            ...it,
+            detailFolderId: it.id,
+            key: it.id,
+            costType: 1,
+          });
+        }
+      });
+      this.onAddCost(arr);
+    });
+  }
+
+  onInitApply = (arrs) => {
+    const ids = arrs.map(it => it.applicationId);
+    const arr = [];
+    this.props.dispatch({
+      type: 'costGlobal/applyIds',
+      payload: {
+        ids
+      }
+    }).then(() => {
+      const { applyIds } = this.props;
+      arrs.forEach(it => {
+        const idss = applyIds.map(item => `${item}`);
+        if (idss.includes(it.applicationId)) {
+          arr.push({...it});
+        }
+      });
+    });
+    return arr;
   }
 
   onCancel = () => {
     this.props.form.resetFields();
+    if (this.props.onChangeVisible) {
+      this.props.onChangeVisible();
+    }
     this.setState({
       visible: false,
       imgUrl: [],
@@ -397,12 +506,13 @@ class AddInvoice extends Component {
 
   //  添加费用成功
   onAddCost = (val, index, flag) => {
-    const  share = this.state.costDetailsVo;
+    let  share = this.state.costDetailsVo;
     const detail = this.state.details;
     if (!flag) {
       if (index === 0 || index) {
         share.splice(index, 1, val);
       } else if (val instanceof Array) {
+        share = share.filter(it => !it.detailFolderId);
         share.push(...val);
       } else {
         share.push(val);
@@ -458,6 +568,7 @@ class AddInvoice extends Component {
 
   //  选择借款
   onAddBorrow = (val) => {
+    console.log('AddInvoice -> onAddBorrow -> val', val);
     const detailList = [...val];
     let money = Number(this.state.total);
     let assessSum = 0;
@@ -528,9 +639,9 @@ class AddInvoice extends Component {
     const { templateType } = this.props;
     const { total } = this.state;
     if (Number(templateType) === 1) {
-      Object.assign(payload, { borrowAmount: (total*1000)/10 });
+      Object.assign(payload, { borrowAmount: payload.borrowArr || (total*1000)/10 });
     } else if (Number(templateType) === 2) {
-      Object.assign(payload, { applicationSum: (total*1000)/10 });
+      Object.assign(payload, { applicationSum: payload.applicationSum || (total*1000)/10 });
     }
     this.props.dispatch({
       type: 'global/approveList',
@@ -770,6 +881,10 @@ class AddInvoice extends Component {
         invoiceName: djDetail.name,
         invoiceTemplateId: djDetail.id,
         id: draftId || '',
+        supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
+        supplierId: val.supplier ? val.supplier.split('_')[1] : '',
+        receiptId: details.receiptId || '',
+        receiptName: details.receiptName || ''
       }
     }).then(() => {
       this.onCancel();
@@ -1130,6 +1245,7 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
     } = this.state;
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

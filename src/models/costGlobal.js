@@ -19,6 +19,10 @@ export default {
     userDeps: [], // 通过userId获取数据
     folderSum: {}, // 详细信息
     queryTemplateIds: [],
+    draftTotal: {},
+    folderIds: [], // 查询删除
+    waitAssessIds: [],
+    applyIds: [],
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -34,6 +38,33 @@ export default {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize
           }
+        },
+      });
+    },
+    *folderIds({ payload }, { call, put }) {
+      const response = yield call(post, api.folderIds, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          folderIds: response || [],
+        },
+      });
+    },
+    *waitAssessIds({ payload }, { call, put }) {
+      const response = yield call(post, api.waitAssessIds, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          waitAssessIds: response || [],
+        },
+      });
+    },
+    *applyIds({ payload }, { call, put }) {
+      const response = yield call(post, api.applyIds, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          applyIds: response || [],
         },
       });
     },
@@ -106,6 +137,7 @@ export default {
         payload: {
           draftList: lists || [],
           total: response.draftBoxPageResult.page.total || 1,
+          draftTotal: response,
           page: {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize
@@ -123,7 +155,7 @@ export default {
       });
     },
     *userDep({ payload }, { call, put }) {
-      const response = yield call(get, api.userDep, payload);
+      const response = yield call(post, api.userDep, payload);
       console.log(response);
       yield put({
         type: 'save',

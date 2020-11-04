@@ -9,11 +9,11 @@ import Lines from '@/components/StyleCom/Lines';
 
 const { SHOW_CHILD } = TreeSelect;
 @Form.create()
-@connect(({ global, loading, auth }) => ({
+@connect(({ global, loading, approveRole }) => ({
   costCategoryList: global.costCategoryList,
-  loading: loading.effects['auth/approveAdd'] ||
-           loading.effects['auth/approveEdit'] || false,
-  details: auth.details,
+  loading: loading.effects['approveRole/add'] ||
+           loading.effects['approveRole/edit'] || false,
+  details: approveRole.details,
 }))
 class AddRole extends Component {
   static propTypes = {
@@ -38,7 +38,7 @@ class AddRole extends Component {
     }).then(() => {
       if (title === 'edit') {
         this.props.dispatch({
-          type: 'auth/approveDetail',
+          type: 'approveRole/detail',
           payload: {
             id: detail.id,
           }
@@ -100,12 +100,8 @@ class AddRole extends Component {
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        let titles = 'Add';
-        if (title === 'edit') {
-          titles = 'Edit';
-        }
         dispatch({
-          type: `auth/approve${titles}`,
+          type: `approveRole/${title}`,
           payload: {
             categoryVos: values.categoryVos.map(it => {
               return {

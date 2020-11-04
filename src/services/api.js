@@ -100,4 +100,7 @@ export default {
    applyDetail: `${APP_API}/cost/invoice/application/detail`, // 申请单详情
    userDep:  `${APP_API}/cost/user/userInfo4UserIds`,
    queryTemplateIds: `${APP_API}/cost/category/queryTemplateIds`, // 单据模板
+   applyIds: `${APP_API}/cost/invoice/application/checkRelevance`,
+   waitAssessIds: `${APP_API}/cost/invoice/loan/waitAssessListByIds`,
+   folderIds: `${APP_API}/cost/cost/folder/listByIds`,
 };

@@ -94,17 +94,20 @@ class LoanTable extends Component {
             </InvoiceDetail>
           </span>
         ),
+        fixed: 'left'
       },
       {
-        title: '借款金额',
+        title: '借款金额（元）',
         dataIndex: 'loanSum',
+        className: 'moneyCol',
         render: (text) => (
           <span>{text ? text/100 : 0}</span>
         )
       },
       {
-        title: '待核销金额',
+        title: '待核销金额（元）',
         dataIndex: 'waitAssessSum',
+        className: 'moneyCol',
         render: (text) => (
           <span>{text ? text/100 : 0}</span>
         )
@@ -149,7 +152,7 @@ class LoanTable extends Component {
           <div className="m-b-16">
             {/* <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" /> */}
             <Search
-              placeholder="请输入单号、事由"
+              placeholder="请输入单号、事由、收款账户"
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
             />
@@ -163,6 +166,7 @@ class LoanTable extends Component {
                 dataSource={loanList}
                 pagination={false}
                 rowKey="id"
+                scroll={{ x: '1100px' }}
               />
             </div>
           </div>

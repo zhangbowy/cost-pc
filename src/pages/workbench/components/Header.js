@@ -25,7 +25,7 @@ function Header(props) {
         </svg>
       </section>
       <div className={style.headerLeft}>
-        <Avatar avatar={props.userInfo && props.userInfo.avatar} name="谈薇" size={72} />
+        <Avatar avatar={props.userInfo && props.userInfo.avatar} name={props.userInfo && props.userInfo.name} size={72} />
         <p className="m-l-24">
           <p className="c-black-85 fs-20 fw-600 li-28 m-b-12">你好，{props.userInfo && props.userInfo.name}！</p>
           <p className="c-black-85 fs-14 li-22">WELCOME 欢迎使用鑫支出V{APP_VER}版本</p>
@@ -66,7 +66,7 @@ function Header(props) {
             </p>
             <p className="c-black-85 fs-30 fw-400">
               {personal.draftCount ? personal.draftCount : 0}
-              <span className="fs-14 c-black-45 m-l-4">笔</span>
+              <span className="fs-14 c-black-45 m-l-4">单</span>
             </p>
           </div>
         </Draft>

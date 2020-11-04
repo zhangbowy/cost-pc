@@ -24,6 +24,21 @@ class SelectInvoice extends Component {
     list: [],
     id: 'often',
     selectCost: [],
+    templateType: 0,
+    invoiceVisible: false,
+    invoiceId: '',
+  }
+
+  componentDidUpdate(prevProps){
+    if(prevProps.visible !==  this.props.visible) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        visible: this.props.visible
+      });
+      if (this.props.visible) {
+        this.onShow();
+      }
+    }
   }
 
   onShow = async() => {
@@ -125,6 +140,19 @@ class SelectInvoice extends Component {
     });
   }
 
+  modalOk = (item) => {
+    this.setState({
+      invoiceVisible: true,
+      invoiceId: item.id,
+      templateType: item.templateType,
+      visible: false,
+    }, () => {
+      if (this.props.onCancel) {
+        this.props.onCancel();
+      }
+    });
+  }
+
   scrollToAnchor = (anchorName) => {
     this.setState({
       id: anchorName,
@@ -137,36 +165,62 @@ class SelectInvoice extends Component {
     }
   };
 
-  handleScroll = () => debounce(
-    el => {
-      const { scrollCancel } = this.state;
-      if (scrollCancel) {
-        this.setState({
-          scrollCancel: false,
-        });
-      } else if (el && el.children) {
-        const lastChild = el.children.length - 1;
-        const top = el.scrollTop + 760;
-        const index = Array.prototype.findIndex.call(
-          el.children, v => v.offsetTop > top
-        ) - 1;
-        const i = index < -1 ? lastChild : index;
-        const elChild = el.children[i];
-        this.setState({
-          id: elChild.dataset ? elChild.dataset.id : 'often'
-        });
-      }
-    }, 100, { maxWait: 200 }
-  );
+  handleScroll = (el) => {
+    if (el && el.children) {
+      console.log('SelectInvoice -> handleScroll -> el.children', el.children);
+      const lastChild = el.children.length - 1;
+      const top = el.scrollTop + 110;
+      const index = Array.prototype.findIndex.call(
+        el.children, v => v.offsetTop > top
+      ) - 1;
+      const i = index < -1 || (index === -1) ? lastChild : index;
+      console.log('SelectInvoice -> handleScroll -> i', i);
+      const elChild = el.children[i];
+      this.setState({
+        id: elChild.dataset ? elChild.dataset.id : 'often'
+      });
+    }
+    debounce(
+      () => {
+        console.log('debounce', el);
+        const { scrollCancel } = this.state;
+        if (scrollCancel) {
+          this.setState({
+            scrollCancel: false,
+          });
+        } else if (el && el.children) {
+          const lastChild = el.children.length - 1;
+          const top = el.scrollTop + 760;
+          const index = Array.prototype.findIndex.call(
+            el.children, v => v.offsetTop > top
+          ) - 1;
+          const i = index < -1 ? lastChild : index;
+          const elChild = el.children[i];
+          this.setState({
+            id: elChild.dataset ? elChild.dataset.id : 'often'
+          });
+        }
+      }, 100, { maxWait: 200 }
+    );
+  };
 
   onCancel = () => {
+    if (this.props.onCancel) {
+      this.props.onCancel();
+    }
     this.setState({
       visible: false,
     });
   }
 
+  onChangeVi = () => {
+    this.setState({
+      invoiceVisible: false,
+    });
+  }
+
   render() {
-    const { list, visible, id, selectCost } = this.state;
+    const { list, visible, id, selectCost, invoiceVisible, templateType, invoiceId } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
@@ -198,6 +252,7 @@ class SelectInvoice extends Component {
             </div>
             <div
               className={style.slRight}
+              ref={scroll => {this.scroll=scroll;}}
               onScroll={({target}) => this.handleScroll(target)}
             >
               {
@@ -218,25 +273,17 @@ class SelectInvoice extends Component {
                               </div>
                             </Tooltip>
                             :
-                            <AddInvoice
-                              templateType={item.templateType}
-                              id={item.id}
-                              onHandleOk={this.props.onOk}
-                              costSelect={selectCost}
-                              onFolder={() => { this.setState({ visible: false }); if (this.props.onHandle) this.props.onHandle(); }}
-                            >
-                              <div className={style.tags} key={item.id}>
-                                <p className="c-black-85 fs-14">{item.name}</p>
-                                <p className="fs-12 c-black-36 eslips-1">{item.note}</p>
-                              </div>
-                            </AddInvoice>
+                            <div className={style.tags} key={item.id} onClick={() => this.modalOk(item)}>
+                              <p className="c-black-85 fs-14">{item.name}</p>
+                              <p className="fs-12 c-black-36 eslips-1">{item.note}</p>
+                            </div>
                         }
                       </>
 
                     ));
                   }
                   return (
-                    <div className="m-b-20" key={it.id} id={it.id} data-id={it.id}>
+                    <div className="m-b-20" key={it.id} id={it.id} data-id={it.id} dataset={it}>
                       <div style={{display: 'flex', alignItems: 'center'}} className="m-b-12">
                         <p className="c-black-85 fs-16 fw-500" style={{marginBottom: '0'}}>
                           {it.name}
@@ -271,6 +318,20 @@ class SelectInvoice extends Component {
               }
             </div>
           </div>
+          <AddInvoice
+            templateType={templateType}
+            visible={invoiceVisible}
+            id={invoiceId}
+            // onHandleOk={this.props.onOk}
+            costSelect={selectCost}
+            onChangeVisible={() => this.onChangeVi()}
+            onFolder={() => { this.setState({ visible: false }); if (this.props.onHandle) this.props.onHandle(); }}
+            onHandleOk={() => {
+              if (this.props.onCallback) {
+                this.props.onCallback();
+              }
+            }}
+          />
         </Modal>
       </span>
     );

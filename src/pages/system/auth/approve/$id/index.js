@@ -109,7 +109,7 @@ class SettingPeople extends Component {
             note: detail.note
           }}
           sub
-          title="审批角色"
+          title="角色管理"
           {...this.props}
         />
         <div className="content-dt">
