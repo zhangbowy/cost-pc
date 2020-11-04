@@ -1,16 +1,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Tooltip, Button, message, Modal, Divider,Select } from 'antd';
-import { connect } from 'dva';
 import moment from 'moment';
 import { choosePeople } from '@/utils/ddApi';
 import Lines from '@/components/StyleCom/Lines';
 import Avatar from '@/components/AntdComp/Avatar';
 import style from './index.scss';
 
-
 function ControllerCom(props) {
-
   const { Option } = Select;
   const { dispatch, userInfo, synCompanyTime,queryUsers } = props;
   const [ visible, setVisible ] = useState(false);
@@ -21,13 +18,13 @@ function ControllerCom(props) {
 
   useEffect(() => {
     dispatch({
-      type: 'controller/getTime',
+      type: 'peopleSet/getTime',
       payload: {
         companyId: userInfo.companyId,
       }
     });
     dispatch({
-      type: 'controller/queryUsers',
+      type: 'peopleSet/queryUsers',
       payload: {
         companyId: userInfo.companyId,
       }
@@ -42,7 +39,7 @@ function ControllerCom(props) {
   const clearCompany = () => {
     // delCompany
     dispatch({
-      type: 'controller/delCompany',
+      type: 'peopleSet/delCompany',
       payload: {
         companyId: userInfo.companyId,
       }
@@ -72,7 +69,7 @@ function ControllerCom(props) {
       return;
     }
     dispatch({
-      type: 'controller/modifyGrant',
+      type: 'peopleSet/modifyGrant',
       payload: {
         userIdExpired,
         userVO:{
@@ -144,11 +141,8 @@ function ControllerCom(props) {
 
   return (
     <div>
-      <div className={style.app_header}>
-        <p className="c-black-85 fs-20 fw-600 m-b-8">控制中心</p>
-        <p className="c-black-45 fs-14" style={{marginBottom: 0}}>你可以在此进行单据清空的设置</p>
-      </div>
-      <div className="content-dt">
+      <Divider type="horizontal" />
+      <div style={{marginTop:'20px'}}>
         <Lines name="人员同步">
           <Tooltip title="同步时间可能会较长，请稍后刷新页面查看同步结果">
             <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
@@ -203,15 +197,5 @@ function ControllerCom(props) {
     </div>
   );
 }
-const mapStateToProps = (state) => {
-  console.log(1111111,state);
-  return {
-    removeDataTime: state.controller.removeDataTime,
-    userInfo: state.session.userInfo,
-    synCompanyTime: state.controller.synCompanyTime,
-    queryUsers: state.controller.queryUsers,
-    modifyGrant: state.controller.modifyGrant,
-  };
-};
-export default connect(mapStateToProps)(ControllerCom);
+export default ControllerCom;
 

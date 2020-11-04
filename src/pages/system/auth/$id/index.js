@@ -5,7 +5,8 @@ import moment from 'moment';
 import { Button, Table, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import { choosePeople } from '@/utils/ddApi';
-import SubHeader from '@/components/SubHeader';
+// import SubHeader from '@/components/SubHeader';
+import PageHead from '@/components/PageHead';
 
 @connect(({ loading, setUser }) => ({
   loading: loading.effects['setUser/list'] || false,
@@ -115,9 +116,12 @@ class setUser extends React.PureComponent {
       width: '80px',
       className: 'fixCenter'
     }];
+    console.log(31231323,role);
+    console.log(2342342343241234,this,this.props);
     return (
       <div>
-        <SubHeader type="role" content={role} {...this.props} sub />
+        {/* <SubHeader type="role" content={role} {...this.props} /> */}
+        <PageHead title={role.roleName} note={role.note} />
         <div className="content-dt">
           <Button type="primary" style={{marginBottom: '15px'}} onClick={this.handleClick}>新增人员</Button>
           <Table

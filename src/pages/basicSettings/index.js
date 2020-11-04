@@ -39,9 +39,9 @@ class basicSetting extends Component {
 			console.log(menus);
 			this.props.BasicSettingMenus.map((item) => {
 				const obj = {...item};
-				if(item.menuName === '数据初始化'){
-					obj.url = 'basicSetting_Initialization';
-				}
+				// if(item.menuName === '数据初始化'){
+				// 	obj.url = 'basicSetting_Initialization';
+				// }
 				// if(item.menuName === "角色管理"){
 				// 	obj.url = 'basicSetting_Initialization'
 				// }
@@ -56,8 +56,13 @@ class basicSetting extends Component {
 				}
 				return item;
 			});
-			this.setState({menus});
+			menus[2].children.map(item => {
+				menus[0].children.push(item);
+				return item;
+			});
+			menus.splice(2,1);
 			console.log(111111,menus);
+			this.setState({menus});
 		});
 	}
 
@@ -73,7 +78,7 @@ class basicSetting extends Component {
 							<div className={`${style.iconImg} ${style[item.icon]}`}  />
 						}
     </div>
-    <div className={style.card_right}>
+    <div className={style.card_right} style={item.note?{}:{justifyContent:'center'}} >
       <div className={style.card_right_title}>{item.menuName}</div>
       {
 							item.note &&
@@ -94,7 +99,7 @@ class basicSetting extends Component {
 	render() {
 		console.log(this.state.menus);
 		return (
-  <div style={{padding:'0 20px 40px 40px'}}>
+  <div style={{padding:'0 20px 40px 24px',marginTop:'-16px'}}>
     {
 					this.state.menus.map(item => {
 						return (

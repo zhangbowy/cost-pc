@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Button, Table, Popconfirm, Divider, message } from 'antd';
 import { connect } from 'dva';
-import SubHeader from '@/components/SubHeader';
+// import SubHeader from '@/components/SubHeader';
+import PageHead from '@/components/PageHead';
 import AddRole from '../components/AddRole';
 
 @connect(({ approveRole, loading }) => ({
@@ -103,7 +104,7 @@ class SettingPeople extends Component {
     const { list, loading } = this.props;
     return (
       <div>
-        <SubHeader
+        {/* <SubHeader
           content={{
             roleName: detail.approveRoleName,
             note: detail.note
@@ -111,7 +112,8 @@ class SettingPeople extends Component {
           sub
           title="角色管理"
           {...this.props}
-        />
+        /> */}
+        <PageHead title={detail.approveRoleName} note={detail.note} />
         <div className="content-dt">
           <AddRole detail={{}} title="add" onOk={this.handleOk} id={id}>
             <Button type="primary" className="m-b-16">新增人员</Button>

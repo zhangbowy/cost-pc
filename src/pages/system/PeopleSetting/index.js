@@ -3,18 +3,21 @@ import { Button, message, Checkbox } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import PageHead from '@/components/PageHead';
+import ControllerCom from '@/components/ControllerCom';
 import style from './index.scss';
 import { choosePeople } from '../../../utils/ddApi';
 import LookAll from './components/LookAll';
-// import ControllerCom from '@/components/ControllerCom';
 
-@connect(({ peopleSet }) => ({
+@connect(({ peopleSet, session }) => ({
   detail: peopleSet.detail,
   isAll: peopleSet.isAll,
   userVos: peopleSet.userVos,
   allUserCount: peopleSet.allUserCount,
   checkAll: peopleSet.checkAll,
-  payUserCount: peopleSet.payUserCount
+  payUserCount: peopleSet.payUserCount,
+  userInfo: session.userInfo,
+  synCompanyTime: peopleSet.synCompanyTime,
+  queryUsers: peopleSet.queryUsers,
 }))
 class PeopleSetting extends Component {
   constructor(props) {
@@ -27,7 +30,6 @@ class PeopleSetting extends Component {
   }
 
   componentDidMount() {
-    console.log(55555555,this.props);
     this.onInit();
   }
 
@@ -134,7 +136,7 @@ class PeopleSetting extends Component {
           <p className="p-t-24 m-b-8 fs-20 c-black-85 fw-600">名额配置</p>
           <p className="p-b-24 fs-14 c-black-65">你可以在这里配置可用鑫支出的人员</p>
         </div> */}
-        <PageHead title="费用类别设置" note="你可以在这里配置可用鑫支出的人员"  />
+        <PageHead title="人员配置" note="你可以在这里配置可用鑫支出的人员"  />
         <div className="content-dt" style={{height: '500px'}}>
           <div className={style.cnt_foot}>
             <div className={style.header}>
@@ -174,7 +176,12 @@ class PeopleSetting extends Component {
               <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
             </LookAll>
           </span>
-          {/* <ControllerCom></ControllerCom> */}
+          <ControllerCom 
+            dispatch={this.props.dispatch}
+            userInfo={this.props.userInfo}
+            synCompanyTime={this.props.synCompanyTime}
+            queryUsers={this.props.queryUsers}
+          />
         </div>
       </div>
     );

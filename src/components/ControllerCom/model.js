@@ -4,7 +4,7 @@ import api from './services';
 
 // const { PAGE_SIZE } = constants;
 export default {
-  namespace: 'controller',
+  namespace: 'ControllerCom',
   state: {
     removeDataTime: null,
     modifyGrant: null,
