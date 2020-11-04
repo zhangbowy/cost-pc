@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-target-blank */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Link from 'umi/link';
 import { connect } from 'dva';
+import withRouter from 'umi/withRouter';
 import {
   // Dropdown,
   // Menu,
@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import styles from './index.scss';
 
+@withRouter
 @connect(({ session, global }) => ({
   userInfo: session.userInfo,
   breadcrumbs: global.breadcrumbs,
@@ -34,7 +35,13 @@ class App extends React.PureComponent {
       <div className={styles.headerBox}>
         <Breadcrumb>
           <Breadcrumb.Item>
-            <Link to="/basicSettings">返回上一页</Link>
+            <a onClick={()=>{
+              if(this.props.history){
+                this.props.history.goBack();
+              }
+            }}
+            >返回上一页
+            </a>
           </Breadcrumb.Item>
           <Breadcrumb.Item>{title}</Breadcrumb.Item>
         </Breadcrumb>
