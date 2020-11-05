@@ -45,7 +45,8 @@ function FlowCard(props) {
     const isOnlyApprove = conf && conf.nodeType === 'approver' &&
                           (
                             ((conf.prevId.indexOf('START') > -1 || (conf.prevId.indexOf('start') > -1) ) ||
-                            conf.childNode && (conf.childNode.nodeType === 'grant')) &&
+                            (conf.childNode && (conf.childNode.nodeType === 'grant'))) &&
+                            (!conf.childNode) &&
                             (count === 1)
                           ); // 唯一的一个审批节点
     console.log('createNormalCard -> isOnlyApprove', isOnlyApprove);

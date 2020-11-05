@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable guard-for-in */
 import React, { Component } from 'react';
 import { Form, Select, InputNumber, Table, Button } from 'antd';
 import { connect } from 'dva';
@@ -36,6 +38,7 @@ class AddCostTable extends Component {
       || (prevProps.costSum !== this.props.costSum)
       || (prevProps.currencyId !== this.props.currencyId)
       || (prevProps.exchangeRate !== this.props.exchangeRate)) {
+      console.log('AddCostTable -> componentDidUpdate -> this.props.costDetailShareVOS', this.props.costDetailShareVOS);
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         costDetailShareVOS: this.props.costDetailShareVOS || [],
@@ -52,7 +55,7 @@ class AddCostTable extends Component {
   onAdd = () => {
     const { costDetailShareVOS } = this.state;
     const { initDep } = this.state;
-    const details = costDetailShareVOS;
+    const details = [...costDetailShareVOS];
     console.log('initDep', initDep);
     details.push({
       key: `a${costDetailShareVOS.length}`,
@@ -64,10 +67,9 @@ class AddCostTable extends Component {
       invoiceBaseId: details.invoiceBaseId,
       users: [],
     });
+    this.props.onChange('costDetailShareVOS', details);
     this.setState({
       costDetailShareVOS: details,
-    }, () => {
-      this.props.onChange('costDetailShareVOS', details);
     });
   }
 
@@ -75,10 +77,11 @@ class AddCostTable extends Component {
   selectPle = (val, index, key) => {
     const detail = this.state.costDetailShareVOS;
     if (val.users) {
+      const params = val.users.length ? { userJson: JSON.stringify(val.users) } : { type: 1 };
       this.props.dispatch({
         type: 'global/users',
         payload: {
-          userJson: JSON.stringify(val.users),
+          ...params,
         }
       }).then(() => {
         const { deptInfo, userId } = this.props;
@@ -86,9 +89,9 @@ class AddCostTable extends Component {
           ...detail[index],
           users: val.users,
           depList: deptInfo,
-          userName: val.users[0].userName,
+          userName: val.users.length ? val.users[0].userName : '',
           userId,
-          loanUserId: val.users[0].userId,
+          loanUserId: val.users.length ? val.users[0].userId : '',
           deptId: ''
         });
         if (deptInfo && deptInfo.length === 1) {
@@ -100,11 +103,9 @@ class AddCostTable extends Component {
             [`deptId[${key}]`]: '',
           });
         }
-
+        this.props.onChange('costDetailShareVOS', detail);
         this.setState({
           costDetailShareVOS: detail,
-        }, () => {
-          this.props.onChange('costDetailShareVOS', detail);
         });
 
       });
@@ -123,10 +124,9 @@ class AddCostTable extends Component {
       });
     }
     amount = numAdd(val, amount);
+    this.props.onChange('shareAmount', amount.toFixed(2));
     this.setState({
       shareAmount: amount.toFixed(2),
-    }, () => {
-      this.props.onChange('shareAmount', amount.toFixed(2));
     });
     if (costSum && (val || val === 0)) {
       const scale = ((val / costSum) * 100).toFixed(2);
@@ -166,34 +166,35 @@ class AddCostTable extends Component {
         });
       }
       amount=numAdd(amounts, amount);
+      this.props.onChange('shareAmount', amount.toFixed(2));
       this.setState({
         shareAmount: amount.toFixed(2),
-      }, () => {
-        this.props.onChange('shareAmount', amount.toFixed(2));
       });
     }
   }
 
-  onDelete = (index) => {
+  onDelete = (key) => {
     const { costDetailShareVOS } = this.state;
     const detail = [...costDetailShareVOS];
-    detail.splice(index, 1);
+    console.log('onDelete -> costDetailShareVOS', costDetailShareVOS);
+    const count = detail.findIndex(it => it.key === key);
+    console.log('onDelete -> count', count);
+    if (count > -1) {
+      detail.splice(count, 1);
+    }
+    let shareMount = 0;
+    const amm = this.props.form.getFieldValue('shareAmount');
+    // eslint-disable-next-line no-restricted-syntax
+    for(const keys in amm) {
+      if (keys !== key) {
+        shareMount+=amm[keys];
+      }
+    }
+    this.props.onChange('costDetailShareVOS', detail);
+    this.props.onChange('shareAmount', shareMount.toFixed(2));
     this.setState({
       costDetailShareVOS: detail,
-    }, () => {
-      // const { costDetailShareVOS } = this.state;
-      let shareMount = 0;
-      if (costDetailShareVOS && costDetailShareVOS.length) {
-        costDetailShareVOS.forEach(it => {
-          shareMount = numAdd(it.shareAmount, shareMount);
-        });
-      }
-      this.props.onChange('costDetailShareVOS', detail);
-      this.setState({
-        shareAmount: shareMount.toFixed(2),
-      }, () => {
-        this.props.onChange('shareAmount', shareMount.toFixed(2));
-      });
+      shareAmount: shareMount.toFixed(2),
     });
   }
 
@@ -234,11 +235,12 @@ class AddCostTable extends Component {
         }
       });
     }
+    const { costDetailShareVOS } = this.state;
+
     if (type === 'submit') {
       this.props.form.validateFieldsAndScroll((err, val) => {
         if (!err) {
           arr = [];
-          const { costDetailShareVOS } = this.state;
           const { usableProject, invoiceId } = this.props;
           costDetailShareVOS.forEach(item => {
             // eslint-disable-next-line eqeqeq
@@ -262,6 +264,8 @@ class AddCostTable extends Component {
               loanUserId: item.loanUserId,
             });
           });
+        } else {
+          arr = null;
         }
       });
     }
@@ -275,7 +279,6 @@ class AddCostTable extends Component {
       usableProject,
     } = this.props;
     const { costDetailShareVOS, shareAmount, costSum, currencyId, currencySymbol, exchangeRate } = this.state;
-    console.log('render -> exchangeRate', exchangeRate);
     const columns = [{
       title: '承担人员',
       dataIndex: 'userId',
@@ -300,13 +303,13 @@ class AddCostTable extends Component {
           <Form.Item>
             {
               getFieldDecorator(`deptId[${record.key}]`, {
-                initialValue: record.deptId ? `${record.deptId}` :  null,
+                initialValue: record.deptId ? `${record.deptId}` : '',
                 rules:[{ required: true, message: '请选择承担部门' }]
               })(
-                <Select>
+                <Select getPopupContainer={triggerNode => triggerNode.parentNode}>
                   {
                     record.depList && record.depList.map(it => (
-                      <Option key={`${it.deptId}`} value={`${it.deptId}`}>{it.name}</Option>
+                      <Option key={`${it.deptId}`}>{it.name}</Option>
                     ))
                   }
                 </Select>
@@ -361,7 +364,7 @@ class AddCostTable extends Component {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record, index) => (
-        <span className="deleteColor" onClick={() => this.onDelete(index)} id={record.id}>删除</span>
+        <span className="deleteColor" onClick={() => this.onDelete(record.key,index)} id={record.id}>删除</span>
       ),
       width: '70px'
     }];

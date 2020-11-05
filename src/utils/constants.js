@@ -83,6 +83,14 @@ export const accountType = [{
   key: 2,
   text: 2,
   value: '现金'
+}, {
+  key: 3,
+  text: 3,
+  value: '微信'
+}, {
+  key: 4,
+  text: 4,
+  value: '其他'
 }];
 
 export const filterAccount = [{

@@ -316,7 +316,7 @@ class Payments extends React.PureComponent {
       dataIndex: 'reason',
       width: 150,
     }, {
-      title: '借款金额',
+      title: '借款金额（元）',
       dataIndex: 'loanSum',
       render: (text) => (
         <span>{text/100}</span>
@@ -324,7 +324,7 @@ class Payments extends React.PureComponent {
       className: 'moneyCol',
       width: 100,
     }, {
-      title: '待还款金额',
+      title: '待还款金额（元）',
       dataIndex: 'waitLoanSum',
       render: (text) => (
         <span>{text/100}</span>

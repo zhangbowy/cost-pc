@@ -282,7 +282,7 @@ class Workbench extends PureComponent {
                 <HeadLeft onOk={() => this.onPersonal()} OftenTemplate={OftenTemplate} />
                 <HeadRight onOk={() => this.onPersonal()} />
               </div>
-              <div className="content-dt" style={{ padding: 0 }}>
+              <div className="content-dt" style={{ padding: '0 0 32px 0', height: 'auto' }}>
                 <div style={{ margin: '0 32px' }}>
                   <p className="fw-500 fs-14 c-black-85 m-t-16 m-b-16">我发起的单据</p>
                   <div className={style.searchs}>
@@ -298,7 +298,11 @@ class Workbench extends PureComponent {
                         <Select
                           value={invoiceTemplateIds}
                           style={{width: '160px'}}
+                          dropdownMatchSelectWidth={false}
                           onChange={(val) => this.onComplete(val, 'invoiceTemplateIds')}
+                          dropdownMenuStyle={{
+                            width: '186px'
+                          }}
                         >
                           <Select.Option value="all">全部</Select.Option>
                           {

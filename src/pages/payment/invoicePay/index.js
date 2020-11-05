@@ -337,6 +337,7 @@ class Payment extends React.PureComponent {
         <span>{text/100}</span>
       ),
       width: 100,
+      className: 'moneyCol',
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',

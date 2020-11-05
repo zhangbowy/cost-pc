@@ -59,6 +59,7 @@
 .app_header{
   // padding: 24px 32px;
   background: #ffffff;
+  min-width: 1098px;
 }
 .cost_cnt{
   display: flex;
@@ -136,6 +137,7 @@
 .ad{
   margin: 24px;
   display: flex;
+  min-width: 1050px;
 }
 .onreset{
   color: rgba(0, 0, 0, 0.45);

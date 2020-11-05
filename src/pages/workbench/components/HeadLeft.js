@@ -11,13 +11,13 @@ function HeadLeft(props) {
   return (
     <div className={style.headLeftC}>
       <div className={style.btns}>
-        <SelectInvoice onOk={props.onOk}>
+        <SelectInvoice onOk={props.onOk} onCallback={() => props.onOk()}>
           <Button type="primary" className="m-r-8">
             <i className="iconfont iconPCxinzengdanju fs-18" />
             <span className="m-l-4">提单据</span>
           </Button>
         </SelectInvoice>
-        <AddCost costType={1} onCallback={() => props.onOk()}>
+        <AddCost costType={1} onCallback={() => props.onOk()} againCost>
           <Button type="primary" ghost>
             <i className="iconfont iconjiyibi fs-14 sub-color" />
             <span className="m-l-4 sub-color">记一笔</span>
@@ -33,7 +33,7 @@ function HeadLeft(props) {
                 <span className={style.iconfonts}>
                   <i className="iconfont iconorder_fill" />
                 </span>
-                <span className="m-l-8">{it.name}</span>
+                <span className="m-l-8 eslips-1">{it.name}</span>
               </div>
             </AddInvoice>
           ))

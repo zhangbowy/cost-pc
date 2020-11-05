@@ -54,6 +54,9 @@ const { confirm } = Modal;
   applyIds: costGlobal.applyIds,
   waitAssessIds: costGlobal.waitAssessIds,
   folderIds: costGlobal.folderIds,
+  expenseList: global.expenseList,
+  currencyList: global.currencyList,
+  userDeps: costGlobal.userDeps,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
 }))
@@ -99,9 +102,16 @@ class AddInvoice extends Component {
 
   onShowHandle = async() => {
     let detail = this.state.details;
-    const { id, userInfo, templateType, contentJson } = this.props;
+    const { id, userInfo, templateType, contentJson, isTemplateDel, isTemplateUsed } = this.props;
     const _this = this;
-
+    if (isTemplateDel) {
+      message.error('管理员已删除该单据模板，草稿无效请删除');
+      return;
+    }
+    if (isTemplateUsed === false) {
+      message.error('该单据模板不可用，草稿无效请删除');
+      return;
+    }
     this.props.dispatch({
       type: 'global/getCurrency',
       payload: {},
@@ -176,7 +186,12 @@ class AddInvoice extends Component {
         templateType,
       }
     });
-
+    await this.props.dispatch({
+      type: 'global/expenseList',
+      payload: {
+        id
+      }
+    });
     await this.props.dispatch({
       type: 'global/receiptAcc',
       payload: {
@@ -194,6 +209,7 @@ class AddInvoice extends Component {
         type: 1,
       },
     });
+
     const djDetails = await this.props.djDetail;
     const obj = {};
     if (djDetails.showField && djDetails.showField.length > 5) {
@@ -235,13 +251,14 @@ class AddInvoice extends Component {
           // if (this.props.onFolder) {
           //   this.props.onFolder();
           // }
-          const { costSelect } = this.props;
+          const { costSelect, expenseList } = this.props;
           const arrs = [];
+          const categoryIds = expenseList.map(it => it.id);
           const category = [];
           costSelect.forEach(it => {
             if (it.isDelete4Category) {
               category.push(it.categoryName);
-            } else {
+            } else if (categoryIds.includes(it.categoryId)) {
               arrs.push(it);
             }
           });
@@ -259,6 +276,7 @@ class AddInvoice extends Component {
       const contents = JsonParse(contentJson);
       this.onInit(contents, djDetails);
       await this.setState({
+        showField: obj,
         accountList: account,
         inDetails: djDetails,
         visible: true
@@ -269,79 +287,171 @@ class AddInvoice extends Component {
 
   // 编辑初始化数据
   onInit = async(detail, djDetails) => {
-    const { details } = detail;
-    // const params = {
-    //   creatorDeptId: detail.createDeptId || '',
-    //   processPersonId: djDetails.approveId,
-    //   loanUserId: detail.loanUserId,
-    //   loanDeptId: detail.loanDeptId,
-    //   createDingUserId: detail.createDingUserId,
-    //   loanEntities: detail.loanEntities,
-    //   categorySumEntities: detail.categorySumEntities,
-    //   total: detail.total ? (detail.total * 1000)/10 : 0,
-    //   projectId: detail.projectId || '',
-    //   supplierId: detail.supplierId || '',
-    //   applicationSum: detail.total ? (detail.total * 1000)/10 : 0,
-    //   borrowAmount: detail.total ? (detail.total * 1000)/10 : 0,
-    // };
-    const borrowArr = detail.borrowArr && detail.borrowArr.length ? this.onInitBorrow(detail.borrowArr) : [];
-    console.log('AddInvoice -> onInit -> borrowArr', borrowArr);
-    const applyArr = detail.applyArr && detail.applyArr.length ? this.onInitApply(detail.applyArr) : [];
+    // const { templateType } = detail;
+    const expandField = [];
+    console.log('AddInvoice -> onInit -> detail', detail);
+    const applyArr = detail.applicationIds && detail.applicationIds.length ? this.onInitApply(detail.applicationIds) : [];
     console.log('AddInvoice -> onInit -> applyArr', applyArr);
-    // console.log('AddInvoice -> onInit -> costDetailsVo', costDetailsVo);
-    // await this.getNode(params);
-    // this.onAddBorrow(borrowArr || []);
+    let newDetail = {
+      ...detail,
+      receiptId: detail.receiptId ? detail.receiptId : '',
+      processPersonId: djDetails.approveId,
+      repaymentTime: detail.repaymentTime,
+      startTime: detail.startTime,
+      endTime: detail.endTime,
+    };
+    const userIds = detail.userId ? [detail.userId] : [];
+    if (detail.costDetailsVo) {
+      detail.costDetailsVo.forEach(it => {
+        if (it.costDetailShareVOS) {
+          it.costDetailShareVOS.forEach(item => {
+            if (item.userId) {
+              userIds.push(item.userId);
+            }
+          });
+        }
+      });
+    }
+    if (djDetails.expandField) {
+      djDetails.expandField.forEach(it => {
+        const index = detail.expandSubmitFieldVos && detail.expandSubmitFieldVos.findIndex(its => its.field === it.field);
+        if (index > -1 && it.status) {
+          expandField.push({
+            ...it,
+            msg: detail.expandSubmitFieldVos[index].msg,
+          });
+        } else if (it.status) {
+          expandField.push({
+            ...it,
+          });
+        }
+      });
+    }
     this.setState({
-      depList: detail.depList, // 所在部门
-      createDepList: detail.createDepList, // 报销部门
-      details: {
-        ...details,
-        receiptId: details.receiptId ? details.receiptId[0] : '',
-        processPersonId: djDetails.approveId,
-        repaymentTime: detail.repaymentTime,
-        startTime: detail.startTime,
-        endTime: detail.endTime,
-      }, // 详情
-      users: detail.users,
       fileUrl: detail.fileUrl || [], // 附件
-      imgUrl: detail.imgUrl || [],
-      showField: detail.showField, // 是否显示输入框
-      total: detail.total, // 报销金额
+      imgUrl: detail.imgUrl ? detail.imgUrl  : [],
+    });
+    await this.props.dispatch({
+      type: 'costGlobal/userDep',
+      payload: {
+        userIds: [...new Set(userIds)],
+      }
+    });
+    let params = {};
+    if (Number(djDetails.templateType) === 0) {
+      this.setState({
+        total: detail.submitSum/100,
+      });
+      this.onInitBorrow(detail.invoiceLoanAssessVos || [], detail.costDetailsVo || []);
+    } else if (Number(djDetails.templateType) === 2) {
+      this.setState({
+        total: detail.applicationSum/100
+      });
+      newDetail = {
+        ...newDetail,
+        total: detail.applicationSum/100,
+        applicationSum: detail.applicationSum/100
+      };
+      params = {
+        loanEntities: detail.loanEntities || [],
+        categorySumEntities: detail.categorySumEntities || [],
+        creatorDeptId: detail.createDeptId,
+        loanUserId: detail.userJson ? detail.userJson[0].userId : '',
+        loanDeptId: detail.deptId,
+        processPersonId: djDetails.approveId,
+        applicationSum: detail.applicationSum,
+        projectId: detail.projectId || '',
+        supplierId: detail.supplierId || '',
+      };
+      this.getNode(params);
+    } else if (Number(djDetails.templateType) === 1) {
+      params = {
+        loanEntities: detail.loanEntities || [],
+        categorySumEntities: detail.categorySumEntities || [],
+        creatorDeptId: detail.createDeptId,
+        loanUserId: detail.userJson ? detail.userJson[0].userId : '',
+        loanDeptId: detail.deptId,
+        processPersonId: djDetails.approveId,
+        borrowArr: detail.loanSum,
+        projectId: detail.projectId || '',
+        supplierId: detail.supplierId || ''
+      };
+      newDetail = {
+        ...newDetail,
+        total: detail.loanSum/100,
+        loanSum: detail.loanSum/100
+      };
+      this.getNode(params);
+      this.setState({
+        total: detail.loanSum/100
+      });
+    }
+    await this.setState({
+      depList: detail.userId ? this.props.userDeps[detail.userId] : this.props.userDeps['-1'], // 所在部门
+      details: {
+        ...newDetail,
+        loanEntities: detail.loanEntities || [],
+        categorySumEntities: detail.categorySumEntities || [],
+        creatorDeptId: detail.createDeptId,
+        loanUserId: detail.userJson ? detail.userJson[0].userId : [],
+        loanDeptId: detail.deptId,
+        processPersonId: djDetails.approveId,
+        projectId: detail.projectId || '',
+        supplierId: detail.supplierId || '',
+        supplier: detail.supplierAccountId ? `${detail.supplierAccountId}_${detail.supplierId}` : ''
+      }, // 详情
+      users: detail.userJson,
       loanUserId: detail.loanUserId, // 审批人的userId
-      expandField: detail.expandField, // 扩展字段
+      expandField, // 扩展字段
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr,
-      borrowArr
-    }, () => {
-      this.onInitFolder(detail.costDetailsVo || []);
     });
+    console.log('AddInvoice -> onInit -> detail.imgUrl', detail.imgUrl);
   }
 
-  onInitBorrow = (arrs) => {
+  onInitBorrow = (arrs, costDetails) => {
     console.log('AddInvoice -> onInitBorrow -> arrs', arrs);
     const ids = arrs.map(it => it.loanId);
     const arr = [];
-    this.props.dispatch({
-      type: 'costGlobal/waitAssessIds',
-      payload: {
-        ids
-      }
-    }).then(() => {
-      const { waitAssessIds } = this.props;
-      console.log('AddInvoice -> onInitBorrow -> waitAssessIds', waitAssessIds);
-      arrs.forEach(it => {
-        const index = waitAssessIds.findIndex(item => item.loanId === it.loanId);
-        if (index > -1) {
-          arr.push({...it});
+    if (ids.length) {
+      this.props.dispatch({
+        type: 'costGlobal/waitAssessIds',
+        payload: {
+          ids
         }
+      }).then(() => {
+        const { waitAssessIds } = this.props;
+        console.log('AddInvoice -> onInitBorrow -> waitAssessIds', waitAssessIds);
+        arrs.forEach(it => {
+          const index = waitAssessIds.findIndex(item => item.loanId === it.loanId);
+          if (index > -1) {
+            arr.push({
+              ...waitAssessIds[index]
+            });
+          }
+        });
+        this.setState({
+          borrowArr: arr,
+        }, () => {
+          this.onInitFolder(costDetails || []);
+        });
       });
-    });
-    return arr;
+    } else {
+      this.setState({
+        borrowArr: arr,
+      }, () => {
+        this.onInitFolder(costDetails || []);
+      });
+    }
   }
 
   onInitFolder = (arrs) => {
+    console.log('AddInvoice -> onInitFolder -> arrs', arrs);
     const ids = arrs.map(it => it.detailFolderId);
     const arr = [];
+    const banArr = [];
+    const { expenseList } = this.props;
+    const categoryIds = expenseList.map(it => it.id);
     this.props.dispatch({
       type: 'costGlobal/folderIds',
       payload: {
@@ -349,23 +459,111 @@ class AddInvoice extends Component {
       }
     }).then(() => {
       const { folderIds } = this.props;
+      const newArrs = this.InitFolderData(folderIds);
       arrs.forEach(it => {
-        const index = folderIds.findIndex(item => item.id === it.detailFolderId);
-        if (index > -1) {
+        const index = newArrs.findIndex(item => item.id === it.detailFolderId);
+        if (index > -1 && it.detailFolderId
+          && !newArrs[index].isDelete4Category
+          && categoryIds.includes(newArrs[index].categoryId)) {
           arr.push({
-            ...it,
-            detailFolderId: it.id,
-            key: it.id,
+            ...newArrs[index],
+            detailFolderId: it.detailFolderId,
+            key: it.detailFolderId,
             costType: 1,
+          });
+        } else if (!it.detailFolderId && categoryIds.includes(it.categoryId)){
+          banArr.push({
+            ...it
           });
         }
       });
-      this.onAddCost(arr);
+      const newArr = this.onInitCategory(banArr);
+      this.onAddCost([...arr, ...newArr]);
     });
   }
 
+  onInitCategory = (selectInvoice) => {
+    const { currencyList } = this.props;
+    const arr = [];
+    const { userDeps } = this.props;
+    selectInvoice.forEach((it, index) => {
+      let currency = {};
+      const costDetailShareVOS = [];
+      if (it.currencyId && it.currencyId !== '-1') {
+        // eslint-disable-next-line prefer-destructuring
+        currency = currencyList.filter(its => its.id === it.currencyId)[0];
+      }
+      const obj = {
+        ...it,
+        key: `a_${index}`,
+        costSum: currency.id ? it.costSum/100 : it.costSum/100,
+        shareTotal: it.costDetailShareVOS.length ? it.costSum/100 : 0,
+      };
+      if (it.costDetailShareVOS) {
+        it.costDetailShareVOS.forEach((item, i) => {
+          const userJsons = item.userJson ? item.userJson.map(its => { return { ...its, userName: its.name }; }) : [];
+          costDetailShareVOS.push({
+            key: `b_${i}`,
+            ...item,
+            shareScale: item.shareScale ? item.shareScale/100 : 0,
+            shareAmount: currency.id ? item.shareAmount/100 : item.shareAmount/100,
+            depList: item.userId ? userDeps[item.userId] : userDeps['-1'],
+            users: userJsons,
+          });
+        });
+      }
+      arr.push({
+        ...obj,
+        costDetailShareVOS,
+        currencyId: it.currencyId || '-1',
+        currencyName: currency.name || '',
+        exchangeRate: currency.exchangeRate || 1,
+        currencySymbol: currency.currencySymbol || '¥',
+      });
+    });
+    return arr;
+  }
+
+  InitFolderData = (selectInvoice) => {
+    const { currencyList } = this.props;
+    const arr = [];
+    selectInvoice.forEach(it => {
+      let currency = {};
+      const costDetailShareVOS = [];
+      if (it.currencyId && it.currencyId !== '-1') {
+        // eslint-disable-next-line prefer-destructuring
+        currency = currencyList.filter(its => its.id === it.currencyId)[0];
+      }
+      const obj = {
+        ...it,
+        key: it.id,
+        folderType: 'folder',
+        costSum: currency.id ? it.currencySum/100 : it.costSum/100,
+        detailFolderId: it.id,
+      };
+      if (it.costDetailShareVOS) {
+        it.costDetailShareVOS.forEach(item => {
+          costDetailShareVOS.push({
+            ...item,
+            shareScale: item.shareScale ? item.shareScale/100 : 0,
+            shareAmount: currency.id ? item.currencySum/100 : item.shareAmount/100,
+          });
+        });
+      }
+      arr.push({
+        ...obj,
+        costDetailShareVOS,
+        currencyId: it.currencyId || '-1',
+        currencyName: currency.name || '',
+        exchangeRate: currency.exchangeRate || 1,
+        currencySymbol: currency.currencySymbol || '¥',
+      });
+    });
+    return arr;
+  }
+
   onInitApply = (arrs) => {
-    const ids = arrs.map(it => it.applicationId);
+    const ids = arrs;
     const arr = [];
     this.props.dispatch({
       type: 'costGlobal/applyIds',
@@ -375,9 +573,11 @@ class AddInvoice extends Component {
     }).then(() => {
       const { applyIds } = this.props;
       arrs.forEach(it => {
-        const idss = applyIds.map(item => `${item}`);
-        if (idss.includes(it.applicationId)) {
-          arr.push({...it});
+        const index = applyIds.findIndex(item => item.id === it);
+        if (index > -1) {
+          arr.push({
+            ...applyIds[index]
+          });
         }
       });
     });
@@ -389,6 +589,7 @@ class AddInvoice extends Component {
     if (this.props.onChangeVisible) {
       this.props.onChangeVisible();
     }
+    console.log('调用');
     this.setState({
       visible: false,
       imgUrl: [],
@@ -670,6 +871,7 @@ class AddInvoice extends Component {
   }
 
   onChangeImg = (val) => {
+    console.log('调用2');
     this.setState({
       imgUrl: val,
     });
@@ -733,6 +935,7 @@ class AddInvoice extends Component {
         costDetailsVo.forEach((item, index) => {
           arr.push({
             'categoryId': item.categoryId,
+            'icon': item.icon,
             'categoryName': item.categoryName,
             'costSum': (((item.costSum) * 1000)/10).toFixed(0),
             'note': item.note,
@@ -778,12 +981,13 @@ class AddInvoice extends Component {
           });
           if (showField.happenTime.dateType === '2') {
             Object.assign(params, {
-              startTime: moment(val.time[0]).format('x'),
-              endTime: moment(val.time[1]).format('x')
+              startTime: val.time ? moment(val.time[0]).format('x') : '',
+              endTime: val.time ? moment(val.time[1]).format('x') : ''
             });
           } else if (showField.happenTime.dateType === '1') {
+
             Object.assign(params, {
-              startTime: moment(val.time).format('x')
+              startTime: val.time ? moment(val.time).format('x') : ''
             });
           }
         }
@@ -817,7 +1021,6 @@ class AddInvoice extends Component {
       message.error('请输入事由');
       return;
     }
-    const { djDetail, draftId } = this.props;
     const {
       imgUrl,
       fileUrl,
@@ -831,45 +1034,112 @@ class AddInvoice extends Component {
       expandField,
       showField,
       borrowArr,
-      applyArr,
+      applyArr
     } = this.state;
-    const params = {
-      ...val,
-      imgUrl,
-      fileUrl,
-      nodes,
-      costDetailsVo,
-      depList,
-      users,
-      details: {
-        ...details,
-        ...val,
-      },
-      createDepList,
-      total,
-      expandField,
-      showField,
-      borrowArr,
-      applyArr,
+    const { id, templateType, draftId, djDetail } = this.props;
+    const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
+    const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
+    const expandSubmitFieldVos = [];
+    if (expandField && expandField.length > 0) {
+      expandField.forEach(it => {
+        if (it.status) {
+          expandSubmitFieldVos.push({
+            ...it,
+            field: it.field,
+            name: it.name,
+            msg: val[it.field],
+          });
+        }
+      });
+    }
+    let params = {
+      ...details,
+      invoiceTemplateId: djDetail.id,
+      reason: val.reason,
+      note: val.note || '',
+      userId: details.userId || '',
+      deptId: val.deptId,
+      deptName: dep && dep.length > 0 ? dep[0].name : '',
+      userJson: users,
+      createDeptId: val.createDeptId,
+      createDeptName: dept && dept.length > 0 ? dept[0].name : '',
+      nodeConfigInfo: nodes,
+      projectId: val.projectId || '',
       supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
       supplierId: val.supplier ? val.supplier.split('_')[1] : '',
+      imgUrl,
+      fileUrl,
+      submitSum: ((total * 1000)/10).toFixed(0),
+      expandSubmitFieldVos
     };
-    if (val.repaymentTime) {
+    const arr = [];
+    costDetailsVo.forEach((item, index) => {
+      arr.push({
+        'categoryId': item.categoryId,
+        'categoryName': item.categoryName,
+        'costSum': (((item.costSum) * 1000)/10).toFixed(0),
+        'note': item.note,
+        'costDate':item.costDate,
+        'startTime':item.startTime || '',
+        'endTime':item.endTime || '',
+        'imgUrl':item.imgUrl,
+        'invoiceBaseId':id,
+        costDetailShareVOS: [],
+        currencyId: item.currencyId && item.currencyId !== '-1' ? item.currencyId : '',
+        currencyName: item.currencyName || '',
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+        detailFolderId: item.detailFolderId || '',
+        icon: item.icon,
+      });
+      if (item.costDetailShareVOS) {
+        item.costDetailShareVOS.forEach(it => {
+          arr[index].costDetailShareVOS.push({
+            'shareAmount': (it.shareAmount * 1000)/10,
+            'shareScale': (it.shareScale * 1000)/10,
+            'deptId': it.deptId,
+            'userId': it.userId,
+            'userJson':it.users,
+            deptName: it.deptName,
+            userName: it.userName,
+            projectId: it.projectId,
+          });
+        });
+      }
+    });
+    params = {
+      ...params,
+      costDetailsVo: arr,
+    };
+    if(Number(templateType) === 1) {
       Object.assign(params, {
+        loanSum: (val.loanSum*1000)/10,
         repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
       });
-    }
-    if (showField.happenTime && showField.happenTime.dateType === '2') {
+    } else if (Number(templateType) === 2) {
       Object.assign(params, {
-        startTime: moment(val.time[0]).format('x'),
-        endTime: moment(val.time[1]).format('x')
+        applicationSum: (val.applicationSum*1000)/10,
       });
-    } else if (showField.happenTime && showField.happenTime.dateType === '1') {
+      if (showField.happenTime.dateType === '2') {
+        Object.assign(params, {
+          startTime: val.time ? moment(val.time[0]).format('x') : '',
+          endTime: val.time ? moment(val.time[1]).format('x') : ''
+        });
+      } else if (showField.happenTime.dateType === '1') {
+        Object.assign(params, {
+          startTime: val.time ? moment(val.time).format('x') : ''
+        });
+      }
+    }
+    if (borrowArr) {
       Object.assign(params, {
-        startTime: moment(val.time).format('x')
+        invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
       });
     }
-    const { templateType } = this.props;
+    if (applyArr) {
+      Object.assign(params, {
+        applicationIds: applyArr.map(it => it.id),
+      });
+    }
     const url = draftId ? 'costGlobal/editDraft' : 'costGlobal/addDraft';
     this.props.dispatch({
       type: url,
@@ -1341,7 +1611,7 @@ class AddInvoice extends Component {
                       })(
                         <Select placeholder="请选择" onChange={this.onChangeDept}>
                           {
-                            depList.map(it => (
+                            depList && depList.map(it => (
                               <Option key={it.deptId}>{it.name}</Option>
                             ))
                           }
@@ -1406,7 +1676,7 @@ class AddInvoice extends Component {
                   <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
                     {
                       getFieldDecorator('createDeptId', {
-                        initialValue: details.createDeptId || '',
+                        initialValue: details.createDeptId ? `${details.createDeptId}` : '',
                         rules: [{ required: true, message: '请选择部门' }]
                       })(
                         <Select
@@ -1415,8 +1685,8 @@ class AddInvoice extends Component {
                           getPopupContainer={triggerNode => triggerNode.parentNode}
                         >
                           {
-                            createDepList.map(it => (
-                              <Option key={it.deptId}>{it.name}</Option>
+                            createDepList && createDepList.map(it => (
+                              <Option key={`${it.deptId}`}>{it.name}</Option>
                             ))
                           }
                         </Select>
@@ -1691,6 +1961,7 @@ class AddInvoice extends Component {
                       onAddCost={this.onAddCost}
                       key="export"
                       list={costDetailsVo}
+                      invoiceName={inDetails.name}
                     >
                       <Button icon="plus" style={{ width: '231px' }} key="export">费用夹导入</Button>
                     </AddFolder>

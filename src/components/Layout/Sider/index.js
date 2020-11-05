@@ -111,7 +111,7 @@ class App extends React.PureComponent {
   render() {
     const {
       collapsed,
-      onCollapse,
+      // onCollapse,
       menus,
       userInfo,
       status,
@@ -124,9 +124,9 @@ class App extends React.PureComponent {
     return (
       <Layout.Sider
         trigger={null}
-        collapsible
-        collapsed={collapsed}
-        onCollapse={onCollapse}
+        // collapsible
+        collapsed={false}
+        // onCollapse={onCollapse}
         breakpoint="lg"
         className={styles.sider}
       >
@@ -143,6 +143,12 @@ class App extends React.PureComponent {
           {...menuProps}
           selectedKeys={selectedKeys}
           onOpenChange={this.onOpenChange}
+          // expandIcon={(prop) => {
+          //   console.log('App -> render -> prop', prop);
+          //   return(
+          //     <i className="iconfont iconjiantouxia" />
+          //   );
+          // }}
         >
           {this.getMenuItems(menus)}
         </Menu>

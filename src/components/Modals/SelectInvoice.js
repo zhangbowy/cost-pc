@@ -267,9 +267,18 @@ class SelectInvoice extends Component {
                               title="已选的费用类别不支持该单据模版"
                               placement="bottom"
                             >
-                              <div className={style.tags} key={item.id} style={{ background: '#F5F5F6', border: '1px solid #F5F5F6' }}>
-                                <p className="c-black-25 fs-14">{item.name}</p>
-                                <p className="fs-12 c-black-25 eslips-1">{item.note}</p>
+                              <div
+                                className={style.tags}
+                                key={item.id}
+                                style={{
+                                  background: 'rgba(0,0,0,0.01)',
+                                  border: '1px solid rgba(0,0,0,0.01)',
+                                  cursor:'not-allowed',
+                                  boxShadow: 'none'
+                                }}
+                              >
+                                <p className="c-black-15 fs-14">{item.name}</p>
+                                <p className="fs-12 c-black-15 eslips-1">{item.note}</p>
                               </div>
                             </Tooltip>
                             :

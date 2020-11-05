@@ -17,6 +17,7 @@
   position: relative;
   z-index: 100;
 }
+
 .logo {
   // padding-left: 40px;
   height: 79px;
@@ -70,4 +71,7 @@
   background: rgba(250, 202, 79, 1);
   color: rgba(0, 0, 0, 0.85);
   border-color: rgba(250, 202, 79, 1);
+}
+.sider > :global(.ant-menu-item-selected span) {
+  font-weight: bold;
 }

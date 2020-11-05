@@ -316,7 +316,7 @@ class Payments extends React.PureComponent {
       dataIndex: 'reason',
       width: 150,
     }, {
-      title: '借款金额',
+      title: '借款金额（元）',
       dataIndex: 'loanSum',
       render: (text) => (
         <span>{text/100}</span>
@@ -324,13 +324,13 @@ class Payments extends React.PureComponent {
       className: 'moneyCol',
       width: 100,
     }, {
-      title: '待还款金额',
+      title: '待还款金额（元）',
       dataIndex: 'waitLoanSum',
       render: (text) => (
         <span>{text/100}</span>
       ),
       className: 'moneyCol',
-      width: 100,
+      width: 120,
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -349,7 +349,7 @@ class Payments extends React.PureComponent {
     }, {
       title: '部门',
       dataIndex: 'deptName',
-      width: 100,
+      width: 140,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
@@ -494,7 +494,7 @@ class Payments extends React.PureComponent {
             columns={columns}
             dataSource={list}
             rowSelection={rowSelection}
-            scroll={{ x: 1800 }}
+            scroll={{ x: 1900 }}
             rowKey="loanId"
             loading={loading}
             pagination={{

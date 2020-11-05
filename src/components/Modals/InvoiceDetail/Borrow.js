@@ -69,7 +69,7 @@ function Borrow(props) {
         </span>
       ),
     }, {
-      title: '查看',
+      title: '操作',
       dataIndex: 'operate',
       render: (_, record) => (
         <span>

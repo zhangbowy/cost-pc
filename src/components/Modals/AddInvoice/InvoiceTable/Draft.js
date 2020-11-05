@@ -181,9 +181,11 @@ class Draft extends Component {
             templateType={record.templateType}
             id={record.invoiceTemplateId}
             contentJson={record.contentJson}
+            isTemplateUsed={record.isTemplateUsed}
             onHandleOk={() => {
               this.onQuery({
-                ...page,
+                pageNo: 1,
+                pageSize: 10,
                 searchContent,
               });
               if (this.props.onPerson) {
@@ -191,13 +193,13 @@ class Draft extends Component {
               }
             }}
             draftId={record.id}
+            isTemplateDel={record.isTemplateDel}
           >
             <a>编辑</a>
           </AddInvoice>
         </span>
       ),
       className: 'fixCenter',
-      fixed: 'right'
     }];
     return (
       <div>
@@ -225,7 +227,7 @@ class Draft extends Component {
             searchPro="请输入事由、收款账户"
             total={total}
             loading={loading}
-            onQuery={this.onQuery}
+            onQuery={() => { this.onQuery({ ...page,searchContent }); }}
             searchContent={searchContent}
             page={page}
             btn={(

@@ -7,3 +7,13 @@
   width: 36px;
   height: 36px;
 }
+.imgUrlTable{
+  display: flex;
+  align-items: center;
+  // overflow-x: scroll;
+}
+.imgScroll{
+  display: flex;
+  align-items: center;
+  overflow-x: scroll;
+}

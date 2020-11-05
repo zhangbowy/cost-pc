@@ -27,7 +27,7 @@ class MenuItems extends Component {
     } = this.props;
     const { status } = this.state;
     return (
-      <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
+      <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal" className={this.props.className || ''}>
         {
           lists.map(item => (
             <Menu.Item key={item[(params && params.key) || 'key']}>

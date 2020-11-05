@@ -357,7 +357,8 @@ class BorrowPay extends React.PureComponent {
       width: 80,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
-      )
+      ),
+      className: 'moneyCol',
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',

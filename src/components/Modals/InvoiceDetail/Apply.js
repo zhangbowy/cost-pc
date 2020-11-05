@@ -34,7 +34,7 @@ function Apply(props) {
       <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
     )
   }, {
-    title: '查看',
+    title: '操作',
     dataIndex: 'operate',
     render: (_, record) => (
       <span>

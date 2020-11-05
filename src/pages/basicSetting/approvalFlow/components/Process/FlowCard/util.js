@@ -101,8 +101,10 @@ export class NodeUtils {
    */
   static createNode ( type, previousNodeId ) {
     const res = JSON.parse( JSON.stringify( nodeConfig[type] ) );
+    console.log('NodeUtils -> createNode -> res', res);
     res.nodeId = this.idGenerator(type);
     res.prevId = previousNodeId;
+    console.log('NodeUtils -> createNode -> res', res);
     return res;
   }
 
@@ -223,6 +225,7 @@ export class NodeUtils {
   static addApprovalNodes ( data, isBranchAction, newChildNode = undefined, flag ) {
     const datas = {...data};
     const oldChildNode = {...data.childNode};
+    console.log('NodeUtils -> addApprovalNodes -> datas', datas);
     newChildNode = newChildNode || this.createNode( 'approver', data.nodeId );
     data.childNode = newChildNode;
     if ( oldChildNode ) {
@@ -279,6 +282,7 @@ export class NodeUtils {
    */
   static addEmptyNode ( data ) {
     const emptyNode = this.createNode( 'route', data.nodeId );
+    console.log('NodeUtils -> addEmptyNode -> emptyNode', emptyNode);
     this.addApprovalNodes( data, true, emptyNode );
     return emptyNode;
   }
@@ -317,6 +321,7 @@ export class NodeUtils {
     // isBottomBtnOfBranch 用户点击的是分支树下面的按钮
     let nodeData = {...data};
     nodeData = this.addEmptyNode( nodeData, true );
+    console.log('NodeUtils -> appendBranch -> nodeData', nodeData);
     const conditionNodes = [
       this.createNode( 'condition', nodeData.nodeId ),
       this.createNode( 'condition', nodeData.nodeId )

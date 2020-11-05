@@ -1,7 +1,8 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
@@ -59,23 +60,6 @@ class AddCost extends Component {
     };
   }
 
-  componentDidUpdate(prevProps){
-    if (prevProps.detail !== this.props.detail) {
-      if(this.props.detail){
-      // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({
-          details: this.props.detail,
-          costDetailShareVOS: this.props.detail.costDetailShareVOS || [],
-          imgUrl: this.props.detail.imgUrl || [],
-          currencyId: this.props.detail.currencyId || '-1',
-          currencyName: this.props.detail.currencyName || '',
-          exchangeRate: this.props.detail.exchangeRate || 1,
-          currencySymbol: this.props.detail.currencySymbol || '¥',
-        });
-      }
-    }
-  }
-
   onShow = async() => {
     const _this = this;
     const { costType, id, isDelete4Category } = this.props;
@@ -97,6 +81,16 @@ class AddCost extends Component {
       type: 'global/getCurrency',
       payload: {},
     });
+    await this.props.dispatch({
+      type: 'global/usableSupplier',
+      payload: {},
+    });
+    await this.props.dispatch({
+      type: 'global/usableProject',
+      payload: {
+        type: 1,
+      },
+    });
     if (costType) {
       await this.props.dispatch({
         type: 'global/costList',
@@ -110,7 +104,7 @@ class AddCost extends Component {
             }
           }).then(async() => {
             const { detailFolder, currencyList } = this.props;
-            console.log('AddCost -> onShow -> currencyList', currencyList);
+            console.log('AddCost -> onShow -> detailFolder', detailFolder);
             const userIds = detailFolder.costDetailShareVOS.map(it => it.userId).filter(item => item);
             const arr = [];
             let currency = {};
@@ -124,7 +118,7 @@ class AddCost extends Component {
                 payload: {
                   userIds: [...new Set(userIds)],
                 }
-              }).then(() => {
+              }).then(async() => {
                 detailFolder.costDetailShareVOS.forEach((it) => {
                   const { userDeps } = this.props;
                   console.log('AddCost -> onShow -> userDeps', userDeps);
@@ -140,12 +134,30 @@ class AddCost extends Component {
                     });
                   } else {
                     Object.assign(obj, {
-                      users: it.userJson,
+                      users: it.userJson ? it.userJson.map(its => { return { ...its, userName: its.name }; }) : [],
                       depList: userDeps[`${it.userId}`],
                     });
                   }
-                  console.log(obj);
                   arr.push(obj);
+                });
+                this.setState({
+                  details: {
+                    ...detailFolder,
+                    costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
+                  },
+                  shareAmount: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
+                  costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
+                  costDetailShareVOS: arr,
+                  currencyId: currency.id || '-1',
+                  currencyName: currency.name || '',
+                  exchangeRate: currency.exchangeRate || 1,
+                  currencySymbol: currency.currencySymbol || '¥',
+                  imgUrl: detailFolder.imgUrl,
+                });
+                console.log('AddCost -> onShow -> arr', arr);
+                this.onChange(detailFolder.categoryId, 'folder', detailFolder.expandCostDetailFieldVos);
+                await this.setState({
+                  visible: true,
                 });
               });
             } else {
@@ -159,31 +171,38 @@ class AddCost extends Component {
                 };
                 arr.push(obj);
               });
-            }
-            await this.setState({
-              details: {
-                ...detailFolder,
+              let amounts = 0;
+              if (currency.id && arr.length) {
+                amounts = detailFolder.currencySum/100;
+              } else if (!currency.id && arr.length ) {
+                amounts = detailFolder.costSum/100;
+              }
+              this.setState({
+                details: {
+                  ...detailFolder,
+                  costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
+                },
+                shareAmount: amounts,
                 costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
-              },
-              shareAmount: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
-              costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
-              costDetailShareVOS: arr,
-              currencyId: currency.id || '-1',
-              currencyName: currency.name || '',
-              exchangeRate: currency.exchangeRate || 1,
-              currencySymbol: currency.currencySymbol || '¥',
-              imgUrl: detailFolder.imgUrl,
-            }, () => {
-              this.onChange(detailFolder.categoryId, 'edit');
-            });
-            await this.setState({
-              visible: true,
-            });
+                costDetailShareVOS: arr,
+                currencyId: currency.id || '-1',
+                currencyName: currency.name || '',
+                exchangeRate: currency.exchangeRate || 1,
+                currencySymbol: currency.currencySymbol || '¥',
+                imgUrl: detailFolder.imgUrl,
+              });
+              console.log('AddCost -> onShow -> arr', arr);
+              this.onChange(detailFolder.categoryId, 'folder', detailFolder.expandCostDetailFieldVos);
+              await this.setState({
+                visible: true,
+              });
+            }
+          });
+        } else {
+          this.setState({
+            visible: true,
           });
         }
-        this.setState({
-          visible: true,
-        });
       });
     } else {
       await this.props.dispatch({
@@ -213,14 +232,18 @@ class AddCost extends Component {
     }
   }
 
-  onCancel = () => {
+  onCancel = (flag) => {
     this.props.form.resetFields();
+    if (!flag) {
+      this.setState({
+        visible: false,
+        initDep: [],// 初始化承担部门
+      });
+    }
     this.setState({
       imgUrl: [],
       costDetailShareVOS: [],
-      initDep: [],// 初始化承担部门
       costDate: 0, // 没有指定日期
-      visible: false,
       showField: {}, // 是否展示
       shareAmount: 0,
       costSum: 0,
@@ -260,12 +283,13 @@ class AddCost extends Component {
   }
 
   //  提交
-  handleOk = () => {
+  handleOk = (flag) => {
     const {
       index,
       costType,
       costTitle,
-      id
+      id,
+      lbDetail
     } = this.props;
     const {
       costDate,
@@ -280,6 +304,7 @@ class AddCost extends Component {
       currencySymbol
     } = this.state;
     const _this = this;
+
     this.props.form.validateFieldsAndScroll((err, val) => {
       console.log('AddCost -> handleOk -> val', val);
       if (!err) {
@@ -296,7 +321,7 @@ class AddCost extends Component {
           imgUrl,
           shareTotal: shareAmount,
           categoryName: details.categoryName,
-          icon: details.icon,
+          icon: lbDetail.icon,
           detailFolderId: costTitle === 'edit' ? id : '',
         };
         const expandCostDetailFieldVos = [];
@@ -326,6 +351,9 @@ class AddCost extends Component {
           }
         }
         const arr = _this.onGetForm('submit', val.categoryId);
+        if (!arr) {
+          return;
+        }
         detail = {
           ...detail,
           expandCostDetailFieldVos,
@@ -343,7 +371,7 @@ class AddCost extends Component {
               totalAmount: (((val.costSum) * 1000)/10).toFixed(0),
               'shareAmount': (it.shareAmount * 1000)/10,
               'shareScale': (it.shareScale * 1000)/10,
-              'deptId': it.deptId,
+              'deptId': it.deptId instanceof Array ? it.deptId[0] : it.deptId,
               'userId': it.userId,
               'userJson':it.users,
               deptName: it.deptName,
@@ -361,7 +389,7 @@ class AddCost extends Component {
               id: costTitle === 'edit' ? id : '',
             }
           }).then(() => {
-            this.onCancel();
+            this.onCancel(flag);
             if (this.props.onCallback) {
               this.props.onCallback();
             }
@@ -419,18 +447,19 @@ class AddCost extends Component {
         <div className="icons">
           {
             item.type ?
-              <i className={cs(`icon${item.icon}`, 'iconfont')} />
+              <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
               :
               null
           }
-          <span>{item.title}</span>
+          <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
         </div>
       )}
     />;
   });
 
   // 选择费用类别
-  onChange = (val, types) => {
+  onChange = (val, types, expand) => {
+    console.log('AddCost -> onChange -> expand', expand);
     let detail = this.state.details;
     const showFields = {};
     let costDate = 0;
@@ -452,7 +481,6 @@ class AddCost extends Component {
         str.forEach(it => {
           showFields[it.field] = {...it};
           if (it.field === 'happenTime') {
-            console.log(costDate);
             costDate = it.dateType ? Number(it.dateType) : 1;
           }
         });
@@ -471,7 +499,28 @@ class AddCost extends Component {
         details: detail,
         project,
       });
-      if (types !== 'edit') {
+      if (types === 'folder') {
+        const expands = [];
+        if (lbDetail.expandField) {
+          lbDetail.expandField.forEach(it => {
+            const index = expand.findIndex(its => its.field === it.field);
+            console.log('AddCost -> onChange -> index', lbDetail.expandField);
+            if (index > -1 && it.status) {
+              expands.push({
+                ...it,
+                msg: expand[index].msg,
+              });
+            } else if (it.status) {
+              expands.push({ ...it });
+            }
+          });
+          console.log('AddCost -> onChange -> expands', expands);
+          this.setState({
+            expandField: expands,
+          });
+        }
+      }
+      if (types !== 'edit' && types !== 'folder') {
         this.setState({
           expandField: lbDetail.expandField,
         });
@@ -550,7 +599,8 @@ class AddCost extends Component {
       // expenseList,
       userInfo,
       currencyList,
-      currencyShow
+      currencyShow,
+      againCost,
     } = this.props;
     const list = this.onSelectTree();
     const {
@@ -596,9 +646,19 @@ class AddCost extends Component {
           visible={visible}
           width="880px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
-          onCancel={this.onCancel}
+          onCancel={() => this.onCancel()}
           maskClosable={false}
-          onOk={() => this.handleOk()}
+          footer={(
+            <>
+              {
+                againCost ?
+                  <Button onClick={() => this.handleOk(true)}>再记一笔</Button>
+                  :
+                  <Button onClick={() => this.onCancel()}>取消</Button>
+              }
+              <Button type="primary" onClick={() => this.handleOk()}>保存</Button>
+            </>
+          )}
         >
           <div className={style.addCosts}>
             <Form>

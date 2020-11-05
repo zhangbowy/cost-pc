@@ -82,7 +82,7 @@ class AuthIndex extends React.PureComponent {
       <div>
         <div style={{background: '#fff', paddingTop: '16px'}}>
           <p className="m-l-32 p-t-16 m-b-16"><span style={{cursor:'pointer'}} className="c-black-36 fs-14" onClick={()=>{this.props.history.goBack();}}>返回上一级</span> / <span className="c-black-65 fs-14">角色管理</span></p>
-          <p className="m-l-32 m-b-16 c-black-85 fs-20">角色管理</p>
+          <p className="m-l-32 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>角色管理</p>
           <Menu
             onClick={this.handleClick}
             mode="horizontal"

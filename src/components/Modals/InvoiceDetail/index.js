@@ -256,8 +256,8 @@ class InvoiceDetail extends Component {
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.icons}>
-          <i className={`iconfont icon${record.icon}`} />
-          <span>{record.categoryName}</span>
+          <i className={`iconfont icon${record.icon}`} style={{ fontSize: '24px', verticalAlign: 'middle' }} />
+          <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
         </span>
       ),
       width: 130
@@ -288,7 +288,7 @@ class InvoiceDetail extends Component {
                 </div>
               )}
             >
-              <Tag>分摊明细</Tag>
+              <Tag className="m-l-8">分摊明细</Tag>
             </Popover>
           }
         </span>
@@ -401,6 +401,15 @@ class InvoiceDetail extends Component {
             </Col>
           </Row>
           <Row className="m-l-10">
+            {
+              Number(templateType) === 2 ?
+                <Col span={8} className="m-t-16">
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>关联单据：</span>
+                  <span className="fs-14 c-black-65">{details.relevanceInvoiceNo ? details.relevanceInvoiceNo : '无'}</span>
+                </Col>
+                :
+                null
+            }
             {
               Number(templateType) === 0 || Number(templateType) === 1 ?
                 <Col span={8} className="m-t-16">
@@ -645,6 +654,16 @@ class InvoiceDetail extends Component {
             </>
           }
           {
+            invoiceLoanAssessVos && invoiceLoanAssessVos.length > 0 &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>借款核销</span>
+              </div>
+              <Borrow list={invoiceLoanAssessVos} type={1} />
+            </>
+          }
+          {
             !Number(templateType) &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
@@ -658,16 +677,6 @@ class InvoiceDetail extends Component {
                 scroll={{x: columns.length > 6 ? '1400px' : '1000px'}}
                 rowKey="id"
               />
-            </>
-          }
-          {
-            invoiceLoanAssessVos && invoiceLoanAssessVos.length > 0 &&
-            <>
-              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
-                <div className={style.line} />
-                <span>借款核销</span>
-              </div>
-              <Borrow list={invoiceLoanAssessVos} type={1} />
             </>
           }
           {

@@ -1,14 +1,14 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Table, Tooltip, Divider, Tag, Popover } from 'antd';
+import { Modal, Form, Table, Tooltip, Tag, Popover } from 'antd';
 import Search from 'antd/lib/input/Search';
 import moment from 'moment';
 import { connect } from 'dva';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import style from './index.scss';
-import AddCost from './AddCost';
+// import AddCost from './AddCost';
 import { getArrayColor, classifyIcon } from '../../../utils/constants';
 
 // const labelInfo = {
@@ -197,9 +197,8 @@ class AddFolder extends Component {
   render() {
     const {
       children,
-      invoiceId,
-      userInfo,
       folderSum,
+      invoiceName,
     } = this.props;
     const {
       visible,
@@ -211,15 +210,33 @@ class AddFolder extends Component {
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.cateNames}>
-          <i
-            className={`iconfont icon${record.icon}`}
-            style={{
-              color: getArrayColor(record.icon, classifyIcon),
-              fontSize: '24px',
-              marginRight: '4px'
-            }}
-          />
-          <span>{record.categoryName}</span>
+          {
+            record.disabled ?
+              <Tooltip title={`【${invoiceName}】不支持该费用类别`} placement="bottomLeft">
+                <i
+                  className={`iconfont icon${record.icon}`}
+                  style={{
+                    color: getArrayColor(record.icon, classifyIcon),
+                    fontSize: '24px',
+                    marginRight: '4px',
+                    opacity: 0.25,
+                  }}
+                />
+                <span style={{opacity: 0.25}}>{record.categoryName}</span>
+              </Tooltip>
+              :
+              <>
+                <i
+                  className={`iconfont icon${record.icon}`}
+                  style={{
+                    color: getArrayColor(record.icon, classifyIcon),
+                    fontSize: '24px',
+                    marginRight: '4px'
+                  }}
+                />
+                <span>{record.categoryName}</span>
+              </>
+          }
         </span>
       )
     }, {
@@ -227,7 +244,7 @@ class AddFolder extends Component {
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span>{record.currencySumStr ?  `${record.costSumStr}(${record.currencySumStr})`: record.costSumStr}</span>
+          <span className={record.disabled ? style.disabled : ''}>{record.currencySumStr ?  `${record.costSumStr}(${record.currencySumStr})`: record.costSumStr}</span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover
@@ -259,7 +276,7 @@ class AddFolder extends Component {
       title: '发生日期',
       dataIndex: 'happenTime',
       render: (_, record) => (
-        <span>
+        <span className={record.disabled ? style.disabled : ''}>
           <span>{record.startTime ? moment(Number(record.startTime)).format('YYYY-MM-DD') : '-'}</span>
           <span>{record.endTime ? `-${moment(Number(record.endTime)).format('YYYY-MM-DD')}` : ''}</span>
         </span>
@@ -269,9 +286,9 @@ class AddFolder extends Component {
       dataIndex: 'note',
       ellipsis: true,
       width: '100px',
-      render: (text) => (
-        <Tooltip placement="topLeft" title={text || ''}>
-          <span>{text}</span>
+      render: (_, record) => (
+        <Tooltip placement="topLeft" title={record.note || ''}>
+          <span className={record.disabled ? style.disabled : ''}>{record.note}</span>
         </Tooltip>
       )
     }, {
@@ -288,30 +305,37 @@ class AddFolder extends Component {
       ),
       textWrap: 'word-break',
       width: '140px'
-    }, {
-      title: '操作',
-      dataIndex: 'opea',
-      render: (_, record) => (
-        <span>
-          <span className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</span>
-          <Divider type="vertical" />
-          <AddCost
-            costType={1}
-            id={record.id}
-            detail={record}
-            invoiceId={invoiceId}
-            userInfo={userInfo}
-            onAddCost={this.addCost}
-            expandField={record.expandCostDetailFieldVos}
-            onHandleOk={() => this.onCancel()}
-          >
-            <a>编辑</a>
-          </AddCost>
-        </span>
-      ),
-      className: 'fixCenter',
-      fixed: 'right'
-    }];
+    },
+    // {
+    //   title: '操作',
+    //   dataIndex: 'opea',
+    //   render: (_, record) => (
+    //     <span>
+    //       <Popconfirm
+    //         title="确认删除吗？"
+    //         onConfirm={() => this.onDeletes(record.id)}
+    //       >
+    //         <span className="deleteColor">删除</span>
+    //       </Popconfirm>
+    //       <Divider type="vertical" />
+    //       <AddCost
+    //         costType={1}
+    //         id={record.id}
+    //         detail={record}
+    //         invoiceId={invoiceId}
+    //         userInfo={userInfo}
+    //         onAddCost={this.addCost}
+    //         expandField={record.expandCostDetailFieldVos}
+    //         onHandleOk={() => this.onCancel()}
+    //       >
+    //         <a>编辑</a>
+    //       </AddCost>
+    //     </span>
+    //   ),
+    //   className: 'fixCenter',
+    //   fixed: 'right'
+    // }
+  ];
     const rowSelection = {
       type: 'checkbox',
       getCheckboxProps: record => ({

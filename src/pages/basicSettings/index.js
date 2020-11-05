@@ -56,11 +56,11 @@ class basicSetting extends Component {
 				}
 				return item;
 			});
-			menus[2].children.map(item => {
-				menus[0].children.push(item);
-				return item;
-			});
-			menus.splice(2,1);
+			// menus[2].children.map(item => {
+			// 	menus[0].children.push(item);
+			// 	return item;
+			// });
+			// menus.splice(2,1);
 			console.log(111111,menus);
 			this.setState({menus});
 		});
@@ -104,7 +104,7 @@ class basicSetting extends Component {
 					this.state.menus.map(item => {
 						return (
   <div key={item.id}>
-    <h3 className={style.h3}>{item.menuName}</h3>
+    <p className={style.h3}>{item.menuName}</p>
     { this.loadmenu(item.children) }
   </div>
 						);

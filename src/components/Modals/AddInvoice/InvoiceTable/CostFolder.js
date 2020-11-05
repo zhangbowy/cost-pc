@@ -12,6 +12,7 @@ import SelectInvoice from '../../SelectInvoice';
 
 @connect(({ costGlobal, loading }) => ({
   folderList: costGlobal.folderList,
+  folderSum: costGlobal.folderSum,
   total: costGlobal.total,
   page: costGlobal.page,
   loading: loading.effects['costGlobal/listFolder'] || false,
@@ -147,7 +148,7 @@ class CostFolder extends Component {
   }
 
   render() {
-    const { folderList, total, loading, page } = this.props;
+    const { folderList, total, loading, page, folderSum } = this.props;
     const { selectedRowKeys, selectedRows, visible, money, searchContent, slVisible } = this.state;
     const columns = [{
       title: '费用类别',
@@ -165,7 +166,8 @@ class CostFolder extends Component {
           />
           <span style={{verticalAlign: 'middle'}}>{record.categoryName}</span>
         </span>
-      )
+      ),
+      width: '150px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
@@ -264,7 +266,7 @@ class CostFolder extends Component {
         </span>
       ),
       className: 'fixCenter',
-      fixed: 'right'
+      // fixed: 'right'
     }];
     return (
       <div>
@@ -280,7 +282,8 @@ class CostFolder extends Component {
               {
                 selectedRowKeys.length ?
                   <div key="dull" className={style.costMoney}>
-                    <Button type="default" key="cancel" onClick={this.onCancel}>取消</Button>
+                    <div />
+                    {/* <Button type="default" key="cancel" onClick={this.onCancel}>取消</Button> */}
                     <div>
                       <span className="fs-15 c-black-85 m-r-8">
                         已选{selectedRowKeys.length}笔 合计¥
@@ -317,11 +320,18 @@ class CostFolder extends Component {
                     this.onQuery({ searchContent, ...page });
                     this.props.onPerson();
                   }}
+                  againCost
                 >
                   <Button type='default' className="m-r-8">记一笔</Button>
                 </AddCost>
                 <Button type='default' onClick={() => this.onDelete()} className="m-r-8">批量删除</Button>
               </>
+            )}
+            production={(
+              <span>
+                费用夹共计{folderSum.totalCount ? folderSum.totalCount : 0}笔，
+                {folderSum.costSumStr ? folderSum.costSumStr : 0}
+              </span>
             )}
           />
           <SelectInvoice

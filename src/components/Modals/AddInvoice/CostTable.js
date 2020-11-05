@@ -30,8 +30,13 @@ class CostTable extends Component {
     this.props.addCost(val, index);
   }
 
+  onBack = (val, index) => {
+    this.props.addCost(val, index);
+  }
+
   render() {
     const { list, userInfo, invoiceId } = this.props;
+    console.log('CostTable -> render -> list', list);
     const newList = [];
     list.forEach(it => {
       const obj = {};
@@ -135,6 +140,7 @@ class CostTable extends Component {
             onAddCost={this.addCost}
             expandField={record.expandCostDetailFieldVos}
             costTitle="edit"
+            // onCancel={(val) => this.onBack(val, index)}
           >
             <a>编辑</a>
           </AddCost>

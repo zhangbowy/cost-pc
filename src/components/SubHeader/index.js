@@ -22,7 +22,7 @@ class SubHeader extends React.PureComponent {
       <div className={style.subHeader}>
         {
           sub &&
-          <p className="fs-14 m-b-16">
+          <p className="fs-14 m-b-8">
             <span className="sub-color cur-p" onClick={() => this.link()}>{title || '角色管理'}</span>
             <span className="m-l-8">/</span>
             <span className="m-l-8">设置人员</span>

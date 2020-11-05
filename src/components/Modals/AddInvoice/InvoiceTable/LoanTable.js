@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Table, Tooltip } from 'antd';
+import { Modal, Form, Table, Tooltip, Button } from 'antd';
 import Search from 'antd/lib/input/Search';
 import moment from 'moment';
 import { connect } from 'dva';
@@ -147,7 +147,11 @@ class LoanTable extends Component {
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={this.onCancel}
           maskClosable={false}
-          footer={null}
+          footer={(
+            <>
+              <Button type="default" key="cen" onClick={this.onCancel}>取消</Button>
+            </>
+          )}
         >
           <div className="m-b-16">
             {/* <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" /> */}
