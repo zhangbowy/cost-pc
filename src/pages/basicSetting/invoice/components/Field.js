@@ -170,7 +170,7 @@ class Field extends React.PureComponent {
               <Form.Item key="dateType">
                 {
                   getFieldDecorator(`dateType_${record.field}`, {
-                    initialValue: record.dateType || '1',
+                    initialValue: record.dateType ? `${record.dateType}` : '1',
                   })(
                     <Select style={{width: '100px'}}>
                       {

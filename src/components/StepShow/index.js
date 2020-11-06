@@ -63,7 +63,7 @@ class StepShow extends Component {
               title="第一步：人员权限设置"
               description={(
                 <div className={style.onStep} onClick={() => this.onOpen('5')}>
-                  <p>系统设置-权限设置</p>
+                  <p>设置-基础设置-角色管理</p>
                   <a>去设置 &gt;</a>
                 </div>
               )}
@@ -75,11 +75,11 @@ class StepShow extends Component {
               description={(
                 <div>
                   <div className={style.onStep} onClick={() => this.onOpen('4')}>
-                    <p>基础设置-费用类别</p>
+                    <p>设置—单据与流程-费用类别设置</p>
                     <a>去设置 &gt;</a>
                   </div>
                   <div className={style.onStep} onClick={() => this.onOpen('3')}>
-                    <p>基础设置-单据</p>
+                    <p>设置—单据与流程-单据模版设置</p>
                     <a>去设置 &gt;</a>
                   </div>
                 </div>

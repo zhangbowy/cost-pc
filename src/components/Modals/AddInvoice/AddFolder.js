@@ -81,10 +81,32 @@ class AddFolder extends Component {
           });
         }
       });
+      const newList = [...list];
+      const newArr = [];
+      newList.forEach(it => {
+        let obj = {
+          ...it,
+          costSum: ((it.costSum * 1000)/10).toFixed(0)-0,
+        };
+        const newCost = [];
+        if (it.costDetailShareVOS) {
+          it.costDetailShareVOS.forEach(its => {
+            newCost.push({
+              ...its,
+              shareAmount: ((its.shareAmount * 1000)/10).toFixed(0)-0,
+            });
+          });
+        }
+        obj = {
+          ...obj,
+          costDetailShareVOS: newCost,
+        };
+        newArr.push(obj);
+      });
       this.setState({
         visible: true,
         selectedRowKeys: list.map(it => it.detailFolderId) || [],
-        selectedRows: list.filter(it => it.detailFolderId) || [],
+        selectedRows: newArr,
         details: list,
         folderList: arr,
       });
@@ -96,6 +118,8 @@ class AddFolder extends Component {
     this.props.form.resetFields();
     this.setState({
       visible: false,
+      selectedRowKeys: [],
+      selectedRows: [],
     });
   }
 

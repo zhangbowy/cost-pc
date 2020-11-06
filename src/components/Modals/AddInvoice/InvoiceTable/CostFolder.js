@@ -317,7 +317,7 @@ class CostFolder extends Component {
                 <AddCost
                   costType={1}
                   onCallback={() => {
-                    this.onQuery({ searchContent, ...page });
+                    this.onQuery({ searchContent, pageNo: 1, pageSize: 10 });
                     this.props.onPerson();
                   }}
                   againCost
@@ -342,6 +342,10 @@ class CostFolder extends Component {
             visible={slVisible}
             onCancel={() => this.onChangeVisible()}
             onCallback={() => {
+              this.setState({
+                selectedRows: [],
+                selectedRowKeys: [],
+              });
               this.onQuery({ searchContent, ...page });
               this.props.onPerson();
             }}
