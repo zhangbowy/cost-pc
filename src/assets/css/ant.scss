@@ -121,6 +121,12 @@
   .moneyCol{
     text-align: right!important;
   }
+  .moneyTagCol{
+    text-align: right!important;
+    .ant-table-header-column span{
+      margin-right: 72px;
+    }
+  }
 
   .selectClass{
     .ant-select-dropdown-menu-item{
@@ -163,5 +169,18 @@
   .titleMenu .ant-menu-item{
     padding: 0;
     margin-right: 42px;
+  }
+
+  .addWidth {
+    :global(.invoiceFirst) {
+      display: inline-block;
+      min-width: 112px;
+      margin-right: 8px;
+      overflow: hidden;
+    }
+    :global(.invoiceSecond) {
+      display: inline-block;
+      width: 100%;
+    }
   }
 }

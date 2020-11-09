@@ -272,7 +272,7 @@ class SelectInvoice extends Component {
                                 key={item.id}
                                 style={{
                                   background: 'rgba(0,0,0,0.01)',
-                                  border: '1px solid rgba(0,0,0,0.01)',
+                                  border: 'none',
                                   cursor:'not-allowed',
                                   boxShadow: 'none'
                                 }}

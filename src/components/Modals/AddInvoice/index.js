@@ -1536,8 +1536,8 @@ class AddInvoice extends Component {
       },
     };
     return (
-      <span>
-        <span onClick={() => this.onShowHandle()}>{ children }</span>
+      <span className="invoiceFirst">
+        <span onClick={() => this.onShowHandle()} className="invoiceSecond">{ children }</span>
         <Modal
           visible={visible}
           width="980px"

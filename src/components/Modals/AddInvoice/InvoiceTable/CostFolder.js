@@ -167,13 +167,13 @@ class CostFolder extends Component {
           <span style={{verticalAlign: 'middle'}}>{record.categoryName}</span>
         </span>
       ),
-      width: '150px'
+      width: '280px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span>{record.currencySumStr ?  `${record.costSumStr}(${record.currencySumStr})`: record.costSumStr}</span>
+          <span className={record.costDetailShareVOS && record.costDetailShareVOS.length > 0 ? '' : 'm-r-72'}>{record.currencySumStr ?  `${record.costSumStr}(${record.currencySumStr})`: record.costSumStr}</span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover
@@ -195,12 +195,12 @@ class CostFolder extends Component {
                 </div>
               )}
             >
-              <Tag>分摊明细</Tag>
+              <Tag className="m-l-8" style={{marginRight: '0px'}}>分摊明细</Tag>
             </Popover>
           }
         </span>
       ),
-      className: 'moneyCol',
+      className: 'moneyTagCol',
       width: '250px'
     }, {
       title: '发生日期',
@@ -266,7 +266,7 @@ class CostFolder extends Component {
         </span>
       ),
       className: 'fixCenter',
-      // fixed: 'right'
+      fixed: 'right'
     }];
     return (
       <div>
@@ -311,6 +311,7 @@ class CostFolder extends Component {
             loading={loading}
             onQuery={this.onQuery}
             searchContent={searchContent}
+            scroll={{x: '1200px'}}
             page={page}
             btn={(
               <>
