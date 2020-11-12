@@ -1,11 +1,22 @@
 import React, { PureComponent } from 'react';
 import { PageHeader, Menu, Button } from 'antd';
 import { connect } from 'dva';
+import cs from 'classnames';
 import LabelLeft from '../../../../components/LabelLeft';
 import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
 
+const basicStr = [{
+  key: 'one',
+  value: '基础设置',
+}, {
+  key: 'two',
+  value: '字段设置',
+}, {
+  key: 'three',
+  value: '分摊设置',
+}];
 @connect(({ loading, session, addCategory }) => ({
   loading: loading.effects['addCategory/add'] || loading.effects['addCategory/edit'],
   userInfo: session.userInfo,
@@ -15,6 +26,11 @@ import Basic from '../components/Basic';
   expandLists: addCategory.expandLists,
 }))
 class CategoryAdd extends PureComponent {
+
+  state = {
+    current: 'one',
+  }
+
   componentDidMount(){
     this.props.dispatch({
       type: 'addCategory/allList',
@@ -26,6 +42,7 @@ class CategoryAdd extends PureComponent {
     const {
       allList,
     } = this.props;
+    const { current } = this.state;
     const routes = [
       {
         path: 'index',
@@ -48,20 +65,22 @@ class CategoryAdd extends PureComponent {
           breadcrumb={{routes}}
           style={{background: '#fff'}}
         />
-        <Menu mode="horizontal">
-          <Menu.Item key="one">
-            <span className={style.circle}>1</span>
-            <span>基础设置</span>
-          </Menu.Item>
-          <Menu.Item key="two">
-            <span className={style.circle}>2</span>
-            <span>字段设置</span>
-          </Menu.Item>
-          <Menu.Item key="three">
-            <span className={style.circle}>3</span>
-            <span>分摊设置</span>
-          </Menu.Item>
-        </Menu>
+        <div style={{background: '#fff', width: '100%'}}>
+          <Menu
+            mode="horizontal"
+            className="m-l-32 titleMenu"
+            selectedKeys={[current]}
+          >
+            {
+              basicStr.map((it, index) => (
+                <Menu.Item key={it.key}>
+                  <span className={it.key === current ? cs(style.circle, style.active) : style.circle}>{index+1}</span>
+                  <span>{it.value}</span>
+                </Menu.Item>
+              ))
+            }
+          </Menu>
+        </div>
         <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
           <LabelLeft title="基础设置" />
           <Basic
