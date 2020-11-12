@@ -93,29 +93,30 @@ class InvoiceDetail extends Component {
           supplierAccountVo: details.supplierAccountVo || {},
         });
       }
-      this.props.dispatch({
-        type: 'global/djDetail',
-        payload: {
-          id: details.invoiceTemplateId,
-          templateType
-        }
-      }).then(() => {
-        const { djDetail } = this.props;
-          const showObj = {};
-          if (djDetail.showField) {
-            const arr = JSON.parse(djDetail.showField);
-            arr.forEach(it => {
-              showObj[it.field] = {...it};
-            });
-          }
-          this.setState({
-            showFields: showObj,
-          });
-          this.setState({
-            visible: true,
-            details,
-          });
+      // const { djDetail } = this.props;
+      const showObj = {};
+      if (details.showField) {
+        const arr = JSON.parse(details.showField);
+        arr.forEach(it => {
+          showObj[it.field] = {...it};
+        });
+      }
+      this.setState({
+        showFields: showObj,
       });
+      this.setState({
+        visible: true,
+        details,
+      });
+      // this.props.dispatch({
+      //   type: 'global/djDetail',
+      //   payload: {
+      //     id: details.invoiceTemplateId,
+      //     templateType
+      //   }
+      // }).then(() => {
+
+      // });
     });
 
   }

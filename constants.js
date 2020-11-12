@@ -17,8 +17,8 @@ const APP_API = {
   // dev: '/api',
   // dev: 'http://127.0.0.1:8083/api', // debug
   // dev: 'https://pretest.forwe.store',
-  test: 'http://172.17.9.120',
-  // test: 'https://pretest.forwe.store',
+  // test: 'http://172.17.9.120',
+  test: 'https://pretest.forwe.store',
   // pre: 'https://framework-api-sandbox.jimistore.com',
   pre: 'https://pretest.forwe.store',
   prod: 'https://cost.forwe.store',

@@ -1008,6 +1008,13 @@ class AddInvoice extends Component {
             applicationIds: applyArr.map(it => it.id),
           });
         }
+        if (showField.receiptId && !showField.receiptId.status) {
+          Object.assign(params, {
+            receiptId: '',
+            receiptName: '',
+            receiptNameJson: '',
+          });
+        }
         this.chargeHandle(params);
       }
     });
