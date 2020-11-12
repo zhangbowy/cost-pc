@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Input, Switch, Icon, Cascader } from 'antd';
 import cs from 'classnames';
 import TextArea from 'antd/lib/input/TextArea';
-import { formItemLayout, classifyIcon } from '@/utils/constants';
+import { classifyIcon } from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
 import style from './classify.scss';
 
@@ -84,9 +84,19 @@ class Basic extends Component {
       tName: 'costName',
     }, lists);
     const { active, data} = this.state;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 4 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 20 },
+      },
+    };
     return (
       <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
-        <Form {...formItemLayout} className="formItem">
+        <Form {...formItemLayout} className="formItem" style={{ width: '450px' }}>
           <Form.Item label={labelInfo.costName}>
             {
               getFieldDecorator('costName', {
