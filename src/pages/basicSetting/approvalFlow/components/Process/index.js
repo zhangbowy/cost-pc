@@ -281,6 +281,7 @@ class Process extends Component {
           onEmits={this.eventReciver}
           scaleVal={scaleVal}
           ccPosition={ccPosition}
+          templateType={templateType}
         />
         <PropPanel
           value={this.state.activeData}

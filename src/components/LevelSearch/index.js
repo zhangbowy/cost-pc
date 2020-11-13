@@ -199,7 +199,7 @@ class LevelSearch extends Component {
                       initialValue: details.categoryIds || [],
                     })(
                       <TreeSelect
-                        showSearch
+                        showSearch={false}
                         // onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
                         treeData={list}
                         treeCheckable
@@ -294,6 +294,7 @@ class LevelSearch extends Component {
                       initialValue: details.invoiceTemplateIds || [],
                     })(
                       <TreeSelect
+                        showSearch={false}
                         treeData={invList}
                         treeCheckable
                         style={{width: '100%'}}

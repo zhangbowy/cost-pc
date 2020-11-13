@@ -17,6 +17,7 @@ function FlowCard(props) {
   // const hasBranch = data => notEmptyArray(data.conditionNodes);
   const hasBranch = data => (data.nodeType === 'route');
   const stopPro = ev => ev.stopPropagation();
+  const { templateType } = props;
   /**
    *事件触发器 统筹本组件所有事件并转发到父组件中
     * @param { Object } 包含event（事件名）和args（事件参数）两个参数
@@ -42,11 +43,10 @@ function FlowCard(props) {
     const isApprNode = afterTrue(NodeUtils.isApproverNode(conf), 'approver');
     const isCopyNode = afterTrue(NodeUtils.isCopyNode(conf), 'notifier');
     const isGrant = afterTrue(NodeUtils.isGrant(conf), 'grant');
-    const isOnlyApprove = conf && conf.nodeType === 'approver' &&
+    const isOnlyApprove = conf && conf.nodeType === 'approver' && (conf.prevId && conf.prevId.indexOf('route') === -1) &&
                           (
-                            ((conf.prevId.indexOf('START') > -1 || (conf.prevId.indexOf('start') > -1) ) ||
+                            ((conf.prevId.indexOf('START') > -1 && (conf.prevId.indexOf('start') > -1) ) ||
                             (conf.childNode && (conf.childNode.nodeType === 'grant'))) &&
-                            (!conf.childNode) &&
                             (count === 1)
                           ); // 唯一的一个审批节点
     console.log('createNormalCard -> isOnlyApprove', isOnlyApprove);
@@ -170,7 +170,7 @@ function FlowCard(props) {
                     (data.nodeType === 'start' && data.childNode && data.childNode.nodeType === 'notifier')
                     || (data.nodeType === 'notifier' &&
                     data.childNode && data.childNode.nodeType === 'grant' &&
-                    (data.prevId.indexOf('START') === -1));
+                    (data.prevId.indexOf('start') === -1 && data.prevId.indexOf('START') === -1));
     return (
       <div className={cs(style['add-node-btn-box'], style.flex, style['justify-center'], isButton && style.addNodeBtns)}>
         {
