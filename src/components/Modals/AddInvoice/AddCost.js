@@ -7,7 +7,6 @@ import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
 import moment from 'moment';
-import { JsonParse } from '@/utils/common';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
@@ -325,10 +324,16 @@ class AddCost extends Component {
           detailFolderId: costTitle === 'edit' ? id : '',
         };
         const expandCostDetailFieldVos = [];
+        const selfCostDetailFieldVos = []; // 私有字段
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            if (it.status) {
+            if (it.status && it.field.indexOf('expand_') > -1) {
               expandCostDetailFieldVos.push({
+                ...it,
+                msg: val[it.field],
+              });
+            } else if (it.status) {
+              selfCostDetailFieldVos.push({
                 ...it,
                 msg: val[it.field],
               });
@@ -357,6 +362,7 @@ class AddCost extends Component {
         detail = {
           ...detail,
           expandCostDetailFieldVos,
+          selfCostDetailFieldVos,
           costDetailShareVOS: arr,
           currencyId,
           currencyName,
@@ -477,7 +483,7 @@ class AddCost extends Component {
         icon: lbDetail.icon,
       };
       if (lbDetail.showField) {
-        const str = JsonParse(lbDetail.showField);
+        const str = lbDetail.showField;
         str.forEach(it => {
           showFields[it.field] = {...it};
           if (it.field === 'happenTime') {
@@ -486,7 +492,7 @@ class AddCost extends Component {
         });
       }
       if (lbDetail.shareField) {
-        const strs = JsonParse(lbDetail.shareField);
+        const strs = lbDetail.shareField;
         strs.forEach(it => {
           if (it.field === 'project') {
             project = {...it};
@@ -514,15 +520,33 @@ class AddCost extends Component {
               expands.push({ ...it });
             }
           });
-          console.log('AddCost -> onChange -> expands', expands);
-          this.setState({
-            expandField: expands,
+        }
+        if (lbDetail.selfFields) {
+          lbDetail.selfFields.forEach(it => {
+            const index = expand.findIndex(its => its.field === it.field);
+            console.log('AddCost -> onChange -> index', lbDetail.selfFields);
+            if (index > -1 && it.status) {
+              expands.push({
+                ...it,
+                msg: expand[index].msg,
+              });
+            } else if (it.status) {
+              expands.push({ ...it });
+            }
           });
         }
+        console.log('AddCost -> onChange -> expands', expands);
+        this.setState({
+          expandField: expands,
+        });
       }
       if (types !== 'edit' && types !== 'folder') {
+        let newArr = lbDetail.expandField || [];
+        if (lbDetail.selfFields) {
+          newArr = [...newArr, ...lbDetail.selfFields];
+        }
         this.setState({
-          expandField: lbDetail.expandField,
+          expandField: newArr,
         });
       }
     });
@@ -616,7 +640,7 @@ class AddCost extends Component {
       expandField,
       exchangeRate,
       currencySymbol,
-      currencyId
+      currencyId,
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -800,7 +824,7 @@ class AddCost extends Component {
                     } else if (Number(it.fieldType) === 1) {
                       renderForm = (<TextArea placeholder='请输入' />);
                       rule = [{ max: 128, message: '限制128个字' }];
-                    } else {
+                    } else if(Number(it.fieldType) === 2) {
                       renderForm = (
                         <Select placeholder='请选择'>
                           {
@@ -810,6 +834,24 @@ class AddCost extends Component {
                           }
                         </Select>
                       );
+                    } else if (it.fieldType === 5) {
+                      if (it.dateType === 1) {
+                        renderForm = (
+                          <DatePicker style={{width: '100%'}} />
+                        );
+                      } else {
+                        renderForm = (
+                          <RangePicker
+                            style={{width: '280px' }}
+                            placeholder="请选择时间"
+                            format="YYYY-MM-DD"
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                            }}
+                          />
+                        );
+                      }
                     }
                       return (
                         <>

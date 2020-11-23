@@ -12,6 +12,7 @@ import style from './index.scss';
 function FlowCard(props) {
   // 判断是否已经有抄送节点
   const {scaleVal, ccPosition} = props;
+  console.log('FlowCard -> ccPosition', ccPosition);
   const isCondition = data => data.nodeType === 'condition';
   const notEmptyArray = arr => Array.isArray(arr) && arr.length > 0;
   // const hasBranch = data => notEmptyArray(data.conditionNodes);

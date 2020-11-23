@@ -112,6 +112,10 @@ class Invoice extends React.PureComponent {
     });
   }
 
+  onAddCategory = (id) => {
+    this.props.history.push(`/basicSetting/invoice/${id}`);
+  }
+
   render() {
     const {
       list,
@@ -279,7 +283,7 @@ class Invoice extends React.PureComponent {
         <div className="content-dt">
           <div className="cnt-header">
             <div className="head_lf">
-              <JudgeType title="add" data={{}} onOk={this.onOk} visible={typeVisible} changeVisible={this.changeVisible}>
+              <JudgeType title="add" data={{}} onOk={this.onOk} visible={typeVisible} changeVisible={this.changeVisible} linkInvoice={this.onAddCategory}>
                 <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
               </JudgeType>
               <AddGroup title="add" onOk={this.onOk}>

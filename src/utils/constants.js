@@ -406,7 +406,7 @@ export const classifyShare = [{
   field: 'user',
   disabled: true,
   name: '承担人',
-  status: true,
+  status: 1,
   isWrite: false,
   note: '',
 }, {
@@ -414,14 +414,14 @@ export const classifyShare = [{
   field: 'dept',
   name: '承担部门',
   disabled: true,
-  status: true,
+  status: 1,
   isWrite: true,
   note: '',
 }, {
   key: 'project',
   field: 'project',
   name: '项目',
-  status: false,
+  status: 0,
   isWrite: false,
   note: '',
 }];

@@ -2,7 +2,7 @@ import {post, get} from '@/utils/request';
 import api from './services';
 
 export default {
-  namespace: 'addCategory',
+  namespace: 'addInvoice',
   state: {
     list: [],
     allList: [], // 所有数据
@@ -18,6 +18,15 @@ export default {
         type: 'save',
         payload: {
           allList: response || [],
+        },
+      });
+    },
+    *approveList({ payload }, { call, put }) {
+      const response = yield call(get, api.approve, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          approveList: response || {},
         },
       });
     },

@@ -313,12 +313,16 @@ class AddInvoice extends Component {
       });
     }
     if (djDetails.expandField) {
+      let newExpand = detail.expandSubmitFieldVos || [];
+      if (detail.selfSubmitFieldVos) {
+        newExpand = [...newExpand, ...detail.selfSubmitFieldVos];
+      }
       djDetails.expandField.forEach(it => {
-        const index = detail.expandSubmitFieldVos && detail.expandSubmitFieldVos.findIndex(its => its.field === it.field);
+        const index = newExpand && newExpand.findIndex(its => its.field === it.field);
         if (index > -1 && it.status) {
           expandField.push({
             ...it,
-            msg: detail.expandSubmitFieldVos[index].msg,
+            msg: newExpand[index].msg,
           });
         } else if (it.status) {
           expandField.push({
@@ -899,10 +903,18 @@ class AddInvoice extends Component {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
         const expandSubmitFieldVos = [];
+        const selfSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            if (it.status) {
+            if (it.status && it.field.indexOf('expand_') > 0) {
               expandSubmitFieldVos.push({
+                ...it,
+                field: it.field,
+                name: it.name,
+                msg: val[it.field],
+              });
+            } else if (it.status && it.field.indexOf('self_') > -1){
+              selfSubmitFieldVos.push({
                 ...it,
                 field: it.field,
                 name: it.name,
@@ -929,7 +941,8 @@ class AddInvoice extends Component {
           imgUrl,
           fileUrl,
           submitSum: ((total * 1000)/10).toFixed(0),
-          expandSubmitFieldVos
+          expandSubmitFieldVos,
+          selfSubmitFieldVos
         };
         const arr = [];
         costDetailsVo.forEach((item, index) => {
@@ -947,7 +960,8 @@ class AddInvoice extends Component {
             costDetailShareVOS: [],
             currencyId: item.currencyId,
             currencyName: item.currencyName,
-            expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+            expandCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('expand_') > -1) || [],
+            selfCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('self_') > -1) || [],
             detailFolderId: item.detailFolderId || '',
           });
           if (item.costDetailShareVOS) {
@@ -1039,10 +1053,18 @@ class AddInvoice extends Component {
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
     const expandSubmitFieldVos = [];
+    const selfSubmitFieldVos = [];
     if (expandField && expandField.length > 0) {
       expandField.forEach(it => {
         if (it.status) {
           expandSubmitFieldVos.push({
+            ...it,
+            field: it.field,
+            name: it.name,
+            msg: val[it.field],
+          });
+        } else if (it.status && it.field.indexOf('self_') > -1){
+          selfSubmitFieldVos.push({
             ...it,
             field: it.field,
             name: it.name,
@@ -1069,7 +1091,8 @@ class AddInvoice extends Component {
       imgUrl,
       fileUrl,
       submitSum: ((total * 1000)/10).toFixed(0),
-      expandSubmitFieldVos
+      expandSubmitFieldVos,
+      selfSubmitFieldVos
     };
     const arr = [];
     costDetailsVo.forEach((item, index) => {
@@ -1086,7 +1109,8 @@ class AddInvoice extends Component {
         costDetailShareVOS: [],
         currencyId: item.currencyId && item.currencyId !== '-1' ? item.currencyId : '',
         currencyName: item.currencyName || '',
-        expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+        selfCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('self_') > -1) || [],
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('expand_') > -1) || [],
         detailFolderId: item.detailFolderId || '',
         icon: item.icon,
       });

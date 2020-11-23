@@ -331,6 +331,15 @@ class InvoiceDetail extends Component {
       ),
       textWrap: 'word-break',
       width: '140px'
+    }, {
+      title: '查看',
+      dataIndex: 'operate',
+      render: (_, record) => (
+        <span record={record}>
+          查看
+        </span>
+      ),
+      width: '140px'
     }];
     if (category && category.length > 0 ) {
       const arr = [];
@@ -589,6 +598,20 @@ class InvoiceDetail extends Component {
               details.expandSubmitFieldVos &&
               (details.expandSubmitFieldVos.length > 0) &&
               details.expandSubmitFieldVos.map(it => (
+                <Col span={8} className="m-t-16" key={it.field}>
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
+                    <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                      {it.msg}
+                    </span>
+                  </div>
+                </Col>
+              ))
+            }
+            {
+              details.selfSubmitFieldVos &&
+              (details.selfSubmitFieldVos.length > 0) &&
+              details.selfSubmitFieldVos.map(it => (
                 <Col span={8} className="m-t-16" key={it.field}>
                   <div style={{display: 'flex'}}>
                     <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>

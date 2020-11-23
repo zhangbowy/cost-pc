@@ -569,10 +569,10 @@ export class NodeUtils {
         }
       }
     }
-    console.log('NodeUtils -> getApprove -> datas', datas);
+    // console.log('NodeUtils -> getApprove -> datas', datas);
 
     nodeSearch(datas);
-    console.log('count', count);
+    // console.log('count', count);
     return count;
   }
 }

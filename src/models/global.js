@@ -142,10 +142,14 @@ export default {
     },
     *djDetail({ payload }, { call, put }) {
       const response = yield call(get, api.invoiceDet, payload);
+      let expandField = response.expandField || [];
+      if (response.selfField) {
+        expandField=[...expandField, ...response.selfField];
+      }
       yield put({
         type: 'save',
         payload: {
-          djDetail: response || {},
+          djDetail: response ? { ...response, expandField } : {},
         },
       });
     },

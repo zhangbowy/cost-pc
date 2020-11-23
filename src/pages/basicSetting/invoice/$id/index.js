@@ -4,13 +4,12 @@ import { connect } from 'dva';
 import cs from 'classnames';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import treeConvert from '@/utils/treeConvert';
 import LabelLeft from '../../../../components/LabelLeft';
 import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
 import StrSetting from './components/StrSetting';
-import Share from './components/Share';
-import { classifyShare } from '../../../../utils/constants';
 
 const basicStr = [{
   key: 'one',
@@ -18,18 +17,16 @@ const basicStr = [{
 }, {
   key: 'two',
   value: '字段设置',
-}, {
-  key: 'three',
-  value: '分摊设置',
 }];
-@connect(({ loading, session, addCategory }) => ({
-  loading: loading.effects['addCategory/add'] || loading.effects['addCategory/edit'],
+@connect(({ loading, session, addInvoice, global }) => ({
+  loading: loading.effects['addInvoice/add'] || loading.effects['addInvoice/edit'],
   userInfo: session.userInfo,
-  details: addCategory.details,
-  allList: addCategory.allList,
-  checkDel: addCategory.checkDel,
-  expandLists: addCategory.expandLists,
-  fieldList: addCategory.fieldList,
+  allList: addInvoice.allList,
+  costCategoryList: global.costCategoryList,
+  detail: addInvoice.detail,
+  approveList: addInvoice.approveList,
+  expandLists: addInvoice.expandLists,
+  fieldList: addInvoice.fieldList,
 }))
 class CategoryAdd extends PureComponent {
 
@@ -37,64 +34,100 @@ class CategoryAdd extends PureComponent {
     current: 'one',
     data: {},
     selectList: [],
-    shareField: classifyShare,
+    categoryList: [],
+    templateType: 0,
+    approveList: [],
   }
 
   componentDidMount(){
     const { id } = this.props.match.params;
+    const { userInfo, dispatch } = this.props;
+    const templateType = id.split('_')[1];
+    const title = id.split('_')[0];
     this.props.dispatch({
-      type: 'addCategory/allList',
-      payload: {}
-    });
-    this.props.dispatch({
-      type: 'addCategory/fieldList',
+      type: 'addInvoice/approveList',
       payload: {
-        categoryId: id !== 'add' ? id : '',
-      }
+        isAuth: true,
+      },
     }).then(() => {
-      const { fieldList } = this.props;
-      const newArr = fieldList.filter(it => it.isSelect);
+      const { approveList } = this.props;
       this.setState({
-        selectList: newArr,
+        approveList,
       });
     });
+    dispatch({
+      type: 'global/costList',
+      payload: {
+        companyId: userInfo.companyId,
+      }
+    }).then(() => {
+      this.props.dispatch({
+        type: 'addInvoice/allList',
+        payload: {}
+      }).then(() => {
+        const { costCategoryList } = this.props;
+        console.log('CategoryAdd -> componentDidMount -> costCategoryList', costCategoryList);
+        const lists = costCategoryList;
+        const list = treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          name: 'costName',
+          tName: 'label',
+          tId: 'value'
+        }, lists);
+        console.log('CategoryAdd -> componentDidMount -> list', list);
+        this.setState({
+          categoryList: list,
+        });
+        this.props.dispatch({
+          type: 'addInvoice/fieldList',
+          payload: {
+            invoiceTemplateId: title !== 'add' ? title : '',
+            templateType
+          }
+        }).then(() => {
+          const { fieldList } = this.props;
+          const newArr = fieldList.filter(it => it.isSelect);
+          this.setState({
+            selectList: newArr,
+            templateType,
+          });
+        });
+      });
+    });
+
   }
 
   onHandle = (e) => {
-    const values = this.formRef && this.formRef.getFormItems();
-    if(!values) {
-      return;
+    if (e.key === 'two') {
+      if (this.formRef && this.formRef.getFormItem) {
+        const datas = {};
+        const values = this.formRef.getFormItem();
+        if(!values) {
+          return;
+        }
+        Object.assign(datas, {
+          ...values,
+          status: values.status ? 1 : 0,
+        });
+        this.setState({
+          data: values
+        });
+      }
     }
     this.setState({
       current: e.key,
     });
   }
 
-  idGenerator = () => {
-    let qutient = 10000;
-    const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
-    const charArr = chars.split( '' );
-    const radix = chars.length;
-    const res = [];
-    do {
-      const mod = qutient % radix;
-      qutient = ( qutient - mod ) / radix;
-      res.push( charArr[mod] );
-    } while ( qutient );
-    return `self_${res.join('')}`;
-
-    // const time = timeStampToHex();
-    // return `${nodeType}_${time+1}`;
-
-  }
-
   onStep = () => {
-    const { current, data, selectList, shareField } = this.state;
+    const { current, data, selectList, templateType } = this.state;
     const { id } = this.props.match.params;
+    const title = id.split('_')[0];
     const { userInfo } = this.props;
     const datas = data;
-    if (current === 'one') {
-      const values = this.formRef.getFormItems();
+    if (this.formRef && this.formRef.getFormItem) {
+      const values = this.formRef.getFormItem();
       if(!values) {
         return;
       }
@@ -104,54 +137,22 @@ class CategoryAdd extends PureComponent {
       });
     }
 
-    if (current === 'three') {
-      const url = id === 'add' ? 'addCategory/add' : 'addCategory/edit';
+    if (current === 'two') {
       const showField = selectList.filter(it => it.field.indexOf('expand_field') === -1);
+      const url = title === 'add' ? 'addInvoice/add' : 'addInvoice/edit';
       const params = {
-        id: id === 'add' ? '' : id,
+        id: title === 'add' ? '' : id,
         showField: showField.map(it => { return { ...it, status: 1 }; }),
-        shareField,
         type: 1,
         ...datas,
+        templateType: Number(templateType),
         companyId: userInfo.companyId || '',
-        parentId: (datas.parentId && datas.parentId[datas.parentId.length-1]) || '',
+        useJson: !datas.isAllUse && datas.userJson ? JSON.stringify(datas.userJson) : '',
+        deptJson: !datas.isAllUse && datas.deptJson ?
+                JSON.stringify(datas.deptJson) : '',
         status: datas.status ? 1: 0,
-        expandField: [{
-          disabled: false,
-          field: 'expand_field_02',
-          fieldType: 0,
-          isFixed: false,
-          isSelect: true,
-          isWrite: false,
-          name: '单行输入框',
-          options: [],
-          sort: 6,
-          status: 1
-        }],
-        selfFields: [{
-          disabled: false,
-          field: this.idGenerator(),
-          fieldType: 0,
-          isFixed: false,
-          isSelect: true,
-          isWrite: false,
-          name: '单行输入框',
-          options: [],
-          sort: 7,
-          status: 1,
-        }, {
-          disabled: false,
-          field: this.idGenerator(),
-          fieldType: 5,
-          isFixed: false,
-          isSelect: true,
-          isWrite: false,
-          name: '日期',
-          options: [],
-          sort: 8,
-          status: 1,
-          dateType: 1,
-        }],
+        expandField: [],
+        selfField: [],
       };
       this.props.dispatch({
         type: url,
@@ -159,7 +160,7 @@ class CategoryAdd extends PureComponent {
           ...params,
         }
       }).then(() => {
-        this.props.history.push('/basicSetting/costCategory');
+        this.props.history.push('/basicSetting/invoice');
       });
     } else {
       const index = basicStr.findIndex(it => it.key === current);
@@ -183,19 +184,27 @@ class CategoryAdd extends PureComponent {
       fieldList
     } = this.props;
     const { id } = this.props.match.params;
-    const { current, shareField, selectList } = this.state;
+    const title = id.split('_')[0];
+    console.log(this.state.selectList);
+    const { current, approveList, selectList } = this.state;
+    const {  dispatch } = this.props;
+    console.log('CategoryAdd -> render -> approveList', approveList);
+    const { categoryList, data, templateType } = this.state;
+    console.log('CategoryAdd -> render -> categoryList', categoryList);
     const routes = [
       {
-        path: '/basicSetting/costCategory',
+        path: '/basicSetting/invoice',
         breadcrumbName: '返回上一页',
+        paths: 'basicSetting/invoice'
       },
       {
         path: '/',
-        breadcrumbName: '费用类别设置',
+        breadcrumbName: '单据模板',
+        paths: 'basicSetting/invoice'
       },
       {
         path: 'second',
-        breadcrumbName: '新建费用类别',
+        breadcrumbName: '新建单据模板',
       },
     ];
 
@@ -228,10 +237,16 @@ class CategoryAdd extends PureComponent {
           <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
             <LabelLeft title="基础设置" />
             <Basic
+              {...this.props}
               wrappedComponentRef={form => {this.formRef = form;}}
+              costCategoryList={categoryList}
               list={allList}
-              data={{}}
-              title="add"
+              data={data}
+              category={data.costCategory}
+              approveList={approveList}
+              templateType={Number(templateType)}
+              dispatch={dispatch}
+              onChangeData={this.onChangeData}
             />
           </div>
         }
@@ -247,22 +262,12 @@ class CategoryAdd extends PureComponent {
             </DndProvider>
           </div>
         }
-        {
-          current === 'three' &&
-          <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
-            <LabelLeft title="基础设置" />
-            <Share
-              wrappedComponentRef={form => {this.formRef = form;}}
-              shareField={shareField}
-            />
-          </div>
-        }
         <FooterBar
           right={(
             <>
               <Button type="default" className="m-r-8">取消</Button>
               <Button type="primary" onClick={() => this.onStep()}>
-                { current === 'three' || id !== 'add' ? '保存' : '下一步' }
+                { current === 'two' || title !== 'add' ? '保存' : '下一步' }
               </Button>
             </>
           )}
