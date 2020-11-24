@@ -23,13 +23,25 @@ function SelfStr({ name, icon, fieldType, selectList, onChange }) {
   };
 
   const [, drag] = useDrag({
-    item: { type: 'box', name, fieldType },
+    item: {
+      type: 'box',
+      name,
+      fieldType,
+      dateType: 1,
+      options: Number(fieldType) === 2 ? ['选项一', '选项二'] : []
+    },
     begin: () => {
       const useless = selectList.find((item) => item.id === -1);
       // 拖拽开始时，向 cardList 数据源中插入一个占位的元素，如果占位元素已经存在，不再重复插入
       if (!useless) {
           console.log('SelfStr -> useless', useless);
-          onChange('selectList', [{ name, id: -1, fieldType, field: idGenerator() }, ...selectList]);
+          onChange('selectList', [{
+            name, id: -1,
+            fieldType,
+            field: idGenerator(),
+            dateType: 1,
+            options: Number(fieldType) === 2 ? ['选项一', '选项二'] : []
+          }, ...selectList]);
       }
       return {
         type: 'box',
@@ -41,20 +53,33 @@ function SelfStr({ name, icon, fieldType, selectList, onChange }) {
     },
     end: (item, monitor) => {
       const datas = monitor.getItem();
-      console.log('SelfStr -> datas', datas);
+      // console.log('SelfStr -> datas', datas);
       const didDrop = monitor.didDrop();
+      console.log('SelfStr -> didDrop', didDrop);
       const uselessIndex = selectList.findIndex(it => it.id === -1);
-      if (!didDrop) {
+      if (didDrop) {
         selectList.splice(uselessIndex, 1, { ...datas });
       } else {
         selectList.splice(uselessIndex, 1);
       }
+      console.log('SelfStr -> selectList', selectList);
       onChange('selectList', selectList);
     }
   });
+
+  const handleAdd = (e) => {
+    e.stopPropagation();
+    onChange('selectList', [...selectList, {
+      name,
+      fieldType,
+      field: idGenerator(),
+      dateType: 1,
+      options: Number(fieldType) === 2 ? ['选项一', '选项二'] : []
+    }]);
+  };
   return (
     <>
-      <div className={style.selfStr} ref={drag}>
+      <div className={style.selfStr} ref={drag} onClick={(e) => handleAdd(e)}>
         <i className={`${icon} iconfont m-l-8 m-r-8`} />
         <span>{name}</span>
       </div>

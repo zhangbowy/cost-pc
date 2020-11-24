@@ -9,6 +9,9 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
       type: 'box',
       ...data,
     },
+    canDrag: () => {
+      return isSelect;
+    },
     begin: () => {
       const useless = selectList.find((item) => item.id === -1);
       // 拖拽开始时，向 cardList 数据源中插入一个占位的元素，如果占位元素已经存在，不再重复插入
@@ -23,9 +26,10 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
     end: (item, monitor) => {
       // const datas = monitor.getItem();
       const didDrop = monitor.didDrop();
+      console.log('FixedStr -> didDrop', didDrop);
       const uselessIndex = selectList.findIndex(it => it.id === -1);
       const arr = [...selectList];
-      if (!didDrop) {
+      if (didDrop) {
         arr.splice(uselessIndex, 1, { ...data });
       } else {
         arr.splice(uselessIndex, 1);

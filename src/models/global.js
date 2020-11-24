@@ -174,10 +174,11 @@ export default {
     },
     *lbDetail({ payload }, { call, put }) {
       const response = yield call(get, api.cateDet, payload);
+      const expandField = [...response.expandField, ...response.selfFields];
       yield put({
         type: 'save',
         payload: {
-          lbDetail: response || {},
+          lbDetail: response ? { ...response, expandField } : {},
         }
       });
     },

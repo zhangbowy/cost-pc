@@ -257,14 +257,7 @@ class Invoice extends React.PureComponent {
             }
             {
               record.type === 1 &&
-                <AddInvoice
-                  onOk={() => _this.onOk()}
-                  data={record}
-                  title="edit"
-                  templateType={record.templateType}
-                >
-                  <a>编辑单据模板</a>
-                </AddInvoice>
+                <a onClick={() => this.onAddCategory(`${record.id}_${record.templateType}`)}>编辑单据模板</a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>

@@ -215,3 +215,16 @@
     }
   }
 }
+
+
+.addForm{
+  // width: 60%;
+  background: #FAFAFB;
+  padding: 0px;
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+  :global(.ant-form-item){
+    margin-bottom: 0;
+  }
+}

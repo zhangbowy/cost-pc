@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-update-set-state */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
@@ -15,6 +16,15 @@ class StrSetting extends Component {
       selectList: props.selectList || [],
       selectId: props.selectList[0].field || 'costCategory',
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.selectList !== this.props.selectList) {
+      this.setState({
+        selectList: this.props.selectList,
+        fieldList: this.props.fieldList
+      });
+    }
   }
 
   findCard = (id) => {
@@ -49,7 +59,15 @@ class StrSetting extends Component {
     this.setState({
       [type]: val,
     });
-    // this.props.onChangeData(type, val);
+    if (type === 'selectList') {
+      this.props.onChangeData(type, val);
+    }
+  }
+
+  getRight = () => {
+    if (this.formRef && this.formRef.getFormItems) {
+      console.log(this.formRef.getFormItems());
+    }
   }
 
   render () {
@@ -79,7 +97,12 @@ class StrSetting extends Component {
             onChange={this.handleChange}
           />
         </div>
-        <Right selectList={selectList} selectId={selectId} />
+        <Right
+          selectList={selectList}
+          selectId={selectId}
+          onChange={this.handleChange}
+          wrappedComponentRef={form => {this.formRef = form;}}
+        />
       </>
     );
   }

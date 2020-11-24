@@ -191,7 +191,8 @@ class AddCost extends Component {
                 imgUrl: detailFolder.imgUrl,
               });
               console.log('AddCost -> onShow -> arr', arr);
-              this.onChange(detailFolder.categoryId, 'folder', detailFolder.expandCostDetailFieldVos);
+              const expands = [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos];
+              this.onChange(detailFolder.categoryId, 'folder', expands);
               await this.setState({
                 visible: true,
               });
@@ -327,16 +328,20 @@ class AddCost extends Component {
         const selfCostDetailFieldVos = []; // 私有字段
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
+            const obj = {
+              ...it,
+              msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+            };
+            if (Number(it.fieldType) === 5 && val[it.field]) {
+              Object.assign(obj, {
+                startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
+              });
+            }
             if (it.status && it.field.indexOf('expand_') > -1) {
-              expandCostDetailFieldVos.push({
-                ...it,
-                msg: val[it.field],
-              });
+              expandCostDetailFieldVos.push(obj);
             } else if (it.status) {
-              selfCostDetailFieldVos.push({
-                ...it,
-                msg: val[it.field],
-              });
+              selfCostDetailFieldVos.push(obj);
             }
           });
         }
@@ -515,20 +520,8 @@ class AddCost extends Component {
               expands.push({
                 ...it,
                 msg: expand[index].msg,
-              });
-            } else if (it.status) {
-              expands.push({ ...it });
-            }
-          });
-        }
-        if (lbDetail.selfFields) {
-          lbDetail.selfFields.forEach(it => {
-            const index = expand.findIndex(its => its.field === it.field);
-            console.log('AddCost -> onChange -> index', lbDetail.selfFields);
-            if (index > -1 && it.status) {
-              expands.push({
-                ...it,
-                msg: expand[index].msg,
+                startTime: expand[index].startTime || '',
+                endTime: expand[index].endTime || '',
               });
             } else if (it.status) {
               expands.push({ ...it });
@@ -541,10 +534,7 @@ class AddCost extends Component {
         });
       }
       if (types !== 'edit' && types !== 'folder') {
-        let newArr = lbDetail.expandField || [];
-        if (lbDetail.selfFields) {
-          newArr = [...newArr, ...lbDetail.selfFields];
-        }
+        const newArr = lbDetail.expandField || [];
         this.setState({
           expandField: newArr,
         });
@@ -818,6 +808,7 @@ class AddCost extends Component {
                   expandField.map(it => {
                     let renderForm = null;
                     let rule = [];
+                    let initMsg = it.msg || '';
                     if (Number(it.fieldType) === 0) {
                       renderForm = (<Input placeholder='请输入' />);
                       rule = [{ max: 20, message: '限制20个字' }];
@@ -836,10 +827,13 @@ class AddCost extends Component {
                       );
                     } else if (it.fieldType === 5) {
                       if (it.dateType === 1) {
+                        initMsg = it.startTime ? moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
                         renderForm = (
                           <DatePicker style={{width: '100%'}} />
                         );
                       } else {
+                        initMsg = it.startTime && it.endTime ?
+                            [moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(it.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
                         renderForm = (
                           <RangePicker
                             style={{width: '280px' }}
@@ -861,7 +855,7 @@ class AddCost extends Component {
                                 <Form.Item label={it.name} {...formItemLayout}>
                                   {
                                     getFieldDecorator(it.field, {
-                                      initialValue: it.msg,
+                                      initialValue: initMsg,
                                       rules: [
                                         { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
                                         ...rule,

@@ -103,7 +103,7 @@ class InvoiceDetail extends Component {
         const { djDetail } = this.props;
           const showObj = {};
           if (djDetail.showField) {
-            const arr = JSON.parse(djDetail.showField);
+            const arr = djDetail.showField;
             arr.forEach(it => {
               showObj[it.field] = {...it};
             });

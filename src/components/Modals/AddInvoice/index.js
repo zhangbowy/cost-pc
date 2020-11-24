@@ -213,7 +213,7 @@ class AddInvoice extends Component {
     const djDetails = await this.props.djDetail;
     const obj = {};
     if (djDetails.showField && djDetails.showField.length > 5) {
-      JSON.parse(djDetails.showField).forEach(item => {
+      djDetails.showField.forEach(item => {
         obj[item.field] = {...item};
       });
     }
@@ -906,7 +906,8 @@ class AddInvoice extends Component {
         const selfSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            if (it.status && it.field.indexOf('expand_') > 0) {
+          console.log('handleOk -> expandField', expandField);
+            if (it.status && it.field.indexOf('expand_') > -1) {
               expandSubmitFieldVos.push({
                 ...it,
                 field: it.field,

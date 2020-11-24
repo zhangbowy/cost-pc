@@ -8,7 +8,7 @@ import style from './index.scss';
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 // import PreviewTemp from './PreviewTemp';
 
-function Templates({ name, moveCard, isWrite, dragId, onChange, index, field, disabled }) {
+function Templates({ name, moveCard, isWrite, dragId, onChange, index, field, disabled, onDelete }) {
   // const originalIndex = findCard(id).index;
   const ref = useRef();
   const [ , drag] = useDrag({
@@ -17,10 +17,15 @@ function Templates({ name, moveCard, isWrite, dragId, onChange, index, field, di
         field,
         index
       },
+      canDrag: () => {
+        return !disabled;
+      }
   });
   const [, drop] = useDrop({
       accept: 'box',
-      canDrop: () => false,
+      canDrop: () => {
+        return !disabled;
+      },
       hover(item, monitor) {
         if (!ref.current) {
           return;
@@ -101,12 +106,14 @@ function Templates({ name, moveCard, isWrite, dragId, onChange, index, field, di
 // }), [ field, isDragging]);
   // const display = isDragging ? 'block' : 'none';
   // console.log(opacity, originalIndex);
+
   return (
     <div
       className={style.StrTemplates}
       ref={ref}
       // style={styles}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         onChange('selectId', field);
       }}
     >
@@ -128,7 +135,13 @@ function Templates({ name, moveCard, isWrite, dragId, onChange, index, field, di
         </div>
       </div>
       <div className={style.operator}>
-        <p className={disabled ? cs(style.delete,style.opacity) : style.delete}>
+        <p
+          className={disabled ? cs(style.delete,style.opacity) : style.delete}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(field, disabled);
+          }}
+        >
           <i className="iconfont iconshanchu" />
         </p>
       </div>

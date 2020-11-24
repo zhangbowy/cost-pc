@@ -10,6 +10,7 @@ import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
 import StrSetting from './components/StrSetting';
+import { JsonParse } from '../../../../utils/common';
 
 const basicStr = [{
   key: 'one',
@@ -37,6 +38,7 @@ class CategoryAdd extends PureComponent {
     categoryList: [],
     templateType: 0,
     approveList: [],
+    fieldList: [],
   }
 
   componentDidMount(){
@@ -88,14 +90,68 @@ class CategoryAdd extends PureComponent {
         }).then(() => {
           const { fieldList } = this.props;
           const newArr = fieldList.filter(it => it.isSelect);
+          if (title === 'add') {
+            this.setState({
+              selectList: newArr,
+            });
+          }
           this.setState({
-            selectList: newArr,
             templateType,
+            fieldList,
           });
         });
       });
     });
+    if (title !== 'add') {
+      dispatch({
+        type: 'addInvoice/detail',
+        payload: {
+          id: title,
+          templateType,
+        }
+      }).then(() => {
+        const { detail } = this.props;
+        console.log('CategoryAdd -> componentDidMount -> detail', detail);
+        const datas = {};
+        let costCategory = [];
+        let userJson = [];
+        let deptJson = [];
+        if (detail.costCategoryJson) {
+          costCategory = JsonParse(detail.costCategoryJson).map(it => it.id);
+        }
+        if (detail.useJson) {
+          userJson = JsonParse(detail.useJson);
+        }
+        if (detail.deptJson) {
+          deptJson = JsonParse(detail.deptJson);
+        }
+        Object.assign(datas, {
+          ...detail,
+          costCategory,
+          userJson,
+          deptJson,
+          sttaus: detail.status === 1,
+        });
+        if (title === 'copy') {
+          Object.assign(datas, {
+            name: `${detail.name}的副本`,
+          });
+        }
+        const selects = [...detail.expandField, ...detail.selfField, ...detail.showField];
+        this.setState({
+          data: datas,
+          selectList: selects.sort(this.compare('sort')),
+        });
+      });
+    }
+  }
 
+  compare = (property) => {
+    return function(a,b){
+        const value1 = a[property];
+        const value2 = b[property];
+        return value1 - value2;
+    };
   }
 
   onHandle = (e) => {
@@ -137,11 +193,12 @@ class CategoryAdd extends PureComponent {
       });
     }
 
-    if (current === 'two') {
-      const showField = selectList.filter(it => it.field.indexOf('expand_field') === -1);
+    if (current === 'two' || title !== 'add') {
+      const newArr = selectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
+      const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
       const url = title === 'add' ? 'addInvoice/add' : 'addInvoice/edit';
       const params = {
-        id: title === 'add' ? '' : id,
+        id: title === 'add' ? '' : title,
         showField: showField.map(it => { return { ...it, status: 1 }; }),
         type: 1,
         ...datas,
@@ -151,8 +208,8 @@ class CategoryAdd extends PureComponent {
         deptJson: !datas.isAllUse && datas.deptJson ?
                 JSON.stringify(datas.deptJson) : '',
         status: datas.status ? 1: 0,
-        expandField: [],
-        selfField: [],
+        expandField: newArr.filter(it => it.field.indexOf('expand_') > -1),
+        selfField: newArr.filter(it => it.field.indexOf('self_') > -1),
       };
       this.props.dispatch({
         type: url,
@@ -176,17 +233,49 @@ class CategoryAdd extends PureComponent {
     this.setState({
       [type]: value,
     });
+    if (type === 'selectList') {
+      const { fieldList } = this.state;
+      let newArr = [...fieldList];
+      const oldField = newArr.map(it => it.field);
+      const add = [];
+      const fields = value.map(it => {
+        if (!oldField.includes(it.field) && (it.field.indexOf('expand_') > -1)) {
+          add.push(it);
+          return it.field;
+        }
+        return it.field;
+      });
+      if (add.length) {
+        newArr=[...newArr, ...add];
+      }
+      console.log('CategoryAdd -> onChangeData -> fields', fields);
+      this.setState({
+        fieldList: newArr.map(it => {
+          if (fields.includes(it.field)) {
+            return {
+              ...it,
+              isSelect: true,
+            };
+          }
+          return {
+            ...it,
+            isSelect: false,
+          };
+        }),
+      }, () => {
+        console.log(this.state.fieldList);
+      });
+    }
   }
 
   render () {
     const {
       allList,
-      fieldList
     } = this.props;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
     console.log(this.state.selectList);
-    const { current, approveList, selectList } = this.state;
+    const { current, approveList, selectList, fieldList } = this.state;
     const {  dispatch } = this.props;
     console.log('CategoryAdd -> render -> approveList', approveList);
     const { categoryList, data, templateType } = this.state;

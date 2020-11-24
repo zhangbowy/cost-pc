@@ -4,13 +4,15 @@ import { connect } from 'dva';
 import cs from 'classnames';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import treeConvert from '@/utils/treeConvert';
 import LabelLeft from '../../../../components/LabelLeft';
 import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
-import StrSetting from './components/StrSetting';
 import Share from './components/Share';
 import { classifyShare } from '../../../../utils/constants';
+import { timeStampToHex } from '../../../../utils/common';
+import StrSetting from '../../invoice/$id/components/StrSetting';
 
 const basicStr = [{
   key: 'one',
@@ -38,6 +40,7 @@ class CategoryAdd extends PureComponent {
     data: {},
     selectList: [],
     shareField: classifyShare,
+    fieldList: [],
   }
 
   componentDidMount(){
@@ -45,6 +48,44 @@ class CategoryAdd extends PureComponent {
     this.props.dispatch({
       type: 'addCategory/allList',
       payload: {}
+    }).then(() => {
+      const _this = this;
+      const { allList } = this.props;
+      const lists = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        tName: 'costName',
+        name: 'costName',
+        otherKeys: ['icon', 'note', 'type']
+      }, allList);
+      const { userInfo } = this.props;
+      if (id !== 'add') {
+        this.props.dispatch({
+          type: 'addCategory/detail',
+          payload: {
+            id,
+            companyId: userInfo.companyId || ''
+          }
+        }).then(() => {
+          let datas = {};
+          const { details } = _this.props;
+          const showFiels = [...details.showField, ...details.expandField, ...details.selfFields] || [];
+          datas = {
+            ...details,
+            parentId: _this.findIndexArray(lists, details.parentId, []),
+            status: Number(details.status) === 1,
+          };
+          if (id === 'copy') {
+            Object.assign(datas, {
+              costName: `${details.costName}的副本`
+            });
+          }
+          _this.setState({
+            data: datas,
+            selectList: showFiels
+          });
+        });
+      }
     });
     this.props.dispatch({
       type: 'addCategory/fieldList',
@@ -54,16 +95,50 @@ class CategoryAdd extends PureComponent {
     }).then(() => {
       const { fieldList } = this.props;
       const newArr = fieldList.filter(it => it.isSelect);
+      if (id === 'add') {
+        this.setState({
+          selectList: newArr,
+        });
+      }
       this.setState({
-        selectList: newArr,
+        fieldList,
       });
     });
   }
 
+  findIndexArray  = (data, id, indexArray) => {
+    const arr = Array.from(indexArray);
+    for (let i = 0, len = data.length; i < len; i+=1) {
+      arr.push(data[i].id);
+      if (data[i].id === id) {
+        return arr;
+      }
+      const {children} = data[i];
+      if (children && children.length) {
+        const result = this.findIndexArray(children, id, arr);
+        if (result) return result;
+      }
+      arr.pop();
+    }
+    return false;
+  }
+
   onHandle = (e) => {
-    const values = this.formRef && this.formRef.getFormItems();
-    if(!values) {
-      return;
+    if (e.key !== 'one') {
+      if (this.formRef && this.formRef.getFormItem) {
+        const datas = {};
+        const values = this.formRef.getFormItem();
+        if(!values) {
+          return;
+        }
+        Object.assign(datas, {
+          ...values,
+          status: values.status ? 1 : 0,
+        });
+        this.setState({
+          data: values
+        });
+      }
     }
     this.setState({
       current: e.key,
@@ -81,9 +156,10 @@ class CategoryAdd extends PureComponent {
       qutient = ( qutient - mod ) / radix;
       res.push( charArr[mod] );
     } while ( qutient );
-    return `self_${res.join('')}`;
+    const time = timeStampToHex();
 
-    // const time = timeStampToHex();
+    return `self_${res.join('')}${time+1}`;
+
     // return `${nodeType}_${time+1}`;
 
   }
@@ -104,9 +180,10 @@ class CategoryAdd extends PureComponent {
       });
     }
 
-    if (current === 'three') {
+    if (current === 'three' || (id !== 'add')) {
       const url = id === 'add' ? 'addCategory/add' : 'addCategory/edit';
-      const showField = selectList.filter(it => it.field.indexOf('expand_field') === -1);
+      const newArr = selectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
+      const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
       const params = {
         id: id === 'add' ? '' : id,
         showField: showField.map(it => { return { ...it, status: 1 }; }),
@@ -116,42 +193,8 @@ class CategoryAdd extends PureComponent {
         companyId: userInfo.companyId || '',
         parentId: (datas.parentId && datas.parentId[datas.parentId.length-1]) || '',
         status: datas.status ? 1: 0,
-        expandField: [{
-          disabled: false,
-          field: 'expand_field_02',
-          fieldType: 0,
-          isFixed: false,
-          isSelect: true,
-          isWrite: false,
-          name: '单行输入框',
-          options: [],
-          sort: 6,
-          status: 1
-        }],
-        selfFields: [{
-          disabled: false,
-          field: this.idGenerator(),
-          fieldType: 0,
-          isFixed: false,
-          isSelect: true,
-          isWrite: false,
-          name: '单行输入框',
-          options: [],
-          sort: 7,
-          status: 1,
-        }, {
-          disabled: false,
-          field: this.idGenerator(),
-          fieldType: 5,
-          isFixed: false,
-          isSelect: true,
-          isWrite: false,
-          name: '日期',
-          options: [],
-          sort: 8,
-          status: 1,
-          dateType: 1,
-        }],
+        expandField: newArr.filter(it => it.field.indexOf('expand_field') > -1),
+        selfFields: newArr.filter(it => it.field.indexOf('self_') > -1),
       };
       this.props.dispatch({
         type: url,
@@ -175,15 +218,47 @@ class CategoryAdd extends PureComponent {
     this.setState({
       [type]: value,
     });
+    if (type === 'selectList') {
+      const { fieldList } = this.state;
+      let newArr = [...fieldList];
+      const oldField = newArr.map(it => it.field);
+      const add = [];
+      const fields = value.map(it => {
+        if (!oldField.includes(it.field) && (it.field.indexOf('expand_') > -1)) {
+          add.push(it);
+          return it.field;
+        }
+        return it.field;
+      });
+      if (add.length) {
+        newArr=[...newArr, ...add];
+      }
+      console.log('CategoryAdd -> onChangeData -> fields', fields);
+      this.setState({
+        fieldList: newArr.map(it => {
+          if (fields.includes(it.field)) {
+            return {
+              ...it,
+              isSelect: true,
+            };
+          }
+          return {
+            ...it,
+            isSelect: false,
+          };
+        }),
+      }, () => {
+        console.log(this.state.fieldList);
+      });
+    }
   }
 
   render () {
     const {
-      allList,
-      fieldList
+      allList
     } = this.props;
     const { id } = this.props.match.params;
-    const { current, shareField, selectList } = this.state;
+    const { current, shareField, selectList, fieldList, data } = this.state;
     const routes = [
       {
         path: '/basicSetting/costCategory',
@@ -230,7 +305,7 @@ class CategoryAdd extends PureComponent {
             <Basic
               wrappedComponentRef={form => {this.formRef = form;}}
               list={allList}
-              data={{}}
+              data={data}
               title="add"
             />
           </div>

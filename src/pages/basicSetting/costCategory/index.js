@@ -252,7 +252,7 @@ class CostCategory extends React.PureComponent {
             }
             {
               record.type === 1 &&
-                <AddClassify onOk={() => _this.onOk()} data={record} title="edit" list={list}><a>编辑类别</a></AddClassify>
+                <a onClick={() => this.onAddCategory(record.id)}>编辑类别</a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>

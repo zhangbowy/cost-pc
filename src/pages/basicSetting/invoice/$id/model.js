@@ -6,7 +6,7 @@ export default {
   state: {
     list: [],
     allList: [], // 所有数据
-    details: {},
+    detail: {},
     checkDel: false,
     expandLists: [],
     fieldList: [], // 获取公有字段
@@ -78,7 +78,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          details: response || {},
+          detail: response || {},
         },
       });
     }

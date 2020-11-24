@@ -33,6 +33,14 @@ function StrCenter({ selectList, findCard, dragId, onChange }) {
       }
       // eslint-disable-next-line
   }, [selectList]);
+  const onDelete = (ids, disabled) => {
+    const arr = [...selectList];
+    if (!disabled) {
+      const lessIndex = selectList.findIndex((item) => item.id === ids);
+      arr.splice(lessIndex, 1);
+      onChange('selectList', arr);
+    }
+  };
   return (
     <div className={style.contents} ref={drop}>
       {
@@ -44,6 +52,7 @@ function StrCenter({ selectList, findCard, dragId, onChange }) {
             findCard={findCard}
             dragId={dragId}
             onChange={onChange}
+            onDelete={onDelete}
             index={index}
           />
         ))
