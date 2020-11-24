@@ -9,10 +9,10 @@ class UserSelector extends PureComponent {
   static propTypes = {
     users: PropTypes.array,
     depts: PropTypes.array,
-    placeholder: PropTypes.string,
+    placeholder: PropTypes.node,
     invalid: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
     disabled: PropTypes.bool,
-    isInput: true
+    isinput: PropTypes.bool
   }
 
   openSelector = () => {
@@ -102,14 +102,14 @@ class UserSelector extends PureComponent {
   }
 
   render () {
-    const { users = [], depts = [], placeholder, invalid, disabled, isInput } = this.props;
+    const { users = [], depts = [], placeholder, invalid, disabled, isinput } = this.props;
     const usersLength = users.length;
     const deptsLength = depts.length;
     const showPlaceholder = !usersLength && !deptsLength;
     return (
       <div
         className={classnames(
-          isInput?style.pmc_form_user_selector:'', { invalid, 'is-disabled': disabled }
+          isinput?style.pmc_form_user_selector:(showPlaceholder?'':'li-22 p-t-20', { invalid, 'is-disabled': disabled })
               )}
         onClick={disabled ? null : this.openSelector}
       >
@@ -138,7 +138,7 @@ class UserSelector extends PureComponent {
                 }
                 {
                   (usersLength > 0 || deptsLength > 0 ) &&
-                  <i className="iconfont icondelete_fill" onClick={e => this.onDelete(e)} style={{float: 'right'}} />
+                  <i className="iconfont icondelete_fill" onClick={e => this.onDelete(e)} />
                 }
               </>
         }

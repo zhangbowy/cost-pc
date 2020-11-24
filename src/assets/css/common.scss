@@ -160,6 +160,7 @@
   /*------------------内边距--------------------------*/
   .p-t-10{padding-top:10px !important;}
   .p-t-24{padding-top:24px !important;}
+  .p-t-20{padding-top:20px !important;}
   .p-b-15{padding-bottom:15px !important;}
   .p-b-24{padding-bottom:24px !important;}
   .p-l-32{padding-left:32px !important;}
@@ -201,6 +202,7 @@
   .m-r-30{margin-right:30px !important;}
   .m-r-32{margin-right:32px !important;}
   .m-r-3{margin-right:3px !important;}
+  .m-r-4{margin-right:4px !important;}
   /*------------------鼠标--------------------------*/
   .cur-p{
     cursor: pointer;
@@ -249,6 +251,10 @@
     display: inline-block;
     vertical-align: middle;
   }
+  .vt-m-i{
+    display: inline-block;
+    vertical-align: middle !important;
+  }
   /*----------------底部--------------------*/
   .b-b-1{
     border-bottom: 1px solid rgba(17, 31, 44, 0.12);
@@ -278,5 +284,14 @@
   }
   .ant-cascader-menu-item:hover {
     background-color: #fafafa!important;
+  }
+  .active-bg {
+    background: rgba(0, 199, 149, 0.12);
+  }
+  .dis-inlineblock{
+    display: inline-block;
+  }
+  .dis-none{
+    display: none;
   }
 }

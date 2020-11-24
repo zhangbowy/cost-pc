@@ -25,6 +25,7 @@
     "classnames": "^2.2.6",
     "dingtalk-jsapi": "^2.10.3",
     "dva": "^2.6.0-beta.6",
+    "echarts": "^4.9.0",
     "html2canvas": "^1.0.0-rc.5",
     "js-base64": "^2.5.1",
     "lodash-decorators": "^6.0.1",

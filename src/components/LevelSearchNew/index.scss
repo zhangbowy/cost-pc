@@ -1,0 +1,45 @@
+.footerBtn{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.iconBox{
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  display: inline-block;
+}
+.modelBox{
+  position: relative;
+  display: inline-block;
+}
+.model{
+  width: 360px;
+  min-height: 300px;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 32px 0px rgba(38, 38, 38, 0.16);
+  border-radius: 4px;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  z-index: 99;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 32px 24px 86px;
+  padding-right: 0;
+}
+.modelBottom{
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #00C795;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  border-top: 1px solid #E9E9E9;
+  line-height: 49px;
+  text-align: center;
+}
