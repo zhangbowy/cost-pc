@@ -125,7 +125,7 @@ const menuData = [
   },{
     id: 'payment',
     name: '财务',
-    myIcon: 'icongongzuotai',
+    myIcon: 'iconbaoxiaodanguanli',
     path: 'payment',
     children:[{
       id: 'payment_invoicePay',
@@ -174,7 +174,7 @@ const menuData = [
   },{
     id: 'basicSettings',
     name: '设置',
-    myIcon: 'iconjichushezhi',
+    myIcon: 'iconxitongshezhi',
     path: 'basicSettings',
   },
   {

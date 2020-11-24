@@ -23,6 +23,7 @@
     z-index: 100;
     align-items: center;
   }
+
   .headerRight{
     height: 118px;
     margin-right: 32px;
@@ -69,6 +70,7 @@
   border-radius: 4px;
   padding: 32px;
   flex: 1;
+  min-width: 424px;
   .btns{
     margin-bottom: 24px;
   }
@@ -83,6 +85,7 @@
     padding: 12px;
     cursor: pointer;
     margin-right: 8px;
+    width: 100%;
   }
   .iconfonts{
     width: 20px;

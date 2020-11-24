@@ -138,7 +138,7 @@ class CostTable extends Component {
             index={index}
             id={record.detailFolderId}
             onAddCost={this.addCost}
-            expandField={record.expandCostDetailFieldVos}
+            expandField={[...record.expandCostDetailFieldVos, ...record.selfCostDetailFieldVos]}
             costTitle="edit"
             // onCancel={(val) => this.onBack(val, index)}
           >

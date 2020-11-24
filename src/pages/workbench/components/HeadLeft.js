@@ -25,7 +25,7 @@ function HeadLeft(props) {
         </AddCost>
       </div>
       <p className="fs-12 c-black-25 m-b-6">常用单据</p>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', minWidth: '368px', overflow: 'hidden' }} className="addWidth">
         {
           OftenTemplate.map(it => (
             <AddInvoice key={it.id} id={it.id} templateType={it.templateType} onHandleOk={props.onOk}>
@@ -33,7 +33,7 @@ function HeadLeft(props) {
                 <span className={style.iconfonts}>
                   <i className="iconfont iconorder_fill" />
                 </span>
-                <span className="m-l-8 eslips-1">{it.name}</span>
+                <span className="m-l-8 eslips-1" style={{flex: 1, display: 'inline-block'}}>{it.name}</span>
               </div>
             </AddInvoice>
           ))

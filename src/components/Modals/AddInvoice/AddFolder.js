@@ -101,11 +101,14 @@ class AddFolder extends Component {
           ...obj,
           costDetailShareVOS: newCost,
         };
-        newArr.push(obj);
+        if (it.id) {
+          newArr.push(obj);
+        }
       });
+      const keys = list.map(it => it.detailFolderId) || [];
       this.setState({
         visible: true,
-        selectedRowKeys: list.map(it => it.detailFolderId) || [],
+        selectedRowKeys: Array.from(new Set(keys)) || [],
         selectedRows: newArr,
         details: list,
         folderList: arr,

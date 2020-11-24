@@ -1,0 +1,14 @@
+.circle{
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  color: #fff;
+  display: inline-block;
+  text-align: center;
+  line-height: 20px;
+  margin-right: 8px;
+}
+.active{
+  background: #00C795;
+}

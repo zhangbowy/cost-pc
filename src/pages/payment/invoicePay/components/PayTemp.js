@@ -371,6 +371,7 @@ class PayTemp extends React.PureComponent {
                         className="m-l-8"
                         placeholder="请选择时间"
                         format="YYYY-MM-DD"
+                        style={{ width: '250px' }}
                         showTime={{
                           hideDisabledOptions: true,
                           defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],

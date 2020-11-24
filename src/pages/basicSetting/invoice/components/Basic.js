@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-update-set-state */
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 import React from 'react';
@@ -58,6 +59,11 @@ class Basic extends React.PureComponent {
           title: 'add',
           name: '',
         });
+    }
+    if (prevProps.approveList !== this.props.approveList) {
+      this.setState({
+        approveList: this.props.approveList,
+      });
     }
 }
 
@@ -183,7 +189,8 @@ class Basic extends React.PureComponent {
       type: 'invoice/approveList',
       payload: {}
     }).then(() => {
-      const { approveList } = this.props;
+      const { approveList, onChangeData } = this.props;
+      onChangeData('approveList', approveList);
       this.setState({
         approveList,
       }, () => {

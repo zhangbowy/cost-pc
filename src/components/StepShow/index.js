@@ -75,11 +75,11 @@ class StepShow extends Component {
               description={(
                 <div>
                   <div className={style.onStep} onClick={() => this.onOpen('4')}>
-                    <p>设置—单据与流程-费用类别设置</p>
+                    <p>设置—基础设置-费用类别设置</p>
                     <a>去设置 &gt;</a>
                   </div>
                   <div className={style.onStep} onClick={() => this.onOpen('3')}>
-                    <p>设置—单据与流程-单据模版设置</p>
+                    <p>设置—基础设置-单据模版设置</p>
                     <a>去设置 &gt;</a>
                   </div>
                 </div>

@@ -213,7 +213,7 @@ class AddInvoice extends Component {
     const djDetails = await this.props.djDetail;
     const obj = {};
     if (djDetails.showField && djDetails.showField.length > 5) {
-      JSON.parse(djDetails.showField).forEach(item => {
+      djDetails.showField.forEach(item => {
         obj[item.field] = {...item};
       });
     }
@@ -313,12 +313,16 @@ class AddInvoice extends Component {
       });
     }
     if (djDetails.expandField) {
+      let newExpand = detail.expandSubmitFieldVos || [];
+      if (detail.selfSubmitFieldVos) {
+        newExpand = [...newExpand, ...detail.selfSubmitFieldVos];
+      }
       djDetails.expandField.forEach(it => {
-        const index = detail.expandSubmitFieldVos && detail.expandSubmitFieldVos.findIndex(its => its.field === it.field);
+        const index = newExpand && newExpand.findIndex(its => its.field === it.field);
         if (index > -1 && it.status) {
           expandField.push({
             ...it,
-            msg: detail.expandSubmitFieldVos[index].msg,
+            msg: newExpand[index].msg,
           });
         } else if (it.status) {
           expandField.push({
@@ -899,10 +903,19 @@ class AddInvoice extends Component {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
         const expandSubmitFieldVos = [];
+        const selfSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            if (it.status) {
+          console.log('handleOk -> expandField', expandField);
+            if (it.status && it.field.indexOf('expand_') > -1) {
               expandSubmitFieldVos.push({
+                ...it,
+                field: it.field,
+                name: it.name,
+                msg: val[it.field],
+              });
+            } else if (it.status && it.field.indexOf('self_') > -1){
+              selfSubmitFieldVos.push({
                 ...it,
                 field: it.field,
                 name: it.name,
@@ -929,7 +942,8 @@ class AddInvoice extends Component {
           imgUrl,
           fileUrl,
           submitSum: ((total * 1000)/10).toFixed(0),
-          expandSubmitFieldVos
+          expandSubmitFieldVos,
+          selfSubmitFieldVos
         };
         const arr = [];
         costDetailsVo.forEach((item, index) => {
@@ -947,7 +961,8 @@ class AddInvoice extends Component {
             costDetailShareVOS: [],
             currencyId: item.currencyId,
             currencyName: item.currencyName,
-            expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+            expandCostDetailFieldVos: item.expandCostDetailFieldVos,
+            selfCostDetailFieldVos: item.selfCostDetailFieldVos,
             detailFolderId: item.detailFolderId || '',
           });
           if (item.costDetailShareVOS) {
@@ -1039,10 +1054,18 @@ class AddInvoice extends Component {
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
     const expandSubmitFieldVos = [];
+    const selfSubmitFieldVos = [];
     if (expandField && expandField.length > 0) {
       expandField.forEach(it => {
         if (it.status) {
           expandSubmitFieldVos.push({
+            ...it,
+            field: it.field,
+            name: it.name,
+            msg: val[it.field],
+          });
+        } else if (it.status && it.field.indexOf('self_') > -1){
+          selfSubmitFieldVos.push({
             ...it,
             field: it.field,
             name: it.name,
@@ -1069,10 +1092,12 @@ class AddInvoice extends Component {
       imgUrl,
       fileUrl,
       submitSum: ((total * 1000)/10).toFixed(0),
-      expandSubmitFieldVos
+      expandSubmitFieldVos,
+      selfSubmitFieldVos
     };
     const arr = [];
     costDetailsVo.forEach((item, index) => {
+    console.log('handelOkDraft -> costDetailsVo', costDetailsVo);
       arr.push({
         'categoryId': item.categoryId,
         'categoryName': item.categoryName,
@@ -1086,7 +1111,8 @@ class AddInvoice extends Component {
         costDetailShareVOS: [],
         currencyId: item.currencyId && item.currencyId !== '-1' ? item.currencyId : '',
         currencyName: item.currencyName || '',
-        expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
         detailFolderId: item.detailFolderId || '',
         icon: item.icon,
       });
@@ -1514,6 +1540,7 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
     } = this.state;
+    console.log('render -> expandField', expandField);
 
     const formItemLayout = {
       labelCol: {
@@ -1536,8 +1563,8 @@ class AddInvoice extends Component {
       },
     };
     return (
-      <span>
-        <span onClick={() => this.onShowHandle()}>{ children }</span>
+      <span className="invoiceFirst">
+        <span onClick={() => this.onShowHandle()} className="invoiceSecond">{ children }</span>
         <Modal
           visible={visible}
           width="980px"
@@ -1888,14 +1915,19 @@ class AddInvoice extends Component {
                 {
                   expandField && (expandField.length > 0) &&
                   expandField.map(itw => {
+                    console.log('render -> itw', itw);
                     let renderForm = null;
                     let rule = [];
-                    if (Number(itw.fieldType) === 2) {
+                    let initMsg = itw.msg || '';
+                    if (Number(itw.fieldType) === 0) {
+                      renderForm = (<Input placeholder='请输入' />);
+                      rule = [{ max: 20, message: '限制20个字' }];
+                    } else if (Number(itw.fieldType) === 1) {
+                      renderForm = (<TextArea placeholder='请输入' />);
+                      rule = [{ max: 128, message: '限制128个字' }];
+                    } else if(Number(itw.fieldType) === 2) {
                       renderForm = (
-                        <Select
-                          placeholder='请选择'
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                        >
+                        <Select placeholder='请选择'>
                           {
                             itw.options && itw.options.map(iteems => (
                               <Select.Option key={iteems}>{iteems}</Select.Option>
@@ -1903,12 +1935,27 @@ class AddInvoice extends Component {
                           }
                         </Select>
                       );
-                    } else if (Number(itw.fieldType) === 1) {
-                      renderForm = (<TextArea placeholder='请输入' />);
-                      rule = [{ max: 128, message: '限制128个字' }];
-                    } else {
-                      renderForm = (<Input placeholder='请输入' />);
-                      rule = [{ max: 20, message: '限制20个字' }];
+                    } else if (itw.fieldType === 5) {
+                      if (itw.dateType === 1) {
+                        initMsg = itw.startTime ? moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
+                        renderForm = (
+                          <DatePicker style={{width: '100%'}} />
+                        );
+                      } else {
+                        initMsg = itw.startTime && itw.endTime ?
+                            [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
+                        renderForm = (
+                          <RangePicker
+                            style={{width: '280px' }}
+                            placeholder="请选择时间"
+                            format="YYYY-MM-DD"
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                            }}
+                          />
+                        );
+                      }
                     }
                     return (
                       <>
@@ -1918,7 +1965,7 @@ class AddInvoice extends Component {
                               <Form.Item label={itw.name} {...formItemLayout}>
                                 {
                                   getFieldDecorator(itw.field, {
-                                    initialValue: itw.msg,
+                                    initialValue: initMsg,
                                     rules: [
                                       {
                                         required: !!(itw.isWrite),

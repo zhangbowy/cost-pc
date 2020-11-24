@@ -79,6 +79,10 @@ class CostCategory extends React.PureComponent {
     });
   }
 
+  onAddCategory = (id) => {
+    this.props.history.push(`/basicSetting/costCategory/${id}`);
+  }
+
   onSearch = (val) => {
     this.setState({
       costName: val,
@@ -248,7 +252,7 @@ class CostCategory extends React.PureComponent {
             }
             {
               record.type === 1 &&
-                <AddClassify onOk={() => _this.onOk()} data={record} title="edit" list={list}><a>编辑类别</a></AddClassify>
+                <a onClick={() => this.onAddCategory(record.id)}>编辑类别</a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>
@@ -268,9 +272,9 @@ class CostCategory extends React.PureComponent {
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">
-              <AddClassify title="add" onOk={() => this.onOk()} list={list}>
-                <Button type="primary" style={{marginRight: '8px'}}>新增费用类别</Button>
-              </AddClassify>
+              {/* <AddClassify title="add" onOk={() => this.onOk()} list={list}> */}
+              <Button type="primary" style={{marginRight: '8px'}} onClick={() => this.onAddCategory('add')}>新增费用类别</Button>
+              {/* </AddClassify> */}
               <AddGroup onOk={this.onOk} title="add" list={list}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>

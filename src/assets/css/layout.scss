@@ -18,6 +18,9 @@
     height: 100%;
     overflow: auto;
     // background-color: #fff;
+    // ::-webkit-scrollbar{
+    //   display: none;
+    // }
   }
 
   .app-body {
@@ -31,7 +34,7 @@
     margin: 24px;
     border-radius:2px;
     overflow-y: scroll;
-    min-width: 1050px;
+    min-width: 952px;
   }
   .app_header {
     height: 106px;
@@ -56,3 +59,15 @@
   }
 }
 
+// ::-webkit-scrollbar{
+//   width: 5px;
+//   height: 5px;
+// }
+// ::-webkit-scrollbar-thumb{
+//   border-radius: 1em;
+//   background-color: rgba(50,50,50,.3);
+// }
+// ::-webkit-scrollbar-track{
+//   border-radius: 1em;
+//   background-color: rgba(50,50,50,.1);
+// }

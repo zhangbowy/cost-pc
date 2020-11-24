@@ -18,7 +18,8 @@ function InvoiceTable(props) {
     total,
     page,
     onQuery,
-    searchContent
+    searchContent,
+    scroll
   } = props;
   const rowSelection = {
     type: 'checkbox',
@@ -47,6 +48,7 @@ function InvoiceTable(props) {
             dataSource={list}
             rowKey="id"
             loading={loading}
+            scroll={scroll || {}}
             pagination={{
               hideOnSinglePage: true,
               current: page.pageNo,
