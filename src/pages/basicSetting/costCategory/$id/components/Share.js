@@ -41,23 +41,47 @@ class Share extends Component {
     const { shareField } = this.props;
     const newArr = [];
     shareField.forEach(item => {
+      const obj = {};
+      if (name === 'status') {
+        console.log(e.target.value);
+        obj[name] = e.target.checked ? 1 : 0;
+      } else if (name === 'isWrite') {
+        obj[name] = e.target.checked;
+      }
       if (item.field === 'project') {
         newArr.push({
           ...item,
-          [name]: e.target.value,
+          ...obj
         });
       } else {
         newArr.push(item);
       }
     });
+    console.log('Share -> onChecks -> newArr', newArr);
     this.props.onChangeData('shareField', newArr);
   }
 
   render() {
     const { shareField } = this.props;
     const arr = shareField.filter(it => it.field === 'project');
+    const indexs = shareField.findIndex(it => it.field === 'project');
     if (shareList.length !== 3) {
       shareList.push({
+        key: 'project',
+        value: '项目',
+        checked: [arr[0].status ? 1 : 0, arr[0].isWrite],
+        children: [{
+          label: '启用',
+          value: 1,
+          name: 'status',
+        }, {
+          label: '必填',
+          value: true,
+          name: 'isWrite',
+        }]
+      });
+    } else {
+      shareList.splice(indexs, 1, {
         key: 'project',
         value: '项目',
         checked: [arr[0].status, arr[0].isWrite],

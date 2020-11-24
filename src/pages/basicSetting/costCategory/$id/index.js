@@ -82,7 +82,8 @@ class CategoryAdd extends PureComponent {
           }
           _this.setState({
             data: datas,
-            selectList: showFiels
+            selectList: showFiels.sort(this.compare('sort')),
+            shareField: details.shareField,
           });
         });
       }
@@ -121,6 +122,14 @@ class CategoryAdd extends PureComponent {
       arr.pop();
     }
     return false;
+  }
+
+  compare = (property) => {
+    return function(a,b){
+        const value1 = a[property];
+        const value2 = b[property];
+        return value1 - value2;
+    };
   }
 
   onHandle = (e) => {
@@ -166,6 +175,7 @@ class CategoryAdd extends PureComponent {
 
   onStep = () => {
     const { current, data, selectList, shareField } = this.state;
+    console.log('CategoryAdd -> onStep -> shareField', shareField);
     const { id } = this.props.match.params;
     const { userInfo } = this.props;
     const datas = data;
@@ -187,7 +197,7 @@ class CategoryAdd extends PureComponent {
       const params = {
         id: id === 'add' ? '' : id,
         showField: showField.map(it => { return { ...it, status: 1 }; }),
-        shareField,
+        shareField: shareField.map(it => { return { ...it, status: it.status ? 1 : 0 }; }),
         type: 1,
         ...datas,
         companyId: userInfo.companyId || '',
@@ -329,6 +339,7 @@ class CategoryAdd extends PureComponent {
             <Share
               wrappedComponentRef={form => {this.formRef = form;}}
               shareField={shareField}
+              onChangeData={this.onChangeData}
             />
           </div>
         }

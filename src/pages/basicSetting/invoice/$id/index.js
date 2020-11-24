@@ -92,7 +92,7 @@ class CategoryAdd extends PureComponent {
           const newArr = fieldList.filter(it => it.isSelect);
           if (title === 'add') {
             this.setState({
-              selectList: newArr,
+              selectList: newArr.sort(this.compare('sort')),
             });
           }
           this.setState({

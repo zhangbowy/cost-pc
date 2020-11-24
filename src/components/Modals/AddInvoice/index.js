@@ -961,8 +961,8 @@ class AddInvoice extends Component {
             costDetailShareVOS: [],
             currencyId: item.currencyId,
             currencyName: item.currencyName,
-            expandCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('expand_') > -1) || [],
-            selfCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('self_') > -1) || [],
+            expandCostDetailFieldVos: item.expandCostDetailFieldVos,
+            selfCostDetailFieldVos: item.selfCostDetailFieldVos,
             detailFolderId: item.detailFolderId || '',
           });
           if (item.costDetailShareVOS) {
@@ -1097,6 +1097,7 @@ class AddInvoice extends Component {
     };
     const arr = [];
     costDetailsVo.forEach((item, index) => {
+    console.log('handelOkDraft -> costDetailsVo', costDetailsVo);
       arr.push({
         'categoryId': item.categoryId,
         'categoryName': item.categoryName,
@@ -1110,8 +1111,8 @@ class AddInvoice extends Component {
         costDetailShareVOS: [],
         currencyId: item.currencyId && item.currencyId !== '-1' ? item.currencyId : '',
         currencyName: item.currencyName || '',
-        selfCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('self_') > -1) || [],
-        expandCostDetailFieldVos: item.expandCostDetailFieldVos.filter(it => it.field.indexOf('expand_') > -1) || [],
+        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
         detailFolderId: item.detailFolderId || '',
         icon: item.icon,
       });
@@ -1539,6 +1540,7 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
     } = this.state;
+    console.log('render -> expandField', expandField);
 
     const formItemLayout = {
       labelCol: {
@@ -1913,14 +1915,19 @@ class AddInvoice extends Component {
                 {
                   expandField && (expandField.length > 0) &&
                   expandField.map(itw => {
+                    console.log('render -> itw', itw);
                     let renderForm = null;
                     let rule = [];
-                    if (Number(itw.fieldType) === 2) {
+                    let initMsg = itw.msg || '';
+                    if (Number(itw.fieldType) === 0) {
+                      renderForm = (<Input placeholder='请输入' />);
+                      rule = [{ max: 20, message: '限制20个字' }];
+                    } else if (Number(itw.fieldType) === 1) {
+                      renderForm = (<TextArea placeholder='请输入' />);
+                      rule = [{ max: 128, message: '限制128个字' }];
+                    } else if(Number(itw.fieldType) === 2) {
                       renderForm = (
-                        <Select
-                          placeholder='请选择'
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                        >
+                        <Select placeholder='请选择'>
                           {
                             itw.options && itw.options.map(iteems => (
                               <Select.Option key={iteems}>{iteems}</Select.Option>
@@ -1928,12 +1935,27 @@ class AddInvoice extends Component {
                           }
                         </Select>
                       );
-                    } else if (Number(itw.fieldType) === 1) {
-                      renderForm = (<TextArea placeholder='请输入' />);
-                      rule = [{ max: 128, message: '限制128个字' }];
-                    } else {
-                      renderForm = (<Input placeholder='请输入' />);
-                      rule = [{ max: 20, message: '限制20个字' }];
+                    } else if (itw.fieldType === 5) {
+                      if (itw.dateType === 1) {
+                        initMsg = itw.startTime ? moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
+                        renderForm = (
+                          <DatePicker style={{width: '100%'}} />
+                        );
+                      } else {
+                        initMsg = itw.startTime && itw.endTime ?
+                            [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
+                        renderForm = (
+                          <RangePicker
+                            style={{width: '280px' }}
+                            placeholder="请选择时间"
+                            format="YYYY-MM-DD"
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                            }}
+                          />
+                        );
+                      }
                     }
                     return (
                       <>
@@ -1943,7 +1965,7 @@ class AddInvoice extends Component {
                               <Form.Item label={itw.name} {...formItemLayout}>
                                 {
                                   getFieldDecorator(itw.field, {
-                                    initialValue: itw.msg,
+                                    initialValue: initMsg,
                                     rules: [
                                       {
                                         required: !!(itw.isWrite),

@@ -114,7 +114,7 @@ function Templates({ name, moveCard, isWrite, dragId, onChange, index, field, di
       // style={styles}
       onClick={(e) => {
         e.stopPropagation();
-        onChange('selectId', field);
+        onChange('selectId', field, 'del');
       }}
     >
       {

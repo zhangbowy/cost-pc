@@ -2,6 +2,7 @@
   width: 240px;
   background: #ffffff;
   height: 100%;
+  overflow-y: scroll;
   .header{
     width: 100%;
     height: 56px;
@@ -69,6 +70,10 @@
     color: rgba(0, 0, 0, 0.36);
     font-size: 16px;
     cursor: pointer;
+    &:hover{
+      background: #FAFAFA;
+      color: rgba(0, 199, 149, 1);
+    }
   }
   .selfActive{
     background: #FAFAFA;
@@ -197,6 +202,7 @@
 .strRight{
   background: #ffffff;
   width: 298px;
+  overflow-y: scroll;
   .header{
     height: 56px;
     display: flex;

@@ -2,6 +2,7 @@ import { get, post } from '@/utils/request';
 import api from '@/services/api';
 import treeConvert from '@/utils/treeConvert';
 import { ddConfig } from '@/utils/ddApi';
+import { compare } from '../utils/common';
 // import { message } from 'antd';
 
 export default {
@@ -175,10 +176,14 @@ export default {
     *lbDetail({ payload }, { call, put }) {
       const response = yield call(get, api.cateDet, payload);
       const expandField = [...response.expandField, ...response.selfFields];
+      let arts = [];
+      if (expandField && expandField.length) {
+        arts = expandField.sort(compare('sort'));
+      }
       yield put({
         type: 'save',
         payload: {
-          lbDetail: response ? { ...response, expandField } : {},
+          lbDetail: response ? { ...response, expandField: arts } : {},
         }
       });
     },

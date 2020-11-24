@@ -46,8 +46,18 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
   } else if (!disabled && isSelect) {
     pro = '已选';
   }
+  const handleAdd = (e) => {
+    e.stopPropagation();
+    onChange('selectList', [...selectList, {
+      ...data,
+    }]);
+  };
   return (
-    <div className={isSelect ? cs(style.dragLabel, style.dragActive) : style.dragLabel} ref={(node) => drag(node)}>
+    <div
+      className={isSelect ? cs(style.dragLabel, style.dragActive) : style.dragLabel}
+      ref={(node) => drag(node)}
+      onClick={(e) => handleAdd(e)}
+    >
       <span className="c-black-65">{name}</span>
       <span className="fs-12 c-black-25">{pro}</span>
     </div>

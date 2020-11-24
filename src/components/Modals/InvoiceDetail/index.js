@@ -12,6 +12,7 @@ import constants, { accountType } from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
 import Borrow from './Borrow';
 import Apply from './Apply';
+import CostDetails from './CostDetails';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -332,14 +333,17 @@ class InvoiceDetail extends Component {
       textWrap: 'word-break',
       width: '140px'
     }, {
-      title: '查看',
+      title: '操作',
       dataIndex: 'operate',
       render: (_, record) => (
-        <span record={record}>
-          查看
-        </span>
+        <CostDetails record={record}>
+          <span record={record} className="sub-color">
+            查看
+          </span>
+        </CostDetails>
       ),
-      width: '140px'
+      width: '140px',
+      fixed: 'right'
     }];
     if (category && category.length > 0 ) {
       const arr = [];
@@ -350,13 +354,25 @@ class InvoiceDetail extends Component {
                 ...item,
                 title: item.name,
                 dataIndex: item.field,
-                render: (text) => (
-                  <span>
-                    <Tooltip placement="topLeft" title={text || ''} arrowPointAtCenter>
-                      <span className="eslips-2">{text}</span>
-                    </Tooltip>
-                  </span>
-                ),
+                render: (_, record) => {
+                  console.log('InvoiceDetail -> render -> records', record);
+                  let texts = record[item.field];
+                  if (record.dateType) {
+                    texts = '';
+                  }else if (record.startTime) {
+                    texts = record.endTime ?
+                    `${moment(Number(record.startTime)).format('YYYY-MM-DD')}-${moment(Number(record.endTime)).format('YYYY-MM-DD')}`
+                    :
+                    `${moment(Number(record.startTime)).format('YYYY-MM-DD')}`;
+                  }
+                  return (
+                    <span>
+                      <Tooltip placement="topLeft" title={texts || ''} arrowPointAtCenter>
+                        <span className="eslips-2">{texts}</span>
+                      </Tooltip>
+                    </span>
+                  );
+                }
               };
           });
           arr.push(...its);
@@ -543,6 +559,7 @@ class InvoiceDetail extends Component {
                 <div style={{display: 'flex'}}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
                   <span className="fs-14 c-black-65" style={{flex: 1}}>
+                    <span className="m-r-8">{ receipt.name }</span>
                     { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
                     <span className="m-r-8">{ receipt.bankName }</span>
                     {receipt.account}
@@ -578,7 +595,10 @@ class InvoiceDetail extends Component {
                 <div style={{display: 'flex'}}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
                   <span className="fs-14 c-black-65" style={{flex: 1}}>
-                    {supplierAccountVo.supplierAccountName} {supplierAccountVo.supplierAccount}
+                    <span className="m-r-8">{ supplierAccountVo.supplierAccountName }</span>
+                    { supplierAccountVo.accountType ? getArrayValue(supplierAccountVo.accountType, accountType) : ''}
+                    <span className="m-r-8">{ supplierAccountVo.bankName }</span>
+                    {supplierAccountVo.supplierAccount}
                   </span>
                 </div>
               </Col>

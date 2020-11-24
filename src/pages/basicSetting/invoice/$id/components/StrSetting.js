@@ -58,6 +58,8 @@ class StrSetting extends Component {
     console.log('StrSetting -> handleChange -> val', val);
     this.setState({
       [type]: val,
+    }, () => {
+      this.forceUpdate();
     });
     if (type === 'selectList') {
       this.props.onChangeData(type, val);

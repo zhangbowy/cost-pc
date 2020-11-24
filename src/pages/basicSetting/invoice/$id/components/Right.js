@@ -219,7 +219,10 @@ class Right extends PureComponent {
       <div className={style.strRight}>
         <div className={style.header}>
           <span className="fs-16 c-black-85 fw-500">{details.name}</span>
-          <span className={style.tags}>默认字段</span>
+          {
+            details.field.indexOf('self_') === -1 &&
+            <span className={style.tags}>{details.field.indexOf('expand_field') === -1 ? '默认字段' : '公用'}</span>
+          }
         </div>
         <Form style={{ padding: '0 24px' }}>
           <Form.Item label="字段标题">
@@ -232,7 +235,7 @@ class Right extends PureComponent {
             }
           </Form.Item>
           {
-            Number(details.fieldType) === 2 &&
+            Number(details.fieldType) === 2 && !details.disabled &&
             <div className={style.moveForm}>
               <p>选项</p>
               {formItems}
@@ -242,7 +245,7 @@ class Right extends PureComponent {
                 type="dashed"
                 className={style.addSelect}
                 onClick={() => this.onAdd()}
-                disabled={details.options && (details.options.length > 15 || (details.options.length === 15))}
+                disabled={list && (list.length > 15 || (list.length === 15))}
               >
                 添加选项
               </Button>

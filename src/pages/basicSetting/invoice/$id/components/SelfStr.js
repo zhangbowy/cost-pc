@@ -39,8 +39,9 @@ function SelfStr({ name, icon, fieldType, selectList, onChange }) {
             name, id: -1,
             fieldType,
             field: idGenerator(),
-            dateType: 1,
-            options: Number(fieldType) === 2 ? ['选项一', '选项二'] : []
+            dateType: Number(fieldType) === 5 ? 1 : 0,
+            options: Number(fieldType) === 2 ? ['选项一', '选项二'] : [],
+            isWrite: false,
           }, ...selectList]);
       }
       return {
@@ -49,6 +50,7 @@ function SelfStr({ name, icon, fieldType, selectList, onChange }) {
         fieldType,
         isSelect: true,
         field: idGenerator(),
+        isWrite: false,
       };
     },
     end: (item, monitor) => {
@@ -73,8 +75,9 @@ function SelfStr({ name, icon, fieldType, selectList, onChange }) {
       name,
       fieldType,
       field: idGenerator(),
-      dateType: 1,
-      options: Number(fieldType) === 2 ? ['选项一', '选项二'] : []
+      dateType: Number(fieldType) === 5 ? 1 : 0,
+      options: Number(fieldType) === 2 ? ['选项一', '选项二'] : [],
+      isWrite: false,
     }]);
   };
   return (

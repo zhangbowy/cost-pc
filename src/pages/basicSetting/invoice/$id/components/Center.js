@@ -36,9 +36,12 @@ function StrCenter({ selectList, findCard, dragId, onChange }) {
   const onDelete = (ids, disabled) => {
     const arr = [...selectList];
     if (!disabled) {
-      const lessIndex = selectList.findIndex((item) => item.id === ids);
+      const lessIndex = selectList.findIndex((item) => item.field === ids);
       arr.splice(lessIndex, 1);
-      onChange('selectList', arr);
+      console.log('onDelete -> arr', arr);
+      onChange('selectList', update(selectList, {
+        $splice: [[lessIndex, 1]],
+      }));
     }
   };
   return (
