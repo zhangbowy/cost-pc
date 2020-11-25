@@ -12,8 +12,8 @@ import Basic from '../components/Basic';
 import Share from './components/Share';
 import { classifyShare } from '../../../../utils/constants';
 import { timeStampToHex } from '../../../../utils/common';
-import StrSetting from '../../invoice/$id/components/StrSetting';
-// import StrSetting from './components/StrSetting';
+// import StrSetting from '../../invoice/$id/components/StrSetting';
+import StrSetting from './components/StrSetting';
 
 const basicStr = [{
   key: 'one',

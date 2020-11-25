@@ -212,7 +212,7 @@ class AddInvoice extends Component {
 
     const djDetails = await this.props.djDetail;
     const obj = {};
-    if (djDetails.showField && djDetails.showField.length > 5) {
+    if (djDetails.showField && djDetails.showField.length) {
       djDetails.showField.forEach(item => {
         obj[item.field] = {...item};
       });
@@ -1541,7 +1541,8 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
     } = this.state;
-    console.log('render -> expandField', expandField);
+    console.log('render -> showField', showField);
+
 
     const formItemLayout = {
       labelCol: {
@@ -1624,6 +1625,7 @@ class AddInvoice extends Component {
                       invalid={false}
                       disabled={Number(templateType)}
                       flag="users"
+                      isInput
                       multiple={false}
                     />
                   </Form.Item>
