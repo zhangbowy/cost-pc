@@ -125,11 +125,19 @@ class CategoryAdd extends PureComponent {
         if (detail.deptJson) {
           deptJson = JsonParse(detail.deptJson);
         }
+        const relation = [];
+        if (detail.isRelationLoan) {
+          relation.push('isRelationLoan');
+        }
+        if (detail.isRelationApply) {
+          relation.push('isRelationApply');
+        }
         Object.assign(datas, {
           ...detail,
           costCategory,
           userJson,
           deptJson,
+          relation,
           sttaus: detail.status === 1,
         });
         if (title === 'copy') {
@@ -268,6 +276,10 @@ class CategoryAdd extends PureComponent {
     }
   }
 
+  onCancel = () => {
+    this.props.history.push('basicSetting/invoice');
+  }
+
   render () {
     const {
       allList,
@@ -354,7 +366,7 @@ class CategoryAdd extends PureComponent {
         <FooterBar
           right={(
             <>
-              <Button type="default" className="m-r-8">取消</Button>
+              <Button type="default" className="m-r-8" onClick={() => this.onCancel()}>取消</Button>
               <Button type="primary" onClick={() => this.onStep()}>
                 { current === 'two' || title !== 'add' ? '保存' : '下一步' }
               </Button>

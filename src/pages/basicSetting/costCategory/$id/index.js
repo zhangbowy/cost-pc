@@ -13,6 +13,7 @@ import Share from './components/Share';
 import { classifyShare } from '../../../../utils/constants';
 import { timeStampToHex } from '../../../../utils/common';
 import StrSetting from '../../invoice/$id/components/StrSetting';
+// import StrSetting from './components/StrSetting';
 
 const basicStr = [{
   key: 'one',
@@ -134,9 +135,9 @@ class CategoryAdd extends PureComponent {
 
   onHandle = (e) => {
     if (e.key !== 'one') {
-      if (this.formRef && this.formRef.getFormItem) {
+      if (this.formRef && this.formRef.getFormItems) {
         const datas = {};
-        const values = this.formRef.getFormItem();
+        const values = this.formRef.getFormItems();
         if(!values) {
           return;
         }
@@ -263,6 +264,10 @@ class CategoryAdd extends PureComponent {
     }
   }
 
+  onCancel = () => {
+    this.props.history.push('/basicSetting/costCategory');
+  }
+
   render () {
     const {
       allList
@@ -285,7 +290,7 @@ class CategoryAdd extends PureComponent {
     ];
 
     return (
-      <div style={{height: '100%'}}>
+      <div style={{height: '100%', minWidth: '1200px'}}>
         <PageHeader
           title={null}
           breadcrumb={{routes}}
@@ -337,7 +342,7 @@ class CategoryAdd extends PureComponent {
           <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
             <LabelLeft title="基础设置" />
             <Share
-              wrappedComponentRef={form => {this.formRef = form;}}
+              // wrappedComponentRef={form => {this.formRef = form;}}
               shareField={shareField}
               onChangeData={this.onChangeData}
             />
@@ -346,7 +351,7 @@ class CategoryAdd extends PureComponent {
         <FooterBar
           right={(
             <>
-              <Button type="default" className="m-r-8">取消</Button>
+              <Button type="default" className="m-r-8" onClick={() => this.onCancel()}>取消</Button>
               <Button type="primary" onClick={() => this.onStep()}>
                 { current === 'three' || id !== 'add' ? '保存' : '下一步' }
               </Button>

@@ -48,9 +48,11 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
   }
   const handleAdd = (e) => {
     e.stopPropagation();
+   if (!isSelect) {
     onChange('selectList', [...selectList, {
       ...data,
     }]);
+   }
   };
   return (
     <div

@@ -2,7 +2,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon } from 'antd';
+import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { formItemLayout, isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
@@ -82,6 +82,7 @@ class Basic extends React.PureComponent {
     const {
       form,
       costCategoryList,
+      templateType
     } = this.props;
     let val = {};
     const { category, users, deptJson } = this.state;
@@ -95,6 +96,22 @@ class Basic extends React.PureComponent {
           });
           Object.assign(val, {
             costCategoryJson: arr.length > 0 && JSON.stringify(arr),
+          });
+        }
+        if (values.relation && values.relation.length) {
+          const obbj = {
+            isRelationApply: false,
+          };
+          if (Number(templateType) === 0) {
+            Object.assign(obbj, {
+              isRelationLoan: false,
+            });
+          }
+          values.relation.forEach(its => {
+            obbj[its] = true;
+          });
+          Object.assign(values, {
+            ...obbj,
           });
         }
         if (!values.isAllUse) {
@@ -411,6 +428,24 @@ class Basic extends React.PureComponent {
               )
             }
           </Form.Item>
+          {
+            Number(templateType) !== 2 &&
+            <Form.Item label="单据相关">
+              {
+                getFieldDecorator('relation', {
+                  initialValue: data && data.relation ? data.relation : [],
+                })(
+                  <Checkbox.Group>
+                    {
+                      Number(templateType) === 0 &&
+                      <Checkbox value="isRelationLoan">关联借款单</Checkbox>
+                    }
+                    <Checkbox value="isRelationApply">关联申请单</Checkbox>
+                  </Checkbox.Group>
+                )
+              }
+            </Form.Item>
+          }
           <Form.Item label={labelInfo.status}>
             {
               getFieldDecorator('status', {

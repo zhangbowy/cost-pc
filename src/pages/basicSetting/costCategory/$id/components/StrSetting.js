@@ -10,6 +10,7 @@ import style from './index.scss';
 // import SelfStr from '../../../invoice/$id/components/SelfStr';
 import StrCenter from './Center';
 import Box from './Box';
+import Right from './Right';
 
 // const boxs = [
 //   { id: 1, category: 'Apple', bg: 'red' },
@@ -58,7 +59,7 @@ const StrSetting = ({ fieldList, selectList }) => {
     };
 
     return (
-      <>
+      <div style={{width: '100%', height: '100%', display: 'flex'}}>
         <div className={style.left}>
           <div className={style.header}>
             {
@@ -81,36 +82,6 @@ const StrSetting = ({ fieldList, selectList }) => {
             {
               fieldList.map((item) => <Box key={item.field} {...item} cardList={cardList} changeCardList={changeCardList} />)
             }
-            {/* {
-              active === 'show' ?
-                <>
-                  {
-                    fieldList.map(it => (
-                      <FixedStr
-                        key={it.field}
-                        {...it}
-                        cardList={cardList}
-                        changeCardList={changeCardList}
-                      />
-                    ))
-                  }
-                </>
-                :
-                <>
-                  {
-                    selfStr.map(item => (
-                      <SelfStr
-                        key={item.key}
-                        fieldType={item.key}
-                        name={item.value}
-                        icon={item.icon}
-                        cardList={cardList}
-                        changeCardList={changeCardList}
-                      />
-                    ))
-                  }
-                </>
-            } */}
           </div>
         </div>
         <div className={style.strCenter}>
@@ -126,7 +97,8 @@ const StrSetting = ({ fieldList, selectList }) => {
           </div>
           <StrCenter cardList={cardList} changeCardList={changeCardList} />
         </div>
-      </>
+        <Right />
+      </div>
     );
 };
 

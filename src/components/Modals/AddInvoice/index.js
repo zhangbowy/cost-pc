@@ -897,7 +897,7 @@ class AddInvoice extends Component {
       borrowArr,
       applyArr
     } = this.state;
-    const { id, templateType } = this.props;
+    const { id, templateType, djDetail } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -1005,22 +1005,22 @@ class AddInvoice extends Component {
             });
           }
         }
-        if (showField.loan && showField.loan.status) {
-          if (showField.loan.isWrite && (borrowArr.length === 0)) {
-            message.error('请选择借款核销');
-            return;
-          }
+        if (djDetail.isRelationLoan) {
+          // if (showField.loan.isWrite && (borrowArr.length === 0)) {
+          //   message.error('请选择借款核销');
+          //   return;
+          // }
           Object.assign(params, {
-            invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
+            invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; }) || []
           });
         }
-        if (showField.apply && showField.apply.status) {
-          if (showField.apply.isWrite && (applyArr.length === 0)) {
-            message.error('请选择关联申请单');
-            return;
-          }
+        if (djDetail.isRelationApply) {
+          // if (showField.apply.isWrite && (applyArr.length === 0)) {
+          //   message.error('请选择关联申请单');
+          //   return;
+          // }
           Object.assign(params, {
-            applicationIds: applyArr.map(it => it.id),
+            applicationIds: applyArr.map(it => it.id) || [],
           });
         }
         this.chargeHandle(params);
@@ -1519,6 +1519,7 @@ class AddInvoice extends Component {
       usableProject,
       templateType,
       draftLoading,
+      djDetail,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -2046,7 +2047,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              showField.loan && showField.loan.status &&
+              djDetail.isRelationLoan &&
               <>
                 <Divider type="horizontal" />
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
@@ -2077,7 +2078,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              showField.apply && showField.apply.status  ?
+              djDetail.isRelationApply  ?
                 <>
                   <Divider type="horizontal" />
                   <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
