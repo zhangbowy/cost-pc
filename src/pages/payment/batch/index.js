@@ -364,8 +364,8 @@ class Batch extends PureComponent {
         >
           <h1 className="fs-24 c-black-85 m-b-16">取消支付</h1>
           <div className={style.modalTit}>
-            本次取消{ valueObj.totalCount }条单据的支付，共计
-            <span style={{fontSize:'20px',fontWeight:'500'}}>{ valueObj.totalTransAmount/100 }</span>元
+            本次取消{ valueObj.failCount || valueObj.totalCount }条单据的支付，共计
+            <span style={{fontSize:'20px',fontWeight:'500'}}>{ (valueObj.failTransAmount && valueObj.failTransAmount/100) || valueObj.totalTransAmount/100 }</span>元
           </div>
           <div className={style.modalText} style={{marginTop:'20px'}}>
             取消后，单据将释放回待发放单据列表
