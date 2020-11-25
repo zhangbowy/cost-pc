@@ -10,7 +10,7 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
       ...data,
     },
     canDrag: () => {
-      return isSelect;
+      return !isSelect;
     },
     begin: () => {
       const useless = selectList.find((item) => item.id === -1);
