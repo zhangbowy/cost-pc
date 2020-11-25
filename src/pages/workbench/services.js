@@ -5,7 +5,7 @@ const { APP_API } = constants;
 export default {
   list: `${APP_API}/cost/invoice/base/v2/list`,
   costCateList: `${APP_API}/cost/invoice/template/listForUser`,
-  del: `${APP_API}/cost/invoice/submit/del`,
+  del: `${APP_API}/cost/invoice/base/del`,
   loanDel: `${APP_API}/cost/invoice/loan/del`, // 借款单删除
   waitList: `${APP_API}/cost/invoice/loan/waitAssessList`, // 我的待核销列表
   ejectFrame: `${APP_API}/cost/eject/frame`,

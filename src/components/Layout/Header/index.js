@@ -65,7 +65,7 @@ class App extends React.PureComponent {
     // const sysList = [];
     const menu = (
       <Menu style={{ minWidth: 120 }}>
-        <Menu.Item 
+        <Menu.Item
           key="basicSetting_receiptAccount"
         >
           <Link to="/basicSetting/receiptAccount">个人收款账户</Link>
@@ -95,7 +95,7 @@ class App extends React.PureComponent {
           className="app-right"
           style={{ marginRight: 12 }}
         >
-          <a href="https://www.yuque.com/ed3xn3/lbawoz" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
+          <a href="https://www.yuque.com/yifei-zszlu/ref3g8/pn19b4" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
           <Dropdown overlay={menu}>
             <a style={{ color: '#333' }}>
               {

@@ -98,18 +98,16 @@ class Workbench extends PureComponent {
     });
   }
 
-  onDelete = (id, temp) => {
-    let url = 'workbench/del';
-    if (temp && Number(temp)) {
-      url = 'workbench/loanDel';
-    }
+  onDelete = (id, template) => {
+    const url = 'workbench/del';
     const {
       query,
     } = this.props;
     this.props.dispatch({
       type: url,
       payload: {
-        id
+        id,
+        template
       }
     }).then(() => {
       this.onQuery({

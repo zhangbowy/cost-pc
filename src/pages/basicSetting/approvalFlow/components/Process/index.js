@@ -52,7 +52,6 @@ class Process extends Component {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         data: this.props.conf,
-        ccPosition: this.props.ccPosition,
       });
     }
   }
@@ -257,8 +256,8 @@ class Process extends Component {
   }
 
   render() {
-    const { scaleVal, step, updateId, data, verifyMode, visible, conditions, ccPosition, approveNode } = this.state;
-    const { templateType } = this.props;
+    const { scaleVal, step, updateId, data, verifyMode, visible, conditions, approveNode } = this.state;
+    const { templateType, ccPosition } = this.props;
     return (
       <div className={style['flow-container']}>
         <div className={style['scale-slider']}>
