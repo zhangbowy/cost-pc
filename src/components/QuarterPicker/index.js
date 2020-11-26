@@ -84,7 +84,7 @@ class QuarterPicker extends Component {
       year,
       value: (value?value.replace(/\d{4}-/g,'year-'):'')
     });
-    this.idBlock(year);
+    // this.idBlock(year);
     if (open === undefined) {
       document.addEventListener('mousedown', this.handleClickOutside);
     }
