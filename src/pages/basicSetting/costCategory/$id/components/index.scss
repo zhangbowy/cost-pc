@@ -2,8 +2,9 @@
   width: 240px;
   background: #ffffff;
   height: 100%;
+  overflow: hidden;
   .header{
-    width: 100%;
+    width: inherit;
     height: 56px;
     background: rgba(0, 0, 0, 0.02);
     display: flex;
@@ -11,6 +12,8 @@
     justify-content: center;
     font-size: 16px;
     color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    z-index: 1;
     div{
       width: 120px;
       text-align: center;
@@ -34,12 +37,16 @@
     }
   }
   .leftCntDrag{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
+    position: relative;
+    top: 56px;
     margin-top: 18px;
     overflow-y: scroll;
+    height: 100%;
+    padding-left: 16px;
+    padding-bottom: 94px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   .dragLabel{
     display: flex;
@@ -68,11 +75,19 @@
     line-height: 44px;
     color: rgba(0, 0, 0, 0.36);
     font-size: 16px;
+    margin-left: 8px;
     cursor: pointer;
+    &:hover{
+      background: #FAFAFA;
+      color: rgba(0, 199, 149, 1);
+    }
   }
   .selfActive{
     background: #FAFAFA;
     color: rgba(0, 199, 149, 1);
+  }
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -95,6 +110,26 @@
     justify-content: space-between;
     line-height: 30px;
   }
+  .dateType{
+    width: 100%;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 0 12px;
+    display: flex;
+    // justify-content: center;
+    line-height: 30px;
+  }
+  .images{
+    width: 48px;
+    border-radius: 2px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .lines{
     width: 4px;
     height: 116px;
@@ -103,8 +138,6 @@
   .linesD{
     width: 4px;
     height: 116px;
-    background: #00C795;
-    display: none;
   }
   .tmpCnt{
     padding-top: 16px;
@@ -113,8 +146,15 @@
     margin-left: 6px;
   }
   .required{
-    margin: 16px 0 16px 6px;
+    padding: 16px 0 16px 6px;
+    display: block;
     color: rgba(255, 90, 95, 1);
+    line-height: 22px;
+  }
+  .requireds{
+    padding: 16px 0 16px 6px;
+    display: block;
+    color: #fff;
     line-height: 22px;
   }
   .operator{
@@ -137,14 +177,17 @@
   }
   &:hover{
     background: #FAFBFB;
-    opacity: 0.3;
+    // opacity: 0.3;
     .linesD{
       display: inline-block;
+      background: #00C795;
     }
     .delete{
-      opacity: 0.3;
       display: block;
     }
+  }
+  .opacity{
+    opacity: 0.3;
   }
 }
 
@@ -154,7 +197,8 @@
   min-width: 616px;
   flex: 1;
   position: relative;
-  overflow-y: scroll;
+  height: 100%;
+  overflow: hidden;
   .header{
     height: 56px;
     position: absolute;
@@ -188,16 +232,24 @@
   .contents{
     top: 56px;
     position: relative;
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 96px;
   }
 }
 
 .strRight{
   background: #ffffff;
   width: 298px;
+  height: 100%;
+  overflow: hidden;
   .header{
     height: 56px;
     display: flex;
     padding: 20px 0 16px 24px;
+    position: absolute;
+    width: 100%;
+    background: #fff;
     .tags{
       width: 64px;
       height: 22px;
@@ -210,5 +262,24 @@
       padding: 0 8px;
       margin-left: 16px;
     }
+  }
+  .contents{
+    top: 56px;
+    position: relative;
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 96px;
+  }
+}
+
+.addForm{
+  // width: 60%;
+  // background: #FAFAFB;
+  padding: 0px;
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+  :global(.ant-form-item){
+    margin-bottom: 0;
   }
 }
