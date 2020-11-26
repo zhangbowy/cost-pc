@@ -230,7 +230,14 @@ class Right extends PureComponent {
               getFieldDecorator(`name[${details.field}]`, {
                 initialValue: details.name,
               })(
-                <Input placeholder="请输入" disabled={details.disabled} onBlur={e => this.onInput(e)} />
+                <Input
+                  placeholder="请输入"
+                  disabled={
+                    details.disabled ||
+                    ((details.name.indexOf('self_') === -1) && (details.name.indexOf('expand_Field') === -1))
+                    }
+                  onBlur={e => this.onInput(e)}
+                />
               )
             }
           </Form.Item>

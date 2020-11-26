@@ -4,7 +4,7 @@
   "description": "鑫支出",
   "author": "Tan Wei",
   "scripts": {
-    "start": "umi dev",
+    "start": "PORT=8088 umi dev",
     "build": "umi build",
     "test": "umi test",
     "lint": "eslint --ext .js src",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@types/classnames": "^2.2.10",
+    "@types/echarts": "^4.9.2",
     "@types/moment": "^2.13.0",
     "@types/prop-types": "^15.7.3",
     "@types/react": "^16.9.34",

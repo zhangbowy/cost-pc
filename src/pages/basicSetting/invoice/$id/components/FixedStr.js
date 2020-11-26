@@ -10,7 +10,7 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
       ...data,
     },
     canDrag: () => {
-      return isSelect;
+      return !isSelect;
     },
     begin: () => {
       const useless = selectList.find((item) => item.id === -1);
@@ -48,9 +48,11 @@ function FixedStr({ isSelect, name, disabled, data, selectList, onChange }) {
   }
   const handleAdd = (e) => {
     e.stopPropagation();
+   if (!isSelect) {
     onChange('selectList', [...selectList, {
       ...data,
     }]);
+   }
   };
   return (
     <div
