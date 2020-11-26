@@ -20,6 +20,12 @@ import styles from './index.scss';
 const time =  getDateUtil(new Date().getTime()).split('-');
 const startDate = `${time[0]}-${  time[1]  }-01 00:00:01`;
 const { MonthPicker } = DatePicker;
+
+const getMaxDay = (year,month) => {
+  const temp = new Date(year,month,'0');
+  return temp.getDate();
+};
+
 class EchartsTest extends Component {
 
   state={
@@ -63,15 +69,10 @@ class EchartsTest extends Component {
       }
     }
 
-    static getMaxDay(year,month){
-      const temp = new Date(year,month,'0');
-      return temp.getDate();
-    }
-
     setDateType(date){
       this.setState({dateType: date});
       if(date === 0){
-        this.monthChage(this,this.state.defaultMonth);
+        this.monthChage(this.state.defaultMonth);
       }else if(date===1){
         this.getQuarter(this.state.defaultQuarter,true);
       }else{
@@ -97,13 +98,13 @@ class EchartsTest extends Component {
       });
     }
 
-    monthChage(that,str){
+    monthChage(str){
       const start = `${str}-01 00:00:01`;
-      const end = `${str  }-${  that.getMaxDay(str.split('-')[0],str.split('-')[1]) } 23:59:59`;
+      const end = `${str  }-${  getMaxDay(str.split('-')[0],str.split('-')[1]) } 23:59:59`;
       const startTime = new Date(start).getTime();
       const endTime = new Date(end).getTime();
-      that.setState({ startTime, endTime },() => {
-        that.loadEchart();
+      this.setState({ startTime, endTime },() => {
+        this.loadEchart();
         this.loadOverview();
       });
     }
@@ -203,7 +204,7 @@ class EchartsTest extends Component {
                   color: this.state.colorArr[this.state.type]
                 }
               },
-              showSymbol: false
+              showSymbol: data.length === 1
           }]
         };
       // 绘制图表
@@ -215,7 +216,6 @@ class EchartsTest extends Component {
     loadOverview(){
       const { startTime, endTime, dateType } = this.state;
       post(api.overview,{dateType,startTime,endTime}).then(res => {
-        console.log(33333,res);
         this.setState({overviewDate: res});
       });
     }
@@ -239,7 +239,7 @@ class EchartsTest extends Component {
                   dateType===2 &&
                     <YearPicker onChange={(str) => this.yearChange(str)} defaultValue={defaultYear} />
                   || dateType===0 && 
-                    <MonthPicker allowClear={false} onChange={(_,str) => this.monthChage(this,str)} defaultValue={moment(defaultMonth)} /> 
+                    <MonthPicker allowClear={false} onChange={(_,str) => this.monthChage(str)} defaultValue={moment(defaultMonth)} /> 
                   || dateType===1 &&
                     <QuarterPicker onChange={(str) => this.quarterChage(str)} value={defaultQuarter} />
                 }
@@ -248,13 +248,13 @@ class EchartsTest extends Component {
           </div>
           <div className={styles.showPanelBox}>
             {
-              overviewDate.map(item => {
+              overviewDate.map((item) => {
                 return (
-                  <div className={styles.showPanel}>
+                  <div className={styles.showPanel} key={Math.random()}>
                     <div className={`${styles.showPanelTit} m-b-8`}>{item.type===0?'报销支出':'借款支出'}</div>
                     <div className={`${styles.showPanelNum} m-b-8`}>
                       ¥{(item.totleSum/100).toFixed(2)}
-                      <span className={styles.subText}>{item.type===0?'（待还 ':'（含核销 '}￥{(item.processSum/100).toFixed(2)}）</span>
+                      <span className={styles.subText}>{item.type===0?'（含核销 ':'（待还 '}￥{(item.processSum/100).toFixed(2)}）</span>
                     </div>
                     <div className={styles.bottom}>
                       <span className="dis-inlineblock">
@@ -292,13 +292,13 @@ class EchartsTest extends Component {
             </div>
           </div>
           <div id="main" style={{ width: '100%', minHeight: 425,background:'#fff' }} />
-          <div className={styles.ballbox} >
+          {/* <div className={styles.ballbox} >
             <span className={styles.ball} style={{background:this.state.colorArr[1]}} />
             借款支出
             <span style={{width:'15px',display:'inline-block'}} />
             <span className={styles.ball} style={{background:this.state.colorArr[0]}} />
             报销支出
-          </div>
+          </div> */}
         </div>
       );
     }

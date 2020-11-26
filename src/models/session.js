@@ -39,17 +39,17 @@ export default {
       //   type:1,
       //   url:'statistics_summary'
       // });
-      response.push({
-        id: '4705310700739333467',
-        icon: 'iconbaoxiaodanguanli',
-        isAll:false,
-        menuName:'统计概览',
-        parentId:0,
-        perms:'',
-        sort:29,
-        type:1,
-        url:'statistics_overview'
-      });
+      // response.push({
+      //   id: '4705310700739333467',
+      //   icon: 'iconbaoxiaodanguanli',
+      //   isAll:false,
+      //   menuName:'统计概览',
+      //   parentId:0,
+      //   perms:'',
+      //   sort:29,
+      //   type:1,
+      //   url:'statistics_overview'
+      // });
       const menus = treeConvert({
         rootId: 0,
         pId: 'parentId',

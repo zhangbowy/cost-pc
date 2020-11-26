@@ -12,6 +12,10 @@ class UserSelector extends PureComponent {
     placeholder: PropTypes.string,
     invalid: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
     disabled: PropTypes.bool,
+    isInput: PropTypes.bool
+  }
+
+  static defaultProps  = {
     isInput: true
   }
 
