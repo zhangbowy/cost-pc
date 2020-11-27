@@ -61,7 +61,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList }) {
 
   const handleAdd = (e) => {
     e.stopPropagation();
-    changeCardList('selectList', [...cardList, {
+    changeCardList([...cardList, {
       name,
       fieldType,
       field: idGenerator(),
@@ -76,7 +76,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList }) {
   return (
     <>
       <div className={style.selfStr} ref={drag} onClick={(e) => handleAdd(e)}>
-        <i className={`${icon} iconfont m-l-16 m-r-8`} />
+        <i className={`${icon} iconfont m-l-16 m-r-8 c-black-65`} />
         <span>{name}</span>
       </div>
     </>

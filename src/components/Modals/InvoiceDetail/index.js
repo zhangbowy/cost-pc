@@ -94,28 +94,19 @@ class InvoiceDetail extends Component {
           supplierAccountVo: details.supplierAccountVo || {},
         });
       }
-      this.props.dispatch({
-        type: 'global/djDetail',
-        payload: {
-          id: details.invoiceTemplateId,
-          templateType
-        }
-      }).then(() => {
-        const { djDetail } = this.props;
-          const showObj = {};
-          if (djDetail.showField) {
-            const arr = djDetail.showField;
-            arr.forEach(it => {
-              showObj[it.field] = {...it};
-            });
-          }
-          this.setState({
-            showFields: showObj,
-          });
-          this.setState({
-            visible: true,
-            details,
-          });
+      const showObj = {};
+      if (details.showField) {
+        const arr = JsonParse(details.showField);
+        arr.forEach(it => {
+          showObj[it.field] = {...it};
+        });
+      }
+      this.setState({
+        showFields: showObj,
+      });
+      this.setState({
+        visible: true,
+        details,
       });
     });
 
@@ -215,7 +206,7 @@ class InvoiceDetail extends Component {
     this.props.dispatch({
       type: url,
       payload: {
-        ...params
+        ...params,
       }
     }).then(() => {
       console.log(options);
@@ -337,57 +328,58 @@ class InvoiceDetail extends Component {
       dataIndex: 'operate',
       render: (_, record) => (
         <CostDetails record={record}>
-          <span record={record} className="sub-color">
+          <span record={record} className="sub-color" style={{ cursor: 'pointer' }}>
             查看
           </span>
         </CostDetails>
       ),
       width: '140px',
-      fixed: 'right'
+      fixed: 'right',
+      className: 'fixCenter'
     }];
-    if (category && category.length > 0 ) {
-      const arr = [];
-      category.forEach(it => {
-        if (it.expandCostDetailFieldVos && (it.expandCostDetailFieldVos.length > 0)) {
-          const its = it.expandCostDetailFieldVos.map(item => {
-              return {
-                ...item,
-                title: item.name,
-                dataIndex: item.field,
-                render: (_, record) => {
-                  console.log('InvoiceDetail -> render -> records', record);
-                  let texts = record[item.field];
-                  if (record.dateType) {
-                    texts = '';
-                  }else if (record.startTime) {
-                    texts = record.endTime ?
-                    `${moment(Number(record.startTime)).format('YYYY-MM-DD')}-${moment(Number(record.endTime)).format('YYYY-MM-DD')}`
-                    :
-                    `${moment(Number(record.startTime)).format('YYYY-MM-DD')}`;
-                  }
-                  return (
-                    <span>
-                      <Tooltip placement="topLeft" title={texts || ''} arrowPointAtCenter>
-                        <span className="eslips-2">{texts}</span>
-                      </Tooltip>
-                    </span>
-                  );
-                }
-              };
-          });
-          arr.push(...its);
-        }
-      });
-      const obj = {};
-      const per = arr.reduce((cur,next) => {
-        if (!obj[next.field]) {
-          obj[next.field] = true;
-          cur.push(next);
-        }
-        return cur;
-      },[]);
-      columns.splice(2, 0, ...per);
-    }
+    // if (category && category.length > 0 ) {
+    //   const arr = [];
+    //   category.forEach(it => {
+    //     if (it.expandCostDetailFieldVos && (it.expandCostDetailFieldVos.length > 0)) {
+    //       const its = it.expandCostDetailFieldVos.map(item => {
+    //           return {
+    //             title: item.name,
+    //             dataIndex: item.field,
+    //             render: (_, itField) => {
+    //               console.log('InvoiceDetail -> render -> records', itField);
+    //               let texts = itField[item.field];
+    //               if (itField.dateType) {
+    //                 texts = '';
+    //               }else if (itField.startTime) {
+    //                 console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
+    //                 texts = itField.endTime ?
+    //                 `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
+    //                 :
+    //                 `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}`;
+    //               }
+    //               return (
+    //                 <span>
+    //                   <Tooltip placement="topLeft" title={texts || ''} arrowPointAtCenter>
+    //                     <span className="eslips-2">{texts}</span>
+    //                   </Tooltip>
+    //                 </span>
+    //               );
+    //             }
+    //           };
+    //       });
+    //       arr.push(...its);
+    //     }
+    //   });
+    //   const obj = {};
+    //   const per = arr.reduce((cur,next) => {
+    //     if (!obj[next.field]) {
+    //       obj[next.field] = true;
+    //       cur.push(next);
+    //     }
+    //     return cur;
+    //   },[]);
+    //   columns.splice(2, 0, ...per);
+    // }
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -545,63 +537,73 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.deptName}</span>
             </Col>
             {
-              showFields.note && showFields.note.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
-                  <span className="fs-14 c-black-65">{details.note}</span>
-                </div>
-              </Col>
+              showFields.note && showFields.note.status ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
+                    <span className="fs-14 c-black-65">{details.note}</span>
+                  </div>
+                </Col>
+                :
+                null
             }
             {
-              showFields.receiptId && showFields.receiptId.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
-                  <span className="fs-14 c-black-65" style={{flex: 1}}>
-                    <span className="m-r-8">{ receipt.name }</span>
-                    { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
-                    <span className="m-r-8">{ receipt.bankName }</span>
-                    {receipt.account}
-                  </span>
-                </div>
-              </Col>
+              showFields.receiptId && showFields.receiptId.status ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>收款账户：</span>
+                    <span className="fs-14 c-black-65" style={{flex: 1}}>
+                      <span className="m-r-8">{ receipt.name }</span>
+                      { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
+                      <span className="m-r-8">{ receipt.bankName }</span>
+                      {receipt.account}
+                    </span>
+                  </div>
+                </Col>
+                :
+                null
             }
             {
-              showFields.project && showFields.project.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
-                  <span className="fs-14 c-black-65" style={{flex: 1}}>
-                    {details.projectName}
-                  </span>
-                </div>
-              </Col>
+              showFields.project && showFields.project.status ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
+                    <span className="fs-14 c-black-65" style={{flex: 1}}>
+                      {details.projectName}
+                    </span>
+                  </div>
+                </Col>
+                :
+                null
             }
             {
-              showFields.supplier && showFields.supplier.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
-                  <span className="fs-14 c-black-65" style={{flex: 1}}>
-                    {details.supplierName}
-                  </span>
-                </div>
-              </Col>
+              showFields.supplier && showFields.supplier.status ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
+                    <span className="fs-14 c-black-65" style={{flex: 1}}>
+                      {details.supplierName}
+                    </span>
+                  </div>
+                </Col>
+                :
+                null
             }
             {
-              showFields.supplier && showFields.supplier.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
-                  <span className="fs-14 c-black-65" style={{flex: 1}}>
-                    <span className="m-r-8">{ supplierAccountVo.supplierAccountName }</span>
-                    { supplierAccountVo.accountType ? getArrayValue(supplierAccountVo.accountType, accountType) : ''}
-                    <span className="m-r-8">{ supplierAccountVo.bankName }</span>
-                    {supplierAccountVo.supplierAccount}
-                  </span>
-                </div>
-              </Col>
+              showFields.supplier && showFields.supplier.status ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商账户：</span>
+                    <span className="fs-14 c-black-65" style={{flex: 1}}>
+                      <span className="m-r-8">{ supplierAccountVo.supplierAccountName }</span>
+                      { supplierAccountVo.accountType ? getArrayValue(supplierAccountVo.accountType, accountType) : ''}
+                      <span className="m-r-8">{ supplierAccountVo.bankName }</span>
+                      {supplierAccountVo.supplierAccount}
+                    </span>
+                  </div>
+                </Col>
+                :
+                null
             }
             {
               details.reasonForRejection &&
@@ -617,73 +619,103 @@ class InvoiceDetail extends Component {
             {
               details.expandSubmitFieldVos &&
               (details.expandSubmitFieldVos.length > 0) &&
-              details.expandSubmitFieldVos.map(it => (
-                <Col span={8} className="m-t-16" key={it.field}>
-                  <div style={{display: 'flex'}}>
-                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
-                    <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                      {it.msg}
-                    </span>
-                  </div>
-                </Col>
-              ))
+              details.expandSubmitFieldVos.map(itField => {
+                let texts = itField.msg;
+                if (itField.dateType) {
+                  texts = '';
+                }
+                if (itField.startTime) {
+                console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
+                texts = itField.endTime ?
+                `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
+                  :
+                  `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}`;
+                }
+                return (
+                  <Col span={8} className="m-t-16" key={itField.field}>
+                    <div style={{display: 'flex'}}>
+                      <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{itField.name}：</span>
+                      <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                        {texts}
+                      </span>
+                    </div>
+                  </Col>
+                );
+              })
             }
             {
               details.selfSubmitFieldVos &&
               (details.selfSubmitFieldVos.length > 0) &&
-              details.selfSubmitFieldVos.map(it => (
-                <Col span={8} className="m-t-16" key={it.field}>
+              details.selfSubmitFieldVos.map(itField => {
+                let texts = itField.msg;
+                if (itField.dateType) {
+                  texts = '';
+                }
+                if (itField.startTime) {
+                console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
+                texts = itField.endTime ?
+                `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
+                  :
+                  `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}`;
+                }
+                return (
+                  <Col span={8} className="m-t-16" key={itField.field}>
+                    <div style={{display: 'flex'}}>
+                      <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{itField.name}：</span>
+                      <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                        {texts}
+                      </span>
+                    </div>
+                  </Col>
+                );
+              })
+            }
+            {
+              showFields.imgUrl && showFields.imgUrl.status ?
+                <Col span={8} className="m-t-16">
                   <div style={{display: 'flex'}}>
-                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{it.name}：</span>
-                    <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                      {it.msg}
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
+                    <span className={cs(style.imgUrl, style.wraps)}>
+                      {
+                        details.imgUrl && details.imgUrl.length ? details.imgUrl.map((it, index) => (
+                          <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.imgUrl, index)}>
+                            <img alt="图片" src={it.imgUrl} className={style.images} />
+                          </div>
+                        ))
+                        :
+                        '-'
+                      }
                     </span>
                   </div>
                 </Col>
-              ))
+                :
+                null
             }
             {
-              showFields.imgUrl && showFields.imgUrl.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
-                  <span className={cs(style.imgUrl, style.wraps)}>
-                    {
-                      details.imgUrl && details.imgUrl.length ? details.imgUrl.map((it, index) => (
-                        <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.imgUrl, index)}>
-                          <img alt="图片" src={it.imgUrl} className={style.images} />
-                        </div>
-                      ))
-                      :
-                      '-'
-                    }
-                  </span>
-                </div>
-              </Col>
-            }
-            {
-              showFields.fileUrl && showFields.fileUrl.status &&
-              <Col span={8} className="m-t-16">
-                <div style={{display: 'flex'}}>
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
-                  <span className={cs('fs-14', 'c-black-65', style.file)}>
-                    {
-                      details.fileUrl && details.fileUrl.length ? details.fileUrl.map(it => (
-                        <div className={style.files} onClick={() => this.previewFiles(it)}>
-                          <img
-                            className='attachment-icon'
-                            src={fileIcon[it.fileType]}
-                            alt='attachment-icon'
-                          />
-                          <p key={it.fileId} style={{marginBottom: '8px'}}>{it.fileName}</p>
-                        </div>
-                      ))
-                      :
-                      <span>-</span>
-                    }
-                  </span>
-                </div>
-              </Col>
+              showFields.fileUrl && showFields.fileUrl.status ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
+                    <span className={cs('fs-14', 'c-black-65', style.file)}>
+                      {
+                        details.fileUrl && details.fileUrl.length ? details.fileUrl.map(it => (
+                          <div className={style.files} onClick={() => this.previewFiles(it)}>
+                            <img
+                              className='attachment-icon'
+                              src={fileIcon[it.fileType]}
+                              alt='attachment-icon'
+                            />
+                            <p key={it.fileId} style={{marginBottom: '8px'}}>{it.fileName}</p>
+                          </div>
+                        ))
+                        :
+                        <span>-</span>
+                      }
+                    </span>
+                  </div>
+                </Col>
+                :
+                null
             }
           </Row>
           {

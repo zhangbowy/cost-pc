@@ -97,11 +97,11 @@ class Share extends Component {
       });
     }
     return (
-      <>
+      <div style={{marginTop: '32px'}}>
         {
           shareList.map(item => (
             <div key={item.key} style={{display: 'flex'}}>
-              <p classlabel={style.checkT}>{item.value}：</p>
+              <p className={style.checkT}>{item.value}：</p>
               <Checkbox.Group defaultValue={item.checked} disabled={item.disabled}>
                 {
                   item.children.map(it => (
@@ -119,7 +119,7 @@ class Share extends Component {
             </div>
           ))
         }
-      </>
+      </div>
     );
   }
 }

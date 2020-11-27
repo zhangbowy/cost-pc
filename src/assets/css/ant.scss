@@ -164,11 +164,31 @@
     line-height: 28px!important;
   }
   .titleMenu{
-    border-bottom: none;
+    border-bottom: none!important;
   }
   .titleMenu .ant-menu-item{
     padding: 0;
     margin-right: 42px;
+    &:hover{
+      color: rgba(0, 199, 149, 1)!important;
+      .circle{
+        background: rgba(0, 199, 149, 1)!important;
+      }
+    }
+    .circle{
+      width: 20px;
+      height: 20px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 50%;
+      color: #fff;
+      display: inline-block;
+      text-align: center;
+      line-height: 20px;
+      margin-right: 8px;
+    }
+    .active{
+      background: rgba(0, 199, 149, 1)!important;
+    }
   }
 
   .addWidth {

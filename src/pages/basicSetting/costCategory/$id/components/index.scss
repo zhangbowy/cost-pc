@@ -57,7 +57,7 @@
     border: 1px solid #ffffff;
     padding: 0 8px 0 16px;
     margin-bottom: 8px;
-    cursor: pointer;
+    cursor: move;
     &:hover{
       border: 1px solid #E9E9E9;
       border-radius: 4px;
@@ -66,6 +66,7 @@
   .dragActive{
     border: 1px solid #E9E9E9;
     border-radius: 4px;
+    cursor: unset;
   }
   .selfStr{
     width: 192px;
@@ -76,7 +77,7 @@
     color: rgba(0, 0, 0, 0.36);
     font-size: 16px;
     margin-left: 8px;
-    cursor: pointer;
+    cursor: move;
     &:hover{
       background: #FAFAFA;
       color: rgba(0, 199, 149, 1);
@@ -99,8 +100,9 @@
   background: #ffffff;
   display: flex;
   position: relative;
+  cursor: move;
   .inputs{
-    width: 100%;
+    // width: 100%;
     height: 32px;
     background: #FFFFFF;
     border-radius: 4px;
@@ -109,9 +111,12 @@
     display: flex;
     justify-content: space-between;
     line-height: 30px;
+    max-width: 480px;
+    min-width: 280px;
   }
   .dateType{
-    width: 100%;
+    max-width: 480px;
+    min-width: 280px;
     height: 32px;
     background: #FFFFFF;
     border-radius: 4px;
@@ -141,7 +146,7 @@
   }
   .tmpCnt{
     padding-top: 16px;
-    margin-right: 64px;
+    margin-right: 24px;
     flex: 1;
     margin-left: 6px;
   }
@@ -161,6 +166,7 @@
     position: absolute;
     top: 12px;
     right: 12px;
+    display: flex;
     .delete{
       width: 24px;
       height: 24px;
@@ -174,13 +180,17 @@
         color: #ffffff;
       }
     }
+    .drag{
+      background: rgba(0, 199, 149, 1);
+      cursor: move;
+    }
   }
   &:hover{
     background: #FAFBFB;
     // opacity: 0.3;
     .linesD{
       display: inline-block;
-      background: #00C795;
+      // background: #00C795;
     }
     .delete{
       display: block;
@@ -188,13 +198,17 @@
   }
   .opacity{
     opacity: 0.3;
+    cursor: default!important;
   }
+}
+.activeStr {
+  background: #FAFBFB;
 }
 
 .strCenter {
   background: #ffffff;
   margin: 0 24px;
-  min-width: 616px;
+  min-width: 366px;
   flex: 1;
   position: relative;
   height: 100%;
@@ -212,10 +226,11 @@
       align-items: center;
       width: 211px;
       height: 24px;
+      line-height: 24px;
       margin-left: 14px;
-      padding: 12px;
+      padding: 0 12px;
       background: rgba(0, 199, 149, 0.08);
-      border-radius: 20px;
+      border-radius: 20px 20px 20px 0px;
       // opacity: 0.08;
       color: rgba(0, 199, 149, 1);
       :global(.iconfont) {
@@ -243,6 +258,7 @@
   width: 298px;
   height: 100%;
   overflow: hidden;
+  position: relative;
   .header{
     height: 56px;
     display: flex;
@@ -251,7 +267,7 @@
     width: 100%;
     background: #fff;
     .tags{
-      width: 64px;
+      // width: 24px;
       height: 22px;
       background: #F5F5F5;
       border-radius: 4px;
@@ -282,4 +298,14 @@
   :global(.ant-form-item){
     margin-bottom: 0;
   }
+}
+
+.checkT{
+  width: 70px;
+  margin-bottom: 28px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
 }

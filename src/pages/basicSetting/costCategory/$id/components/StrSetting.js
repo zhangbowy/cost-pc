@@ -3,7 +3,7 @@
  * overview: 整个拖拽演示界面
  */
 
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle } from 'react';
 import cs from 'classnames';
 import style from './index.scss';
 import StrCenter from './Center';
@@ -13,10 +13,10 @@ import SelfStr from './SelfStr';
 
 const title = [{
   key: 'show',
-  value: '共有库'
+  value: '公用库'
 }, {
   key: 'self',
-  value: '自定义字段'
+  value: '自定义'
 }];
 const selfStr = [{
   key: '0',
@@ -40,15 +40,21 @@ const selfStr = [{
   icon: 'iconriqi',
 }];
 
-const StrSetting = ({ fieldList, selectList, onChangeData, selectId }) => {
+const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, type }) => {
   const [cardList, setCardList] = useState(selectList);
   const [active, setActive] = useState('show');
   const [dragId, setDragId] = useState(selectId);
   let formRef = null;
-  // const [, drange] = useDrag({
-  //   item: { type: 'Box' },
-  // });
 
+  useImperativeHandle(childRef, () => ({
+    getRightParams: () => {
+      let val = null;
+      if (formRef && formRef.getFormItems) {
+        val = formRef.getFormItems();
+      }
+      return val;
+    }
+  }));
   const onHandle = (e) => {
     setActive(e);
   };
@@ -57,9 +63,18 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId }) => {
     onChangeData('selectList', [...list]);
   };
 
-  const changeDragId = (id) => {
-    if (formRef && formRef.getFormItems) {
-      console.log(formRef.getFormItems());
+  const changeDragId = (id, flag) => {
+    if (flag && formRef && formRef.getFormItems) {
+      const newValues = formRef.getFormItems();
+      console.log('changeDragId -> newValues', newValues);
+      if (!newValues) {
+        return;
+      }
+      const index = cardList.findIndex(it => it.field === newValues.field);
+      const newArr = [...cardList];
+      newArr.splice(index, 1, newValues);
+      console.log('changeDragId -> newArr', newArr);
+      changeCardList(newArr);
     }
     setDragId(id);
   };
@@ -92,9 +107,9 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId }) => {
                 {
                   fieldList.map(item => (
                     <Box
+                      {...item}
                       key={item.field}
                       data={{...item}}
-                      {...item}
                       cardList={cardList}
                       changeCardList={changeCardList}
                     />
@@ -106,9 +121,9 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId }) => {
                 {
                   selfStr.map(item => (
                     <SelfStr
+                      {...item}
                       key={item.key}
                       data={{...item}}
-                      {...item}
                       cardList={cardList}
                       changeCardList={changeCardList}
                     />
@@ -126,7 +141,6 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId }) => {
               <i className="iconfont iconinfo-cirlce" />
               <span>请拖拽左侧添加控件</span>
             </span>
-            <i className="iconfont iconclose" />
           </div>
         </div>
         <StrCenter
@@ -141,6 +155,7 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId }) => {
         selectList={cardList}
         onChange={changeCardList}
         selectId={dragId}
+        type={type}
       />
     </div>
   );

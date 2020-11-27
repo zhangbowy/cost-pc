@@ -5,21 +5,24 @@
  * overview: 根据放入 Box 生成的 Card 组件
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
 import style from './index.scss';
+import { defaultString } from '../../../../../utils/constants';
 
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 
-const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fieldType, changeDragId, onDelete, disabled }) => {
+const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fieldType, changeDragId, onDelete, disabled, data }) => {
   // const ref = useRef(null);
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
     }),
+    canDrag: () => !defaultString.includes(field),
     // item 中包含 index 属性，则在 drop 组件 hover 和 drop 是可以根据第一个参数获取到 index 值
-    item: { type: 'box', index, field },
+    item: { type: 'box', index, field, ...data, },
     end: (dropResult, monitor) => {
       const didDrop = monitor.didDrop();
       const { field: dropId } = monitor.getItem();
@@ -32,9 +35,10 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
 
   const [, drop] = useDrop({
     accept: 'box',
+    canDrop: () => !defaultString.includes(field),
     hover(item, monitor) {
       console.log(monitor);
-      if (item.field !== field) {
+      if (item.field !== field && !defaultString.includes(field)) {
         const hoverIndex = findCard(item.field);
         moveCard(hoverIndex, index);
       }
@@ -46,14 +50,23 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
    * 使用 dragPreview 包裹组件，可以实现拖动时预览该组件的效果
    */
   const types = Number(fieldType);
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, []);
   return (
     <div
       ref={(node) => drag(drop(node))}
-      className={style.StrTemplates}
-      style={{opacity}}
+      className={
+        dragId === field ?
+        cs(style.StrTemplates, style.activeStr) : style.StrTemplates
+      }
+      style={{
+        opacity,
+        cursor: defaultString.includes(field) ? 'default' : 'move',
+      }}
       onClick={(e) => {
         e.stopPropagation();
-        changeDragId(field);
+        changeDragId(field, true);
       }}
     >
       {/* { field !== -1 && drag && drag(<img alt="" src={OrderListSvg} style={svgStyle} />) } */}
@@ -96,13 +109,25 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
       </div>
       <div className={style.operator}>
         <p
-          className={disabled ? cs(style.delete,style.opacity) : style.delete}
+          className={
+            defaultString.includes(field) ?
+            cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
+          }
+          style={{ display: dragId === field ? 'block' : '' }}
           onClick={(e) => {
             e.stopPropagation();
             onDelete(field, disabled);
           }}
         >
           <i className="iconfont iconshanchu" />
+        </p>
+        <p
+          className={defaultString.includes(field) ?
+          cs(style.delete,style.opacity, style.drag) :
+          cs(style.delete, style.drag)}
+          style={{ display: dragId === field ? 'block' : '' }}
+        >
+          <i className="iconfont icontuozhuai" />
         </p>
       </div>
     </div>

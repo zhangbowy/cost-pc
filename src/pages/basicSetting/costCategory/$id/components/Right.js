@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import { Form, Input, Checkbox, Divider, Select, Modal, Button } from 'antd';
 import style from './index.scss';
-import { dataType } from '../../../../../utils/constants';
+import { dataType, defaultString } from '../../../../../utils/constants';
 import { timeStampToHex } from '../../../../../utils/common';
 
 let id = 1000;
@@ -91,11 +91,38 @@ class Right extends PureComponent {
 
   getFormItems = () => {
     const { form } = this.props;
+    const { details } = this.state;
+    let val = null;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log(values);
+        val = {
+          ...details,
+          isWrite: !!values.isWrite[details.field].length,
+          name: values.name[details.field],
+        };
+        if (Number(details.fieldType) === 2) {
+          const newArr = [];
+          if (values.keys) {
+            const keys = values.keys.map(it => it.id);
+            keys.forEach(it => {
+              newArr.push(values[it]);
+            });
+          }
+          console.log('Right -> getFormItems -> newArr', newArr);
+          Object.assign(val, {
+            options: newArr,
+          });
+        } else if (Number(details.fieldType) === 5) {
+          Object.assign(val, {
+            dateType: values.dataType[details.field],
+          });
+        }
+      } else {
+        val = null;
       }
     });
+    console.log('Right -> getFormItems -> val', val);
+    return val;
   }
 
   onChangeMore = (e) => {
@@ -185,7 +212,7 @@ class Right extends PureComponent {
 
   render() {
     const { details, list } = this.state;
-    const { selectId } = this.props;
+    const { selectId, type } = this.props;
 
     const {
       form: { getFieldDecorator, getFieldValue },
@@ -203,7 +230,10 @@ class Right extends PureComponent {
           {
             getFieldDecorator(`${it.id}`, {
               initialValue:it.name,
-              rules: [{ max: 15, message: '限制15个字' }]
+              rules: [
+                { max: 15, message: '限制15个字' },
+                { required: true, message: '请输入' }
+              ]
             })(
               <Input placeholder="请输入选项" style={{width: '232px'}} />
             )
@@ -221,7 +251,7 @@ class Right extends PureComponent {
           <span className="fs-16 c-black-85 fw-500">{details.name}</span>
           {
             details.field.indexOf('self_') === -1 &&
-            <span className={style.tags}>{details.field.indexOf('expand_field') === -1 ? '默认字段' : '公用'}</span>
+            <span className={style.tags}>{defaultString.includes(details.field) ? '默认字段' : '公用'}</span>
           }
         </div>
         <div className={style.contents}>
@@ -230,18 +260,30 @@ class Right extends PureComponent {
               {
                 getFieldDecorator(`name[${details.field}]`, {
                   initialValue: details.name,
+                  rules: [
+                    { max: 10, message: '限制10个字' },
+                    { required: true, message: '请输入字段标题' }
+                  ]
                 })(
                   <Input
                     placeholder="请输入"
                     disabled={
                       details.disabled ||
-                      (details.field.indexOf('self_') === -1)
+                      (details.field.indexOf('self_') === -1 &&
+                      details.field.indexOf('expand_') === -1)
                     }
                     onBlur={e => this.onInput(e)}
                   />
                 )
               }
             </Form.Item>
+            {
+              details.field.indexOf('expand_') > -1 &&
+              <p style={{ marginTop: '-20px', marginBottom: '8px' }}>
+                <i className="iconfont iconxinxitishi warn fs-16 m-r-4" style={{verticalAlign: 'middle'}} />
+                <span className="fs-12 warn" style={{verticalAlign: 'middle'}}>公用字段标题修改后将应用到所有{type === 'invoice' ? '单据模板' : '费用类别'}</span>
+              </p>
+            }
             {
               Number(details.fieldType) === 2 && !details.disabled &&
               <div className={style.moveForm}>
@@ -259,21 +301,6 @@ class Right extends PureComponent {
                 </Button>
               </div>
             }
-            <Form.Item label="校验">
-              {
-                getFieldDecorator(`isWrite[${details.field}]`, {
-                  initialValue: details.isWrite ? [details.isWrite] : [],
-                })(
-                  <Checkbox.Group
-                    style={{ width: '100%' }}
-                    disabled={details.disabled}
-                    onChange={this.onChange}
-                  >
-                    <Checkbox value>必填</Checkbox>
-                  </Checkbox.Group>
-                )
-              }
-            </Form.Item>
             {
               ((details.fieldType === '5') || (details.fieldType === 5)) &&
               <Form.Item label="类型">
@@ -292,6 +319,21 @@ class Right extends PureComponent {
                 }
               </Form.Item>
             }
+            <Form.Item label="校验">
+              {
+                getFieldDecorator(`isWrite[${details.field}]`, {
+                  initialValue: details.isWrite ? [details.isWrite] : [],
+                })(
+                  <Checkbox.Group
+                    style={{ width: '100%' }}
+                    disabled={details.disabled}
+                    onChange={this.onChange}
+                  >
+                    <Checkbox value>必填</Checkbox>
+                  </Checkbox.Group>
+                )
+              }
+            </Form.Item>
             {
               details.field && (details.field.indexOf('self_') > -1) &&
               <>

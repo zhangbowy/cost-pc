@@ -313,16 +313,20 @@ class AddInvoice extends Component {
       });
     }
     if (djDetails.expandField) {
-      let newExpand = detail.expandSubmitFieldVos || [];
+      let newExpand =  detail.expandSubmitFieldVos || [];
       if (detail.selfSubmitFieldVos) {
         newExpand = [...newExpand, ...detail.selfSubmitFieldVos];
       }
+      console.log('AddInvoice -> onInit -> newExpand', newExpand);
+
       djDetails.expandField.forEach(it => {
         const index = newExpand && newExpand.findIndex(its => its.field === it.field);
         if (index > -1 && it.status) {
           expandField.push({
             ...it,
             msg: newExpand[index].msg,
+            startTime: newExpand[index].startTime || '',
+            endTime: newExpand[index].endTime || '',
           });
         } else if (it.status) {
           expandField.push({
@@ -906,21 +910,20 @@ class AddInvoice extends Component {
         const selfSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-          console.log('handleOk -> expandField', expandField);
+            const obj = {
+              ...it,
+              msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+            };
+            if (Number(it.fieldType) === 5 && val[it.field]) {
+              Object.assign(obj, {
+                startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
+              });
+            }
             if (it.status && it.field.indexOf('expand_') > -1) {
-              expandSubmitFieldVos.push({
-                ...it,
-                field: it.field,
-                name: it.name,
-                msg: val[it.field],
-              });
+              expandSubmitFieldVos.push(obj);
             } else if (it.status && it.field.indexOf('self_') > -1){
-              selfSubmitFieldVos.push({
-                ...it,
-                field: it.field,
-                name: it.name,
-                msg: val[it.field],
-              });
+              selfSubmitFieldVos.push(obj);
             }
           });
         }
@@ -1057,20 +1060,20 @@ class AddInvoice extends Component {
     const selfSubmitFieldVos = [];
     if (expandField && expandField.length > 0) {
       expandField.forEach(it => {
+        const obj = {
+          ...it,
+          msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+        };
+        if (Number(it.fieldType) === 5 && val[it.field]) {
+          Object.assign(obj, {
+            startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+            endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
+          });
+        }
         if (it.status) {
-          expandSubmitFieldVos.push({
-            ...it,
-            field: it.field,
-            name: it.name,
-            msg: val[it.field],
-          });
+          expandSubmitFieldVos.push(obj);
         } else if (it.status && it.field.indexOf('self_') > -1){
-          selfSubmitFieldVos.push({
-            ...it,
-            field: it.field,
-            name: it.name,
-            msg: val[it.field],
-          });
+          selfSubmitFieldVos.push(obj);
         }
       });
     }
@@ -1541,8 +1544,6 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
     } = this.state;
-    console.log('render -> showField', showField);
-
 
     const formItemLayout = {
       labelCol: {
