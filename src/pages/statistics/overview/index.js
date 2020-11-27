@@ -14,6 +14,7 @@ import { post } from '@/utils/request';
 import getDateUtil from '@/utils/tool';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
+import { eventChange } from '@/utils/util';
 import api from './services';
 import styles from './index.scss';
 
@@ -33,7 +34,7 @@ class EchartsTest extends Component {
     colorArr : ['rgba(3,122,254,1)','rgba(0,199,149,1)'],
     startTime: new Date(startDate).getTime(),
     endTime: new Date().getTime(),
-    type: 1,
+    type: 0,
     dateType: 0,
     defaultQuarter: this.getQuarter(new Date()),
     defaultMonth: `${time[0]}-${time[1]}`,
@@ -41,8 +42,11 @@ class EchartsTest extends Component {
   }
 
     componentDidMount() {
-        this.loadEchart();
-        this.loadOverview();
+      console.log('eventChange======',eventChange);
+      console.log(5555);
+      this.loadEchart();
+      this.loadOverview();
+      eventChange(() => {console.log(22222222,this);const { myChart } = this.state;if(myChart) myChart.resize();});
     }
 
     getQuarter(date,isValue){
@@ -207,8 +211,9 @@ class EchartsTest extends Component {
               showSymbol: data.length === 1
           }]
         };
-      // 绘制图表
-      myChart.setOption(option);
+        this.setState({ myChart });
+        // 绘制图表
+        myChart.setOption(option);
         // }
       });
     }
@@ -291,7 +296,7 @@ class EchartsTest extends Component {
               </Radio.Group>
             </div>
           </div>
-          <div id="main" style={{ width: '100%', minHeight: 425,background:'#fff' }} />
+          <div id="main" style={{ width: '100%',minWidth: 500, minHeight: 425,background:'#fff' }} />
           {/* <div className={styles.ballbox} >
             <span className={styles.ball} style={{background:this.state.colorArr[1]}} />
             借款支出

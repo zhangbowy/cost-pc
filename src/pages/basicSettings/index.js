@@ -93,7 +93,7 @@ class basicSetting extends Component {
 	goMenuUrl(data){
 		console.log(this.props);
 		console.log(data);
-		this.props.history.push({pathname:data.url.replace('_','/'), state: {selectUrl: this.props.location.pathname}});
+		this.props.history.push({pathname:data.url.replace('_','/'), params: {selectUrl: this.props.location.pathname}});
 	}
 
 	render() {
