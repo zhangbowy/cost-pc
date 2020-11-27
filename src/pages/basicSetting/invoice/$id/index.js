@@ -9,8 +9,8 @@ import LabelLeft from '../../../../components/LabelLeft';
 import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
-import StrSetting from './components/StrSetting';
 import { JsonParse } from '../../../../utils/common';
+import StrSetting from '../../costCategory/$id/components/StrSetting';
 
 const basicStr = [{
   key: 'one',
@@ -277,7 +277,7 @@ class CategoryAdd extends PureComponent {
   }
 
   onCancel = () => {
-    this.props.history.push('basicSetting/invoice');
+    this.props.history.push('/basicSetting/invoice');
   }
 
   render () {
@@ -359,6 +359,7 @@ class CategoryAdd extends PureComponent {
                 fieldList={fieldList}
                 selectList={selectList}
                 onChangeData={this.onChangeData}
+                selectId="reason"
               />
             </DndProvider>
           </div>

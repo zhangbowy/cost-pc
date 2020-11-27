@@ -14,6 +14,7 @@ import { classifyShare } from '../../../../utils/constants';
 import { timeStampToHex } from '../../../../utils/common';
 // import StrSetting from '../../invoice/$id/components/StrSetting';
 import StrSetting from './components/StrSetting';
+import PreviewBox from './components/PreviewBox';
 
 const basicStr = [{
   key: 'one',
@@ -232,7 +233,7 @@ class CategoryAdd extends PureComponent {
     if (type === 'selectList') {
       const { fieldList } = this.state;
       let newArr = [...fieldList];
-      const oldField = newArr.map(it => it.field);
+      const oldField = newArr.map(it => it.field) || [];
       const add = [];
       const fields = value.map(it => {
         if (!oldField.includes(it.field) && (it.field.indexOf('expand_') > -1)) {
@@ -274,6 +275,7 @@ class CategoryAdd extends PureComponent {
     } = this.props;
     const { id } = this.props.match.params;
     const { current, shareField, selectList, fieldList, data } = this.state;
+    console.log('CategoryAdd -> render -> selectList', selectList);
     const routes = [
       {
         path: '/basicSetting/costCategory',
@@ -329,10 +331,12 @@ class CategoryAdd extends PureComponent {
           current === 'two' &&
           <div style={{height: 'calc(100% - 157px)', padding: '24px 24px 0 24px', display: 'flex'}}>
             <DndProvider backend={HTML5Backend}>
+              <PreviewBox />
               <StrSetting
                 fieldList={fieldList}
                 selectList={selectList}
                 onChangeData={this.onChangeData}
+                selectId="costCategory"
               />
             </DndProvider>
           </div>
