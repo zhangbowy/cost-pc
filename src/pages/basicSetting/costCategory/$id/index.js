@@ -5,6 +5,7 @@ import cs from 'classnames';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import treeConvert from '@/utils/treeConvert';
+import PageHead from '@/components/PageHead';
 import LabelLeft from '../../../../components/LabelLeft';
 // import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
@@ -302,10 +303,6 @@ class CategoryAdd extends PureComponent {
     const routes = [
       {
         path: '/basicSetting/costCategory',
-        breadcrumbName: '返回上一页',
-      },
-      {
-        path: '/',
         breadcrumbName: '费用类别设置',
       },
       {
@@ -316,10 +313,13 @@ class CategoryAdd extends PureComponent {
 
     return (
       <div style={{height: '100%', minWidth: '1000px'}}>
-        <PageHeader
-          title={null}
-          breadcrumb={{routes}}
-          style={{background: '#fff'}}
+        <PageHead title={
+          <PageHeader
+            title={null}
+            breadcrumb={{routes}}
+            style={{background: '#fff'}}
+          />
+        }
         />
         <div style={{background: '#fff', width: '100%'}}>
           <Menu
