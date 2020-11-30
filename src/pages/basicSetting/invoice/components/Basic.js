@@ -449,7 +449,7 @@ class Basic extends React.PureComponent {
                   <Checkbox.Group>
                     {
                       Number(templateType) === 0 &&
-                      <Checkbox value="isRelationLoan">关联借款单</Checkbox>
+                      <Checkbox value="isRelationLoan">借款核销</Checkbox>
                     }
                     <Checkbox value="isRelationApply">关联申请单</Checkbox>
                   </Checkbox.Group>

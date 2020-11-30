@@ -11,6 +11,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
+import { compare } from '../../../utils/common';
 // import TreeCatogory from './TreeCatogory';
 
 const { Option } = Select;
@@ -46,6 +47,7 @@ class AddCost extends Component {
       initDep: [],// 初始化承担部门
       costDate: 0, // 没有指定日期
       showField: {}, // 是否展示
+      newShowField: [],
       imgUrl: [],
       details: props.detail || {}, // 详细信息
       costSum: 0,
@@ -153,8 +155,12 @@ class AddCost extends Component {
                   currencySymbol: currency.currencySymbol || '¥',
                   imgUrl: detailFolder.imgUrl,
                 });
-                console.log('AddCost -> onShow -> arr', arr);
-                this.onChange(detailFolder.categoryId, 'folder', detailFolder.expandCostDetailFieldVos);
+                const expands = detailFolder.selfCostDetailFieldVos ?
+                  [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
+                  :
+                  [...detailFolder.expandCostDetailFieldVos];
+                console.log('AddCost -> onShow -> expands', expands);
+                this.onChange(detailFolder.categoryId, 'folder', expands);
                 await this.setState({
                   visible: true,
                 });
@@ -190,8 +196,11 @@ class AddCost extends Component {
                 currencySymbol: currency.currencySymbol || '¥',
                 imgUrl: detailFolder.imgUrl,
               });
-              console.log('AddCost -> onShow -> arr', arr);
-              const expands = [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos];
+              const expands = detailFolder.selfCostDetailFieldVos ?
+              [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
+              :
+              [...detailFolder.expandCostDetailFieldVos];
+              console.log('AddCost -> onShow -> expands', expands);
               this.onChange(detailFolder.categoryId, 'folder', expands);
               await this.setState({
                 visible: true,
@@ -245,6 +254,7 @@ class AddCost extends Component {
       costDetailShareVOS: [],
       costDate: 0, // 没有指定日期
       showField: {}, // 是否展示
+      newShowField: [],
       shareAmount: 0,
       costSum: 0,
       currencyId: '-1',
@@ -517,7 +527,7 @@ class AddCost extends Component {
                 startTime: expand[index].startTime || '',
                 endTime: expand[index].endTime || '',
               });
-            } else if (it.status) {
+            } else if (it.status && index === -1) {
               expands.push({ ...it });
             }
           });
@@ -535,6 +545,7 @@ class AddCost extends Component {
       }
       this.setState({
         showField: showFields,
+        newShowField: lbDetail.showField,
         costDate,
         details: detail,
         project,
@@ -622,6 +633,7 @@ class AddCost extends Component {
       costDetailShareVOS,
       imgUrl,
       showField,
+      newShowField,
       costDate,
       details,
       costSum,
@@ -632,6 +644,7 @@ class AddCost extends Component {
       currencySymbol,
       currencyId,
     } = this.state;
+    const newRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -743,134 +756,140 @@ class AddCost extends Component {
                   </Form.Item>
                 </Col>
                 {
-                  showField.costNote && showField.costNote.status ?
-                    <Col span={12}>
-                      <Form.Item label={labelInfo.costNote} {...formItemLayout}>
-                        {
-                          getFieldDecorator('note', {
-                            initialValue: details.note || '',
-                            rules: [{ required: !!(showField.costNote.isWrite), message: '请输入备注' }]
-                          })(
-                            <Input placeholder="请输入" />
-                          )
+                  newRenderField && (newRenderField.length > 0) &&
+                  newRenderField.map(it => {
+                    if (it.field && (it.field.indexOf('expand_') > -1 || it.field.indexOf('self_') > -1)) {
+                      let renderForm = null;
+                      let rule = [];
+                      let initMsg = it.msg || '';
+                      if (Number(it.fieldType) === 0) {
+                        renderForm = (<Input placeholder='请输入' />);
+                        rule = [{ max: 20, message: '限制20个字' }];
+                      } else if (Number(it.fieldType) === 1) {
+                        renderForm = (<TextArea placeholder='请输入' />);
+                        rule = [{ max: 128, message: '限制128个字' }];
+                      } else if(Number(it.fieldType) === 2) {
+                        renderForm = (
+                          <Select placeholder='请选择'>
+                            {
+                              it.options && it.options.map(iteems => (
+                                <Select.Option key={iteems}>{iteems}</Select.Option>
+                              ))
+                            }
+                          </Select>
+                        );
+                      } else if (it.fieldType === 5) {
+                        if (it.dateType === 1) {
+                          initMsg = it.startTime ? moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
+                          renderForm = (
+                            <DatePicker style={{width: '100%'}} />
+                          );
+                        } else {
+                          initMsg = it.startTime && it.endTime ?
+                              [moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(it.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
+                          renderForm = (
+                            <RangePicker
+                              style={{width: '280px' }}
+                              placeholder="请选择时间"
+                              format="YYYY-MM-DD"
+                              showTime={{
+                                hideDisabledOptions: true,
+                                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                              }}
+                            />
+                          );
                         }
-                      </Form.Item>
-                    </Col>
-                  :
-                  null
-                }
-                {
-                  showField.happenTime && showField.happenTime.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.happenTime} {...formItemLayout}>
-                      {
-                        costDate === 1 &&
-                        getFieldDecorator('time', {
-                          initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
-                          rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                        })(
-                          <DatePicker style={{width: '100%'}} />
-                        )
                       }
-                      {
-                        costDate === 2 &&
-                        getFieldDecorator('time', {
-                          initialValue: details.startTime && details.endTime ?
-                            [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
-                            :
-                            [],
-                          rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                        })(
-                          <RangePicker
-                            style={{width: '280px' }}
-                            placeholder="请选择时间"
-                            format="YYYY-MM-DD"
-                            showTime={{
-                              hideDisabledOptions: true,
-                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                            }}
-                          />
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.imgUrl && showField.imgUrl.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                      <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  expandField && (expandField.length > 0) &&
-                  expandField.map(it => {
-                    let renderForm = null;
-                    let rule = [];
-                    let initMsg = it.msg || '';
-                    if (Number(it.fieldType) === 0) {
-                      renderForm = (<Input placeholder='请输入' />);
-                      rule = [{ max: 20, message: '限制20个字' }];
-                    } else if (Number(it.fieldType) === 1) {
-                      renderForm = (<TextArea placeholder='请输入' />);
-                      rule = [{ max: 128, message: '限制128个字' }];
-                    } else if(Number(it.fieldType) === 2) {
-                      renderForm = (
-                        <Select placeholder='请选择'>
-                          {
-                            it.options && it.options.map(iteems => (
-                              <Select.Option key={iteems}>{iteems}</Select.Option>
-                            ))
-                          }
-                        </Select>
-                      );
-                    } else if (it.fieldType === 5) {
-                      if (it.dateType === 1) {
-                        initMsg = it.startTime ? moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
-                        renderForm = (
-                          <DatePicker style={{width: '100%'}} />
+                        return (
+                          <>
+                            {
+                              it.status ?
+                                <Col span={12}>
+                                  <Form.Item label={it.name} {...formItemLayout}>
+                                    {
+                                      getFieldDecorator(it.field, {
+                                        initialValue: initMsg,
+                                        rules: [
+                                          { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
+                                          ...rule,
+                                        ]
+                                      })(
+                                        renderForm
+                                      )
+                                    }
+                                  </Form.Item>
+                                </Col>
+                                :
+                                null
+                            }
+                          </>
                         );
-                      } else {
-                        initMsg = it.startTime && it.endTime ?
-                            [moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(it.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
-                        renderForm = (
-                          <RangePicker
-                            style={{width: '280px' }}
-                            placeholder="请选择时间"
-                            format="YYYY-MM-DD"
-                            showTime={{
-                              hideDisabledOptions: true,
-                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                            }}
-                          />
-                        );
-                      }
                     }
-                      return (
-                        <>
-                          {
-                            it.status ?
-                              <Col span={12}>
-                                <Form.Item label={it.name} {...formItemLayout}>
-                                  {
-                                    getFieldDecorator(it.field, {
-                                      initialValue: initMsg,
-                                      rules: [
-                                        { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
-                                        ...rule,
-                                      ]
-                                    })(
-                                      renderForm
-                                    )
-                                  }
-                                </Form.Item>
-                              </Col>
-                              :
-                              null
-                          }
-                        </>
-                      );
+                    return (
+                      <>
+                        {
+                          it.field === 'costNote' && showField.costNote.status ?
+                            <Col span={12}>
+                              <Form.Item label={labelInfo.costNote} {...formItemLayout}>
+                                {
+                                  getFieldDecorator('note', {
+                                    initialValue: details.note || '',
+                                    rules: [{ required: !!(showField.costNote.isWrite), message: '请输入备注' }]
+                                  })(
+                                    <Input placeholder="请输入" />
+                                  )
+                                }
+                              </Form.Item>
+                            </Col>
+                          :
+                          null
+                        }
+                        {
+                          it.field === 'happenTime' && showField.happenTime.status &&
+                          <Col span={12}>
+                            <Form.Item label={labelInfo.happenTime} {...formItemLayout}>
+                              {
+                                costDate === 1 &&
+                                getFieldDecorator('time', {
+                                  initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                                  rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                                })(
+                                  <DatePicker style={{width: '100%'}} />
+                                )
+                              }
+                              {
+                                costDate === 2 &&
+                                getFieldDecorator('time', {
+                                  initialValue: details.startTime && details.endTime ?
+                                    [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                                    :
+                                    [],
+                                  rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                                })(
+                                  <RangePicker
+                                    style={{width: '280px' }}
+                                    placeholder="请选择时间"
+                                    format="YYYY-MM-DD"
+                                    showTime={{
+                                      hideDisabledOptions: true,
+                                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                                    }}
+                                  />
+                                )
+                              }
+                            </Form.Item>
+                          </Col>
+                        }
+                        {
+                          it.field === 'imgUrl' && showField.imgUrl.status &&
+                          <Col span={12}>
+                            <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
+                              <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
+                            </Form.Item>
+                          </Col>
+                        }
+                      </>
+                    );
                   })
                 }
               </Row>

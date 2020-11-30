@@ -5,7 +5,7 @@ import style from './index.scss';
 import { timeStampToHex } from '../../../../../utils/common';
 
 let id = 1000;
-function SelfStr({ name, icon, fieldType, cardList, changeCardList }) {
+function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId }) {
   const idGenerator = () => {
     let qutient = 10000;
     const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
@@ -50,7 +50,9 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList }) {
        */
       console.log('end', monitor.didDrop());
       if (monitor.didDrop()) {
+          const items = monitor.getItem();
           cardList.splice(uselessIndex, 1, { ...monitor.getItem(), id: id++ });
+          changeDragId(items.field);
       } else {
           cardList.splice(uselessIndex, 1);
       }

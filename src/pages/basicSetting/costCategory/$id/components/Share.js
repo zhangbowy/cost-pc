@@ -84,7 +84,7 @@ class Share extends Component {
       shareList.splice(indexs, 1, {
         key: 'project',
         value: '项目',
-        checked: [arr[0].status, arr[0].isWrite],
+        checked: [arr[0].status ? 1 : 0, arr[0].isWrite],
         children: [{
           label: '启用',
           value: 1,
