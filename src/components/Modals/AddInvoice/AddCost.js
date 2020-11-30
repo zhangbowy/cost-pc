@@ -255,6 +255,7 @@ class AddCost extends Component {
       costDate: 0, // 没有指定日期
       showField: {}, // 是否展示
       newShowField: [],
+      expandField: [],
       shareAmount: 0,
       costSum: 0,
       currencyId: '-1',
@@ -648,21 +649,21 @@ class AddCost extends Component {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 7 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16 },
+        sm: { span: 15 },
       },
     };
     const formItemLayouts = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 7 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 9 },
+        sm: { span: 8 },
       },
     };
     return (
