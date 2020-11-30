@@ -10,6 +10,7 @@ export default {
     checkDel: false,
     expandLists: [],
     fieldList: [], // 获取公有字段
+    approveList: [],
   },
   effects: {
     *allList({ payload }, { call, put }) {
@@ -26,7 +27,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          approveList: response || {},
+          approveList: response || [],
         },
       });
     },

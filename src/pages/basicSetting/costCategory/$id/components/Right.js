@@ -52,23 +52,21 @@ class Right extends PureComponent {
   }
 
   onChange = (e) => {
-    if (e && e.length) {
-      const { selectList } = this.props;
-      const { details } = this.state;
-      const arr = [...selectList];
-      const index = arr.findIndex(it => it.field === details.field);
-      arr.splice(index, 1, {
+    const { selectList } = this.props;
+    const { details } = this.state;
+    const arr = [...selectList];
+    const index = arr.findIndex(it => it.field === details.field);
+    arr.splice(index, 1, {
+      ...details,
+      isWrite: e && e.length ? e[0] : false,
+    });
+    this.setState({
+      details: {
         ...details,
-        isWrite: e[0]
-      });
-      this.setState({
-        details: {
-          ...details,
-          isWrite: e[0]
-        }
-      });
-      this.props.onChange(arr);
-    }
+        isWrite: e && e.length ? e[0] : false,
+      }
+    });
+    this.props.onChange(arr);
   }
 
   onInput = (e) => {
@@ -255,7 +253,7 @@ class Right extends PureComponent {
           }
         </div>
         <div className={style.contents}>
-          <Form style={{ padding: '0 24px' }}>
+          <Form style={{ padding: '0 24px' }} colon={false}>
             <Form.Item label="字段标题">
               {
                 getFieldDecorator(`name[${details.field}]`, {
