@@ -92,10 +92,10 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, t
                 onClick={() => onHandle(it.key)}
               >
                 <span>{it.value}</span>
-                {
+                {/* {
                   it.key === 'show' &&
                   <i className="iconfont iconIcon-yuangongshouce m-l-12 m-r-8" />
-                }
+                } */}
               </div>
             ))
           }
@@ -112,6 +112,7 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, t
                       data={{...item}}
                       cardList={cardList}
                       changeCardList={changeCardList}
+                      changeDragId={changeDragId}
                     />
                   ))
                 }
@@ -126,6 +127,7 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, t
                       data={{...item}}
                       cardList={cardList}
                       changeCardList={changeCardList}
+                      changeDragId={changeDragId}
                     />
                   ))
                 }

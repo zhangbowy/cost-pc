@@ -147,7 +147,7 @@ class Right extends PureComponent {
               field: this.idGenerator()
             }
           });
-          this.props.onChange('selectList', arr);
+          this.props.onChange(arr);
         }
       });
     }
@@ -205,7 +205,7 @@ class Right extends PureComponent {
         dateType: op
       }
     });
-    this.props.onChange('selectList', arr);
+    this.props.onChange(arr);
   }
 
   render() {
@@ -284,6 +284,7 @@ class Right extends PureComponent {
             }
             {
               Number(details.fieldType) === 2 && !details.disabled &&
+              (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
               <div className={style.moveForm}>
                 <p>选项</p>
                 {formItems}
@@ -301,6 +302,7 @@ class Right extends PureComponent {
             }
             {
               ((details.fieldType === '5') || (details.fieldType === 5)) &&
+              (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
               <Form.Item label="类型">
                 {
                   getFieldDecorator(`dateType[${details.field}]`, {

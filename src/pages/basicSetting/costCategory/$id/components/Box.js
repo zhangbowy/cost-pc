@@ -12,7 +12,7 @@ import style from './index.scss';
 
 let id = 1;
 
-const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data}) => {
+const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data, changeDragId}) => {
   const box = {
     field,
     name,
@@ -39,7 +39,9 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data}) 
        *  2、如果否，则将占位元素删除
        */
       if (monitor.didDrop()) {
+          const items = monitor.getItem();
           cardList.splice(uselessIndex, 1, { ...monitor.getItem(), id: id++ });
+          changeDragId(items.field);
       } else {
           cardList.splice(uselessIndex, 1);
       }
@@ -52,7 +54,7 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data}) 
   }, []);
   let pro = '';
   if (disabled) {
-    pro = '必选';
+    pro = '已选';
   } else if (!disabled && isSelect) {
     pro = '已选';
   }

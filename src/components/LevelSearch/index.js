@@ -45,7 +45,9 @@ class LevelSearch extends Component {
     }).then(() => {
       this.props.dispatch({
         type: 'global/invoiceList',
-        payload: {},
+        payload: {
+          templateType: 0
+        },
       }).then(() => {
         const { details } = this.props;
         if (details) {
