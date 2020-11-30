@@ -229,7 +229,7 @@ class EchartsTest extends Component {
     render() {
       const { dateType, defaultYear, defaultQuarter, defaultMonth, type, overviewDate } = this.state;
       return (
-        <div style={{margin:'24px',background:'#fff'}}>
+        <div style={{margin:'24px',background:'#fff',minWidth:'935px',boxSizing:'border-box'}}>
           <div className={styles.title}>
             <div className={styles.header}>
               <div className={styles.headerLeft}>
@@ -296,7 +296,7 @@ class EchartsTest extends Component {
               </Radio.Group>
             </div>
           </div>
-          <div id="main" style={{ width: '100%',minWidth: 500, minHeight: 425,background:'#fff' }} />
+          <div id="main" style={{ width: '100%',minWidth: 500, minHeight: 385,background:'#fff' }} />
           {/* <div className={styles.ballbox} >
             <span className={styles.ball} style={{background:this.state.colorArr[1]}} />
             借款支出

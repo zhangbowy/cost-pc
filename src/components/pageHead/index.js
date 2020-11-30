@@ -3,7 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import withRouter from 'umi/withRouter';
-import localMenu from '@/common/menu';
 import {
   // Dropdown,
   // Menu,
@@ -31,7 +30,6 @@ class App extends React.PureComponent {
       note,
       // collapsed,
     } = this.props;
-    console.log(666666,localMenu);
     return (
       <div className={styles.headerBox}>
         <Breadcrumb>
@@ -45,15 +43,22 @@ class App extends React.PureComponent {
             >返回上一页
             </a>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>{title}</Breadcrumb.Item>
+          {
+            typeof(title) === 'string'?
+              <Breadcrumb.Item>{title}</Breadcrumb.Item>
+            : <div style={{display: 'inline-block'}}>{title}</div>
+          }
         </Breadcrumb>
-        <div className={styles.title}>
-          {title}{note?(
-            <Tooltip title={note}>
-              <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-            </Tooltip>
-          ):''}
-        </div>
+        {
+          typeof(title) === 'string' &&  
+          <div className={styles.title}>
+            {title}{note?(
+              <Tooltip title={note}>
+                <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+              </Tooltip>
+            ):''}
+          </div>
+        }
       </div>
     );
   }

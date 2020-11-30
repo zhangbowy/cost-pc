@@ -5,6 +5,7 @@ import cs from 'classnames';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import treeConvert from '@/utils/treeConvert';
+import PageHead from '@/components/PageHead';
 import LabelLeft from '../../../../components/LabelLeft';
 import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
@@ -293,13 +294,13 @@ class CategoryAdd extends PureComponent {
     const { categoryList, data, templateType } = this.state;
     console.log('CategoryAdd -> render -> categoryList', categoryList);
     const routes = [
+      // {
+      //   path: '/basicSetting/invoice',
+      //   breadcrumbName: '返回上一页',
+      //   paths: 'basicSetting/invoice'
+      // },
       {
         path: '/basicSetting/invoice',
-        breadcrumbName: '返回上一页',
-        paths: 'basicSetting/invoice'
-      },
-      {
-        path: '/',
         breadcrumbName: '单据模板',
         paths: 'basicSetting/invoice'
       },
@@ -311,10 +312,13 @@ class CategoryAdd extends PureComponent {
 
     return (
       <div style={{height: '100%'}}>
-        <PageHeader
-          title={null}
-          breadcrumb={{routes}}
-          style={{background: '#fff'}}
+        <PageHead title={
+          <PageHeader
+            title={null}
+            breadcrumb={{routes}}
+            style={{background: '#fff'}}
+          />
+        }
         />
         <div style={{background: '#fff', width: '100%'}}>
           <Menu

@@ -218,7 +218,7 @@ class QuarterPicker extends Component {
                 className={`${styles.img} ${(isMouse&&selectionTime)?styles.iconHover:''}`} 
                 type={(isMouse&&selectionTime)?'close-circle':'calendar'}  
                 theme={(isMouse&&selectionTime)?'filled':''} 
-                onClick={() => this.clear()}
+                onClick={(ev) => isMouse?this.clear():this.onclick(ev)}
               />
             }
           />
