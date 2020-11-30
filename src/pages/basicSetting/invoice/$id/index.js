@@ -39,7 +39,6 @@ class CategoryAdd extends PureComponent {
     selectList: [],
     categoryList: [],
     templateType: 0,
-    approveList: [],
     fieldList: [],
   }
 
@@ -55,11 +54,6 @@ class CategoryAdd extends PureComponent {
       payload: {
         isAuth: true,
       },
-    }).then(() => {
-      const { approveList } = this.props;
-      this.setState({
-        approveList,
-      });
     });
     dispatch({
       type: 'global/costList',
@@ -318,12 +312,13 @@ class CategoryAdd extends PureComponent {
   render () {
     const {
       allList,
+      approveList
     } = this.props;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
     const paramsL = id.split('_');
     const titleType = paramsL[2];
-    const { current, approveList, selectList, fieldList } = this.state;
+    const { current, selectList, fieldList } = this.state;
     const {  dispatch } = this.props;
     const { categoryList, data, templateType } = this.state;
     const routes = [

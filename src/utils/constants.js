@@ -118,7 +118,7 @@ export const isAllCostCategory = [{
   key: false,
   value: '部分类别'
 }];
-export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount'];
+export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum'];
 export const costCategoryJson = [{
   key: 'reason',
   field: 'reason',

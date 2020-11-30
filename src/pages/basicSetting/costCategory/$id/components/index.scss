@@ -81,6 +81,9 @@
     &:hover{
       background: #FAFAFA;
       color: rgba(0, 199, 149, 1);
+      :global(.iconfont) {
+        color: rgba(0, 199, 149, 1);
+      }
     }
   }
   .selfActive{

@@ -203,10 +203,11 @@ class Basic extends React.PureComponent {
   onChangeSelect = (type) => {
     this.onCancel();
     this.props.dispatch({
-      type: 'invoice/approveList',
+      type: 'addInvoice/approveList',
       payload: {}
     }).then(() => {
       const { approveList, onChangeData } = this.props;
+      console.log('Basic -> onChangeSelect -> approveList', approveList);
       onChangeData('approveList', approveList);
       this.setState({
         approveList,
