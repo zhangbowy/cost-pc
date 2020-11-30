@@ -31,7 +31,8 @@ class EchartsTest extends Component {
 
   state={
     overviewDate:[],
-    colorArr : ['rgba(3,122,254,1)','rgba(0,199,149,1)'],
+    // colorArr : ['rgba(3,122,254,1)','rgba(0,199,149,1)'],
+    colorArr : ['rgba(0,199,149,1)','rgba(0,199,149,1)'],
     startTime: new Date(startDate).getTime(),
     endTime: new Date().getTime(),
     type: 0,
