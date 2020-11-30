@@ -78,7 +78,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
   return (
     <>
       <div className={style.selfStr} ref={drag} onClick={(e) => handleAdd(e)}>
-        <i className={`${icon} iconfont m-l-16 m-r-8 c-black-65`} />
+        <i className={`${icon} iconfont m-l-16 m-r-12 c-black-65`} />
         <span>{name}</span>
       </div>
     </>
