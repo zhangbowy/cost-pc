@@ -121,11 +121,12 @@ class EchartsTest extends Component {
     loadEchart(){
       const { startTime, endTime, dateType, type } = this.state;
       post(api.overviewTrend,{dateType,startTime,endTime,type}).then(res => {
-          // 基于准备好的dom，初始化echarts实例
+        // 基于准备好的dom，初始化echarts实例
+        console.log(123123,res);
         const myChart = echarts.init(document.getElementById('main'));
         const data = res.map(item => {
           const obj = {...item};
-          obj.totleSum = (item.totleSum/100).toFixed(2);
+          obj.totleSum = item.totleSum?(item.totleSum/100).toFixed(2):0;
           return obj;
         });
         const option = {
@@ -149,27 +150,27 @@ class EchartsTest extends Component {
               containLabel: true
           },
           xAxis: {
-              type: 'category',
-              data: data.map((item) => {
-                const date = item.date.split('-');
-                  return date.length===3?`${date[1]}-${date[2]}`:item.date;
-              }),
-              axisTick: {           // 去掉坐标轴刻线
-                show: false
+            type: 'category',
+            data: data.map((item) => {
+              const date = item.date.split('-');
+                return date.length===3?`${date[1]}-${date[2]}`:item.date;
+            }),
+            axisTick: {           // 去掉坐标轴刻线
+              show: false
+            },
+            axisLine:{
+              lineStyle:{
+                  color:'#D9D9D9'     // X轴的颜色
               },
-              axisLine:{
-                lineStyle:{
-                    color:'#D9D9D9'     // X轴的颜色
-                },
-              },
-              axisLabel: {
-                color:'rgba(0,0,0,0.65)',
-                formatter: (value) => {
-                    // const dateX = new Date(value);
-                    // return idx === 0 ? value : [dateX.getMonth() + 1, dateX.getDate()].join('-');
-                    return value;
-                }
-              },
+            },
+            axisLabel: {
+              color:'rgba(0,0,0,0.65)',
+              formatter: (value) => {
+                  // const dateX = new Date(value);
+                  // return idx === 0 ? value : [dateX.getMonth() + 1, dateX.getDate()].join('-');
+                  return value;
+              }
+            },
           },
           yAxis: {
               axisTick: {           // 去掉坐标轴刻线
@@ -222,7 +223,30 @@ class EchartsTest extends Component {
     loadOverview(){
       const { startTime, endTime, dateType } = this.state;
       post(api.overview,{dateType,startTime,endTime}).then(res => {
-        this.setState({overviewDate: res});
+        console.log(123123,res);
+        let obj = [];
+        if(!res){
+          obj = [{
+            type:0,
+            totleSum:0,
+            processSum:0,
+            yearOnYear:'-',
+            annulus:'-',
+            yearOnYearSymbolType:0,
+            annulusSymbolType:0
+          },{
+            type:1,
+            totleSum:0,
+            processSum:0,
+            yearOnYear:'-',
+            annulus:'-',
+            yearOnYearSymbolType:0,
+            annulusSymbolType:0
+          }];
+        }else{
+          obj = res;
+        }
+        this.setState({overviewDate: obj});
       });
     }
 
@@ -259,8 +283,8 @@ class EchartsTest extends Component {
                   <div className={styles.showPanel} key={Math.random()}>
                     <div className={`${styles.showPanelTit} m-b-8`}>{item.type===0?'报销支出':'借款支出'}</div>
                     <div className={`${styles.showPanelNum} m-b-8`}>
-                      ¥{(item.totleSum/100).toFixed(2)}
-                      <span className={styles.subText}>{item.type===0?'（含核销 ':'（待还 '}￥{(item.processSum/100).toFixed(2)}）</span>
+                      ¥{item.totleSum?(item.totleSum/100).toFixed(2):0}
+                      <span className={styles.subText}>{item.type===0?'（含核销 ':'（待还 '}￥{item.processSum?(item.processSum/100).toFixed(2):0}）</span>
                     </div>
                     <div className={styles.bottom}>
                       <span className="dis-inlineblock">
@@ -275,11 +299,11 @@ class EchartsTest extends Component {
                       <span className="dis-inlineblock m-l-24">
                         <span>环比</span>
                         {
-                          item.yearOnYear !== '-'?
+                          item.annulus !== '-'?
                             <span className={`iconfont ${item.annulusSymbolType===0?`iconshangsheng ${styles.iconshangsheng}`:`iconxiajiang ${styles.iconxiajiang}`}`} />
                             : ' '
                         }
-                        <span className={styles.percent}>{item.annulus}{item.yearOnYear !== '-'?'%':''}</span>
+                        <span className={styles.percent}>{item.annulus}{item.annulus !== '-'?'%':''}</span>
                       </span>
                     </div>
                   </div>

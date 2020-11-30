@@ -46,7 +46,9 @@ export default class YearPicker extends Component {
           format="YYYY"              
           onOpenChange={this.handleOpenChange}              
           onPanelChange={this.handlePanelChange}              
-          onChange={this.clearValue}  
+          onChange={this.clearValue}
+          // disabledDate={this.props.disabledDate}  
+          // disabledDate={(current) => {return current && current > moment().endOf('day');}}
         />        
       </span>
     );
