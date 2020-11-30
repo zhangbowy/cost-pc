@@ -46,7 +46,7 @@ function PreviewBox() {
   }
   return (
     <div style={layerStyles}>
-      <div style={getItemStyles(initialOffset, currentOffset)}>
+      <div style={getItemStyles(initialOffset, currentOffset, item)}>
         {renderItem()}
       </div>
     </div>

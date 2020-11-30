@@ -212,7 +212,6 @@ class AddCost extends Component {
         }
       }).then(() => {
         const { index, detail, expandField } = this.props;
-        console.log(index, detail);
         if (index === 0 || index) {
           this.setState({
             details: detail,
@@ -222,7 +221,8 @@ class AddCost extends Component {
             costSum: detail.costSum,
             shareAmount: detail.shareTotal,
           }, () => {
-            this.onChange(this.props.detail.categoryId, 'edit');
+            const newExpands = expandField;
+            this.onChange(this.props.detail.categoryId, 'folder', newExpands);
           });
         }
         this.setState({
@@ -504,12 +504,6 @@ class AddCost extends Component {
           }
         });
       }
-      this.setState({
-        showField: showFields,
-        costDate,
-        details: detail,
-        project,
-      });
       if (types === 'folder') {
         const expands = [];
         if (lbDetail.expandField) {
@@ -539,6 +533,12 @@ class AddCost extends Component {
           expandField: newArr,
         });
       }
+      this.setState({
+        showField: showFields,
+        costDate,
+        details: detail,
+        project,
+      });
     });
 
   }

@@ -18,6 +18,7 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data}) 
     name,
     type: 'box',
     ...data,
+    id: -1
   };
   const [, drag, preview] = useDrag({
     item: box,
@@ -26,7 +27,7 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data}) 
         const useless = cardList.find((item) => item.id === -1);
         // 拖拽开始时，向 cardList 数据源中插入一个占位的元素，如果占位元素已经存在，不再重复插入
         if (!useless) {
-            changeCardList([...cardList, { name, field, id: -1 }]);
+          changeCardList([...cardList, { name, field, id: -1, isSelect: true }]);
         }
         return box;
     },
@@ -44,10 +45,7 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data}) 
       }
       // 更新 cardList 数据源
       changeCardList(cardList);
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    })
+    }
   });
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });

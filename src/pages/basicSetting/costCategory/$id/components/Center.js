@@ -10,6 +10,7 @@ import { useDrop } from 'react-dnd';
 // import Templates from './Templates';
 import Card from './Card';
 import style from './index.scss';
+import { defaultString } from '../../../../../utils/constants';
 
 const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
   const [, drop ] = useDrop({
@@ -38,9 +39,9 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
     return cardList.findIndex(it => it.field === field);
   };
 
-  const onDelete = (field, disabled) => {
+  const onDelete = (field) => {
     const arr = [...cardList];
-    if (!disabled) {
+    if (!defaultString.includes(field)) {
       const lessIndex = cardList.findIndex((item) => item.field === field);
       arr.splice(lessIndex, 1);
       const newId = arr[lessIndex-1].field;
@@ -50,6 +51,8 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
       changeDragId(newId);
     }
   };
+  // const notDropList = cardList.filter(it => defaultString.includes(it.field));
+  // const dropList = cardList.filter(it => !defaultString.includes(it.field));
   return (
     <div ref={drop} className={style.contents}>
       {
@@ -57,6 +60,7 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
           <Card
             {...item}
             key={item.field}
+            data={{...item}}
             moveCard={moveCard}
             findCard={(val) => findCard(val)}
             dragId={dragId}

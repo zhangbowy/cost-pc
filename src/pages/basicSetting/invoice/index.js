@@ -10,7 +10,7 @@ import treeConvert from '@/utils/treeConvert';
 import Search from 'antd/lib/input/Search';
 // import SortModal from './components/SortModal';
 import PageHead from '@/components/PageHead';
-import AddInvoice from './components/AddInvoice';
+// import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
 import Tags from '../../../components/Tags';
@@ -177,14 +177,12 @@ class Invoice extends React.PureComponent {
         const _this = this;
         let btns = [{
           node: (
-            <AddInvoice
-              title="add"
-              data={{parentId: record.id}}
-              onOk={() => _this.onOk()}
-              templateType={record.templateType}
+            <span
+              className="pd-20-9 c-black-65"
+              onClick={() => this.onAddCategory(`${record.id}_${record.templateType}_child`)}
             >
-              <span className="pd-20-9 c-black-65">添加单据模版</span>
-            </AddInvoice>
+              添加单据模版
+            </span>
           ),
         }, {
           node: (
@@ -209,14 +207,7 @@ class Invoice extends React.PureComponent {
         if (record.type === 1) {
           btns = [{
             node: (
-              <AddInvoice
-                onOk={() => _this.onOk()}
-                data={record}
-                title="copy"
-                templateType={record.templateType}
-              >
-                <span className="pd-20-9 c-black-65">复制</span>
-              </AddInvoice>
+              <span className="pd-20-9 c-black-65" onClick={() => this.onAddCategory(`${record.id}_${record.templateType}_copy`)}>复制</span>
             ),
           }, {
             node: (

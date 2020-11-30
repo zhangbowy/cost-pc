@@ -4,7 +4,7 @@
 import React from 'react';
 import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { formItemLayout, isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
+import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
@@ -251,12 +251,22 @@ class Basic extends React.PureComponent {
       dispatch,
     } = this.props;
     const { cost, user, category, users, deptJson, flowId, approveList, visible, name, title } = this.state;
-    console.log('flowId', flowId);
+    console.log('data', data);
     // eslint-disable-next-line
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 19 },
+      },
+    };
     return (
       <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
-        <Form {...formItemLayout} className="formItem">
+        <Form {...formItemLayout} className="formItem" style={{ width: '450px' }}>
           <Form.Item label={labelInfo.name}>
             {
               getFieldDecorator('name', {

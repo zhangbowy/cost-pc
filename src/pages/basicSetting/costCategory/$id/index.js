@@ -7,7 +7,7 @@ import { DndProvider } from 'react-dnd';
 import treeConvert from '@/utils/treeConvert';
 import PageHead from '@/components/PageHead';
 import LabelLeft from '../../../../components/LabelLeft';
-import style from './index.scss';
+// import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
 import Share from './components/Share';
@@ -48,6 +48,8 @@ class CategoryAdd extends PureComponent {
 
   componentDidMount(){
     const { id } = this.props.match.params;
+    const title = id.split('_')[0];
+    const costId = id.split('_')[1];
     this.props.dispatch({
       type: 'addCategory/allList',
       payload: {}
@@ -62,11 +64,11 @@ class CategoryAdd extends PureComponent {
         otherKeys: ['icon', 'note', 'type']
       }, allList);
       const { userInfo } = this.props;
-      if (id !== 'add') {
+      if (title !== 'add' && title !== 'child') {
         this.props.dispatch({
           type: 'addCategory/detail',
           payload: {
-            id,
+            id: costId,
             companyId: userInfo.companyId || ''
           }
         }).then(() => {
@@ -78,7 +80,7 @@ class CategoryAdd extends PureComponent {
             parentId: _this.findIndexArray(lists, details.parentId, []),
             status: Number(details.status) === 1,
           };
-          if (id === 'copy') {
+          if (title === 'copy') {
             Object.assign(datas, {
               costName: `${details.costName}的副本`
             });
@@ -89,17 +91,24 @@ class CategoryAdd extends PureComponent {
             shareField: details.shareField,
           });
         });
+      } else if (title === 'child') {
+        const newData = {
+          parentId: this.findIndexArray(lists, costId, []),
+        };
+        _this.setState({
+          data: newData,
+        });
       }
     });
     this.props.dispatch({
       type: 'addCategory/fieldList',
       payload: {
-        categoryId: id !== 'add' ? id : '',
+        categoryId: title !== 'add' && title !== 'child' ? costId : '',
       }
     }).then(() => {
       const { fieldList } = this.props;
       const newArr = fieldList.filter(it => it.isSelect);
-      if (id === 'add') {
+      if (title === 'add' || title === 'child') {
         this.setState({
           selectList: newArr,
         });
@@ -108,6 +117,7 @@ class CategoryAdd extends PureComponent {
         fieldList,
       });
     });
+
   }
 
   findIndexArray  = (data, id, indexArray) => {
@@ -176,10 +186,12 @@ class CategoryAdd extends PureComponent {
 
   }
 
-  onStep = () => {
+  onStep = (flag) => {
     const { current, data, selectList, shareField } = this.state;
-    console.log('CategoryAdd -> onStep -> shareField', shareField);
+    const newSelectList = [...selectList];
     const { id } = this.props.match.params;
+    const title = id.split('_')[0];
+    const costId = id.split('_')[1];
     const { userInfo } = this.props;
     const datas = data;
     if (current === 'one') {
@@ -192,13 +204,22 @@ class CategoryAdd extends PureComponent {
         status: values.status ? 1 : 0,
       });
     }
+    if (this.childRef && this.childRef.getRightParams) {
+      const valStr = this.childRef.getRightParams();
+      console.log('CategoryAdd -> onStep -> valStr', valStr);
+      if (!valStr) {
+        return;
+      }
+      const indexs = selectList.findIndex(it => it.field === valStr.field);
+      newSelectList.splice(indexs, 1, valStr);
+    }
 
-    if (current === 'three' || (id !== 'add')) {
-      const url = id === 'add' ? 'addCategory/add' : 'addCategory/edit';
-      const newArr = selectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
+    if ((current === 'three' || (title !== 'add' && title !== 'child')) && flag !== 'down') {
+      const url = title !== 'edit' ? 'addCategory/add' : 'addCategory/edit';
+      const newArr = newSelectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
       const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
       const params = {
-        id: id === 'add' ? '' : id,
+        id: title !== 'edit' ? '' : costId,
         showField: showField.map(it => { return { ...it, status: 1 }; }),
         shareField: shareField.map(it => { return { ...it, status: it.status ? 1 : 0 }; }),
         type: 1,
@@ -222,7 +243,7 @@ class CategoryAdd extends PureComponent {
       console.log('CategoryAdd -> onStep -> index', index);
       this.setState({
         data: datas,
-        current: basicStr[index+1].key,
+        current: flag === 'up' ? basicStr[index+1].key : basicStr[index-1].key,
       });
     }
   }
@@ -275,6 +296,8 @@ class CategoryAdd extends PureComponent {
       allList
     } = this.props;
     const { id } = this.props.match.params;
+    const title = id.split('_')[0];
+    // const costId = id.split('_')[1];
     const { current, shareField, selectList, fieldList, data } = this.state;
     console.log('CategoryAdd -> render -> selectList', selectList);
     const routes = [
@@ -284,12 +307,12 @@ class CategoryAdd extends PureComponent {
       },
       {
         path: 'second',
-        breadcrumbName: '新建费用类别',
+        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}费用类别`,
       },
     ];
 
     return (
-      <div style={{height: '100%', minWidth: '1200px'}}>
+      <div style={{height: '100%', minWidth: '1000px'}}>
         <PageHead title={
           <PageHeader
             title={null}
@@ -308,7 +331,12 @@ class CategoryAdd extends PureComponent {
             {
               basicStr.map((it, index) => (
                 <Menu.Item key={it.key}>
-                  <span className={it.key === current ? cs(style.circle, style.active) : style.circle}>{index+1}</span>
+                  <span
+                    className={it.key === current ?
+                    cs('circle', 'active') : 'circle'}
+                  >
+                    {index+1}
+                  </span>
                   <span>{it.value}</span>
                 </Menu.Item>
               ))
@@ -317,19 +345,19 @@ class CategoryAdd extends PureComponent {
         </div>
         {
           current === 'one' &&
-          <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
+          <div className="content-dt" style={{height: 'calc(100% - 178px)', minWidth: '1000px'}}>
             <LabelLeft title="基础设置" />
             <Basic
               wrappedComponentRef={form => {this.formRef = form;}}
               list={allList}
               data={data}
-              title="add"
+              title={title}
             />
           </div>
         }
         {
           current === 'two' &&
-          <div style={{height: 'calc(100% - 157px)', padding: '24px 24px 0 24px', display: 'flex'}}>
+          <div style={{height: 'calc(100% - 153px)', padding: '24px 24px 0 24px', display: 'flex'}}>
             <DndProvider backend={HTML5Backend}>
               <PreviewBox />
               <StrSetting
@@ -337,6 +365,8 @@ class CategoryAdd extends PureComponent {
                 selectList={selectList}
                 onChangeData={this.onChangeData}
                 selectId="costCategory"
+                type="cost"
+                childRef={ref => { this.childRef = ref; }}
               />
             </DndProvider>
           </div>
@@ -355,9 +385,31 @@ class CategoryAdd extends PureComponent {
         <FooterBar
           right={(
             <>
-              <Button type="default" className="m-r-8" onClick={() => this.onCancel()}>取消</Button>
-              <Button type="primary" onClick={() => this.onStep()}>
-                { current === 'three' || id !== 'add' ? '保存' : '下一步' }
+              <Button
+                type="default"
+                className="m-r-8"
+                onClick={() => this.onCancel()}
+              >
+                取消
+              </Button>
+              {
+                current !== 'one' &&
+                <Button
+                  type="default"
+                  className="m-r-8"
+                  onClick={() => this.onStep('down')}
+                >
+                  上一步
+                </Button>
+              }
+              <Button
+                type="primary"
+                onClick={() => this.onStep('up')}
+              >
+                {
+                  current === 'three' ||
+                  (title !== 'add' && title !== 'child') ? '保存' : '下一步'
+                }
               </Button>
             </>
           )}
