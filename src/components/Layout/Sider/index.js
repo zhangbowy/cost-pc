@@ -23,8 +23,8 @@ const getMenuKey = (props) => {
     const indexs = url.indexOf('/_aliPayConfirms');
     url = url.substring(0, indexs);
   }
-  if(props.location.state&&props.location.state.selectUrl){
-    url = props.location.state.selectUrl;
+  if(props.location.params&&props.location.params.selectUrl){
+    url = props.location.params.selectUrl;
   }
   console.log(url);
   return urlToList(url);

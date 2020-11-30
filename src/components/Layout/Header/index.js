@@ -11,6 +11,7 @@ import { Dropdown, Avatar, Icon, Menu ,
 } from 'antd';
 
 import styles from './index.scss';
+import XfwProducts from '../../XfwProducts';
 
 @connect(({ session, global }) => ({
   userInfo: session.userInfo,
@@ -95,6 +96,9 @@ class App extends React.PureComponent {
           className="app-right"
           style={{ marginRight: 12 }}
         >
+          <XfwProducts current="鑫支出">
+            <a className="m-r-32">鑫蜂维其他产品</a>
+          </XfwProducts>
           <a href="https://www.yuque.com/yifei-zszlu/ref3g8/pn19b4" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
           <Dropdown overlay={menu}>
             <a style={{ color: '#333' }}>

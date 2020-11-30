@@ -2,6 +2,7 @@ import { get, post } from '@/utils/request';
 import api from '@/services/api';
 import treeConvert from '@/utils/treeConvert';
 import { ddConfig } from '@/utils/ddApi';
+import { compare } from '../utils/common';
 // import { message } from 'antd';
 
 export default {
@@ -142,10 +143,14 @@ export default {
     },
     *djDetail({ payload }, { call, put }) {
       const response = yield call(get, api.invoiceDet, payload);
+      let expandField = response.expandField || [];
+      if (response.selfField) {
+        expandField=[...expandField, ...response.selfField];
+      }
       yield put({
         type: 'save',
         payload: {
-          djDetail: response || {},
+          djDetail: response ? { ...response, expandField } : {},
         },
       });
     },
@@ -170,10 +175,15 @@ export default {
     },
     *lbDetail({ payload }, { call, put }) {
       const response = yield call(get, api.cateDet, payload);
+      const expandField = [...response.expandField, ...response.selfFields];
+      let arts = [];
+      if (expandField && expandField.length) {
+        arts = expandField.sort(compare('sort'));
+      }
       yield put({
         type: 'save',
         payload: {
-          lbDetail: response || {},
+          lbDetail: response ? { ...response, expandField: arts } : {},
         }
       });
     },

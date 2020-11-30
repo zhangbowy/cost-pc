@@ -257,7 +257,9 @@ class Process extends Component {
 
   render() {
     const { scaleVal, step, updateId, data, verifyMode, visible, conditions, approveNode } = this.state;
-    const { templateType, ccPosition } = this.props;
+    const { ccPosition } = this.props;
+    console.log('Process -> render -> ccPosition', ccPosition);
+    const { templateType } = this.props;
     return (
       <div className={style['flow-container']}>
         <div className={style['scale-slider']}>

@@ -560,19 +560,19 @@ export class NodeUtils {
     let count = 0;
     function nodeSearch(list) {
       for(const key in list) {
-        console.log('NodeUtils -> nodeSearch -> key', key);
+        // console.log('NodeUtils -> nodeSearch -> key', key);
         if (key === 'childNode') {
           nodeSearch(list.childNode);
         } else if (key === 'nodeType' && list[key] === 'approver') {
-          console.log('NodeUtils -> nodeSearch -> list[key]', list[key]);
+          // console.log('NodeUtils -> nodeSearch -> list[key]', list[key]);
           count+=1;
         }
       }
     }
-    console.log('NodeUtils -> getApprove -> datas', datas);
+    // console.log('NodeUtils -> getApprove -> datas', datas);
 
     nodeSearch(datas);
-    console.log('count', count);
+    // console.log('count', count);
     return count;
   }
 }

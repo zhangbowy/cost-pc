@@ -9,7 +9,7 @@ import { classifyIcon, getArrayColor } from '@/utils/constants';
 import Search from 'antd/lib/input/Search';
 // import SortModal from './components/SortModal';
 import PageHead from '@/components/PageHead';
-import AddClassify from './components/AddClassfy';
+// import AddClassify from './components/AddClassfy';
 import AddGroup from './components/AddGroup';
 
 const namespace = 'costCategory';
@@ -77,6 +77,10 @@ class CostCategory extends React.PureComponent {
         },
       });
     });
+  }
+
+  onAddCategory = (id) => {
+    this.props.history.push(`/basicSetting/costCategory/${id}`);
   }
 
   onSearch = (val) => {
@@ -175,14 +179,7 @@ class CostCategory extends React.PureComponent {
           ),
         }, {
           node: (
-            <AddClassify
-              title="add"
-              data={{parentId: record.id}}
-              onOk={() => _this.onOk()}
-              list={list}
-            >
-              <span className="m-l-8 pd-20-9 c-black-65">创建子费用类别</span>
-            </AddClassify>
+            <span className="m-l-8 pd-20-9 c-black-65" onClick={() => this.onAddCategory(`child_${record.id}`)}>创建子费用类别</span>
           ),
         }, {
           node: (
@@ -210,14 +207,7 @@ class CostCategory extends React.PureComponent {
         if (record.type === 1) {
           btns = [{
             node: (
-              <AddClassify
-                onOk={() => _this.onOk()}
-                data={record}
-                title="copy"
-                list={list}
-              >
-                <span className="pd-20-9 c-black-65">复制</span>
-              </AddClassify>
+              <span className="pd-20-9 c-black-65" onClick={() => this.onAddCategory(`copy_${record.id}`)}>复制</span>
             ),
           }, {
             node: (
@@ -248,7 +238,7 @@ class CostCategory extends React.PureComponent {
             }
             {
               record.type === 1 &&
-                <AddClassify onOk={() => _this.onOk()} data={record} title="edit" list={list}><a>编辑类别</a></AddClassify>
+                <a onClick={() => this.onAddCategory(`edit_${record.id}`)}>编辑类别</a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>
@@ -268,9 +258,9 @@ class CostCategory extends React.PureComponent {
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">
-              <AddClassify title="add" onOk={() => this.onOk()} list={list}>
-                <Button type="primary" style={{marginRight: '8px'}}>新增费用类别</Button>
-              </AddClassify>
+              {/* <AddClassify title="add" onOk={() => this.onOk()} list={list}> */}
+              <Button type="primary" style={{marginRight: '8px'}} onClick={() => this.onAddCategory('add')}>新增费用类别</Button>
+              {/* </AddClassify> */}
               <AddGroup onOk={this.onOk} title="add" list={list}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>

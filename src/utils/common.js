@@ -244,3 +244,12 @@ export const PROJECTURL = {
     return this.url = origin + pathname;
   }
 };
+
+// sort排序
+export const compare = (property) => {
+  return function(a,b){
+      const value1 = a[property];
+      const value2 = b[property];
+      return value1 - value2;
+  };
+};

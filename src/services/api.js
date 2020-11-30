@@ -20,7 +20,8 @@ export default {
   // 下载附件
   grantDownload: `${APP_API}/cost/space/grantDownload`,
   // 下载附件
-  newGrantDownload: `${APP_API}/cost/space/grantDownload4Approval`,
+  // newGrantDownload: `${APP_API}/cost/space/grantDownload4Approval`,
+  newGrantDownload: `${APP_API}/cost/space/processDentryAuth`,
   // 判断附件
   isApproval: `${APP_API}/cost/space/isApproval`,
 

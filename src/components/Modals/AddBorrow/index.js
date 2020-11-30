@@ -324,7 +324,10 @@ class AddInvoice extends Component {
     this.props.dispatch({
       type: 'global/grantDownload',
       payload: {
-        fileIds: options.fileId
+        spaceProcessDentryAuthVOS: [{
+          fileIds: options.fileId,
+          spaceId: options.spaceId,
+        }]
       }
     }).then(() => {
       previewFile(options);

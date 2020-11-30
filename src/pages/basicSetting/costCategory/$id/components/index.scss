@@ -1,0 +1,314 @@
+.left{
+  width: 240px;
+  background: #ffffff;
+  height: 100%;
+  overflow: hidden;
+  .header{
+    width: inherit;
+    height: 56px;
+    background: rgba(0, 0, 0, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    z-index: 1;
+    div{
+      width: 120px;
+      text-align: center;
+      height: 56px;
+      line-height: 56px;
+      cursor: pointer;
+      :global(.iconfont) {
+        color: rgba(0, 0, 0, 0.45);
+        font-size: 14px;
+        margin: 0 8px;
+      }
+    }
+  }
+  .active{
+    background: #ffffff;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.85);
+    :global(.iconfont) {
+      color: rgba(0, 0, 0, 0.45);
+      font-size: 14px;
+    }
+  }
+  .leftCntDrag{
+    position: relative;
+    top: 56px;
+    margin-top: 18px;
+    overflow-y: scroll;
+    height: 100%;
+    padding-left: 16px;
+    padding-bottom: 94px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .dragLabel{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 208px;
+    height: 32px;
+    border: 1px solid #ffffff;
+    padding: 0 8px 0 16px;
+    margin-bottom: 8px;
+    cursor: move;
+    &:hover{
+      border: 1px solid #E9E9E9;
+      border-radius: 4px;
+    }
+  }
+  .dragActive{
+    border: 1px solid #E9E9E9;
+    border-radius: 4px;
+    cursor: unset;
+  }
+  .selfStr{
+    width: 192px;
+    height: 44px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    line-height: 44px;
+    color: rgba(0, 0, 0, 0.36);
+    font-size: 16px;
+    margin-left: 8px;
+    cursor: move;
+    &:hover{
+      background: #FAFAFA;
+      color: rgba(0, 199, 149, 1);
+      :global(.iconfont) {
+        color: rgba(0, 199, 149, 1);
+      }
+    }
+  }
+  .selfActive{
+    background: #FAFAFA;
+    color: rgba(0, 199, 149, 1);
+  }
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// 模板
+.StrTemplates{
+  height: 116px;
+  // width: 100%;
+  margin: 0 24px;
+  background: #ffffff;
+  display: flex;
+  position: relative;
+  cursor: move;
+  .inputs{
+    // width: 100%;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 0 12px;
+    display: flex;
+    justify-content: space-between;
+    line-height: 30px;
+    max-width: 480px;
+    min-width: 280px;
+  }
+  .dateType{
+    max-width: 480px;
+    min-width: 280px;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 0 12px;
+    display: flex;
+    // justify-content: center;
+    line-height: 30px;
+  }
+  .images{
+    width: 48px;
+    border-radius: 2px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lines{
+    width: 4px;
+    height: 116px;
+    background: #00C795;
+  }
+  .linesD{
+    width: 4px;
+    height: 116px;
+  }
+  .tmpCnt{
+    padding-top: 16px;
+    margin-right: 24px;
+    flex: 1;
+    margin-left: 6px;
+  }
+  .required{
+    padding: 16px 0 16px 6px;
+    display: block;
+    color: rgba(255, 90, 95, 1);
+    line-height: 22px;
+  }
+  .requireds{
+    padding: 16px 0 16px 6px;
+    display: block;
+    color: #fff;
+    line-height: 22px;
+  }
+  .operator{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    .delete{
+      width: 24px;
+      height: 24px;
+      display: none;
+      background: rgba(255, 90, 95, 1);
+      border-radius: 4px;
+      line-height: 24px;
+      text-align: center;
+      cursor: pointer;
+      :global(.iconfont){
+        color: #ffffff;
+      }
+    }
+    .drag{
+      background: rgba(0, 199, 149, 1);
+      cursor: move;
+    }
+  }
+  &:hover{
+    background: #FAFBFB;
+    // opacity: 0.3;
+    .linesD{
+      display: inline-block;
+      // background: #00C795;
+    }
+    .delete{
+      display: block;
+    }
+  }
+  .opacity{
+    opacity: 0.3;
+    cursor: default!important;
+  }
+}
+.activeStr {
+  background: #FAFBFB;
+}
+
+.strCenter {
+  background: #ffffff;
+  margin: 0 24px;
+  min-width: 366px;
+  flex: 1;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  .header{
+    height: 56px;
+    position: absolute;
+    display: flex;
+    line-height: 56px;
+    padding-left: 24px;
+    align-items: center;
+    .pro{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 211px;
+      height: 24px;
+      line-height: 24px;
+      margin-left: 14px;
+      padding: 0 12px;
+      background: rgba(0, 199, 149, 0.08);
+      border-radius: 20px 20px 20px 0px;
+      // opacity: 0.08;
+      color: rgba(0, 199, 149, 1);
+      :global(.iconfont) {
+        color: rgba(0, 199, 149, 1);
+        font-size: 22px;
+        vertical-align: middle;
+      }
+      span{
+        color: rgba(0, 199, 149, 1);
+        vertical-align: middle;
+      }
+    }
+  }
+  .contents{
+    top: 56px;
+    position: relative;
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 96px;
+  }
+}
+
+.strRight{
+  background: #ffffff;
+  width: 298px;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  .header{
+    height: 56px;
+    display: flex;
+    padding: 20px 0 16px 24px;
+    position: absolute;
+    width: 100%;
+    background: #fff;
+    .tags{
+      // width: 24px;
+      height: 22px;
+      background: #F5F5F5;
+      border-radius: 4px;
+      display: inline-block;
+      line-height: 22px;
+      text-align: center;
+      font-size: 12px;
+      padding: 0 8px;
+      margin-left: 16px;
+    }
+  }
+  .contents{
+    top: 56px;
+    position: relative;
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 96px;
+  }
+}
+
+.addForm{
+  // width: 60%;
+  // background: #FAFAFB;
+  padding: 0px;
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+  :global(.ant-form-item){
+    margin-bottom: 0;
+  }
+}
+
+.checkT{
+  width: 70px;
+  margin-bottom: 28px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+}

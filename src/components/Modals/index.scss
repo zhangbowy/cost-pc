@@ -20,6 +20,9 @@
     overflow: scroll;
     margin-top: 12px;
   }
+  ::-webkit-scrollbar{
+    display: none;
+  }
 }
 .slRight{
   height: 372px;

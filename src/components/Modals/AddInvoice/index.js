@@ -20,7 +20,7 @@ import ReceiptModal from '../ReceiptModal';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
 import AddApply from './AddApply';
 import { invoiceJson } from '../../../utils/constants';
-import { JsonParse } from '../../../utils/common';
+import { JsonParse, compare } from '../../../utils/common';
 import ApplyTable from './ApplyTable';
 import AddFolder from './AddFolder';
 
@@ -77,6 +77,7 @@ class AddInvoice extends Component {
       nodes: {},
       fileUrl: [], // 附件
       showField: {}, // 是否显示输入框
+      newshowField: [], // 是否显示输入框
       total: 0, // 报销金额
       loanUserId: '', // 审批人的userId
       expandField: [], // 扩展字段
@@ -212,8 +213,8 @@ class AddInvoice extends Component {
 
     const djDetails = await this.props.djDetail;
     const obj = {};
-    if (djDetails.showField && djDetails.showField.length > 5) {
-      JSON.parse(djDetails.showField).forEach(item => {
+    if (djDetails.showField && djDetails.showField.length) {
+      djDetails.showField.forEach(item => {
         obj[item.field] = {...item};
       });
     }
@@ -242,6 +243,7 @@ class AddInvoice extends Component {
           processPersonId: djDetails.approveId
         },
         showField: obj,
+        newshowField: djDetails.showField,
         expandField: djDetails.expandField,
         accountList: account,
         inDetails: djDetails,
@@ -277,6 +279,7 @@ class AddInvoice extends Component {
       this.onInit(contents, djDetails);
       await this.setState({
         showField: obj,
+        newshowField: djDetails.showField,
         accountList: account,
         inDetails: djDetails,
         visible: true
@@ -313,12 +316,20 @@ class AddInvoice extends Component {
       });
     }
     if (djDetails.expandField) {
+      let newExpand =  detail.expandSubmitFieldVos || [];
+      if (detail.selfSubmitFieldVos) {
+        newExpand = [...newExpand, ...detail.selfSubmitFieldVos];
+      }
+      console.log('AddInvoice -> onInit -> newExpand', newExpand);
+
       djDetails.expandField.forEach(it => {
-        const index = detail.expandSubmitFieldVos && detail.expandSubmitFieldVos.findIndex(its => its.field === it.field);
+        const index = newExpand && newExpand.findIndex(its => its.field === it.field);
         if (index > -1 && it.status) {
           expandField.push({
             ...it,
-            msg: detail.expandSubmitFieldVos[index].msg,
+            msg: newExpand[index].msg,
+            startTime: newExpand[index].startTime || '',
+            endTime: newExpand[index].endTime || '',
           });
         } else if (it.status) {
           expandField.push({
@@ -607,6 +618,7 @@ class AddInvoice extends Component {
       loanUserId: '', // 审批人的userId
       borrowArr: [],
       expandField: [],
+      newshowField: [],
       assessSum: 0,
       applyArr: [], // 申请单
     });
@@ -893,21 +905,29 @@ class AddInvoice extends Component {
       borrowArr,
       applyArr
     } = this.state;
-    const { id, templateType } = this.props;
+    const { id, templateType, djDetail } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
         const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
         const expandSubmitFieldVos = [];
+        const selfSubmitFieldVos = [];
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            if (it.status) {
-              expandSubmitFieldVos.push({
-                ...it,
-                field: it.field,
-                name: it.name,
-                msg: val[it.field],
+            const obj = {
+              ...it,
+              msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+            };
+            if (Number(it.fieldType) === 5 && val[it.field]) {
+              Object.assign(obj, {
+                startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
               });
+            }
+            if (it.status && it.field.indexOf('expand_') > -1) {
+              expandSubmitFieldVos.push(obj);
+            } else if (it.status && it.field.indexOf('self_') > -1){
+              selfSubmitFieldVos.push(obj);
             }
           });
         }
@@ -929,7 +949,8 @@ class AddInvoice extends Component {
           imgUrl,
           fileUrl,
           submitSum: ((total * 1000)/10).toFixed(0),
-          expandSubmitFieldVos
+          expandSubmitFieldVos,
+          selfSubmitFieldVos
         };
         const arr = [];
         costDetailsVo.forEach((item, index) => {
@@ -947,7 +968,8 @@ class AddInvoice extends Component {
             costDetailShareVOS: [],
             currencyId: item.currencyId,
             currencyName: item.currencyName,
-            expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+            expandCostDetailFieldVos: item.expandCostDetailFieldVos,
+            selfCostDetailFieldVos: item.selfCostDetailFieldVos,
             detailFolderId: item.detailFolderId || '',
           });
           if (item.costDetailShareVOS) {
@@ -990,22 +1012,22 @@ class AddInvoice extends Component {
             });
           }
         }
-        if (showField.loan && showField.loan.status) {
-          if (showField.loan.isWrite && (borrowArr.length === 0)) {
-            message.error('请选择借款核销');
-            return;
-          }
+        if (djDetail.isRelationLoan) {
+          // if (showField.loan.isWrite && (borrowArr.length === 0)) {
+          //   message.error('请选择借款核销');
+          //   return;
+          // }
           Object.assign(params, {
-            invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; })
+            invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; }) || []
           });
         }
-        if (showField.apply && showField.apply.status) {
-          if (showField.apply.isWrite && (applyArr.length === 0)) {
-            message.error('请选择关联申请单');
-            return;
-          }
+        if (djDetail.isRelationApply) {
+          // if (showField.apply.isWrite && (applyArr.length === 0)) {
+          //   message.error('请选择关联申请单');
+          //   return;
+          // }
           Object.assign(params, {
-            applicationIds: applyArr.map(it => it.id),
+            applicationIds: applyArr.map(it => it.id) || [],
           });
         }
         if (showField.receiptId && !showField.receiptId.status) {
@@ -1046,15 +1068,23 @@ class AddInvoice extends Component {
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
     const expandSubmitFieldVos = [];
+    const selfSubmitFieldVos = [];
     if (expandField && expandField.length > 0) {
       expandField.forEach(it => {
-        if (it.status) {
-          expandSubmitFieldVos.push({
-            ...it,
-            field: it.field,
-            name: it.name,
-            msg: val[it.field],
+        const obj = {
+          ...it,
+          msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+        };
+        if (Number(it.fieldType) === 5 && val[it.field]) {
+          Object.assign(obj, {
+            startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+            endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
           });
+        }
+        if (it.status) {
+          expandSubmitFieldVos.push(obj);
+        } else if (it.status && it.field.indexOf('self_') > -1){
+          selfSubmitFieldVos.push(obj);
         }
       });
     }
@@ -1076,10 +1106,12 @@ class AddInvoice extends Component {
       imgUrl,
       fileUrl,
       submitSum: ((total * 1000)/10).toFixed(0),
-      expandSubmitFieldVos
+      expandSubmitFieldVos,
+      selfSubmitFieldVos
     };
     const arr = [];
     costDetailsVo.forEach((item, index) => {
+    console.log('handelOkDraft -> costDetailsVo', costDetailsVo);
       arr.push({
         'categoryId': item.categoryId,
         'categoryName': item.categoryName,
@@ -1093,7 +1125,8 @@ class AddInvoice extends Component {
         costDetailShareVOS: [],
         currencyId: item.currencyId && item.currencyId !== '-1' ? item.currencyId : '',
         currencyName: item.currencyName || '',
-        expandCostDetailFieldVos: item.expandCostDetailFieldVos || [],
+        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
         detailFolderId: item.detailFolderId || '',
         icon: item.icon,
       });
@@ -1500,6 +1533,7 @@ class AddInvoice extends Component {
       usableProject,
       templateType,
       draftLoading,
+      djDetail,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1520,26 +1554,27 @@ class AddInvoice extends Component {
       borrowArr,
       assessSum,
       applyArr,
+      newshowField,
     } = this.state;
-
+    const newForm = [...newshowField, ...expandField].sort(compare('sort'));
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 7 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16 },
+        sm: { span: 15 },
       },
     };
     const formItemLayouts = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 7 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 14 },
+        sm: { span: 13 },
       },
     };
     return (
@@ -1603,6 +1638,7 @@ class AddInvoice extends Component {
                       invalid={false}
                       disabled={Number(templateType)}
                       flag="users"
+                      isInput
                       multiple={false}
                     />
                   </Form.Item>
@@ -1626,58 +1662,6 @@ class AddInvoice extends Component {
                     }
                   </Form.Item>
                 </Col>
-                {
-                  showField.note && showField.note.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.note} {...formItemLayout}>
-                      {
-                        getFieldDecorator('note',{
-                          initialValue: details.note || '',
-                          rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
-                        })(
-                          <Input placeholder="请输入"  />
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.receiptId && showField.receiptId.status &&
-                  <Col span={12} style={{position: 'relative'}}>
-                    <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
-                      {
-                        getFieldDecorator('receiptId', {
-                          initialValue: details.receiptId ? [details.receiptId] : null,
-                          rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
-                        })(
-                          <Select
-                            placeholder="请选择"
-                            dropdownClassName={style.opt}
-                            onChange={(val) => this.onChangeAcc(val)}
-                            optionLabelProp="label"
-                            getPopupContainer={triggerNode => triggerNode.parentNode}
-                            // value={details.receiptId}
-                          >
-                            {
-                              accountList.map(it => (
-                                <Option key={it.id} value={it.id} label={it.name}>
-                                  <div className={style.selects}>
-                                    <p className="c-black fs-14">{it.name} </p>
-                                    <p className="c-black-36 fs-13">{it.account}</p>
-                                  </div>
-                                  <Divider type="horizontal" />
-                                </Option>
-                              ))
-                            }
-                          </Select>
-                        )
-                      }
-                    </Form.Item>
-                    <ReceiptModal title="add" onOk={this.handelAcc}>
-                      <a className={style.addReceipt}>新增</a>
-                    </ReceiptModal>
-                  </Col>
-                }
                 <Col span={12}>
                   <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
                     {
@@ -1701,249 +1685,346 @@ class AddInvoice extends Component {
                   </Form.Item>
                 </Col>
                 {
-                  showField.loanSum && showField.loanSum.status &&
-                  <Col span={12}>
-                    <Form.Item label={showField.loanSum && showField.loanSum.name} {...formItemLayout}>
-                      {
-                        getFieldDecorator('loanSum', {
-                          initialValue: details.loanSum || '',
-                          rules: [{
-                            required: !!(showField.loanSum && showField.loanSum.isWrite),
-                            message: `请输入${showField.loanSum && showField.loanSum.name}`
-                          }, {
-                            validator: this.checkMoney
-                          }]
-                        })(
-                          <InputNumber
-                            onChange={val => this.inputMoney(val)}
-                            placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
-                            style={{width: '100%'}}
-                          />
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.applicationSum && showField.applicationSum.status &&
-                  <Col span={12}>
-                    <Form.Item label={showField.applicationSum && showField.applicationSum.name} {...formItemLayout}>
-                      {
-                        getFieldDecorator('applicationSum', {
-                          initialValue: details.applicationSum || '',
-                          rules: [{
-                            required: !!(showField.applicationSum && showField.applicationSum.isWrite),
-                            message: `请输入${showField.applicationSum && showField.applicationSum.name}`
-                          }, {
-                            validator: this.checkMoney
-                          }]
-                        })(
-                          <InputNumber
-                            onChange={val => this.inputMoney(val)}
-                            placeholder={`请输入${showField.applicationSum && showField.applicationSum.name}`}
-                            style={{width: '100%'}}
-                          />
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.repaymentTime && showField.repaymentTime.status &&
-                  <Col span={12}>
-                    <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
-                      {
-                        getFieldDecorator('repaymentTime', {
-                          initialValue: details.repaymentTime ? moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
-                          rules: [{
-                            required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
-                            message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
-                          }]
-                        })(
-                          <DatePicker
-                            disabledDate={this.disabledDate}
-                            disabledTime={this.disabledDateTime}
-                          />
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.happenTime && showField.happenTime.status &&
-                  <Col span={12}>
-                    <Form.Item label={showField.happenTime && showField.happenTime.name} {...formItemLayout}>
-                      {
-                        Number(showField.happenTime.dateType) === 1 &&
-                        getFieldDecorator('time', {
-                          initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
-                          rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                        })(
-                          <DatePicker style={{width: '100%'}} />
-                        )
-                      }
-                      {
-                        Number(showField.happenTime.dateType) === 2 &&
-                        getFieldDecorator('time', {
-                          initialValue: details.startTime && details.endTime ?
-                            [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
-                            :
-                            [],
-                          rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                        })(
-                          <RangePicker
-                            style={{width: '280px' }}
-                            placeholder="请选择时间"
-                            format="YYYY-MM-DD"
-                            showTime={{
-                              hideDisabledOptions: true,
-                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                            }}
-                          />
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.imgUrl && showField.imgUrl.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                      <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.fileUrl && showField.fileUrl.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
-                      <Button onClick={() => this.uploadFiles()} disabled={fileUrl && (fileUrl.length > 9 || fileUrl.length === 9)}>
-                        <Icon type="upload" /> 上传文件
-                      </Button>
-                      <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
-                      {
-                        fileUrl.map((it, index) => (
-                          <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
-                            <div className={style.fileIcon}>
-                              <img
-                                className='attachment-icon'
-                                src={fileIcon[it.fileType]}
-                                alt='attachment-icon'
-                              />
-                              <span className="eslips-1">{it.fileName}</span>
-                            </div>
-                            <i className="iconfont icondelete_fill" onClick={(e) => this.onDelFile(index, e)} />
-                          </div>
-                        ))
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.project && showField.project.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.project} {...formItemLayout}>
-                      {
-                        getFieldDecorator('projectId', {
-                          initialValue: details.projectId || '',
-                          rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
-                        })(
-                          <Select
-                            placeholder={`请选择${labelInfo.project}`}
-                            onChange={(val) => this.onChangePro(val, 'project')}
-                            dropdownClassName="selectClass"
-                            getPopupContainer={triggerNode => triggerNode.parentNode}
-                          >
+                  newForm && (newForm.length > 0) &&
+                  newForm.map(itw => {
+                    if (itw.field.indexOf('expand_') > -1 || itw.field.indexOf('self_') > -1) {
+                      let renderForm = null;
+                      let rule = [];
+                      let initMsg = itw.msg || '';
+                      if (Number(itw.fieldType) === 0) {
+                        renderForm = (<Input placeholder='请输入' />);
+                        rule = [{ max: 20, message: '限制20个字' }];
+                      } else if (Number(itw.fieldType) === 1) {
+                        renderForm = (<TextArea placeholder='请输入' />);
+                        rule = [{ max: 128, message: '限制128个字' }];
+                      } else if(Number(itw.fieldType) === 2) {
+                        renderForm = (
+                          <Select placeholder='请选择'>
                             {
-                              usableProject.map(it => (
-                                <Option key={it.id}>{it.name}</Option>
+                              itw.options && itw.options.map(iteems => (
+                                <Select.Option key={iteems}>{iteems}</Select.Option>
                               ))
                             }
                           </Select>
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  showField.supplier && showField.supplier.status &&
-                  <Col span={12}>
-                    <Form.Item label={labelInfo.supplier} {...formItemLayout}>
-                      {
-                        getFieldDecorator('supplier', {
-                          initialValue: details.supplier || '',
-                          rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
-                        })(
-                          <TreeSelect
-                            showSearch
-                            treeNodeFilterProp='searchs'
-                            placeholder="请选择"
-                            style={{width: '100%'}}
-                            treeDefaultExpandAll
-                            dropdownStyle={{height: '300px'}}
-                            onChange={(val) => this.onChangePro(val, 'supplier')}
-                            treeNodeLabelProp="name"
-                            getPopupContainer={triggerNode => triggerNode.parentNode}
-                          >
-                            {this.treeNodeRender(supplierList)}
-                          </TreeSelect>
-                        )
-                      }
-                    </Form.Item>
-                  </Col>
-                }
-                {
-                  expandField && (expandField.length > 0) &&
-                  expandField.map(itw => {
-                    let renderForm = null;
-                    let rule = [];
-                    if (Number(itw.fieldType) === 2) {
-                      renderForm = (
-                        <Select
-                          placeholder='请选择'
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                        >
-                          {
-                            itw.options && itw.options.map(iteems => (
-                              <Select.Option key={iteems}>{iteems}</Select.Option>
-                            ))
-                          }
-                        </Select>
-                      );
-                    } else if (Number(itw.fieldType) === 1) {
-                      renderForm = (<TextArea placeholder='请输入' />);
-                      rule = [{ max: 128, message: '限制128个字' }];
-                    } else {
-                      renderForm = (<Input placeholder='请输入' />);
-                      rule = [{ max: 20, message: '限制20个字' }];
-                    }
-                    return (
-                      <>
-                        {
-                          itw.status ?
-                            <Col span={12}>
-                              <Form.Item label={itw.name} {...formItemLayout}>
-                                {
-                                  getFieldDecorator(itw.field, {
-                                    initialValue: itw.msg,
-                                    rules: [
-                                      {
-                                        required: !!(itw.isWrite),
-                                        message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}`
-                                      },
-                                      ...rule,
-                                    ],
-                                  })(
-                                    renderForm
-                                  )
-                                }
-                              </Form.Item>
-                            </Col>
-                            :
-                            null
+                        );
+                      } else if (itw.fieldType === 5) {
+                        if (itw.dateType === 1) {
+                          initMsg = itw.startTime ? moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
+                          renderForm = (
+                            <DatePicker style={{width: '100%'}} />
+                          );
+                        } else {
+                          initMsg = itw.startTime && itw.endTime ?
+                              [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
+                          renderForm = (
+                            <RangePicker
+                              style={{width: '280px' }}
+                              placeholder="请选择时间"
+                              format="YYYY-MM-DD"
+                              showTime={{
+                                hideDisabledOptions: true,
+                                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                              }}
+                            />
+                          );
                         }
-                      </>
-                    );
+                      }
+                      return (
+                        <>
+                          {
+                            itw.status ?
+                              <Col span={12}>
+                                <Form.Item label={itw.name} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator(itw.field, {
+                                      initialValue: initMsg,
+                                      rules: [
+                                        {
+                                          required: !!(itw.isWrite),
+                                          message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}`
+                                        },
+                                        ...rule,
+                                      ],
+                                    })(
+                                      renderForm
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                        </>
+                      );
+                    }
+                      return (
+                        <>
+                          {
+                            itw.field === 'loanSum' && itw.status ?
+                              <Col span={12}>
+                                <Form.Item label={showField.loanSum && showField.loanSum.name} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator('loanSum', {
+                                      initialValue: details.loanSum || '',
+                                      rules: [{
+                                        required: !!(showField.loanSum && showField.loanSum.isWrite),
+                                        message: `请输入${showField.loanSum && showField.loanSum.name}`
+                                      }, {
+                                        validator: this.checkMoney
+                                      }]
+                                    })(
+                                      <InputNumber
+                                        onChange={val => this.inputMoney(val)}
+                                        placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
+                                        style={{width: '100%'}}
+                                      />
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'applicationSum' && itw.status ?
+                              <Col span={12}>
+                                <Form.Item label={showField.applicationSum && showField.applicationSum.name} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator('applicationSum', {
+                                      initialValue: details.applicationSum || '',
+                                      rules: [{
+                                        required: !!(showField.applicationSum && showField.applicationSum.isWrite),
+                                        message: `请输入${showField.applicationSum && showField.applicationSum.name}`
+                                      }, {
+                                        validator: this.checkMoney
+                                      }]
+                                    })(
+                                      <InputNumber
+                                        onChange={val => this.inputMoney(val)}
+                                        placeholder={`请输入${showField.applicationSum && showField.applicationSum.name}`}
+                                        style={{width: '100%'}}
+                                      />
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'repaymentTime' && itw.status ?
+                              <Col span={12}>
+                                <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator('repaymentTime', {
+                                      initialValue: details.repaymentTime ? moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                                      rules: [{
+                                        required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
+                                        message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
+                                      }]
+                                    })(
+                                      <DatePicker
+                                        disabledDate={this.disabledDate}
+                                        disabledTime={this.disabledDateTime}
+                                      />
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'happenTime' && itw.status ?
+                              <Col span={12}>
+                                <Form.Item label={showField.happenTime && showField.happenTime.name} {...formItemLayout}>
+                                  {
+                                    Number(showField.happenTime.dateType) === 1 &&
+                                    getFieldDecorator('time', {
+                                      initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                                      rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                                    })(
+                                      <DatePicker style={{width: '100%'}} />
+                                    )
+                                  }
+                                  {
+                                    Number(showField.happenTime.dateType) === 2 &&
+                                    getFieldDecorator('time', {
+                                      initialValue: details.startTime && details.endTime ?
+                                        [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                                        :
+                                        [],
+                                      rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                                    })(
+                                      <RangePicker
+                                        style={{width: '280px' }}
+                                        placeholder="请选择时间"
+                                        format="YYYY-MM-DD"
+                                        showTime={{
+                                          hideDisabledOptions: true,
+                                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                                        }}
+                                      />
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'imgUrl' && showField.imgUrl.status ?
+                              <Col span={12}>
+                                <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
+                                  <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'fileUrl' && showField.fileUrl.status ?
+                              <Col span={12}>
+                                <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
+                                  <Button onClick={() => this.uploadFiles()} disabled={fileUrl && (fileUrl.length > 9 || fileUrl.length === 9)}>
+                                    <Icon type="upload" /> 上传文件
+                                  </Button>
+                                  <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
+                                  {
+                                    fileUrl.map((it, index) => (
+                                      <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
+                                        <div className={style.fileIcon}>
+                                          <img
+                                            className='attachment-icon'
+                                            src={fileIcon[it.fileType]}
+                                            alt='attachment-icon'
+                                          />
+                                          <span className="eslips-1">{it.fileName}</span>
+                                        </div>
+                                        <i className="iconfont icondelete_fill" onClick={(e) => this.onDelFile(index, e)} />
+                                      </div>
+                                    ))
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'project' && showField.project.status ?
+                              <Col span={12}>
+                                <Form.Item label={labelInfo.project} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator('projectId', {
+                                      initialValue: details.projectId || '',
+                                      rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
+                                    })(
+                                      <Select
+                                        placeholder={`请选择${labelInfo.project}`}
+                                        onChange={(val) => this.onChangePro(val, 'project')}
+                                        dropdownClassName="selectClass"
+                                        getPopupContainer={triggerNode => triggerNode.parentNode}
+                                      >
+                                        {
+                                          usableProject.map(it => (
+                                            <Option key={it.id}>{it.name}</Option>
+                                          ))
+                                        }
+                                      </Select>
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'supplier' && showField.supplier.status ?
+                              <Col span={12}>
+                                <Form.Item label={labelInfo.supplier} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator('supplier', {
+                                      initialValue: details.supplier || '',
+                                      rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
+                                    })(
+                                      <TreeSelect
+                                        showSearch
+                                        treeNodeFilterProp='searchs'
+                                        placeholder="请选择"
+                                        style={{width: '100%'}}
+                                        treeDefaultExpandAll
+                                        dropdownStyle={{height: '300px'}}
+                                        onChange={(val) => this.onChangePro(val, 'supplier')}
+                                        treeNodeLabelProp="name"
+                                        getPopupContainer={triggerNode => triggerNode.parentNode}
+                                      >
+                                        {this.treeNodeRender(supplierList)}
+                                      </TreeSelect>
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'note' && showField.note.status ?
+                              <Col span={12}>
+                                <Form.Item label={labelInfo.note} {...formItemLayout}>
+                                  {
+                                    getFieldDecorator('note',{
+                                      initialValue: details.note || '',
+                                      rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
+                                    })(
+                                      <Input placeholder="请输入"  />
+                                    )
+                                  }
+                                </Form.Item>
+                              </Col>
+                              :
+                              null
+                          }
+                          {
+                            itw.field === 'receiptId' && showField.receiptId.status ?
+                              <Col span={12} style={{position: 'relative'}}>
+                                <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
+                                  {
+                                    getFieldDecorator('receiptId', {
+                                      initialValue: details.receiptId ? [details.receiptId] : null,
+                                      rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
+                                    })(
+                                      <Select
+                                        placeholder="请选择"
+                                        dropdownClassName={style.opt}
+                                        onChange={(val) => this.onChangeAcc(val)}
+                                        optionLabelProp="label"
+                                        getPopupContainer={triggerNode => triggerNode.parentNode}
+                                        // value={details.receiptId}
+                                      >
+                                        {
+                                          accountList.map(it => (
+                                            <Option key={it.id} value={it.id} label={it.name}>
+                                              <div className={style.selects}>
+                                                <p className="c-black fs-14">{it.name} </p>
+                                                <p className="c-black-36 fs-13">{it.account}</p>
+                                              </div>
+                                              <Divider type="horizontal" />
+                                            </Option>
+                                          ))
+                                        }
+                                      </Select>
+                                    )
+                                  }
+                                </Form.Item>
+                                <ReceiptModal title="add" onOk={this.handelAcc}>
+                                  <a className={style.addReceipt}>新增</a>
+                                </ReceiptModal>
+                              </Col>
+                              :
+                              null
+                          }
+                        </>
+                      );
                   })
                 }
               </Row>
@@ -1986,7 +2067,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              showField.loan && showField.loan.status &&
+              djDetail.isRelationLoan &&
               <>
                 <Divider type="horizontal" />
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
@@ -2017,7 +2098,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              showField.apply && showField.apply.status  ?
+              djDetail.isRelationApply  ?
                 <>
                   <Divider type="horizontal" />
                   <div style={{paddingTop: '24px', paddingBottom: '30px'}}>

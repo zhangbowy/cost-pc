@@ -1,0 +1,16 @@
+.payContent{
+  min-height: 500px;
+  padding: 24px 32px;
+
+  :global(.cnt-header .head_lf) {
+    display: flex;
+  }
+  :global(.ant-form-item) {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  .acctive-bg{
+    background: rgba(0, 199, 149, 0.12);
+  }
+}

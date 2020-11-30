@@ -160,6 +160,16 @@ const menuData = [
       name: '支出费用明细',
       myIcon: '',
       path: 'costDetail',
+    },{
+      id: 'statistics_summary',
+      name: '台账汇总',
+      myIcon: '',
+      path: 'summary',
+    },{
+      id: 'statistics_overview',
+      name: '统计概览',
+      myIcon: '',
+      path: 'overview',
     }]
   },{
     id: 'basicSettings',

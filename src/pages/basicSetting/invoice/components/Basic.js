@@ -1,9 +1,10 @@
+/* eslint-disable react/no-did-update-set-state */
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon } from 'antd';
+import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { formItemLayout, isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
+import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
@@ -59,6 +60,11 @@ class Basic extends React.PureComponent {
           name: '',
         });
     }
+    if (prevProps.approveList !== this.props.approveList) {
+      this.setState({
+        approveList: this.props.approveList,
+      });
+    }
 }
 
   onRest() {
@@ -76,6 +82,7 @@ class Basic extends React.PureComponent {
     const {
       form,
       costCategoryList,
+      templateType
     } = this.props;
     let val = {};
     const { category, users, deptJson } = this.state;
@@ -89,6 +96,22 @@ class Basic extends React.PureComponent {
           });
           Object.assign(val, {
             costCategoryJson: arr.length > 0 && JSON.stringify(arr),
+          });
+        }
+        if (values.relation && values.relation.length) {
+          const obbj = {
+            isRelationApply: false,
+          };
+          if (Number(templateType) === 0) {
+            Object.assign(obbj, {
+              isRelationLoan: false,
+            });
+          }
+          values.relation.forEach(its => {
+            obbj[its] = true;
+          });
+          Object.assign(values, {
+            ...obbj,
           });
         }
         if (!values.isAllUse) {
@@ -180,10 +203,12 @@ class Basic extends React.PureComponent {
   onChangeSelect = (type) => {
     this.onCancel();
     this.props.dispatch({
-      type: 'invoice/approveList',
+      type: 'addInvoice/approveList',
       payload: {}
     }).then(() => {
-      const { approveList } = this.props;
+      const { approveList, onChangeData } = this.props;
+      console.log('Basic -> onChangeSelect -> approveList', approveList);
+      onChangeData('approveList', approveList);
       this.setState({
         approveList,
       }, () => {
@@ -227,12 +252,22 @@ class Basic extends React.PureComponent {
       dispatch,
     } = this.props;
     const { cost, user, category, users, deptJson, flowId, approveList, visible, name, title } = this.state;
-    console.log('flowId', flowId);
+    console.log('data', data);
     // eslint-disable-next-line
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 19 },
+      },
+    };
     return (
       <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
-        <Form {...formItemLayout} className="formItem">
+        <Form {...formItemLayout} className="formItem" style={{ width: '450px' }}>
           <Form.Item label={labelInfo.name}>
             {
               getFieldDecorator('name', {
@@ -404,6 +439,24 @@ class Basic extends React.PureComponent {
               )
             }
           </Form.Item>
+          {
+            Number(templateType) !== 2 &&
+            <Form.Item label="单据相关">
+              {
+                getFieldDecorator('relation', {
+                  initialValue: data && data.relation ? data.relation : [],
+                })(
+                  <Checkbox.Group>
+                    {
+                      Number(templateType) === 0 &&
+                      <Checkbox value="isRelationLoan">借款核销</Checkbox>
+                    }
+                    <Checkbox value="isRelationApply">关联申请单</Checkbox>
+                  </Checkbox.Group>
+                )
+              }
+            </Form.Item>
+          }
           <Form.Item label={labelInfo.status}>
             {
               getFieldDecorator('status', {
