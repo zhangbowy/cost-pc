@@ -18,14 +18,15 @@ import { eventChange } from '@/utils/util';
 import api from './services';
 import styles from './index.scss';
 
-const time =  getDateUtil(new Date().getTime()).split('-');
-const startDate = `${time[0]}-${  time[1]  }-01 00:00:01`;
-const { MonthPicker } = DatePicker;
-
 const getMaxDay = (year,month) => {
   const temp = new Date(year,month,'0');
   return temp.getDate();
 };
+const time =  getDateUtil(new Date().getTime()).split('-');
+const startDate = `${time[0]}-${time[1]}-01 00:00:01`;
+const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
+const { MonthPicker } = DatePicker;
+
 
 class EchartsTest extends Component {
 
@@ -34,7 +35,7 @@ class EchartsTest extends Component {
     // colorArr : ['rgba(3,122,254,1)','rgba(0,199,149,1)'],
     colorArr : ['rgba(0,199,149,1)','rgba(0,199,149,1)'],
     startTime: new Date(startDate).getTime(),
-    endTime: new Date().getTime(),
+    endTime: new Date(endDate).getTime(),
     type: 0,
     dateType: 0,
     defaultQuarter: this.getQuarter(new Date()),
