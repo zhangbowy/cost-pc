@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Tree, Icon, Input } from 'antd';
+import Modal from '@/Components/Modal';
 // import treeConvert from '@/utils/treeConvert';
 // import styles from './index.scss';  
 
@@ -14,7 +15,8 @@ class TreeSelectNew extends Component {
       checkedKeys: ['0-0-0'],
       selectedKeys: [],
       // searchValue:'',
-      treeData: props.treeData
+      treeData: props.treeData,
+      visible: false
     };
   }
 
@@ -33,6 +35,15 @@ class TreeSelectNew extends Component {
       autoExpandParent: true,
     });
   };
+
+  showModel = () => {
+    const { visible } = this.state;
+    if(visible){
+      this.setState({visible: false});
+    }else{
+      this.setState({visible: true});
+    }
+  }
 
   onExpand = expandedKeys => {
     console.log('onExpand', expandedKeys);
@@ -83,25 +94,28 @@ class TreeSelectNew extends Component {
 
 
   render() {
-    const { treeData } = this.state;
+    const { treeData, visible } = this.state;
+    console.log(visible);
     console.log('treeData=======',treeData);
     return (
       <span>
-        <Input type="Group"  />
-        <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={this.onChange} />
-        <Tree
-          checkable
-          onExpand={this.onExpand}
-          switcherIcon={<Icon type="down" />}
-          expandedKeys={this.state.expandedKeys}
-          autoExpandParent={this.state.autoExpandParent}
-          onCheck={this.onCheck}
-          checkedKeys={this.state.checkedKeys}
-          onSelect={this.onSelect}
-          selectedKeys={this.state.selectedKeys}
-        >
-          {this.renderTreeNodes(treeData)}
-        </Tree>
+        <Input type="Group" onClick={this.showModel} />
+        <Modal visible={visible} >
+          <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={this.onChange} />
+          <Tree
+            checkable
+            onExpand={this.onExpand}
+            switcherIcon={<Icon type="down" />}
+            expandedKeys={this.state.expandedKeys}
+            autoExpandParent={this.state.autoExpandParent}
+            onCheck={this.onCheck}
+            checkedKeys={this.state.checkedKeys}
+            onSelect={this.onSelect}
+            selectedKeys={this.state.selectedKeys}
+          >
+            {this.renderTreeNodes(treeData)}
+          </Tree>
+        </Modal>
       </span>
     );
   }

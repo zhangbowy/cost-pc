@@ -10,9 +10,14 @@ class Modal extends Component{
   }
 
   render(){
-    
+    const { visible } = this.props;
+    console.log(visible);
     return (
-      <div className={styles.ModalBox} />
+      <div className={styles.ModalBox} style={{display: visible?'block':'none'}} >
+        <div className={styles.Modal} style={{position:'fiexd'}}>
+          { this.props.children }
+        </div>
+      </div>
     );
   }
 }
