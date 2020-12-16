@@ -322,15 +322,37 @@ class AddInvoice extends Component {
   //  预览附件
   previewFiless = (options) => {
     this.props.dispatch({
-      type: 'global/grantDownload',
+      type: 'global/isApproval',
       payload: {
-        spaceProcessDentryAuthVOS: [{
-          fileIds: options.fileId,
-          spaceId: options.spaceId,
-        }]
+        spaceId: options.spaceId
       }
     }).then(() => {
+      const { isApproval } = this.props;
+      if (isApproval) {
+        this.preview(options, 'global/newGrantDownload', true);
+      } else {
+        this.preview(options, 'global/grantDownload');
+      }
+    });
+  }
+
+  preview = (options, url, flag) => {
+    const { details } = this.state;
+    const params = {
+      fileIds: options.fileId
+    };
+    if (flag) {
+      Object.assign(params, { processInstanceId: details.proInsId });
+    }
+    this.props.dispatch({
+      type: url,
+      payload: {
+        ...params,
+      }
+    }).then(() => {
+      console.log(options);
       previewFile(options);
+      // DownloadFile(options.file, options.fileName);
     });
   }
 
