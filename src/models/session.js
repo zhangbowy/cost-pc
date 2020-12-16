@@ -28,28 +28,6 @@ export default {
         api.getLeftMenu,
         payload,
       );
-      response.push({
-        id: '4705310700739333467',
-        icon: 'iconbaoxiaodanguanli',
-        isAll:false,
-        menuName:'台账汇总',
-        parentId:0,
-        perms:'',
-        sort:29,
-        type:1,
-        url:'statistics_summary'
-      });
-      // response.push({
-      //   id: '4705310700739333467',
-      //   icon: 'iconbaoxiaodanguanli',
-      //   isAll:false,
-      //   menuName:'统计概览',
-      //   parentId:0,
-      //   perms:'',
-      //   sort:29,
-      //   type:1,
-      //   url:'statistics_overview'
-      // });
       const menus = treeConvert({
         rootId: 0,
         pId: 'parentId',
@@ -86,8 +64,8 @@ export default {
     *login({ payload }, { call, put }) {
       const response = yield call(post, api.login, payload);
       // Object.assign(payload, {
-      //   corpId: 'ding60b685dc54dadadd24f2f5cc6abecb85',
-      //   dingUserId: '124147011224269463'
+      //   corpId: 'ding5544314d521e6209a39a90f97fcb1e09',
+      //   dingUserId: '283712026539702854'
       // });
       // const response = yield call(get, api.mockLogin, payload);
       Session.set('userInfo', JSON.stringify(response));

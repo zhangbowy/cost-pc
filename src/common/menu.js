@@ -156,20 +156,45 @@ const menuData = [
     myIcon: 'iconzhichufeiyongtongji',
     path: 'statistics',
     children: [{
-      id: 'statistics_costDetail',
-      name: '支出费用明细',
-      myIcon: '',
-      path: 'costDetail',
-    },{
-      id: 'statistics_summary',
-      name: '台账汇总',
-      myIcon: '',
-      path: 'summary',
-    },{
       id: 'statistics_overview',
       name: '统计概览',
       myIcon: '',
       path: 'overview',
+    }, {
+      id: 'statistics_summary',
+      name: '台账汇总',
+      myIcon: '',
+      path: 'summary',
+    }, {
+      id: 'statistics_department',
+      name: '部门支出表',
+      myIcon: '',
+      path: 'department',
+    }, {
+      id: 'statistics_classify',
+      name: '费用类别支出表',
+      myIcon: '',
+      path: 'classify',
+    }, {
+      id: 'statistics_project',
+      name: '项目支出表',
+      myIcon: '',
+      path: 'project',
+    }, {
+      id: 'statistics_supplier',
+      name: '供应商支出表',
+      myIcon: '',
+      path: 'supplier',
+    }, {
+      id: 'statistics_people',
+      name: '员工支出表',
+      myIcon: '',
+      path: 'people',
+    }, {
+      id: 'statistics_costDetail',
+      name: '支出费用明细',
+      myIcon: '',
+      path: 'costDetail',
     }]
   },{
     id: 'basicSettings',
