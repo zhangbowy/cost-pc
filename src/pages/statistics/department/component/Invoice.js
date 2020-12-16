@@ -59,7 +59,7 @@ function Invoice({ children, lists, onQuery }) {
     }];
   return (
     <span>
-      <span onClick={() => setVisible(true)}>{ children }</span>
+      <span onClick={() => { onQuery({ pageNo: 1, pageSize: 10 }); setVisible(true);  }}>{ children }</span>
       <Modal
         title="单据列表"
         visible={visible}

@@ -111,10 +111,11 @@ class Department extends Component {
   }
 
   inVoiceQuery = (payload) => {
-    const { startTime, endTime } = this.state;
+    const { startTime, endTime, dateType } = this.state;
     Object.assign(payload, {
       startTime,
       endTime,
+      dateType: Number(dateType)
     });
     this.props.dispatch({
       type: 'department/detailList',
