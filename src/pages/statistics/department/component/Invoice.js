@@ -1,30 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Modal, Table, Tooltip } from 'antd';
+import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus } from '../../../../utils/constants';
 
-function Invoice({ children, lists, onQuery }) {
+function Invoice({ children, lists, onQuery, deptId }) {
   const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    onQuery({
-      pageNo: 1,
-      pageSize: 10,
-    });
-  }, [lists]);
   const columns = [{
-    title: '事由',
-      dataIndex: 'reason',
-      width: 150,
-      render: (text) => (
+      title: '序号',
+      dataIndex: 'index',
+      width: 80,
+      render: (_, record, index) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
+          {index+1}
         </span>
       ),
     }, {
+    title: '事由',
+      dataIndex: 'reason',
+      width: 150,
+      render: (_, record) => (
+        <InvoiceDetail id={record.invoiceTemplateId} templateType={0}>
+          <span>
+            <Tooltip placement="topLeft" title={record.reason || ''}>
+              <a className="eslips-2">{record.reason}</a>
+            </Tooltip>
+          </span>
+        </InvoiceDetail>
+      ),
+    }, {
       title: '金额(元)',
-      dataIndex: 'loanSum',
+      dataIndex: 'submitSum',
       render: (text) => (
         <span>{text && text / 100}</span>
       ),
@@ -40,7 +46,7 @@ function Invoice({ children, lists, onQuery }) {
       width: 160,
     }, {
       title: '提交人',
-      dataIndex: 'createUserName',
+      dataIndex: 'createName',
       width: 150,
     }, {
       title: '提交时间',
@@ -59,7 +65,7 @@ function Invoice({ children, lists, onQuery }) {
     }];
   return (
     <span>
-      <span onClick={() => { onQuery({ pageNo: 1, pageSize: 10 }); setVisible(true);  }}>{ children }</span>
+      <span onClick={() => { onQuery({ pageNo: 1, pageSize: 10, deptId }); setVisible(true);  }}>{ children }</span>
       <Modal
         title="单据列表"
         visible={visible}

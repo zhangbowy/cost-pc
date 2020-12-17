@@ -147,15 +147,19 @@ class Department extends Component {
       width: 140,
     }, {
       title: '报销人数',
-      dataIndex: 'submitSumYearAll',
+      dataIndex: 'submitUserCountAll',
       width: 100,
     }, {
       title: '单据数',
       dataIndex: 'submitUserCountAll',
       width: 100,
-      render: (text) => (
-        <Invoice lists={detailList} onQuery={this.inVoiceQuery}>
-          <a>{text}</a>
+      render: (_, record) => (
+        <Invoice
+          lists={detailList}
+          onQuery={this.inVoiceQuery}
+          deptId={record.deptId}
+        >
+          <a>{record.submitUserCountAll}</a>
         </Invoice>
       )
     }, {
