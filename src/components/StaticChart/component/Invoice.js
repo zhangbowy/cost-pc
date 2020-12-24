@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import { Modal, Table, Tooltip } from 'antd';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
-import { getArrayValue, invoiceStatus } from '../../../../utils/constants';
+import { getArrayValue, invoiceStatus } from '../../../utils/constants';
 
-function Invoice({ children, lists, onQuery, deptId }) {
+function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
   const [visible, setVisible] = useState(false);
   const columns = [{
       title: '序号',
@@ -20,7 +20,7 @@ function Invoice({ children, lists, onQuery, deptId }) {
       dataIndex: 'reason',
       width: 150,
       render: (_, record) => (
-        <InvoiceDetail id={record.invoiceTemplateId} templateType={0}>
+        <InvoiceDetail id={record.invoiceSubmitId} templateType={0}>
           <span>
             <Tooltip placement="topLeft" title={record.reason || ''}>
               <a className="eslips-2">{record.reason}</a>
@@ -65,7 +65,7 @@ function Invoice({ children, lists, onQuery, deptId }) {
     }];
   return (
     <span>
-      <span onClick={() => { onQuery({ pageNo: 1, pageSize: 10, deptId }); setVisible(true);  }}>{ children }</span>
+      <span onClick={() => { onQuery({ pageNo: 1, pageSize: 10, id, projectType }); setVisible(true);  }}>{ children }</span>
       <Modal
         title="单据列表"
         visible={visible}
@@ -76,8 +76,34 @@ function Invoice({ children, lists, onQuery, deptId }) {
       >
         <Table
           dataSource={lists}
-          pagination={false}
           columns={columns}
+          rowKey="invoiceSubmitId"
+          pagination={{
+            current: query.pageNo,
+            onChange: (pageNumber) => {
+              console.log('onChange');
+              onQuery({
+                pageNo: pageNumber,
+                pageSize: query.pageSize,
+                id,
+                projectType
+              });
+            },
+            total,
+            size: 'small',
+            showTotal: () => (`共${total}条数据`),
+            showSizeChanger: true,
+            showQuickJumper: true,
+            onShowSizeChange: (cur, size) => {
+              console.log('翻页');
+              onQuery({
+                pageNo: cur,
+                pageSize: size,
+                id,
+                projectType
+              });
+            }
+          }}
         />
       </Modal>
     </span>

@@ -1,13 +1,13 @@
 
 
 import React from 'react';
-import { Menu, Form, message } from 'antd';
+import { Menu, Form, message, Icon } from 'antd';
 import { connect } from 'dva';
 import Search from 'antd/lib/input/Search';
 import DropBtn from '@/components/DropBtn';
 import SummaryCmp from './components/SummaryCmp';
 import style from './index.scss';
-
+import LevelSearch from './components/LevelSearch';
 
 @connect(({ loading, summary }) => ({
   loading: loading.effects['summary/submitList'] ||
@@ -19,14 +19,15 @@ import style from './index.scss';
   query: summary.query,
   total: summary.total,
 }))
-class AuthIndex extends React.PureComponent {
+class Summary extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      current: 0,
+      current: '0',
       selectedRowKeys: [],
       list: [],
       searchContent: '',
+      sumAmount: 0,
     };
   }
 
@@ -48,32 +49,62 @@ class AuthIndex extends React.PureComponent {
 
   export = (key) => {
     const { current, selectedRowKeys } = this.state;
-    if (selectedRowKeys.length ===  0 && (key === '1' || key === '2')) {
+    if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
     }
     let url = 'summary/submitExport';
-    if (current === 1) {
+    if (Number(current) === 1) {
       url = 'summary/loanExport';
-    } else if (current === 2) {
+    } else if (Number(current) === 2) {
       url = 'summary/applicationExport';
     }
+    const payload = {};
+    const { searchContent, levelSearch } = this.state;
+    Object.assign(payload, {
+      content: searchContent,
+      ...levelSearch,
+    });
     this.props.dispatch({
       type: url,
       payload: {
         ids: selectedRowKeys,
+        ...payload,
       }
     });
   }
 
+  onSearch = e => {
+    const { query } = this.props;
+    this.setState({
+      searchContent: e,
+    }, () => {
+      this.onQuery({
+        pageNo:1,
+        pageSize: query.pageSize,
+      });
+    });
+  }
+
+  onSelect = (val) => {
+    this.setState({
+      ...val,
+    });
+  }
+
   onQuery = (payload) => {
-    const { current } = this.state;
+    const { current, searchContent, levelSearch } = this.state;
+    console.log('AuthIndex -> onQuery -> current', current);
     let url = 'summary/submitList';
-    if (current === 1) {
+    if (Number(current) === 1) {
       url = 'summary/loanList';
-    } else if (current === 2) {
+    } else if (Number(current) === 2) {
       url = 'summary/applicationList';
     }
+    Object.assign(payload, {
+      content: searchContent,
+      ...levelSearch,
+    });
     this.props.dispatch({
       type: url,
       payload,
@@ -84,13 +115,25 @@ class AuthIndex extends React.PureComponent {
         loanList
       } = this.props;
       let lists = submitList;
-      if (current === 1) {
+      if (Number(current) === 1) {
         lists = loanList;
-      } else if (current === 2) {
+      } else if (Number(current) === 2) {
         lists = applicationList;
       }
       this.setState({
         list: lists,
+      });
+    });
+  }
+
+  onOk = (search) => {
+    const { query } = this.props;
+    this.setState({
+      levelSearch: search,
+    }, () => {
+      this.onQuery({
+        pageNo: 1,
+        pageSize: query.pageSize
       });
     });
   }
@@ -108,7 +151,7 @@ class AuthIndex extends React.PureComponent {
 
   render() {
     const { loading, query, total } = this.props;
-    const { current, selectedRowKeys, list, searchContent } = this.state;
+    const { current, selectedRowKeys, list, searchContent, sumAmount, levelSearch } = this.state;
     return (
       <div>
         <div style={{background: '#fff', paddingTop: '16px'}}>
@@ -130,8 +173,7 @@ class AuthIndex extends React.PureComponent {
               <div className="head_lf">
                 <DropBtn
                   selectKeys={selectedRowKeys}
-                  // total={total}
-                  total={selectedRowKeys.length}
+                  total={total}
                   className="m-l-8"
                   onExport={(key) => this.export(key)}
                 >
@@ -146,14 +188,23 @@ class AuthIndex extends React.PureComponent {
                   />
                 </Form>
               </div>
+              <LevelSearch onOk={this.onOk} details={levelSearch}>
+                <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
+                  <div className={style.activebg}>
+                    <Icon className="sub-color m-r-8" type="filter" />
+                  </div>
+                  <span className="fs-14 sub-color">筛选</span>
+                </div>
+              </LevelSearch>
             </div>
-            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，共计¥{0}</p>
+            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，共计¥{sumAmount/100}</p>
             <SummaryCmp
               list={list}
-              templateType={current}
+              templateType={Number(current)}
               selectedRowKeys={selectedRowKeys}
               loading={loading}
               onQuery={this.onQuery}
+              onSelect={this.onSelect}
               total={total}
               query={query}
               searchContent={searchContent}
@@ -165,4 +216,4 @@ class AuthIndex extends React.PureComponent {
   }
 }
 
-export default AuthIndex;
+export default Summary;

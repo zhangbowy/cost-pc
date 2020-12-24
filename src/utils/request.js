@@ -102,7 +102,7 @@ function request(url, config) {
   const options = {
     method: config.method || 'POST',
     mode: 'cors', // 请求模式
-    catche: 'cache', // 缓存
+    catch: 'cache', // 缓存
   };
 
   /* ---------- 请求参数处理 ----------*/
@@ -160,7 +160,7 @@ function request(url, config) {
       },
     });
   }
-  if(config.data.type === 'export' || config.data.export === true) {
+  if(config.data.exportType === 'export' || config.data.export === true) {
     return Promise.race([
       fetch(requestUrl, options),
       new Promise((_, reject) => {

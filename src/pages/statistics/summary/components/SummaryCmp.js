@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Tooltip } from 'antd';
 import moment from 'moment';
+import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
 
@@ -26,6 +27,12 @@ class SummaryCmp extends Component {
         selectedRows: _selectedRows,
         selectedRowKeys,
         sumAmount: amount,
+    }, () => {
+      this.props.onSelect({
+        selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
+      });
     });
   };
 
@@ -42,6 +49,12 @@ class SummaryCmp extends Component {
         selectedRows,
         selectedRowKeys,
         sumAmount: amount,
+    }, () => {
+      this.props.onSelect({
+        selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
+      });
     });
   };
 
@@ -59,13 +72,16 @@ class SummaryCmp extends Component {
     title: '事由',
       dataIndex: 'reason',
       width: 150,
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
+      render: (_, record) => (
+        <InvoiceDetail id={record.id} templateType={0}>
+          <span>
+            <Tooltip placement="topLeft" title={record.reason || ''}>
+              <a className="eslips-2">{record.reason}</a>
+            </Tooltip>
+          </span>
+        </InvoiceDetail>
       ),
+      fixed: 'left'
     }, {
       title: '金额(元)',
       dataIndex: 'submitSum',
@@ -120,13 +136,16 @@ class SummaryCmp extends Component {
       title: '事由',
         dataIndex: 'reason',
         width: 150,
-        render: (text) => (
-          <span>
-            <Tooltip placement="topLeft" title={text || ''}>
-              <span className="eslips-2">{text}</span>
-            </Tooltip>
-          </span>
+        render: (_, record) => (
+          <InvoiceDetail id={record.id} templateType={1}>
+            <span>
+              <Tooltip placement="topLeft" title={record.reason || ''}>
+                <a className="eslips-2">{record.reason}</a>
+              </Tooltip>
+            </span>
+          </InvoiceDetail>
         ),
+        fixed: 'left'
       }, {
         title: '借款金额(元)',
         dataIndex: 'loanSum',
@@ -196,13 +215,16 @@ class SummaryCmp extends Component {
         title: '事由',
           dataIndex: 'reason',
           width: 150,
-          render: (text) => (
-            <span>
-              <Tooltip placement="topLeft" title={text || ''}>
-                <span className="eslips-2">{text}</span>
-              </Tooltip>
-            </span>
+          render: (_, record) => (
+            <InvoiceDetail id={record.id} templateType={2}>
+              <span>
+                <Tooltip placement="topLeft" title={record.reason || ''}>
+                  <a className="eslips-2">{record.reason}</a>
+                </Tooltip>
+              </span>
+            </InvoiceDetail>
           ),
+          fixed: 'left'
         }, {
           title: '金额(元)',
           dataIndex: 'applicationSum',
@@ -262,22 +284,15 @@ class SummaryCmp extends Component {
           dataSource={list}
           loading={loading}
           rowSelection={rowSelection}
+          rowKey="id"
+          scroll={{ x: '1500px' }}
           pagination={{
             current: query.pageNo,
             onChange: (pageNumber) => {
-              const createTime = this.props.form.getFieldValue('createTime');
-              let startTime = '';
-              let endTime = '';
-              if (createTime && createTime.length > 0) {
-                startTime = moment(createTime[0]).format('x');
-                endTime = moment(createTime[1]).format('x');
-              }
               this.props.onQuery({
                 pageNo: pageNumber,
                 pageSize: query.pageSize,
                 content: searchContent,
-                endTime,
-                startTime,
               });
             },
             total,
@@ -286,19 +301,10 @@ class SummaryCmp extends Component {
             showSizeChanger: true,
             showQuickJumper: true,
             onShowSizeChange: (cur, size) => {
-              const createTime = this.props.form.getFieldValue('createTime');
-              let startTime = '';
-              let endTime = '';
-              if (createTime && createTime.length > 0) {
-                startTime = moment(createTime[0]).format('x');
-                endTime = moment(createTime[1]).format('x');
-              }
               this.props.onQuery({
                 pageNo: 1,
                 pageSize: size,
                 content: searchContent,
-                endTime,
-                startTime,
               });
             }
           }}

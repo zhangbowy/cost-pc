@@ -11,14 +11,15 @@ const getMaxDay = (year,month) => {
 const time =  getDateUtil(new Date().getTime()).split('-');
 const startDate = `${time[0]}-${time[1]}-01 00:00:01`;
 const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
-@connect(({ department, loading }) => ({
-  loading: loading.effects['department/list'] || false,
-  list: department.list,
-  query: department.query,
-  total: department.total,
-  detailList: department.detailList,
+@connect(({ projectS, loading }) => ({
+  loading: loading.effects['projectS/list'] || false,
+  list: projectS.list,
+  query: projectS.query,
+  total: projectS.total,
+  detailList: projectS.detailList,
+  chartList: projectS.chartList,
 }))
-class Department extends Component {
+class Project extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -41,24 +42,31 @@ class Department extends Component {
 
   onQuery = (payload) => {
     this.props.dispatch({
-      type: 'department/list',
+      type: 'projectS/list',
       payload,
     });
   }
 
   inVoiceQuery = (payload) => {
     Object.assign(payload, {
-      deptId: payload.id,
+      projectId: payload.id,
     });
     this.props.dispatch({
-      type: 'department/detailList',
+      type: 'projectS/detailList',
+      payload,
+    });
+  }
+
+  chartQuery = (payload) => {
+    this.props.dispatch({
+      type: 'projectS/chart',
       payload,
     });
   }
 
   onExport = (payload) => {
     this.props.dispatch({
-      type: 'department/export',
+      type: 'projectS/export',
       payload,
     });
   }
@@ -69,26 +77,26 @@ class Department extends Component {
       list,
       detailList,
       query,
-      total
+      total,
+      chartList
     } = this.props;
-    console.log('Department -> render -> total', total);
-
     return (
       <>
         <StaticChart
           onQuery={this.onQuery}
+          onExport={this.onExport}
           list={list}
           detailList={detailList}
           loading={loading}
           invoiceQuery={this.inVoiceQuery}
           query={query}
           total={total}
-          type="dept"
-          onExport={this.onExport}
-          chartName="deptName"
+          onChart={this.chartQuery}
+          chartList={chartList}
+          type="project"
           column={[{
-            title: '部门',
-            dataIndex: 'deptName',
+            title: '项目',
+            dataIndex: 'projectName',
             width: 260,
           }]}
         />
@@ -97,4 +105,4 @@ class Department extends Component {
   }
 }
 
-export default Department;
+export default Project;

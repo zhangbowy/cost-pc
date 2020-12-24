@@ -48,7 +48,7 @@ export default {
     },
     // 待发放
     *exporting({ payload }, { call }) {
-      Object.assign(payload, { type: 'export', fileName: '待发放列表' });
+      Object.assign(payload, { exportType:'export', fileName: '待发放列表' });
       yield call(post, api.payingExport, payload);
     },
     *refuse({ payload }, { call }) {

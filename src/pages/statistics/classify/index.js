@@ -11,14 +11,14 @@ const getMaxDay = (year,month) => {
 const time =  getDateUtil(new Date().getTime()).split('-');
 const startDate = `${time[0]}-${time[1]}-01 00:00:01`;
 const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
-@connect(({ department, loading }) => ({
-  loading: loading.effects['department/list'] || false,
-  list: department.list,
-  query: department.query,
-  total: department.total,
-  detailList: department.detailList,
+@connect(({ classifyS, loading }) => ({
+  loading: loading.effects['classifyS/list'] || false,
+  list: classifyS.list,
+  detailList: classifyS.detailList,
+  query: classifyS.query,
+  total: classifyS.total,
 }))
-class Department extends Component {
+class Classify extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -41,24 +41,24 @@ class Department extends Component {
 
   onQuery = (payload) => {
     this.props.dispatch({
-      type: 'department/list',
+      type: 'classifyS/list',
       payload,
     });
   }
 
   inVoiceQuery = (payload) => {
     Object.assign(payload, {
-      deptId: payload.id,
+      categoryId: payload.id,
     });
     this.props.dispatch({
-      type: 'department/detailList',
+      type: 'classifyS/detailList',
       payload,
     });
   }
 
   onExport = (payload) => {
     this.props.dispatch({
-      type: 'department/export',
+      type: 'classifyS/export',
       payload,
     });
   }
@@ -71,24 +71,22 @@ class Department extends Component {
       query,
       total
     } = this.props;
-    console.log('Department -> render -> total', total);
-
     return (
       <>
         <StaticChart
           onQuery={this.onQuery}
+          onExport={this.onExport}
           list={list}
           detailList={detailList}
           loading={loading}
-          invoiceQuery={this.inVoiceQuery}
           query={query}
           total={total}
-          type="dept"
-          onExport={this.onExport}
-          chartName="deptName"
+          type="classify"
+          invoiceQuery={this.inVoiceQuery}
+          chartName="categoryName"
           column={[{
-            title: '部门',
-            dataIndex: 'deptName',
+            title: '费用类别',
+            dataIndex: 'categoryName',
             width: 260,
           }]}
         />
@@ -97,4 +95,4 @@ class Department extends Component {
   }
 }
 
-export default Department;
+export default Classify;

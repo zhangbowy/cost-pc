@@ -71,7 +71,7 @@ class EchartsTest extends Component {
           return `${year}-07~${year}-09`;
         }
           return `${year}-10~${year}-12`;
-        
+
       }
     }
 
@@ -269,8 +269,8 @@ class EchartsTest extends Component {
                 {
                   dateType===2 &&
                     <YearPicker onChange={(str) => this.yearChange(str)} defaultValue={defaultYear} />
-                  || dateType===0 && 
-                    <MonthPicker allowClear={false} onChange={(_,str) => this.monthChage(str)} defaultValue={moment(defaultMonth)} /> 
+                  || dateType===0 &&
+                    <MonthPicker allowClear={false} onChange={(_,str) => this.monthChage(str)} defaultValue={moment(defaultMonth)} />
                   || dateType===1 &&
                     <QuarterPicker onChange={(str) => this.quarterChage(str)} value={defaultQuarter} />
                 }
@@ -312,7 +312,7 @@ class EchartsTest extends Component {
               })
             }
           </div>
-         
+
           <div className={styles.canvasHeader}>
             <div className={styles.canvasHeaderLeft} >趋势图</div>
             <div className={styles.canvasHeaderRight} >

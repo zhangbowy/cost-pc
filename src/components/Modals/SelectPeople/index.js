@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { ddComplexPicker } from '@/utils/ddApi';
 import style from './index.scss';
-import { choosePeople } from '../../../utils/ddApi';
+import { choosePeople, ddDepartmentsPicker } from '../../../utils/ddApi';
 
 class UserSelector extends PureComponent {
   static propTypes = {
@@ -67,6 +67,8 @@ class UserSelector extends PureComponent {
       });
     } else if (flag === 'users') {
       this.selectPeop();
+    } else if (flag === 'dept') {
+      this.selectDept();
     }
 
   }
@@ -102,6 +104,31 @@ class UserSelector extends PureComponent {
     }, {
       multiple,
       max,
+    });
+  }
+
+  selectDept = () => {
+    const { depts, multiple, max  } = this.props;
+    const _this = this;
+    ddDepartmentsPicker({
+      departments: depts.map(it => it.deptId),
+      multiple,
+      max,
+    }, res => {
+      const arr = [];
+      if (res.departments) {
+        res.departments.forEach(it => {
+          arr.push({
+            deptId: it.id,
+            name: it.name,
+            deptName: it.name,
+            number:it.number,
+          });
+        });
+      }
+      _this.props.onSelectPeople({
+        depts: arr,
+      });
     });
   }
 

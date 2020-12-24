@@ -64,8 +64,8 @@ export default {
     *login({ payload }, { call, put }) {
       const response = yield call(post, api.login, payload);
       // Object.assign(payload, {
-      //   corpId: 'ding5544314d521e6209a39a90f97fcb1e09',
-      //   dingUserId: '283712026539702854'
+      //   corpId: 'dinge90fa6b633f55e0135c2f4657eb6378f',
+      //   dingUserId: '4148493239708004'
       // });
       // const response = yield call(get, api.mockLogin, payload);
       Session.set('userInfo', JSON.stringify(response));

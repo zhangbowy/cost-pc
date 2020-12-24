@@ -1,4 +1,4 @@
-import { get, post } from '@/utils/request';
+import { post } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -31,11 +31,11 @@ export default {
       });
     },
     *loanList({ payload }, { call, put }) {
-      const response = yield call(post, api.submitList, payload);
+      const response = yield call(post, api.loanList, payload);
       yield put({
         type: 'save',
         payload: {
-          submitList: response.list || [],
+          loanList: response.list || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
@@ -45,11 +45,11 @@ export default {
       });
     },
     *applicationList({ payload }, { call, put }) {
-      const response = yield call(get, api.submitList, payload);
+      const response = yield call(post, api.applicationList, payload);
       yield put({
         type: 'save',
         payload: {
-          submitList: response.list || [],
+          applicationList: response.list || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
@@ -59,15 +59,15 @@ export default {
       });
     },
     *submitExport({ payload }, { call }) {
-      Object.assign(payload, { type: 'export', fileName: '待发放列表' });
+      Object.assign(payload, { exportType:'export', fileName: '报销单列表' });
       yield call(post, api.submitExport, payload);
     },
     *loanExport({ payload }, { call }) {
-      Object.assign(payload, { type: 'export', fileName: '待发放列表' });
+      Object.assign(payload, { exportType:'export', fileName: '借款单列表' });
       yield call(post, api.loanExport, payload);
     },
     *applicationExport({ payload }, { call }) {
-      Object.assign(payload, { type: 'export', fileName: '待发放列表' });
+      Object.assign(payload, { exportType:'export', fileName: '申请单列表' });
       yield call(post, api.applicationExport, payload);
     },
   },

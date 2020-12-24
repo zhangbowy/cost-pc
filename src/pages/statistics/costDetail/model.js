@@ -34,7 +34,7 @@ export default {
       yield call(post, api.send, payload);
     },
     *export({ payload }, { call }) {
-      Object.assign(payload, { type: 'export', fileName: '支出费用明细' });
+      Object.assign(payload, { exportType:'export', fileName: '支出费用明细' });
       yield call(post, api.exports, payload);
       // yield put({
       //   exportData: res,
