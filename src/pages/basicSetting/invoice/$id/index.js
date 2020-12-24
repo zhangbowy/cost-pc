@@ -230,13 +230,26 @@ class CategoryAdd extends PureComponent {
       newSelectList.splice(indexs, 1, valStr);
     }
 
-    if ((current === 'two' || (title !== 'add' && paramsT[2] !== 'child')) && flag !== 'down') {
+    if ((current === 'two'
+      || (title !== 'add'
+      && paramsT[2] !== 'child'))
+      && flag !== 'down') {
       const newArr = newSelectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
       const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
       const url = title === 'add' || paramsT.length === 3 ? 'addInvoice/add' : 'addInvoice/edit';
       const params = {
         id: title === 'add' || paramsT.length === 3 ? '' : title,
-        showField: showField.map(it => { return { ...it, status: 1 }; }),
+        showField: showField.map(it => {
+          let dateTypes = it.dateType;
+          if (Number(it.fieldType) === 5) {
+            dateTypes = dateTypes || 1;
+          }
+          return {
+            ...it,
+            status: 1,
+            dateType: dateTypes,
+          };
+        }),
         type: 1,
         ...datas,
         templateType: Number(templateType),
