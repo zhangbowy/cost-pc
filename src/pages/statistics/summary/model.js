@@ -14,47 +14,54 @@ export default {
       pageSize: PAGE_SIZE,
     },
     total: 0,
+    sum: 0,
   },
   effects: {
     *submitList({ payload }, { call, put }) {
       const response = yield call(post, api.submitList, payload);
+      const newArr = response.list && response.list.map(it => { return { ...it, money: it.submitSum }; });
       yield put({
         type: 'save',
         payload: {
-          submitList: response.list || [],
+          submitList: newArr || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+          sum: response.sum || 0
         },
       });
     },
     *loanList({ payload }, { call, put }) {
       const response = yield call(post, api.loanList, payload);
+      const newArr = response.list && response.list.map(it => { return { ...it, money: it.loanSum }; });
       yield put({
         type: 'save',
         payload: {
-          loanList: response.list || [],
+          loanList: newArr || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+          sum: response.sum || 0
         },
       });
     },
     *applicationList({ payload }, { call, put }) {
       const response = yield call(post, api.applicationList, payload);
+      const newArr = response.list && response.list.map(it => { return { ...it, money: it.applicationSum }; });
       yield put({
         type: 'save',
         payload: {
-          applicationList: response.list || [],
+          applicationList: newArr || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+          sum: response.sum || 0
         },
       });
     },

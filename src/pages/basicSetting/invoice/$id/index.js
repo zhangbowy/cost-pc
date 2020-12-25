@@ -236,8 +236,10 @@ class CategoryAdd extends PureComponent {
       && flag !== 'down') {
       const newArr = newSelectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
       const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
+      console.log('CategoryAdd -> onStep -> showField', showField);
       const url = title === 'add' || paramsT.length === 3 ? 'addInvoice/add' : 'addInvoice/edit';
       const params = {
+        ...datas,
         id: title === 'add' || paramsT.length === 3 ? '' : title,
         showField: showField.map(it => {
           let dateTypes = it.dateType;
@@ -251,7 +253,6 @@ class CategoryAdd extends PureComponent {
           };
         }),
         type: 1,
-        ...datas,
         templateType: Number(templateType),
         companyId: userInfo.companyId || '',
         useJson: !datas.isAllUse && datas.userJson ? JSON.stringify(datas.userJson) : '',

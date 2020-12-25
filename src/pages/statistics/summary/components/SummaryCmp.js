@@ -10,9 +10,21 @@ class SummaryCmp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedRowKeys: [],
-      selectedRows: [],
+      selectedRowKeys: props.selectedRowKeys || [],
+      selectedRows: props.selectedRows || [],
+      sumAmount: props.sumAmount || 0,
     };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.selectedRowKeys !== this.props.selectedRowKeys) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        selectedRowKeys: this.props.selectedRowKeys,
+        selectedRows: this.props.selectedRows,
+        sumAmount: this.props.sumAmount,
+      });
+    }
   }
 
   onSelectAll = (selected, selectedRows, changeRows) => {
@@ -21,7 +33,7 @@ class SummaryCmp extends Component {
     const { selectedRowKeys } = result;
     let amount = 0;
     _selectedRows.forEach(item => {
-      amount+=item.submitSum;
+      amount+=item.money;
     });
     this.setState({
         selectedRows: _selectedRows,
@@ -42,8 +54,10 @@ class SummaryCmp extends Component {
         selectedRowKeys,
     } = rowSelect.onSelect(this.state, record, selected);
     let amount = 0;
+    console.log('SummaryCmp -> onSelect -> selectedRows', selectedRows);
+
     selectedRows.forEach(item => {
-      amount+=item.submitSum;
+      amount+=item.money;
     });
     this.setState({
         selectedRows,
@@ -116,7 +130,7 @@ class SummaryCmp extends Component {
     }, {
       title: '单据状态',
       dataIndex: 'statusStr',
-      width: 100,
+      width: 150,
       render: (_, record) => (
         <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
       )
@@ -195,7 +209,7 @@ class SummaryCmp extends Component {
       }, {
         title: '单据状态',
         dataIndex: 'statusStr',
-        width: 100,
+        width: 150,
         render: (_, record) => (
           <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
         )
@@ -259,7 +273,7 @@ class SummaryCmp extends Component {
         }, {
           title: '单据状态',
           dataIndex: 'statusStr',
-          width: 100,
+          width: 150,
           render: (_, record) => (
             <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
           )

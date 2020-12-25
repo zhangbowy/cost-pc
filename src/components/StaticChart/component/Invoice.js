@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import { Modal, Table, Tooltip } from 'antd';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import Search from 'antd/lib/input/Search';
 import { getArrayValue, invoiceStatus } from '../../../utils/constants';
 
 function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
   const [visible, setVisible] = useState(false);
+  const [search, setSearch] = useState('');
   const columns = [{
       title: '序号',
       dataIndex: 'index',
@@ -15,6 +17,7 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
           {index+1}
         </span>
       ),
+      fixed: 'left',
     }, {
     title: '事由',
       dataIndex: 'reason',
@@ -28,6 +31,7 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
           </span>
         </InvoiceDetail>
       ),
+      fixed: 'left',
     }, {
       title: '金额(元)',
       dataIndex: 'submitSum',
@@ -63,23 +67,36 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
         <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
       )
     }];
+    const onSearch = (e) => {
+      setSearch(e);
+      onQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e });
+    };
   return (
     <span>
       <span onClick={() => { onQuery({ pageNo: 1, pageSize: 10, id, projectType }); setVisible(true);  }}>{ children }</span>
       <Modal
         title="单据列表"
         visible={visible}
-        onCancel={() => setVisible(false)}
+        onCancel={() => { setSearch('');setVisible(false); }}
         footer={null}
         width="980px"
         bodyStyle={{height: '470px', overflowY: 'scroll'}}
       >
+        <Search
+          placeholder="请输入单号、事由、收款账户名称"
+          style={{ width: '292px',marginRight:'20px', marginBottom: '16px' }}
+          onSearch={(e) => onSearch(e)}
+          value={search}
+          onInput={e => setSearch(e.target.value)}
+        />
         <Table
           dataSource={lists}
           columns={columns}
           rowKey="invoiceSubmitId"
+          scroll={{y: '280px', x: '1090px'}}
           pagination={{
             current: query.pageNo,
+            hideOnSinglePage: true,
             onChange: (pageNumber) => {
               console.log('onChange');
               onQuery({

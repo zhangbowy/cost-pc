@@ -62,12 +62,12 @@ export default {
       });
     },
     *login({ payload }, { call, put }) {
-      const response = yield call(post, api.login, payload);
-      // Object.assign(payload, {
-      //   corpId: 'dinge90fa6b633f55e0135c2f4657eb6378f',
-      //   dingUserId: '4148493239708004'
-      // });
-      // const response = yield call(get, api.mockLogin, payload);
+      // const response = yield call(post, api.login, payload);
+      Object.assign(payload, {
+        corpId: 'ding29da919253e4f181acaaa37764f94726',
+        dingUserId: '091265503724275423'
+      });
+      const response = yield call(get, api.mockLogin, payload);
       Session.set('userInfo', JSON.stringify(response));
       localStorage.setItem('token', response.token);
       yield put({

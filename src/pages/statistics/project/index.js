@@ -97,7 +97,7 @@ class Project extends Component {
           column={[{
             title: '项目',
             dataIndex: 'projectName',
-            width: 260,
+            width: 100,
           }]}
         />
       </>

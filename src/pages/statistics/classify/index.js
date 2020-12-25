@@ -87,7 +87,7 @@ class Classify extends Component {
           column={[{
             title: '费用类别',
             dataIndex: 'categoryName',
-            width: 260,
+            width: 120,
           }]}
         />
       </>

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { post } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
@@ -17,32 +18,33 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(post, api.list, payload);
+      const submitSum = response && response.length ?
+      response.reduce((prev, next) => {
+        return prev + next.submitSumAll;
+      }, 0) : 0;
+      const submitSumAnnulus = response && response.length ?
+      response.reduce((prev, next) => {
+        return prev + next.submitSumAnnulusAll;
+      }, 0) : 0;
+      const annuls = submitSumAnnulus ?
+      Number(((((submitSum - submitSumAnnulus) / submitSumAnnulus).toFixed(2)) * 100).toFixed(0))
+      : 0;
+      const submitSumYear = response && response.length ?
+      response.reduce((prev, next) => {
+        return prev + next.submitSumYearAll;
+      }, 0) : 0;
+      const yearOnYear = submitSumYear ?
+      Number(((((submitSum - submitSumYear) / submitSumYear).toFixed(2)) * 100).toFixed(0))
+      : 0;
       response.unshift({
         categoryName: '合计',
         id: -1,
-        'submitSum': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumAll;
-        }, 0) : 0,
-        'submitSumAll': response && response.length ? response.reduce((prev, next) => {
-          return prev + next.submitSumAll;
-        }, 0) : 0,
-        'submitSumAnnulus': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumAnnulusAll;
-        }, 0) : 0,
-        'submitSumAnnulusAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumAnnulusAll;
-        }, 0) : 0,
-        'submitSumYear': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumYearAll;
-        }, 0) : 0,
-        'submitSumYearAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumYearAll;
-        }, 0) : 0,
+        'submitSum': submitSum,
+        'submitSumAll': 0,
+        'submitSumAnnulus': submitSumAnnulus,
+        'submitSumAnnulusAll': 0,
+        'submitSumYear': submitSumYear,
+        'submitSumYearAll': 0,
         'submitUserCount': response && response.length ?
         response.reduce((prev, next) => {
           return prev + next.submitUserCountAll;
@@ -67,14 +69,10 @@ export default {
         response.reduce((prev, next) => {
           return prev + next.categoryCountAll;
         }, 0) : 0,
-        'yearOnYear': response && response.length ?
-        response[0].yearOnYear : 0,
-        'annulus': response && response.length ?
-        response[0].annulus : 0,
-        'yearOnYearSymbolType': response && response.length ?
-        response[0].yearOnYearSymbolType : 0,
-        'annulusSymbolType': response && response.length ?
-        response[0].annulusSymbolType : 0,
+        'yearOnYear': yearOnYear,
+        'annulus': annuls,
+        'yearOnYearSymbolType': submitSumYear === 0 ? null : yearOnYear > 0 ? 0 : 1,
+        'annulusSymbolType': submitSumAnnulus === 0 ? null : annuls > 0 ? 0 : 1,
         children: [],
         childrens: [...response],
       });

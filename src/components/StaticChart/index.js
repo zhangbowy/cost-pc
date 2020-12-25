@@ -206,7 +206,7 @@ class StaticChart extends Component {
       ...levelSearch,
       isAll: false
     });
-    if (e.key === '2') {
+    if (e.key === '3') {
       Object.assign(obj, {
         isAll: true
       });
@@ -249,13 +249,13 @@ class StaticChart extends Component {
               </a>
               :
               <a>
-                { record.submitSum ?  record.submitSum/changeMoney : 0}
+                { record.submitSum ?  `¥${(record.submitSum/changeMoney).toFixed(2)}` : 0}
               </a>
           }
         </Invoice>
       ),
       className: 'moneyCol',
-      width: 100,
+      width: 120,
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
@@ -277,8 +277,9 @@ class StaticChart extends Component {
           dateType={dateType}
           startTime={startTime}
           chartName={chartName}
+          changeMoney={changeMoney}
         >
-          <a>查看趋势图</a>
+          <a>{`${type === 'project' || type === 'supplier' ? '查看费用类别分布' : '查看趋势图'}`}</a>
         </Chart>
       )
     }];
@@ -300,7 +301,7 @@ class StaticChart extends Component {
             (
               <span className="icons">
                 <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-                {record.annulus}
+                {record.annulus}%
               </span>
             )}
           </span>
@@ -324,7 +325,7 @@ class StaticChart extends Component {
             (
               <span className="icons">
                 <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-                {record.yearOnYear}
+                {record.yearOnYear}%
               </span>
             )}
           </span>
@@ -372,7 +373,7 @@ class StaticChart extends Component {
                 <div>
                   <Icon className="sub-color m-r-8" type="filter" />
                 </div>
-                <span className="fs-14 sub-color">筛选</span>
+                <span className="fs-14 sub-color">高级搜索</span>
               </div>
             </LevelSearch>
           </div>

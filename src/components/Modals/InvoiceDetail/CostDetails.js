@@ -50,9 +50,6 @@ function CostDetails({ children, record }) {
             (record.expandCostDetailFieldVos.length > 0) &&
             record.expandCostDetailFieldVos.map(itField => {
               let texts = itField.msg;
-              if (itField.dateType) {
-                texts = '';
-              }
               if (itField.startTime) {
               console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
               texts = itField.endTime ?
@@ -77,9 +74,6 @@ function CostDetails({ children, record }) {
             (record.selfCostDetailFieldVos.length > 0) &&
             record.selfCostDetailFieldVos.map(itField => {
               let texts = itField.msg;
-              if (itField.dateType) {
-                texts = '';
-              }
               if (itField.startTime) {
               console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
               texts = itField.endTime ?

@@ -18,6 +18,7 @@ import LevelSearch from './components/LevelSearch';
   loanList: summary.loanList,
   query: summary.query,
   total: summary.total,
+  sum: summary.sum,
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -25,6 +26,7 @@ class Summary extends React.PureComponent {
     this.state = {
       current: '0',
       selectedRowKeys: [],
+      selectedRows: [],
       list: [],
       searchContent: '',
       sumAmount: 0,
@@ -59,17 +61,22 @@ class Summary extends React.PureComponent {
     } else if (Number(current) === 2) {
       url = 'summary/applicationExport';
     }
-    const payload = {};
+    let params = {};
     const { searchContent, levelSearch } = this.state;
-    Object.assign(payload, {
-      content: searchContent,
-      ...levelSearch,
-    });
+    if (key === '1') {
+      params = {
+        ids: selectedRowKeys,
+      };
+    } else if (key === '2') {
+      params = {
+        searchContent,
+        ...levelSearch,
+      };
+    }
     this.props.dispatch({
       type: url,
       payload: {
-        ids: selectedRowKeys,
-        ...payload,
+        ...params,
       }
     });
   }
@@ -88,7 +95,9 @@ class Summary extends React.PureComponent {
 
   onSelect = (val) => {
     this.setState({
-      ...val,
+      selectedRowKeys: val.selectedRowKeys,
+      selectedRows: val.selectedRows,
+      sumAmount: val.sumAmount
     });
   }
 
@@ -141,6 +150,8 @@ class Summary extends React.PureComponent {
   handleClick = e => {
     this.setState({
       current: e.key,
+      selectedRowKeys: [],
+      selectedRows: []
     }, () => {
       this.onQuery({
         pageNo: 1,
@@ -150,8 +161,9 @@ class Summary extends React.PureComponent {
   };
 
   render() {
-    const { loading, query, total } = this.props;
-    const { current, selectedRowKeys, list, searchContent, sumAmount, levelSearch } = this.state;
+    const { loading, query, total, sum } = this.props;
+    const { current, selectedRowKeys, list, searchContent, sumAmount, levelSearch, selectedRows } = this.state;
+    console.log('Summary -> render -> selectedRowKeys', selectedRowKeys);
     return (
       <div>
         <div style={{background: '#fff', paddingTop: '16px'}}>
@@ -188,20 +200,22 @@ class Summary extends React.PureComponent {
                   />
                 </Form>
               </div>
-              <LevelSearch onOk={this.onOk} details={levelSearch}>
+              <LevelSearch onOk={this.onOk} details={levelSearch} templateType={Number(current)}>
                 <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
                   <div className={style.activebg}>
                     <Icon className="sub-color m-r-8" type="filter" />
                   </div>
-                  <span className="fs-14 sub-color">筛选</span>
+                  <span className="fs-14 sub-color">高级搜索</span>
                 </div>
               </LevelSearch>
             </div>
-            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，共计¥{sumAmount/100}</p>
+            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，{selectedRowKeys.length ? `共计¥${sumAmount/100}` : `合计¥${sum/100}`} </p>
             <SummaryCmp
               list={list}
               templateType={Number(current)}
               selectedRowKeys={selectedRowKeys}
+              selectedRows={selectedRows}
+              sumAmount={sumAmount}
               loading={loading}
               onQuery={this.onQuery}
               onSelect={this.onSelect}

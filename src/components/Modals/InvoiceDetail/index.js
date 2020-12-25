@@ -630,9 +630,6 @@ class InvoiceDetail extends Component {
               (details.expandSubmitFieldVos.length > 0) &&
               details.expandSubmitFieldVos.map(itField => {
                 let texts = itField.msg;
-                if (itField.dateType) {
-                  texts = '';
-                }
                 if (itField.startTime) {
                 console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
                 texts = itField.endTime ?
@@ -657,9 +654,6 @@ class InvoiceDetail extends Component {
               (details.selfSubmitFieldVos.length > 0) &&
               details.selfSubmitFieldVos.map(itField => {
                 let texts = itField.msg;
-                if (itField.dateType) {
-                  texts = '';
-                }
                 if (itField.startTime) {
                 console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
                 texts = itField.endTime ?

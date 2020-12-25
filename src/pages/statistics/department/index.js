@@ -89,7 +89,7 @@ class Department extends Component {
           column={[{
             title: '部门',
             dataIndex: 'deptName',
-            width: 260,
+            width: 120,
           }]}
         />
       </>

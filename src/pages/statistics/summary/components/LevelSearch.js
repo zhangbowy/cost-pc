@@ -3,8 +3,8 @@ import { Modal, Form, Row, Col, Button, DatePicker, Select, TreeSelect } from 'a
 import { connect } from 'dva';
 import moment from 'moment';
 import treeConvert from '@/utils/treeConvert';
-import { approveStatus } from '@/utils/constants';
 import UserSelector from '@/components/Modals/SelectPeople';
+import { newInvoiceStatus, newLoanStatus, newApplyStatus } from '../../../../utils/constants';
 // import styles from './index.scss';
 
 const { RangePicker } = DatePicker;
@@ -77,8 +77,8 @@ class LevelSearch extends Component {
         let startTime = '';
         let endTime = '';
         if (createTime && createTime.length > 0) {
-          startTime = moment(createTime[0]).format('x');
-          endTime = moment(createTime[1]).format('x');
+          startTime = moment(moment(createTime[0]).format('YYYY-MM-DD 00:00:01')).format('x');
+          endTime = moment(moment(createTime[1]).format('YYYY-MM-DD 23:59:59')).format('x');
         }
         // eslint-disable-next-line no-param-reassign
         if (val.time) delete val.time;
@@ -125,6 +125,7 @@ class LevelSearch extends Component {
       invoiceList,
       projectList,
       supplierList,
+      templateType
     } = this.props;
     const formItemLayout = {
       labelCol: {
@@ -150,8 +151,13 @@ class LevelSearch extends Component {
       tName: 'title',
       tId: 'value'
     }, projectList);
-    console.log(supplierList);
     const { visible, createUserVOS, createDeptVOS, details } = this.state;
+    let selectList = newInvoiceStatus;
+    if (templateType === 1) {
+      selectList = newLoanStatus;
+    } else if (templateType === 2) {
+      selectList = newApplyStatus;
+    }
     return (
       <span>
         <span onClick={this.onShow}>{children}</span>
@@ -189,11 +195,11 @@ class LevelSearch extends Component {
               <Col span={12}>
                 <Form.Item label="单据状态" {...formItemLayout}>
                   {
-                    getFieldDecorator('approveStatus', {
-                      initialValue: details.approveStatus || '',
+                    getFieldDecorator('status', {
+                      initialValue: details.status || '',
                     })(
                       <Select placeholder="请选择">
-                        { approveStatus.map(item => (
+                        { selectList.map(item => (
                           <Option key={item.key}>{item.value}</Option>
                         )) }
                       </Select>

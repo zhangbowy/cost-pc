@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import getDateUtil from '@/utils/tool';
-import { Table, Button, Form, Radio, DatePicker, Icon, Dropdown, Menu } from 'antd';
+import { Table, Button, Form, Radio, DatePicker, Icon, Dropdown, Menu, Switch } from 'antd';
 import moment from 'moment';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
@@ -39,6 +39,7 @@ class People extends Component {
       defaultYear: time[0],
       levelSearch: {},
       sortType: 2,
+      changeMoney: 100,
     };
   }
 
@@ -146,8 +147,12 @@ class People extends Component {
       endTime,
       dateType: Number(dateType),
       ...levelSearch,
-      searchUserId: payload.id
+      searchUserId: payload.id === -1 ? '' : payload.id
     });
+    if (payload.id) {
+      // eslint-disable-next-line no-param-reassign
+      delete payload.id;
+    }
     this.props.dispatch({
       type: 'peopleS/detailList',
       payload,
@@ -164,7 +169,7 @@ class People extends Component {
       ...levelSearch,
       sortType
     });
-    if (e.key === '2') {
+    if (e.key === '3') {
       Object.assign(payload, {
         isAll: true,
       });
@@ -178,7 +183,12 @@ class People extends Component {
   handleChange = (pagination, filters, sorter) => {
     console.log(pagination, filters, sorter);
     const { sortType } = this.state;
-    const order = sorter.order === 'ascend' ? 1 : 2;
+    let order = '';
+    if (sorter.order === 'ascend') {
+      order = 1;
+    } else if (sorter.order === 'descend') {
+      order = 2;
+    }
     if (order !== sortType) {
       this.setState({
         sortType: order,
@@ -196,6 +206,16 @@ class People extends Component {
     }
   }
 
+  onCheck = (checked) => {
+    let money = 100;
+    if(checked) {
+      money = 1000000;
+    }
+    this.setState({
+      changeMoney: money,
+    });
+  }
+
   render () {
     const {
       loading,
@@ -206,11 +226,11 @@ class People extends Component {
       querys,
       totals,
     } = this.props;
-    const { dateType, defaultYear, defaultQuarter, defaultMonth, levelSearch } = this.state;
+    const { dateType, defaultYear, defaultQuarter, defaultMonth, levelSearch, changeMoney } = this.state;
     const columns = [{
       title: '姓名',
       dataIndex: 'userName',
-      width: 100,
+      width: 60,
     }, {
       title: '金额(元)',
       dataIndex: 'submitSumAll',
@@ -226,14 +246,14 @@ class People extends Component {
           id={record.userId}
         >
           <a>
-            {record.submitSum ? record.submitSum/100 : 0}
+            {record.submitSum ? (record.submitSum/changeMoney).toFixed(2) : 0}
           </a>
         </Invoice>
       ),
       className: 'moneyCol',
-      width: 100,
+      width: 80,
     }, {
-      title: '环比增长(%)',
+      title: '环比增长',
       dataIndex: 'annulus',
       width: 100,
       render: (_, record) => (
@@ -249,7 +269,7 @@ class People extends Component {
         </span>
       ),
     }, {
-      title: '同比增长(%)',
+      title: '同比增长',
       dataIndex: 'yearOnYear',
       width: 100,
       render: (_, record) => (
@@ -303,14 +323,17 @@ class People extends Component {
               }
             </Form>
           </div>
-          <LevelSearch onOk={this.onOk} details={levelSearch}>
-            <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
-              <div>
-                <Icon className="sub-color m-r-8" type="filter" />
+          <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
+            <Switch className="m-r-32" checkedChildren="万元" unCheckedChildren="元" onChange={(check) => this.onCheck(check)} />
+            <LevelSearch onOk={this.onOk} details={levelSearch}>
+              <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
+                <div>
+                  <Icon className="sub-color m-r-8" type="filter" />
+                </div>
+                <span className="fs-14 sub-color">高级搜索</span>
               </div>
-              <span className="fs-14 sub-color">筛选</span>
-            </div>
-          </LevelSearch>
+            </LevelSearch>
+          </div>
         </div>
         <Table
           dataSource={list}

@@ -542,10 +542,11 @@ export const invoiceStatus = [
 //   {
 //   key: '0',
 //   value: '草稿'
-// }, {
-//   key: '1',
-//   value: '审核中'
 // },
+{
+  key: '1',
+  value: '审核中'
+},
 {
   key: '2',
   value: '待发放'
@@ -553,10 +554,10 @@ export const invoiceStatus = [
   key: '3',
   value: '已发放'
 },
-// {
-//   key: '4',
-//   value: '已撤销'
-// },
+{
+  key: '4',
+  value: '已撤销'
+},
 {
   key: '5',
   value: '已拒绝'
@@ -964,6 +965,76 @@ export const invoiceJson = {
 };
 
 export const newInvoiceStatus = [{
-  key: '',
-  value: ''
+  key: '1',
+  value: '审批中'
+},
+{
+  key: '2',
+  value: '待发放'
+}, {
+  key: '3',
+  value: '已发放'
+},
+{
+  key: '4',
+  value: '已撤销'
+},
+{
+  key: '5',
+  value: '审批拒绝'
+},
+{
+  key: '11',
+  value: '发放拒绝'
 }];
+
+export const newLoanStatus = [{
+  key: '1',
+  value: '审批中'
+},
+{
+  key: '2',
+  value: '待发放'
+}, {
+  key: '3',
+  value: '待还款'
+},
+{
+  key: '4',
+  value: '已撤销'
+},
+{
+  key: '5',
+  value: '审批拒绝'
+},
+{
+  key: '6',
+  value: '已还款'
+},
+{
+  key: '11',
+  value: '发放拒绝'
+}];
+
+export const newApplyStatus = [{
+  key: '1',
+  value: '审批中'
+},
+{
+  key: '2',
+  value: '审批通过'
+}, {
+  key: '3',
+  value: '已发放'
+},
+{
+  key: '4',
+  value: '已撤销'
+},
+{
+  key: '5',
+  value: '已拒绝'
+}];
+
+
+export const defaultColor = ['#3BA0FF', '#36CBCB', '#4DCB73', '#FAD337', '#F2637B', '#975FE4', '#3B56FF', '#FF943E', '#FF7FA5', '#FFD2AD', 'rgba(0,0,0,0.25)'];

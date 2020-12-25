@@ -122,7 +122,7 @@ class LevelSearch extends Component {
               <Col span={12}>
                 <Form.Item label="提交人" {...formItemLayout}>
                   <UserSelector
-                    users={userVOS}
+                    users={userVOS || []}
                     placeholder='请选择'
                     onSelectPeople={(val) => this.selectPle(val, 'user')}
                     invalid={[]}

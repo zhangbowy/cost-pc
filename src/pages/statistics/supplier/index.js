@@ -97,7 +97,7 @@ class Supplier extends Component {
           column={[{
             title: '供应商',
             dataIndex: 'supplierName',
-            width: 260,
+            width: 80,
           }]}
         />
       </>

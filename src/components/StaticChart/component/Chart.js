@@ -4,7 +4,7 @@ import moment from 'moment';
 import Line from './Line';
 import Pie from './Pie';
 
-function Chart({ children, data, type, onChart, chartList, dateType, startTime, chartName }) {
+function Chart({ children, data, type, onChart, chartList, dateType, startTime, chartName, changeMoney }) {
   console.log('Chart -> type', type);
   const [visible, setVisible] = useState(false);
   const [newArr, setNewArr] = useState([]);
@@ -61,9 +61,9 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
     } else {
       newArrs.push({
         name: data[chartName],
-        submitSum: data.submitSum/100,
-        submitSumAnnulus: data.submitSumAnnulus/100,
-        submitSumYear: data.submitSumYear/100,
+        submitSum: Number((data.submitSum/changeMoney).toFixed(2)),
+        submitSumAnnulus: Number((data.submitSumAnnulus/changeMoney).toFixed(2)),
+        submitSumYear: Number((data.submitSumYear/changeMoney).toFixed(2)),
         annulus: data.submitSumAnnulus ?
         Number(((((data.submitSum - data.submitSumAnnulus) / data.submitSumAnnulus).toFixed(2)) * 100).toFixed(0))
         : 0,
@@ -79,10 +79,10 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
             newArrs.push({
               name: item[chartName],
               yearOnYear: item.yearOnYear, // 同比
-              submitSumYear: data.submitSumYear/100,
+              submitSumYear: data.submitSumYear/changeMoney,
               annulus: item.annulus, // 环比
-              submitSum: item.submitSum/100,
-              submitSumAnnulus: item.submitSumAnnulus/100
+              submitSum: Number((item.submitSum/changeMoney).toFixed(2)),
+              submitSumAnnulus: Number((item.submitSumAnnulus/changeMoney).toFixed(2))
             });
           }
         });
@@ -117,7 +117,7 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
     <div>
       <span onClick={() => onShow()}>{ children }</span>
       <Modal
-        title="趋势图"
+        title={`${type === 'project' || type === 'supplier' ? '查看费用类别分布' : '查看趋势图'}`}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
@@ -132,9 +132,9 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
         }
         {
           type === 'project' || type === 'supplier' ?
-            <Pie data={chartList} />
+            <Pie data={chartList} changeMoney={changeMoney} />
             :
-            <Line data={newArr} max={max} changeType={changeType} series={series} />
+            <Line data={newArr} max={max} changeType={changeType} series={series} changeMoney={changeMoney} />
         }
       </Modal>
     </div>
