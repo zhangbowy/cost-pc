@@ -40,15 +40,6 @@ class Summary extends React.PureComponent {
     this.onQuery({...query});
   }
 
-  onOk = () => {
-    const {
-      query,
-    } = this.props;
-    this.onQuery({
-      ...query
-    });
-  }
-
   export = (key) => {
     const { current, selectedRowKeys } = this.state;
     if (selectedRowKeys.length ===  0 && key === '1') {
@@ -151,7 +142,8 @@ class Summary extends React.PureComponent {
     this.setState({
       current: e.key,
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      levelSearch: {},
     }, () => {
       this.onQuery({
         pageNo: 1,

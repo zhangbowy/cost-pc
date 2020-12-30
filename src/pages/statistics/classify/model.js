@@ -40,7 +40,7 @@ export default {
         categoryName: '合计',
         id: -1,
         'submitSum': submitSum,
-        'submitSumAll': 0,
+        'submitSumAll': submitSum,
         'submitSumAnnulus': submitSumAnnulus,
         'submitSumAnnulusAll': 0,
         'submitSumYear': submitSumYear,
@@ -69,8 +69,8 @@ export default {
         response.reduce((prev, next) => {
           return prev + next.categoryCountAll;
         }, 0) : 0,
-        'yearOnYear': yearOnYear,
-        'annulus': annuls,
+        'yearOnYear': Math.abs(yearOnYear),
+        'annulus': Math.abs(annuls),
         'yearOnYearSymbolType': submitSumYear === 0 ? null : yearOnYear > 0 ? 0 : 1,
         'annulusSymbolType': submitSumAnnulus === 0 ? null : annuls > 0 ? 0 : 1,
         children: [],

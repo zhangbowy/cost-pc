@@ -203,4 +203,10 @@
       width: 100%;
     }
   }
+  .ant-table-tbody > tr > td.ant-table-column-sort{
+    background: none!important;
+  }
+  .ant-table-thead > tr > th.ant-table-column-sort{
+    background: #fafafa!important;
+  }
 }

@@ -22,7 +22,7 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
     //  月度
     if (dateType === 0) {
       if (types) {
-        if (month === 1) {
+        if ((month - 1) === 0) {
           arr = [`${year}年${month}月`, `${year -1}年12月`, '环比增长'];
         } else {
           arr = [`${year}年${month}月`, `${year}年${month-1}月`, '环比增长'];
@@ -32,7 +32,7 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
       }
     } else if (dateType === 1) {
       if (types) {
-        if (month === 1) {
+        if ((quarter-1) === 0) {
           arr = [`${year}年第${quarter}季度`, `${year -1}年第四季度`, '环比增长'];
         } else {
           arr = [`${year}年第${quarter}季度`, `${year}年第${quarter-1}季度`, '环比增长'];
@@ -59,30 +59,32 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
         supplierId: data.supplierId,
       });
     } else {
-      newArrs.push({
-        name: data[chartName],
-        submitSum: Number((data.submitSum/changeMoney).toFixed(2)),
-        submitSumAnnulus: Number((data.submitSumAnnulus/changeMoney).toFixed(2)),
-        submitSumYear: Number((data.submitSumYear/changeMoney).toFixed(2)),
-        annulus: data.submitSumAnnulus ?
-        Number(((((data.submitSum - data.submitSumAnnulus) / data.submitSumAnnulus).toFixed(2)) * 100).toFixed(0))
-        : 0,
-        yearOnYear: data.submitSumYear ?
-        Number(((((data.submitSum - data.submitSumYear) / data.submitSumYear).toFixed(2)) * 100).toFixed(0))
-        :
-        0,
-      });
+      if ((type === 'dept' || !data.isGroup ) && data.id !== -1) {
+        newArrs.push({
+          name: data[chartName],
+          submitSum: Number((data.submitSum/changeMoney).toFixed(2)),
+          submitSumAnnulus: Number((data.submitSumAnnulus/changeMoney).toFixed(2)),
+          submitSumYear: Number((data.submitSumYear/changeMoney).toFixed(2)),
+          annulus: data.submitSumAnnulus ?
+          Number(((((data.submitSum - data.submitSumAnnulus) / data.submitSumAnnulus).toFixed(2)) * 100).toFixed(0))
+          : 0,
+          yearOnYear: data.submitSumYear ?
+          Number(((((data.submitSum - data.submitSumYear) / data.submitSumYear).toFixed(2)) * 100).toFixed(0))
+          :
+          0,
+        });
+      }
       if ((data && data.children.length) || (data.id === -1 && data.childrens.length)) {
         const childens = data.id === -1 ? data.childrens : data.children;
         childens.forEach(item => {
-          if(item.submitSum) {
+          if(item.submitSum || item.submitSumAll || item.annulus) {
             newArrs.push({
               name: item[chartName],
-              yearOnYear: item.yearOnYear, // 同比
-              submitSumYear: data.submitSumYear/changeMoney,
-              annulus: item.annulus, // 环比
-              submitSum: Number((item.submitSum/changeMoney).toFixed(2)),
-              submitSumAnnulus: Number((item.submitSumAnnulus/changeMoney).toFixed(2))
+              yearOnYear: item.yearOnYearSymbolType ? -item.yearOnYear : item.yearOnYear, // 同比
+              submitSumYear: data.submitSumYearAll/changeMoney,
+              annulus: item.annulusSymbolType ? -item.annulus : item.annulus, // 环比
+              submitSum: Number((item.submitSumAll/changeMoney).toFixed(2)),
+              submitSumAnnulus: Number((item.submitSumAnnulusAll/changeMoney).toFixed(2))
             });
           }
         });

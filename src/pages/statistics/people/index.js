@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import getDateUtil from '@/utils/tool';
-import { Table, Button, Form, Radio, DatePicker, Icon, Dropdown, Menu, Switch } from 'antd';
+import { Table, Button, Form, Radio, DatePicker, Icon, Dropdown, Menu, Switch, Tooltip } from 'antd';
 import moment from 'moment';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
@@ -230,9 +230,12 @@ class People extends Component {
     const columns = [{
       title: '姓名',
       dataIndex: 'userName',
-      width: 60,
+      width: 80,
+      render: (_, record) => (
+        <span style={{fontWeight: record.userId === -1 ? 'bolder' : 'normal'}}>{record.userName}</span>
+      )
     }, {
-      title: '金额(元)',
+      title: `金额（${changeMoney > 102 ? '万元' : '元'}）`,
       dataIndex: 'submitSumAll',
       sorter: true,
       defaultSortOrder: 'descend',
@@ -246,14 +249,21 @@ class People extends Component {
           id={record.userId}
         >
           <a>
-            {record.submitSum ? (record.submitSum/changeMoney).toFixed(2) : 0}
+            ¥{record.submitSum ? (record.submitSum/changeMoney).toFixed(2) : 0}
           </a>
         </Invoice>
       ),
       className: 'moneyCol',
       width: 80,
     }, {
-      title: '环比增长',
+      title: (
+        <span>
+          <span className="m-r-8">环比增长</span>
+          <Tooltip title="环比上月/上季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
       dataIndex: 'annulus',
       width: 100,
       render: (_, record) => (
@@ -263,13 +273,20 @@ class People extends Component {
           (
             <span>
               <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.annulus}
+              {record.annulus}{ record.annulusSymbolType === null ? '' : '%' }
             </span>
           )}
         </span>
       ),
     }, {
-      title: '同比增长',
+      title: (
+        <span className="icons">
+          <span className="m-r-8">同比增长</span>
+          <Tooltip title="同比去年同月/同季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
       dataIndex: 'yearOnYear',
       width: 100,
       render: (_, record) => (
@@ -279,7 +296,7 @@ class People extends Component {
           (
             <span className="icons">
               <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.yearOnYear}
+              {record.yearOnYear}{ record.yearOnYearSymbolType === null ? '' : '%' }
             </span>
           )}
         </span>

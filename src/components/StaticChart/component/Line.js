@@ -27,8 +27,8 @@ function Line({ data, series, changeType, changeMoney }) {
     title:{
       // show,// show 可以在上面顶一个一个 let show = null;
       textStyle: {
-        color:'rgba(0,0,0,0.85)',
-        fontSize: 20,
+        color:'rgba(0,0,0,0.45)',
+        fontSize: 14,
         fontWeight:100
       },
       text: `${changeType ? '' : '暂无去年同期数据'}`,// 这个你可以定义一个变量，也可以直接写死'暂无数据'
@@ -39,7 +39,8 @@ function Line({ data, series, changeType, changeMoney }) {
         data: series,
         textStyle: {
           color: 'rgba(0,0,0,0.65)'
-        }
+        },
+        top: -1,
     },
     xAxis: [
       {
@@ -55,6 +56,11 @@ function Line({ data, series, changeType, changeMoney }) {
           lineStyle:{
               color:'#E9E9E9'     // X轴的颜色
           },
+        },
+        axisLabel:{
+          color:'rgba(0,0,0,0.65)',
+          interval:0,
+          rotate:25
         },
       }
     ],
@@ -79,7 +85,21 @@ function Line({ data, series, changeType, changeMoney }) {
             }
         },
         axisLabel:{
-          color:'rgba(0,0,0,0.65)'
+          color:'rgba(0,0,0,0.65)',
+          margin: 2,
+          formatter: (value) => {
+            let values = value;
+            if (changeMoney < 101) {
+              if (values >= 10000 && values < 10000000) {
+                values = `${value / 10000  }万`;
+              } else if (values >= 10000000) {
+                values = `${values / 10000000  }千万`;
+              }
+            } else if (values > 1000) {
+              values = `${values / 1000  }千万`;
+            }
+            return values;
+          }
         },
         splitNumber: 3,
         splitLine: {
@@ -94,10 +114,10 @@ function Line({ data, series, changeType, changeMoney }) {
         // min: -100,
         // max: 100,
         // interval: 25,
-        // axisLabel: {
-        //     formatter: '{value} %',
-        //     color:'rgba(0,0,0,0.65)'
-        // },
+        axisLabel: {
+            formatter: '{value} %',
+            color:'rgba(0,0,0,0.65)'
+        },
         axisTick: {           // 去掉坐标轴刻线
           show: false
         },
@@ -109,9 +129,6 @@ function Line({ data, series, changeType, changeMoney }) {
         axisPointer: {
             label: {
             }
-        },
-        axisLabel:{
-          color:'rgba(0,0,0,0.65)'
         },
         splitNumber: 3,
         splitLine: {
@@ -140,11 +157,17 @@ function Line({ data, series, changeType, changeMoney }) {
       }
     ],
     color: defaultColor,
+    grid:{
+      left:'5%',
+      right:'5%',
+      bottom:'8%',
+      containLabel: true
+    }
   };
   return (
     <div>
       <ReactEcharts
-        style={{height: '400px', width: '100%'}}
+        style={{height: '440px', width: '100%'}}
         className='echarts-for-echarts'
         notMerge
         lazyUpdate

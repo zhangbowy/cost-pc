@@ -29,6 +29,7 @@ class LevelSearch extends Component {
   }
 
   onShow = async () => {
+    const { templateType } = this.props;
     await this.props.dispatch({
       type: 'global/projectList',
       payload: {}
@@ -44,7 +45,7 @@ class LevelSearch extends Component {
       this.props.dispatch({
         type: 'global/invoiceList',
         payload: {
-          templateType: 0
+          templateType,
         },
       }).then(() => {
         const { details } = this.props;

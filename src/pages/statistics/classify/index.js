@@ -87,7 +87,10 @@ class Classify extends Component {
           column={[{
             title: '费用类别',
             dataIndex: 'categoryName',
-            width: 120,
+            width: 150,
+            render: (_, record) => (
+              <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.categoryName}</span>
+            )
           }]}
         />
       </>

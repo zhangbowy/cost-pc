@@ -2,7 +2,7 @@ import React from 'react';
 import cs from 'classnames';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import constants from '@/utils/constants';
+// import constants from '@/utils/constants';
 import Avatar from '../../../components/AntdComp/Avatar';
 import style from './index.scss';
 import CostFolder from '../../../components/Modals/AddInvoice/InvoiceTable/CostFolder';
@@ -10,7 +10,6 @@ import Draft from '../../../components/Modals/AddInvoice/InvoiceTable/Draft';
 import LoanTable from '../../../components/Modals/AddInvoice/InvoiceTable/LoanTable';
 
 function Header(props) {
-  const { APP_VER } = constants;
   const {
     personal
   } = props;
@@ -28,7 +27,7 @@ function Header(props) {
         <Avatar avatar={props.userInfo && props.userInfo.avatar} name={props.userInfo && props.userInfo.name} size={72} />
         <p className="m-l-24">
           <p className="c-black-85 fs-20 fw-600 li-28 m-b-12">你好，{props.userInfo && props.userInfo.name}！</p>
-          <p className="c-black-85 fs-14 li-22">WELCOME 欢迎使用鑫支出V{APP_VER}版本</p>
+          <p className="c-black-85 fs-14 li-22">WELCOME 欢迎使用鑫支出</p>
         </p>
       </div>
       <div className={style.headerRight}>

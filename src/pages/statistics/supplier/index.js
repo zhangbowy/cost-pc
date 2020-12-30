@@ -98,6 +98,9 @@ class Supplier extends Component {
             title: '供应商',
             dataIndex: 'supplierName',
             width: 80,
+            render: (_, record) => (
+              <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.supplierName}</span>
+            )
           }]}
         />
       </>

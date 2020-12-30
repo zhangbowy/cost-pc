@@ -25,7 +25,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     type: 'box',
     name,
     fieldType,
-    dateType: 1,
+    dateType: Number(fieldType) === 5 ? 1 : 0,
     options: Number(fieldType) === 2 ? ['选项一', '选项二'] : [],
     field: idGenerator(),
     isSelect: true,

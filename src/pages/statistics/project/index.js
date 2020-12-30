@@ -98,6 +98,9 @@ class Project extends Component {
             title: '项目',
             dataIndex: 'projectName',
             width: 100,
+            render: (_, record) => (
+              <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.projectName}</span>
+            )
           }]}
         />
       </>

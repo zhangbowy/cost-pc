@@ -9,6 +9,9 @@ import Invoice from './component/Invoice';
 import Chart from './component/Chart';
 import LevelSearch from './component/LevelSearch';
 import style from './index.scss';
+import NoRole from './component/NoRole';
+import noData from '../../assets/img/noData.png';
+
 
 
 const getMaxDay = (year,month) => {
@@ -167,7 +170,7 @@ class StaticChart extends Component {
             </a>
           );
     }
-      return <span style={{marginRight:8, width: '16px' }} />;
+      return <span />;
   }
 
   onChart = (payload) => {
@@ -194,6 +197,63 @@ class StaticChart extends Component {
       changeMoney: money,
     });
   }
+
+  // treeNodeRender = (treeNode) => {
+  //   if(!treeNode || !treeNode.length){
+  //     return;
+  //   }
+  //     return treeNode.map((v) => {
+  //       return (
+  //         <TreeNode
+  //           value={v.value}
+  //           title={(
+  //             <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.title}</span>
+  //           )}
+  //           key={v.value}
+  //           searchs={v.title}
+  //           disabled
+  //         >
+  //           {v.children && this.treeNodeChildRender(v.children, v.title)}
+  //         </TreeNode>
+  //       );
+  //     });
+  //   }
+
+  //   treeNodeChildRender = (list, titles) => {
+  //     return list.map(it => (
+  //       <TreeNode
+  //         key={it.value}
+  //         value={it.value}
+  //         name={it.title}
+  //         searchs={titles}
+  //         title={(
+  //           <div>
+  //             <div className={style.treeOption}>
+  //               {
+  //                 it.type === 0 &&
+  //                 <i className="iconfont iconyinhangka" />
+  //               }
+  //               {
+  //                 it.type === 1 &&
+  //                 <i className="iconfont iconzhifubao" />
+  //               }
+  //               {
+  //                 it.type === 2 &&
+  //                 <i className="iconfont iconxianjin" />
+  //               }
+  //               {it.title}
+  //             </div>
+  //             <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
+  //               {it.type === 0 && '银行卡'}
+  //               {it.type === 1 && '支付宝'}
+  //               {it.type === 2 && '现金'}
+  //               {it.account}
+  //             </p>
+  //           </div>
+  //         )}
+  //       />
+  //     ));
+  //   }
 
   export = (e) => {
     const obj = {};
@@ -226,8 +286,11 @@ class StaticChart extends Component {
       total,
       type,
       chartList,
-      chartName
+      chartName,
+      isNoRole
     } = this.props;
+    console.log('StaticChart -> render -> isNoRole', isNoRole);
+
     const { dateType, defaultYear, defaultQuarter, defaultMonth, levelSearch, startTime, changeMoney } = this.state;
     const columns = [{
       title: `金额（${changeMoney > 102 ? '万元' : '元'}）`,
@@ -245,29 +308,29 @@ class StaticChart extends Component {
             type === 'dept' ?
               <a>
                 {record.submitSumAll ? (record.submitSumAll/changeMoney).toFixed(2) : 0}
-                { record.submitSum ?  `（本部${(record.submitSum/changeMoney).toFixed(2)}）` : ''}
+                { record.submitSum && record.id !== -1 && record.children.length ?  `（本部${(record.submitSum/changeMoney).toFixed(2)}）` : ''}
               </a>
               :
               <a>
-                { record.submitSum ?  `¥${(record.submitSum/changeMoney).toFixed(2)}` : 0}
+                ¥{(record.submitSumAll/changeMoney).toFixed(2)}
               </a>
           }
         </Invoice>
       ),
       className: 'moneyCol',
-      width: 120,
+      width: type === 'dept' ? 160 : 100,
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
-      width: 100,
+      width: 70,
     }, {
       title: '费用数',
       dataIndex: 'categoryCountAll',
-      width: 100,
+      width: 70,
     }, {
       title: '操作',
       dataIndex: 'ope',
-      width: 100,
+      width: 150,
       render: (_, record) => (
         <Chart
           data={record}
@@ -281,13 +344,14 @@ class StaticChart extends Component {
         >
           <a>{`${type === 'project' || type === 'supplier' ? '查看费用类别分布' : '查看趋势图'}`}</a>
         </Chart>
-      )
+      ),
+      fixed: 'right'
     }];
     if (type !== 'project' && type !== 'supplier') {
       columns.splice(3, 0, {
         title: (
           <span>
-            <span className="m-r-8">环比增长(%)</span>
+            <span className="m-r-8">环比增长</span>
             <Tooltip title="环比上月/上季度/上年度的增长率">
               <i className="iconfont iconIcon-yuangongshouce fs-16" />
             </Tooltip>
@@ -301,23 +365,23 @@ class StaticChart extends Component {
             (
               <span className="icons">
                 <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-                {record.annulus}%
+                {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
               </span>
             )}
           </span>
         ),
-        width: 100,
+        width: 80,
       }, {
         title: (
           <span className="icons">
-            <span className="m-r-8">同比增长(%)</span>
+            <span className="m-r-8">同比增长</span>
             <Tooltip title="同比去年同月/同季度/上年度的增长率">
               <i className="iconfont iconIcon-yuangongshouce fs-16" />
             </Tooltip>
           </span>
         ),
         dataIndex: 'yearOnYear',
-        width: 100,
+        width: 80,
         render: (_, record) => (
           <span>
             { record.yearOnYearSymbolType === null && '-' }
@@ -325,7 +389,7 @@ class StaticChart extends Component {
             (
               <span className="icons">
                 <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-                {record.yearOnYear}%
+                {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
               </span>
             )}
           </span>
@@ -385,6 +449,20 @@ class StaticChart extends Component {
           pagination={false}
           rowKey="id"
           expandIcon={(props) => this.customExpandIcon(props)}
+          scroll={{ x: '1200px' }}
+          locale={{
+            emptyText: isNoRole ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <img src={noData} alt="暂无数据" style={{ width: '200px' }} />
+                <span>
+                  暂无查看权限，
+                  <NoRole>
+                    <a>点击查看原因 &gt;</a>
+                  </NoRole>
+                </span>
+              </div>
+              ) : '暂无数据'
+          }}
         />
       </div>
     );

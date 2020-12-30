@@ -17,6 +17,7 @@ const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
   query: department.query,
   total: department.total,
   detailList: department.detailList,
+  isNoRole: department.isNoRole,
 }))
 class Department extends Component {
   constructor(props){
@@ -69,7 +70,8 @@ class Department extends Component {
       list,
       detailList,
       query,
-      total
+      total,
+      isNoRole,
     } = this.props;
     console.log('Department -> render -> total', total);
 
@@ -86,10 +88,14 @@ class Department extends Component {
           type="dept"
           onExport={this.onExport}
           chartName="deptName"
+          isNoRole={isNoRole}
           column={[{
             title: '部门',
             dataIndex: 'deptName',
-            width: 120,
+            width: 150,
+            render: (_, record) => (
+              <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.deptName}</span>
+            )
           }]}
         />
       </>

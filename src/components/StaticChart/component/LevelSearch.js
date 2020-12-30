@@ -98,6 +98,28 @@ class LevelSearch extends Component {
     });
   }
 
+  // treeNodeRender = () => {
+
+  //   const { treeNode } = this.state;
+
+  //   if(!treeNode || !treeNode.length){
+  //     return;
+  //   }
+
+  //   return treeNode.map((v, i) => {
+  //     return (
+  //       <TreeNode
+
+  //         value={v.medicalInstitutionId}
+  //         title={v.medicalInstitutionSimpleCode}
+  //         key={i}
+  //       >
+  //         {v.children && this.treeNodeChildRender(v.children)}
+  //       </TreeNode>
+  //     );
+  //   });
+  // }
+
   render() {
     const {
       children,
@@ -170,6 +192,10 @@ class LevelSearch extends Component {
                           style={{width: '100%'}}
                           showCheckedStrategy={SHOW_CHILD}
                           dropdownStyle={{height: '300px'}}
+                          showSearch
+                          treeNodeFilterProp='title'
+                          treeDefaultExpandAll
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
                         />
                       )
                     }
@@ -185,7 +211,9 @@ class LevelSearch extends Component {
                         initialValue: details.supplierIds || [],
                       })(
                         <TreeSelect
+                          showSearch
                           treeData={supplierList}
+                          treeNodeFilterProp='title'
                           placeholder="请选择供应商"
                           treeCheckable
                           style={{width: '100%'}}
@@ -219,7 +247,7 @@ class LevelSearch extends Component {
                       initialValue: details.categoryIds || [],
                     })(
                       <TreeSelect
-                        showSearch={false}
+                        showSearch
                         // onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
                         treeData={list}
                         treeCheckable

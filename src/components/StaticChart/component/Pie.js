@@ -44,7 +44,7 @@ function Pie({ data, changeMoney }) {
           name: '费用类别',
           type: 'pie',
           radius: '55%',
-          center: ['50%', '50%'],
+          center: ['50%', '55%'],
           data: data.map(it => {
             return {
               value: it.submitSum/changeMoney,
