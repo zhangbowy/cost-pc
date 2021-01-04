@@ -98,8 +98,6 @@ class QuarterPicker extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     // 该方法内禁止访问 this
     const { value } = nextProps;
-    console.log(nextProps);
-    console.log(prevState);
     if (value !== prevState.selectionTime) {
       // 通过对比nextProps和prevState，返回一个用于更新状态的对象
       return {
@@ -194,7 +192,6 @@ class QuarterPicker extends Component {
     } else {
       openOnOff = stateOpen;
     }
-    console.log(this.state.value);
     return (
       <div
         className={`${styles.QuarterlyPicker} ${className}`}

@@ -44,11 +44,9 @@ class EchartsTest extends Component {
   }
 
     componentDidMount() {
-      console.log('eventChange======',eventChange);
-      console.log(5555);
       this.loadEchart();
       this.loadOverview();
-      eventChange(() => {console.log(22222222,this);const { myChart } = this.state;if(myChart) myChart.resize();});
+      eventChange(() => {const { myChart } = this.state;if(myChart) myChart.resize();});
     }
 
     getQuarter(date,isValue){
@@ -63,15 +61,15 @@ class EchartsTest extends Component {
         });
       }else{
         const year = date.getFullYear();
-        if(date <= 3){
+        const month = date.getMonth()+1;
+        if(month <= 3){
           return `${year}-01~${year}-03`;
-        }if(date <= 6){
+        }if(month <= 6){
           return `${year}-04~${year}-06`;
-        }if(date <= 9){
+        }if(month <= 9){
           return `${year}-07~${year}-09`;
         }
           return `${year}-10~${year}-12`;
-
       }
     }
 
