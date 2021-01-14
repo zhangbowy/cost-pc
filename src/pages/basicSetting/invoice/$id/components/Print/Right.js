@@ -32,7 +32,12 @@ function Right({ templateType, templatePdfVo, corpName }) {
           <div className={style['cont-info-fields']}>
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
-                <div className={style['cont-cell-label']}>报销单号</div>
+                <div className={style['cont-cell-label']}>
+                  { templateType === 0 && '报销' }
+                  { templateType === 1 && '借款' }
+                  { templateType === 2 && '申请' }
+                  单号
+                </div>
               </div>
               <div className={style['cont-cell']} style={{ flex: 2 }}>
                 <div className={style['cont-cell-label']}>事由</div>
@@ -40,20 +45,43 @@ function Right({ templateType, templatePdfVo, corpName }) {
             </div>
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
-                <div className={style['cont-cell-label']}>提交人</div>
+                <div className={style['cont-cell-label']}>
+                  { templateType === 0 && '提交' }
+                  { templateType === 1 && '借款' }
+                  { templateType === 2 && '申请' }
+                  人
+                </div>
               </div>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
-                <div className={style['cont-cell-label']}>承担人/部门</div>
+                <div className={style['cont-cell-label']}>
+                  { templateType === 0 && '承担人/部门' }
+                  { templateType === 1 && '借款部门' }
+                  { templateType === 2 && '申请部门' }
+                </div>
               </div>
               <div className={style['cont-cell']}>
-                <div className={style['cont-cell-label']}>提交日期</div>
+                <div className={style['cont-cell-label']}>
+                  { templateType === 0 && '提交' }
+                  { templateType === 1 && '借款' }
+                  { templateType === 2 && '申请' }
+                  日期
+                </div>
               </div>
             </div>
-            <div className={style['cont-info-line']}>
-              <div className={style['cont-cell']}>
-                <div className={style['cont-cell-label']}>收款账户</div>
-              </div>
-            </div>
+            {
+              templateType !== 2 ?
+                <div className={style['cont-info-line']}>
+                  <div className={style['cont-cell']}>
+                    <div className={style['cont-cell-label']}>收款账户</div>
+                  </div>
+                </div>
+                :
+                <div className={style['cont-info-line']}>
+                  <div className={style['cont-cell']}>
+                    <div className={style['cont-cell-label']}>申请金额(大写)</div>
+                  </div>
+                </div>
+            }
           </div>
           {
             templatePdfVo.isQrCode &&
@@ -62,6 +90,14 @@ function Right({ templateType, templatePdfVo, corpName }) {
               </div>
           }
         </div>
+        {
+          templateType === 1 &&
+          <div className={cs(style['cont-info-line'], style['cont-line-l'])}>
+            <div className={cs(style['cont-cell'], style['cont-line-r'])}>
+              <div className={cs(style['cont-cell-label'])}>借款金额(大写)</div>
+            </div>
+          </div>
+        }
         {
           twos && twos.length > 0 &&
           twos.map(it => (
