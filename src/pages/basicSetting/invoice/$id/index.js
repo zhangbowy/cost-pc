@@ -467,6 +467,7 @@ class CategoryAdd extends PureComponent {
               templateType={Number(templateType)}
               onChange={this.onChangeDatas}
               corpName={userInfo.corpName}
+              isRelationLoan={data.isRelationLoan}
               invoiceName={data.name}
             />
           </div>

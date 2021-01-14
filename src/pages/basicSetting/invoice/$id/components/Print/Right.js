@@ -10,7 +10,7 @@ const pdf = {
   1: 'pdf5',
   2: 'pdfb5',
 };
-function Right({ templateType, templatePdfVo, corpName }) {
+function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceName }) {
   const list = templatePdfVo.templatePdfExpandVos || [];
   const one = list.filter(it => it.fieldType === 1) || [];
   const two = list.filter(it => it.fieldType !== 1);
@@ -18,11 +18,7 @@ function Right({ templateType, templatePdfVo, corpName }) {
   return (
     <div style={{ background: '#fff', position: 'relative' }} className={style[pdf[templatePdfVo.paperType]]}>
       <img src={zdx} alt='装订线' className={style.zdx} />
-      <h1 className={style.header}>
-        { templateType === 0 && '报销单' }
-        { templateType === 1 && '借款单' }
-        { templateType === 2 && '申请单' }
-      </h1>
+      <h1 className={style.header}>{invoiceName}</h1>
       {
         templatePdfVo.isCompanyName &&
         <h1 className={style.company}>{corpName}</h1>
@@ -54,7 +50,7 @@ function Right({ templateType, templatePdfVo, corpName }) {
               </div>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                 <div className={style['cont-cell-label']}>
-                  { templateType === 0 && '承担人/部门' }
+                  { templateType === 0 && '承担者' }
                   { templateType === 1 && '借款部门' }
                   { templateType === 2 && '申请部门' }
                 </div>
@@ -144,11 +140,18 @@ function Right({ templateType, templatePdfVo, corpName }) {
               </tr>
             </table>
             <table style={{ borderTop: 'none' }}>
-              <tr>
-                <td className={style['cont-line-r']}>报销金额（元）</td>
-                <td className={style['cont-line-r']}>核销金额（元）</td>
-                <td>收款金额（元）</td>
-              </tr>
+              {
+                isRelationLoan ?
+                  <tr>
+                    <td className={style['cont-line-r']}>报销金额（元）</td>
+                    <td className={style['cont-line-r']}>核销金额（元）</td>
+                    <td>收款金额（元）</td>
+                  </tr>
+                  :
+                  <tr>
+                    <td className={style['cont-line-r']} colSpan="3">报销金额（元）</td>
+                  </tr>
+              }
             </table>
           </div>
         }
