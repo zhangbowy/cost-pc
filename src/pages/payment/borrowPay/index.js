@@ -256,15 +256,17 @@ class BorrowPay extends React.PureComponent {
 
   print = () => {
     const { selectedRowKeys } = this.state;
-    if (selectedRowKeys.length > 1) {
-      message.error('只支持打印一条数据');
+    if (selectedRowKeys.length > 10) {
+      message.error('只支持打印十条数据');
       return;
     }
+    const ids = selectedRowKeys.join(',');
     if (selectedRowKeys.length === 0) {
       message.error('请选择一条数据打印');
       return;
     }
-    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    // window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    window.location.href = `${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&id=${ids}`;
     // this.props.dispatch({
     //   type: 'global/print',
     //   payload: {

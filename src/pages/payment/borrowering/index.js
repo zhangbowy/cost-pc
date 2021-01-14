@@ -8,13 +8,11 @@ import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
-import constants from '@/utils/constants';
 import style from './index.scss';
 import RecordModal from './components/RecordModal';
 import AddModal from './components/AddModal';
 
 const { RangePicker } = DatePicker;
-const { APP_API } = constants;
 @Form.create()
 @connect(({ loading, borrowering }) => ({
   loading: loading.effects['borrowering/list'] || false,
@@ -260,27 +258,6 @@ class Payments extends React.PureComponent {
     }).then(() => {
       message.success('导出成功');
     });
-  }
-
-  print = () => {
-    const { selectedRowKeys } = this.state;
-    if (selectedRowKeys.length > 1) {
-      message.error('只支持打印一条数据');
-      return;
-    }
-    if (selectedRowKeys.length === 0) {
-      message.error('请选择一条数据打印');
-      return;
-    }
-    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
-    // this.props.dispatch({
-    //   type: 'global/print',
-    //   payload: {
-    //     id: selectedRowKeys[0],
-    //   }
-    // }).then(() => {
-    //   message.success('打印成功');
-    // });
   }
 
   // 拒绝

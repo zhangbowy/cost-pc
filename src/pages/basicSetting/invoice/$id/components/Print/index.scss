@@ -1,0 +1,240 @@
+.left{
+  width: 298px;
+  background: #ffffff;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 21px 24px;
+  z-index: 1;
+  box-shadow: 0px 12px 32px 0px rgba(38, 38, 38, 0.1);
+  :global(.ant-form-item-no-colon) {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+  }
+  :global(.ant-form-item) {
+    margin-bottom: 14px;
+  }
+  :global(.ant-checkbox-wrapper){
+    line-height: normal;
+  }
+  :global(.ant-form-item-control) {
+    line-height: normal;
+  }
+}
+
+.pdf5{
+  min-height: 597px;
+  width: 850px;
+  padding: 24px 51px;
+}
+.zdx{
+  width: 108px;
+  height: 108px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.pdfb5{
+  width: 1000px;
+  min-height: 704px;
+  background: #FFFFFF;
+  box-shadow: 0px 12px 32px 0px rgba(38, 38, 38, 0.16);
+  padding: 24px 51px;
+}
+
+h1{
+  font-size: 15px;
+  color: rgba(0,0,0,0.85);
+}
+.header {
+  text-align:center;
+  font-size: 18px;
+}
+.footer {
+  font-size: 90%;
+  text-align:center;
+}
+
+.content{}
+
+.production{
+  color: #666;
+  font-size: 13px;
+  width: 100px;
+  display: inline-block;
+}
+.write{
+  color: #666;
+  font-size: 13px;
+}
+
+.cont-info{
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid #D7D7DC;
+  border-left: 1px solid #D7D7DC;
+  border-right: 1px solid #D7D7DC;
+}
+.cont-info-fields{
+  width: 620px;
+  flex: 1 1 auto;
+}
+.cont-info-line{
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #D7D7DC;
+}
+.cont-cell{
+  display: flex;
+  flex-direction: row;
+  font-size: 13px;
+  line-height: 1.4;
+  flex: 1;
+}
+.cont-cell-label{
+  flex: 0 0 auto;
+  width: 72px;
+  color: #666;
+  padding-left: 12px;
+  z-index: 1;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+.cont-cell .cont-cell-value {
+  min-width: 128px;
+  flex: 1 1 auto;
+  position: relative;
+  height: 40px;
+  line-height: 40px;
+  color: #666;
+}
+.cont-line-r{
+  border-right: 1px solid #D7D7DC;
+}
+.cont-line-t{
+  border-top: 1px solid #D7D7DC;
+}
+.cont-line-l{
+  border-left: 1px solid #D7D7DC;
+}
+.cont-line-b{
+  border-bottom: 1px solid #D7D7DC;
+}
+.cont-info-line .cont-cell:last-child {
+  flex: 1;
+}
+.cont-cell .cont-cell-value:before {
+  position: absolute;
+  content: '';
+  display: block;
+  top: 5px;
+  left: 0;
+  right: 5px;
+  bottom: 5px;
+  z-index: 0;
+}
+.prod-title{
+  color: #333333;
+  margin: 40px 0 10px 0;
+}
+.cont-info-qr{
+  // flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border-bottom: 1px solid #D7D7DC;
+  border-left: 1px solid #D7D7DC;
+  width: 120px;
+  background: #F4F5FA;
+}
+.table-header{
+  background: #F4F5FA;
+  color: #666666;
+  font-size: 13px;
+  height: 40px;
+  line-height: 40px;
+}
+.table-header th {
+  text-align: left;
+  padding-left: 12px;
+}
+
+.rights{
+  margin-left: 50px;
+  margin-top: 32px;
+  min-width: 696px;
+  ::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+  // height: 100%;
+  // margin-bottom: 100px;
+  table{
+    width: 100%;
+    border-collapse:collapse;
+    // border-bottom:1px solid #D7D7DC;
+    border-top:1px solid #D7D7DC;
+  }
+  table td{
+    padding: 0px 12px;
+    height: 40px;
+    line-height: 40px;
+    color: #666;
+    font-size: 13px;
+    /* border-top:1px solid #D7D7DC; */
+  }
+  table th{
+    height: 40px;
+    background: #F4F5FA;
+    padding-left: 12px;
+    color: #666;
+    font-weight: normal;
+  }
+  table tr{
+    /* padding: 16px 8px; */
+    border-bottom:1px solid #D7D7DC;
+    border-right:1px solid #D7D7DC;
+    border-left:1px solid #D7D7DC;
+  }
+}
+.rightContainer{
+  min-width: 696px;
+  height: 100%;
+  overflow: scroll;
+  padding-bottom: 100px;
+  margin-right: 50px;
+  ::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+}
+.checkbox{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  :global(.ant-checkbox-wrapper + .ant-checkbox-wrapper){
+    margin-left: 0px;
+  }
+  :global(.ant-checkbox-wrapper){
+    margin-bottom: 10px;
+    line-height: normal;
+  }
+}
+.pdf4{
+  width: 850px;
+  min-height: 1020px;
+  padding: 54px 51px;
+  box-shadow: 0px 12px 32px 0px rgba(38, 38, 38, 0.16);
+}
+.contents{
+  margin-top: 10px;
+}
+.title{
+  margin-bottom: 10px;
+  margin-top: 40px;
+  font-weight: bold;
+  color: rgba(0,0,0,0.85);
+  font-size: 15px;
+}

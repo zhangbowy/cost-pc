@@ -31,6 +31,16 @@ export default {
     key: 'shareField',
     value: '分摊设置',
   }],
+  invoice: [{
+    key: 'basic',
+    value: '基础设置',
+  }, {
+    key: 'field',
+    value: '字段设置',
+  }, {
+    key: 'print',
+    value: '打印设置',
+  }],
   imgPath: `${APP_API}/cost/upload/image`
 };
 
@@ -483,6 +493,7 @@ export const approveCreate = [{
   key: 'bear_user_or_dept',
   value: '承担人/部门'
 }];
+
 
 export const peopleType = {
   'START': '提交人',

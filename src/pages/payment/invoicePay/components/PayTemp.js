@@ -8,6 +8,7 @@ import DropBtn from '@/components/DropBtn';
 import constants from '@/utils/constants';
 import style from '../index.scss';
 import PayModal from './payModal';
+import { ddOpenLink } from '../../../../utils/ddApi';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
@@ -246,18 +247,35 @@ class PayTemp extends React.PureComponent {
   print = () => {
     const { selectedRowKeys } = this.state;
     const { templateType } = this.props;
-    if (selectedRowKeys.length > 1) {
-      message.error('只支持打印一条数据');
+    if (selectedRowKeys.length > 10) {
+      message.error('最多支持打印十条数据');
       return;
     }
     if (selectedRowKeys.length === 0) {
       message.error('请选择一条数据打印');
       return;
     }
-    if (Number(templateType)) {
-      window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+    const ids = `${selectedRowKeys.join(',')}`;
+    if (!Number(templateType)) {
+      // window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+      // window.location.href = `${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`;
+      // this.props.dispatch({
+      //   type: 'global/invoicePrint',
+      //   payload: {
+      //     ids,
+      //   }
+      // });
+      ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`);
     } else {
-      window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+      // window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
+      // window.location.href = `${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${ids}`;
+      // this.props.dispatch({
+      //   type: 'global/loanPrint',
+      //   payload: {
+      //     ids,
+      //   }
+      // });
+      ddOpenLink(`${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${ids}`);
     }
   }
 

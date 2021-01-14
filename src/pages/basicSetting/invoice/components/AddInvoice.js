@@ -8,6 +8,7 @@ import { JsonParse } from '@/utils/common';
 import styles from './classify.scss';
 import Basic from './Basic';
 import Field from './Field';
+import Print from './Print';
 // import { borrowJson, applyJson } from '../../../../utils/constants';
 
 @connect(({ global, session, invoice }) => ({
@@ -341,7 +342,7 @@ class AddInvoice extends React.PureComponent {
           <div className={styles.classify}>
             <div className={styles.lefts}>
               {
-                constants.classify.slice(0,2).map(item => (
+                constants.invoice.slice(0,2).map(item => (
                   <div
                     className={left === item.key ? cs(styles.leftTl, styles.active) : styles.leftTl}
                     key={item.key}
@@ -353,7 +354,7 @@ class AddInvoice extends React.PureComponent {
               }
             </div>
             {
-              left === 'basic' ?
+              left === 'basic' &&
                 <Basic
                   {...this.props}
                   wrappedComponentRef={form => {this.formRef = form;}}
@@ -365,15 +366,21 @@ class AddInvoice extends React.PureComponent {
                   templateType={templateType}
                   dispatch={dispatch}
                 />
-              :
-                <Field
-                  checkDel={checkDel}
-                  dispatch={dispatch}
-                  wrappedComponentRef={form => {this.saveFormRef = form;}}
-                  // viewShowModal={fn => this.saveFormRef(fn)}
-                  showFields={data.showFields}
-                  expandField={data.expandField}
-                />
+            }
+            {
+              left === 'field' &&
+              <Field
+                checkDel={checkDel}
+                dispatch={dispatch}
+                wrappedComponentRef={form => {this.saveFormRef = form;}}
+                // viewShowModal={fn => this.saveFormRef(fn)}
+                showFields={data.showFields}
+                expandField={data.expandField}
+              />
+            }
+            {
+              left === 'print' &&
+              <Print />
             }
           </div>
         </Modal>

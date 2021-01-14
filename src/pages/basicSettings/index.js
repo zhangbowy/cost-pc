@@ -56,11 +56,6 @@ class basicSetting extends Component {
 				}
 				return item;
 			});
-			// menus[2].children.map(item => {
-			// 	menus[0].children.push(item);
-			// 	return item;
-			// });
-			// menus.splice(2,1);
 			console.log(111111,menus);
 			this.setState({menus});
 		});
@@ -68,48 +63,46 @@ class basicSetting extends Component {
 
 	loadmenu = (data) => {
 		const that = this;
-		console.log(222222,data);
-		return data.map(item => {
-			return (
-  <div className={style.card} onClick={() => that.goMenuUrl(item)} key={item.id} >
+		return data.map(item => (
+  <div
+    className={style.card}
+    onClick={() => that.goMenuUrl(item)}
+    key={item.id}
+  >
     <div className={style.card_left}>
       {
-							item.icon &&
-							<div className={`${style.iconImg} ${style[item.icon]}`}  />
-						}
+        item.icon &&
+        <div className={`${style.iconImg} ${style[item.icon]}`}  />
+      }
     </div>
     <div className={style.card_right} style={item.note?{}:{justifyContent:'center'}} >
       <div className={style.card_right_title}>{item.menuName}</div>
       {
-							item.note &&
-							<div className={style.card_right_content}>{item.note}</div>
-						}
+        item.note &&
+        <div className={style.card_right_content}>{item.note}</div>
+      }
     </div>
   </div>
-			);
-		});
+    ));
 	}
 
 	goMenuUrl(data){
-		console.log(this.props);
-		console.log(data);
 		this.props.history.push({pathname:data.url.replace('_','/'), params: {selectUrl: this.props.location.pathname}});
 	}
 
 	render() {
-		console.log(this.state.menus);
 		return (
   <div style={{padding:'0 20px 40px 24px',marginTop:'-16px'}}>
     {
-					this.state.menus.map(item => {
-						return (
-  <div key={item.id}>
-    <p className={style.h3}>{item.menuName}</p>
-    { this.loadmenu(item.children) }
-  </div>
-						);
-					})
-				}
+      this.state.menus.map(item => {
+        return (
+          <div key={item.id}>
+            <p className={style.h3}>{item.menuName}</p>
+            { this.loadmenu(item.children) }
+          </div>
+        );
+      })
+    }
   </div>
 		);
 	}

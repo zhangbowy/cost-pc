@@ -13,6 +13,7 @@ import Basic from '../components/Basic';
 import { JsonParse } from '../../../../utils/common';
 import StrSetting from '../../costCategory/$id/components/StrSetting';
 import PreviewBox from '../../costCategory/$id/components/PreviewBox';
+import Print from './components/Print';
 
 const basicStr = [{
   key: 'one',
@@ -20,6 +21,9 @@ const basicStr = [{
 }, {
   key: 'two',
   value: '字段设置',
+}, {
+  key: 'three',
+  value: '打印设置',
 }];
 @connect(({ loading, session, addInvoice, global }) => ({
   loading: loading.effects['addInvoice/add'] || loading.effects['addInvoice/edit'],
@@ -40,6 +44,16 @@ class CategoryAdd extends PureComponent {
     categoryList: [],
     templateType: 0,
     fieldList: [],
+    templatePdfVo: {
+      'templateType':0,
+      'paperType':2,
+      'isQrCode':true,
+      'isAssessRecord':false,
+      'isApplicationRecord':false,
+      'isCompanyName':true,
+      'isImage':true,
+      templatePdfExpandVos: [],
+  },
   }
 
   componentDidMount() {
@@ -111,6 +125,7 @@ class CategoryAdd extends PureComponent {
               payload: {
                 id: title,
                 templateType,
+                isPdf: true,
               }
             }).then(() => {
               const { detail } = this.props;
@@ -160,6 +175,11 @@ class CategoryAdd extends PureComponent {
                 selects = [...selects, ...detail.selfField];
               }
               this.setState({
+                templatePdfVo: {
+                  ...detail.templatePdfVo,
+                  templatePdfExpandVos: detail.templatePdfVo && detail.templatePdfVo.templatePdfExpandVos
+                    ? detail.templatePdfVo.templatePdfExpandVos.filter(it => it.isSelect) : [],
+                },
                 data: datas,
                 selectList: selects.sort(this.compare('sort')),
               });
@@ -180,7 +200,7 @@ class CategoryAdd extends PureComponent {
   }
 
   onHandle = (e) => {
-    if (e.key === 'two') {
+    if (e.key !== 'one') {
       if (this.formRef && this.formRef.getFormItem) {
         const datas = {};
         const values = this.formRef.getFormItem();
@@ -202,7 +222,7 @@ class CategoryAdd extends PureComponent {
   }
 
   onStep = (flag) => {
-    const { current, data, selectList, templateType } = this.state;
+    const { current, data, selectList, templateType, templatePdfVo } = this.state;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
     const paramsT = id.split('_');
@@ -230,7 +250,7 @@ class CategoryAdd extends PureComponent {
       newSelectList.splice(indexs, 1, valStr);
     }
 
-    if ((current === 'two'
+    if ((current === 'three'
       || (title !== 'add'
       && paramsT[2] !== 'child'))
       && flag !== 'down') {
@@ -261,6 +281,10 @@ class CategoryAdd extends PureComponent {
         status: datas.status ? 1: 0,
         expandField: newArr.filter(it => it.field.indexOf('expand_') > -1),
         selfField: newArr.filter(it => it.field.indexOf('self_') > -1),
+        templatePdfVo: {
+          ...templatePdfVo,
+          templatePdfExpandVos: templatePdfVo.templatePdfExpandVos.map(it => { return{ ...it, isSelect: true }; })
+        },
       };
       this.props.dispatch({
         type: url,
@@ -285,7 +309,7 @@ class CategoryAdd extends PureComponent {
       [type]: value,
     });
     if (type === 'selectList') {
-      const { fieldList } = this.state;
+      const { fieldList, templatePdfVo } = this.state;
       let newArr = [...fieldList];
       const oldField = newArr.map(it => it.field);
       const add = [];
@@ -299,7 +323,13 @@ class CategoryAdd extends PureComponent {
       if (add.length) {
         newArr=[...newArr, ...add];
       }
-      console.log('CategoryAdd -> onChangeData -> fields', fields);
+      const lists = templatePdfVo.templatePdfExpandVos || [];
+      let newLists = [];
+      if (lists && lists.length) {
+        const keys = value.map(it => it.field);
+        newLists = lists.filter(it => keys.includes(it.field));
+        console.log('CategoryAdd -> onChangeData -> newLists', newLists);
+      }
       this.setState({
         fieldList: newArr.map(it => {
           if (fields.includes(it.field)) {
@@ -313,6 +343,10 @@ class CategoryAdd extends PureComponent {
             isSelect: false,
           };
         }),
+        templatePdfVo: {
+          ...templatePdfVo,
+          templatePdfExpandVos: newLists,
+        }
       }, () => {
         console.log(this.state.fieldList);
       });
@@ -321,6 +355,12 @@ class CategoryAdd extends PureComponent {
 
   onCancel = () => {
     this.props.history.push('/basicSetting/invoice');
+  }
+
+  onChangeDatas = (key, value) => {
+    this.setState({
+      [key]: value,
+    });
   }
 
   render () {
@@ -332,8 +372,13 @@ class CategoryAdd extends PureComponent {
     const title = id.split('_')[0];
     const paramsL = id.split('_');
     const titleType = paramsL[2];
-    const { current, selectList, fieldList } = this.state;
-    const {  dispatch } = this.props;
+    const {
+      current,
+      selectList,
+      fieldList,
+      templatePdfVo
+    } = this.state;
+    const {  dispatch, userInfo } = this.props;
     const { categoryList, data, templateType } = this.state;
     const routes = [
       // {
@@ -381,7 +426,7 @@ class CategoryAdd extends PureComponent {
         </div>
         {
           current === 'one' &&
-          <div className="content-dt" style={{height: 'calc(100% - 178px)', minWidth: '1000px'}}>
+          <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
             <LabelLeft title="基础设置" />
             <Basic
               {...this.props}
@@ -413,6 +458,19 @@ class CategoryAdd extends PureComponent {
             </DndProvider>
           </div>
         }
+        {
+          current === 'three' &&
+          <div style={{height: 'calc(100% - 152px)', padding: '0', display: 'flex' }}>
+            <Print
+              templatePdfVo={templatePdfVo}
+              selectList={selectList}
+              templateType={Number(templateType)}
+              onChange={this.onChangeDatas}
+              corpName={userInfo.corpName}
+              invoiceName={data.name}
+            />
+          </div>
+        }
         <FooterBar
           right={(
             <>
@@ -431,7 +489,7 @@ class CategoryAdd extends PureComponent {
                 type="primary"
                 onClick={() => this.onStep('up')}
               >
-                { current === 'two' || (title !== 'add' && titleType !== 'child') ? '保存' : '下一步' }
+                { current === 'three' || (title !== 'add' && titleType !== 'child') ? '保存' : '下一步' }
               </Button>
             </>
           )}

@@ -253,3 +253,12 @@ export const compare = (property) => {
       return value1 - value2;
   };
 };
+
+export const arrayGroup = (array, subGroupLength) => {
+  let index = 0;
+  const newArray = [];
+  while(index < array.length) {
+      newArray.push(array.slice(index, index += subGroupLength));
+  }
+  return newArray;
+};

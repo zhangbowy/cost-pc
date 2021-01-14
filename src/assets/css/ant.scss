@@ -209,4 +209,7 @@
   .ant-table-thead > tr > th.ant-table-column-sort{
     background: #fafafa!important;
   }
+  .ant-menu-horizontal > .ant-menu-item-active,.ant-menu-horizontal > .ant-menu-item-selected{
+    z-index: 10;
+  }
 }

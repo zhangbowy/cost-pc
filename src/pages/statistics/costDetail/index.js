@@ -12,6 +12,7 @@ import constants, { getArrayValue, approveStatus, invoiceStatus } from '@/utils/
 import LevelSearch from '@/components/LevelSearch';
 import DropBtn from '@/components/DropBtn';
 import style from './index.scss';
+import { ddOpenLink } from '../../../utils/ddApi';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
@@ -166,15 +167,19 @@ onDelete = (id) => {
 
   print = () => {
     const { selectedRows } = this.state;
-    if (selectedRows.length > 1) {
-      message.error('只支持打印一条数据');
+    if (selectedRows.length > 10) {
+      message.error('最多支持打印十条数据');
       return;
     }
     if (selectedRows.length === 0) {
       message.error('请选择一条数据打印');
       return;
     }
-    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRows[0].invoiceSubmitId}`;
+    const id = selectedRows.map(it => it.invoiceSubmitId);
+    const lists = Array.from(new Set(id));
+    const ids = lists.join(',');
+    // window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&ids=${ids}`;
+    ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`);
     // this.props.dispatch({
     //   type: 'global/print',
     //   payload: {

@@ -460,7 +460,7 @@ class Basic extends React.PureComponent {
           <Form.Item label={labelInfo.status}>
             {
               getFieldDecorator('status', {
-                initialValue: data && data.status === undefined ? true : (data.status === 1),
+                initialValue: data.status === undefined ? true :!!(data.status),
                 valuePropName: 'checked'
               })(
                 <Switch />

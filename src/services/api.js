@@ -104,4 +104,7 @@ export default {
    applyIds: `${APP_API}/cost/invoice/application/checkRelevance`,
    waitAssessIds: `${APP_API}/cost/invoice/loan/waitAssessListByIds`,
    folderIds: `${APP_API}/cost/cost/folder/listByIds`,
+   invoicePrint: `${APP_API}/cost/pdf/batch/submit`,
+   loanPrint: `${APP_API}/cost/pdf/batch/loan`,
+   applicationPrint: `${APP_API}/cost/pdf/batch/application`,
 };

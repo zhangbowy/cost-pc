@@ -1,0 +1,30 @@
+.content{
+  width: 384px;
+  height: 224px;
+  padding: 30px;
+  background: #ffffff;
+  margin: 24px;
+  p{
+    margin-bottom: 0px;
+  }
+  .production{
+    font-size: 14px;
+    line-height: 22px;
+    color: rgba(0,0,0,0.45);
+    margin-bottom: 16px;
+    margin-top: 6px;
+  }
+  .label{
+    display: flex;
+    p{
+      font-size: 14px;
+      font-weight: 400;
+      &:after{
+        width: 8px;
+        height: 8px;
+        background: rgba(0, 0, 0, 0.25);
+      }
+    }
+  }
+}
+

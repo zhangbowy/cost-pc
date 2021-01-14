@@ -13,6 +13,7 @@ import RefuseModal from './RefuseModal';
 import Borrow from './Borrow';
 import Apply from './Apply';
 import CostDetails from './CostDetails';
+import { ddOpenLink } from '../../../utils/ddApi';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -168,6 +169,17 @@ class InvoiceDetail extends Component {
       window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
     } else {
       window.location.href = `${APP_API}/cost/export/pdfDetail4Application?token=${localStorage.getItem('token')}&id=${id}`;
+    }
+  }
+
+  handelOkPrint = () => {
+    const { id, templateType } = this.props;
+    if (Number(templateType) === 1) {
+      ddOpenLink(`${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${id}`);
+    } else if (Number(templateType) === 0) {
+      ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${id}`);
+    } else {
+      ddOpenLink(`${APP_API}/cost/pdf/batch/application?token=${localStorage.getItem('token')}&ids=${id}`);
     }
   }
 
@@ -402,7 +414,8 @@ class InvoiceDetail extends Component {
           onCancel={() => this.onCancel()}
           footer={([
             canRefuse && <RefuseModal refuse={val => this.handleRefuse(val)}><Button key="refuse" className="m-r-16">拒绝</Button></RefuseModal>,
-            <Button key="cancel" type="primary" onClick={() => this.handelOk()}>打印</Button>
+            <Button key="cancel" type="primary" onClick={() => this.handelOk()}>下载</Button>,
+            <Button key="print" type="primary" onClick={() => this.handelOkPrint()}>打印</Button>
           ]
           )}
         >

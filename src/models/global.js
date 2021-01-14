@@ -545,6 +545,18 @@ export default {
         },
       });
     },
+    // 报销单打印
+    *invoicePrint({ payload }, { call }) {
+      yield call(get, api.invoicePrint, payload);
+    },
+    // 借款单打印
+    *loanPrint({ payload }, { call }) {
+      yield call(get, api.loanPrint, payload);
+    },
+    // 报销单打印
+    *applicationPrint({ payload }, { call }) {
+      yield call(get, api.applicationPrint, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {
