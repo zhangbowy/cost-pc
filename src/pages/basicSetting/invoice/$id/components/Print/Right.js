@@ -203,7 +203,7 @@ function Right({ templateType, templatePdfVo, corpName }) {
               <td colSpan="2">审批人</td>
             </tr>
             <tr>
-              <td className={style['cont-line-r']}>复合</td>
+              <td className={style['cont-line-r']}>复核</td>
               <td>出纳</td>
             </tr>
           </table>
