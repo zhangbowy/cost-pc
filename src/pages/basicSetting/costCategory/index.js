@@ -253,7 +253,7 @@ class CostCategory extends React.PureComponent {
       className: 'fixCenter'
     }];
     return (
-      <div>
+      <div className="mainContainer">
         <PageHead title="费用类别设置" />
         <div className="content-dt ">
           <div className="cnt-header">

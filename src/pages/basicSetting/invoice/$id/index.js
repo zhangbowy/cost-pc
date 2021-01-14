@@ -399,64 +399,94 @@ class CategoryAdd extends PureComponent {
 
     return (
       <div style={{height: '100%'}}>
-        <PageHead title={
-          <PageHeader
-            title={null}
-            breadcrumb={{routes}}
-            style={{background: '#fff'}}
+        <div style={{width: '100%'}}>
+          <PageHead title={
+            <PageHeader
+              title={null}
+              breadcrumb={{routes}}
+              style={{background: '#fff'}}
+            />
+          }
           />
-        }
-        />
-        <div style={{background: '#fff', width: '100%'}}>
-          <Menu
-            mode="horizontal"
-            className="m-l-32 titleMenu"
-            selectedKeys={[current]}
-            onClick={(e) => this.onHandle(e)}
-          >
-            {
-              basicStr.map((it, index) => (
-                <Menu.Item key={it.key}>
-                  <span className={it.key === current ? cs('circle', 'active') : 'circle'}>{index+1}</span>
-                  <span>{it.value}</span>
-                </Menu.Item>
-              ))
-            }
-          </Menu>
+          <div style={{background: '#fff'}}>
+            <Menu
+              mode="horizontal"
+              className="m-l-32 titleMenu"
+              selectedKeys={[current]}
+              onClick={(e) => this.onHandle(e)}
+            >
+              {
+                basicStr.map((it, index) => (
+                  <Menu.Item key={it.key}>
+                    <span className={it.key === current ? cs('circle', 'active') : 'circle'}>{index+1}</span>
+                    <span>{it.value}</span>
+                  </Menu.Item>
+                ))
+              }
+            </Menu>
+          </div>
         </div>
         {
-          current === 'one' &&
-          <div className="content-dt" style={{height: 'calc(100% - 178px)'}}>
-            <LabelLeft title="基础设置" />
-            <Basic
-              {...this.props}
-              wrappedComponentRef={form => {this.formRef = form;}}
-              costCategoryList={categoryList}
-              list={allList}
-              data={data}
-              category={data.costCategory}
-              approveList={approveList}
-              templateType={Number(templateType)}
-              dispatch={dispatch}
-              onChangeData={this.onChangeData}
-            />
-          </div>
-        }
-        {
-          current === 'two' &&
-          <div style={{height: 'calc(100% - 153px)', padding: '24px 24px 0 24px', display: 'flex'}}>
-            <DndProvider backend={HTML5Backend}>
-              <StrSetting
-                fieldList={fieldList}
-                selectList={selectList}
-                onChangeData={this.onChangeData}
-                selectId="reason"
-                childRef={ref => { this.childRef = ref; }}
-                type="invoice"
-              />
-              <PreviewBox />
-            </DndProvider>
-          </div>
+          current !== 'three' &&
+            <div
+              style={{
+                position: 'relative',
+                height: 'calc(100% - 153px)',
+                overflow: 'scroll',
+                width: '100%'
+              }}
+            >
+              {
+                current === 'one' &&
+                <div
+                  className="content-dt"
+                  style={{
+                    height: '100%',
+                    minWidth: '1008px',
+                    width: 'inherit'
+                  }}
+                >
+                  <LabelLeft title="基础设置" />
+                  <Basic
+                    {...this.props}
+                    wrappedComponentRef={form => {this.formRef = form;}}
+                    costCategoryList={categoryList}
+                    list={allList}
+                    data={data}
+                    category={data.costCategory}
+                    approveList={approveList}
+                    templateType={Number(templateType)}
+                    dispatch={dispatch}
+                    onChangeData={this.onChangeData}
+                  />
+                </div>
+              }
+              {
+                current === 'two' &&
+                <div
+                  style={{
+                    height: '100%',
+                    padding: '24px 24px 0 24px',
+                    display: 'flex',
+                    position: 'absolute',
+                    minWidth: '1008px',
+                    width: 'inherit'
+                  }}
+                >
+                  <DndProvider backend={HTML5Backend}>
+                    <StrSetting
+                      fieldList={fieldList}
+                      selectList={selectList}
+                      onChangeData={this.onChangeData}
+                      selectId="reason"
+                      childRef={ref => { this.childRef = ref; }}
+                      type="invoice"
+                    />
+                    <PreviewBox />
+                  </DndProvider>
+                </div>
+              }
+            </div>
         }
         {
           current === 'three' &&
