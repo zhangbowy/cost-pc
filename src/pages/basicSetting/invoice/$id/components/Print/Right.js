@@ -149,7 +149,7 @@ function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceN
                   </tr>
                   :
                   <tr>
-                    <td className={style['cont-line-r']} colSpan="3">报销金额（元）</td>
+                    <td className={style['cont-line-r']} colSpan="3">报销金额（大写）</td>
                   </tr>
               }
             </table>
