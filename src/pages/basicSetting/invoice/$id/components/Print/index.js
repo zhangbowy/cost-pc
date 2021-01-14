@@ -4,7 +4,7 @@ import Left from './Left';
 import Right from './Right';
 import style from './index.scss';
 
-function index({ templatePdfVo, selectList, templateType, onChange, invoiceName, corpName }) {
+function index({ templatePdfVo, selectList, templateType, onChange, isRelationLoan, corpName, invoiceName }) {
   const expandList = selectList.filter(it => it.field.indexOf('expand') > -1) || [];
   console.log(templatePdfVo);
   return (
@@ -20,8 +20,9 @@ function index({ templatePdfVo, selectList, templateType, onChange, invoiceName,
           <Right
             templateType={templateType}
             templatePdfVo={templatePdfVo}
-            invoiceName={invoiceName}
+            isRelationLoan={isRelationLoan}
             corpName={corpName}
+            invoiceName={invoiceName}
           />
         </div>
       </div>
