@@ -70,7 +70,7 @@ export default {
         type: 'save',
         payload: {
           approveList: response.list || [],
-          query: {
+          approveQuery: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
@@ -96,6 +96,9 @@ export default {
     },
     *approveEdit({ payload }, { call }) {
       yield call(post, api.approveEdit, payload);
+    },
+    *syncApproveRole({ payload }, { call }) {
+      yield call(get, api.syncApproveRole, payload);
     },
   },
   reducers: {

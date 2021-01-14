@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Table, Popconfirm, Divider, Button, message, Tooltip } from 'antd';
+import { Table, Popconfirm, Divider, Button, message, Tooltip, Modal } from 'antd';
 import AddModal from './components/AddModal';
 
+const { confirm } = Modal;
 @connect(({ auth, loading }) => ({
   loading: loading.effects['auth/approveList'] || false,
   list: auth.approveList,
@@ -61,6 +62,30 @@ class ApproveIndex extends Component {
     this.props.dispatch({
       type: 'auth/approveList',
       payload,
+    });
+  }
+
+  again = () => {
+    confirm({
+      title: '确认将钉钉已设置好的审批角色，同步至鑫支出吗？',
+      content: '如角色名称重复，同步后，会覆盖现有角色名称、人员、管理范围',
+      okText: '继续同步',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'auth/syncApproveRole',
+          payload: {}
+        }).then(() => {
+          message.success('同步成功');
+          const { query } = this.props;
+          this.onQuery({
+            pageNo: 1,
+            pageSize: query.pageSize
+          });
+        });
+      },
+      onCancel: () => {
+        console.log('Cancel');
+      },
     });
   }
 
@@ -122,8 +147,9 @@ class ApproveIndex extends Component {
     return (
       <div className="content-dt">
         <AddModal title="add" onOk={this.onOk} detail={{}}>
-          <Button type="primary" className="m-b-16">新增</Button>
+          <Button type="primary" className="m-b-16 m-r-8">新增</Button>
         </AddModal>
+        <Button type="default" onClick={() => this.again()}>同步钉钉审批角色</Button>
         <Table
           rowKey="id"
           columns={columns}

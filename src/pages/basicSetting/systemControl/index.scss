@@ -4,6 +4,12 @@
   padding: 30px;
   background: #ffffff;
   margin: 24px;
+  position: relative;
+  .switch{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
   p{
     margin-bottom: 0px;
   }
@@ -16,15 +22,24 @@
   }
   .label{
     display: flex;
-    p{
-      font-size: 14px;
-      font-weight: 400;
-      &:after{
+    .lables{
+      display: flex;
+      align-items: center;
+      span{
+        font-size: 14px;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.65);
+      }
+      .circle{
         width: 8px;
         height: 8px;
         background: rgba(0, 0, 0, 0.25);
+        border-radius: 50%;
+        display: block;
+        margin-right: 7px;
       }
     }
+
   }
 }
 
