@@ -90,7 +90,7 @@ class Left extends Component {
       <div className={style.left}>
         <Form style={{ padding: '1px 0px' }}>
           <Form.Item label="打印模板" colon={false} style={{ marginBottom: '10px' }}>
-            <Select onChange={e => this.onChanges(e)} defaultValue={templatePdfVo.paperType ? `${templatePdfVo.paperType}` : '2'}>
+            <Select onChange={e => this.onChanges(e)} value={templatePdfVo.paperType || templatePdfVo.paperType === 0 ? `${templatePdfVo.paperType}` : '2'}>
               {
                 printType.map(it => (
                   <Select.Option key={it.key}>{it.value}</Select.Option>
@@ -104,7 +104,7 @@ class Left extends Component {
                 basicSet[templateType].map(it => (
                   <Checkbox
                     key={it.key}
-                    defaultChecked={templatePdfVo[it.key]}
+                    checked={templatePdfVo[it.key]}
                     onChange={e => this.onChange(e, it.key)}
                   >
                     {it.value}
@@ -120,7 +120,7 @@ class Left extends Component {
               <CheckboxGroup
                 className={style.checkbox}
                 onChange={this.onChangeBasic}
-                defaultValue={templatePdfVo.templatePdfExpandVos ? templatePdfVo.templatePdfExpandVos.map(it => it.field) : []}
+                value={templatePdfVo.templatePdfExpandVos ? templatePdfVo.templatePdfExpandVos.map(it => it.field) : []}
               >
                 {
                   expandList.map(it => (
@@ -136,7 +136,7 @@ class Left extends Component {
           }
           <Form.Item label="公司名称" colon={false}>
             <Checkbox
-              defaultChecked={templatePdfVo.isCompanyName}
+              checked={templatePdfVo.isCompanyName}
               onChange={e => this.onChange(e, 'isCompanyName')}
             >
               打印
@@ -145,7 +145,7 @@ class Left extends Component {
           <Divider type="horizontal" style={{ marginTop: '14px', marginBottom: '5px' }} />
           <Form.Item label="图片" colon={false}>
             <Checkbox
-              defaultChecked={templatePdfVo.isImage}
+              checked={templatePdfVo.isImage}
               onChange={e => this.onChange(e, 'isImage')}
             >
               打印
