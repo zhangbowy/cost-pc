@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import { Form, Input, Checkbox, Divider, Select, Modal, Button } from 'antd';
 import style from './index.scss';
-import { dataType, defaultString } from '../../../../../utils/constants';
+import { dataType, defaultString, changeOrder } from '../../../../../utils/constants';
 import { timeStampToHex } from '../../../../../utils/common';
 
 let id = 1000;
@@ -210,7 +210,7 @@ class Right extends PureComponent {
 
   render() {
     const { details, list } = this.state;
-    const { selectId, type } = this.props;
+    const { selectId, type, templateType } = this.props;
 
     const {
       form: { getFieldDecorator, getFieldValue },
@@ -334,6 +334,39 @@ class Right extends PureComponent {
                 )
               }
             </Form.Item>
+            <Form.Item label="校验">
+              {
+                getFieldDecorator(`isWrite[${details.field}]`, {
+                  initialValue: details.isWrite ? [details.isWrite] : [],
+                })(
+                  <Checkbox.Group
+                    style={{ width: '100%' }}
+                    disabled={details.disabled}
+                    onChange={this.onChange}
+                  >
+                    <Checkbox value>必填</Checkbox>
+                  </Checkbox.Group>
+                )
+              }
+            </Form.Item>
+            {
+              !changeOrder.includes(details.field) && templateType !== 2 &&
+              <Form.Item label="改单">
+                {
+                  getFieldDecorator(`isWrite[${details.field}]`, {
+                    initialValue: details.isWrite ? [details.isWrite] : [],
+                  })(
+                    <Checkbox.Group
+                      style={{ width: '100%' }}
+                      disabled={details.disabled}
+                      onChange={this.onChange}
+                    >
+                      <Checkbox value>允许发放环节修改</Checkbox>
+                    </Checkbox.Group>
+                  )
+                }
+              </Form.Item>
+            }
             {
               details.field && (details.field.indexOf('self_') > -1) &&
               <>

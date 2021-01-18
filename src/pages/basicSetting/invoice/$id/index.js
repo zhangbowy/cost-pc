@@ -478,6 +478,7 @@ class CategoryAdd extends PureComponent {
                       fieldList={fieldList}
                       selectList={selectList}
                       onChangeData={this.onChangeData}
+                      templateType={Number(templateType)}
                       selectId="reason"
                       childRef={ref => { this.childRef = ref; }}
                       type="invoice"

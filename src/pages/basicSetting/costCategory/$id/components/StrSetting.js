@@ -40,7 +40,7 @@ const selfStr = [{
   icon: 'iconriqi',
 }];
 
-const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, type }) => {
+const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, type, templateType }) => {
   const [cardList, setCardList] = useState(selectList);
   const [active, setActive] = useState('show');
   const [dragId, setDragId] = useState(selectId);
@@ -158,6 +158,7 @@ const StrSetting = ({ fieldList, selectList, onChangeData, selectId, childRef, t
         onChange={changeCardList}
         selectId={dragId}
         type={type}
+        templateType={templateType}
       />
     </div>
   );
