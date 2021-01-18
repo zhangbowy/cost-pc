@@ -262,3 +262,18 @@ export const arrayGroup = (array, subGroupLength) => {
   }
   return newArray;
 };
+
+
+export const GetRequest = (url) => {
+  const theRequest = {};
+  if(url.indexOf('?') !== -1){
+    const str = url.substr(url.indexOf('?')+1);
+    const strs=str.split('&');
+    for(let i=0;i<strs.length;i++){
+      console.log(strs[i]);
+      const arr = strs[i].split('=');
+      theRequest[arr[0]]=unescape(arr[1]);
+    }
+  }
+  return theRequest;
+};

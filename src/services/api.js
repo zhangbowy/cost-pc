@@ -107,4 +107,5 @@ export default {
    invoicePrint: `${APP_API}/cost/pdf/batch/submit`,
    loanPrint: `${APP_API}/cost/pdf/batch/loan`,
    applicationPrint: `${APP_API}/cost/pdf/batch/application`,
+   qrQuery: `${APP_API}/cost/qr/queryDetail`,
 };

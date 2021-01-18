@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import Main from '@/components/Layout/Main';
 import NoDing from '@/components/NoDing';
 import constants from '../utils/constants';
+import Transform from '../components/Transform';
 
 const { isInDingTalk } = constants;
 @connect(({ session }) => ({
@@ -19,6 +20,12 @@ class BasicLayout extends React.PureComponent {
 
   render() {
     const { children, isLogin, status, userInfo } = this.props;
+    let url = window.location.href;
+    if (url.indexOf('transformPage') > -1) {
+      return (
+        <Transform />
+      );
+    }
     if (!isLogin && isInDingTalk) {
       return null;
     }
@@ -28,7 +35,6 @@ class BasicLayout extends React.PureComponent {
     if (!isInDingTalk) {
       return <NoDing type="500" />;
     }
-    let url = window.location.href;
     if (url.indexOf('/_aliPayConfirms') !== -1) {
       const indexs = url.indexOf('/_aliPayConfirms');
       url = url.substring(0, indexs);
