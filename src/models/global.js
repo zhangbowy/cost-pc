@@ -52,6 +52,7 @@ export default {
     applyDetail: {}, // 申请单详情
     BasicSettingMenus:[], // 获取设置内容
     isApproval: false, // 判断是否是钉钉空间
+    msnUrl: '', // 小程序二维码链接
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -556,6 +557,16 @@ export default {
     // 报销单打印
     *applicationPrint({ payload }, { call }) {
       yield call(get, api.applicationPrint, payload);
+    },
+    // 报销单打印
+    *qrQuery({ payload }, { call, put }) {
+      const response = yield call(get, api.qrQuery, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          msnUrl: response || '',
+        },
+      });
     },
   },
   reducers: {

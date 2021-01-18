@@ -318,7 +318,7 @@ class AddCostTable extends Component {
           </Form.Item>
         </Form>
       ),
-      width: '230px'
+      width: '200px'
     }, {
       title: '承担金额(元)',
       dataIndex: 'shareAmount',
