@@ -334,21 +334,6 @@ class Right extends PureComponent {
                 )
               }
             </Form.Item>
-            <Form.Item label="校验">
-              {
-                getFieldDecorator(`isWrite[${details.field}]`, {
-                  initialValue: details.isWrite ? [details.isWrite] : [],
-                })(
-                  <Checkbox.Group
-                    style={{ width: '100%' }}
-                    disabled={details.disabled}
-                    onChange={this.onChange}
-                  >
-                    <Checkbox value>必填</Checkbox>
-                  </Checkbox.Group>
-                )
-              }
-            </Form.Item>
             {
               !changeOrder.includes(details.field) && templateType !== 2 &&
               <Form.Item label="改单">

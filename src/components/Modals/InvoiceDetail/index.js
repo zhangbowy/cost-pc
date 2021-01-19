@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Row, Col, Table, Tag, Popover, message, Button, Tooltip } from 'antd';
+import { Modal, Row, Col, Table, Tag, Popover, message, Button, Tooltip, Divider } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -412,34 +412,38 @@ class InvoiceDetail extends Component {
           width="980px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
-          footer={([
-            canRefuse && <RefuseModal refuse={val => this.handleRefuse(val)}><Button key="refuse" className="m-r-16">拒绝</Button></RefuseModal>,
-            <Button key="cancel" type="primary" onClick={() => this.handelOk()}>下载</Button>,
-            <Button key="print" type="primary" onClick={() => this.handelOkPrint()}>打印</Button>
-          ]
+          footer={(
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                {
+                  canRefuse &&
+                  <RefuseModal refuse={val => this.handleRefuse(val)}>
+                    <Button key="refuse" className="m-r-16">拒绝</Button>
+                  </RefuseModal>
+                }
+                <Button key="cancel" type="default" onClick={() => this.handelOk()}>下载</Button>
+                <Button key="print" type="default" onClick={() => this.handelOkPrint()}>打印</Button>
+                <Button key="again" type="default" onClick={() => this.handelOkPrint()}>复制</Button>
+              </div>
+              <div>
+                <Button type="default" onClick={() => this.onCancel()}>关闭</Button>
+              </div>
+            </div>
           )}
         >
-          <div className={cs(style.header, 'm-b-16')}>
+          <div className={cs(style.header)}>
             <div className={style.line} />
             <span>单据基础信息</span>
           </div>
           <Row className="fs-14 m-l-10">
-            <Col span={8}>
-              <div style={{display: 'flex'}}>
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name ? showFields.reason.name : '事由'}：</span>
-                <span className="fs-14 c-black-65" style={{flex: 1}}>{details.reason}</span>
-              </div>
-            </Col>
-            <Col span={8}>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据类型：</span>
               <span className="fs-14 c-black-65">{details.invoiceTemplateName}</span>
             </Col>
-            <Col span={8}>
+            <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单号：</span>
               <span className="fs-14 c-black-65">{details.invoiceNo}</span>
             </Col>
-          </Row>
-          <Row className="m-l-10">
             {
               Number(templateType) === 2 ?
                 <Col span={8} className="m-t-16">
@@ -559,17 +563,6 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.deptName}</span>
             </Col>
             {
-              showFields.note && showFields.note.status ?
-                <Col span={8} className="m-t-16">
-                  <div style={{display: 'flex'}}>
-                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
-                    <span className="fs-14 c-black-65">{details.note}</span>
-                  </div>
-                </Col>
-                :
-                null
-            }
-            {
               showFields.receiptId && showFields.receiptId.status ?
                 <Col span={8} className="m-t-16">
                   <div style={{display: 'flex'}}>
@@ -686,8 +679,32 @@ class InvoiceDetail extends Component {
                 );
               })
             }
-            {
-              showFields.imgUrl && showFields.imgUrl.status ?
+          </Row>
+          <Divider type="horizontal" className="m-t-16 m-b-23" />
+          <Row className="m-l-10">
+            <Col span={24}>
+              <div style={{display: 'flex'}}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.reason && showFields.reason.name ? showFields.reason.name : '事由'}：</span>
+                <span className="fs-14 c-black-65" style={{flex: 1}}>{details.reason}</span>
+              </div>
+            </Col>
+          </Row>
+          {
+            showFields.note && showFields.note.status ?
+              <Row className="m-l-10">
+                <Col span={24} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
+                    <span className="fs-14 c-black-65">{details.note}</span>
+                  </div>
+                </Col>
+              </Row>
+              :
+              null
+          }
+          {
+            showFields.imgUrl && showFields.imgUrl.status ?
+              <Row className="m-l-10">
                 <Col span={8} className="m-t-16">
                   <div style={{display: 'flex'}}>
                     <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
@@ -704,11 +721,13 @@ class InvoiceDetail extends Component {
                     </span>
                   </div>
                 </Col>
-                :
-                null
-            }
-            {
-              showFields.fileUrl && showFields.fileUrl.status ?
+              </Row>
+              :
+              null
+          }
+          {
+            showFields.fileUrl && showFields.fileUrl.status ?
+              <Row>
                 <Col span={8} className="m-t-16">
                   <div style={{display: 'flex'}}>
                     <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
@@ -730,10 +749,10 @@ class InvoiceDetail extends Component {
                     </span>
                   </div>
                 </Col>
-                :
-                null
-            }
-          </Row>
+              </Row>
+              :
+              null
+          }
           {
             invoiceLoanRepayRecords && invoiceLoanRepayRecords.length > 0 &&
             <>
