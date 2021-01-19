@@ -30,6 +30,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     field: idGenerator(),
     isSelect: true,
     id: -1,
+    isWrite: false,
   };
   const [, drag, preview] = useDrag({
     item: box,
