@@ -14,6 +14,7 @@ import Borrow from './Borrow';
 import Apply from './Apply';
 import CostDetails from './CostDetails';
 import { ddOpenLink } from '../../../utils/ddApi';
+import AddInvoice from '../AddInvoice';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -95,6 +96,19 @@ class InvoiceDetail extends Component {
           supplierAccountVo: details.supplierAccountVo || {},
         });
       }
+      if (details.approveUser) {
+        details = {
+          ...details,
+          userJson: details.approveUser ?
+          [{ ...details.approveUser, userName: details.approveUser.name }] : [],
+        };
+      }
+      if (details.applicationAssociageVOS) {
+        details = {
+          ...details,
+          applicationIds: details.applicationAssociageVOS.map(it => it.applicationId)
+        };
+      }
       const showObj = {};
       if (details.showField) {
         const arr = JsonParse(details.showField);
@@ -108,16 +122,8 @@ class InvoiceDetail extends Component {
       this.setState({
         visible: true,
         details,
+        // isModify: details.isModify,
       });
-      // this.props.dispatch({
-      //   type: 'global/djDetail',
-      //   payload: {
-      //     id: details.invoiceTemplateId,
-      //     templateType
-      //   }
-      // }).then(() => {
-
-      // });
     });
 
   }
@@ -246,12 +252,13 @@ class InvoiceDetail extends Component {
       invoiceLoanRepayRecords,
       invoiceLoanAssessVos,
       supplierAccountVo,
-      applicationAssociageVOS
+      applicationAssociageVOS,
+      // isModify
     } = this.state;
     const {
       children,
       canRefuse,
-      templateType
+      templateType,
     } = this.props;
     const newList = [];
     category.forEach(it => {
@@ -279,13 +286,17 @@ class InvoiceDetail extends Component {
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span>{record.currencySumStr ? `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}</span>
+          <span>{record.currencySumStr ?
+          `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}
+          </span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover
               content={(
                 <div className={style.share_cnt}>
-                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}</p>
+                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">
+                    分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}
+                  </p>
                   {
                     record.costDetailShareVOS.map(it => (
                       <p key={it.id} className="c-black-36 fs-13">
@@ -421,9 +432,55 @@ class InvoiceDetail extends Component {
                     <Button key="refuse" className="m-r-16">拒绝</Button>
                   </RefuseModal>
                 }
-                <Button key="cancel" type="default" onClick={() => this.handelOk()}>下载</Button>
-                <Button key="print" type="default" onClick={() => this.handelOkPrint()}>打印</Button>
-                <Button key="again" type="default" onClick={() => this.handelOkPrint()}>复制</Button>
+                <Button
+                  key="cancel"
+                  type="default"
+                  onClick={() => this.handelOk()}
+                >
+                  下载
+                </Button>
+                <Button
+                  key="print"
+                  type="default"
+                  onClick={() => this.handelOkPrint()}
+                >
+                  打印
+                </Button>
+                <AddInvoice
+                  templateType={templateType}
+                  id={details.invoiceTemplateId}
+                  contentJson={JSON.stringify(details)}
+                  onHandleOk={() => {
+                    this.onCancel();
+                  }}
+                >
+                  <Button
+                    key="again"
+                    type="default"
+                    operateType="copy"
+                    className="m-l-8"
+                  >
+                    复制
+                  </Button>
+                </AddInvoice>
+                <AddInvoice
+                  templateType={templateType}
+                  id={details.invoiceTemplateId}
+                  contentJson={JSON.stringify(details)}
+                  onHandleOk={() => {
+                    this.onCancel();
+                  }}
+                  operateType="modify"
+                >
+                  <Button
+                    key="again"
+                    type="default"
+                    operateType="copy"
+                    className="m-l-8"
+                  >
+                    改单
+                  </Button>
+                </AddInvoice>
               </div>
               <div>
                 <Button type="default" onClick={() => this.onCancel()}>关闭</Button>
@@ -727,7 +784,7 @@ class InvoiceDetail extends Component {
           }
           {
             showFields.fileUrl && showFields.fileUrl.status ?
-              <Row>
+              <Row className="m-l-10">
                 <Col span={8} className="m-t-16">
                   <div style={{display: 'flex'}}>
                     <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>

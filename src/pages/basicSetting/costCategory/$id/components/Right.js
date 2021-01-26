@@ -51,37 +51,37 @@ class Right extends PureComponent {
     return `expand_field_${res.join('')}${time+1}`;
   }
 
-  onChange = (e) => {
+  onChange = (e, key) => {
     const { selectList } = this.props;
     const { details } = this.state;
     const arr = [...selectList];
     const index = arr.findIndex(it => it.field === details.field);
     arr.splice(index, 1, {
       ...details,
-      isWrite: e && e.length ? e[0] : false,
+      [key]: e && e.length ? e[0] : false,
     });
     this.setState({
       details: {
         ...details,
-        isWrite: e && e.length ? e[0] : false,
+        [key]: e && e.length ? e[0] : false,
       }
     });
     this.props.onChange(arr);
   }
 
-  onInput = (e) => {
+  onInput = (e, key) => {
     const { selectList } = this.props;
     const { details } = this.state;
     const arr = [...selectList];
     const index = arr.findIndex(it => it.field === details.field);
     arr.splice(index, 1, {
       ...details,
-      name: e.target.value
+      [key]: e.target.value
     });
     this.setState({
       details: {
         ...details,
-        name: e.target.value
+        [key]: e.target.value
       }
     });
     this.props.onChange(arr);
@@ -106,7 +106,6 @@ class Right extends PureComponent {
               newArr.push(values[it]);
             });
           }
-          console.log('Right -> getFormItems -> newArr', newArr);
           Object.assign(val, {
             options: newArr,
           });
@@ -270,7 +269,7 @@ class Right extends PureComponent {
                       (details.field.indexOf('self_') === -1 &&
                       details.field.indexOf('expand_') === -1)
                     }
-                    onBlur={e => this.onInput(e)}
+                    onBlur={e => this.onInput(e, 'name')}
                   />
                 )
               }
@@ -282,6 +281,21 @@ class Right extends PureComponent {
                 <span className="fs-12 warn" style={{verticalAlign: 'middle'}}>公用字段标题修改后将应用到所有{type === 'invoice' ? '单据模板' : '费用类别'}</span>
               </p>
             }
+            <Form.Item label="默认文案">
+              {
+                getFieldDecorator(`note[${details.field}]`, {
+                  initialValue: details.note || '请输入',
+                  rules: [
+                    { max: 10, message: '限制10个字' },
+                  ]
+                })(
+                  <Input
+                    placeholder="请输入"
+                    onBlur={e => this.onInput(e, 'note')}
+                  />
+                )
+              }
+            </Form.Item>
             {
               Number(details.fieldType) === 2 && !details.disabled &&
               (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
@@ -327,7 +341,7 @@ class Right extends PureComponent {
                   <Checkbox.Group
                     style={{ width: '100%' }}
                     disabled={details.disabled}
-                    onChange={this.onChange}
+                    onChange={e => this.onChange(e, 'isWrite')}
                   >
                     <Checkbox value>必填</Checkbox>
                   </Checkbox.Group>
@@ -338,13 +352,13 @@ class Right extends PureComponent {
               !changeOrder.includes(details.field) && templateType !== 2 &&
               <Form.Item label="改单">
                 {
-                  getFieldDecorator(`isWrite[${details.field}]`, {
-                    initialValue: details.isWrite ? [details.isWrite] : [],
+                  getFieldDecorator(`isModify[${details.field}]`, {
+                    initialValue: details.isModify ? [details.isModify] : [],
                   })(
                     <Checkbox.Group
                       style={{ width: '100%' }}
                       disabled={details.disabled}
-                      onChange={this.onChange}
+                      onChange={e => this.onChange(e, 'isModify')}
                     >
                       <Checkbox value>允许发放环节修改</Checkbox>
                     </Checkbox.Group>

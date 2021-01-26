@@ -627,7 +627,10 @@ class AddCost extends Component {
       currencyList,
       currencyShow,
       againCost,
+      modify,
     } = this.props;
+    console.log('render -> modify', modify);
+
     const list = this.onSelectTree();
     const {
       visible,
@@ -695,7 +698,7 @@ class AddCost extends Component {
                   <Form.Item label={labelInfo.costName} {...formItemLayout}>
                     {
                       getFieldDecorator('categoryId', {
-                        initialValue: details.categoryId || '',
+                        initialValue: details.categoryId || undefined,
                         rules: [{ required: true, message: '请选择费用类别' }]
                       })(
                         <TreeSelect
@@ -704,6 +707,7 @@ class AddCost extends Component {
                           style={{width: '100%'}}
                           treeDefaultExpandAll
                           dropdownStyle={{height: '300px'}}
+                          disabled={modify}
                         >
                           {this.loop(list)}
                         </TreeSelect>
@@ -720,7 +724,11 @@ class AddCost extends Component {
                             initialValue: details.currencyId || '-1',
                             rules: [{ required: true, message: '请选择币种' }]
                           })(
-                            <Select placeholder="请选择" onChange={this.onChangeCurr}>
+                            <Select
+                              placeholder="请选择"
+                              onChange={this.onChangeCurr}
+                              disabled={modify}
+                            >
                               <Option key="-1">CNY 人民币</Option>
                               {
                                 currencyList && currencyList.map(it => (
@@ -751,7 +759,13 @@ class AddCost extends Component {
                           { validator: this.checkMoney }
                         ]
                       })(
-                        <InputNumber placeholder="请输入" onChange={(val) => this.onChangeAmm(val)} style={{width: '100%'}} />
+                        <InputNumber
+                          placeholder={showField.costSum && showField.costSum.note ?
+                          showField.costSum.note : '请输入'}
+                          onChange={(val) => this.onChangeAmm(val)}
+                          style={{width: '100%'}}
+                          disabled={modify &&showField.costSum && !showField.costSum.isModify}
+                        />
                       )
                     }
                   </Form.Item>
@@ -762,16 +776,25 @@ class AddCost extends Component {
                     if (it.field && (it.field.indexOf('expand_') > -1 || it.field.indexOf('self_') > -1)) {
                       let renderForm = null;
                       let rule = [];
-                      let initMsg = it.msg || '';
+                      let initMsg = it.msg || undefined;
                       if (Number(it.fieldType) === 0) {
-                        renderForm = (<Input placeholder='请输入' />);
+                        renderForm = (<Input
+                          placeholder={it.note ? it.note : '请输入'}
+                          disabled={modify && !it.isModify}
+                        />);
                         rule = [{ max: 20, message: '限制20个字' }];
                       } else if (Number(it.fieldType) === 1) {
-                        renderForm = (<TextArea placeholder='请输入' />);
+                        renderForm = (<TextArea
+                          placeholder={it.note ? it.note : '请输入'}
+                          disabled={modify && !it.isModify}
+                        />);
                         rule = [{ max: 128, message: '限制128个字' }];
                       } else if(Number(it.fieldType) === 2) {
                         renderForm = (
-                          <Select placeholder='请选择'>
+                          <Select
+                            placeholder={it.note ? it.note : '请选择'}
+                            disabled={modify && !it.isModify}
+                          >
                             {
                               it.options && it.options.map(iteems => (
                                 <Select.Option key={iteems}>{iteems}</Select.Option>
@@ -783,7 +806,11 @@ class AddCost extends Component {
                         if (it.dateType === 1) {
                           initMsg = it.startTime ? moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
                           renderForm = (
-                            <DatePicker style={{width: '100%'}} />
+                            <DatePicker
+                              style={{width: '100%'}}
+                              placeholder={it.note ? it.note : '请选择'}
+                              disabled={modify && !it.isModify}
+                            />
                           );
                         } else {
                           initMsg = it.startTime && it.endTime ?
@@ -791,8 +818,9 @@ class AddCost extends Component {
                           renderForm = (
                             <RangePicker
                               style={{width: '280px' }}
-                              placeholder="请选择时间"
+                              placeholder={it.note ? it.note : '请选择时间'}
                               format="YYYY-MM-DD"
+                              disabled={modify && !it.isModify}
                               showTime={{
                                 hideDisabledOptions: true,
                                 defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
@@ -809,7 +837,7 @@ class AddCost extends Component {
                                   <Form.Item label={it.name} {...formItemLayout}>
                                     {
                                       getFieldDecorator(it.field, {
-                                        initialValue: initMsg,
+                                        initialValue: initMsg || undefined,
                                         rules: [
                                           { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
                                           ...rule,
@@ -837,7 +865,10 @@ class AddCost extends Component {
                                     initialValue: details.note || '',
                                     rules: [{ required: !!(showField.costNote.isWrite), message: '请输入备注' }]
                                   })(
-                                    <Input placeholder="请输入" />
+                                    <Input
+                                      placeholder={showField.costNote.note ? showField.costNote.note : '请输入'}
+                                      disabled={modify && !showField.costNote.isModify}
+                                    />
                                   )
                                 }
                               </Form.Item>
@@ -855,7 +886,11 @@ class AddCost extends Component {
                                   initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
                                   rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                                 })(
-                                  <DatePicker style={{width: '100%'}} />
+                                  <DatePicker
+                                    style={{width: '100%'}}
+                                    disabled={modify && !showField.happenTime.isModify}
+                                    placeholder={showField.happenTime.note ? showField.happenTime.note : '请选择时间'}
+                                  />
                                 )
                               }
                               {
@@ -869,8 +904,10 @@ class AddCost extends Component {
                                 })(
                                   <RangePicker
                                     style={{width: '280px' }}
-                                    placeholder="请选择时间"
+                                    placeholder={showField.happenTime.note ?
+                                    showField.happenTime.note : '请选择时间'}
                                     format="YYYY-MM-DD"
+                                    disabled={modify && !showField.happenTime.isModify}
                                     showTime={{
                                       hideDisabledOptions: true,
                                       defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
@@ -885,7 +922,12 @@ class AddCost extends Component {
                           it.field === 'imgUrl' && showField.imgUrl.status &&
                           <Col span={12}>
                             <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                              <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
+                              <UploadImg
+                                onChange={(val) => this.onChangeImg(val)}
+                                imgUrl={imgUrl}
+                                userInfo={userInfo}
+                                disabled={modify && !showField.imgUrl.isModify}
+                              />
                             </Form.Item>
                           </Col>
                         }
@@ -908,6 +950,7 @@ class AddCost extends Component {
                 invoiceId={this.props.invoiceId}
                 costType={this.props.costType}
                 onGetForm={fn=> { this.onGetForm = fn; }}
+                modify={modify}
               />
             </Form>
           </div>

@@ -410,7 +410,14 @@ export const costClassify = [{
   note: '',
 }];
 
-export const changeOrder = ['userJson', 'deptId', 'receiptId'];
+export const changeOrder = ['userJson', 'deptId', 'receiptId', 'supplier'];
+
+export const placeholderType = {
+  0: '请输入',
+  1: '请输入',
+  2: '请选择',
+  5: '请输入',
+};
 
 // 费用类别分摊
 export const classifyShare = [{

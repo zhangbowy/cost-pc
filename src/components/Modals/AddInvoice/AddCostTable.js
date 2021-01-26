@@ -277,6 +277,7 @@ class AddCostTable extends Component {
       form: { getFieldDecorator },
       project,
       usableProject,
+      modify
     } = this.props;
     const { costDetailShareVOS, shareAmount, costSum, currencyId, currencySymbol, exchangeRate } = this.state;
     const columns = [{
@@ -289,7 +290,7 @@ class AddCostTable extends Component {
             placeholder='请选择'
             onSelectPeople={(val) => this.selectPle(val, index, record.key)}
             invalid={false}
-            disabled={false}
+            disabled={modify}
             flag="users"
             multiple={false}
           />
@@ -306,7 +307,7 @@ class AddCostTable extends Component {
                 initialValue: record.deptId ? `${record.deptId}` : '',
                 rules:[{ required: true, message: '请选择承担部门' }]
               })(
-                <Select getPopupContainer={triggerNode => triggerNode.parentNode}>
+                <Select getPopupContainer={triggerNode => triggerNode.parentNode} disabled={modify}>
                   {
                     record.depList && record.depList.map(it => (
                       <Option key={`${it.deptId}`}>{it.name}</Option>
@@ -364,7 +365,13 @@ class AddCostTable extends Component {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record, index) => (
-        <span className="deleteColor" onClick={() => this.onDelete(record.key,index)} id={record.id}>删除</span>
+        <span
+          className="deleteColor"
+          onClick={() => this.onDelete(record.key,index)}
+          id={record.id}
+        >
+          删除
+        </span>
       ),
       width: '70px'
     }];
@@ -378,9 +385,9 @@ class AddCostTable extends Component {
               {
                 getFieldDecorator(`projectId[${record.key}]`, {
                   initialValue: record.projectId,
-                  rules: [{ required: !!(project.isWrite), message: '请选择项目' }]
+                  rules: [{ required: (!!(project.isWrite) && !modify), message: '请选择项目' }]
                 })(
-                  <Select>
+                  <Select disabled={modify}>
                     {
                       usableProject.map(it => (
                         <Option key={it.id}>{it.name}</Option>
@@ -403,9 +410,12 @@ class AddCostTable extends Component {
           <div className={style.line} />
           <span>分摊</span>
         </div>
-        <div style={{textAlign: 'center'}} className={style.addbtn}>
-          <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
-        </div>
+        {
+          !modify &&
+          <div style={{textAlign: 'center'}} className={style.addbtn}>
+            <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
+          </div>
+        }
         {
           costDetailShareVOS && costDetailShareVOS.length > 0 &&
           <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500">

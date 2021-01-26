@@ -19,10 +19,11 @@ import ApproveNode from '../ApproveNode';
 import ReceiptModal from '../ReceiptModal';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
 import AddApply from './AddApply';
-import { invoiceJson } from '../../../utils/constants';
+import { invoiceJson, placeholderType } from '../../../utils/constants';
 import { JsonParse, compare } from '../../../utils/common';
 import ApplyTable from './ApplyTable';
 import AddFolder from './AddFolder';
+import defaultFunc from './utils';
 
 const {Option} = Select;
 const { RangePicker } = DatePicker;
@@ -103,7 +104,14 @@ class AddInvoice extends Component {
 
   onShowHandle = async() => {
     let detail = this.state.details;
-    const { id, userInfo, templateType, contentJson, isTemplateDel, isTemplateUsed } = this.props;
+    const {
+      id,
+      userInfo,
+      templateType,
+      contentJson,
+      isTemplateDel,
+      isTemplateUsed,
+    } = this.props;
     const _this = this;
     if (isTemplateDel) {
       message.error('管理员已删除该单据模板，草稿无效请删除');
@@ -285,16 +293,20 @@ class AddInvoice extends Component {
         visible: true
       });
     }
-
   }
 
   // 编辑初始化数据
   onInit = async(detail, djDetails) => {
     // const { templateType } = detail;
     const expandField = [];
+    const { operateType } = this.props;
     console.log('AddInvoice -> onInit -> detail', detail);
-    const applyArr = detail.applicationIds && detail.applicationIds.length ? this.onInitApply(detail.applicationIds) : [];
-    console.log('AddInvoice -> onInit -> applyArr', applyArr);
+    let applyArr = detail.applicationIds && detail.applicationIds.length &&
+      operateType !== 'modify' ?
+      this.onInitApply(detail.applicationIds) : [];
+    if (operateType === 'modify') {
+      applyArr = detail.applicationAssociageVOS || [];
+    }
     let newDetail = {
       ...detail,
       receiptId: detail.receiptId ? detail.receiptId : '',
@@ -320,7 +332,6 @@ class AddInvoice extends Component {
       if (detail.selfSubmitFieldVos) {
         newExpand = [...newExpand, ...detail.selfSubmitFieldVos];
       }
-      console.log('AddInvoice -> onInit -> newExpand', newExpand);
 
       djDetails.expandField.forEach(it => {
         const index = newExpand && newExpand.findIndex(its => its.field === it.field);
@@ -417,14 +428,14 @@ class AddInvoice extends Component {
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr,
     });
-    console.log('AddInvoice -> onInit -> detail.imgUrl', detail.imgUrl);
   }
 
   onInitBorrow = (arrs, costDetails) => {
     console.log('AddInvoice -> onInitBorrow -> arrs', arrs);
+    const { operateType } = this.props;
     const ids = arrs.map(it => it.loanId);
-    const arr = [];
-    if (ids.length) {
+    const arr = operateType === 'modify' ? arrs : [];
+    if (ids.length && operateType !== 'modify') {
       this.props.dispatch({
         type: 'costGlobal/waitAssessIds',
         payload: {
@@ -844,7 +855,7 @@ class AddInvoice extends Component {
   }
 
   getNode = (payload) => {
-    const { id } = this.props;
+    const { id, operateType } = this.props;
     Object.assign(payload, {
       deepQueryFlag: true,
       invoiceTemplateId: id,
@@ -856,15 +867,17 @@ class AddInvoice extends Component {
     } else if (Number(templateType) === 2) {
       Object.assign(payload, { applicationSum: payload.applicationSum || (total*1000)/10 });
     }
-    this.props.dispatch({
-      type: 'global/approveList',
-      payload,
-    }).then(() => {
-      const { nodes } = this.props;
-      this.setState({
-        nodes,
+    if (operateType !== 'modify') {
+      this.props.dispatch({
+        type: 'global/approveList',
+        payload,
+      }).then(() => {
+        const { nodes } = this.props;
+        this.setState({
+          nodes,
+        });
       });
-    });
+    }
   }
 
   onChangeNode = (val) => {
@@ -1501,28 +1514,6 @@ class AddInvoice extends Component {
     }
   }
 
-  range = (start, end) => {
-    const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  }
-
-  disabledDate = (current) => {
-    console.log(current);
-    // Can not select days before today and today
-    return current && current < moment(new Date()).subtract(1, 'day');
-  }
-
-  disabledDateTime = () => {
-    return {
-      disabledHours: () => this.range(0, 24).splice(4, 20),
-      disabledMinutes: () => this.range(30, 60),
-      disabledSeconds: () => [55, 56],
-    };
-  }
-
   render() {
     const {
       children,
@@ -1534,6 +1525,7 @@ class AddInvoice extends Component {
       templateType,
       draftLoading,
       djDetail,
+      operateType, // 操作类型，改单：modify, 复制：copy
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1556,6 +1548,7 @@ class AddInvoice extends Component {
       applyArr,
       newshowField,
     } = this.state;
+    const modify = operateType === 'modify';
     const newForm = [...newshowField, ...expandField].sort(compare('sort'));
     const formItemLayout = {
       labelCol: {
@@ -1595,16 +1588,30 @@ class AddInvoice extends Component {
                 {
                   !Number(templateType) ?
                     <>
-                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span></span>
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
+                        报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span>
+                      </span>
                       <Divider type="vertical" />
-                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span></span>
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
+                        核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span>
+                      </span>
                       <Divider type="vertical" />
-                      <span className={cs('fs-15', 'c-black-50', style.moneyList, 'm-r-8')}>收款金额：<span className="fs-20 fw-500 c-black-85">¥{total-assessSum > 0 ? (numSub(total,assessSum)) : 0}</span></span>
+                      <span className={cs('fs-15', 'c-black-50', style.moneyList, 'm-r-8')}>
+                        收款金额：
+                        <span className="fs-20 fw-500 c-black-85">
+                          ¥{total-assessSum > 0 ? (numSub(total,assessSum)) : 0}
+                        </span>
+                      </span>
                     </>
                   :
-                    <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span></span>
+                    <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>
+                      合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span>
+                    </span>
                 }
-                <Button key="draft" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
+                {
+                  !modify &&
+                  <Button key="draft" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
+                }
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>
             </div>
@@ -1624,7 +1631,10 @@ class AddInvoice extends Component {
                         initialValue: details.reason || '',
                         rules:[{ required: true, message: '请输入事由' }]
                       })(
-                        <Input placeholder="请输入"  />
+                        <Input
+                          disabled={modify && showField.reason && !showField.reason.isModify}
+                          placeholder={showField.reason && showField.reason.note ? showField.reason.note : '请输入'}
+                        />
                       )
                     }
                   </Form.Item>
@@ -1636,7 +1646,7 @@ class AddInvoice extends Component {
                       placeholder='请选择'
                       onSelectPeople={(val) => this.selectPle(val)}
                       invalid={false}
-                      disabled={Number(templateType)}
+                      disabled={Number(templateType) || modify}
                       flag="users"
                       isInput
                       multiple={false}
@@ -1651,7 +1661,11 @@ class AddInvoice extends Component {
                       getFieldDecorator('deptId', {
                         rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
                       })(
-                        <Select placeholder="请选择" onChange={this.onChangeDept}>
+                        <Select
+                          placeholder={showField.deptId && showField.deptId.note ? showField.deptId.note : '请选择'}
+                          onChange={this.onChangeDept}
+                          disabled={modify}
+                        >
                           {
                             depList && depList.map(it => (
                               <Option key={it.deptId}>{it.name}</Option>
@@ -1662,28 +1676,33 @@ class AddInvoice extends Component {
                     }
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
-                    {
-                      getFieldDecorator('createDeptId', {
-                        initialValue: details.createDeptId ? `${details.createDeptId}` : '',
-                        rules: [{ required: true, message: '请选择部门' }]
-                      })(
-                        <Select
-                          placeholder="请选择"
-                          onChange={this.onChangeCreate}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                        >
-                          {
-                            createDepList && createDepList.map(it => (
-                              <Option key={`${it.deptId}`}>{it.name}</Option>
-                            ))
-                          }
-                        </Select>
-                      )
-                    }
-                  </Form.Item>
-                </Col>
+                {
+                  !modify &&
+                    <Col span={12}>
+                      <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
+                        {
+                          getFieldDecorator('createDeptId', {
+                            initialValue: details.createDeptId ? `${details.createDeptId}` : '',
+                            rules: [{ required: true, message: '请选择部门' }]
+                          })(
+                            <Select
+                              placeholder={showField.createDeptId && showField.createDeptId.note
+                              ? showField.createDeptId.note : '请选择'}
+                              onChange={this.onChangeCreate}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              disabled={modify}
+                            >
+                              {
+                                createDepList && createDepList.map(it => (
+                                  <Option key={`${it.deptId}`}>{it.name}</Option>
+                                ))
+                              }
+                            </Select>
+                          )
+                        }
+                      </Form.Item>
+                    </Col>
+                }
                 {
                   newForm && (newForm.length > 0) &&
                   newForm.map(itw => {
@@ -1692,14 +1711,27 @@ class AddInvoice extends Component {
                       let rule = [];
                       let initMsg = itw.msg || '';
                       if (Number(itw.fieldType) === 0) {
-                        renderForm = (<Input placeholder='请输入' />);
+                        renderForm = (
+                          <Input
+                            placeholder={itw.note ? itw.note : '请输入'}
+                            disabled={modify && !itw.isModify}
+                          />
+                        );
                         rule = [{ max: 20, message: '限制20个字' }];
                       } else if (Number(itw.fieldType) === 1) {
-                        renderForm = (<TextArea placeholder='请输入' />);
+                        renderForm = (
+                          <TextArea
+                            placeholder={itw.note ? itw.note : '请输入'}
+                            disabled={modify && !itw.isModify}
+                          />
+                        );
                         rule = [{ max: 128, message: '限制128个字' }];
                       } else if(Number(itw.fieldType) === 2) {
                         renderForm = (
-                          <Select placeholder='请选择'>
+                          <Select
+                            placeholder={itw.note ? itw.note : '请选择'}
+                            disabled={modify && !itw.isModify}
+                          >
                             {
                               itw.options && itw.options.map(iteems => (
                                 <Select.Option key={iteems}>{iteems}</Select.Option>
@@ -1711,16 +1743,22 @@ class AddInvoice extends Component {
                         if (itw.dateType === 1) {
                           initMsg = itw.startTime ? moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
                           renderForm = (
-                            <DatePicker style={{width: '100%'}} />
+                            <DatePicker
+                              style={{width: '100%'}}
+                              placeholder={itw.note ? itw.note : '请选择'}
+                              disabled={modify && !itw.isModify}
+                            />
                           );
                         } else {
                           initMsg = itw.startTime && itw.endTime ?
-                              [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
+                              [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                              moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
                           renderForm = (
                             <RangePicker
                               style={{width: '280px' }}
-                              placeholder="请选择时间"
+                              placeholder={itw.note ? itw.note : '请选择时间'}
                               format="YYYY-MM-DD"
+                              disabled={modify && itw.isModify}
                               showTime={{
                                 hideDisabledOptions: true,
                                 defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
@@ -1737,7 +1775,7 @@ class AddInvoice extends Component {
                                 <Form.Item label={itw.name} {...formItemLayout}>
                                   {
                                     getFieldDecorator(itw.field, {
-                                      initialValue: initMsg,
+                                      initialValue: initMsg || undefined,
                                       rules: [
                                         {
                                           required: !!(itw.isWrite),
@@ -1774,8 +1812,10 @@ class AddInvoice extends Component {
                                       }]
                                     })(
                                       <InputNumber
+                                        disabled={modify && !showField.loanSum.isModify}
                                         onChange={val => this.inputMoney(val)}
-                                        placeholder={`请输入${showField.loanSum && showField.loanSum.name}`}
+                                        placeholder={showField.loanSum && showField.loanSum.note ?
+                                          showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
                                         style={{width: '100%'}}
                                       />
                                     )
@@ -1800,8 +1840,10 @@ class AddInvoice extends Component {
                                       }]
                                     })(
                                       <InputNumber
+                                        disabled={modify && !showField.applicationSum.isModify}
                                         onChange={val => this.inputMoney(val)}
-                                        placeholder={`请输入${showField.applicationSum && showField.applicationSum.name}`}
+                                        placeholder={showField.applicationSum && showField.applicationSum.note ?
+                                          showField.applicationSum.note : `请输入${showField.applicationSum && showField.applicationSum.name}`}
                                         style={{width: '100%'}}
                                       />
                                     )
@@ -1817,15 +1859,17 @@ class AddInvoice extends Component {
                                 <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
                                   {
                                     getFieldDecorator('repaymentTime', {
-                                      initialValue: details.repaymentTime ? moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                                      initialValue: details.repaymentTime ?
+                                      moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
                                       rules: [{
                                         required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
                                         message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
                                       }]
                                     })(
                                       <DatePicker
-                                        disabledDate={this.disabledDate}
-                                        disabledTime={this.disabledDateTime}
+                                        disabledDate={defaultFunc.disabledDate}
+                                        disabledTime={defaultFunc.disabledDateTime}
+                                        disabled={modify && !showField.repaymentTime.isModify}
                                       />
                                     )
                                   }
@@ -1841,24 +1885,31 @@ class AddInvoice extends Component {
                                   {
                                     Number(showField.happenTime.dateType) === 1 &&
                                     getFieldDecorator('time', {
-                                      initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                                      initialValue: details.startTime ?
+                                      moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
                                       rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                                     })(
-                                      <DatePicker style={{width: '100%'}} />
+                                      <DatePicker
+                                        style={{width: '100%'}}
+                                        disabled={modify && !showField.happenTime.isModify}
+                                      />
                                     )
                                   }
                                   {
                                     Number(showField.happenTime.dateType) === 2 &&
                                     getFieldDecorator('time', {
                                       initialValue: details.startTime && details.endTime ?
-                                        [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                                        [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                                        moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
                                         :
                                         [],
                                       rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                                     })(
                                       <RangePicker
                                         style={{width: '280px' }}
-                                        placeholder="请选择时间"
+                                        placeholder={showField.happenTime && showField.happenTime.note ?
+                                        showField.happenTime.note : '请选择时间'}
+                                        disabled={modify && !showField.happenTime.isModify}
                                         format="YYYY-MM-DD"
                                         showTime={{
                                           hideDisabledOptions: true,
@@ -1876,7 +1927,12 @@ class AddInvoice extends Component {
                             itw.field === 'imgUrl' && showField.imgUrl.status ?
                               <Col span={12}>
                                 <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                                  <UploadImg onChange={(val) => this.onChangeImg(val)} imgUrl={imgUrl} userInfo={userInfo} />
+                                  <UploadImg
+                                    onChange={(val) => this.onChangeImg(val)}
+                                    imgUrl={imgUrl}
+                                    userInfo={userInfo}
+                                    disabled={modify && !showField.imgUrl.isModify}
+                                  />
                                 </Form.Item>
                               </Col>
                               :
@@ -1886,10 +1942,16 @@ class AddInvoice extends Component {
                             itw.field === 'fileUrl' && showField.fileUrl.status ?
                               <Col span={12}>
                                 <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
-                                  <Button onClick={() => this.uploadFiles()} disabled={fileUrl && (fileUrl.length > 9 || fileUrl.length === 9)}>
+                                  <Button
+                                    onClick={() => this.uploadFiles()}
+                                    disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
+                                      || (modify && !showField.fileUrl.isModify)}
+                                  >
                                     <Icon type="upload" /> 上传文件
                                   </Button>
-                                  <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>支持扩展名：.rar .zip .doc .docx .pdf .jpg...</p>
+                                  <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
+                                    支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+                                  </p>
                                   {
                                     fileUrl.map((it, index) => (
                                       <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
@@ -1916,14 +1978,16 @@ class AddInvoice extends Component {
                                 <Form.Item label={labelInfo.project} {...formItemLayout}>
                                   {
                                     getFieldDecorator('projectId', {
-                                      initialValue: details.projectId || '',
+                                      initialValue: details.projectId || undefined,
                                       rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
                                     })(
                                       <Select
-                                        placeholder={`请选择${labelInfo.project}`}
+                                        placeholder={showField.project && showField.project.note ?
+                                        showField.project.note : `请选择${labelInfo.project}`}
                                         onChange={(val) => this.onChangePro(val, 'project')}
                                         dropdownClassName="selectClass"
                                         getPopupContainer={triggerNode => triggerNode.parentNode}
+                                        disabled={modify && !showField.project.isModify}
                                       >
                                         {
                                           usableProject.map(it => (
@@ -1944,19 +2008,21 @@ class AddInvoice extends Component {
                                 <Form.Item label={labelInfo.supplier} {...formItemLayout}>
                                   {
                                     getFieldDecorator('supplier', {
-                                      initialValue: details.supplier || '',
+                                      initialValue: details.supplier || undefined,
                                       rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
                                     })(
                                       <TreeSelect
                                         showSearch
                                         treeNodeFilterProp='searchs'
-                                        placeholder="请选择"
+                                        placeholder={showField.supplier && showField.supplier.note ?
+                                        showField.supplier.note : '请选择'}
                                         style={{width: '100%'}}
                                         treeDefaultExpandAll
                                         dropdownStyle={{height: '300px'}}
                                         onChange={(val) => this.onChangePro(val, 'supplier')}
                                         treeNodeLabelProp="name"
                                         getPopupContainer={triggerNode => triggerNode.parentNode}
+                                        disabled={modify}
                                       >
                                         {this.treeNodeRender(supplierList)}
                                       </TreeSelect>
@@ -1976,7 +2042,10 @@ class AddInvoice extends Component {
                                       initialValue: details.note || '',
                                       rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
                                     })(
-                                      <Input placeholder="请输入"  />
+                                      <Input
+                                        placeholder={showField.note && showField.note.note ? showField.note.note : '请输入'}
+                                        disabled={modify && !showField.note.isModify}
+                                      />
                                     )
                                   }
                                 </Form.Item>
@@ -1990,16 +2059,17 @@ class AddInvoice extends Component {
                                 <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
                                   {
                                     getFieldDecorator('receiptId', {
-                                      initialValue: details.receiptId ? [details.receiptId] : null,
+                                      initialValue: details.receiptId ? [details.receiptId] : undefined,
                                       rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
                                     })(
                                       <Select
-                                        placeholder="请选择"
+                                        placeholder={showField.receiptId && showField.receiptId.note ?
+                                        showField.receiptId.note : placeholderType[showField.receiptId.fieldType]}
                                         dropdownClassName={style.opt}
                                         onChange={(val) => this.onChangeAcc(val)}
                                         optionLabelProp="label"
                                         getPopupContainer={triggerNode => triggerNode.parentNode}
-                                        // value={details.receiptId}
+                                        disabled={modify && !showField.receiptId.isModify}
                                       >
                                         {
                                           accountList.map(it => (
@@ -2039,19 +2109,28 @@ class AddInvoice extends Component {
                     <span>费用明细</span>
                   </div>
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
-                    <AddCost userInfo={userInfo} invoiceId={id} onAddCost={this.onAddCost} key="handle">
-                      <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加费用</Button>
-                    </AddCost>
-                    <AddFolder
+                    <AddCost
                       userInfo={userInfo}
                       invoiceId={id}
                       onAddCost={this.onAddCost}
-                      key="export"
-                      list={costDetailsVo}
-                      invoiceName={inDetails.name}
+                      key="handle"
+                      modify={operateType === 'modify'}
                     >
-                      <Button icon="plus" style={{ width: '231px' }} key="export">费用夹导入</Button>
-                    </AddFolder>
+                      <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加费用</Button>
+                    </AddCost>
+                    {
+                      !modify &&
+                      <AddFolder
+                        userInfo={userInfo}
+                        invoiceId={id}
+                        onAddCost={this.onAddCost}
+                        key="export"
+                        list={costDetailsVo}
+                        invoiceName={inDetails.name}
+                      >
+                        <Button icon="plus" style={{ width: '231px' }} key="export">费用夹导入</Button>
+                      </AddFolder>
+                    }
                     {
                       costDetailsVo && costDetailsVo.length > 0 &&
                       <CostTable
@@ -2076,14 +2155,17 @@ class AddInvoice extends Component {
                     <span>借款核销</span>
                   </div>
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
-                    <AddBorrow
-                      userInfo={userInfo}
-                      invoiceId={id}
-                      onAddBorrow={arr => this.onAddBorrow(arr)}
-                      list={borrowArr}
-                    >
-                      <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
-                    </AddBorrow>
+                    {
+                      !modify &&
+                      <AddBorrow
+                        userInfo={userInfo}
+                        invoiceId={id}
+                        onAddBorrow={arr => this.onAddBorrow(arr)}
+                        list={borrowArr}
+                      >
+                        <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
+                      </AddBorrow>
+                    }
                     {
                       this.state.borrowArr && this.state.borrowArr.length > 0 &&
                       <BorrowTable
@@ -2091,6 +2173,7 @@ class AddInvoice extends Component {
                         userInfo={userInfo}
                         invoiceId={id}
                         onChangeData={(val,keys) => this.changeBorrows(val,keys)}
+                        modify={modify}
                       />
                     }
                   </div>
@@ -2107,20 +2190,24 @@ class AddInvoice extends Component {
                       <span>关联申请单</span>
                     </div>
                     <div style={{textAlign: 'center'}} className={style.addbtn}>
-                      <AddApply
-                        userInfo={userInfo}
-                        invoiceId={id}
-                        onAddBorrow={arr => this.onAddApply(arr)}
-                        list={applyArr}
-                      >
-                        <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
-                      </AddApply>
+                      {
+                        !modify &&
+                        <AddApply
+                          userInfo={userInfo}
+                          invoiceId={id}
+                          onAddBorrow={arr => this.onAddApply(arr)}
+                          list={applyArr}
+                        >
+                          <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
+                        </AddApply>
+                      }
                       {
                         this.state.applyArr && applyArr.length > 0 &&
                         <ApplyTable
                           list={applyArr}
                           userInfo={userInfo}
                           invoiceId={id}
+                          modify={modify}
                           onChangeData={(val,keys) => this.changeApply(val,keys)}
                         />
                       }
@@ -2130,17 +2217,23 @@ class AddInvoice extends Component {
                 :
                 null
             }
-            <Divider type="horizontal" />
-            <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-              <div className={style.header} style={{padding: 0}}>
-                <div className={style.line} />
-                <span>审批流程</span>
+            {
+              !modify &&
+              <Divider type="horizontal" />
+            }
+            {
+              !modify &&
+              <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                <div className={style.header} style={{padding: 0}}>
+                  <div className={style.line} />
+                  <span>审批流程</span>
+                </div>
+                <ApproveNode
+                  approveNodes={nodes}
+                  onChangeForm={(val) => this.onChangeNode(val)}
+                />
               </div>
-              <ApproveNode
-                approveNodes={nodes}
-                onChangeForm={(val) => this.onChangeNode(val)}
-              />
-            </div>
+            }
           </div>
         </Modal>
       </span>

@@ -29,7 +29,7 @@ class ApplyTable extends Component {
   }
 
   render() {
-    const { list } = this.props;
+    const { list, modify } = this.props;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -60,8 +60,19 @@ class ApplyTable extends Component {
       dataIndex: 'opea',
       render: (_, record) => (
         <span>
-          <span className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</span>
-          <Divider type="vertical" />
+          {
+            !modify &&
+              <span
+                className="deleteColor"
+                onClick={() => this.onDelete(record.id)}
+              >
+                删除
+              </span>
+          }
+          {
+            !modify &&
+              <Divider type="vertical" />
+          }
           <InvoiceDetail id={record.id} templateType={2}>
             <a>查看</a>
           </InvoiceDetail>

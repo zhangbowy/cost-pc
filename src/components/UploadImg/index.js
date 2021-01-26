@@ -44,7 +44,7 @@ class UploadImg extends Component {
   }
 
   render() {
-    const { userInfo } = this.props;
+    const { userInfo, disabled } = this.props;
     const { imgUrl } = this.state;
     const uploadButton = (
       <div>
@@ -66,6 +66,7 @@ class UploadImg extends Component {
           accept="image/*"
           listType="picture-card"
           className="avatar-uploader"
+          disabled={disabled}
           showUploadList={false}
           // loading={loading}
           action={imgPath}
