@@ -256,6 +256,8 @@ class Workbench extends PureComponent {
             id={record.invoiceId}
             templateId={record.invoiceTemplateId}
             templateType={record.templateType}
+            allow="copy"
+            onCallback={() => this.onPersonal()}
           >
             <a>查看</a>
           </InvoiceDetail>

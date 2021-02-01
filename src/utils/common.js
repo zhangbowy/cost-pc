@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import moment from 'moment';
 
 // /system/user/id => ['/system','/system/user,'/system/user/id']
 export function urlToList(url) {
@@ -276,4 +277,21 @@ export const GetRequest = (url) => {
     }
   }
   return theRequest;
+};
+
+export const isJsonString = (str) => {
+  try {
+    if (typeof JSON.parse(str) === 'object') {
+        return true;
+    }
+  } catch(e) {
+    console.log(e);
+    return false;
+  };
+  return false;
+};
+
+export const setTime = ({ time, type }) => {
+  const times = moment(time).format('YYYY-MM-DD');
+  return moment(times).format(type);
 };

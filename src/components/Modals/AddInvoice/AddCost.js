@@ -11,7 +11,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare } from '../../../utils/common';
+import { compare, setTime } from '../../../utils/common';
 // import TreeCatogory from './TreeCatogory';
 
 const { Option } = Select;
@@ -22,7 +22,7 @@ const labelInfo = {
   costSum: '金额(元)',
   costNote: '费用备注',
   imgUrl: '图片',
-  happenTime: '发生日期'
+  happenTime: '发生日期',
 };
 @Form.create()
 @connect(({ global, costGlobal, session }) => ({
@@ -300,7 +300,8 @@ class AddCost extends Component {
       costType,
       costTitle,
       id,
-      lbDetail
+      lbDetail,
+      modify
     } = this.props;
     const {
       costDate,
@@ -317,7 +318,6 @@ class AddCost extends Component {
     const _this = this;
 
     this.props.form.validateFieldsAndScroll((err, val) => {
-      console.log('AddCost -> handleOk -> val', val);
       if (!err) {
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
@@ -345,8 +345,10 @@ class AddCost extends Component {
             };
             if (Number(it.fieldType) === 5 && val[it.field]) {
               Object.assign(obj, {
-                startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
-                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
+                startTime: Number(it.dateType) === 2 ?
+                moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+                endTime: Number(it.dateType) === 2 ?
+                setTime({ time: val[it.field][1], type: 'x' }) : '',
               });
             }
             if (it.status && it.field.indexOf('expand_') > -1) {
@@ -420,6 +422,9 @@ class AddCost extends Component {
             }
           });
         } else {
+          if (modify) {
+            Object.assign(detail, { id: details.id });
+          }
           this.props.onAddCost(detail, index);
           this.onCancel();
         }
@@ -498,6 +503,10 @@ class AddCost extends Component {
         categoryName: lbDetail.costName,
         icon: lbDetail.icon,
       };
+      this.props.form.setFieldsValue({
+        time: null
+      });
+      console.log('AddCost -> onChange -> detail', detail);
       if (lbDetail.showField) {
         const str = lbDetail.showField;
         str.forEach(it => {
@@ -627,9 +636,8 @@ class AddCost extends Component {
       currencyList,
       currencyShow,
       againCost,
-      modify,
+      modify
     } = this.props;
-    console.log('render -> modify', modify);
 
     const list = this.onSelectTree();
     const {
@@ -669,6 +677,7 @@ class AddCost extends Component {
         sm: { span: 8 },
       },
     };
+    console.log(details.startTime);
     return (
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -707,7 +716,7 @@ class AddCost extends Component {
                           style={{width: '100%'}}
                           treeDefaultExpandAll
                           dropdownStyle={{height: '300px'}}
-                          disabled={modify}
+                          disabled={modify && details.categoryId}
                         >
                           {this.loop(list)}
                         </TreeSelect>
@@ -727,7 +736,6 @@ class AddCost extends Component {
                             <Select
                               placeholder="请选择"
                               onChange={this.onChangeCurr}
-                              disabled={modify}
                             >
                               <Option key="-1">CNY 人民币</Option>
                               {
@@ -764,7 +772,7 @@ class AddCost extends Component {
                           showField.costSum.note : '请输入'}
                           onChange={(val) => this.onChangeAmm(val)}
                           style={{width: '100%'}}
-                          disabled={modify &&showField.costSum && !showField.costSum.isModify}
+                          disabled={modify && showField.costSum && !showField.costSum.isModify}
                         />
                       )
                     }
@@ -804,7 +812,8 @@ class AddCost extends Component {
                         );
                       } else if (it.fieldType === 5) {
                         if (it.dateType === 1) {
-                          initMsg = it.startTime ? moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
+                          initMsg = it.startTime && !it.endTime ?
+                          moment(moment(Number(it.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
                           renderForm = (
                             <DatePicker
                               style={{width: '100%'}}
@@ -883,7 +892,8 @@ class AddCost extends Component {
                               {
                                 costDate === 1 &&
                                 getFieldDecorator('time', {
-                                  initialValue: details.startTime ? moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                                  initialValue: details.startTime && !details.endTime ?
+                                  moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : moment().startOf('day'),
                                   rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                                 })(
                                   <DatePicker
@@ -897,7 +907,8 @@ class AddCost extends Component {
                                 costDate === 2 &&
                                 getFieldDecorator('time', {
                                   initialValue: details.startTime && details.endTime ?
-                                    [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'), moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                                    [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                                    moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
                                     :
                                     [],
                                   rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]

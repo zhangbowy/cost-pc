@@ -41,7 +41,7 @@ const labelInfo = {
   supplier: '供应商'
 };
 const { confirm } = Modal;
-@connect(({ session, global, loading, workbench, costGlobal }) => ({
+@connect(({ session, global, loading, costGlobal }) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
@@ -51,7 +51,7 @@ const { confirm } = Modal;
   userId: global.userId,
   usableSupplier: global.usableSupplier,
   usableProject: global.usableProject,
-  waitLists: workbench.waitLists,
+  waitLists: costGlobal.waitLists,
   applyIds: costGlobal.applyIds,
   waitAssessIds: costGlobal.waitAssessIds,
   folderIds: costGlobal.folderIds,
@@ -86,6 +86,9 @@ class AddInvoice extends Component {
       borrowArr:[],
       assessSum: 0, // 核销金额
       applyArr: [], // 申请单
+      historyParams: {}, // 历史数据
+      hisCostDetailsVo: [], // 历史分摊数据
+      modifyNote: '',
     };
   }
 
@@ -127,7 +130,7 @@ class AddInvoice extends Component {
     });
     if (!Number(templateType)) {
       this.props.dispatch({
-        type: 'workbench/waitLists',
+        type: 'costGlobal/waitLists',
         payload: {
           pageNo: 1,
           pageSize: 200,
@@ -187,6 +190,7 @@ class AddInvoice extends Component {
     this.setState({
       createDepList: dep
     });
+
     await this.props.dispatch({
       type: 'global/djDetail',
       payload: {
@@ -284,13 +288,24 @@ class AddInvoice extends Component {
       }
     } else {
       const contents = JsonParse(contentJson);
+      // const { operateType } = this.props;
+      // if (operateType === 'modify') {
+      //   if (contents.receiptId && contents.receiptNameJson) {
+      //     const newAccount = JSON.parse(contents.receiptNameJson);
+      //     console.log('AddInvoice -> onShowHandle -> newAccount', newAccount);
+      //     if (newAccount && newAccount.length) {
+      //       account.push(newAccount[0]);
+      //     }
+      //   }
+      // }
       this.onInit(contents, djDetails);
       await this.setState({
         showField: obj,
         newshowField: djDetails.showField,
         accountList: account,
         inDetails: djDetails,
-        visible: true
+        visible: true,
+        historyParams: contents,
       });
     }
   }
@@ -302,7 +317,7 @@ class AddInvoice extends Component {
     const { operateType } = this.props;
     console.log('AddInvoice -> onInit -> detail', detail);
     let applyArr = detail.applicationIds && detail.applicationIds.length &&
-      operateType !== 'modify' ?
+      operateType !== 'modify' && operateType !== 'copy' ?
       this.onInitApply(detail.applicationIds) : [];
     if (operateType === 'modify') {
       applyArr = detail.applicationAssociageVOS || [];
@@ -435,7 +450,7 @@ class AddInvoice extends Component {
     const { operateType } = this.props;
     const ids = arrs.map(it => it.loanId);
     const arr = operateType === 'modify' ? arrs : [];
-    if (ids.length && operateType !== 'modify') {
+    if (ids.length && operateType !== 'modify' && operateType !== 'copy') {
       this.props.dispatch({
         type: 'costGlobal/waitAssessIds',
         payload: {
@@ -468,11 +483,11 @@ class AddInvoice extends Component {
   }
 
   onInitFolder = (arrs) => {
-    console.log('AddInvoice -> onInitFolder -> arrs', arrs);
     const ids = arrs.map(it => it.detailFolderId);
     const arr = [];
     const banArr = [];
-    const { expenseList } = this.props;
+    const { expenseList, operateType } = this.props;
+    let isShowMsg = false;
     const categoryIds = expenseList.map(it => it.id);
     this.props.dispatch({
       type: 'costGlobal/folderIds',
@@ -493,13 +508,23 @@ class AddInvoice extends Component {
             key: it.detailFolderId,
             costType: 1,
           });
-        } else if (!it.detailFolderId && categoryIds.includes(it.categoryId)){
+        } else if ((!it.detailFolderId && categoryIds.includes(it.categoryId)) || (operateType === 'modify')){
           banArr.push({
             ...it
           });
         }
+        if (!categoryIds.includes(it.categoryId)) {
+          isShowMsg = true;
+        }
       });
+      if (isShowMsg && (operateType === 'copy')) {
+        message.error('部分费用类别不可用，已自动删除');
+      }
       const newArr = this.onInitCategory(banArr);
+      // 初始化的数据存储后续比较
+      this.setState({
+        hisCostDetailsVo: [...arr, ...newArr],
+      });
       this.onAddCost([...arr, ...newArr]);
     });
   }
@@ -611,7 +636,6 @@ class AddInvoice extends Component {
     if (this.props.onChangeVisible) {
       this.props.onChangeVisible();
     }
-    console.log('调用');
     this.setState({
       visible: false,
       imgUrl: [],
@@ -632,6 +656,9 @@ class AddInvoice extends Component {
       newshowField: [],
       assessSum: 0,
       applyArr: [], // 申请单
+      modifyNote: '',
+      historyParams: {}, // 历史数据
+      hisCostDetailsVo: [], // 历史分摊数据
     });
   }
 
@@ -742,7 +769,6 @@ class AddInvoice extends Component {
         share.push(val);
       }
     }
-    console.log('AddInvoice -> onAddCost -> share', share);
     let mo = 0;
     const loanEntities = [];
     const categorySumEntities = [];
@@ -886,8 +912,12 @@ class AddInvoice extends Component {
     });
   }
 
-  onDelFile = (index, e) => {
+  onDelFile = (index, e, flag) => {
     e.stopPropagation();
+    if (flag) {
+      message.error('不允许删除');
+      return;
+    }
     const files = this.state.fileUrl;
     files.splice(index, 1);
     this.setState({
@@ -968,6 +998,7 @@ class AddInvoice extends Component {
         const arr = [];
         costDetailsVo.forEach((item, index) => {
           arr.push({
+            id: item.id || '',
             'categoryId': item.categoryId,
             'icon': item.icon,
             'categoryName': item.categoryName,
@@ -988,6 +1019,7 @@ class AddInvoice extends Component {
           if (item.costDetailShareVOS) {
             item.costDetailShareVOS.forEach(it => {
               arr[index].costDetailShareVOS.push({
+                id: it.id || '',
                 'shareAmount': (it.shareAmount * 1000)/10,
                 'shareScale': (it.shareScale * 1000)/10,
                 'deptId': it.deptId,
@@ -1007,21 +1039,21 @@ class AddInvoice extends Component {
         if(Number(templateType) === 1) {
           Object.assign(params, {
             loanSum: (val.loanSum*1000)/10,
-            repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
+            repaymentTime: val.repaymentTime ? setTimeout({ time: val.repaymentTime, type: 'x' }) : '',
           });
         } else if (Number(templateType) === 2) {
           Object.assign(params, {
             applicationSum: (val.applicationSum*1000)/10,
-            repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
+            repaymentTime: val.repaymentTime ? setTimeout({ time: val.repaymentTime, type: 'x' }) : '',
           });
           if (showField.happenTime.dateType === '2' || showField.happenTime.dateType === 2) {
             Object.assign(params, {
-              startTime: val.time ? moment(val.time[0]).format('x') : '',
-              endTime: val.time ? moment(val.time[1]).format('x') : ''
+              startTime: val.time ? setTimeout({ time: val.time[0], type: 'x' }) : '',
+              endTime: val.time ? setTimeout({ time: val.time[1], type: 'x' }) : ''
             });
           } else if (showField.happenTime.dateType === '1' || showField.happenTime.dateType === 1) {
             Object.assign(params, {
-              startTime: val.time ? moment(val.time).format('x') : ''
+              startTime: val.time ? setTimeout({ time: val.time, type: 'x' }) : ''
             });
           }
         }
@@ -1216,27 +1248,58 @@ class AddInvoice extends Component {
   }
 
   onSubmit = (params) => {
-    const { dispatch, templateType, draftId } = this.props;
-    dispatch({
-      type: templateType ? invoiceJson[templateType].addUrl : 'global/addInvoice',
-      payload : {
-        ...params,
-        templateType,
-        draftId: draftId || ''
+    const { dispatch, templateType, draftId, operateType } = this.props;
+    const {
+      costDetailsVo,
+      historyParams,
+      hisCostDetailsVo,
+      modifyNote
+    } = this.state;
+    if (operateType !== 'modify') {
+      dispatch({
+        type: templateType ? invoiceJson[templateType].addUrl : 'global/addInvoice',
+        payload : {
+          ...params,
+          templateType,
+          draftId: draftId || ''
+        }
+      }).then(() => {
+        this.onCancel();
+        message.success('发起单据成功');
+        this.props.onHandleOk();
+      });
+    } else {
+      const compareParams = defaultFunc.compareParams({
+        hisCostDetailsVo,
+        hisParams: historyParams,
+        params,
+        costDetailsVo,
+        templateType
+      });
+      if (!modifyNote) {
+        message.error('请输入改单理由');
+        return;
       }
-    }).then(() => {
-      this.onCancel();
-      message.success('发起单据成功');
-      this.props.onHandleOk();
-    });
+      dispatch({
+        type: templateType ? 'costGlobal/loanEdit' : 'costGlobal/invoiceEdit',
+        payload: {
+          ...compareParams,
+          modifyNote,
+        }
+      }).then(() => {
+        this.onCancel();
+        message.success('修改单据成功');
+        this.props.onHandleOk();
+      });
+    }
   }
 
   chargeHandle = (params) => {
     const { borrowArr } = this.state;
-    const { templateType, waitLists } = this.props;
+    const { templateType, waitLists, operateType } = this.props;
     if (templateType && Number(templateType)) {
       this.onSubmit(params);
-    } else if (borrowArr.length === 0 && (waitLists.length > 0)) {
+    } else if (borrowArr.length === 0 && (waitLists.length > 0) && operateType !== 'modify') {
       confirm({
         title: '还有借款未核销，确认提交吗？',
         okText: '确定提交',
@@ -1547,6 +1610,7 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
       newshowField,
+      modifyNote
     } = this.state;
     const modify = operateType === 'modify';
     const newForm = [...newshowField, ...expandField].sort(compare('sort'));
@@ -1963,7 +2027,10 @@ class AddInvoice extends Component {
                                           />
                                           <span className="eslips-1">{it.fileName}</span>
                                         </div>
-                                        <i className="iconfont icondelete_fill" onClick={(e) => this.onDelFile(index, e)} />
+                                        <i
+                                          className="iconfont icondelete_fill"
+                                          onClick={(e) => this.onDelFile(index, e, modify && !showField.fileUrl.isModify)}
+                                        />
                                       </div>
                                     ))
                                   }
@@ -2086,9 +2153,12 @@ class AddInvoice extends Component {
                                     )
                                   }
                                 </Form.Item>
-                                <ReceiptModal title="add" onOk={this.handelAcc}>
-                                  <a className={style.addReceipt}>新增</a>
-                                </ReceiptModal>
+                                {
+                                  !modify &&
+                                  <ReceiptModal title="add" onOk={this.handelAcc}>
+                                    <a className={style.addReceipt}>新增</a>
+                                  </ReceiptModal>
+                                }
                               </Col>
                               :
                               null
@@ -2109,15 +2179,18 @@ class AddInvoice extends Component {
                     <span>费用明细</span>
                   </div>
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
-                    <AddCost
-                      userInfo={userInfo}
-                      invoiceId={id}
-                      onAddCost={this.onAddCost}
-                      key="handle"
-                      modify={operateType === 'modify'}
-                    >
-                      <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加费用</Button>
-                    </AddCost>
+                    {
+                      !modify &&
+                      <AddCost
+                        userInfo={userInfo}
+                        invoiceId={id}
+                        onAddCost={this.onAddCost}
+                        key="handle"
+                        modify={modify}
+                      >
+                        <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加费用</Button>
+                      </AddCost>
+                    }
                     {
                       !modify &&
                       <AddFolder
@@ -2139,6 +2212,7 @@ class AddInvoice extends Component {
                         invoiceId={id}
                         onChangeData={(val) => this.onChangeData(val)}
                         addCost={this.onAddCost}
+                        modify={modify}
                       />
                     }
                   </div>
@@ -2146,7 +2220,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              djDetail.isRelationLoan &&
+              djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&
               <>
                 <Divider type="horizontal" />
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
@@ -2181,7 +2255,7 @@ class AddInvoice extends Component {
               </>
             }
             {
-              djDetail.isRelationApply  ?
+              djDetail.isRelationApply && (!modify || (modify && this.state.applyArr && applyArr.length > 0 )) ?
                 <>
                   <Divider type="horizontal" />
                   <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
@@ -2231,6 +2305,25 @@ class AddInvoice extends Component {
                 <ApproveNode
                   approveNodes={nodes}
                   onChangeForm={(val) => this.onChangeNode(val)}
+                />
+              </div>
+            }
+            {
+              modify &&
+              <Divider type="horizontal" />
+            }
+            {
+              modify &&
+              <div style={{paddingTop: '24px', paddingBottom: '100px'}}>
+                <div className={style.header} style={{padding: 0, marginBottom: '16px'}}>
+                  <div className={style.line} />
+                  <span>改单理由</span>
+                </div>
+                <TextArea
+                  placeholder="请输入改单理由(必填)"
+                  style={{height: '128px'}}
+                  value={modifyNote}
+                  onInput={(e) => { this.setState({ modifyNote: e.target.value }); }}
                 />
               </div>
             }

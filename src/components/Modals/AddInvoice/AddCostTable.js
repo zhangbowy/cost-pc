@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable guard-for-in */
 import React, { Component } from 'react';
-import { Form, Select, InputNumber, Table, Button } from 'antd';
+import { Form, Select, InputNumber, Table, Button, message } from 'antd';
 import { connect } from 'dva';
 import SelectPeople from '../SelectPeople';
 import style from './index.scss';
@@ -54,8 +54,13 @@ class AddCostTable extends Component {
 
   onAdd = () => {
     const { costDetailShareVOS } = this.state;
+    const { modify } = this.props;
     const { initDep } = this.state;
     const details = [...costDetailShareVOS];
+    if (modify) {
+      message.error('改单不允许更改分摊');
+      return;
+    }
     console.log('initDep', initDep);
     details.push({
       key: `a${costDetailShareVOS.length}`,
@@ -175,6 +180,8 @@ class AddCostTable extends Component {
 
   onDelete = (key) => {
     const { costDetailShareVOS } = this.state;
+    const { modify } = this.props;
+    if (modify) return;
     const detail = [...costDetailShareVOS];
     console.log('onDelete -> costDetailShareVOS', costDetailShareVOS);
     const count = detail.findIndex(it => it.key === key);
@@ -248,6 +255,7 @@ class AddCostTable extends Component {
             const projectName = val.projectId && val.projectId[item.key] ?
                 usableProject.filter(it => it.id === val.projectId[item.key])[0].name : '';
             arr.push({
+              id: item.id || '',
               key: item.key,
               shareAmount: val.shareAmount[item.key],
               shareScale: val.shareScale[item.key],
@@ -410,12 +418,9 @@ class AddCostTable extends Component {
           <div className={style.line} />
           <span>分摊</span>
         </div>
-        {
-          !modify &&
-          <div style={{textAlign: 'center'}} className={style.addbtn}>
-            <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
-          </div>
-        }
+        <div style={{textAlign: 'center'}} className={style.addbtn}>
+          <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
+        </div>
         {
           costDetailShareVOS && costDetailShareVOS.length > 0 &&
           <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500">

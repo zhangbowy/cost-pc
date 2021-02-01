@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Upload, Icon } from 'antd';
+import { Upload, Icon, message } from 'antd';
 import constants from '@/utils/constants';
 import cs from 'classnames';
 import style from './index.scss';
@@ -29,6 +29,11 @@ class UploadImg extends Component {
   onDelete = (index) => {
     // eslint-disable-next-line react/no-access-state-in-setstate
     const imgs = this.state.imgUrl;
+    const { disabled } = this.props;
+    if (disabled) {
+      message.error('不允许删除');
+      return;
+    }
     imgs.splice(index, 1);
     this.setState({
       imgUrl: imgs,

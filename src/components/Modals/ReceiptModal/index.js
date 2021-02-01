@@ -1,8 +1,9 @@
 import React from 'react';
-import { Modal, Form, Input, Select, Button, message, Switch, Checkbox } from 'antd';
+import { Modal, Form, Input, Select, Button, message, Switch, Checkbox, Cascader } from 'antd';
 import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
+import treeConvert from '@/utils/treeConvert';
 
 const labelInfo = {
   type: '账户类型',
@@ -10,14 +11,17 @@ const labelInfo = {
   account: '银行卡号',
   note: '备注',
   defaultStatus: '启用',
-  status: '启用'
+  status: '启用',
+  bankNameBranch: '开户支行',
+  awAreas: '开户省市'
 };
 const {Option} = Select;
 @Form.create()
-@connect(({ loading, session, global }) => ({
+@connect(({ loading, session, global, costGlobal }) => ({
   userInfo: session.userInfo,
   loading: loading.effects['global/addAcc'] || false,
   detailReceipt: global.detail,
+  areaCode: costGlobal.areaCode,
 }))
 class AddAccount extends React.PureComponent {
   constructor(props) {
@@ -25,13 +29,30 @@ class AddAccount extends React.PureComponent {
     this.state = {
       type: '0',
       visible: false,
+      treeList: [],
     };
   }
 
   onShow = () => {
-    this.setState({
-      type: '0',
-      visible: true,
+    this.props.dispatch({
+      type: 'costGlobal/area',
+      payload: {}
+    }).then(() => {
+      const { areaCode } = this.props;
+      console.log('AddAccount -> onShow -> areaCode', areaCode);
+      const treeList = treeConvert({
+        rootId: 0,
+        pId: 'pid',
+        name: 'areaName',
+        id: 'areaCode',
+        tName: 'label',
+        tId: 'value'
+      }, areaCode);
+      this.setState({
+        type: '0',
+        visible: true,
+        treeList,
+      });
     });
 
   }
@@ -40,7 +61,8 @@ class AddAccount extends React.PureComponent {
     this.props.form.resetFields();
     this.setState({
       type: '0',
-      visible: false
+      visible: false,
+      treeList: [],
     });
   }
 
@@ -51,6 +73,7 @@ class AddAccount extends React.PureComponent {
       form,
       onOk,
       userInfo,
+      areaCode
     } = this.props;
 
     form.validateFieldsAndScroll((err, value) => {
@@ -60,6 +83,11 @@ class AddAccount extends React.PureComponent {
           companyId: userInfo.companyId || '',
           type: Number(value.type),
           status: value.status ? 1 : 0,
+          awAreas: value.awAreas ?
+            value.awAreas.map(it => {
+              const items = areaCode.filter(item => item.areaCode === it)[0];
+              return { ...items };
+            }) : [],
         };
         const action = 'global/addAcc';
         dispatch({
@@ -94,6 +122,7 @@ class AddAccount extends React.PureComponent {
       visible,
       loading,
       data,
+      treeList
     } = this.state;
     return (
       <span>
@@ -102,6 +131,7 @@ class AddAccount extends React.PureComponent {
           title={title && `${defaultTitle[title]}收款账户`}
           visible={visible}
           onCancel={() => this.onRest()}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           footer={[
             <Button
               key="cancel"
@@ -185,6 +215,33 @@ class AddAccount extends React.PureComponent {
                         ))
                       }
                     </Select>
+                  )
+                }
+              </Form.Item>
+            }
+            {
+              Number(type) === 0 &&
+              <Form.Item label={labelInfo.awAreas}>
+                {
+                  getFieldDecorator('awAreas', {
+                    initialValue: (data && data.awAreas) || [],
+                  })(
+                    <Cascader
+                      options={treeList}
+                      placeholder={`请选择${labelInfo.awAreas}`}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
+            {
+              Number(type) === 0 &&
+              <Form.Item label={labelInfo.bankNameBranch}>
+                {
+                  getFieldDecorator('bankNameBranch', {
+                    initialValue: data && data.bankNameBranch,
+                  })(
+                    <Input placeholder={`请输入${labelInfo.bankNameBranch}`} />
                   )
                 }
               </Form.Item>

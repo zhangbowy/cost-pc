@@ -200,7 +200,7 @@ class SummaryCmp extends Component {
         ),
         width: 150,
       }, {
-        title: '预计还款时间',
+        title: '预计还款日期',
         dataIndex: 'repaymentTime',
         render: (_, record) => (
           <span>{record.repaymentTime ? moment(record.repaymentTime).format('YYYY-MM-DD') : '-'}</span>

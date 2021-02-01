@@ -1,8 +1,10 @@
 import React from 'react';
-import { Modal, Form, Input, Select, Button, message, Switch, Checkbox } from 'antd';
+import { Modal, Form, Input, Select, Button, message, Switch, Checkbox, Cascader } from 'antd';
 import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
+import treeConvert from '@/utils/treeConvert';
+import { compare } from '../../../../utils/common';
 
 const labelInfo = {
   type: '账户类型',
@@ -10,14 +12,17 @@ const labelInfo = {
   account: '银行卡号',
   note: '备注',
   defaultStatus: '启用',
-  status: '启用'
+  status: '启用',
+  bankNameBranch: '开户支行',
+  awAreas: '开户省市'
 };
 const {Option} = Select;
 @Form.create()
-@connect(({ loading, session, receiptAcc }) => ({
+@connect(({ loading, session, receiptAcc, costGlobal }) => ({
   userInfo: session.userInfo,
   loading: loading.effects['receiptAcc/add'] || loading.effects['receiptAcc/edit'] || false,
   detail: receiptAcc.detail,
+  areaCode: costGlobal.areaCode,
 }))
 class AddAccount extends React.PureComponent {
   constructor(props) {
@@ -31,6 +36,20 @@ class AddAccount extends React.PureComponent {
   onShow = () => {
     const { record } = this.props;
     let type = '0';
+    this.props.dispatch({
+      type: 'costGlobal/area',
+      payload: {}
+    }).then(() => {
+      const { areaCode } = this.props;
+      console.log('AddAccount -> onShow -> areaCode', areaCode);
+      const treeList = treeConvert({
+        rootId: 0,
+        pId: 'pid',
+        name: 'areaName',
+        id: 'areaCode',
+        tName: 'label',
+        tId: 'value'
+      }, areaCode);
     if (record) {
       ({ type } = record);
       this.props.dispatch({
@@ -43,15 +62,22 @@ class AddAccount extends React.PureComponent {
         this.setState({
           visible: true,
           type,
-          data: detail,
+          data: {
+            ...detail,
+            awAreas: detail.awAreas ?
+              detail.awAreas.sort(compare('level')).map(it => it.areaCode) : undefined,
+          },
+          treeList
         });
       });
     } else {
       this.setState({
         visible: true,
         type,
+        treeList
       });
     }
+  });
 
   }
 
@@ -71,6 +97,7 @@ class AddAccount extends React.PureComponent {
       detail,
       userInfo,
       title,
+      areaCode
     } = this.props;
 
     form.validateFieldsAndScroll((err, value) => {
@@ -80,6 +107,11 @@ class AddAccount extends React.PureComponent {
           companyId: userInfo.companyId || '',
           type: Number(value.type),
           status: value.status ? 1 : 0,
+          awAreas: value.awAreas ?
+            value.awAreas.map(it => {
+              const items = areaCode.filter(item => item.areaCode === it)[0];
+              return { ...items };
+            }) : [],
         };
         let action = 'receiptAcc/add';
         if (title === 'edit') {
@@ -128,6 +160,7 @@ class AddAccount extends React.PureComponent {
       visible,
       loading,
       data,
+      treeList
     } = this.state;
     return (
       <span>
@@ -135,6 +168,7 @@ class AddAccount extends React.PureComponent {
         <Modal
           title={title && `${defaultTitle[title]}收款账户`}
           visible={visible}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={() => {
             this.onRest();
             this.setState({ visible: false });
@@ -232,6 +266,33 @@ class AddAccount extends React.PureComponent {
                 }
               </Form.Item>
             }
+            {
+              Number(type) === 0 &&
+              <Form.Item label={labelInfo.awAreas}>
+                {
+                  getFieldDecorator('awAreas', {
+                    initialValue: (data && data.awAreas) || [],
+                  })(
+                    <Cascader
+                      options={treeList}
+                      placeholder={`请选择${labelInfo.awAreas}`}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
+            {
+              Number(type) === 0 &&
+              <Form.Item label={labelInfo.bankNameBranch}>
+                {
+                  getFieldDecorator('bankNameBranch', {
+                    initialValue: data && data.bankNameBranch,
+                  })(
+                    <Input placeholder={`请输入${labelInfo.bankNameBranch}`} />
+                  )
+                }
+              </Form.Item>
+            }
             <Form.Item label={labelInfo.note}>
               {
                 getFieldDecorator('note', {
@@ -245,7 +306,7 @@ class AddAccount extends React.PureComponent {
               <div>
                 {
                   getFieldDecorator('status', {
-                    initialValue: !!((data && data.status === 1)),
+                    initialValue: !!((data && data.status === 1)) || (title === 'add'),
                     valuePropName: 'checked'
                   })(
                     <Switch />

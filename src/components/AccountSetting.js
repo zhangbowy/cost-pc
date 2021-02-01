@@ -5,8 +5,11 @@
  */
 
 import React, { Component } from 'react';
-import { Modal, Form, Select, Input, Button } from 'antd';
+import { Modal, Form, Select, Input, Button, Cascader } from 'antd';
 import { formItemLayout, bankList } from '@/utils/constants';
+import { connect } from 'dva';
+import treeConvert from '@/utils/treeConvert';
+import { compare } from '../utils/common';
 
 const { Option } = Select;
 const formLabel = {
@@ -14,7 +17,9 @@ const formLabel = {
   name: '名称',
   card: '银行卡号',
   alipay: '账号',
-  bankName: '开户行'
+  bankName: '开户行',
+  bankNameBranch: '开户支行',
+  awAreas: '开户省市'
 };
 const accountType = [
   {
@@ -32,28 +37,49 @@ const accountType = [
 ];
 
 @Form.create()
+@connect(({ costGlobal }) => ({
+  areaCode: costGlobal.areaCode,
+}))
 class AccountSetting extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      data: { type: 0 }
+      data: { type: 0 },
+      treeList: [],
     };
   }
 
   // 显示modal
   show = () => {
     const { data = {} } = this.props;
-    if (!data.type) {
-      data.type = 0;
-    }
     const datas = { ...data };
-
-
-
-    this.setState({
-      visible: true,
-      data: datas
+    if (!datas.type) {
+      datas.type = 0;
+    }
+    this.props.dispatch({
+      type: 'costGlobal/area',
+      payload: {}
+    }).then(() => {
+      const { areaCode } = this.props;
+      console.log('AddAccount -> onShow -> areaCode', areaCode);
+      const treeList = treeConvert({
+        rootId: 0,
+        pId: 'pid',
+        name: 'areaName',
+        id: 'areaCode',
+        tName: 'label',
+        tId: 'value'
+      }, areaCode);
+      this.setState({
+        visible: true,
+        data: {
+          ...datas,
+          awAreas: datas.awAreas ?
+          datas.awAreas.sort(compare('level')).map(it => it.areaCode) : undefined,
+        },
+        treeList
+      });
     });
   }
 
@@ -63,12 +89,19 @@ class AccountSetting extends Component {
   }
 
   onSave = () => {
-    const {form: { validateFields }, callback } = this.props;
+    const {form: { validateFields }, callback, areaCode } = this.props;
     const { data } = this.state;
     const val = { ...data };
     validateFields((err, values) => {
       if(!err) {
-        Object.assign(val, {...values});
+        const awAreas = values.awAreas.map(it => {
+          const items = areaCode.filter(item => item.areaCode === it)[0];
+          return { ...items };
+        });
+        Object.assign(val, {
+          ...values,
+          awAreas,
+        });
         callback(val, this.checkResult);
       }
     });
@@ -76,6 +109,7 @@ class AccountSetting extends Component {
 
   // 名字重复
   checkResult = (type) => {
+    console.log('娇艳');
     if(type === 'repeat') {
       this.props.form.setFields({
         name: {
@@ -95,7 +129,7 @@ class AccountSetting extends Component {
   }
 
   render() {
-    const { visible, data } = this.state;
+    const { visible, data, treeList } = this.state;
     const { form: { getFieldDecorator } } = this.props;
     return (
       <span>
@@ -105,6 +139,7 @@ class AccountSetting extends Component {
           visible={visible}
           onCancel={() => this.closeModal()}
           onOk={() => this.onSave()}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           footer={[
             <Button key="cancel" onClick={() => this.closeModal()}>取消</Button>,
             <Button key="save" type="primary" onClick={e => this.onSave(e)}>保存</Button>
@@ -176,6 +211,27 @@ class AccountSetting extends Component {
                           <Option key={item} value={item}>{item}</Option>
                         ))}
                       </Select>
+                    )
+                  }
+                </Form.Item>
+                <Form.Item label={formLabel.awAreas} key="awAreas">
+                  {
+                    getFieldDecorator('awAreas', {
+                      initialValue: (data && data.awAreas) || [],
+                    })(
+                      <Cascader
+                        options={treeList}
+                        placeholder={`请选择${formLabel.awAreas}`}
+                      />
+                    )
+                  }
+                </Form.Item>
+                <Form.Item label={formLabel.bankNameBranch} key="bankNameBranch">
+                  {
+                    getFieldDecorator('bankNameBranch', {
+                      initialValue: (data && data.bankNameBranch) || '',
+                    })(
+                      <Input placeholder={`请输入${formLabel.bankNameBranch}`} />
                     )
                   }
                 </Form.Item>

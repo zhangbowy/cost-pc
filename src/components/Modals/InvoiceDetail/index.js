@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Row, Col, Table, Tag, Popover, message, Button, Tooltip, Divider } from 'antd';
+import { Modal, Row, Col, message, Button, Divider } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -12,19 +12,24 @@ import constants, { accountType } from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
 import Borrow from './Borrow';
 import Apply from './Apply';
-import CostDetails from './CostDetails';
 import { ddOpenLink } from '../../../utils/ddApi';
 import AddInvoice from '../AddInvoice';
+import RecordHistory from './RecordHistory';
+import CostDetailTable from './CostDetailTable';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
-@connect(({ global }) => ({
+@connect(({ global, costGlobal, session }) => ({
   invoiceDetail: global.invoiceDetail,
   approvedUrl: global.approvedUrl,
   djDetail: global.djDetail,
   loanDetail: global.loanDetail,
   applyDetail: global.applyDetail,
   isApproval: global.isApproval,
+  recordDetailInvoice: costGlobal.recordDetailInvoice,
+  recordDetailLoan: costGlobal.recordDetailLoan,
+  checkTemp: costGlobal.checkTemp,
+  userInfo: session.userInfo,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -39,6 +44,9 @@ class InvoiceDetail extends Component {
       invoiceLoanAssessVos: [],
       supplierAccountVo: {},
       applicationAssociageVOS: [],
+      recordList: [],
+      operateType: '',
+      invoiceVisible: {},
     };
   }
 
@@ -64,7 +72,6 @@ class InvoiceDetail extends Component {
       } else if (Number(templateType) === 2) {
         details = applyDetail;
       }
-      console.log(details);
       if (details.costDetailsVo) {
         this.setState({
           category: details.costDetailsVo,
@@ -96,13 +103,6 @@ class InvoiceDetail extends Component {
           supplierAccountVo: details.supplierAccountVo || {},
         });
       }
-      if (details.approveUser) {
-        details = {
-          ...details,
-          userJson: details.approveUser ?
-          [{ ...details.approveUser, userName: details.approveUser.name }] : [],
-        };
-      }
       if (details.applicationAssociageVOS) {
         details = {
           ...details,
@@ -120,12 +120,26 @@ class InvoiceDetail extends Component {
         showFields: showObj,
       });
       this.setState({
-        visible: true,
         details,
-        // isModify: details.isModify,
+        isModify: details.isModify,
+      });
+      this.props.dispatch({
+        type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
+        payload: {
+          isMobile: false,
+          id,
+        }
+      }).then(() => {
+        console.log(this.props.recordDetailLoan);
+        const { recordDetailLoan, recordDetailInvoice } = this.props;
+        const recordList = Number(templateType) ? recordDetailLoan : recordDetailInvoice;
+        console.log('InvoiceDetail -> onShow -> recordDetailLoan', recordDetailLoan);
+        this.setState({
+          visible: true,
+          recordList,
+        });
       });
     });
-
   }
 
   onCancel = () => {
@@ -242,6 +256,40 @@ class InvoiceDetail extends Component {
     });
   }
 
+  onChangeType = (operateType) => {
+    const { details } = this.state;
+    this.props.dispatch({
+      type: 'costGlobal/checkTemplate',
+      payload: {
+        invoiceTemplateId: details.invoiceTemplateId,
+      }
+    }).then(() => {
+      const { checkTemp } = this.props;
+      if(checkTemp.isDisabled){
+        message.error('单据已停用，无法提交。' );
+        return;
+      }
+      if(!checkTemp.isCanUse){
+        message.error('不可使用该单据，请联系管理员“超管”' );
+        return;
+      }
+      this.setState({
+        operateType,
+        visible: false,
+      }, () => {
+        this.setState({
+          invoiceVisible: true,
+        });
+      });
+    });
+  }
+
+  onChangeVi = () => {
+    this.setState({
+      invoiceVisible: false,
+    });
+  }
+
   render() {
     const {
       visible,
@@ -253,165 +301,19 @@ class InvoiceDetail extends Component {
       invoiceLoanAssessVos,
       supplierAccountVo,
       applicationAssociageVOS,
-      // isModify
+      recordList,
+      isModify,
+      operateType,
+      invoiceVisible,
     } = this.state;
     const {
       children,
       canRefuse,
       templateType,
+      allow,
+      userInfo
     } = this.props;
-    const newList = [];
-    category.forEach(it => {
-      const obj = {};
-      it.expandCostDetailFieldVos.forEach(i => {
-        obj[i.field] = i.msg;
-      });
-      newList.push({
-        ...it,
-        ...obj,
-      });
-    });
-    const columns = [{
-      title: '费用类别',
-      dataIndex: 'categoryName',
-      render: (_, record) => (
-        <span className={style.icons}>
-          <i className={`iconfont icon${record.icon}`} style={{ fontSize: '24px', verticalAlign: 'middle' }} />
-          <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
-        </span>
-      ),
-      width: 130
-    }, {
-      title: '金额（元）',
-      dataIndex: 'costSum',
-      render: (_, record) => (
-        <span>
-          <span>{record.currencySumStr ?
-          `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}
-          </span>
-          {
-            record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
-            <Popover
-              content={(
-                <div className={style.share_cnt}>
-                  <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">
-                    分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}
-                  </p>
-                  {
-                    record.costDetailShareVOS.map(it => (
-                      <p key={it.id} className="c-black-36 fs-13">
-                        <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
-                        {
-                          it.projectName &&
-                          <span className="m-r-8">{it.projectName}</span>
-                        }
-                        <span>¥{it.shareAmount/100}{it.currencySumStr ? `(${it.currencySumStr})` : ''}</span>
-                      </p>
-                    ))
-                  }
-                </div>
-              )}
-            >
-              <Tag className="m-l-8">分摊明细</Tag>
-            </Popover>
-          }
-        </span>
-      ),
-      className: 'moneyCol',
-      width: '250px'
-    }, {
-      title: '发生日期',
-      dataIndex: 'happenTime',
-      render: (_, record) => (
-        <span>
-          <span>{record.startTime ? moment(record.startTime).format('YYYY-MM-DD') : '-'}</span>
-          <span>{record.endTime ? `-${moment(record.endTime).format('YYYY-MM-DD')}` : ''}</span>
-        </span>
-      ),
-      width: 120
-    }, {
-      title: '费用备注',
-      dataIndex: 'note',
-      width: 120,
-      ellipsis: true,
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
-    }, {
-      title: '图片',
-      dataIndex: 'imgUrl',
-      render: (_, record) => (
-        <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
-          {record.imgUrl && record.imgUrl.map((it, index) => (
-            <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
-              <img alt="图片" src={it.imgUrl} className={style.images} />
-            </div>
-          ))}
-        </span>
-      ),
-      textWrap: 'word-break',
-      width: '140px'
-    }, {
-      title: '操作',
-      dataIndex: 'operate',
-      render: (_, record) => (
-        <CostDetails record={record}>
-          <span record={record} className="sub-color" style={{ cursor: 'pointer' }}>
-            查看
-          </span>
-        </CostDetails>
-      ),
-      width: '140px',
-      fixed: 'right',
-      className: 'fixCenter'
-    }];
-    // if (category && category.length > 0 ) {
-    //   const arr = [];
-    //   category.forEach(it => {
-    //     if (it.expandCostDetailFieldVos && (it.expandCostDetailFieldVos.length > 0)) {
-    //       const its = it.expandCostDetailFieldVos.map(item => {
-    //           return {
-    //             title: item.name,
-    //             dataIndex: item.field,
-    //             render: (_, itField) => {
-    //               console.log('InvoiceDetail -> render -> records', itField);
-    //               let texts = itField[item.field];
-    //               if (itField.dateType) {
-    //                 texts = '';
-    //               }else if (itField.startTime) {
-    //                 console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
-    //                 texts = itField.endTime ?
-    //                 `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
-    //                 :
-    //                 `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}`;
-    //               }
-    //               return (
-    //                 <span>
-    //                   <Tooltip placement="topLeft" title={texts || ''} arrowPointAtCenter>
-    //                     <span className="eslips-2">{texts}</span>
-    //                   </Tooltip>
-    //                 </span>
-    //               );
-    //             }
-    //           };
-    //       });
-    //       arr.push(...its);
-    //     }
-    //   });
-    //   const obj = {};
-    //   const per = arr.reduce((cur,next) => {
-    //     if (!obj[next.field]) {
-    //       obj[next.field] = true;
-    //       cur.push(next);
-    //     }
-    //     return cur;
-    //   },[]);
-    //   columns.splice(2, 0, ...per);
-    // }
+
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -446,41 +348,30 @@ class InvoiceDetail extends Component {
                 >
                   打印
                 </Button>
-                <AddInvoice
-                  templateType={templateType}
-                  id={details.invoiceTemplateId}
-                  contentJson={JSON.stringify(details)}
-                  onHandleOk={() => {
-                    this.onCancel();
-                  }}
-                >
-                  <Button
-                    key="again"
-                    type="default"
-                    operateType="copy"
-                    className="m-l-8"
-                  >
-                    复制
-                  </Button>
-                </AddInvoice>
-                <AddInvoice
-                  templateType={templateType}
-                  id={details.invoiceTemplateId}
-                  contentJson={JSON.stringify(details)}
-                  onHandleOk={() => {
-                    this.onCancel();
-                  }}
-                  operateType="modify"
-                >
-                  <Button
-                    key="again"
-                    type="default"
-                    operateType="copy"
-                    className="m-l-8"
-                  >
-                    改单
-                  </Button>
-                </AddInvoice>
+                {
+                  allow === 'copy' && (userInfo.userId === details.userId) &&
+                    <Button
+                      key="again"
+                      type="default"
+                      operateType="copy"
+                      className="m-l-8"
+                      onClick={() => this.onChangeType('copy')}
+                    >
+                      复制
+                    </Button>
+                }
+                {
+                  isModify && allow === 'modify' &&
+                    <Button
+                      key="again"
+                      type="default"
+                      operateType="copy"
+                      className="m-l-8"
+                      onClick={() => this.onChangeType('modify')}
+                    >
+                      改单
+                    </Button>
+                }
               </div>
               <div>
                 <Button type="default" onClick={() => this.onCancel()}>关闭</Button>
@@ -595,7 +486,7 @@ class InvoiceDetail extends Component {
             {
               Number(templateType) === 1 ?
                 <Col span={8} className="m-t-16">
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款时间：</span>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款日期：</span>
                   <span className="fs-14 c-black-65">{details.repaymentTime ? moment(details.repaymentTime).format('YYYY-MM-DD') : '-'}</span>
                 </Col>
                 :
@@ -835,14 +726,10 @@ class InvoiceDetail extends Component {
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
-                <span>费用明细（共{newList.length}项，合计¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}）</span>
+                <span>费用明细（共{category.length}项，合计¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}）</span>
               </div>
-              <Table
-                columns={columns}
-                dataSource={newList}
-                pagination={false}
-                scroll={{x: columns.length > 6 ? '1400px' : '1000px'}}
-                rowKey="id"
+              <CostDetailTable
+                list={category}
               />
             </>
           }
@@ -856,7 +743,30 @@ class InvoiceDetail extends Component {
               <Apply list={applicationAssociageVOS} type={1} />
             </>
           }
+          {
+            recordList.length > 0 &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>改单历史</span>
+              </div>
+              <RecordHistory list={recordList} type={1} />
+            </>
+          }
         </Modal>
+        <AddInvoice
+          templateType={templateType}
+          id={details.invoiceTemplateId}
+          visible={invoiceVisible}
+          contentJson={JSON.stringify(details)}
+          onChangeVisible={() => this.onChangeVi()}
+          onHandleOk={() => {
+            if (this.props.onCallback) {
+              this.props.onCallback();
+            }
+          }}
+          operateType={operateType}
+        />
       </span>
     );
   }

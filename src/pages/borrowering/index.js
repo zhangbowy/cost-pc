@@ -335,7 +335,7 @@ class Payments extends React.PureComponent {
       ),
       width: 150,
     }, {
-      title: '预计还款时间',
+      title: '预计还款日期',
       dataIndex: 'repaymentTime',
       render: (text) => (
         <span>{ text && moment(text).format('YYYY-MM-DD') }</span>

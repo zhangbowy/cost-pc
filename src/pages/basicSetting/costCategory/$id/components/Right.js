@@ -1,7 +1,8 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/no-did-update-set-state */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Input, Checkbox, Divider, Select, Modal, Button } from 'antd';
+import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from 'antd';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder } from '../../../../../utils/constants';
 import { timeStampToHex } from '../../../../../utils/common';
@@ -209,7 +210,7 @@ class Right extends PureComponent {
 
   render() {
     const { details, list } = this.state;
-    const { selectId, type, templateType } = this.props;
+    const { selectId, type, templateType, isModifyInvoice, operateType } = this.props;
 
     const {
       form: { getFieldDecorator, getFieldValue },
@@ -316,7 +317,8 @@ class Right extends PureComponent {
             }
             {
               ((details.fieldType === '5') || (details.fieldType === 5)) &&
-              (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
+              ((details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1))
+              || details.field === 'happenTime') &&
               <Form.Item label="类型">
                 {
                   getFieldDecorator(`dateType[${details.field}]`, {
@@ -349,29 +351,47 @@ class Right extends PureComponent {
               }
             </Form.Item>
             {
-              !changeOrder.includes(details.field) && templateType !== 2 &&
-              <Form.Item label="改单">
-                {
-                  getFieldDecorator(`isModify[${details.field}]`, {
-                    initialValue: details.isModify ? [details.isModify] : [],
-                  })(
-                    <Checkbox.Group
-                      style={{ width: '100%' }}
-                      disabled={details.disabled}
-                      onChange={e => this.onChange(e, 'isModify')}
-                    >
-                      <Checkbox value>允许发放环节修改</Checkbox>
-                    </Checkbox.Group>
-                  )
-                }
-              </Form.Item>
+              templateType !== 2 && isModifyInvoice &&
+                <Form.Item
+                  label={(
+                    <>
+                      <span className="m-r-8">改单</span>
+                      {
+                        changeOrder.includes(details.field) &&
+                        <Tooltip placement="bottomLeft" title="敏感字段不允许改单">
+                          <i className="iconfont iconIcon-yuangongshouce" />
+                        </Tooltip>
+                      }
+                    </>
+                  )}
+                >
+                  {
+                    getFieldDecorator(`isModify[${details.field}]`, {
+                      initialValue: details.isModify ? [details.isModify] :
+                        operateType === 'add' ? [(details.field === 'amount') || (details.field === 'loanSum')] : [],
+                    })(
+                      <Checkbox.Group
+                        style={{ width: '100%' }}
+                        disabled={changeOrder.includes(details.field)}
+                        onChange={e => this.onChange(e, 'isModify')}
+                      >
+                        <Checkbox value>允许发放环节修改</Checkbox>
+                      </Checkbox.Group>
+                    )
+                  }
+                </Form.Item>
             }
             {
               details.field && (details.field.indexOf('self_') > -1) &&
               <>
                 <Divider type="horizontal" />
                 <Form.Item label="其他设置">
-                  <Checkbox onChange={(e) => this.onChangeMore(e)} checked={this.state.checked}>添加此字段到公用库</Checkbox>
+                  <Checkbox
+                    onChange={(e) => this.onChangeMore(e)}
+                    checked={this.state.checked}
+                  >
+                    添加此字段到公用库
+                  </Checkbox>
                 </Form.Item>
               </>
             }

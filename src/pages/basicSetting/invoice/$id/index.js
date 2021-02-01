@@ -25,7 +25,7 @@ const basicStr = [{
   key: 'three',
   value: '打印设置',
 }];
-@connect(({ loading, session, addInvoice, global }) => ({
+@connect(({ loading, session, addInvoice, global, costGlobal }) => ({
   loading: loading.effects['addInvoice/add'] || loading.effects['addInvoice/edit'],
   userInfo: session.userInfo,
   allList: addInvoice.allList,
@@ -34,6 +34,7 @@ const basicStr = [{
   approveList: addInvoice.approveList,
   expandLists: addInvoice.expandLists,
   fieldList: addInvoice.fieldList,
+  isModifyInvoice: costGlobal.isModifyInvoice
 }))
 class CategoryAdd extends PureComponent {
 
@@ -53,7 +54,9 @@ class CategoryAdd extends PureComponent {
       'isCompanyName':true,
       'isImage':true,
       templatePdfExpandVos: [],
-  },
+    },
+    reLoan: [],
+    reApply: [],
   }
 
   componentDidMount() {
@@ -63,6 +66,10 @@ class CategoryAdd extends PureComponent {
     const templateType = id.split('_')[1];
     const title = id.split('_')[0];
     const titleType = params[2];
+    this.props.dispatch({
+      type: 'costGlobal/queryModifyOrder',
+      payload: {}
+    });
     this.props.dispatch({
       type: 'addInvoice/approveList',
       payload: {
@@ -143,11 +150,18 @@ class CategoryAdd extends PureComponent {
                 deptJson = JsonParse(detail.deptJson);
               }
               const relation = [];
+              const relations = [];
               if (detail.isRelationLoan) {
                 relation.push('isRelationLoan');
               }
               if (detail.isRelationApply) {
-                relation.push('isRelationApply');
+                relations.push('isRelationApply');
+              }
+              if (detail.isWriteByRelationLoan) {
+                relation.push('isWriteByRelationLoan');
+              }
+              if (detail.isWriteByRelationApply) {
+                relations.push('isWriteByRelationApply');
               }
               const ids = costCategoryList.map(it => it.id);
               const newArrs = [];
@@ -162,6 +176,7 @@ class CategoryAdd extends PureComponent {
                 userJson,
                 deptJson,
                 relation,
+                relations,
               });
               console.log(titleType);
               if (titleType === 'copy') {
@@ -180,6 +195,8 @@ class CategoryAdd extends PureComponent {
                   templatePdfExpandVos: detail.templatePdfVo && detail.templatePdfVo.templatePdfExpandVos
                     ? detail.templatePdfVo.templatePdfExpandVos.filter(it => it.isSelect) : [],
                 },
+                reLoan: relation,
+                reApply: relations,
                 data: datas,
                 selectList: selects.sort(this.compare('sort')),
               });
@@ -286,6 +303,8 @@ class CategoryAdd extends PureComponent {
           templatePdfExpandVos: templatePdfVo.templatePdfExpandVos.map(it => { return{ ...it, isSelect: true }; })
         },
       };
+      if (params.relations) delete params.relations;
+      if (params.relation) delete params.relation;
       this.props.dispatch({
         type: url,
         payload: {
@@ -366,7 +385,8 @@ class CategoryAdd extends PureComponent {
   render () {
     const {
       allList,
-      approveList
+      approveList,
+      isModifyInvoice
     } = this.props;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
@@ -376,7 +396,9 @@ class CategoryAdd extends PureComponent {
       current,
       selectList,
       fieldList,
-      templatePdfVo
+      templatePdfVo,
+      reLoan,
+      reApply,
     } = this.state;
     const {  dispatch, userInfo } = this.props;
     const { categoryList, data, templateType } = this.state;
@@ -458,6 +480,9 @@ class CategoryAdd extends PureComponent {
                     templateType={Number(templateType)}
                     dispatch={dispatch}
                     onChangeData={this.onChangeData}
+                    onChanges={this.onChangeDatas}
+                    reLoan={reLoan}
+                    reApply={reApply}
                   />
                 </div>
               }
@@ -482,6 +507,8 @@ class CategoryAdd extends PureComponent {
                       selectId="reason"
                       childRef={ref => { this.childRef = ref; }}
                       type="invoice"
+                      isModifyInvoice={isModifyInvoice}
+                      operateType={title}
                     />
                     <PreviewBox />
                   </DndProvider>

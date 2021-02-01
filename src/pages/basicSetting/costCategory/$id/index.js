@@ -27,7 +27,7 @@ const basicStr = [{
   key: 'three',
   value: '分摊设置',
 }];
-@connect(({ loading, session, addCategory }) => ({
+@connect(({ loading, session, addCategory, costGlobal }) => ({
   loading: loading.effects['addCategory/add'] || loading.effects['addCategory/edit'],
   userInfo: session.userInfo,
   details: addCategory.details,
@@ -35,6 +35,7 @@ const basicStr = [{
   checkDel: addCategory.checkDel,
   expandLists: addCategory.expandLists,
   fieldList: addCategory.fieldList,
+  isModifyInvoice: costGlobal.isModifyInvoice
 }))
 class CategoryAdd extends PureComponent {
 
@@ -50,6 +51,10 @@ class CategoryAdd extends PureComponent {
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
     const costId = id.split('_')[1];
+    this.props.dispatch({
+      type: 'costGlobal/queryModifyOrder',
+      payload:{}
+    });
     this.props.dispatch({
       type: 'addCategory/allList',
       payload: {}
@@ -293,7 +298,8 @@ class CategoryAdd extends PureComponent {
 
   render () {
     const {
-      allList
+      allList,
+      isModifyInvoice
     } = this.props;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
@@ -366,6 +372,8 @@ class CategoryAdd extends PureComponent {
                 onChangeData={this.onChangeData}
                 selectId="costCategory"
                 type="cost"
+                isModifyInvoice={isModifyInvoice}
+                operateType={title}
                 childRef={ref => { this.childRef = ref; }}
               />
             </DndProvider>

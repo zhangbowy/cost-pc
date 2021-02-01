@@ -202,22 +202,26 @@ class Setting extends Component {
   // 保存供应商账号
   onSaveSupplierSet = (val, callback) => {
     const { data, action, editIndex } = this.state;
+    const supplierAccounts = data.supplierAccounts ? [...data.supplierAccounts] : [];
+    let datas = {...data};
     if (action === 'edit') {
-      data.supplierAccounts[editIndex] = val;
+      supplierAccounts.splice(editIndex, 1, val);
+      // data.supplierAccounts[editIndex] = val;
       callback();
     } else {
-      const res = data.supplierAccounts.filter(item => item.name === val.name);
+      const res = supplierAccounts.filter(item => item.name === val.name);
       if (res.length) {
         callback('repeat');
       } else {
-        data.supplierAccounts.push(val);
+        supplierAccounts.push(val);
         callback();
       }
     }
-    this.checkAccounts(data);
+    datas = {...datas, supplierAccounts};
+    this.checkAccounts(datas);
 
     this.setState({
-      data,
+      data: datas,
       action: '',
       editIndex: 0
     });

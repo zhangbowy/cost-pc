@@ -7,6 +7,7 @@ import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 // import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 import constants from '@/utils/constants';
+import Tags from '@/components/Tags';
 import PayTemp from '../invoicePay/components/PayTemp';
 import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
@@ -328,16 +329,25 @@ class BorrowPay extends React.PureComponent {
       dispatch
     } = this.props;
     console.log(list);
-    const { status, visibleConfirm, selectedRowKeys, selectedRows } = this.state;
+    const {
+      status,
+      visibleConfirm,
+      selectedRowKeys,
+      selectedRows,
+    } = this.state;
     const columns = [{
       title: '借款事由',
       dataIndex: 'reason',
       width: 140,
-      render: (text) => (
+      render: (_, record) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
+          <Tooltip placement="topLeft" title={record.reason || ''}>
+            <span className="eslips-2">{record.reason}</span>
           </Tooltip>
+          {
+            record.isModify &&
+              <Tags color='rgba(0, 199, 149, 0.08)'>改单</Tags>
+          }
         </span>
       ),
     }, {
@@ -415,7 +425,7 @@ class BorrowPay extends React.PureComponent {
       ),
       width: 100,
     }, {
-      title: '预计还款时间',
+      title: '预计还款日期',
       dataIndex: 'repaymentTime',
       render: (text) => (
         <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
@@ -428,7 +438,13 @@ class BorrowPay extends React.PureComponent {
         <span>
           {
             Number(status) === 2 &&
-              <PayModal onOk={(val) => this.onOk(val)} data={record} templateType={1} selectKey={[record]} confirms={() => this.onConfirm()}>
+              <PayModal
+                onOk={(val) => this.onOk(val)}
+                data={record}
+                templateType={1}
+                selectKey={[record]}
+                confirms={() => this.onConfirm()}
+              >
                 <a>发起支付</a>
               </PayModal>
           }
@@ -442,6 +458,8 @@ class BorrowPay extends React.PureComponent {
             canRefuse={Number(record.status) === 2}
             refuse={this.handleRefuse}
             templateType={1}
+            allow="modify"
+            onCallback={() => this.onOk()}
           >
             <a>查看</a>
           </InvoiceDetail>

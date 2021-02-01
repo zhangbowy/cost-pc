@@ -12,6 +12,7 @@ export default {
   effects: {
     *query({ payload }, { call, put }) {
       const response = yield call(get, api.query, payload);
+      console.log('*query -> response', response);
       yield put({
         type: 'save',
         payload: {

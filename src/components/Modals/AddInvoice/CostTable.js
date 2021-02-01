@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Divider, Tag, Popover, Tooltip } from 'antd';
+import { Table, Divider, Tag, Popover, Tooltip, message } from 'antd';
 import moment from 'moment';
 import AddCost from './AddCost';
 import style from './index.scss';
@@ -22,8 +22,13 @@ class CostTable extends Component {
 
   onDelete = (index) => {
     const lists = this.props.list;
-    lists.splice(index, 1);
-    this.props.onChangeData(lists);
+    const { modify } = this.props;
+    if (lists.length === 1 && !modify) {
+      lists.splice(index, 1);
+      this.props.onChangeData(lists);
+    } else {
+      message.error('只有一条费用类别，不能删除');
+    }
   }
 
   addCost = (val, index) => {
@@ -35,7 +40,7 @@ class CostTable extends Component {
   }
 
   render() {
-    const { list, userInfo, invoiceId } = this.props;
+    const { list, userInfo, invoiceId, modify } = this.props;
     console.log('CostTable -> render -> list', list);
     const newList = [];
     list.forEach(it => {
@@ -136,6 +141,7 @@ class CostTable extends Component {
             invoiceId={invoiceId}
             userInfo={userInfo}
             index={index}
+            modify={modify}
             id={record.detailFolderId}
             onAddCost={this.addCost}
             expandField={record.selfCostDetailFieldVos ? [...record.expandCostDetailFieldVos, ...record.selfCostDetailFieldVos] : [...record.expandCostDetailFieldVos]}

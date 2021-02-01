@@ -316,7 +316,7 @@ export const borrowJson = [{
 }, {
   key: 'repaymentTime',
   field: 'repaymentTime',
-  name: '预计还款时间',
+  name: '预计还款日期',
   status: true,
   isWrite: true,
   note: '',
@@ -410,7 +410,12 @@ export const costClassify = [{
   note: '',
 }];
 
-export const changeOrder = ['userJson', 'deptId', 'receiptId', 'supplier'];
+export const changeOrder = ['userJson', 'deptId', 'receiptId', 'supplier', 'costCategory', 'project'];
+
+export const changeDefaultStr = {
+  0: ['reason', 'note', 'imgUrl', 'fileUrl'],
+  1: ['reason', 'loanSum', 'repaymentTime', 'note', 'imgUrl', 'fileUrl']
+};
 
 export const placeholderType = {
   0: '请输入',
@@ -660,6 +665,7 @@ export const defaultFlowId = [{
 }];
 
 export const bankList = [
+  '其他银行',
   '中国建设银行',
   '中国银行',
   '中国邮政储蓄银行',
@@ -674,7 +680,14 @@ export const bankList = [
   '中国工商银行',
   '广发银行',
   '北京银行',
-  '其他银行'
+  '农村商业银行',
+  '农村信用社',
+  '华夏银行',
+  '民生银行',
+  '浙商银行',
+  '恒丰银行',
+  '渤海银行',
+  '城商行'
 ];
 
 export const repeatMethod = [{

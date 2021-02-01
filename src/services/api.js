@@ -108,4 +108,13 @@ export default {
    loanPrint: `${APP_API}/cost/pdf/batch/loan`,
    applicationPrint: `${APP_API}/cost/pdf/batch/application`,
    qrQuery: `${APP_API}/cost/qr/queryDetail`,
+   /* ------------------------------ 报销单改单 ---------------------------------*/
+   invoiceEdit: `${APP_API}/cost/invoice/submit/edit`,
+   loanEdit: `${APP_API}/cost/invoice/loan/edit`,
+   recordDetailInvoice: `${APP_API}/cost/invoice/submit/recordDetail`,
+   recordDetailLoan: `${APP_API}/cost/invoice/loan/recordDetail`,
+   waitList: `${APP_API}/cost/invoice/loan/waitAssessList`, // 我的待核销列表
+   area: `${APP_API}/cost/aw/area`,
+   checkTemplate: `${APP_API}/cost/invoice/template/checkTemplate`,
+   queryModify: `${APP_API}/cost/manage/querySysSwitch`, // 查询改单
 };

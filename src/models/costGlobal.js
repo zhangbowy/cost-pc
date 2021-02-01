@@ -23,6 +23,13 @@ export default {
     folderIds: [], // 查询删除
     waitAssessIds: [],
     applyIds: [],
+    recordDetailLoan: [],
+    recordDetailInvoice: [],
+    waitLists: [],
+    waitLoanSums: {},
+    areaCode: [],
+    checkTemp: {},
+    isModifyInvoice: false,
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -161,6 +168,71 @@ export default {
         type: 'save',
         payload: {
           userDeps: response || {},
+        },
+      });
+    },
+    *invoiceEdit({ payload }, { call }) {
+      yield call(post, api.invoiceEdit, payload);
+    },
+    *loanEdit({ payload }, { call }) {
+      yield call(post, api.loanEdit, payload);
+    },
+    *recordDetailLoan({ payload }, { call, put }) {
+      const response = yield call(get, api.recordDetailLoan, payload);
+      console.log('*recordDetailLoan -> response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          recordDetailLoan: response || [],
+        },
+      });
+    },
+    *recordDetailInvoice({ payload }, { call, put }) {
+      const response = yield call(get, api.recordDetailInvoice, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          recordDetailInvoice: response || [],
+        },
+      });
+    },
+    *waitLists({ payload }, { call, put }) {
+      const response = yield call(get, api.waitList, payload);
+      const res = response.pageResult;
+      const lists = res.list.map(it => { return { ...it, id: it.loanId }; }) || [];
+      yield put({
+        type: 'save',
+        payload: {
+          waitLists: lists || [],
+          waitLoanSums: response.loanSum || {},
+        }
+      });
+    },
+    *area({ payload }, { call, put }) {
+      const response = yield call(get, api.area, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          areaCode: response || [],
+        }
+      });
+    },
+    *checkTemplate({ payload }, { call, put }) {
+      const response = yield call(get, api.checkTemplate, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          checkTemp: response || {},
+        }
+      });
+    },
+    *queryModifyOrder({ payload }, { call, put }) {
+      const response = yield call(get, api.queryModify, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          isModifyInvoice: response.isModifyInvoice,
+          isModifyReload: response.isModifyReload,
         },
       });
     },

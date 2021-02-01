@@ -19,7 +19,7 @@ const labelInfo = {
   deptId: '借款部门',
   reason: '借款事由',
   loanSum:'借款金额',
-  repaymentTime:'预计还款时间',
+  repaymentTime:'预计还款日期',
   note: '单据备注',
   project: '项目',
   supplier: '供应商/账户',
@@ -809,7 +809,7 @@ class AddInvoice extends Component {
                     <Form.Item label={labelInfo.repaymentTime} {...formItemLayout}>
                       {
                         getFieldDecorator('repaymentTime',{
-                          rules: [{ required: !!(showField.repaymentTime.isWrite), message: '请选择预计还款时间' }]
+                          rules: [{ required: !!(showField.repaymentTime.isWrite), message: '请选择预计还款日期' }]
                         })(
                           <DatePicker placeholder="请选择" disabledDate={this.disabledDate} />
                         )

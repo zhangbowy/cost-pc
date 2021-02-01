@@ -82,7 +82,6 @@ class Basic extends React.PureComponent {
     const {
       form,
       costCategoryList,
-      templateType
     } = this.props;
     let val = {};
     const { category, users, deptJson } = this.state;
@@ -100,14 +99,22 @@ class Basic extends React.PureComponent {
         }
         if (values.relation && values.relation.length) {
           const obbj = {
-            isRelationApply: false,
+            isRelationLoan: false,
+            isWriteByRelationLoan: false,
           };
-          if (Number(templateType) === 0) {
-            Object.assign(obbj, {
-              isRelationLoan: false,
-            });
-          }
           values.relation.forEach(its => {
+            obbj[its] = true;
+          });
+          Object.assign(values, {
+            ...obbj,
+          });
+        }
+        if (values.relations && values.relations.length) {
+          const obbj = {
+            isRelationApply: false,
+            isWriteByRelationApply: false,
+          };
+          values.relations.forEach(its => {
             obbj[its] = true;
           });
           Object.assign(values, {
@@ -242,6 +249,10 @@ class Basic extends React.PureComponent {
     });
   }
 
+  onChangeRelation = (e, key) => {
+    this.props.onChanges(key, e);
+  }
+
   render() {
     const {
       form: { getFieldDecorator },
@@ -250,8 +261,12 @@ class Basic extends React.PureComponent {
       costCategoryList,
       templateType,
       dispatch,
+      reApply,
+      reLoan
     } = this.props;
-    const { cost, user, category, users, deptJson, flowId, approveList, visible, name, title } = this.state;
+    const { cost, user, category, users,
+      deptJson, flowId, approveList,
+      visible, name, title } = this.state;
     console.log('data', data);
     // eslint-disable-next-line
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
@@ -440,18 +455,36 @@ class Basic extends React.PureComponent {
             }
           </Form.Item>
           {
-            Number(templateType) !== 2 &&
-            <Form.Item label="单据相关">
+            !Number(templateType) &&
+            <Form.Item label="借款核销">
               {
                 getFieldDecorator('relation', {
                   initialValue: data && data.relation ? data.relation : [],
                 })(
-                  <Checkbox.Group>
+                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reLoan')}>
+                    <Checkbox value="isRelationLoan">关联启用</Checkbox>
                     {
-                      Number(templateType) === 0 &&
-                      <Checkbox value="isRelationLoan">借款核销</Checkbox>
+                      reLoan.includes('isRelationLoan') &&
+                        <Checkbox value="isWriteByRelationLoan">必填</Checkbox>
                     }
-                    <Checkbox value="isRelationApply">关联申请单</Checkbox>
+                  </Checkbox.Group>
+                )
+              }
+            </Form.Item>
+          }
+          {
+            Number(templateType) !== 2 &&
+            <Form.Item label="申请单">
+              {
+                getFieldDecorator('relations', {
+                  initialValue: data && data.relations ? data.relations : [],
+                })(
+                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reApply')}>
+                    <Checkbox value="isRelationApply">关联启用</Checkbox>
+                    {
+                      reApply.includes('isRelationApply') &&
+                        <Checkbox value="isWriteByRelationApply">必填</Checkbox>
+                    }
                   </Checkbox.Group>
                 )
               }

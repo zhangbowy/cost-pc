@@ -7,6 +7,7 @@ import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 // import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 import constants from '@/utils/constants';
+import Tags from '@/components/Tags';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/payModal';
 import { JsonParse } from '../../../utils/common';
@@ -323,11 +324,15 @@ class Payment extends React.PureComponent {
       title: '报销事由',
       dataIndex: 'reason',
       width: 140,
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
+      render: (_, record) => (
+        <span style={{display: 'flex'}}>
+          <Tooltip placement="topLeft" title={record.reason || ''}>
+            <span className="eslips-2 m-r-8">{record.reason}</span>
           </Tooltip>
+          {
+            record.isModify &&
+              <Tags color='rgba(0, 199, 149, 0.08)'>改单</Tags>
+          }
         </span>
       ),
     }, {
@@ -425,6 +430,8 @@ class Payment extends React.PureComponent {
             refuse={this.handleRefuse}
             templateId={record.invoiceTemplateId}
             templateType={0}
+            allow="modify"
+            onCallback={() => this.onOk()}
           >
             <a>查看</a>
           </InvoiceDetail>

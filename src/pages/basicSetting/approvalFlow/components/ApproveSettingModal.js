@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, Radio, Divider, Row, Col, Button, message, Checkbox } from 'antd';
+import { Modal, Form, Input, Select, Radio, Divider, Row, Col, Button, message, Checkbox, Tooltip } from 'antd';
 import { approveUser, approveCreate, approveSet, approveLeader } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
 import { choosePeople } from '@/utils/ddApi';
@@ -283,7 +283,33 @@ class ApproveSettingModal extends Component {
                     <RadioGroup onChange={e => this.onChange(e)}>
                       {
                         radioList.map(item => (
-                          <Radio key={item.key} value={item.key}>{item.value}</Radio>
+                          <Radio key={item.key} value={item.key}>
+                            {
+                              item.key === 'approverRole' ?
+                                <span>
+                                  {item.value}
+                                  <Tooltip
+                                    title={(
+                                      <div>
+                                        <p className="m-b-8">1.审核角色是什么？</p>
+                                        <p className="m-b-8">可以将有相同审批职能的人设置为同一角色，并将角色添加为审批人。</p>
+                                        <p className="m-b-8">2.角色的管理范围？</p>
+                                        <p className="m-b-8">角色中的每个人可以指定管理的部门/费用类别，设置后对应部门/费用类别的员工的审批就由对应的人审批</p>
+                                        <p className="m-b-8">如何添加审批角色？</p>
+                                        <p className="m-b-8">进入设置-&lt;角色管理-&lt;审批角色，有两种方式添加审批角色</p>
+                                        <p className="m-b-8">a.手动添加</p>
+                                        <p className="m-b-8">b.直接同步钉钉通讯录的角色至鑫支出</p>
+                                      </div>
+                                    )}
+                                    placement="bottomLeft"
+                                  >
+                                    <i className="iconfont iconIcon-yuangongshouce" />
+                                  </Tooltip>
+                                </span>
+                                :
+                                <span>{item.value}</span>
+                            }
+                          </Radio>
                         ))
                       }
                     </RadioGroup>

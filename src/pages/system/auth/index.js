@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { message, Menu } from 'antd';
+import { message, Menu, Tooltip } from 'antd';
 import { connect } from 'dva';
 import Auth from './auth';
 import ApproveIndex from './approve';
@@ -90,7 +90,21 @@ class AuthIndex extends React.PureComponent {
             className="m-l-32 titleMenu"
           >
             <Menu.Item key="auth">系统角色</Menu.Item>
-            <Menu.Item key="approve">审批角色</Menu.Item>
+            <Menu.Item key="approve">
+              <Tooltip
+                title={(
+                  <div>
+                    <p style={{marginBottom: 0}}>1.审核角色是什么？</p>
+                    <p className="m-b-8">可以将有相同审批职能的人设置为同一角色，并将角色添加为审批人。</p>
+                    <p style={{marginBottom: 0}}>2.角色的管理范围？</p>
+                    <p className="m-b-8">角色中的每个人可以指定管理的部门/费用类别，设置后对应部门/费用类别的员工的审批就由对应的人审批</p>
+                  </div>
+                )}
+                placement="bottomLeft"
+              >
+                <span>审批角色</span>
+              </Tooltip>
+            </Menu.Item>
           </Menu>
         </div>
         {

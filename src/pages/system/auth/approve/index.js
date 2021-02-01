@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import { Table, Popconfirm, Divider, Button, message, Tooltip, Modal } from 'antd';
+import ddImg from '@/assets/img/dingding.png';
 import AddModal from './components/AddModal';
 
 const { confirm } = Modal;
@@ -75,7 +76,7 @@ class ApproveIndex extends Component {
           type: 'auth/syncApproveRole',
           payload: {}
         }).then(() => {
-          message.success('同步成功');
+          message.success('数据同步中，请稍后查看');
           const { query } = this.props;
           this.onQuery({
             pageNo: 1,
@@ -100,6 +101,15 @@ class ApproveIndex extends Component {
     const columns = [{
       title: '角色名称',
       dataIndex: 'approveRoleName',
+      render: (_, record) => (
+        <span>
+          {record.approveRoleName}
+          {
+            record.isDing &&
+              <img src={ddImg} className="m-l-8" alt="钉钉" style={{width: '16px', height: '16px'}} />
+          }
+        </span>
+      )
     }, {
       title: '角色简介',
       dataIndex: 'note',

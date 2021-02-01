@@ -11,9 +11,14 @@ function Apply(props) {
     dataIndex: 'reason',
     render: (text) => (
       <span>
-        <Tooltip placement="topLeft" title={text || ''}>
-          <span className="eslips-2">{text}</span>
-        </Tooltip>
+        {
+          text && text.length > 10 ?
+            <Tooltip placement="topLeft" title={text || ''}>
+              <span className="eslips-2">{text}</span>
+            </Tooltip>
+            :
+            <span>{text}</span>
+        }
       </span>
     ),
   },
