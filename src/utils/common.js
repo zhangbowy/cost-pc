@@ -291,7 +291,8 @@ export const isJsonString = (str) => {
   return false;
 };
 
-export const setTime = ({ time, type }) => {
+export const setTime = ({ time }) => {
+  console.log('setTime -> time', time);
   const times = moment(time).format('YYYY-MM-DD');
-  return moment(times).format(type);
+  return moment(times).format('x');
 };

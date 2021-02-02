@@ -27,6 +27,7 @@ const basicStr = [{
 }];
 @connect(({ loading, session, addInvoice, global, costGlobal }) => ({
   loading: loading.effects['addInvoice/add'] || loading.effects['addInvoice/edit'],
+  detailLoading: loading.effects['addInvoice/detail'] || false,
   userInfo: session.userInfo,
   allList: addInvoice.allList,
   costCategoryList: global.costCategoryList,
@@ -43,7 +44,7 @@ class CategoryAdd extends PureComponent {
     data: {},
     selectList: [],
     categoryList: [],
-    templateType: 0,
+    templateType: 2,
     fieldList: [],
     templatePdfVo: {
       'templateType':0,
@@ -386,7 +387,8 @@ class CategoryAdd extends PureComponent {
     const {
       allList,
       approveList,
-      isModifyInvoice
+      isModifyInvoice,
+      detailLoading
     } = this.props;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
@@ -483,6 +485,7 @@ class CategoryAdd extends PureComponent {
                     onChanges={this.onChangeDatas}
                     reLoan={reLoan}
                     reApply={reApply}
+                    detailLoading={detailLoading}
                   />
                 </div>
               }

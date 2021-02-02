@@ -207,6 +207,7 @@ class AddAccount extends React.PureComponent {
                     <Select
                       showSearch
                       placeholder="请选择"
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
                     >
                       {
                         bankList.map((it) => (
@@ -229,6 +230,7 @@ class AddAccount extends React.PureComponent {
                     <Cascader
                       options={treeList}
                       placeholder={`请选择${labelInfo.awAreas}`}
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
                     />
                   )
                 }

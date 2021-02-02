@@ -23,6 +23,8 @@ export default {
   compareParams: (obj) => {
     const { hisCostDetailsVo, hisParams, params, costDetailsVo, templateType } = obj;
     console.log('costDetailsVo', costDetailsVo);
+    console.log('params', params);
+    console.log('hisParams', hisParams);
     console.log('hisCostDetailsVo', hisCostDetailsVo);
     let newParams = {
       id: params.id,
@@ -55,8 +57,17 @@ export default {
       });
     }
     changeDefaultStr[templateType].forEach(item => {
+
       if (hisParams[item] !== params[item]) {
-        Object.assign(newParams, { [item]: params[item] });
+        if (item === 'imgUrl') {
+          const imgs = hisParams[item] ? hisParams[item].map(it => it.imgUrl) : [];
+          const newImg = params[item] ? params[item].map(it => it.imgUrl) : [];
+          if (JSON.stringify(imgs) !== JSON.stringify(newImg)) {
+            Object.assign(newParams, { [item]: params[item] });
+          }
+        } else {
+          Object.assign(newParams, { [item]: params[item] });
+        }
       }
     });
     if (!Number(templateType)) {

@@ -340,9 +340,9 @@ class BorrowPay extends React.PureComponent {
       dataIndex: 'reason',
       width: 140,
       render: (_, record) => (
-        <span>
+        <span style={{display: 'flex'}}>
           <Tooltip placement="topLeft" title={record.reason || ''}>
-            <span className="eslips-2">{record.reason}</span>
+            <span className="eslips-2 m-r-8">{record.reason}</span>
           </Tooltip>
           {
             record.isModify &&

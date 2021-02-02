@@ -262,7 +262,7 @@ class Basic extends React.PureComponent {
       templateType,
       dispatch,
       reApply,
-      reLoan
+      reLoan,
     } = this.props;
     const { cost, user, category, users,
       deptJson, flowId, approveList,
@@ -462,7 +462,7 @@ class Basic extends React.PureComponent {
                   initialValue: data && data.relation ? data.relation : [],
                 })(
                   <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reLoan')}>
-                    <Checkbox value="isRelationLoan">关联启用</Checkbox>
+                    <Checkbox value="isRelationLoan">允许关联</Checkbox>
                     {
                       reLoan.includes('isRelationLoan') &&
                         <Checkbox value="isWriteByRelationLoan">必填</Checkbox>
@@ -480,7 +480,7 @@ class Basic extends React.PureComponent {
                   initialValue: data && data.relations ? data.relations : [],
                 })(
                   <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reApply')}>
-                    <Checkbox value="isRelationApply">关联启用</Checkbox>
+                    <Checkbox value="isRelationApply">允许关联</Checkbox>
                     {
                       reApply.includes('isRelationApply') &&
                         <Checkbox value="isWriteByRelationApply">必填</Checkbox>

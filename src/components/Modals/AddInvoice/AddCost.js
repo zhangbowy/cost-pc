@@ -768,11 +768,11 @@ class AddCost extends Component {
                         ]
                       })(
                         <InputNumber
-                          placeholder={showField.costSum && showField.costSum.note ?
-                          showField.costSum.note : '请输入'}
+                          placeholder={showField.amount && showField.amount.note ?
+                          showField.amount.note : '请输入'}
                           onChange={(val) => this.onChangeAmm(val)}
                           style={{width: '100%'}}
-                          disabled={modify && showField.costSum && !showField.costSum.isModify}
+                          disabled={modify && showField.amount && !showField.amount.isModify}
                         />
                       )
                     }

@@ -20,7 +20,7 @@ import ReceiptModal from '../ReceiptModal';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
 import AddApply from './AddApply';
 import { invoiceJson, placeholderType } from '../../../utils/constants';
-import { JsonParse, compare } from '../../../utils/common';
+import { JsonParse, compare, setTime } from '../../../utils/common';
 import ApplyTable from './ApplyTable';
 import AddFolder from './AddFolder';
 import defaultFunc from './utils';
@@ -305,7 +305,7 @@ class AddInvoice extends Component {
         accountList: account,
         inDetails: djDetails,
         visible: true,
-        historyParams: contents,
+        historyParams: JsonParse(contentJson),
       });
     }
   }
@@ -1037,23 +1037,24 @@ class AddInvoice extends Component {
           costDetailsVo: arr,
         };
         if(Number(templateType) === 1) {
+          console.log('时间',setTime({ time: val.repaymentTime }));
           Object.assign(params, {
             loanSum: (val.loanSum*1000)/10,
-            repaymentTime: val.repaymentTime ? setTimeout({ time: val.repaymentTime, type: 'x' }) : '',
+            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
         } else if (Number(templateType) === 2) {
           Object.assign(params, {
             applicationSum: (val.applicationSum*1000)/10,
-            repaymentTime: val.repaymentTime ? setTimeout({ time: val.repaymentTime, type: 'x' }) : '',
+            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
           if (showField.happenTime.dateType === '2' || showField.happenTime.dateType === 2) {
             Object.assign(params, {
-              startTime: val.time ? setTimeout({ time: val.time[0], type: 'x' }) : '',
-              endTime: val.time ? setTimeout({ time: val.time[1], type: 'x' }) : ''
+              startTime: val.time ? setTime({ time: val.time[0], type: 'x' }) : '',
+              endTime: val.time ? setTime({ time: val.time[1], type: 'x' }) : ''
             });
           } else if (showField.happenTime.dateType === '1' || showField.happenTime.dateType === 1) {
             Object.assign(params, {
-              startTime: val.time ? setTimeout({ time: val.time, type: 'x' }) : ''
+              startTime: val.time ? setTime({ time: val.time, type: 'x' }) : ''
             });
           }
         }
