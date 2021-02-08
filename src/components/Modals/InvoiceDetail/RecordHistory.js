@@ -7,7 +7,10 @@ import style from './index.scss';
 import { isJsonString } from '../../../utils/common';
 
 function RecordHistory(props) {
-
+  const {
+    previewImage,
+    previewFiles,
+  } = props;
   const columns = [{
     title: '字段名称',
     dataIndex: 'fieldName',
@@ -23,9 +26,9 @@ function RecordHistory(props) {
         arr = JSON.parse(record.oldMsg);
         if (record.fieldName === '图片') {
           return (
-            <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
+            <span className={arr && (arr.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
               {arr && arr.map((it, index) => (
-                <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
+                <div className="m-r-8" onClick={() => previewImage(arr, index)}>
                   <img alt="图片" src={it.imgUrl} className={style.images} />
                 </div>
               ))}
@@ -33,9 +36,9 @@ function RecordHistory(props) {
           );
         }
         return (
-          <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
+          <span className={arr && (arr.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
             {arr && arr.map((it) => (
-              <div className={style.files} onClick={() => this.previewFiles(it)}>
+              <div className={style.files} onClick={() => previewFiles(it)}>
                 <img
                   className='attachment-icon'
                   src={fileIcon[it.fileType]}
@@ -87,12 +90,12 @@ function RecordHistory(props) {
         return (
           <>
             <span
-              className={record.imgUrl && (record.imgUrl.length > 0) ?
+              className={arrs && (arrs.length > 0) ?
               style.imgUrlScroll : style.imgUrl}
               style={{overflow: 'scroll'}}
             >
               {arrs && arrs.map((it, index) => (
-                <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
+                <div className="m-r-8" onClick={() => previewImage(arrs, index)}>
                   <img alt="图片" src={it.imgUrl} className={style.images} />
                 </div>
               ))}
@@ -118,12 +121,12 @@ function RecordHistory(props) {
         if (record.fieldName === '图片') {
           return (
             <span
-              className={record.imgUrl && (record.imgUrl.length > 0) ?
+              className={arr && (arr.length > 0) ?
               style.imgUrlScroll : style.imgUrl}
               style={{overflow: 'scroll'}}
             >
               {arr && arr.map((it, index) => (
-                <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
+                <div className="m-r-8" onClick={() => previewImage(arr, index)}>
                   <img alt="图片" src={it.imgUrl} className={style.images} />
                 </div>
               ))}
@@ -142,7 +145,7 @@ function RecordHistory(props) {
             }}
           >
             {arr && arr.map((it) => (
-              <div className={style.files} onClick={() => this.previewFiles(it)}>
+              <div className={style.files} onClick={() => previewFiles(it)}>
                 <img
                   className='attachment-icon'
                   src={fileIcon[it.fileType]}
@@ -194,12 +197,12 @@ function RecordHistory(props) {
         return (
           <>
             <span
-              className={record.imgUrl && (record.imgUrl.length > 0) ?
+              className={arrs && (arrs.length > 0) ?
               style.imgUrlScroll : style.imgUrl}
               style={{overflow: 'scroll'}}
             >
               {arrs && arrs.map((it, index) => (
-                <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
+                <div className="m-r-8" onClick={() => previewImage(arrs, index)}>
                   <img alt="图片" src={it.imgUrl} className={style.images} />
                 </div>
               ))}

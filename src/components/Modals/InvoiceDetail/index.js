@@ -730,6 +730,7 @@ class InvoiceDetail extends Component {
               </div>
               <CostDetailTable
                 list={category}
+                previewImage={this.previewImage}
               />
             </>
           }
@@ -750,7 +751,12 @@ class InvoiceDetail extends Component {
                 <div className={style.line} />
                 <span>改单历史</span>
               </div>
-              <RecordHistory list={recordList} type={1} />
+              <RecordHistory
+                list={recordList}
+                type={1}
+                previewImage={this.previewImage}
+                previewFiles={this.previewFiles}
+              />
             </>
           }
         </Modal>

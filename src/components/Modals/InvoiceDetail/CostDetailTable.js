@@ -7,6 +7,7 @@ import style from './index.scss';
 class CostDetailTable extends PureComponent {
 
   onHandle = (list) => {
+    const { previewImage } = this.props;
     console.log('CostDetailTable -> onHandle -> list', list);
     let newArr = [];
     const columns = [];
@@ -93,7 +94,7 @@ class CostDetailTable extends PureComponent {
             render: (_, record) => (
               <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
                 {record.imgUrl && record.imgUrl.map((it, index) => (
-                  <div className="m-r-8" onClick={() => this.previewImage(record.imgUrl, index)}>
+                  <div className="m-r-8" onClick={() => previewImage(record.imgUrl, index)}>
                     <img alt="图片" src={it.imgUrl} className={style.images} />
                   </div>
                 ))}
