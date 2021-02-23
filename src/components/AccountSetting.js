@@ -94,10 +94,13 @@ class AccountSetting extends Component {
     const val = { ...data };
     validateFields((err, values) => {
       if(!err) {
-        const awAreas = values.awAreas.map(it => {
-          const items = areaCode.filter(item => item.areaCode === it)[0];
-          return { ...items };
-        });
+        const awAreas = [];
+        if (values.awAreas) {
+          values.awAreas.map(it => {
+            const items = areaCode.filter(item => item.areaCode === it)[0];
+            return { ...items };
+          });
+        }
         Object.assign(val, {
           ...values,
           awAreas,

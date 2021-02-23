@@ -47,16 +47,16 @@ class Workbench extends PureComponent {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (document.querySelector('#svg-area')) {
       wave.init();
     }
-    this.onQuery({
+    await this.onQuery({
       isComplete: false,
       pageNo: 1,
       pageSize: 10,
     });
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'workbench/personal',
       payload: {}
     }).then(() => {
@@ -65,17 +65,17 @@ class Workbench extends PureComponent {
         personal,
       });
     });
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'workbench/costList',
       payload: {}
     });
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'global/invoiceList',
       payload: {
         type: 1,
       }
     });
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'workbench/ejectFrame',
       payload: {}
     }).then((e) => {

@@ -1047,12 +1047,16 @@ class AddInvoice extends Component {
             applicationSum: (val.applicationSum*1000)/10,
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
-          if (showField.happenTime.dateType === '2' || showField.happenTime.dateType === 2) {
+          if (showField.happenTime &&
+            (showField.happenTime.dateType === '2' ||
+            showField.happenTime.dateType === 2)) {
             Object.assign(params, {
               startTime: val.time ? setTime({ time: val.time[0], type: 'x' }) : '',
               endTime: val.time ? setTime({ time: val.time[1], type: 'x' }) : ''
             });
-          } else if (showField.happenTime.dateType === '1' || showField.happenTime.dateType === 1) {
+          } else if (showField.happenTime &&
+            (showField.happenTime.dateType === '1' ||
+            showField.happenTime.dateType === 1)) {
             Object.assign(params, {
               startTime: val.time ? setTime({ time: val.time, type: 'x' }) : ''
             });
@@ -1204,12 +1208,16 @@ class AddInvoice extends Component {
       Object.assign(params, {
         applicationSum: (val.applicationSum*1000)/10,
       });
-      if (showField.happenTime.dateType === '2' || showField.happenTime.dateType === 2) {
+      if (showField.happenTime &&
+        (showField.happenTime.dateType === '2' ||
+        showField.happenTime.dateType === 2)) {
         Object.assign(params, {
           startTime: val.time ? moment(val.time[0]).format('x') : '',
           endTime: val.time ? moment(val.time[1]).format('x') : ''
         });
-      } else if (showField.happenTime.dateType === '1' || showField.happenTime.dateType === 1) {
+      } else if (showField.happenTime &&
+        (showField.happenTime.dateType === '1' ||
+        showField.happenTime.dateType === 1)) {
         Object.assign(params, {
           startTime: val.time ? moment(val.time).format('x') : ''
         });
