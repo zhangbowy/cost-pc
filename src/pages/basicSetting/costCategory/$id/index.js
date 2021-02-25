@@ -309,11 +309,11 @@ class CategoryAdd extends PureComponent {
     const routes = [
       {
         path: '/basicSetting/costCategory',
-        breadcrumbName: '费用类别设置',
+        breadcrumbName: '支出类别设置',
       },
       {
         path: 'second',
-        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}费用类别`,
+        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}支出类别`,
       },
     ];
 

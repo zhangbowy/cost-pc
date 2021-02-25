@@ -343,7 +343,7 @@ class StaticChart extends Component {
           chartName={chartName}
           changeMoney={changeMoney}
         >
-          <a>{`${type === 'project' || type === 'supplier' ? '查看费用类别分布' : '查看趋势图'}`}</a>
+          <a>{`${type === 'project' || type === 'supplier' ? '查看支出类别分布' : '查看趋势图'}`}</a>
         </Chart>
       ),
       fixed: 'right'

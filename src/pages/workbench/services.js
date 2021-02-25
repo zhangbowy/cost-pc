@@ -12,4 +12,5 @@ export default {
   unRemind: `${APP_API}/cost/eject/unRemind`,
   personal:  `${APP_API}/cost/invoice/base/personal`,
   associateLists: `${APP_API}/cost/invoice/application/associate`, // 申请单
+  setUser: `${APP_API}/cost/user/workbench/set`,
 };

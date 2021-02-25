@@ -27,7 +27,7 @@ class CostTable extends Component {
       lists.splice(index, 1);
       this.props.onChangeData(lists);
     } else {
-      message.error('只有一条费用类别，不能删除');
+      message.error('只有一条支出类别，不能删除');
     }
   }
 
@@ -54,7 +54,7 @@ class CostTable extends Component {
       });
     });
     const columns = [{
-      title: '费用类别',
+      title: '支出类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.cateNames}>

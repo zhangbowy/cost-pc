@@ -103,6 +103,9 @@ export default {
     *unRemind({ payload }, { call }) {
       yield call(get, api.unRemind, payload);
     },
+    *setUser({ payload }, { call }) {
+      yield call(get, api.setUser, payload);
+    },
     *ejectFrame({ payload }, { call, put }) {
       const response = yield call(get, api.ejectFrame, payload);
       yield put({

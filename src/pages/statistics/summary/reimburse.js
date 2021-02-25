@@ -258,7 +258,7 @@ onDelete = (id) => {
       loading,
     } = this.props;
     const columns = [{
-      title: '费用类别',
+      title: '支出类别',
       dataIndex: 'categoryName',
       width: 100,
       render: (text) => (

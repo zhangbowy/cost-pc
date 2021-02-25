@@ -85,7 +85,7 @@ class Classify extends Component {
           invoiceQuery={this.inVoiceQuery}
           chartName="categoryName"
           column={[{
-            title: '费用类别',
+            title: '支出类别',
             dataIndex: 'categoryName',
             width: 150,
             render: (_, record) => (

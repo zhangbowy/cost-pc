@@ -100,7 +100,7 @@ export default {
       });
     },
     *export({ payload }, { call }) {
-      Object.assign(payload, { exportType:'export', fileName: '费用类别支出表' });
+      Object.assign(payload, { exportType:'export', fileName: '支出类别支出表' });
       yield call(post, api.export, payload);
     },
   },

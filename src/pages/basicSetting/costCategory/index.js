@@ -179,7 +179,7 @@ class CostCategory extends React.PureComponent {
           ),
         }, {
           node: (
-            <span className="m-l-8 pd-20-9 c-black-65" onClick={() => this.onAddCategory(`child_${record.id}`)}>创建子费用类别</span>
+            <span className="m-l-8 pd-20-9 c-black-65" onClick={() => this.onAddCategory(`child_${record.id}`)}>创建子支出类别</span>
           ),
         }, {
           node: (
@@ -254,12 +254,12 @@ class CostCategory extends React.PureComponent {
     }];
     return (
       <div className="mainContainer">
-        <PageHead title="费用类别设置" />
+        <PageHead title="支出类别设置" />
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">
               {/* <AddClassify title="add" onOk={() => this.onOk()} list={list}> */}
-              <Button type="primary" style={{marginRight: '8px'}} onClick={() => this.onAddCategory('add')}>新增费用类别</Button>
+              <Button type="primary" style={{marginRight: '8px'}} onClick={() => this.onAddCategory('add')}>新增支出类别</Button>
               {/* </AddClassify> */}
               <AddGroup onOk={this.onOk} title="add" list={list}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>

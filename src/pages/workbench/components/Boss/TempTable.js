@@ -1,27 +1,14 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Table, Tooltip, Button } from 'antd';
+import { Modal, Form, Table, Button } from 'antd';
 import Search from 'antd/lib/input/Search';
-import moment from 'moment';
-import { connect } from 'dva';
 import cs from 'classnames';
 import style from './index.scss';
-import InvoiceDetail from '../../InvoiceDetail';
+import listJson from './list';
 
-// const labelInfo = {
-//   costName: '支出类别',
-//   costSum: '金额(元)',
-//   costNote: '费用备注',
-//   imgUrl: '图片',
-//   happenTime: '发生日期'
-// };
-@connect(({ costGlobal }) => ({
-  loanList: costGlobal.loanList,
-  waitLoanSumAll: costGlobal.waitLoanSumAll,
-}))
 @Form.create()
-class LoanTable extends Component {
+class TempTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,21 +42,7 @@ class LoanTable extends Component {
   }
 
   onSearch = (e) => {
-    this.props.dispatch({
-      type: 'costGlobal/loanList',
-      payload: {
-        pageSize: 100,
-        pageNo: 1,
-        searchContent: e,
-      }
-    });
-  }
-
-  onQuery = (payload) => {
-    this.props.dispatch({
-      type: 'costGlobal/loanList',
-      payload,
-    });
+    console.log(e);
   }
 
   render() {
@@ -81,61 +54,7 @@ class LoanTable extends Component {
     const {
       visible,
     } = this.state;
-    const columns = [
-      {
-        title: '事由',
-        dataIndex: 'reason',
-        render: (_,record) => (
-          <span>
-            <InvoiceDetail templateType={1} id={record.loanId}>
-              <Tooltip placement="topLeft" title={record.reason || ''}>
-                <span className="eslips-2 ope-btn" style={{ cursor: 'pointer' }}>{record.reason}</span>
-              </Tooltip>
-            </InvoiceDetail>
-          </span>
-        ),
-        fixed: 'left'
-      },
-      {
-        title: '借款金额（元）',
-        dataIndex: 'loanSum',
-        className: 'moneyCol',
-        render: (text) => (
-          <span>{text ? text/100 : 0}</span>
-        )
-      },
-      {
-        title: '待核销金额（元）',
-        dataIndex: 'waitAssessSum',
-        className: 'moneyCol',
-        render: (text) => (
-          <span>{text ? text/100 : 0}</span>
-        )
-      },
-      {
-        title: '核销中金额',
-        dataIndex: 'freezeSum',
-        render: (text) => (
-          <span>{text ? text/100 : 0}</span>
-        )
-      },
-      {
-        title: '单号',
-        dataIndex: 'invoiceNo',
-      }, {
-        title: '提交时间',
-        dataIndex: 'createTime',
-        render: (text) => (
-          <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
-        )
-      }, {
-        title: '预计还款日期',
-        dataIndex: 'repaymentTime',
-        render: (text) => (
-          <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
-        )
-      },
-    ];
+    const columns = listJson;
 
     return (
       <span className={cs('formItem', style.addCost)}>
@@ -180,4 +99,4 @@ class LoanTable extends Component {
   }
 }
 
-export default LoanTable;
+export default TempTable;

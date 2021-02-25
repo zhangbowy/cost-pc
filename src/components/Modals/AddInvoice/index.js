@@ -278,7 +278,7 @@ class AddInvoice extends Component {
           });
           if (category && category.length) {
             const msg = Array.from(new Set(category)).join('、');
-            message.error(`${msg}费用类别被删除，请重新选择`);
+            message.error(`${msg}支出类别被删除，请重新选择`);
           }
           this.onAddCost(arrs);
         }
@@ -518,7 +518,7 @@ class AddInvoice extends Component {
         }
       });
       if (isShowMsg && (operateType === 'copy')) {
-        message.error('部分费用类别不可用，已自动删除');
+        message.error('部分支出类别不可用，已自动删除');
       }
       const newArr = this.onInitCategory(banArr);
       // 初始化的数据存储后续比较
@@ -2210,7 +2210,7 @@ class AddInvoice extends Component {
                         list={costDetailsVo}
                         invoiceName={inDetails.name}
                       >
-                        <Button icon="plus" style={{ width: '231px' }} key="export">费用夹导入</Button>
+                        <Button icon="plus" style={{ width: '231px' }} key="export">账本导入</Button>
                       </AddFolder>
                     }
                     {

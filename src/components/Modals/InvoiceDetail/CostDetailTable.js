@@ -155,7 +155,7 @@ class CostDetailTable extends PureComponent {
     const { list } = this.props;
     const allData = this.onHandle(list);
     let columns = [{
-      title: '费用类别',
+      title: '支出类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.icons}>

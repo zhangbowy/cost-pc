@@ -18,7 +18,7 @@ const { Option } = Select;
 const { TreeNode } = Tree;
 const { RangePicker } = DatePicker;
 const labelInfo = {
-  costName: '费用类别',
+  costName: '支出类别',
   costSum: '金额(元)',
   costNote: '费用备注',
   imgUrl: '图片',
@@ -65,7 +65,7 @@ class AddCost extends Component {
     const _this = this;
     const { costType, id, isDelete4Category } = this.props;
     if (isDelete4Category) {
-      message.error('该费用类别已被管理员删除');
+      message.error('该支出类别已被管理员删除');
       return;
     }
     await this.props.dispatch({
@@ -484,7 +484,7 @@ class AddCost extends Component {
     />;
   });
 
-  // 选择费用类别
+  // 选择支出类别
   onChange = (val, types, expand) => {
     console.log('AddCost -> onChange -> expand', expand);
     let detail = this.state.details;
@@ -708,7 +708,7 @@ class AddCost extends Component {
                     {
                       getFieldDecorator('categoryId', {
                         initialValue: details.categoryId || undefined,
-                        rules: [{ required: true, message: '请选择费用类别' }]
+                        rules: [{ required: true, message: '请选择支出类别' }]
                       })(
                         <TreeSelect
                           placeholder="请选择"

@@ -115,3 +115,18 @@
     border-radius: 4px;
   }
 }
+
+.judgeType{
+  display: flex;
+  justify-content: center;
+  div{
+    width: 288px;
+    height: 120px;
+    cursor: pointer;
+    padding-right: 24px;
+    border-radius: 4px;
+  }
+  p{
+    margin-bottom: 0px;
+  }
+}

@@ -371,11 +371,11 @@ export const borrowJson = [{
   note: '',
 }];
 
-// 费用类别
+// 支出类别
 export const costClassify = [{
   key: 'costCategory',
   field: 'costCategory',
-  name: '费用类别',
+  name: '支出类别',
   status: true,
   isWrite: true,
   note: '',
@@ -424,7 +424,7 @@ export const placeholderType = {
   5: '请输入',
 };
 
-// 费用类别分摊
+// 支出类别分摊
 export const classifyShare = [{
   key: 'user',
   field: 'user',
@@ -739,7 +739,7 @@ export const condition = [{
   ruleType: 'people',
 }, {
   key: 'cost_category',
-  value: '费用类别',
+  value: '支出类别',
   sel: condExclude,
   type: 'selectTree',
   ruleType: 'category',
@@ -784,7 +784,7 @@ export const conditionObj = {
     ruleType: 'people',
   }, {
     key: 'cost_category',
-    value: '费用类别',
+    value: '支出类别',
     sel: condExclude,
     type: 'selectTree',
     ruleType: 'category',

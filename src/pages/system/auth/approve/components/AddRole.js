@@ -224,7 +224,7 @@ class AddRole extends Component {
                 multiple
               />
             </Form.Item>
-            <Form.Item label="费用类别" {...formItemLayout}>
+            <Form.Item label="支出类别" {...formItemLayout}>
               {
                 getFieldDecorator('categoryVos', {
                   initialValue: category,

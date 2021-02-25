@@ -11,7 +11,7 @@ export default {
     breadcrumbs: [], // 面包屑
     menuKey: '', // 导航选中标识
     payAccount: [], // 收款账号列表
-    costCategoryList: [], // 费用类别列表
+    costCategoryList: [], // 支出类别列表
     jsApiAuth: {}, // jsApi
     invoiceDetail: {}, // 单据详情
     changeNodes: {}, // 审批流的节点

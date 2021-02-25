@@ -41,7 +41,7 @@ function Pie({ data, changeMoney }) {
   },
   series: [
       {
-          name: '费用类别',
+          name: '支出类别',
           type: 'pie',
           radius: '55%',
           center: ['50%', '55%'],

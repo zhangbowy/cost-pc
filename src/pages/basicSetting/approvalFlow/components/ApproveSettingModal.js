@@ -294,7 +294,7 @@ class ApproveSettingModal extends Component {
                                         <p className="m-b-8">1.审核角色是什么？</p>
                                         <p className="m-b-8">可以将有相同审批职能的人设置为同一角色，并将角色添加为审批人。</p>
                                         <p className="m-b-8">2.角色的管理范围？</p>
-                                        <p className="m-b-8">角色中的每个人可以指定管理的部门/费用类别，设置后对应部门/费用类别的员工的审批就由对应的人审批</p>
+                                        <p className="m-b-8">角色中的每个人可以指定管理的部门/支出类别，设置后对应部门/支出类别的员工的审批就由对应的人审批</p>
                                         <p className="m-b-8">如何添加审批角色？</p>
                                         <p className="m-b-8">进入设置-&lt;角色管理-&lt;审批角色，有两种方式添加审批角色</p>
                                         <p className="m-b-8">a.手动添加</p>

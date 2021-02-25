@@ -16,7 +16,7 @@ const labelInfo = {
   parentId: '所属分组',
   note: '描述',
   isAllUse: '可用人员',
-  isAllCostCategory: '可选费用类别',
+  isAllCostCategory: '可选支出类别',
   approveId: '审批流',
   icon: '图标',
   status: '启用'

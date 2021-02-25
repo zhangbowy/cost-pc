@@ -151,7 +151,7 @@ class CostFolder extends Component {
     const { folderList, total, loading, page, folderSum } = this.props;
     const { selectedRowKeys, selectedRows, visible, money, searchContent, slVisible } = this.state;
     const columns = [{
-      title: '费用类别',
+      title: '支出类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.cateNames}>
@@ -272,7 +272,7 @@ class CostFolder extends Component {
       <div>
         <div onClick={() => this.onShow()}>{this.props.children}</div>
         <Modal
-          title="费用夹"
+          title="账本"
           visible={visible}
           onCancel={() => this.onCancel()}
           width="980px"
@@ -306,7 +306,7 @@ class CostFolder extends Component {
             onSelect={this.onSelect}
             onSelectAll={this.onSelectAll}
             onSearch={this.onSearch}
-            searchPro="请输入费用类别名称搜索"
+            searchPro="请输入支出类别名称搜索"
             total={total}
             loading={loading}
             onQuery={this.onQuery}
@@ -330,7 +330,7 @@ class CostFolder extends Component {
             )}
             production={(
               <span>
-                费用夹共计{folderSum.totalCount ? folderSum.totalCount : 0}笔，
+                账本共计{folderSum.totalCount ? folderSum.totalCount : 0}笔，
                 {folderSum.costSumStr ? folderSum.costSumStr : 0}
               </span>
             )}

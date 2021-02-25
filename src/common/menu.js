@@ -63,7 +63,7 @@
   //   path: 'basicSetting',
   //   children: [{
   //     id: 'basicSetting_costCategory',
-  //     name: '费用类别',
+  //     name: '支出类别',
   //     path: 'costCategory',
   //   }, {
   //     id: 'basicSetting_payAccount',
@@ -172,7 +172,7 @@ const menuData = [
       path: 'department',
     }, {
       id: 'statistics_classify',
-      name: '费用类别支出表',
+      name: '支出类别支出表',
       myIcon: '',
       path: 'classify',
     }, {
@@ -209,7 +209,7 @@ const menuData = [
     path: 'basicSetting',
     children: [{
       id: 'basicSetting_costCategory',
-      name: '费用类别',
+      name: '支出类别',
       path: 'costCategory',
     }, {
       id: 'basicSetting_payAccount',

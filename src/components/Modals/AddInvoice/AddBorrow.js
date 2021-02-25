@@ -11,7 +11,7 @@ import style from './index.scss';
 import { sortBy } from '../../../utils/common';
 
 // const labelInfo = {
-//   costName: '费用类别',
+//   costName: '支出类别',
 //   costSum: '金额(元)',
 //   costNote: '费用备注',
 //   imgUrl: '图片',

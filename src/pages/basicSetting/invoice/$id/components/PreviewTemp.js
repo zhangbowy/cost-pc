@@ -7,7 +7,7 @@ function PreviewTemp() {
       className={style.StrTemplates}
     >
       <div className={style.tmpCnt}>
-        <p className="fs-14 c-black-85">费用类别</p>
+        <p className="fs-14 c-black-85">支出类别</p>
         <div className={style.inputs}>
           <span className="fs-14 c-black-25">请选择</span>
           <i className="iconfont icondown c-black-25" />

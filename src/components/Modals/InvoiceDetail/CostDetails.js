@@ -14,7 +14,7 @@ function CostDetails({ children, record }) {
       <span onClick={() => setVisible(true)}>{children}</span>
       <Modal
         visible={visible}
-        title="费用类别详情"
+        title="支出类别详情"
         footer={null}
         onCancel={() => setVisible(false)}
         width="980px"
@@ -27,7 +27,7 @@ function CostDetails({ children, record }) {
         <Row>
           <Col span={8}>
             <div style={{display: 'flex'}}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>费用类别名称：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>支出类别名称：</span>
               <span className="fs-14 c-black-65" style={{flex: 1}}>{record.categoryName}</span>
             </div>
           </Col>
@@ -41,7 +41,7 @@ function CostDetails({ children, record }) {
           </Col>
           <Col span={8}>
             <div style={{display: 'flex'}}>
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>费用类别备注：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>支出类别备注：</span>
               <span className="fs-14 c-black-65" style={{flex: 1}}>{record.note}</span>
             </div>
           </Col>

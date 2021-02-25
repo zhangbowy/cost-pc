@@ -258,7 +258,7 @@ class AddClassify extends React.PureComponent {
       }
     }).then(() => {
       onOk();
-      message.success(`${defaultTitle[title]}费用类别成功`);
+      message.success(`${defaultTitle[title]}支出类别成功`);
       this.onCancel();
     });
   }
@@ -280,7 +280,7 @@ class AddClassify extends React.PureComponent {
       <span className={styles.content}>
         <span onClick={() => this.show()}>{ children }</span>
         <Modal
-          title={title && `${defaultTitle[title]}费用类别`}
+          title={title && `${defaultTitle[title]}支出类别`}
           visible={visible}
           key="addInvoice"
           bodyStyle={{

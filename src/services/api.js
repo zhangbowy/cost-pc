@@ -12,7 +12,7 @@ export default {
   login: `${APP_API}/cost/user/login`,
   mockLogin: `${APP_API}/cost/user/mockLogin`,
 
-  /* ---------- 费用类别 ----------*/
+  /* ---------- 支出类别 ----------*/
   costCategoryList: `${APP_API}/cost/category/list`,
   authApi: `${APP_API}/cost/user/jsapiAuth`,
   payAccount: `${APP_API}/cost/account/payment/list/on`,
@@ -84,19 +84,19 @@ export default {
   batchPay: `${APP_API}/cost/alipay/fundBatch/payOrder`, // 发起支付
   getServiceTime: `${APP_API}/cost/common/getServiceTime`, // 获取服务器时间
   reCreate: `${APP_API}/cost/alipay/fundBatch/reCreate`, // 重新下单
-  /* ------------------------------ 费用夹 ---------------------------------*/
-  addFolder: `${APP_API}/cost/cost/folder/add`, // 新增费用夹
-  editFolder: `${APP_API}/cost/cost/folder/edit`, // 编辑费用夹
-  delFolder: `${APP_API}/cost/cost/folder/del`, // 删除费用夹
-  detailFolder: `${APP_API}/cost/cost/folder/detail`, // 费用夹详情
-  listFolder: `${APP_API}/cost/cost/folder/list`, // 费用夹列表
-  useExpense: `${APP_API}/cost/invoice/submit/allExpense/list`, // 获取可用的费用夹的费用
+  /* ------------------------------ 账本 ---------------------------------*/
+  addFolder: `${APP_API}/cost/cost/folder/add`, // 新增账本
+  editFolder: `${APP_API}/cost/cost/folder/edit`, // 编辑账本
+  delFolder: `${APP_API}/cost/cost/folder/del`, // 删除账本
+  detailFolder: `${APP_API}/cost/cost/folder/detail`, // 账本详情
+  listFolder: `${APP_API}/cost/cost/folder/list`, // 账本列表
+  useExpense: `${APP_API}/cost/invoice/submit/allExpense/list`, // 获取可用的账本的费用
    /* ------------------------------ 草稿 ---------------------------------*/
-   addDraft: `${APP_API}/cost/draft/add`, // 新增费用夹
-   editDraft: `${APP_API}/cost/draft/edit`, // 编辑费用夹
-   delDraft: `${APP_API}/cost/draft/del`, // 删除费用夹
-   detailDraft: `${APP_API}/cost/draft/detail`, // 费用夹详情
-   listDraft: `${APP_API}/cost/draft/list`, // 费用夹列表
+   addDraft: `${APP_API}/cost/draft/add`, // 新增账本
+   editDraft: `${APP_API}/cost/draft/edit`, // 编辑账本
+   delDraft: `${APP_API}/cost/draft/del`, // 删除账本
+   detailDraft: `${APP_API}/cost/draft/detail`, // 账本详情
+   listDraft: `${APP_API}/cost/draft/list`, // 账本列表
    loanList: `${APP_API}/cost/invoice/base/loanList`,
    applyDetail: `${APP_API}/cost/invoice/application/detail`, // 申请单详情
    userDep:  `${APP_API}/cost/user/userInfo4UserIds`,

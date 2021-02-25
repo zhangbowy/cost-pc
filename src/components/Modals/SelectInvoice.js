@@ -264,7 +264,7 @@ class SelectInvoice extends Component {
                         {
                           item.disabled ?
                             <Tooltip
-                              title="已选的费用类别不支持该单据模版"
+                              title="已选的支出类别不支持该单据模版"
                               placement="bottom"
                             >
                               <div

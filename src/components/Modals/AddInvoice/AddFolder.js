@@ -12,7 +12,7 @@ import style from './index.scss';
 import { getArrayColor, classifyIcon } from '../../../utils/constants';
 
 // const labelInfo = {
-//   costName: '费用类别',
+//   costName: '支出类别',
 //   costSum: '金额(元)',
 //   costNote: '费用备注',
 //   imgUrl: '图片',
@@ -233,13 +233,13 @@ class AddFolder extends Component {
       folderList
     } = this.state;
     const columns = [{
-      title: '费用类别',
+      title: '支出类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.cateNames}>
           {
             record.disabled ?
-              <Tooltip title={`【${invoiceName}】不支持该费用类别`} placement="bottomLeft">
+              <Tooltip title={`【${invoiceName}】不支持该支出类别`} placement="bottomLeft">
                 <i
                   className={`iconfont icon${record.icon}`}
                   style={{
@@ -377,7 +377,7 @@ class AddFolder extends Component {
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title="费用夹导入"
+          title="账本导入"
           visible={visible}
           width="980px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}

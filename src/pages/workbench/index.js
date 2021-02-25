@@ -20,6 +20,7 @@ import HeadLeft from './components/HeadLeft';
 import StepShow from '../../components/StepShow';
 // import { accountType } from '../../utils/constants';
 import wave from '../../utils/wave';
+// import Boss from './components/Boss';
 
 @Form.create()
 @connect(({ loading, workbench, session, global }) => ({
@@ -190,6 +191,15 @@ class Workbench extends PureComponent {
     });
   }
 
+  onSetUser = isBoss => {
+    this.props.dispatch({
+      type: 'workbench/setUser',
+      payload: {
+        isBoss
+      }
+    });
+  }
+
   render() {
     const { list, total, query, userInfo, loading, invoiceList, OftenTemplate } = this.props;
     const { huaVisible, personal, isComplete, invoiceTemplateIds, reason } = this.state;
@@ -275,6 +285,7 @@ class Workbench extends PureComponent {
             <StepShow {...this.props} userInfo={userInfo} />
             :
             <>
+              {/* <Boss visible /> */}
               <div className={style.app_header}>
                 <Header personal={personal || {}} onOk={() => this.onPersonal()} />
               </div>

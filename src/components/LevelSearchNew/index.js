@@ -395,7 +395,7 @@ class LevelSearch extends Component {
               清空所有筛选条件
             </div>
           </div>
-          
+
           {/* <Modal
             title="高级搜索"
             visible={visible}
@@ -415,7 +415,7 @@ class LevelSearch extends Component {
             <Form className="formItem">
               <Row>
                 <Col span={12}>
-                  <Form.Item label="费用类别" {...formItemLayout}>
+                  <Form.Item label="支出类别" {...formItemLayout}>
                     {
                       getFieldDecorator('categoryIds', {
                         initialValue: details.categoryIds || [],

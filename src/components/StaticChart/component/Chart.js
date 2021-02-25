@@ -119,7 +119,7 @@ function Chart({ children, data, type, onChart, chartList, dateType, startTime, 
     <div>
       <span onClick={() => onShow()}>{ children }</span>
       <Modal
-        title={`${type === 'project' || type === 'supplier' ? '查看费用类别分布' : '查看趋势图'}`}
+        title={`${type === 'project' || type === 'supplier' ? '查看支出类别分布' : '查看趋势图'}`}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}

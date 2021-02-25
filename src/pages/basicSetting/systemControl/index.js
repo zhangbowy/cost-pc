@@ -106,7 +106,7 @@ class SystemControl extends Component {
           <p className={style.production}>
             <span>开启后，在单据发放环节，发放人可对单据的部分信息进行修改后发放，无需重新打回。比如事由、金额等，如需支持更多信息的修改，请至</span>
             <span className="sub-color">
-              <a onClick={() => this.onLink(0)}>单据模版设置</a>/<a onClick={() => this.onLink(1)}>费用类别设置</a>
+              <a onClick={() => this.onLink(0)}>单据模版设置</a>/<a onClick={() => this.onLink(1)}>支出类别设置</a>
             </span>
             <span>，编辑页面操作</span>
           </p>

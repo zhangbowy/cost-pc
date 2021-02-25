@@ -279,7 +279,7 @@ class Right extends PureComponent {
               details.field.indexOf('expand_') > -1 &&
               <p style={{ marginTop: '-20px', marginBottom: '8px' }}>
                 <i className="iconfont iconxinxitishi warn fs-16 m-r-4" style={{verticalAlign: 'middle'}} />
-                <span className="fs-12 warn" style={{verticalAlign: 'middle'}}>公用字段标题修改后将应用到所有{type === 'invoice' ? '单据模板' : '费用类别'}</span>
+                <span className="fs-12 warn" style={{verticalAlign: 'middle'}}>公用字段标题修改后将应用到所有{type === 'invoice' ? '单据模板' : '支出类别'}</span>
               </p>
             }
             <Form.Item label="默认文案">

@@ -17,7 +17,7 @@ let id = 0;
 const defaultList = {
   '0': [{
     key: 'cost_category',
-    value: '费用类别',
+    value: '支出类别',
     sel: condExclude,
     type: 'selectTree',
     id,

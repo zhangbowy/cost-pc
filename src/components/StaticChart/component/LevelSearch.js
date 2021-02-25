@@ -241,7 +241,7 @@ class LevelSearch extends Component {
                 </Col>
               }
               <Col span={12}>
-                <Form.Item label="费用类别" {...formItemLayout}>
+                <Form.Item label="支出类别" {...formItemLayout}>
                   {
                     getFieldDecorator('categoryIds', {
                       initialValue: details.categoryIds || [],

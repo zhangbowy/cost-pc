@@ -171,7 +171,7 @@ function Controller(props) {
       </div>
       <div className="content-dt">
         <Lines name="单据清空">
-          <Tooltip title="清空所有单据，费用类别、单据等基础设置不变">
+          <Tooltip title="清空所有单据，支出类别、单据等基础设置不变">
             <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
           </Tooltip>
           <span className="fs-14 c-black-45 fw-400">（清空数据后不可撤销，请谨慎操作）</span>

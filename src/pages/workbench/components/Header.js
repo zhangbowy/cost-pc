@@ -48,7 +48,7 @@ function Header(props) {
             <p>
               <i className={cs(style.cost, 'iconfont', 'iconfeiyongjia')} />
               <span className="c-black-45 fs-14 m-l-4">
-                费用夹<span className="c-black-85 fs-14">{personal.folderCount ? personal.folderCount : 0}</span>笔
+                账本<span className="c-black-85 fs-14">{personal.folderCount ? personal.folderCount : 0}</span>笔
               </span>
             </p>
             <p className="c-black-85 fs-30 fw-400">¥{personal.folderSum ? personal.folderSum/100 : 0}</p>

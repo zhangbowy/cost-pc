@@ -4,9 +4,9 @@ import api from '@/services/api';
 export default {
   namespace: 'costGlobal',
   state: {
-    costCategoryList: [], // 可用的费用类别
-    folderList: [], // 费用夹列表
-    detailFolder: {}, // 费用夹详情
+    costCategoryList: [], // 可用的支出类别
+    folderList: [], // 账本列表
+    detailFolder: {}, // 账本详情
     page: {
       pageNo: 1,
       pageSize: 10,
