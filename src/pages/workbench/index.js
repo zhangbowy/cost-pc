@@ -20,6 +20,9 @@ import HeadLeft from './components/HeadLeft';
 import StepShow from '../../components/StepShow';
 // import { accountType } from '../../utils/constants';
 import wave from '../../utils/wave';
+import SubmitReport from './components/Boss/SubmitReport';
+import LeftPie from './components/Boss/LeftPie';
+import RightChart from './components/Boss/RightChart';
 // import Boss from './components/Boss';
 
 @Form.create()
@@ -37,6 +40,11 @@ import wave from '../../utils/wave';
   invoiceList: global.invoiceList,
 }))
 class Workbench extends PureComponent {
+
+  static getDerivedStateFromProps(nextProps) {
+    console.log('nextProps', nextProps.location);
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -52,6 +60,7 @@ class Workbench extends PureComponent {
     if (document.querySelector('#svg-area')) {
       wave.init();
     }
+    console.log('params', this.props.location);
     await this.onQuery({
       isComplete: false,
       pageNo: 1,
@@ -83,6 +92,10 @@ class Workbench extends PureComponent {
       console.log(e);
       this.setState({huaVisible:this.props.huaVisible});
     });
+  }
+
+  componentDidUpdate(prev) {
+    console.log('prev',prev.location);
   }
 
   onQuery = (payload) => {
@@ -293,6 +306,13 @@ class Workbench extends PureComponent {
                 <HeadLeft onOk={() => this.onPersonal()} OftenTemplate={OftenTemplate} />
                 <HeadRight onOk={() => this.onPersonal()} />
               </div>
+              <div className={style.ad}>
+                <SubmitReport />
+              </div>
+              <div className={style.ad}>
+                <LeftPie />
+                <RightChart />
+              </div>
               <div className="content-dt" style={{ padding: '0 0 32px 0', height: 'auto' }}>
                 <div style={{ margin: '0 32px' }}>
                   <p className="fw-500 fs-14 c-black-85 m-t-16 m-b-16">我发起的单据</p>
@@ -349,7 +369,6 @@ class Workbench extends PureComponent {
                     pagination={{
                       current: query.pageNo,
                       onChange: (pageNumber) => {
-                        console.log('onChange');
                         this.onQuery({
                           pageNo: pageNumber,
                           pageSize: query.pageSize,
@@ -362,7 +381,6 @@ class Workbench extends PureComponent {
                       showSizeChanger: true,
                       showQuickJumper: true,
                       onShowSizeChange: (cur, size) => {
-                        console.log('翻页');
                         this.onQuery({
                           reason,
                           pageNo: cur,

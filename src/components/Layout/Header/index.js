@@ -9,15 +9,18 @@ import { Dropdown, Avatar, Icon, Menu ,
   // Icon,
   Breadcrumb,
 } from 'antd';
+import withRouter from 'umi/withRouter';
 
 import styles from './index.scss';
 import XfwProducts from '../../XfwProducts';
 
+@withRouter
 @connect(({ session, global }) => ({
   userInfo: session.userInfo,
   breadcrumbs: global.breadcrumbs,
 }))
 class App extends React.PureComponent {
+
   static propTypes = {
     breadcrumbs: PropTypes.array,
     collapsed: PropTypes.bool,
@@ -71,6 +74,19 @@ class App extends React.PureComponent {
         >
           <Link to="/basicSetting/receiptAccount">个人收款账户</Link>
         </Menu.Item>
+        <Menu.Item
+          key="workbench"
+        >
+          <Link
+            to={{
+              pathname: '/workbench',
+              state: { id: 1 }
+            }}
+            replace
+          >
+            切换员工工作台
+          </Link>
+        </Menu.Item>
         {/* <Menu.Divider />
         {
           sysList.map((el) => (
@@ -81,7 +97,6 @@ class App extends React.PureComponent {
         } */}
       </Menu>
     );
-    console.log('11111',userInfo);
     return (
       <div className={styles.header}>
         {/* <div className="app-left">

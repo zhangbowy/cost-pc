@@ -303,7 +303,7 @@ class People extends Component {
         </span>
       ),
     }, {
-      title: '费用数',
+      title: '明细数',
       dataIndex: 'categoryCountAll',
       width: 100,
     }];

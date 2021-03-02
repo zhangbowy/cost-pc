@@ -68,3 +68,43 @@
     margin-bottom: 0;
   }
 }
+
+.judgeType{
+  display: flex;
+  justify-content: center;
+  div{
+    height: 224px;
+    width: 208px;
+    cursor: pointer;
+    padding-right: 24px;
+    border-radius: 4px;
+  }
+  p{
+    margin-bottom: 0px;
+  }
+  .cost{
+    background: url('../../../../assets/img/cost.png') no-repeat center / 100%;
+    box-shadow: 0 0 0 2px transparent inset;
+    transition:all .4s ease;
+    cursor: pointer;
+    margin-left: 12px;
+    margin-right: 12px;
+    &:hover{
+      background-size: 120%;
+      transform: translateY(-6px);
+    }
+  }
+  .chengben{
+    background: url('../../../../assets/img/chengben.png') no-repeat center / 100%;
+    box-shadow: 0 0 0 2px transparent inset;
+    transition:all .4s ease;
+    cursor: pointer;
+    margin-left: 12px;
+    margin-right: 12px;
+    &:hover{
+      background-size: 120%;
+      transform: translateY(-6px);
+    }
+  }
+}
+

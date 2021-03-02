@@ -325,7 +325,7 @@ class StaticChart extends Component {
       dataIndex: 'submitUserCountAll',
       width: 70,
     }, {
-      title: '费用数',
+      title: '明细数',
       dataIndex: 'categoryCountAll',
       width: 70,
     }, {

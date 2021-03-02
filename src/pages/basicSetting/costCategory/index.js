@@ -11,6 +11,8 @@ import Search from 'antd/lib/input/Search';
 import PageHead from '@/components/PageHead';
 // import AddClassify from './components/AddClassfy';
 import AddGroup from './components/AddGroup';
+import JudgeType from './components/JudgeType';
+import Tags from '../../../components/Tags';
 
 const namespace = 'costCategory';
 const { confirm } = Modal;
@@ -32,6 +34,7 @@ class CostCategory extends React.PureComponent {
     super(props);
     this.state = {
       costName: '',
+      typeVisible: false,
     };
   }
 
@@ -106,11 +109,18 @@ class CostCategory extends React.PureComponent {
     });
   }
 
+  changeVisible = () => {
+    this.setState({
+      typeVisible: false,
+    });
+  }
+
   render() {
     const {
       list,
       loading
     } = this.props;
+    const { typeVisible } = this.state;
     let lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -126,8 +136,20 @@ class CostCategory extends React.PureComponent {
       dataIndex: 'costName',
       render: (_, record) => (
         <span>
-          <span style={{ marginRight: '8px' }}>{record.costName}</span>
+          <span style={{ marginRight: '8px' }}>{record.costName}{record.attribute}</span>
           { (record.status === 0) && <Tag color="red">已停用</Tag> }
+          {
+            (record.type === 0) && (Number(record.attribute) === 0) &&
+            <Tags color='rgba(0, 199, 149, 0.08)'>
+              费用
+            </Tags>
+          }
+          {
+            (record.type === 0) && (record.attribute === 1) &&
+            <Tags color='rgba(0, 199, 149, 0.08)'>
+              成本
+            </Tags>
+          }
         </span>
       ),
     }, {
@@ -167,17 +189,6 @@ class CostCategory extends React.PureComponent {
       render: (_, record) => {
         const _this = this;
         let btns = [{
-          node: (
-            <AddGroup
-              onOk={() => _this.onOk()}
-              title="add"
-              data={{parentId: record.id}}
-              list={list}
-            >
-              <span className="pd-20-9 c-black-65">添加子分组</span>
-            </AddGroup>
-          ),
-        }, {
           node: (
             <span className="m-l-8 pd-20-9 c-black-65" onClick={() => this.onAddCategory(`child_${record.id}`)}>创建子支出类别</span>
           ),
@@ -258,9 +269,16 @@ class CostCategory extends React.PureComponent {
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">
-              {/* <AddClassify title="add" onOk={() => this.onOk()} list={list}> */}
-              <Button type="primary" style={{marginRight: '8px'}} onClick={() => this.onAddCategory('add')}>新增支出类别</Button>
-              {/* </AddClassify> */}
+              <JudgeType
+                title="add"
+                data={{}}
+                onOk={this.onOk}
+                visible={typeVisible}
+                changeVisible={this.changeVisible}
+                linkInvoice={this.onAddCategory}
+              >
+                <Button type="primary" style={{marginRight: '8px'}}>新增支出类别</Button>
+              </JudgeType>
               <AddGroup onOk={this.onOk} title="add" list={list}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>

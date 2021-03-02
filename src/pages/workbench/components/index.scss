@@ -129,4 +129,28 @@
   p{
     margin-bottom: 0px;
   }
+  .boss{
+    background: url('../../../assets/img/boss.png') no-repeat center / 100%;
+    box-shadow: 0 0 0 2px transparent inset;
+    transition:all .4s ease;
+    cursor: pointer;
+    margin-left: 12px;
+    margin-right: 12px;
+    &:hover{
+      background-size: 120%;
+      transform: translateY(-6px);
+    }
+  }
+  .peoples{
+    background: url('../../../assets/img/peoples.png') no-repeat center / 100%;
+    box-shadow: 0 0 0 2px transparent inset;
+    transition:all .4s ease;
+    cursor: pointer;
+    margin-left: 12px;
+    margin-right: 12px;
+    &:hover{
+      background-size: 120%;
+      transform: translateY(-6px);
+    }
+  }
 }

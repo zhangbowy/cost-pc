@@ -4,10 +4,12 @@ import { formItemLayout, defaultTitle } from '@/utils/constants';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import { findIndexArray } from '@/utils/common';
+import fields from '@/utils/fields';
 
 const labelItem = {
   costName: '名称',
-  parentId: '所属分组'
+  parentId: '所属分组',
+  attribute: '类型'
 };
 const {Option} = Select;
 @Form.create()
@@ -129,6 +131,7 @@ class AddGroup extends React.PureComponent {
       title,
       form: { getFieldDecorator },
     } = this.props;
+    const { costType } = fields;
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -157,41 +160,63 @@ class AddGroup extends React.PureComponent {
                 )
               }
             </Form.Item>
-            <Form.Item
-              key="parentId"
-              label={labelItem.parentId}
-              {...formItemLayout}
-            >
+            {
+              title === 'add' &&
+              <Form.Item
+                key="parentId"
+                label={labelItem.parentId}
+                {...formItemLayout}
+              >
+                {
+                  (lists && lists.length === 0) ?
+                  getFieldDecorator('parentId', {
+                    initialValue: (data && data.parentId) || '0',
+                  })(
+                    <Select disabled={title === 'edit'}>
+                      <Option key="0">无</Option>
+                      {
+                        lists.map(item => (
+                          <Option key={item.value}>{item.costName}</Option>
+                        ))
+                      }
+                    </Select>
+                  )
+                  :
+                  getFieldDecorator('parentId', {
+                    initialValue: data && data.parentId,
+                  })(
+                    <Cascader
+                      options={lists}
+                      placeholder="请选择"
+                      fieldNames={{
+                        label: 'costName',
+                        value: 'id',
+                      }}
+                      disabled={title === 'edit'}
+                      showSearch={this.filter}
+                      changeOnSelect
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
+            <Form.Item label="类型选择" {...formItemLayout}>
               {
-                (lists && lists.length === 0) ?
-                getFieldDecorator('parentId', {
-                  initialValue: (data && data.parentId) || '0',
+                getFieldDecorator('attribute', {
+                  initialValue: (data && data.attribute) || 0,
                 })(
-                  <Select disabled={title === 'edit'}>
-                    <Option key="0">无</Option>
+                  <Select
+                    placeholder="请选择类型选择"
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                    disabled={title === 'edit'}
+                  >
                     {
-                      lists.map(item => (
-                        <Option key={item.value}>{item.costName}</Option>
+                      costType.map(it => (
+                        <Option key={it.key} value={it.key}>{it.value}</Option>
                       ))
                     }
                   </Select>
-                )
-                :
-                getFieldDecorator('parentId', {
-                  initialValue: data && data.parentId,
-                })(
-                  <Cascader
-                    options={lists}
-                    placeholder="请选择"
-                    fieldNames={{
-                      label: 'costName',
-                      value: 'id',
-                    }}
-                    disabled={title === 'edit'}
-                    showSearch={this.filter}
-                    changeOnSelect
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                  />
                 )
               }
             </Form.Item>

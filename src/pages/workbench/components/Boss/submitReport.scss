@@ -1,0 +1,41 @@
+.submit{
+  width: 100%;
+  height: 196px;
+  background: #fff;
+  .top{
+    height: 64px;
+    width: 100%;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    p{
+      margin-bottom: 0px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 28px;
+    }
+  }
+  .bottom{
+    display: flex;
+    height: 108px;
+    align-items: center;
+    margin-left: 16px;
+    p{
+      margin-bottom: 0px;
+    }
+    .content{
+      width: 272px;
+      height: 108px;
+      cursor: pointer;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 16px;
+      &:hover{
+        background: #FAFBFB;
+      }
+    }
+  }
+}

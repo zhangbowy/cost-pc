@@ -235,5 +235,18 @@ export default {
         )
       },
     ]
-  }
+  },
+  list: [{
+    key: 0,
+    value: '计划待付'
+  }, {
+    key: 1,
+    value: '应付'
+  }, {
+    key: 2,
+    value: '已付'
+  }, {
+    key: 3,
+    value: '借款待还'
+  }]
 };

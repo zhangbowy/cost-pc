@@ -334,6 +334,7 @@ class AddCost extends Component {
           categoryName: details.categoryName,
           icon: lbDetail.icon,
           detailFolderId: costTitle === 'edit' ? id : '',
+          attribute: lbDetail.attribute,
         };
         const expandCostDetailFieldVos = [];
         const selfCostDetailFieldVos = []; // 私有字段

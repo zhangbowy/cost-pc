@@ -126,7 +126,7 @@ function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceN
           <div className={style.contents}>
             {
               !Number(templatePdfVo.paperType) &&
-              <div className={style.title}>费用明细</div>
+              <div className={style.title}>支出明细</div>
             }
             <table>
               <tr>

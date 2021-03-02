@@ -314,7 +314,7 @@ class AddInvoice extends Component {
   onInit = async(detail, djDetails) => {
     // const { templateType } = detail;
     const expandField = [];
-    const { operateType } = this.props;
+    const { operateType, userInfo } = this.props;
     console.log('AddInvoice -> onInit -> detail', detail);
     let applyArr = detail.applicationIds && detail.applicationIds.length &&
       operateType !== 'modify' && operateType !== 'copy' ?
@@ -393,6 +393,7 @@ class AddInvoice extends Component {
         loanEntities: detail.loanEntities || [],
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
+        createDingUserId: userInfo.dingUserId,
         loanUserId: detail.userJson ? detail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
@@ -406,6 +407,7 @@ class AddInvoice extends Component {
         loanEntities: detail.loanEntities || [],
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
+        createDingUserId: userInfo.dingUserId,
         loanUserId: detail.userJson ? detail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
@@ -430,6 +432,7 @@ class AddInvoice extends Component {
         loanEntities: detail.loanEntities || [],
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
+        createDingUserId: userInfo.dingUserId,
         loanUserId: detail.userJson ? detail.userJson[0].userId : [],
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
@@ -1015,6 +1018,7 @@ class AddInvoice extends Component {
             expandCostDetailFieldVos: item.expandCostDetailFieldVos,
             selfCostDetailFieldVos: item.selfCostDetailFieldVos,
             detailFolderId: item.detailFolderId || '',
+            attribute: item.attribute,
           });
           if (item.costDetailShareVOS) {
             item.costDetailShareVOS.forEach(it => {
@@ -2185,7 +2189,7 @@ class AddInvoice extends Component {
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
                   <div className={style.header}>
                     <div className={style.line} />
-                    <span>费用明细</span>
+                    <span>支出明细</span>
                   </div>
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
                     {
