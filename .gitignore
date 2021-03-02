@@ -5,6 +5,7 @@
 /npm-debug.log*
 /yarn-error.log
 /package-lock.json
+/package-lock
 # /yarn.lock
 
 # production
@@ -15,6 +16,8 @@
 .DS_Store
 /.vscode
 /.idea
+.gitignore
+
 
 # umi
 .umi

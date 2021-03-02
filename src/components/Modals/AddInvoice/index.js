@@ -314,7 +314,7 @@ class AddInvoice extends Component {
   onInit = async(detail, djDetails) => {
     // const { templateType } = detail;
     const expandField = [];
-    const { operateType } = this.props;
+    const { operateType, userInfo } = this.props;
     console.log('AddInvoice -> onInit -> detail', detail);
     let applyArr = detail.applicationIds && detail.applicationIds.length &&
       operateType !== 'modify' && operateType !== 'copy' ?
@@ -393,7 +393,8 @@ class AddInvoice extends Component {
         loanEntities: detail.loanEntities || [],
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
-        loanUserId: detail.userJson ? detail.userJson[0].userId : '',
+        createDingUserId: userInfo.dingUserId,
+        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         applicationSum: detail.applicationSum,
@@ -406,7 +407,8 @@ class AddInvoice extends Component {
         loanEntities: detail.loanEntities || [],
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
-        loanUserId: detail.userJson ? detail.userJson[0].userId : '',
+        createDingUserId: userInfo.dingUserId,
+        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         borrowArr: detail.loanSum,
@@ -430,7 +432,8 @@ class AddInvoice extends Component {
         loanEntities: detail.loanEntities || [],
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
-        loanUserId: detail.userJson ? detail.userJson[0].userId : [],
+        createDingUserId: userInfo.dingUserId,
+        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         projectId: detail.projectId || '',
@@ -438,7 +441,7 @@ class AddInvoice extends Component {
         supplier: detail.supplierAccountId ? `${detail.supplierAccountId}_${detail.supplierId}` : ''
       }, // 详情
       users: detail.userJson,
-      loanUserId: detail.loanUserId, // 审批人的userId
+      loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '', // 审批人的userId
       expandField, // 扩展字段
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr,
@@ -790,6 +793,7 @@ class AddInvoice extends Component {
       });
     });
     const { loanUserId } = this.state;
+    console.log('AddInvoice -> onAddCost -> loanUserId', loanUserId);
     this.getNode({
       loanEntities,
       categorySumEntities,
@@ -1047,12 +1051,20 @@ class AddInvoice extends Component {
             applicationSum: (val.applicationSum*1000)/10,
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
-          if (showField.happenTime.dateType === '2' || showField.happenTime.dateType === 2) {
+          if (
+              showField.happenTime &&
+              (showField.happenTime.dateType === '2' ||
+              showField.happenTime.dateType === 2)
+            ) {
             Object.assign(params, {
               startTime: val.time ? setTime({ time: val.time[0], type: 'x' }) : '',
               endTime: val.time ? setTime({ time: val.time[1], type: 'x' }) : ''
             });
-          } else if (showField.happenTime.dateType === '1' || showField.happenTime.dateType === 1) {
+          } else if (
+            showField.happenTime &&
+            (showField.happenTime.dateType === '1' ||
+            showField.happenTime.dateType === 1)
+          ) {
             Object.assign(params, {
               startTime: val.time ? setTime({ time: val.time, type: 'x' }) : ''
             });
@@ -1204,12 +1216,20 @@ class AddInvoice extends Component {
       Object.assign(params, {
         applicationSum: (val.applicationSum*1000)/10,
       });
-      if (showField.happenTime.dateType === '2' || showField.happenTime.dateType === 2) {
+      if (
+        showField.happenTime &&
+        (showField.happenTime.dateType === '2' ||
+        showField.happenTime.dateType === 2)
+      ) {
         Object.assign(params, {
           startTime: val.time ? moment(val.time[0]).format('x') : '',
           endTime: val.time ? moment(val.time[1]).format('x') : ''
         });
-      } else if (showField.happenTime.dateType === '1' || showField.happenTime.dateType === 1) {
+      } else if (
+        showField.happenTime &&
+        (showField.happenTime.dateType === '1' ||
+          showField.happenTime.dateType === 1)
+      ) {
         Object.assign(params, {
           startTime: val.time ? moment(val.time).format('x') : ''
         });
