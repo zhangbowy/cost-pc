@@ -3,8 +3,7 @@
 import React, { Component } from 'react';
 import { Modal, Form, Table, Button } from 'antd';
 import Search from 'antd/lib/input/Search';
-import cs from 'classnames';
-import style from './index.scss';
+import style from './submitReport.scss';
 import listJson from './list';
 
 @Form.create()
@@ -13,25 +12,21 @@ class TempTable extends Component {
     super(props);
     this.state = {
       visible: false,
+      searchContent: '',
     };
   }
 
   onShow = async() => {
-    this.props.dispatch({
-      type: 'costGlobal/loanList',
-      payload: {
-        pageNo: 1,
-        pageSize: 1000,
-      }
-    }).then(() => {
-      console.log(this.props.waitList);
-      const { list } = this.props;
-      console.log('list', list);
+    const { reportType } = this.props;
+    this.props.reportChange({
+      pageNo: 1,
+      pageSize: 10,
+      reportType,
+    }, () => {
       this.setState({
         visible: true,
       });
     });
-
   }
 
   onCancel = () => {
@@ -49,18 +44,34 @@ class TempTable extends Component {
     const {
       children,
       loanList,
-      waitLoanSumAll
+      reportType,
+      total,
+      reportChange,
+      page,
+      loanSumVo,
     } = this.props;
+
     const {
       visible,
+      searchContent
     } = this.state;
-    const columns = listJson;
+    const details = listJson[reportType];
+    const {columns, title} = details;
 
     return (
-      <span className={cs('formItem', style.addCost)}>
-        <span onClick={() => this.onShow()}>{children}</span>
+      <>
+        <span
+          onClick={() => this.onShow()}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flex: 1
+          }}
+        >
+          {children}
+        </span>
         <Modal
-          title="待还款单据"
+          title={title}
           visible={visible}
           width="880px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
@@ -79,22 +90,52 @@ class TempTable extends Component {
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
             />
-            待核销共计¥{waitLoanSumAll.waitAssessSumAll ? waitLoanSumAll.waitAssessSumAll/100 : 0}，
-            借款共计¥{waitLoanSumAll.loanSumAll ? waitLoanSumAll.loanSumAll/100 : 0}
+            {
+              Number(reportType) === 3 &&
+              <span>
+                待核销共计¥{loanSumVo.waitAssessSumAll ?
+                loanSumVo.waitAssessSumAll/100 : 0}，借款共计¥{loanSumVo.loanSumAll ?
+                loanSumVo.loanSumAll/100 : 0}
+              </span>
+            }
           </div>
           <div className={style.addCosts}>
             <div className={style.addTable}>
               <Table
                 columns={columns}
                 dataSource={loanList}
-                pagination={false}
                 rowKey="id"
                 scroll={{ x: '1100px' }}
+                pagination={{
+                  hideOnSinglePage: true,
+                  current: page.pageNo,
+                  onChange: (pageNumber) => {
+                    reportChange({
+                      pageNo: pageNumber,
+                      pageSize: page.pageSize,
+                      searchContent,
+                      reportType
+                    });
+                  },
+                  total,
+                  size: 'small',
+                  showTotal: () => (`共${total}条数据`),
+                  showSizeChanger: true,
+                  showQuickJumper: true,
+                  onShowSizeChange: (cur, size) => {
+                    reportChange({
+                      pageNo: cur,
+                      pageSize: size,
+                      searchContent,
+                      reportType
+                    });
+                  }
+                }}
               />
             </div>
           </div>
         </Modal>
-      </span>
+      </>
     );
   }
 }

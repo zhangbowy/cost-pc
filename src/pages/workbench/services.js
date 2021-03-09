@@ -13,4 +13,9 @@ export default {
   personal:  `${APP_API}/cost/invoice/base/personal`,
   associateLists: `${APP_API}/cost/invoice/application/associate`, // 申请单
   setUser: `${APP_API}/cost/user/workbench/set`,
+  submitReport: `${APP_API}/cost/user/workbench/submitReport`,
+  submitReportDetail: `${APP_API}/cost/user/workbench/submitReportDetail`,
+  brokenLine: `${APP_API}/cost/user/workbench/category/broken`,
+  chartPie: `${APP_API}/cost/user/workbench/get/chart`,
+  deptTree: `${APP_API}/cost/dept/list`,
 };

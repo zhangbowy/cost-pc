@@ -62,6 +62,25 @@
     color: rgba(255, 204, 12, 1);
   }
 }
+.bossHeader {
+  height: 128px;
+  position: relative;
+  .headTag{
+    height: 24px;
+  }
+  .headerRight{
+    height: 24px;
+    margin-top: -52px;
+  }
+  .lines{
+    height: 24px;
+  }
+  .btns{
+    position: absolute;
+    right: 40px;
+    top: 64px;
+  }
+}
 
 // 广告的左侧操作栏
 .headLeftC{

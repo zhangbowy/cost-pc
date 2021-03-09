@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-update-set-state */
 /**
  * Routes:
  *  - src/components/PrivateRoute
@@ -23,7 +24,8 @@ import wave from '../../utils/wave';
 import SubmitReport from './components/Boss/SubmitReport';
 import LeftPie from './components/Boss/LeftPie';
 import RightChart from './components/Boss/RightChart';
-// import Boss from './components/Boss';
+import Boss from './components/Boss';
+import { dateToTime } from '../../utils/util';
 
 @Form.create()
 @connect(({ loading, workbench, session, global }) => ({
@@ -38,6 +40,16 @@ import RightChart from './components/Boss/RightChart';
   huaVisible: workbench.huaVisible,
   personal: workbench.personal,
   invoiceList: global.invoiceList,
+  submitReport: workbench.submitReport,
+  submitReportDetail: workbench.submitReportDetail,
+  reportPage: workbench.reportPage,
+  fyCategory: workbench.fyCategory,
+  cbCategory: workbench.cbCategory,
+  totalSum: workbench.totalSum,
+  pieList: workbench.pieList,
+  deptTree: workbench.deptTree,
+  reportTotal: workbench.reportTotal,
+  loanSumVo: workbench.loanSumVo,
 }))
 class Workbench extends PureComponent {
 
@@ -53,6 +65,22 @@ class Workbench extends PureComponent {
       personal: {},
       isComplete: false,
       invoiceTemplateIds: 'all',
+      isBoss: props.userInfo ?
+        props.userInfo.workbenchIsBoss : false,
+      bossVisible: props.userInfo ?
+        props.userInfo.isSetWorkbench : false,
+      submitTime: {
+        ...dateToTime('0_m'),
+        type: '0_m'
+      },
+      pieChart: {
+        ...dateToTime('0_m'),
+        type: '0_m',
+      },
+      lineChart: {
+        ...dateToTime('0_m'),
+        type: '0_m',
+      }
     };
   }
 
@@ -60,13 +88,7 @@ class Workbench extends PureComponent {
     if (document.querySelector('#svg-area')) {
       wave.init();
     }
-    console.log('params', this.props.location);
-    await this.onQuery({
-      isComplete: false,
-      pageNo: 1,
-      pageSize: 10,
-    });
-    await this.props.dispatch({
+    this.props.dispatch({
       type: 'workbench/personal',
       payload: {}
     }).then(() => {
@@ -74,28 +96,65 @@ class Workbench extends PureComponent {
       this.setState({
         personal,
       });
+      this.onQuery({
+        isComplete: false,
+        pageNo: 1,
+        pageSize: 10,
+      });
+      this.props.dispatch({
+        type: 'workbench/costList',
+        payload: {}
+      });
+      this.props.dispatch({
+        type: 'global/invoiceList',
+        payload: {
+          type: 1,
+        }
+      });
+      // 支出简报
+      this.props.dispatch({
+        type: 'workbench/submitReport',
+        payload: {
+          ...dateToTime('0_m'),
+        }
+      });
+       // 右侧图表
+      this.props.dispatch({
+        type: 'workbench/brokenLine',
+        payload: {
+          ...dateToTime('3_cm'),
+        }
+      });
+      // 左侧图表
+      this.props.dispatch({
+        type: 'workbench/chartPie',
+        payload: {
+          ...dateToTime('0_y'),
+          attribute: 0,
+        }
+      });
+      this.props.dispatch({
+        type: 'workbench/deptTree',
+        payload: {}
+      });
+      this.props.dispatch({
+        type: 'workbench/ejectFrame',
+        payload: {}
+      }).then((e) => {
+        console.log(e);
+        this.setState({huaVisible:this.props.huaVisible});
+      });
     });
-    await this.props.dispatch({
-      type: 'workbench/costList',
-      payload: {}
-    });
-    await this.props.dispatch({
-      type: 'global/invoiceList',
-      payload: {
-        type: 1,
-      }
-    });
-    await this.props.dispatch({
-      type: 'workbench/ejectFrame',
-      payload: {}
-    }).then((e) => {
-      console.log(e);
-      this.setState({huaVisible:this.props.huaVisible});
-    });
+
   }
 
   componentDidUpdate(prev) {
     console.log('prev',prev.location);
+    if (prev.location.state && prev.location.state.id) {
+      this.setState({
+        isBoss: false,
+      });
+    }
   }
 
   onQuery = (payload) => {
@@ -151,19 +210,73 @@ class Workbench extends PureComponent {
 
   onPersonal = () => {
     const { query } = this.props;
+    const { isBoss } = this.state;
     this.onQuery({
       ...query,
       pageNo: 1,
     });
-    this.props.dispatch({
-      type: 'workbench/personal',
-      payload: {},
-    }).then(() => {
-      const { personal } = this.props;
-      this.setState({
-        personal
+    const { submitTime, pieChart, lineChart } = this.state;
+    if (isBoss) {
+      this.chart({
+        url: 'submitReport',
+        payload: this.setVal({
+          url: 'submitReport',
+          payload:{...submitTime},
+        })
       });
-    });
+      this.chart({
+        url: 'brokenLine',
+        payload: this.setVal({
+          url: 'brokenLine',
+          payload:{...lineChart},
+        })
+      });
+      this.chart({
+        url: 'chartPie',
+        payload: this.setVal({
+          url: 'chartPie',
+          payload:{...pieChart},
+        })
+      });
+    } else {
+      this.props.dispatch({
+        type: 'workbench/personal',
+        payload: {},
+      }).then(() => {
+        const { personal } = this.props;
+        this.setState({
+          personal
+        });
+      });
+    }
+  }
+
+  setVal = ({ url, payload }) => {
+    const obj = {
+      startTime: payload.startTime,
+      endTime: payload.endTime,
+    };
+    if (url === 'submitReport') {
+      if (payload.deptIds) {
+        Object.assign(obj , {
+          deptIds: payload.deptIds,
+        });
+      }
+      let dateType = 0;
+      if (payload.type.indexOf('q') > -1) {
+        dateType = 1;
+      } else if (payload.type.indexOf('y') > -1) {
+        dateType = 2;
+      }
+      Object.assign(obj , {
+        dateType,
+      });
+    } else if (url === 'pieChart') {
+      Object.assign(obj, {
+        attribute: payload.attribute,
+      });
+    }
+    return obj;
   }
 
   closeHua = (type) => {
@@ -210,12 +323,66 @@ class Workbench extends PureComponent {
       payload: {
         isBoss
       }
+    }).then(() => {
+      // window.location.reload();
+      this.setState({
+        isBoss,
+        bossVisible: false,
+      });
+    });;
+  }
+
+  reportChange = (payload, callback) => {
+    const {
+      submitTime: { startTime, endTime, deptIds }
+    } = this.state;
+    if (deptIds) {
+      Object.assign(payload, { deptIds });
+    }
+    console.log('reportChange', startTime);
+    this.props.dispatch({
+      type: 'workbench/submitReportDetail',
+      payload: {
+        ...payload,
+        startTime,
+        endTime,
+      },
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  chart  = ({ payload, url }, callback) => {
+    this.props.dispatch({
+      type: `workbench/${url}`,
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  onChangeState = (key, val) => {
+    this.setState({
+      [key]: val,
     });
   }
 
   render() {
-    const { list, total, query, userInfo, loading, invoiceList, OftenTemplate } = this.props;
-    const { huaVisible, personal, isComplete, invoiceTemplateIds, reason } = this.state;
+    const { list, total, query,
+        userInfo, loading, invoiceList,
+        OftenTemplate, submitReport,
+        fyCategory, cbCategory,deptTree,
+        reportPage, reportTotal,
+        loanSumVo,
+        submitReportDetail, pieList, totalSum } = this.props;
+    const { huaVisible, personal, isComplete,
+      invoiceTemplateIds, reason, submitTime,
+      pieChart, lineChart,
+      isBoss, bossVisible } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -298,21 +465,59 @@ class Workbench extends PureComponent {
             <StepShow {...this.props} userInfo={userInfo} />
             :
             <>
-              {/* <Boss visible /> */}
+              <Boss
+                visible={!bossVisible}
+                changeBoss={this.onSetUser}
+              />
               <div className={style.app_header}>
-                <Header personal={personal || {}} onOk={() => this.onPersonal()} />
+                <Header
+                  personal={personal || {}}
+                  onOk={() => this.onPersonal()}
+                  isBoss={isBoss}
+                />
               </div>
-              <div className={style.ad}>
-                <HeadLeft onOk={() => this.onPersonal()} OftenTemplate={OftenTemplate} />
-                <HeadRight onOk={() => this.onPersonal()} />
-              </div>
-              <div className={style.ad}>
-                <SubmitReport />
-              </div>
-              <div className={style.ad}>
-                <LeftPie />
-                <RightChart />
-              </div>
+              {
+                !isBoss &&
+                <div className={style.ad}>
+                  <HeadLeft onOk={() => this.onPersonal()} OftenTemplate={OftenTemplate} />
+                  <HeadRight onOk={() => this.onPersonal()} />
+                </div>
+              }
+              {
+                isBoss &&
+                <div className={style.ad}>
+                  <SubmitReport
+                    submitReport={submitReport}
+                    submitReportDetail={submitReportDetail}
+                    reportPage={reportPage}
+                    reportChange={this.reportChange}
+                    submitTime={submitTime}
+                    chart={this.chart}
+                    deptTree={deptTree}
+                    onChangeData={this.onChangeState}
+                    reportTotal={reportTotal}
+                    loanSumVo={loanSumVo}
+                  />
+                </div>
+              }
+              {
+                isBoss &&
+                <div className={style.ad}>
+                  <LeftPie
+                    chart={this.chart}
+                    data={pieList}
+                    totalSum={totalSum}
+                    pieChart={pieChart}
+                    onChangeData={this.onChangeState}
+                  />
+                  <RightChart
+                    chart={this.chart}
+                    lineData={{ cbCategory, fyCategory }}
+                    onChangeData={this.onChangeState}
+                    lineChart={lineChart}
+                  />
+                </div>
+              }
               <div className="content-dt" style={{ padding: '0 0 32px 0', height: 'auto' }}>
                 <div style={{ margin: '0 32px' }}>
                   <p className="fw-500 fs-14 c-black-85 m-t-16 m-b-16">我发起的单据</p>

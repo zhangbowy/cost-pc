@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Input, Select, Button, message, Cascader } from 'antd';
+import { Modal, Form, Input, Select, Button, message } from 'antd';
 import { formItemLayout, defaultTitle } from '@/utils/constants';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
@@ -23,7 +23,6 @@ class AddGroup extends React.PureComponent {
     super(props);
     this.state = {
       visible: false,
-      lists: [],
       data: {},
     };
   }
@@ -112,7 +111,6 @@ class AddGroup extends React.PureComponent {
     }
     this.setState({
       visible: true,
-      lists,
       data: datas,
     });
   }
@@ -125,7 +123,7 @@ class AddGroup extends React.PureComponent {
   }
 
   render() {
-    const { visible, lists, data } = this.state;
+    const { visible, data } = this.state;
     const {
       children,
       title,
@@ -160,7 +158,7 @@ class AddGroup extends React.PureComponent {
                 )
               }
             </Form.Item>
-            {
+            {/* {
               title === 'add' &&
               <Form.Item
                 key="parentId"
@@ -200,7 +198,7 @@ class AddGroup extends React.PureComponent {
                   )
                 }
               </Form.Item>
-            }
+            } */}
             <Form.Item label="类型选择" {...formItemLayout}>
               {
                 getFieldDecorator('attribute', {

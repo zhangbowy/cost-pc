@@ -22,6 +22,19 @@ export default {
     waitLoanSums: {},
     personal: {}, // 个人信息
     associateLists: [],
+    submitReport: {}, // 支出简报
+    submitReportDetail: [], // 支出简报的列表
+    reportPage: { // 简报列表的分页
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+    },
+    fyCategory: [],
+    cbCategory: [],
+    totalSum: 0,
+    pieList: [],
+    deptTree: [],
+    reportTotal: 0,
+    loanSumVo: {},
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -47,6 +60,70 @@ export default {
         type: 'save',
         payload: {
           personal: response || {},
+        },
+      });
+    },
+    *submitReport({ payload }, { call, put }) {
+      const response = yield call(get, api.submitReport, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          submitReport: response || {},
+        },
+      });
+    },
+    *submitReportDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.submitReportDetail, payload);
+      let loanSumVo = {};
+      let list = [];
+      let reportTotal = 0;
+      if (Number(payload.reportType) === 3) {
+        loanSumVo = response.loanSumVo;
+        list = response.pageObject.list || [];
+        reportTotal = response.pageObject.page.total || 0;
+      } else {
+        list = response.list || [];
+        reportTotal = response.page.total || 0;
+      }
+      yield put({
+        type: 'save',
+        payload: {
+          submitReportDetail: list,
+          loanSumVo,
+          reportPage: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize
+          },
+          reportTotal,
+        },
+      });
+    },
+    *brokenLine({ payload }, { call, put }) {
+      const response = yield call(get, api.brokenLine, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          cbCategory: response.cbCategory || [],
+          fyCategory: response.fyCategory || [],
+        },
+      });
+    },
+    *deptTree({ payload }, { call, put }) {
+      const response = yield call(get, api.deptTree, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          deptTree: response || [],
+        },
+      });
+    },
+    *chartPie({ payload }, { call, put }) {
+      const response = yield call(get, api.chartPie, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          pieList: response.pieChartVos || [],
+          totalSum: response.totalSum || 0,
         },
       });
     },

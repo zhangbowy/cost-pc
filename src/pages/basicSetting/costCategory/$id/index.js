@@ -58,7 +58,7 @@ class CategoryAdd extends PureComponent {
     this.props.dispatch({
       type: 'addCategory/allList',
       payload: {
-        attribute: title === 'add' ? costId : '',
+        attribute: title === 'add' ? costId : id.split('_')[2],
       }
     }).then(() => {
       const _this = this;
@@ -236,7 +236,7 @@ class CategoryAdd extends PureComponent {
         status: datas.status ? 1: 0,
         expandField: newArr.filter(it => it.field.indexOf('expand_field') > -1),
         selfFields: newArr.filter(it => it.field.indexOf('self_') > -1),
-        attribute: title === 'add' ? costId : datas.attribute,
+        attribute: title === 'add' ? costId : id.split('_')[2],
       };
       this.props.dispatch({
         type: url,

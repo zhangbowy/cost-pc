@@ -3,19 +3,23 @@ import cs from 'classnames';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
 // import constants from '@/utils/constants';
+import { Button } from 'antd';
 import Avatar from '../../../components/AntdComp/Avatar';
 import style from './index.scss';
 import CostFolder from '../../../components/Modals/AddInvoice/InvoiceTable/CostFolder';
 import Draft from '../../../components/Modals/AddInvoice/InvoiceTable/Draft';
 import LoanTable from '../../../components/Modals/AddInvoice/InvoiceTable/LoanTable';
+import AddCost from '../../../components/Modals/AddInvoice/AddCost';
+import SelectInvoice from '../../../components/Modals/SelectInvoice';
 
 function Header(props) {
   const {
-    personal
+    personal,
+    isBoss,
   } = props;
 
   return (
-    <div className={style.header}>
+    <div className={isBoss ? cs(style.header, style.bossHeader) : style.header}>
       <section className={style['wave-container']} style={{background: '#F6F9FB'}}>
         <svg id="svg-area">
           <path />
@@ -39,7 +43,10 @@ function Header(props) {
                 待还款<span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
               </span>
             </p>
-            <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum/100 : 0}</p>
+            {
+              !isBoss &&
+              <p className="c-black-85 fs-30 fw-400">¥{personal.loanSum ? personal.loanSum/100 : 0}</p>
+            }
           </div>
         </LoanTable>
         <i className={style.lines} />
@@ -51,7 +58,10 @@ function Header(props) {
                 账本<span className="c-black-85 fs-14">{personal.folderCount ? personal.folderCount : 0}</span>笔
               </span>
             </p>
-            <p className="c-black-85 fs-30 fw-400">¥{personal.folderSum ? personal.folderSum/100 : 0}</p>
+            {
+              !isBoss &&
+              <p className="c-black-85 fs-30 fw-400">¥{personal.folderSum ? personal.folderSum/100 : 0}</p>
+            }
           </div>
         </CostFolder>
         <i className={style.lines} />
@@ -63,12 +73,29 @@ function Header(props) {
                 草稿箱
               </span>
             </p>
-            <p className="c-black-85 fs-30 fw-400">
-              {personal.draftCount ? personal.draftCount : 0}
-              <span className="fs-14 c-black-45 m-l-4">单</span>
-            </p>
+            {
+              !isBoss &&
+              <p className="c-black-85 fs-30 fw-400">
+                {personal.draftCount ? personal.draftCount : 0}
+                <span className="fs-14 c-black-45 m-l-4">单</span>
+              </p>
+            }
           </div>
         </Draft>
+      </div>
+      <div className={style.btns}>
+        <SelectInvoice onOk={props.onOk} onCallback={() => props.onOk()}>
+          <Button type="primary" className="m-r-8" style={{width: '140px', height: '40px'}}>
+            <i className="iconfont iconPCxinzengdanju fs-20" style={{ verticalAlign: 'middle' }} />
+            <span className="m-l-8 fs-16 m-r-10" style={{ verticalAlign: 'middle' }}>提单据</span>
+          </Button>
+        </SelectInvoice>
+        <AddCost costType={1} onCallback={() => props.onOk()} againCost>
+          <Button type="primary" ghost style={{width: '140px', height: '40px', verticalAlign: 'center'}}>
+            <i className="iconfont iconjiyibi fs-20 sub-color" style={{ verticalAlign: 'middle' }} />
+            <span className="m-l-4 sub-color fs-16 m-r-10" style={{ verticalAlign: 'middle' }}>记一笔</span>
+          </Button>
+        </AddCost>
       </div>
     </div>
   );

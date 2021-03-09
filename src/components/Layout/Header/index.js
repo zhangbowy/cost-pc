@@ -84,7 +84,7 @@ class App extends React.PureComponent {
             }}
             replace
           >
-            切换员工工作台
+            { userInfo.workbenchIsBoss ? '切换员工工作台' : '切换老板工作台' }
           </Link>
         </Menu.Item>
         {/* <Menu.Divider />

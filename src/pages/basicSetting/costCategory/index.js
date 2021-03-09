@@ -126,7 +126,7 @@ class CostCategory extends React.PureComponent {
       pId: 'parentId',
       tName: 'costName',
       name: 'costName',
-      otherKeys: ['icon', 'note', 'type', 'parentId', 'status']
+      otherKeys: ['icon', 'note', 'type', 'parentId', 'status', 'attribute']
     }, list);
     if (this.state.costName) {
       lists = list;
@@ -146,7 +146,7 @@ class CostCategory extends React.PureComponent {
           }
           {
             (record.type === 0) && (record.attribute === 1) &&
-            <Tags color='rgba(0, 199, 149, 0.08)'>
+            <Tags color='#FFF1F0'>
               成本
             </Tags>
           }
@@ -190,7 +190,12 @@ class CostCategory extends React.PureComponent {
         const _this = this;
         let btns = [{
           node: (
-            <span className="m-l-8 pd-20-9 c-black-65" onClick={() => this.onAddCategory(`child_${record.id}`)}>创建子支出类别</span>
+            <span
+              className="m-l-8 pd-20-9 c-black-65"
+              onClick={() => this.onAddCategory(`child_${record.id}_${record.attribute}`)}
+            >
+              创建子支出类别
+            </span>
           ),
         }, {
           node: (
@@ -218,7 +223,12 @@ class CostCategory extends React.PureComponent {
         if (record.type === 1) {
           btns = [{
             node: (
-              <span className="pd-20-9 c-black-65" onClick={() => this.onAddCategory(`copy_${record.id}`)}>复制</span>
+              <span
+                className="pd-20-9 c-black-65"
+                onClick={() => this.onAddCategory(`copy_${record.id}_${record.attribute}`)}
+              >
+                复制
+              </span>
             ),
           }, {
             node: (
@@ -245,11 +255,18 @@ class CostCategory extends React.PureComponent {
           <span>
             {
               record.type === 0 &&
-                <AddGroup data={record} onOk={() => _this.onOk()} title="edit" list={list}><a>编辑组</a></AddGroup>
+                <AddGroup
+                  data={record}
+                  onOk={() => _this.onOk()}
+                  title="edit"
+                  list={list}
+                >
+                  <a>编辑组</a>
+                </AddGroup>
             }
             {
               record.type === 1 &&
-                <a onClick={() => this.onAddCategory(`edit_${record.id}`)}>编辑类别</a>
+                <a onClick={() => this.onAddCategory(`edit_${record.id}_${record.attribute}`)}>编辑类别</a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>
