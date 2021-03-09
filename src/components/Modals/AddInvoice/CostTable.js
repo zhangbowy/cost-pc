@@ -23,7 +23,7 @@ class CostTable extends Component {
   onDelete = (index) => {
     const lists = this.props.list;
     const { modify } = this.props;
-    if (lists.length === 1 && !modify) {
+    if (lists.length > 1 || !modify) {
       lists.splice(index, 1);
       this.props.onChangeData(lists);
     } else {
