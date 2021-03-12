@@ -9,7 +9,7 @@ import { dateToTime } from '../../../../utils/util';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const { TreeNode } = TreeSelect;
+const { TreeNode, SHOW_ALL } = TreeSelect;
 @Form.create()
 class SubmitReport extends PureComponent {
 
@@ -45,10 +45,12 @@ class SubmitReport extends PureComponent {
 
   setVal = ({ type, startTime, endTime, deptIds }) => {
     let dateType = 0;
-    if (type.indexOf('q') > -1) {
-      dateType = 1;
-    } else if (type.indexOf('y') > -1) {
-      dateType = 2;
+    if (type !== '-1') {
+      if (type.indexOf('q') > -1) {
+        dateType = 1;
+      } else if (type.indexOf('y') > -1) {
+        dateType = 2;
+      }
     }
     const obj = {
       dateType,
@@ -66,12 +68,15 @@ class SubmitReport extends PureComponent {
     chart({
       url: 'submitReport',
       payload: this.setVal({
+        ...submitTime,
+        type: '-1',
         startTime: dateString.length ? moment(`${dateString[0]} 00:00:01`).format('x') : '',
         endTime: dateString.length ? moment(`${dateString[1]} 23:59:59`).format('x') : '',
       })
     }, () => {
       this.props.onChangeData('submitTime', {
         ...submitTime,
+        type: '-1',
         startTime: dateString.length ?
           moment(`${dateString[0]} 00:00:01`).format('x') : '',
         endTime: dateString.length ?
@@ -80,55 +85,53 @@ class SubmitReport extends PureComponent {
     });
   }
 
-  treeNodeRender = (treeNode) => {
-    if(!treeNode || !treeNode.length){
-      return;
+  treeNodeRender = data => data.map(v => {
+    if (v.children && v.children.length) {
+      return (
+        <TreeNode
+          value={v.deptId}
+          title={(
+            <span
+              className="c-black-85"
+              style={{color: 'rgba(0,0,0,0.85)!important'}}
+            >
+              {v.deptName}
+            </span>
+          )}
+          key={v.deptId}
+          name={v.deptName}
+          searchs={v.deptName}
+        >
+          {this.treeNodeRender(v.children)}
+        </TreeNode>
+      );
     }
-      return treeNode.map((v) => {
-        return (
-          <TreeNode
-            value={v.deptId}
-            title={(
-              <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.deptName}</span>
-            )}
-            key={v.deptId}
-            searchs={v.deptName}
-            disabled
-          >
-            {v.children && this.treeNodeChildRender(v.children, v.deptName)}
-          </TreeNode>
-        );
-      });
-    }
+    return <TreeNode
+      key={v.deptId}
+      value={v.deptId}
+      name={v.deptName}
+      title={(
+        <div className={style.treeOption}>
+          {v.deptName}
+        </div>
+      )}
+    />;
+  });
 
-  treeNodeChildRender = (list, titles) => {
-    return list.map(it => (
-      <TreeNode
-        key={it.deptId}
-        value={it.deptId}
-        name={it.deptName}
-        searchs={titles}
-        title={(
-          <div className={style.treeOption}>
-            {it.deptName}
-          </div>
-        )}
-      />
-    ));
-  }
-
-  onChangePro = val => {
+  onChangePro = (value) => {
+    console.log('onChangePro -> value', value);
     const { chart, submitTime } = this.props;
+    const ids = value.map(it => it.value);
     chart({
       url: 'submitReport',
       payload: this.setVal({
         ...submitTime,
-        deptIds: val,
+        deptIds: ids.join(','),
       })
     }, () => {
       this.props.onChangeData('submitTime', {
         ...submitTime,
-        deptIds: val,
+        deptIds: ids.join(','),
       });
     });
   }
@@ -154,7 +157,11 @@ class SubmitReport extends PureComponent {
                 getFieldDecorator('time', {
                   initialValue: '0_m'
                 })(
-                  <Select style={{ width: '88px' }} onChange={this.onChange}>
+                  <Select
+                    style={{ width: '88px' }}
+                    onChange={this.onChange}
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                  >
                     {
                       dateType.map(it => (
                         <Option key={it.key}>{it.value}</Option>
@@ -164,29 +171,36 @@ class SubmitReport extends PureComponent {
                 )
               }
             </Form.Item>
-            <Form.Item>
-              <TreeSelect
-                placeholder="请选择"
-                style={{width: '200px'}}
-                treeDefaultExpandAll
-                dropdownStyle={{height: '300px'}}
-                onChange={(val) => this.onChangePro(val)}
-                treeNodeLabelProp="name"
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                showSearch
-              >
-                {this.treeNodeRender(deptTree)}
-              </TreeSelect>
-            </Form.Item>
             {
               isShow &&
               <Form.Item>
                 <RangePicker
                   style={{ width: '136px' }}
+                  className="m-l-8"
                   onChange={this.onChangeDate}
                 />
               </Form.Item>
             }
+            <Form.Item>
+              <TreeSelect
+                placeholder="请选择"
+                style={{width: '200px', height: '32px'}}
+                treeDefaultExpandAll
+                dropdownStyle={{
+                  height: '300px',
+                  width: '200px',
+                }}
+                onChange={(value, label, extra) => this.onChangePro(value, label, extra)}
+                treeNodeLabelProp="name"
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                treeCheckable
+                showCheckedStrategy={SHOW_ALL}
+                treeCheckStrictly
+                className="m-l-8"
+              >
+                {this.treeNodeRender(deptTree)}
+              </TreeSelect>
+            </Form.Item>
           </Form>
         </div>
         <div className={style.bottom}>

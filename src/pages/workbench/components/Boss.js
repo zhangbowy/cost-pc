@@ -10,7 +10,6 @@ function Boss({ visible, changeBoss }) {
       footer={null}
       visible={visible}
       width="680px"
-      height="361px"
       closable={false}
       maskClosable={false}
     >

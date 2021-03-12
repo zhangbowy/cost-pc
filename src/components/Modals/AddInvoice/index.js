@@ -2003,13 +2003,25 @@ class AddInvoice extends Component {
                           {
                             itw.field === 'imgUrl' && showField.imgUrl.status ?
                               <Col span={12}>
-                                <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                                  <UploadImg
-                                    onChange={(val) => this.onChangeImg(val)}
-                                    imgUrl={imgUrl}
-                                    userInfo={userInfo}
-                                    disabled={modify && !showField.imgUrl.isModify}
-                                  />
+                                <Form.Item
+                                  label={labelInfo.imgUrl}
+                                  {...formItemLayout}
+                                >
+                                  {
+                                    getFieldDecorator('img', {
+                                      rules: [{
+                                        required: !!(showField.imgUrl.isWrite),
+                                        message: '请选择图片'
+                                      }]
+                                    })(
+                                      <UploadImg
+                                        onChange={(val) => this.onChangeImg(val)}
+                                        imgUrl={imgUrl}
+                                        userInfo={userInfo}
+                                        disabled={modify && !showField.imgUrl.isModify}
+                                      />
+                                    )
+                                  }
                                 </Form.Item>
                               </Col>
                               :
@@ -2201,7 +2213,7 @@ class AddInvoice extends Component {
                         key="handle"
                         modify={modify}
                       >
-                        <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加费用</Button>
+                        <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加</Button>
                       </AddCost>
                     }
                     {

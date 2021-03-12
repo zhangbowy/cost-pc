@@ -1,17 +1,22 @@
 import React from 'react';
 // import echarts from 'echarts';
 import ReactEcharts from 'echarts-for-react';
-import { defaultColor } from '@/utils/constants';
+// import { defaultColor } from '@/utils/constants';
 import styles from './leftPie.scss';
 
 function RightLine({ data }) {
+  let xline = [];
+  if (data.fyCategory && data.fyCategory.length) {
+    xline = data.fyCategory;
+  } else if (data.cbCategory && data.cbCategory.length) {
+    xline = data.cbCategory;
+  }
   const option = {
     tooltip: {
       trigger: 'axis',
       backgroundColor:'#fff',
       padding: 0,
       formatter: (params) => {
-        console.log('RightLine -> params', params);
         let lis = '';
         params.forEach(item => {
           lis+=`<div style='line-height: 20px;'>
@@ -25,7 +30,7 @@ function RightLine({ data }) {
           </div>`;
       }
     },
-    color: defaultColor,
+    color: ['rgba(3,122,254,1)','rgba(0,199,149,1)'],
     grid: {
       left: '32px',
       right: '32px',
@@ -34,7 +39,7 @@ function RightLine({ data }) {
     legend: {
       icon: 'circle',
       data: ['费用支出','成本支出'],
-      bottom: '3%',
+      bottom: 20,
       textStyle: {
         fontSize: 12,
         color: '#666'
@@ -44,7 +49,7 @@ function RightLine({ data }) {
     },
     xAxis: {
       type: 'category',
-      data: data.fyCategory && data.fyCategory.map(it => it.x),
+      data: xline && xline.map(it => it.x),
       axisTick: {           // 去掉坐标轴刻线
         show: false
       },
@@ -89,15 +94,17 @@ function RightLine({ data }) {
     series: [{
       name: '费用支出',
       type: 'line',
-      data: data.fyCategory && data.fyCategory.map(it => it.y),
+      data: data.fyCategory && data.fyCategory.map(it => it.y/100),
       hoverAnimation: false,
       symbolSize: 6,
+      showSymbol: data.fyCategory && data.fyCategory.length === 1
     }, {
     name: '成本支出',
     type: 'line',
-    data: data.cbCategory && data.cbCategory.map(it => it.y),
+    data: data.cbCategory && data.cbCategory.map(it => it.y/100),
     hoverAnimation: false,
     symbolSize: 6,
+    showSymbol: data.cbCategory && data.cbCategory.length === 1
   }]
   };
   return (

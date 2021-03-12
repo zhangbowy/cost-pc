@@ -1,5 +1,6 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
-import { Modal, Row, Col, message, Button, Divider } from 'antd';
+import { Modal, Row, Col, message, Button, Divider, Tooltip } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -361,16 +362,29 @@ class InvoiceDetail extends Component {
                     </Button>
                 }
                 {
-                  isModify && allow === 'modify' &&
-                    <Button
-                      key="again"
-                      type="default"
-                      operateType="copy"
-                      className="m-l-8"
-                      onClick={() => this.onChangeType('modify')}
-                    >
-                      改单
-                    </Button>
+                  isModify && allow === 'modify' ?
+                    details.isModifySelect ?
+                      <Button
+                        key="again"
+                        type="default"
+                        operateType="copy"
+                        className="m-l-8"
+                        onClick={() => this.onChangeType('modify')}
+                      >
+                        改单
+                      </Button>
+                      :
+                      <Tooltip title="请联系管理员设置可改单字段">
+                        <Button
+                          key="again"
+                          className="m-l-8"
+                          disabled
+                        >
+                          改单
+                        </Button>
+                      </Tooltip>
+                    :
+                    null
                 }
               </div>
               <div>
@@ -726,7 +740,7 @@ class InvoiceDetail extends Component {
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
-                <span>费用明细（共{category.length}项，合计¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}）</span>
+                <span>支出明细（共{category.length}项，合计¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}）</span>
               </div>
               <CostDetailTable
                 list={category}

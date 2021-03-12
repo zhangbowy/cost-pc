@@ -71,6 +71,12 @@ function Header(props) {
               <i className={cs(style.caogao, 'iconfont', 'iconcaogaoxiang')} />
               <span className="c-black-45 fs-14 m-l-4">
                 草稿箱
+                {
+                  isBoss ?
+                    <><span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>笔</>
+                    :
+                    null
+                }
               </span>
             </p>
             {
@@ -83,20 +89,23 @@ function Header(props) {
           </div>
         </Draft>
       </div>
-      <div className={style.btns}>
-        <SelectInvoice onOk={props.onOk} onCallback={() => props.onOk()}>
-          <Button type="primary" className="m-r-8" style={{width: '140px', height: '40px'}}>
-            <i className="iconfont iconPCxinzengdanju fs-20" style={{ verticalAlign: 'middle' }} />
-            <span className="m-l-8 fs-16 m-r-10" style={{ verticalAlign: 'middle' }}>提单据</span>
-          </Button>
-        </SelectInvoice>
-        <AddCost costType={1} onCallback={() => props.onOk()} againCost>
-          <Button type="primary" ghost style={{width: '140px', height: '40px', verticalAlign: 'center'}}>
-            <i className="iconfont iconjiyibi fs-20 sub-color" style={{ verticalAlign: 'middle' }} />
-            <span className="m-l-4 sub-color fs-16 m-r-10" style={{ verticalAlign: 'middle' }}>记一笔</span>
-          </Button>
-        </AddCost>
-      </div>
+      {
+        isBoss &&
+        <div className={style.btns}>
+          <SelectInvoice onOk={props.onOk} onCallback={() => props.onOk()}>
+            <Button type="primary" className="m-r-8" style={{width: '140px', height: '40px'}}>
+              <i className="iconfont iconPCxinzengdanju fs-20" style={{ verticalAlign: 'middle' }} />
+              <span className="m-l-8 fs-16 m-r-10" style={{ verticalAlign: 'middle' }}>提单据</span>
+            </Button>
+          </SelectInvoice>
+          <AddCost costType={1} onCallback={() => props.onOk()} againCost>
+            <Button type="primary" ghost style={{width: '140px', height: '40px', verticalAlign: 'center'}}>
+              <i className="iconfont iconjiyibi fs-20 sub-color" style={{ verticalAlign: 'middle' }} />
+              <span className="m-l-4 sub-color fs-16 m-r-10" style={{ verticalAlign: 'middle' }}>记一笔</span>
+            </Button>
+          </AddCost>
+        </div>
+      }
     </div>
   );
 }

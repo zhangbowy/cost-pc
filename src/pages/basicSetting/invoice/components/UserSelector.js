@@ -10,7 +10,6 @@ class UserSelector extends PureComponent {
     depts: PropTypes.array,
     placeholder: PropTypes.string,
     invalid: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-    disabled: PropTypes.bool
   }
 
   openSelector = () => {

@@ -101,7 +101,11 @@ class RightChart extends PureComponent {
             {
               isShow &&
               <Form.Item>
-                <RangePicker style={{ width: '136px' }} onChange={this.onChangeDate} />
+                <RangePicker
+                  style={{ width: '136px' }}
+                  onChange={this.onChangeDate}
+                  className="m-l-8"
+                />
               </Form.Item>
             }
           </Form>

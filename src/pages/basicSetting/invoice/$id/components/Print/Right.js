@@ -131,7 +131,7 @@ function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceN
             <table>
               <tr>
                 <th>支出类别</th>
-                <th>费用备注</th>
+                <th>备注</th>
                 <th>发生日期</th>
                 <th>金额</th>
               </tr>

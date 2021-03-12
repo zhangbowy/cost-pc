@@ -101,6 +101,7 @@ class LeftPie extends PureComponent {
       onChangeData('pieChart', {
         ...pieChart,
         type: '-1',
+        attribute: current,
         startTime: dateString.length ?
           moment(`${dateString[0]} 00:00:01`).format('x') : '',
         endTime: dateString.length ?
@@ -146,7 +147,11 @@ class LeftPie extends PureComponent {
             {
               isShow &&
               <Form.Item>
-                <RangePicker style={{ width: '136px' }} onChange={this.onChangeDate} />
+                <RangePicker
+                  style={{ width: '136px' }}
+                  onChange={this.onChangeDate}
+                  className="m-l-8"
+                />
               </Form.Item>
             }
           </Form>

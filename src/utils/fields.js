@@ -11,6 +11,6 @@ export default {
   { key: '6_cm', value: '最近6个月' },
   { key: '1_cy', value: '最近1年' },
   { key: '-1', value: '自定义' }],
-  costType: [{ key: 0, value: '费用'},
-  { key: 1, value: '成本'}]
+  costType: [{ key: 0, value: '费用支出'},
+  { key: 1, value: '成本支出'}]
 };

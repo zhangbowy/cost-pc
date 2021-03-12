@@ -33,11 +33,22 @@ class TempTable extends Component {
     this.props.form.resetFields();
     this.setState({
       visible: false,
+      searchContent: '',
     });
   }
 
   onSearch = (e) => {
-    console.log(e);
+    const { reportType } = this.props;
+    this.props.reportChange({
+      pageNo: 1,
+      pageSize: 10,
+      reportType,
+      searchContent: e,
+    }, () => {
+      this.setState({
+        searchContent: e,
+      });
+    });
   }
 
   render() {
@@ -105,7 +116,7 @@ class TempTable extends Component {
                 columns={columns}
                 dataSource={loanList}
                 rowKey="id"
-                scroll={{ x: '1100px' }}
+                scroll={{ x: '1300px' }}
                 pagination={{
                   hideOnSinglePage: true,
                   current: page.pageNo,

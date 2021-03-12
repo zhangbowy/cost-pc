@@ -20,7 +20,7 @@ const { RangePicker } = DatePicker;
 const labelInfo = {
   costName: '支出类别',
   costSum: '金额(元)',
-  costNote: '费用备注',
+  costNote: '备注',
   imgUrl: '图片',
   happenTime: '发生日期',
 };
@@ -321,7 +321,7 @@ class AddCost extends Component {
       if (!err) {
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
-          message.error('分摊明细金额合计不等于费用金额，请修改');
+          message.error('分摊明细金额合计不等于支出金额，请修改');
           return;
         }
         let detail = {
@@ -683,7 +683,7 @@ class AddCost extends Component {
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title="添加费用"
+          title="添加支出"
           visible={visible}
           width="880px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
@@ -933,13 +933,24 @@ class AddCost extends Component {
                         {
                           it.field === 'imgUrl' && showField.imgUrl.status &&
                           <Col span={12}>
-                            <Form.Item label={labelInfo.imgUrl} {...formItemLayout}>
-                              <UploadImg
-                                onChange={(val) => this.onChangeImg(val)}
-                                imgUrl={imgUrl}
-                                userInfo={userInfo}
-                                disabled={modify && !showField.imgUrl.isModify}
-                              />
+                            <Form.Item
+                              label={labelInfo.imgUrl}
+                              {...formItemLayout}
+                            >
+                              {
+                                getFieldDecorator('img', {
+                                  rules: [{
+                                    required: !!(showField.imgUrl.isWrite), message: '请选择图片'
+                                  }]
+                                })(
+                                  <UploadImg
+                                    onChange={(val) => this.onChangeImg(val)}
+                                    imgUrl={imgUrl}
+                                    userInfo={userInfo}
+                                    disabled={modify && !showField.imgUrl.isModify}
+                                  />
+                                )
+                              }
                             </Form.Item>
                           </Col>
                         }

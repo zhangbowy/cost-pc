@@ -11,6 +11,7 @@ export default {
   BasicSettingMenus: `${APP_API}/cost/menu/v2/navByParentId`,
   login: `${APP_API}/cost/user/login`,
   mockLogin: `${APP_API}/cost/user/mockLogin`,
+  setUserRole: `${APP_API}/cost/user/workbench/set`,
 
   /* ---------- 支出类别 ----------*/
   costCategoryList: `${APP_API}/cost/category/list`,

@@ -4,12 +4,11 @@ import PropTypes from 'prop-types';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import { Dropdown, Avatar, Icon, Menu ,
-  // Dropdown,
-  // Menu,
-  // Icon,
   Breadcrumb,
 } from 'antd';
 import withRouter from 'umi/withRouter';
+import boss from '@/assets/img/bossC.png';
+import acc from '@/assets/img/account.png';
 
 import styles from './index.scss';
 import XfwProducts from '../../XfwProducts';
@@ -26,6 +25,10 @@ class App extends React.PureComponent {
     collapsed: PropTypes.bool,
     onCollapse: PropTypes.func,
   };
+
+  state = {
+    isBoss: localStorage.getItem('workbenchIsBoss') === 'true',
+  }
 
   // 设置面包屑
   setBreadcrumb = () => {
@@ -60,11 +63,35 @@ class App extends React.PureComponent {
     onCollapse(!collapsed);
   };
 
+  changeLink = (url) => {
+    const { isBoss } = this.state;
+    if (url === '/workbench') {
+      this.props.dispatch({
+        type: 'session/setUserRole',
+        payload: {
+          isBoss: !isBoss
+        }
+      }).then(() => {
+        this.setState({
+          isBoss: !isBoss,
+        });
+        localStorage.removeItem('workbenchIsBoss');
+        localStorage.setItem('workbenchIsBoss', !isBoss);
+        this.props.history.replace({
+          pathname: this.props.location.pathname.indexOf('workbench') > -1 ? '/' : url,
+          state: isBoss ? 2 : 1,
+        });
+      });
+    }
+    this.props.history.push(url);
+  }
+
   render() {
     const {
       userInfo,
       // collapsed,
     } = this.props;
+    const { isBoss } = this.state;
     // const breadcrumbList = this.setBreadcrumb();
     // const sysList = [];
     const menu = (
@@ -72,20 +99,34 @@ class App extends React.PureComponent {
         <Menu.Item
           key="basicSetting_receiptAccount"
         >
-          <Link to="/basicSetting/receiptAccount">个人收款账户</Link>
+          <span
+            className={styles.headMenu}
+            onClick={() => this.changeLink('/basicSetting/receiptAccount')}
+          >
+            <img src={acc} alt="账户" />
+            <span className="fs-14 c-black-65">个人收款账户</span>
+          </span>
+          {/* <Link to="/basicSetting/receiptAccount">个人收款账户</Link> */}
         </Menu.Item>
         <Menu.Item
           key="workbench"
         >
-          <Link
+          <span
+            className={styles.headMenu}
+            onClick={() => this.changeLink('/workbench')}
+          >
+            <img src={boss} alt="老板" />
+            <span className="fs-14 c-black-65">{ isBoss ? '切换员工工作台' : '切换老板工作台' }</span>
+          </span>
+          {/* <Link
             to={{
               pathname: '/workbench',
-              state: { id: 1 }
+              state: { id: userInfo.workbenchIsBoss ? 2 : 1 }
             }}
             replace
           >
             { userInfo.workbenchIsBoss ? '切换员工工作台' : '切换老板工作台' }
-          </Link>
+          </Link> */}
         </Menu.Item>
         {/* <Menu.Divider />
         {
@@ -115,7 +156,10 @@ class App extends React.PureComponent {
             <a className="m-r-32">鑫蜂维其他产品</a>
           </XfwProducts>
           <a href="https://www.yuque.com/yifei-zszlu/ref3g8/pn19b4" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
-          <Dropdown overlay={menu}>
+          <Dropdown
+            overlay={menu}
+            overlayClassName={styles.overlayMenu}
+          >
             <a style={{ color: '#333' }}>
               {
                 userInfo.avatar?
@@ -126,10 +170,13 @@ class App extends React.PureComponent {
                   </Avatar>
                 )
               }
-              <span>{userInfo.name || ''}</span>
+              <span className="m-l-8 c-black-65">{userInfo.name || ''}</span>
               <Icon
                 type="down"
-                style={{ marginLeft: 5 }}
+                style={{
+                  marginLeft: 5,
+                  color: 'rgba(0,0,0,0.65)'
+                }}
               />
             </a>
           </Dropdown>

@@ -130,7 +130,7 @@ class Invoice extends React.PureComponent {
       lists = treeConvert({
         rootId: 0,
         pId: 'parentId',
-        otherKeys: ['status', 'note', 'type', 'sort', 'templateType'],
+        otherKeys: ['status', 'note', 'type', 'sort', 'templateType', 'parentId'],
       },list);
     }
     const columns = [{
@@ -141,19 +141,22 @@ class Invoice extends React.PureComponent {
           <span style={{ marginRight: '8px' }}>{record.name}</span>
           { (record.status === 0) && <Tag color="red">已停用</Tag> }
           {
-            (record.type === 0) && record.templateType === 0 &&
+            (record.type === 0 || (record.parentId === 0)) &&
+            record.templateType === 0 &&
             <Tags color='rgba(38, 128, 242, 0.08)'>
               报销
             </Tags>
           }
           {
-            (record.type === 0) && record.templateType === 1 &&
+            (record.type === 0 || (record.parentId === 0)) &&
+            record.templateType === 1 &&
             <Tags color='rgba(0, 199, 149, 0.08)'>
               借款
             </Tags>
           }
           {
-            (record.type === 0) && record.templateType === 2 &&
+            (record.type === 0 || (record.parentId === 0)) &&
+            record.templateType === 2 &&
             <Tags color='rgba(255, 159, 0, 0.08)'>
               申请
             </Tags>

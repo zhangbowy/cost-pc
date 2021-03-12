@@ -105,7 +105,7 @@ class CostTable extends Component {
         </span>
       )
     }, {
-      title: '费用备注',
+      title: '备注',
       dataIndex: 'note',
       ellipsis: true,
       width: '100px',

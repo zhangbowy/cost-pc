@@ -80,6 +80,9 @@
     right: 40px;
     top: 64px;
   }
+  .wave-container{
+    height: 128px;
+  }
 }
 
 // 广告的左侧操作栏
@@ -138,6 +141,7 @@
 .judgeType{
   display: flex;
   justify-content: center;
+  margin-bottom: 64px;
   div{
     width: 288px;
     height: 120px;

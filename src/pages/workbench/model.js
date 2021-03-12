@@ -78,9 +78,11 @@ export default {
       let list = [];
       let reportTotal = 0;
       if (Number(payload.reportType) === 3) {
-        loanSumVo = response.loanSumVo;
-        list = response.pageObject.list || [];
-        reportTotal = response.pageObject.page.total || 0;
+        loanSumVo = response.loanSumVo || {};
+        list = (response.pageObject && response.pageObject.list) || [];
+        reportTotal = (response.pageObject &&
+          response.pageObject.page &&
+          response.pageObject.page.total) || 0;
       } else {
         list = response.list || [];
         reportTotal = response.page.total || 0;

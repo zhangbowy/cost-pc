@@ -6,14 +6,14 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Popconfirm, Divider, Modal, Button, Icon, Popover, Tooltip, Form, Select } from 'antd';
+import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, invoiceStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
-import banner from '@/assets/img/banner.png';
-import adCode from '@/assets/img/adCode.png';
+// import banner from '@/assets/img/banner.png';
+// import adCode from '@/assets/img/adCode.png';
 import HeadRight from '@/pages/workbench/components/HeadRight';
 import style from './index.scss';
 import Header from './components/Header';
@@ -37,7 +37,6 @@ import { dateToTime } from '../../utils/util';
   total: workbench.total,
   userInfo: session.userInfo,
   loanSum: workbench.loanSum,
-  huaVisible: workbench.huaVisible,
   personal: workbench.personal,
   invoiceList: global.invoiceList,
   submitReport: workbench.submitReport,
@@ -54,21 +53,23 @@ import { dateToTime } from '../../utils/util';
 class Workbench extends PureComponent {
 
   static getDerivedStateFromProps(nextProps) {
-    console.log('nextProps', nextProps.location);
+    if (nextProps.location.state && nextProps.location.state.id) {
+      return {
+        isBoss: nextProps.location.state.id === 1
+      };
+    }
+    return null;
   }
 
   constructor(props) {
     super(props);
     this.state = {
       reason: '',
-      huaVisible: false,
       personal: {},
       isComplete: false,
       invoiceTemplateIds: 'all',
-      isBoss: props.userInfo ?
-        props.userInfo.workbenchIsBoss : false,
-      bossVisible: props.userInfo ?
-        props.userInfo.isSetWorkbench : false,
+      isBoss: !!(localStorage.getItem('workbenchIsBoss') === 'true'),
+      bossVisible: !!(localStorage.getItem('isSetWorkbench') === 'true'),
       submitTime: {
         ...dateToTime('0_m'),
         type: '0_m'
@@ -76,9 +77,10 @@ class Workbench extends PureComponent {
       pieChart: {
         ...dateToTime('0_m'),
         type: '0_m',
+        attribute: 0,
       },
       lineChart: {
-        ...dateToTime('0_m'),
+        ...dateToTime('3_cm'),
         type: '0_m',
       }
     };
@@ -129,7 +131,7 @@ class Workbench extends PureComponent {
       this.props.dispatch({
         type: 'workbench/chartPie',
         payload: {
-          ...dateToTime('0_y'),
+          ...dateToTime('0_m'),
           attribute: 0,
         }
       });
@@ -137,25 +139,25 @@ class Workbench extends PureComponent {
         type: 'workbench/deptTree',
         payload: {}
       });
-      this.props.dispatch({
-        type: 'workbench/ejectFrame',
-        payload: {}
-      }).then((e) => {
-        console.log(e);
-        this.setState({huaVisible:this.props.huaVisible});
-      });
+      // this.props.dispatch({
+      //   type: 'workbench/ejectFrame',
+      //   payload: {}
+      // }).then((e) => {
+      //   console.log(e);
+      //   this.setState({huaVisible:this.props.huaVisible});
+      // });
     });
 
   }
 
-  componentDidUpdate(prev) {
-    console.log('prev',prev.location);
-    if (prev.location.state && prev.location.state.id) {
-      this.setState({
-        isBoss: false,
-      });
-    }
-  }
+  // componentDidUpdate(prev) {
+  //   console.log('prev',prev.location);
+  //   if (prev.location.state && prev.location.state.id) {
+  //     this.setState({
+  //       isBoss: prev.location.state.id === 1,
+  //     });
+  //   }
+  // }
 
   onQuery = (payload) => {
     const { invoiceTemplateIds, isComplete, reason } = this.state;
@@ -215,6 +217,15 @@ class Workbench extends PureComponent {
       ...query,
       pageNo: 1,
     });
+    this.props.dispatch({
+      type: 'workbench/personal',
+      payload: {},
+    }).then(() => {
+      const { personal } = this.props;
+      this.setState({
+        personal
+      });
+    });
     const { submitTime, pieChart, lineChart } = this.state;
     if (isBoss) {
       this.chart({
@@ -238,16 +249,6 @@ class Workbench extends PureComponent {
           payload:{...pieChart},
         })
       });
-    } else {
-      this.props.dispatch({
-        type: 'workbench/personal',
-        payload: {},
-      }).then(() => {
-        const { personal } = this.props;
-        this.setState({
-          personal
-        });
-      });
     }
   }
 
@@ -263,15 +264,17 @@ class Workbench extends PureComponent {
         });
       }
       let dateType = 0;
-      if (payload.type.indexOf('q') > -1) {
-        dateType = 1;
-      } else if (payload.type.indexOf('y') > -1) {
-        dateType = 2;
+      if (payload.type !== '-1') {
+        if (payload.type.indexOf('q') > -1) {
+          dateType = 1;
+        } else if (payload.type.indexOf('y') > -1) {
+          dateType = 2;
+        }
       }
       Object.assign(obj , {
         dateType,
       });
-    } else if (url === 'pieChart') {
+    } else if (url === 'chartPie') {
       Object.assign(obj, {
         attribute: payload.attribute,
       });
@@ -279,17 +282,17 @@ class Workbench extends PureComponent {
     return obj;
   }
 
-  closeHua = (type) => {
-    if(type){
-      this.props.dispatch({
-        type: 'workbench/unRemind',
-        payload: {
-          isCompany: true
-        }
-      });
-    }
-    this.setState({ huaVisible: false });
-  }
+  // closeHua = (type) => {
+  //   if(type){
+  //     this.props.dispatch({
+  //       type: 'workbench/unRemind',
+  //       payload: {
+  //         isCompany: true
+  //       }
+  //     });
+  //   }
+  //   this.setState({ huaVisible: false });
+  // }
 
   onComplete = (value, type) => {
     this.setState({
@@ -324,10 +327,15 @@ class Workbench extends PureComponent {
         isBoss
       }
     }).then(() => {
-      // window.location.reload();
+      localStorage.removeItem('workbenchIsBoss');
+      localStorage.setItem('workbenchIsBoss', isBoss);
       this.setState({
         isBoss,
-        bossVisible: false,
+        bossVisible: true,
+      }, () => {
+        localStorage.removeItem('isSetWorkbench');
+        localStorage.setItem('isSetWorkbench', 'true');
+        this.onPersonal();
       });
     });;
   }
@@ -379,7 +387,7 @@ class Workbench extends PureComponent {
         reportPage, reportTotal,
         loanSumVo,
         submitReportDetail, pieList, totalSum } = this.props;
-    const { huaVisible, personal, isComplete,
+    const { personal, isComplete,
       invoiceTemplateIds, reason, submitTime,
       pieChart, lineChart,
       isBoss, bossVisible } = this.state;
@@ -387,11 +395,24 @@ class Workbench extends PureComponent {
       title: '事由',
       dataIndex: 'reason',
       width: 150,
-      render: (text) => (
+      render: (_, record) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
+          <InvoiceDetail
+            id={record.invoiceId}
+            templateId={record.invoiceTemplateId}
+            templateType={record.templateType}
+            allow="copy"
+            onCallback={() => this.onPersonal()}
+          >
+            <Tooltip placement="topLeft" title={record.reason || ''}>
+              <span
+                className="eslips-2 ope-btn"
+                style={{ cursor: 'pointer' }}
+              >
+                {record.reason}
+              </span>
+            </Tooltip>
+          </InvoiceDetail>
         </span>
       ),
     }, {
@@ -600,7 +621,7 @@ class Workbench extends PureComponent {
         }
 
         {/* 花呗工作花开通指引 */}
-        <Modal
+        {/* <Modal
           footer={null}
           header={null}
           closable={false}
@@ -628,7 +649,6 @@ class Workbench extends PureComponent {
               </div>
               <div className={style.footer_right}>
                 <div className={style.jumpout} onselectstart="return false;" onClick={() => {this.closeHua(1);}}>不再提醒 &gt;</div>
-                {/* <Button type="primary" className={style.opening}>立刻咨询开通</Button> */}
                 <Popover
                   content={(
                     <div>
@@ -643,7 +663,7 @@ class Workbench extends PureComponent {
               </div>
             </div>
           </div>
-        </Modal>
+        </Modal> */}
       </div>
     );
   }

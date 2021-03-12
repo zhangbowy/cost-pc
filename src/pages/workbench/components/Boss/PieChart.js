@@ -67,6 +67,7 @@ function PieChart({ data, total, current }) {
     legend: {
       left: '50%',
       top: 'center',
+      bottom: '20',
       orient: 'vertical',
       icon: 'circle',
       formatter: name => {
@@ -98,7 +99,7 @@ function PieChart({ data, total, current }) {
             fontSize:12,
             align:'left',
             color: 'rgba(0,0,0,0.45)',
-            width: 58
+            width: 68
           },
           c:{
             fontSize:12,
@@ -113,23 +114,21 @@ function PieChart({ data, total, current }) {
       {
         name: tabList[current].value,
         type: 'pie',
-        radius: ['40%', '55%'],
+        radius: ['43%', '55%'],
         center: ['25%', '50%'],
-        avoidLabelOverlap: false,
+        avoidLabelOverlap: true,
+        minAngle: 10,
+        stillShowZeroSum: false,
+        zlevel: 1,
         itemStyle: {
+          normal: {
             borderColor: '#fff',
-            borderWidth: 5
+            borderWidth: data.length === 1 ? 0 : 5
+          }
         },
         label: {
           show: false,
           position: 'center'
-        },
-        emphasis: {
-          label: {
-            show: false,
-            fontSize: '40',
-            fontWeight: 'bold'
-          }
         },
         labelLine: {
           show: false

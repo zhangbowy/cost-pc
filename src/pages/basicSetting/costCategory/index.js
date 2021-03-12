@@ -136,16 +136,18 @@ class CostCategory extends React.PureComponent {
       dataIndex: 'costName',
       render: (_, record) => (
         <span>
-          <span style={{ marginRight: '8px' }}>{record.costName}{record.attribute}</span>
+          <span style={{ marginRight: '8px' }}>{record.costName}</span>
           { (record.status === 0) && <Tag color="red">已停用</Tag> }
           {
-            (record.type === 0) && (Number(record.attribute) === 0) &&
+            (record.type === 0 || record.parentId === 0) &&
+            (Number(record.attribute) === 0) &&
             <Tags color='rgba(0, 199, 149, 0.08)'>
               费用
             </Tags>
           }
           {
-            (record.type === 0) && (record.attribute === 1) &&
+            (record.type === 0 || record.parentId === 0)
+            && (record.attribute === 1) &&
             <Tags color='#FFF1F0'>
               成本
             </Tags>

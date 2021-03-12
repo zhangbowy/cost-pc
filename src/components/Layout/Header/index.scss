@@ -1,5 +1,6 @@
 .header {
   padding-right: 12px;
+
 }
 .trigger {
   padding: 0 12px;
@@ -14,3 +15,28 @@
   display: inline-block;
   font-size: 14px;
 }
+.headMenu{
+  padding-left: 16px;
+  display: block;
+  line-height: 32px;
+  width: 100%;
+  img{
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+}
+.overlayMenu{
+  :global(.ant-dropdown-menu) {
+    width: 160px;
+    align-items: flex-start;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  :global(.ant-dropdown-menu-item){
+    width: 100%;
+    text-align: left;
+    vertical-align: middle;
+  }
+}
+

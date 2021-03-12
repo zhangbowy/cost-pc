@@ -100,8 +100,8 @@ export const dateToTime = str => {
   let startTime = '';
   let endTime = '';
   if (arr[0] === '0' && arr[1] === 'm') { // 当前月
-    startTime = `${moment().add('month', 0).format('YYYY/MM')}/01 00:00:01`;
-    endTime = `${moment(startTime).add('month', 1).add('days', -1).format('YYYY/MM/DD')} 23:59:59`;
+    startTime = moment().startOf('month').valueOf();
+    endTime = moment().endOf('month').valueOf();
   } else if (arr[0] === '-1' && arr[1] === 'm') { // 上一个月
     startTime = moment().month(moment().month() - 1).startOf('month').valueOf();
     endTime = moment().month(moment().month() - 1).endOf('month').valueOf();
@@ -109,14 +109,14 @@ export const dateToTime = str => {
     startTime = moment().quarter(moment().quarter() - 1).startOf('quarter').valueOf();
     endTime = moment().quarter(moment().quarter() - 1).endOf('quarter').valueOf();
   } else if (arr[0] === '0' && arr[1] === 'q') { // 当前季度
-    startTime = moment().startOf('quarter').format('YYYY-MM-DD 00: 00: 01');
-    endTime = moment().endOf('quarter').format('YYYY-MM-DD 23:59:59');
+    startTime = moment().startOf('quarter').valueOf();
+    endTime = moment().endOf('quarter').valueOf();
   } else if (arr[0] === '0' && arr[1] === 'y') { // 今年
-    startTime = moment().startOf('year').format('YYYY-MM-DD 00: 00: 01');
-    endTime = moment().endOf('year').format('YYYY-MM-DD 23:59:59');
+    startTime = moment().startOf('year').valueOf();
+    endTime = moment().endOf('year').valueOf();
   } else if (arr[0] === '-1' && arr[1] === 'y') { // 上年
-    startTime = moment().add(-1, 'y').startOf('year').format('YYYY-MM-DD 00: 00: 01');
-    endTime = moment().add(-1, 'y').endOf('year').format('YYYY-MM-DD 23:59:59');
+    startTime = moment().add('y', -1).startOf('year').valueOf();
+    endTime = moment().add('y', -1).endOf('year').valueOf();
   } else if (arr[1].indexOf('cm') > -1) { // 最近几个月
     startTime = moment(new Date()).subtract(arr[0] -1,'months').format('YYYY-MM-DD 00: 00: 01');
     endTime = moment().format('YYYY-MM-DD 23:59:59');

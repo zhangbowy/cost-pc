@@ -397,7 +397,7 @@ export const costClassify = [{
 }, {
   key: 'costNote',
   field: 'costNote',
-  name: '费用备注',
+  name: '备注',
   status: true,
   isWrite: false,
   note: '',
@@ -751,7 +751,7 @@ export const condition = [{
   ruleType: 'submit_sum',
 }, {
   key: 'cost_detail',
-  value: '费用金额',
+  value: '支出金额',
   sel: condThan,
   type: 'inputNumber',
   ruleType: 'detail_sum',
@@ -796,7 +796,7 @@ export const conditionObj = {
     ruleType: 'submit_sum',
   }, {
     key: 'cost_detail',
-    value: '费用金额',
+    value: '支出金额',
     sel: condThan,
     type: 'inputNumber',
     ruleType: 'detail_sum',

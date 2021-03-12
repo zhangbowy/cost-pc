@@ -68,7 +68,7 @@ class CostDetailTable extends PureComponent {
           };
         } else if (item.field === 'costNote') {
           objs = {
-            title: '费用备注',
+            title: '备注',
             dataIndex: 'note',
             width: 120,
             ellipsis: true,
