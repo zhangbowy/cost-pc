@@ -178,6 +178,7 @@ class SubmitReport extends PureComponent {
                   style={{ width: '136px' }}
                   className="m-l-8"
                   onChange={this.onChangeDate}
+                  allowClear={false}
                 />
               </Form.Item>
             }

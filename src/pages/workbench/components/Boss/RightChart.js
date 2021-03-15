@@ -105,6 +105,7 @@ class RightChart extends PureComponent {
                   style={{ width: '136px' }}
                   onChange={this.onChangeDate}
                   className="m-l-8"
+                  allowClear={false}
                 />
               </Form.Item>
             }

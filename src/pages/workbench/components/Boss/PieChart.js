@@ -78,7 +78,7 @@ function PieChart({ data, total, current }) {
           }
         }
         const arr = [
-          `{a|${ name }}`,
+          `{a|${ name.length > 9 ? `${name.slice(0,8)  }...` : name }}`,
           `{b|｜${  obj.proportion}}`,
           `{c|¥${obj.submitSum/100}}`
         ];
