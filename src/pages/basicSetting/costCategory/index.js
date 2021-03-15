@@ -192,6 +192,17 @@ class CostCategory extends React.PureComponent {
         const _this = this;
         let btns = [{
           node: (
+            <AddGroup
+              onOk={() => _this.onOk()}
+              title="add"
+              data={{parentId: record.id}}
+              list={list}
+            >
+              <span className="pd-20-9 c-black-65">添加子分组</span>
+            </AddGroup>
+          ),
+        }, {
+          node: (
             <span
               className="m-l-8 pd-20-9 c-black-65"
               onClick={() => this.onAddCategory(`child_${record.id}_${record.attribute}`)}

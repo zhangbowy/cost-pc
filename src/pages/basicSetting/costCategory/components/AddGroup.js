@@ -1,9 +1,9 @@
 import React from 'react';
-import { Modal, Form, Input, Button, message, Radio } from 'antd';
+import { Modal, Form, Input, Button, message, Radio, Cascader, Select } from 'antd';
 import { formItemLayout, defaultTitle } from '@/utils/constants';
 import { connect } from 'dva';
-// import treeConvert from '@/utils/treeConvert';
-// import { findIndexArray } from '@/utils/common';
+import treeConvert from '@/utils/treeConvert';
+import { findIndexArray } from '@/utils/common';
 import fields from '@/utils/fields';
 
 const labelItem = {
@@ -11,6 +11,7 @@ const labelItem = {
   parentId: '所属分组',
   attribute: '类型'
 };
+const { Option } = Select;
 @Form.create()
 @connect(({ loading, session, costCategory }) => ({
   loading: loading.effects['costCategory/add'] || loading.effects['costCategory/edit'],
@@ -23,6 +24,7 @@ class AddGroup extends React.PureComponent {
     this.state = {
       visible: false,
       data: {},
+      lists: [],
     };
   }
 
@@ -47,17 +49,22 @@ class AddGroup extends React.PureComponent {
           companyId: userInfo.companyId || '',
           type: 0,
         };
+        if (value.parentId && (typeof value.parentId !== 'string')) {
+          Object.assign(payload, {
+            parentId: value.parentId && value.parentId[value.parentId.length -1],
+          });
+        } else {
+          Object.assign(payload, {
+            parentId: 0,
+          });
+        }
+
         let action = 'costCategory/add';
         if (title === 'edit') {
           action = 'costCategory/edit';
           Object.assign(payload, {
             id: data.id,
           });
-          if (data.parentId) {
-            Object.assign(payload, {
-              parentId: data.parentId,
-            });
-          }
         }
         dispatch({
           type: action,
@@ -79,24 +86,24 @@ class AddGroup extends React.PureComponent {
       type: 'costCategory/allList',
       payload: {}
     });
-    const {  data, title } = this.props;
-    // const listTree = (allList && allList.filter(it => Number(it.type) === 0)) || [];
-    // const lists = treeConvert({
-    //   rootId: 0,
-    //   pId: 'parentId',
-    //   tName: 'costName',
-    //   name: 'costName',
-    //   otherKeys: ['icon', 'note', 'type', 'parentId']
-    // }, listTree);
+    const {  data, title, allList } = this.props;
+    const listTree = (allList && allList.filter(it => Number(it.type) === 0)) || [];
+    const lists = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      tName: 'costName',
+      name: 'costName',
+      otherKeys: ['icon', 'note', 'type', 'parentId', 'attribute']
+    }, listTree);
     const datas = {...data};
-    // if (data && data.parentId) {
-    //   if (data && data.parentId !== '0') {
-    //     console.log(findIndexArray(lists, data.parentId, []));
-    //     Object.assign(datas, {
-    //        parentId: findIndexArray(lists, data.parentId, []),
-    //     });
-    //   }
-    // }
+    if (data && data.parentId) {
+      if (data && data.parentId !== '0') {
+        console.log(findIndexArray(lists, data.parentId, []));
+        Object.assign(datas, {
+           parentId: findIndexArray(lists, data.parentId, []),
+        });
+      }
+    }
 
     if (title === 'copy') {
       Object.assign(datas, {
@@ -106,6 +113,7 @@ class AddGroup extends React.PureComponent {
     this.setState({
       visible: true,
       data: datas,
+      lists,
     });
   }
 
@@ -117,7 +125,7 @@ class AddGroup extends React.PureComponent {
   }
 
   render() {
-    const { visible, data } = this.state;
+    const { visible, data, lists } = this.state;
     const {
       children,
       title,
@@ -152,7 +160,7 @@ class AddGroup extends React.PureComponent {
                 )
               }
             </Form.Item>
-            {/* {
+            {
               title === 'add' &&
               <Form.Item
                 key="parentId"
@@ -185,14 +193,13 @@ class AddGroup extends React.PureComponent {
                         value: 'id',
                       }}
                       disabled={title === 'edit'}
-                      showSearch={this.filter}
                       changeOnSelect
                       getPopupContainer={triggerNode => triggerNode.parentNode}
                     />
                   )
                 }
               </Form.Item>
-            } */}
+            }
             <Form.Item label="类型选择" {...formItemLayout}>
               {
                 getFieldDecorator('attribute', {

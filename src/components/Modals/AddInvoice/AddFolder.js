@@ -392,7 +392,7 @@ class AddFolder extends Component {
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
             />
-            <span>未报销费用共计 {folderSum.totalCount}笔，{folderSum.costSumStr}</span>
+            <span>未报销支出共计 {folderSum.totalCount}笔，{folderSum.costSumStr}</span>
           </div>
           <div className={style.addCosts}>
             <div className={style.addTable}>

@@ -394,7 +394,7 @@ class AddInvoice extends Component {
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
         createDingUserId: userInfo.dingUserId,
-        loanUserId: detail.userJson ? detail.userJson[0].userId : '',
+        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         applicationSum: detail.applicationSum,
@@ -408,7 +408,7 @@ class AddInvoice extends Component {
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
         createDingUserId: userInfo.dingUserId,
-        loanUserId: detail.userJson ? detail.userJson[0].userId : '',
+        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         borrowArr: detail.loanSum,
@@ -433,7 +433,7 @@ class AddInvoice extends Component {
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
         createDingUserId: userInfo.dingUserId,
-        loanUserId: detail.userJson ? detail.userJson[0].userId : [],
+        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         projectId: detail.projectId || '',
@@ -441,7 +441,7 @@ class AddInvoice extends Component {
         supplier: detail.supplierAccountId ? `${detail.supplierAccountId}_${detail.supplierId}` : ''
       }, // 详情
       users: detail.userJson,
-      loanUserId: detail.loanUserId, // 审批人的userId
+      loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '', // 审批人的userId
       expandField, // 扩展字段
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr,
@@ -793,6 +793,7 @@ class AddInvoice extends Component {
       });
     });
     const { loanUserId } = this.state;
+    console.log('AddInvoice -> onAddCost -> loanUserId', loanUserId);
     this.getNode({
       loanEntities,
       categorySumEntities,
@@ -1212,16 +1213,20 @@ class AddInvoice extends Component {
       Object.assign(params, {
         applicationSum: (val.applicationSum*1000)/10,
       });
-      if (showField.happenTime &&
+      if (
+        showField.happenTime &&
         (showField.happenTime.dateType === '2' ||
-        showField.happenTime.dateType === 2)) {
+        showField.happenTime.dateType === 2)
+      ) {
         Object.assign(params, {
           startTime: val.time ? moment(val.time[0]).format('x') : '',
           endTime: val.time ? moment(val.time[1]).format('x') : ''
         });
-      } else if (showField.happenTime &&
+      } else if (
+        showField.happenTime &&
         (showField.happenTime.dateType === '1' ||
-        showField.happenTime.dateType === 1)) {
+          showField.happenTime.dateType === 1)
+      ) {
         Object.assign(params, {
           startTime: val.time ? moment(val.time).format('x') : ''
         });

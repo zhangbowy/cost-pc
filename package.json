@@ -1,10 +1,10 @@
 {
   "name": "spending_pc",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "鑫支出",
   "author": "Tan Wei",
   "scripts": {
-    "start": "PORT=8088 umi dev",
+    "start": "PORT=8084 umi dev",
     "build": "umi build",
     "test": "umi test",
     "lint": "eslint --ext .js src",
