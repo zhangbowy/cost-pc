@@ -29,7 +29,6 @@ function getItemStyles(initialOffset, currentOffset) {
   };
 }
 function PreviewBox() {
-  console.log('preview');
   const { item, initialOffset, currentOffset, isDragging } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     isDragging: monitor.isDragging(),
@@ -37,10 +36,8 @@ function PreviewBox() {
     currentOffset: monitor.getSourceClientOffset(),
   }));
   function renderItem() {
-    console.log('renderItem -> item', item);
     return (<Templates {...item} />);
   }
-  console.log('isDragging', isDragging);
   if (!isDragging) {
     return null;
   }

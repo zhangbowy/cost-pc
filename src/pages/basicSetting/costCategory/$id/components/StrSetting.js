@@ -38,6 +38,11 @@ const selfStr = [{
   fieldType: '5',
   name: '日期',
   icon: 'iconriqi',
+}, {
+  key: '8',
+  fieldType: '8',
+  name: '明细',
+  icon: 'iconriqi',
 }];
 
 const StrSetting = ({ fieldList,

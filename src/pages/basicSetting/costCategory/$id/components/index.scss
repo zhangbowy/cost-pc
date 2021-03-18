@@ -97,7 +97,7 @@
 
 // 模板
 .StrTemplates{
-  height: 116px;
+  min-height: 116px;
   // width: 100%;
   margin: 0 24px;
   background: #ffffff;
@@ -140,12 +140,14 @@
   }
   .lines{
     width: 4px;
-    height: 116px;
+    min-height: 116px;
+    margin-bottom: 0;
     background: #00C795;
   }
   .linesD{
     width: 4px;
     height: 116px;
+    margin-bottom: 0;
   }
   .tmpCnt{
     padding-top: 16px;

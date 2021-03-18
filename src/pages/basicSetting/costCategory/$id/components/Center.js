@@ -36,6 +36,9 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
   }, [cardList])
 
   const findCard = (field) => {
+    if (field === 8) {
+      return (cardList.length-1);
+    }
     return cardList.findIndex(it => it.field === field);
   };
 

@@ -42,6 +42,12 @@ function Templates({ name, isWrite, fieldType }) {
             <i className="iconfont iconxinzengbaoxiao" />
           </div>
         }
+        {
+          types === 8 &&
+          <div className={style.images}>
+            <i className="iconfont iconxinzengbaoxiao" />
+          </div>
+        }
       </div>
     </div>
   );

@@ -32,6 +32,41 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     id: -1,
     isWrite: false,
   };
+  if (Number(fieldType) === 3) {
+    Object.assign(box, {
+      expandFieldVos: [{
+        name: '金额',
+        dateType: 0,
+        fieldType: 1,
+        key: '102',
+        isWrite: true,
+        type: 'box',
+        field: 'detail_money',
+        isSelect: true,
+        id: 'detail_money',
+      }, {
+        name: '数量',
+        dateType: 0,
+        fieldType: 1,
+        key: '103',
+        isWrite: true,
+        type: 'box',
+        field: 'detail_account',
+        isSelect: true,
+        id: 'detail_account',
+      }, {
+        name: '单价',
+        dateType: 0,
+        fieldType: 1,
+        key: '104',
+        isWrite: true,
+        type: 'box',
+        field: 'detail_sale',
+        isSelect: true,
+        id: 'detail_sale',
+      }]
+    });
+  }
   const [, drag, preview] = useDrag({
     item: box,
     begin: () => {
@@ -44,6 +79,9 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     },
     end: (item, monitor) => {
       const uselessIndex = cardList.findIndex((it) => it.id === -1);
+      // if (Number(fieldType) === 8) {
+      //   uselessIndex=cardList.length - 1;
+      // }
       /**
        * 拖拽结束时，判断是否将拖拽元素放入了目标接收组件中
        *  1、如果是，则使用真正传入的 box 元素代替占位元素

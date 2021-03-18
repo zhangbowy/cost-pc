@@ -11,10 +11,13 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
 import style from './index.scss';
 import { defaultString } from '../../../../../utils/constants';
+import CountCmp from './CountCmp';
 
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 
-const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fieldType, changeDragId, onDelete, disabled, data }) => {
+const Card = ({ name, isWrite, index,
+  moveCard, field, findCard, dragId, id,
+  fieldType, changeDragId, onDelete, disabled, data }) => {
   // const ref = useRef(null);
   const [{ isDragging }, drag, preview] = useDrag({
     collect: (monitor) => ({
@@ -28,6 +31,9 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
       const { field: dropId } = monitor.getItem();
       if (!didDrop) {
         const hoverIndex = findCard(dropId);
+        // if (Number(types) === 8) {
+        //   hoverIndex = findCard(Number(types));
+        // }
         moveCard(hoverIndex, index);
       }
     }
@@ -37,11 +43,15 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
     accept: 'box',
     canDrop: () => !defaultString.includes(field),
     hover(item, monitor) {
-      console.log(monitor);
+      console.log('card-->drop', monitor);
       if (item.field !== field && !defaultString.includes(field)) {
         const hoverIndex = findCard(item.field);
         moveCard(hoverIndex, index);
       }
+      // if (Number(fieldType) === 8) {
+      //   const len = findCard(Number(fieldType));
+      //   moveCard(len, index);
+      // }
     },
   });
   const opacity = isDragging || (id === -1) ? 0 : 1;
@@ -78,7 +88,10 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
       }
       <span className={isWrite ? style.required : style.requireds}>*</span>
       <div className={style.tmpCnt}>
-        <p className="fs-14 c-black-85">{name}</p>
+        {
+          types !== 8 &&
+          <p className="fs-14 c-black-85">{name}</p>
+        }
         {
           types === 2 &&
           <div className={style.inputs}>
@@ -105,6 +118,12 @@ const Card = ({ name, isWrite, index, moveCard, field, findCard, dragId, id, fie
           <div className={style.images}>
             <i className="iconfont iconxinzengbaoxiao" />
           </div>
+        }
+        {
+          types === 8 &&
+          <CountCmp
+            types={8}
+          />
         }
       </div>
       <div className={style.operator}>
