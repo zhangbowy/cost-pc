@@ -87,6 +87,8 @@ class Basic extends React.PureComponent {
     const { category, users, deptJson } = this.state;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        console.log('Basic -> getFormItem -> values', values);
+
         const arr = [];
         if (category && category.length > 0) {
           console.log(category);
@@ -97,7 +99,7 @@ class Basic extends React.PureComponent {
             costCategoryJson: arr.length > 0 && JSON.stringify(arr),
           });
         }
-        if (values.relation && values.relation.length) {
+        if (values.relation) {
           const obbj = {
             isRelationLoan: false,
             isWriteByRelationLoan: false,
@@ -109,7 +111,7 @@ class Basic extends React.PureComponent {
             ...obbj,
           });
         }
-        if (values.relations && values.relations.length) {
+        if (values.relations) {
           const obbj = {
             isRelationApply: false,
             isWriteByRelationApply: false,
