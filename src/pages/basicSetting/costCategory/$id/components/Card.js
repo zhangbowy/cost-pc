@@ -9,51 +9,73 @@ import React, { useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
+import { Popconfirm } from 'antd';
 import style from './index.scss';
-import { defaultString } from '../../../../../utils/constants';
+import { defaultString, dragDisabled, applyDefault } from '../../../../../utils/constants';
 import CountCmp from './CountCmp';
 
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 
 const Card = ({ name, isWrite, index,
   moveCard, field, findCard, dragId, id,
-  fieldType, changeDragId, onDelete, disabled, data }) => {
-  // const ref = useRef(null);
+  fieldType, changeDragId, onDelete, disabled, data,
+  expandFieldVos, cardList, changeCardList, parentId,
+  dragType, expandLength, className}) => {
   const [{ isDragging }, drag, preview] = useDrag({
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
     }),
-    canDrag: () => !defaultString.includes(field),
+    canDrag: () => !defaultString.includes(field) && !dragDisabled.includes(field),
     // item 中包含 index 属性，则在 drop 组件 hover 和 drop 是可以根据第一个参数获取到 index 值
-    item: { type: 'box', index, field, ...data, },
+    item: { ...data, type: dragType || 'parent', index, field,  },
     end: (dropResult, monitor) => {
       const didDrop = monitor.didDrop();
       const { field: dropId } = monitor.getItem();
+      const item = monitor.getItem();
       if (!didDrop) {
         const hoverIndex = findCard(dropId);
         // if (Number(types) === 8) {
         //   hoverIndex = findCard(Number(types));
         // }
-        moveCard(hoverIndex, index);
+        moveCard(hoverIndex, index, { item, field: dropId });
       }
     }
   });
 
   const [, drop] = useDrop({
-    accept: 'box',
+    accept: dragType === 'child' ? ['child', 'box'] : ['box', 'parent'],
     canDrop: () => !defaultString.includes(field),
-    hover(item, monitor) {
-      console.log('card-->drop', monitor);
-      if (item.field !== field && !defaultString.includes(field)) {
-        const hoverIndex = findCard(item.field);
-        moveCard(hoverIndex, index);
+    hover(item) {
+      if (Number(item.fieldType) === 3) {
+        return;
       }
-      // if (Number(fieldType) === 8) {
-      //   const len = findCard(Number(fieldType));
-      //   moveCard(len, index);
-      // }
+      if (dragType === 'child' && (item.field.indexOf('expand') > -1 ||
+      applyDefault.includes(item.field))) {
+        return;
+      }
+      if (dragType !== 'child') {
+        if (item.field !== field && !defaultString.includes(field)) {
+          const hoverIndex = findCard(item.field);
+          moveCard(hoverIndex, index, { item, field });
+        }
+      } else if (item.field !== field && !defaultString.includes(field) &&
+        (!dragDisabled.includes(field) || (index === 0) ||
+        (index === expandLength))) {
+          if (!parentId || item.field.indexOf('expand_') > -1) {
+            const hoverIndex = findCard(item.field);
+            moveCard(hoverIndex, index, { item, field });
+          } else {
+            console.log('走这里-明细');
+            moveCard(item, { parentId, field });
+          }
+        }
     },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      isOverCurrent: monitor.isOver({ shallow: true }),
+    }),
   });
+  // console.log('card->out', parentId);
   const opacity = isDragging || (id === -1) ? 0 : 1;
   /**
    * 使用 drag 和 drop 对 ref 进行包裹，则组件既可以进行拖拽也可以接收拖拽组件
@@ -64,92 +86,153 @@ const Card = ({ name, isWrite, index,
     preview(getEmptyImage(), { captureDraggingState: true });
   }, []);
   return (
-    <div
-      ref={(node) => drag(drop(node))}
-      className={
-        dragId === field ?
-        cs(style.StrTemplates, style.activeStr) : style.StrTemplates
-      }
-      style={{
-        opacity,
-        cursor: defaultString.includes(field) ? 'default' : 'move',
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-        changeDragId(field, true);
-      }}
-    >
-      {/* { field !== -1 && drag && drag(<img alt="" src={OrderListSvg} style={svgStyle} />) } */}
+    <>
       {
-        dragId === field ?
-          <p className={style.lines} />
-          :
-          <p className={style.linesD} />
+        types === 3 && id !== -1 &&
+        <CountCmp
+          types={8}
+          expandFieldVos={expandFieldVos}
+          findCard={findCard}
+          moveCard={moveCard}
+          {...data}
+          isDragging={isDragging || (id === -1)}
+          cardList={cardList}
+          changeCardList={changeCardList}
+          dragId={dragId}
+          keyField={data.field}
+          changeDragId={changeDragId}
+          onDelete={onDelete}
+        />
       }
-      <span className={isWrite ? style.required : style.requireds}>*</span>
-      <div className={style.tmpCnt}>
-        {
-          types !== 8 &&
-          <p className="fs-14 c-black-85">{name}</p>
-        }
-        {
-          types === 2 &&
-          <div className={style.inputs}>
-            <span className="fs-14 c-black-25">请选择</span>
-            <i className="iconfont icondown c-black-25" />
-          </div>
-        }
-        {
-          types === 5 &&
-          <div className={style.dateType}>
-            <i className="iconfont iconriqi c-black-25 m-r-8" />
-            <span className="fs-14 c-black-25">请选择</span>
-          </div>
-        }
-        {
-          (types === 0 || types === 1) &&
-          <div className={style.inputs}>
-            <span className="fs-14 c-black-25">请输入</span>
-            {/* <i className="iconfont icondown c-black-25" /> */}
-          </div>
-        }
-        {
-          (types === 6 || types === 7) &&
-          <div className={style.images}>
-            <i className="iconfont iconxinzengbaoxiao" />
-          </div>
-        }
-        {
-          types === 8 &&
-          <CountCmp
-            types={8}
-          />
-        }
-      </div>
-      <div className={style.operator}>
-        <p
+      {
+        types !== 3 &&
+        <div
+          ref={node => drag(drop(node))}
           className={
-            defaultString.includes(field) ?
-            cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
+            dragId === field ?
+            cs(style.StrTemplates, style.activeStr, className) : cs(style.StrTemplates, className)
           }
-          style={{ display: dragId === field ? 'block' : '' }}
+          style={{
+            opacity,
+            cursor: defaultString.includes(field) ? 'default' : 'move',
+            margin: dragType === 'child' ? '0 0 0 12px' : '0 24px'
+          }}
           onClick={(e) => {
             e.stopPropagation();
-            onDelete(field, disabled);
+            console.log('子组件', field);
+            changeDragId(field, true);
           }}
         >
-          <i className="iconfont iconshanchu" />
-        </p>
-        <p
-          className={defaultString.includes(field) ?
-          cs(style.delete,style.opacity, style.drag) :
-          cs(style.delete, style.drag)}
-          style={{ display: dragId === field ? 'block' : '' }}
-        >
-          <i className="iconfont icontuozhuai" />
-        </p>
-      </div>
-    </div>
+          {/* { field !== -1 && drag && drag(<img alt="" src={OrderListSvg} style={svgStyle} />) } */}
+          {
+            dragId === field ?
+              <p className={style.lines} />
+              :
+              <p className={style.linesD} />
+          }
+          <span className={isWrite ? style.required : style.requireds}>*</span>
+          <div className={style.tmpCnt}>
+            {
+              types !== 3 &&
+              <p className="fs-14 c-black-85">{name}</p>
+            }
+            {
+              types === 2 &&
+              <div className={style.inputs}>
+                <span className="fs-14 c-black-25">请选择</span>
+                <i className="iconfont icondown c-black-25" />
+              </div>
+            }
+            {
+              types === 5 &&
+              <div className={style.dateType}>
+                <i className="iconfont iconriqi c-black-25 m-r-8" />
+                <span className="fs-14 c-black-25">请选择</span>
+              </div>
+            }
+            {
+              (types === 0 || types === 1) &&
+              <div className={style.inputs}>
+                <span className="fs-14 c-black-25">请输入</span>
+                {/* <i className="iconfont icondown c-black-25" /> */}
+              </div>
+            }
+            {
+              (types === 6 || types === 7) &&
+              <div className={style.images}>
+                <i className="iconfont iconxinzengbaoxiao" />
+              </div>
+            }
+          </div>
+          <div className={style.operator}>
+            {
+              !dragDisabled.includes(field) &&
+                <p
+                  className={
+                    defaultString.includes(field) ?
+                    cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
+                  }
+                  style={{ display: dragId === field ? 'block' : '' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(field, disabled);
+                  }}
+                >
+                  <i className="iconfont iconshanchu" />
+                </p>
+            }
+            {
+              field === 'detail_sale' && expandLength === 2 &&
+                <Popconfirm
+                  title="将同步删除明细组件，请先添加任意组件后再行删除"
+                  onConfirm={(e) => {
+                    e.stopPropagation();
+                    onDelete(field, disabled);
+                  }}
+                >
+                  <p
+                    className={
+                      defaultString.includes(field) ?
+                      cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
+                    }
+                    style={{ display: dragId === field ? 'block' : '' }}
+                  >
+                    <i className="iconfont iconshanchu" />
+                  </p>
+                </Popconfirm>
+            }
+            {
+              field === 'detail_sale' && expandLength !== 2 &&
+                <p
+                  className={
+                    defaultString.includes(field) ?
+                    cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
+                  }
+                  style={{ display: dragId === field ? 'block' : '' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(field, disabled);
+                  }}
+                >
+                  <i className="iconfont iconshanchu" />
+                </p>
+            }
+            {
+              (field !== 'detail_money' && field !== 'detail_account') &&
+              <p
+                className={defaultString.includes(field) || types === 3 ||
+                  dragDisabled.includes(field) ?
+                cs(style.delete,style.opacity, style.drag) :
+                cs(style.delete, style.drag)}
+                style={{ display: dragId === field ? 'block' : '' }}
+              >
+                <i className="iconfont icontuozhuai" />
+              </p>
+            }
+          </div>
+        </div>
+      }
+    </>
   );
 };
 

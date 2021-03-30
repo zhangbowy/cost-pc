@@ -296,3 +296,16 @@ export const setTime = ({ time }) => {
   const times = moment(time).format('YYYY-MM-DD');
   return moment(times).format('x');
 };
+
+export const setMoney = (_obj = {}) => {
+  const { unit, num, sum } = _obj;
+  console.log('setMoney -> sum', sum);
+  let res = 0;
+  if (sum || (sum === 0)) {
+    res = unit ? sum/unit : sum/num;
+  } else {
+    res = num * unit;
+  }
+  console.log('res', res);
+  return ((res*100).toFixed(0))/100;
+};

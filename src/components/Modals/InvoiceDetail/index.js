@@ -17,6 +17,8 @@ import { ddOpenLink } from '../../../utils/ddApi';
 import AddInvoice from '../AddInvoice';
 import RecordHistory from './RecordHistory';
 import CostDetailTable from './CostDetailTable';
+import ProductTable from './ProductTable';
+import { numAdd } from '../../../utils/float';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -48,6 +50,8 @@ class InvoiceDetail extends Component {
       recordList: [],
       operateType: '',
       invoiceVisible: {},
+      productSum: 0,
+      totalCost: 0,
     };
   }
 
@@ -68,6 +72,7 @@ class InvoiceDetail extends Component {
     }).then(() => {
       const { invoiceDetail, loanDetail, applyDetail } = this.props;
       let details = invoiceDetail;
+      let productSum = 0;
       if (Number(templateType) === 1) {
         details = loanDetail;
       } else if (Number(templateType) === 2) {
@@ -110,6 +115,17 @@ class InvoiceDetail extends Component {
           applicationIds: details.applicationAssociageVOS.map(it => it.applicationId)
         };
       }
+      let totalCost = 0;
+      if (details.costDetailsVo) {
+        details.costDetailsVo.forEach(it => {
+          totalCost+=Number(it.costSum);
+        });
+      }
+      if (details.detailList) {
+        details.detailList.forEach(it => {
+          productSum=numAdd(productSum, it.detail_money);
+        });
+      }
       const showObj = {};
       if (details.showField) {
         const arr = JsonParse(details.showField);
@@ -123,6 +139,8 @@ class InvoiceDetail extends Component {
       this.setState({
         details,
         isModify: details.isModify,
+        productSum,
+        totalCost,
       });
       this.props.dispatch({
         type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
@@ -306,6 +324,8 @@ class InvoiceDetail extends Component {
       isModify,
       operateType,
       invoiceVisible,
+      productSum,
+      totalCost,
     } = this.state;
     const {
       children,
@@ -314,7 +334,6 @@ class InvoiceDetail extends Component {
       allow,
       userInfo
     } = this.props;
-
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -596,7 +615,7 @@ class InvoiceDetail extends Component {
             {
               details.expandSubmitFieldVos &&
               (details.expandSubmitFieldVos.length > 0) &&
-              details.expandSubmitFieldVos.map(itField => {
+              details.expandSubmitFieldVos.filter(it => (Number(it.fieldType) !== 3 && it.name !== '明细')).map(itField => {
                 let texts = itField.msg;
                 if (itField.startTime) {
                 console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
@@ -620,7 +639,7 @@ class InvoiceDetail extends Component {
             {
               details.selfSubmitFieldVos &&
               (details.selfSubmitFieldVos.length > 0) &&
-              details.selfSubmitFieldVos.map(itField => {
+              details.selfSubmitFieldVos.filter(it => (Number(it.fieldType) !== 3 && it.name !== '明细')).map(itField => {
                 let texts = itField.msg;
                 if (itField.startTime) {
                 console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
@@ -736,16 +755,29 @@ class InvoiceDetail extends Component {
             </>
           }
           {
-            !Number(templateType) &&
+            (!Number(templateType) || (Number(templateType) === 2 && category.length > 0)) &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
-                <span>支出明细（共{category.length}项，合计¥{ Number(templateType) ? details.loanSum/100 : details.submitSum/100}）</span>
+                <span>支出明细（共{category.length}项，合计¥{
+                  Number(templateType) ? totalCost/100 : details.submitSum/100
+                  }）
+                </span>
               </div>
               <CostDetailTable
                 list={category}
                 previewImage={this.previewImage}
               />
+            </>
+          }
+          {
+            details.detailList &&  details.detailList.length > 0 &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>明细（共{details.detailList.length}项，合计¥{productSum/100}）</span>
+              </div>
+              <ProductTable cols={details.detailJson} list={details.detailList || []} />
             </>
           }
           {

@@ -163,15 +163,25 @@ function FlowCard(props) {
     if (isEmpty && !isBranch) {
       return '';
     }
+    const endNodeId = NodeUtils.getEndNodeId(ctx.data);
     const isCopy = ((data.nodeType === 'start') ||
-                  (data.childNode && data.childNode.nodeType === 'grant'))
+                  (data.childNode && data.childNode.nodeType === 'grant') ||
+                  (endNodeId === data.nodeId && data.nodeType !== 'grant'))
                   &&  !ccPosition;
+                  console.log('addNodeButton -> ccPosition', ccPosition);
     // 判断是否可以有抄送人
     const isButton = data.nodeType === 'grant' ||
-                    (data.nodeType === 'start' && data.childNode && data.childNode.nodeType === 'notifier')
+                    (data.nodeType === 'start' &&
+                    data.childNode &&
+                    data.childNode.nodeType === 'notifier' &&
+                    ccPosition !== 'FINISH')
                     || (data.nodeType === 'notifier' &&
                     data.childNode && data.childNode.nodeType === 'grant' &&
-                    (data.prevId.indexOf('start') === -1 && data.prevId.indexOf('START') === -1));
+                    (data.prevId.indexOf('start') === -1 && data.prevId.indexOf('START') === -1))
+                    || (endNodeId === data.nodeId &&
+                      data.nodeId.indexOf('notifier') !== -1 &&
+                    ((data.prevId.indexOf('start') === -1 && data.prevId.indexOf('START') === -1) ||
+                    ccPosition === 'FINISH'));
     return (
       <div className={cs(style['add-node-btn-box'], style.flex, style['justify-center'], isButton && style.addNodeBtns)}>
         {

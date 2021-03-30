@@ -10,11 +10,13 @@ const pdf = {
   1: 'pdf5',
   2: 'pdfb5',
 };
-function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceName }) {
+function Right({ templateType, templatePdfVo, corpName,
+  isRelationLoan, invoiceName, categoryStatus }) {
   const list = templatePdfVo.templatePdfExpandVos || [];
   const one = list.filter(it => it.fieldType === 1) || [];
-  const two = list.filter(it => it.fieldType !== 1);
+  const two = list.filter(it => it.fieldType !== 1 && Number(it.fieldType) !== 3);
   const twos = arrayGroup(two, 2);
+  const lists = list.filter(it => Number(it.fieldType) === 3);
   return (
     <div style={{ background: '#fff', position: 'relative' }} className={style[pdf[templatePdfVo.paperType]]}>
       <img src={zdx} alt='装订线' className={style.zdx} />
@@ -122,7 +124,8 @@ function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceN
           ))
         }
         {
-          !templateType &&
+          (!templateType ||
+          (templateType === 2 && !!Number(categoryStatus))) &&
           <div className={style.contents}>
             {
               !Number(templatePdfVo.paperType) &&
@@ -152,6 +155,27 @@ function Right({ templateType, templatePdfVo, corpName, isRelationLoan, invoiceN
                     <td className={style['cont-line-r']} colSpan="3">报销金额（元）</td>
                   </tr>
               }
+            </table>
+          </div>
+        }
+        {
+          lists && lists.length > 0 &&
+          <div className={style.contents}>
+            {
+              !Number(templatePdfVo.paperType) &&
+              <div className={style.title}>明细</div>
+            }
+            <table>
+              <tr>
+                {
+                  lists[0].expandFieldVos && lists[0].expandFieldVos.map(it => (
+                    <th key={it.field}>{it.name}</th>
+                  ))
+                }
+              </tr>
+              <tr>
+                <td colSpan={lists[0].expandFieldVos && lists[0].expandFieldVos.length} />
+              </tr>
             </table>
           </div>
         }

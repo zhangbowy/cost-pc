@@ -51,12 +51,13 @@ export class NodeUtils {
     const charArr = chars.split( '' );
     const radix = chars.length;
     const res = [];
+    const time = timeStampToHex();
     do {
       const mod = qutient % radix;
       qutient = ( qutient - mod ) / radix;
       res.push( charArr[mod] );
     } while ( qutient );
-    return `${nodeType}_${res.join('')}`;
+    return `${nodeType}_${res.join('')}_${time+1}`;
 
     // const time = timeStampToHex();
     // return `${nodeType}_${time+1}`;
@@ -515,10 +516,8 @@ export class NodeUtils {
           if (type === 'del' && (val.nodeId === child.nodeId)) {
             x = val.childNode ? {
               ...val.childNode,
+              prevId: val.prevId,
             } : null;
-            // x.childNode = val;
-            // Object.assign(result, x);
-            console.log(`result${JSON.stringify(result)}`);
             return x;
           }
             x[key] = childNode(child[key]);
@@ -574,6 +573,23 @@ export class NodeUtils {
     nodeSearch(datas);
     // console.log('count', count);
     return count;
+  }
+
+  static getEndNodeId(datas) {
+    let nodeId = '';
+    function nodeSearch(list) {
+      for (const key in list) {
+        if (key === 'childNode') {
+          if (list.childNode && list.childNode.childNode && list.childNode.childNode.nodeId) {
+            nodeSearch(list.childNode);
+          } else if (list.childNode) {
+            nodeId = list.childNode.nodeId;
+          }
+        }
+      }
+    }
+    nodeSearch(datas);
+    return nodeId;
   }
 }
 

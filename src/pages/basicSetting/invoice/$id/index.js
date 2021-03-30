@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { PageHeader, Menu, Button } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
+// import { HTML5Backend } from 'react-dnd-html5-backend';
+// import { DndProvider } from 'react-dnd';
 import treeConvert from '@/utils/treeConvert';
 import PageHead from '@/components/PageHead';
 import LabelLeft from '../../../../components/LabelLeft';
@@ -11,9 +11,10 @@ import LabelLeft from '../../../../components/LabelLeft';
 import FooterBar from '../../../../components/FooterBar';
 import Basic from '../components/Basic';
 import { JsonParse } from '../../../../utils/common';
-import StrSetting from '../../costCategory/$id/components/StrSetting';
-import PreviewBox from '../../costCategory/$id/components/PreviewBox';
+// import StrSetting from '../../costCategory/$id/components/StrSetting';
+// import PreviewBox from '../../costCategory/$id/components/PreviewBox';
 import Print from './components/Print';
+import DragContent from '../../costCategory/$id/components/DragContent';
 
 const basicStr = [{
   key: 'one',
@@ -190,6 +191,15 @@ class CategoryAdd extends PureComponent {
               if (detail.selfField) {
                 selects = [...selects, ...detail.selfField];
               }
+              const arrs = selects.sort(this.compare('sort'));
+              const i = arrs.findIndex(it => it.fieldType === 3);
+              if (i>-1) {
+                const expand = arrs[i].expandFieldVos.map(it => { return {...it, parentId: arrs[i].field}; });
+                arrs.splice(i, 1, {
+                  ...arrs[i],
+                  expandFieldVos: expand,
+                });
+              }
               this.setState({
                 templatePdfVo: {
                   ...detail.templatePdfVo,
@@ -199,7 +209,7 @@ class CategoryAdd extends PureComponent {
                 reLoan: relation,
                 reApply: relations,
                 data: datas,
-                selectList: selects.sort(this.compare('sort')),
+                selectList: arrs,
               });
             });
           }
@@ -249,6 +259,7 @@ class CategoryAdd extends PureComponent {
     const newSelectList = [...selectList];
     if (this.formRef && this.formRef.getFormItem) {
       const values = this.formRef.getFormItem();
+      console.log('CategoryAdd -> onStep -> values', values);
       if(!values) {
         return;
       }
@@ -265,7 +276,18 @@ class CategoryAdd extends PureComponent {
         return;
       }
       const indexs = selectList.findIndex(it => it.field === valStr.field);
-      newSelectList.splice(indexs, 1, valStr);
+      if (indexs > -1) {
+        newSelectList.splice(indexs, 1, valStr);
+      } else {
+        const i = newSelectList.findIndex(it => Number(it.fieldType) === 3);
+        const expandDetail = newSelectList[i].expandFieldVos;
+        const ci = expandDetail.findIndex(it => it.field === valStr.field);
+        expandDetail.splice(ci, 1, valStr);
+        newSelectList.splice(i, 1, {
+          ...newSelectList[i],
+          expandFieldVos: expandDetail,
+        });
+      }
     }
 
     if ((current === 'three'
@@ -273,6 +295,15 @@ class CategoryAdd extends PureComponent {
       && paramsT[2] !== 'child'))
       && flag !== 'down') {
       const newArr = newSelectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
+      const iN = newArr.findIndex(it => Number(it.fieldType) === 3);
+      if (iN > -1) {
+        const expand = newArr[iN].expandFieldVos.map((it,index) =>
+          { return {...it, isSelect: true, sort: (index+1), status: 1}; });
+          newArr.splice(iN, 1, {
+          ...newArr[iN],
+          expandFieldVos: expand,
+        });
+      }
       const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
       console.log('CategoryAdd -> onStep -> showField', showField);
       const url = title === 'add' || paramsT.length === 3 ? 'addInvoice/add' : 'addInvoice/edit';
@@ -324,15 +355,16 @@ class CategoryAdd extends PureComponent {
     }
   }
 
-  onChangeData = (type, value) => {
+  onChangeData = (type, value, flag) => {
     this.setState({
       [type]: value,
     });
-    if (type === 'selectList') {
+    if (type === 'selectList' && !flag) {
       const { fieldList, templatePdfVo } = this.state;
       let newArr = [...fieldList];
       const oldField = newArr.map(it => it.field);
       const add = [];
+      console.log('CategoryAdd -> onChangeData -> value', value);
       const fields = value.map(it => {
         if (!oldField.includes(it.field) && (it.field.indexOf('expand_') > -1)) {
           add.push(it);
@@ -501,20 +533,17 @@ class CategoryAdd extends PureComponent {
                     width: 'inherit'
                   }}
                 >
-                  <DndProvider backend={HTML5Backend}>
-                    <StrSetting
-                      fieldList={fieldList}
-                      selectList={selectList}
-                      onChangeData={this.onChangeData}
-                      templateType={Number(templateType)}
-                      selectId="reason"
-                      childRef={ref => { this.childRef = ref; }}
-                      type="invoice"
-                      isModifyInvoice={isModifyInvoice}
-                      operateType={title}
-                    />
-                    <PreviewBox />
-                  </DndProvider>
+                  <DragContent
+                    fieldList={fieldList}
+                    selectList={selectList}
+                    onChangeData={this.onChangeData}
+                    selectId="reason"
+                    type="invoice"
+                    isModifyInvoice={isModifyInvoice}
+                    operateType={title}
+                    middleRef={this.childRef}
+                    templateType={Number(templateType)}
+                  />
                 </div>
               }
             </div>
@@ -530,6 +559,7 @@ class CategoryAdd extends PureComponent {
               corpName={userInfo.corpName}
               isRelationLoan={data.isRelationLoan}
               invoiceName={data.name}
+              categoryStatus={data.categoryStatus}
             />
           </div>
         }

@@ -129,6 +129,7 @@ export const isAllCostCategory = [{
   value: '部分类别'
 }];
 export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum'];
+export const dragDisabled = ['detail_money', 'detail_sale', 'detail_account'];
 export const costCategoryJson = [{
   key: 'reason',
   field: 'reason',
@@ -280,6 +281,9 @@ export const applyJson = [{
   isWrite: false,
   note: '',
 }];
+
+export const applyDefault =
+['reason', 'userJson', 'deptId', 'applicationSum', 'happenTime', 'project', 'supplier', 'note', 'imgUrl', 'fileUrl'];
 
 export const borrowJson = [{
   key: 'reason',

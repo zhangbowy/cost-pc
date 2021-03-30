@@ -168,3 +168,9 @@
 .disabled{
   opacity: 0.25;
 }
+
+.categoryTable {
+  :global(.ant-form-item) {
+    margin-bottom: 0;
+  }
+}

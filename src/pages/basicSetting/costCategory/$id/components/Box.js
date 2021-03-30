@@ -22,7 +22,9 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data, c
   };
   const [, drag, preview] = useDrag({
     item: box,
-    canDrag: () => !isSelect,
+    canDrag: () => !isSelect &&
+    (Number(data.fieldType) !== 3 ||
+      (Number(data.fieldType) === 3 && cardList.findIndex(it => Number(it.fieldType) === 3) === -1)),
     begin() {
         const useless = cardList.find((item) => item.id === -1);
         // 拖拽开始时，向 cardList 数据源中插入一个占位的元素，如果占位元素已经存在，不再重复插入
@@ -38,13 +40,25 @@ const Box = ({field, name, cardList, changeCardList, isSelect, disabled, data, c
        *  1、如果是，则使用真正传入的 box 元素代替占位元素
        *  2、如果否，则将占位元素删除
        */
+      console.log(Number(cardList[uselessIndex-1].fieldType) === 3);
+      if (uselessIndex-1 > 0 && (Number(cardList[uselessIndex-1].fieldType) === 3)) {
+        cardList.splice(uselessIndex, 1);
+        changeCardList(cardList);
+        return;
+      }
+      const items = monitor.getItem();
+
       if (monitor.didDrop()) {
-          const items = monitor.getItem();
           cardList.splice(uselessIndex, 1, { ...monitor.getItem(), id: id++ });
           changeDragId(items.field);
-      } else {
+      } else if (Number(items.fieldType) !== 3) {
           cardList.splice(uselessIndex, 1);
-      }
+        } else {
+          cardList.splice(uselessIndex, 1, { ...monitor.getItem(), id: id++ });
+          changeDragId(items.field);
+        }
+        console.log('end -> cardList', cardList);
+
       // 更新 cardList 数据源
       changeCardList(cardList);
     }

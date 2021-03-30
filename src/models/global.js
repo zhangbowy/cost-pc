@@ -53,6 +53,8 @@ export default {
     BasicSettingMenus:[], // 获取设置内容
     isApproval: false, // 判断是否是钉钉空间
     msnUrl: '', // 小程序二维码链接
+    detailJson: [],
+    detailType: 0,
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -148,10 +150,22 @@ export default {
       if (response.selfField) {
         expandField=[...expandField, ...response.selfField];
       }
+      let detailJson = [];
+      let detailType = 0;
+      if (response.templateType === 2 &&
+        expandField.findIndex(it => it.fieldType === 3) > -1) {
+          const arr = expandField.filter(it => it.fieldType === 3)[0];
+          if (arr.status) {
+            detailJson = arr.expandFieldVos;
+            detailType = arr.field.indexOf('self_') > -1 ? 0 : 1;
+          }
+      }
       yield put({
         type: 'save',
         payload: {
           djDetail: response ? { ...response, expandField } : {},
+          detailJson,
+          detailType
         },
       });
     },

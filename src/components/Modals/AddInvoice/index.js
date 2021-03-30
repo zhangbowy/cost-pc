@@ -24,6 +24,7 @@ import { JsonParse, compare, setTime } from '../../../utils/common';
 import ApplyTable from './ApplyTable';
 import AddFolder from './AddFolder';
 import defaultFunc from './utils';
+import CategoryTable from './InvoiceTable/CategoryTable';
 
 const {Option} = Select;
 const { RangePicker } = DatePicker;
@@ -46,6 +47,8 @@ const { confirm } = Modal;
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
   djDetail: global.djDetail,
+  detailJson: global.detailJson,
+  detailType: global.detailType, // 产品明细类型
   uploadSpace: global.uploadSpace,
   nodes: global.nodes,
   userId: global.userId,
@@ -89,6 +92,7 @@ class AddInvoice extends Component {
       historyParams: {}, // 历史数据
       hisCostDetailsVo: [], // 历史分摊数据
       modifyNote: '',
+      applyDetailList: [],  // 产品明细
     };
   }
 
@@ -259,7 +263,7 @@ class AddInvoice extends Component {
         expandField: djDetails.expandField,
         accountList: account,
         inDetails: djDetails,
-        visible: true
+        visible: true,
       }, () => {
         if (this.props.costSelect) {
           // if (this.props.onFolder) {
@@ -288,16 +292,6 @@ class AddInvoice extends Component {
       }
     } else {
       const contents = JsonParse(contentJson);
-      // const { operateType } = this.props;
-      // if (operateType === 'modify') {
-      //   if (contents.receiptId && contents.receiptNameJson) {
-      //     const newAccount = JSON.parse(contents.receiptNameJson);
-      //     console.log('AddInvoice -> onShowHandle -> newAccount', newAccount);
-      //     if (newAccount && newAccount.length) {
-      //       account.push(newAccount[0]);
-      //     }
-      //   }
-      // }
       this.onInit(contents, djDetails);
       await this.setState({
         showField: obj,
@@ -331,7 +325,7 @@ class AddInvoice extends Component {
       endTime: detail.endTime,
     };
     const userIds = detail.userId ? [detail.userId] : [];
-    if (detail.costDetailsVo) {
+    if (detail.costDetailsVo && (djDetails.templateType === 2 && djDetails.categoryStatus)) {
       detail.costDetailsVo.forEach(it => {
         if (it.costDetailShareVOS) {
           it.costDetailShareVOS.forEach(item => {
@@ -381,6 +375,9 @@ class AddInvoice extends Component {
       });
       this.onInitBorrow(detail.invoiceLoanAssessVos || [], detail.costDetailsVo || []);
     } else if (Number(djDetails.templateType) === 2) {
+      if (djDetails.categoryStatus) {
+        this.onInitBorrow([], detail.costDetailsVo || []);
+      }
       this.setState({
         total: detail.applicationSum/100
       });
@@ -445,6 +442,7 @@ class AddInvoice extends Component {
       expandField, // 扩展字段
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr,
+      applyDetailList: detail.detailList,
     });
   }
 
@@ -662,6 +660,7 @@ class AddInvoice extends Component {
       modifyNote: '',
       historyParams: {}, // 历史数据
       hisCostDetailsVo: [], // 历史分摊数据
+      applyDetailList: [],  // 产品明细
     });
   }
 
@@ -815,8 +814,14 @@ class AddInvoice extends Component {
         categorySumEntities,
       }
     }, () => {
-      const { borrowArr } = this.state;
+      const { borrowArr, total } = this.state;
+      const { djDetail, form: { getFieldValue } } = this.props;
       this.onAddBorrow(borrowArr);
+      if (Number(total) === 0 && (djDetail.categoryStatus && djDetail.templateType === 2)) {
+        this.setState({
+          total: getFieldValue('applicationSum') || 0,
+        });
+      }
     });
   }
 
@@ -952,7 +957,8 @@ class AddInvoice extends Component {
       borrowArr,
       applyArr
     } = this.state;
-    const { id, templateType, djDetail } = this.props;
+
+    const { id, templateType, djDetail, detailJson, detailType } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -1092,6 +1098,16 @@ class AddInvoice extends Component {
             receiptNameJson: '',
           });
         }
+        if (this.onCategoryStatus && this.onCategoryStatus.onSave) {
+          if (this.onCategoryStatus.onSave() === false) {
+            return;
+          }
+          Object.assign(params, {
+            detailList: this.onCategoryStatus.onSave(),
+            detailJson,
+            detailType,
+          });
+        }
         this.chargeHandle(params);
       }
     });
@@ -1119,7 +1135,8 @@ class AddInvoice extends Component {
       borrowArr,
       applyArr
     } = this.state;
-    const { id, templateType, draftId, djDetail } = this.props;
+    const { id, templateType, draftId, djDetail, detailJson,
+      detailType, } = this.props;
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
     const expandSubmitFieldVos = [];
@@ -1184,6 +1201,7 @@ class AddInvoice extends Component {
         expandCostDetailFieldVos: item.expandCostDetailFieldVos,
         detailFolderId: item.detailFolderId || '',
         icon: item.icon,
+        attribute: item.attribute,
       });
       if (item.costDetailShareVOS) {
         item.costDetailShareVOS.forEach(it => {
@@ -1240,6 +1258,16 @@ class AddInvoice extends Component {
     if (applyArr) {
       Object.assign(params, {
         applicationIds: applyArr.map(it => it.id),
+      });
+    }
+    if (this.onCategoryStatus && this.onCategoryStatus.onSave) {
+      if (this.onCategoryStatus.onSave() === false) {
+        return;
+      }
+      Object.assign(params, {
+        detailList: this.onCategoryStatus.onSave(),
+        detailJson,
+        detailType,
       });
     }
     const url = draftId ? 'costGlobal/editDraft' : 'costGlobal/addDraft';
@@ -1550,29 +1578,33 @@ class AddInvoice extends Component {
 
   inputMoney = (value) => {
     const { details } = this.state;
-    this.setState({
-      total: value
-    }, () => {
-      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-        return;
-      }
-      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
-        return;
-      }
-      if (value > 100000000 || value === 100000000) {
-        return;
-      }
-      if (value < 0) {
-        return;
-      }
-      this.getNode({
-        projectId: details.projectId || '',
-        supplierId: details.supplierId || '',
-        createDingUserId: details.createDingUserId,
-        creatorDeptId: details.createDeptId || '',
-        processPersonId: details.processPersonId,
-      });
+    const { djDetail } = this.props;
+    const { costDetailsVo } = this.state;
+    if (!djDetail.categoryStatus || (costDetailsVo.length === 0)) {
+      this.setState({
+        total: value
+      }, () => {
+        if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+          return;
+        }
+        if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+          return;
+        }
+        if (value > 100000000 || value === 100000000) {
+          return;
+        }
+        if (value < 0) {
+          return;
+        }
+        this.getNode({
+          projectId: details.projectId || '',
+          supplierId: details.supplierId || '',
+          createDingUserId: details.createDingUserId,
+          creatorDeptId: details.createDeptId || '',
+          processPersonId: details.processPersonId,
+        });
     });
+  }
   }
 
   checkMoney = (rule, value, callback) => {
@@ -1607,6 +1639,7 @@ class AddInvoice extends Component {
       draftLoading,
       djDetail,
       operateType, // 操作类型，改单：modify, 复制：copy
+      detailJson,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1628,8 +1661,10 @@ class AddInvoice extends Component {
       assessSum,
       applyArr,
       newshowField,
-      modifyNote
+      modifyNote,
+      applyDetailList,
     } = this.state;
+
     const modify = operateType === 'modify';
     const newForm = [...newshowField, ...expandField].sort(compare('sort'));
     const formItemLayout = {
@@ -1849,10 +1884,11 @@ class AddInvoice extends Component {
                           );
                         }
                       }
+                      console.log('itw.field', itw.field);
                       return (
                         <>
                           {
-                            itw.status ?
+                            itw.status && (itw.fieldType !== 3) ?
                               <Col span={12}>
                                 <Form.Item label={itw.name} {...formItemLayout}>
                                   {
@@ -2200,7 +2236,7 @@ class AddInvoice extends Component {
               </Row>
             </Form>
             {
-              !Number(templateType) &&
+              (!Number(templateType) || (Number(templateType) === 2 && !!djDetail.categoryStatus)) &&
               <>
                 <Divider type="horizontal" />
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
@@ -2217,12 +2253,13 @@ class AddInvoice extends Component {
                         onAddCost={this.onAddCost}
                         key="handle"
                         modify={modify}
+                        templateType={Number(templateType)}
                       >
                         <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加</Button>
                       </AddCost>
                     }
                     {
-                      !modify &&
+                      !modify && !Number(templateType) &&
                       <AddFolder
                         userInfo={userInfo}
                         invoiceId={id}
@@ -2248,6 +2285,14 @@ class AddInvoice extends Component {
                   </div>
                 </div>
               </>
+            }
+            {
+              (detailJson && detailJson.length > 0) && Number(templateType) === 2 &&
+              <CategoryTable
+                list={detailJson}
+                onRef={ref => {this.onCategoryStatus = ref;}}
+                detailList={applyDetailList}
+              />
             }
             {
               djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&

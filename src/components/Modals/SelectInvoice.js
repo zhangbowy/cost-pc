@@ -167,14 +167,12 @@ class SelectInvoice extends Component {
 
   handleScroll = (el) => {
     if (el && el.children) {
-      console.log('SelectInvoice -> handleScroll -> el.children', el.children);
       const lastChild = el.children.length - 1;
       const top = el.scrollTop + 110;
       const index = Array.prototype.findIndex.call(
         el.children, v => v.offsetTop > top
       ) - 1;
       const i = index < -1 || (index === -1) ? lastChild : index;
-      console.log('SelectInvoice -> handleScroll -> i', i);
       const elChild = el.children[i];
       this.setState({
         id: elChild.dataset ? elChild.dataset.id : 'often'
@@ -182,7 +180,6 @@ class SelectInvoice extends Component {
     }
     debounce(
       () => {
-        console.log('debounce', el);
         const { scrollCancel } = this.state;
         if (scrollCancel) {
           this.setState({

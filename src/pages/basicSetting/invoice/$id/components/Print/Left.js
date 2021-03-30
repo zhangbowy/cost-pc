@@ -71,6 +71,7 @@ class Left extends Component {
     console.log('Left -> checkValues', checkValues);
     const { expandList } = this.props;
     const templatePdfExpandVos = expandList.filter(it => checkValues.includes(it.field)) || [];
+    console.log('Left -> templatePdfExpandVos', templatePdfExpandVos);
     const obj = { ...this.props.templatePdfVo };
     Object.assign(obj, {
       templatePdfExpandVos,

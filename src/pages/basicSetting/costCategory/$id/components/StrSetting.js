@@ -39,10 +39,10 @@ const selfStr = [{
   name: '日期',
   icon: 'iconriqi',
 }, {
-  key: '8',
-  fieldType: '8',
+  key: '3',
+  fieldType: '3',
   name: '明细',
-  icon: 'iconriqi',
+  icon: 'iconmingxi',
 }];
 
 const StrSetting = ({ fieldList,
@@ -65,9 +65,10 @@ const StrSetting = ({ fieldList,
   const onHandle = (e) => {
     setActive(e);
   };
-  const changeCardList = (list) => {
+  const changeCardList = (list, flag) => {
+    console.log('changeCardList -> list', list);
     setCardList([...list]);
-    onChangeData('selectList', [...list]);
+    onChangeData('selectList', [...list], flag);
   };
 
   const changeDragId = (id, flag) => {
@@ -77,15 +78,27 @@ const StrSetting = ({ fieldList,
       if (!newValues) {
         return;
       }
-      const index = cardList.findIndex(it => it.field === newValues.field);
       const newArr = [...cardList];
-      newArr.splice(index, 1, newValues);
+
+      const index = cardList.findIndex(it => it.field === newValues.field);
+      if (index > -1) {
+        newArr.splice(index, 1, newValues);
+      } else {
+        const i = newArr.findIndex(it => Number(it.fieldType) === 3);
+        const expands = newArr[i].expandFieldVos;
+        const mod = expands.findIndex(it => it.field === newValues.field);
+        expands.splice(mod, 1, newValues);
+        newArr.splice(i, 1, {
+          ...newArr[i],
+          expandFieldVos: expands
+        });
+      }
       console.log('changeDragId -> newArr', newArr);
       changeCardList(newArr);
     }
     setDragId(id);
   };
-
+  const selfList = templateType === 2 ? selfStr : selfStr.filter(it => (Number(it.fieldType) !== 3));
   return (
     <div style={{width: '100%', height: '100%', display: 'flex'}}>
       <div className={style.left}>
@@ -127,7 +140,7 @@ const StrSetting = ({ fieldList,
               :
               <>
                 {
-                  selfStr.map(item => (
+                  selfList.map(item => (
                     <SelfStr
                       {...item}
                       key={item.key}

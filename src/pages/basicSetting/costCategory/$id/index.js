@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react';
 import { PageHeader, Menu, Button } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
 import treeConvert from '@/utils/treeConvert';
 import PageHead from '@/components/PageHead';
 import LabelLeft from '../../../../components/LabelLeft';
@@ -14,8 +12,9 @@ import Share from './components/Share';
 import { classifyShare } from '../../../../utils/constants';
 import { timeStampToHex } from '../../../../utils/common';
 // import StrSetting from '../../invoice/$id/components/StrSetting';
-import StrSetting from './components/StrSetting';
-import PreviewBox from './components/PreviewBox';
+// import StrSetting from './components/StrSetting';
+// import PreviewBox from './components/PreviewBox';
+import DragContent from './components/DragContent';
 
 const basicStr = [{
   key: 'one',
@@ -366,21 +365,16 @@ class CategoryAdd extends PureComponent {
         }
         {
           current === 'two' &&
-          <div style={{height: 'calc(100% - 153px)', padding: '24px 24px 0 24px', display: 'flex'}}>
-            <DndProvider backend={HTML5Backend}>
-              <PreviewBox />
-              <StrSetting
-                fieldList={fieldList}
-                selectList={selectList}
-                onChangeData={this.onChangeData}
-                selectId="costCategory"
-                type="cost"
-                isModifyInvoice={isModifyInvoice}
-                operateType={title}
-                childRef={ref => { this.childRef = ref; }}
-              />
-            </DndProvider>
-          </div>
+          <DragContent
+            fieldList={fieldList}
+            selectList={selectList}
+            onChangeData={this.onChangeData}
+            isModifyInvoice={isModifyInvoice}
+            operateType={title}
+            middleRef={this.childRef}
+            selectId="costCategory"
+            type="cost"
+          />
         }
         {
           current === 'three' &&

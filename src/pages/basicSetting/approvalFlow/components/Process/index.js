@@ -227,22 +227,27 @@ class Process extends Component {
       );
       this.setState({
         data: nodes,
+      }, () => {
+        if (this.props.startNodeChange) {
+          this.props.startNodeChange(nodes);
+        }
       });
-      this.props.startNodeChange(nodes);
+      this.forceUpdate();
+    } else {
+      const nodes = NodeUtils.getMockData(data, newData, 'edit');
+      console.log('Process -> onPropEditConfirm -> nodes', nodes);
+      this.setState({
+        activeData: newData,
+        data: nodes,
+      }, () => {
+        if (this.props.startNodeChange) {
+          this.props.startNodeChange(nodes);
+        }
+      });
       this.forceUpdate();
     }
-    const nodes = NodeUtils.getMockData(data, newData, 'edit');
-    console.log('Process -> onPropEditConfirm -> nodes', nodes);
-    this.setState({
-      activeData: newData,
-      data: nodes,
-    }, () => {
-      if (this.props.startNodeChange) {
-        this.props.startNodeChange(nodes);
-      }
-    });
+
     this.onClosePanel();
-    this.forceUpdate();
   }
 
   /**

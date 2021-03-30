@@ -13,10 +13,7 @@ const layerStyles = {
   height: '119px',
 };
 function getItemStyles(initialOffset, currentOffset) {
-  console.log('getItemStyles -> isDragging');
   if (!initialOffset || !currentOffset) {
-    console.log('getItemStyles -> currentOffset', currentOffset);
-    console.log('getItemStyles -> initialOffset', initialOffset);
     return {
       display: 'none',
     };

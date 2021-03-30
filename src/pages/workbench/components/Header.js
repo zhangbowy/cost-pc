@@ -73,7 +73,7 @@ function Header(props) {
                 草稿箱
                 {
                   isBoss ?
-                    <><span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>笔</>
+                    <><span className={style.loan}>{personal.draftCount ? personal.draftCount : 0}</span>笔</>
                     :
                     null
                 }

@@ -195,8 +195,8 @@ class Conditions extends Component {
         const conditions = [];
         let flag = true;
         if (val.keys) {
-          val.keys.forEach((it) => {
-            content+=`${getArrayValue(it.key, conditionObj[templateType])}、`;
+          val.keys.forEach((it, index) => {
+            content+=`${getArrayValue(it.key, conditionObj[templateType])}${index !== (val.keys.length-1) ? '、' : ''}`;
             let rules = {};
             let values = [];
             if (it.type === 'people') {

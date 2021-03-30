@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from 'antd';
 import style from './index.scss';
-import { dataType, defaultString, changeOrder } from '../../../../../utils/constants';
+import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
 import { timeStampToHex } from '../../../../../utils/common';
 
 let id = 1000;
@@ -12,9 +12,11 @@ let id = 1000;
 class Right extends PureComponent {
   constructor(props) {
     super(props);
+    console.log(this.props.selectList);
+    console.log(this.props.selectId);
     this.state = {
       details: this.props.selectList &&
-               this.props.selectList.filter(it => it.field === this.props.selectId) ?
+               (this.props.selectList.findIndex(it => it.field === this.props.selectId) > -1) ?
                this.props.selectList.filter(it => it.field === this.props.selectId)[0] : {},
       checked: false,
       list: [],
@@ -25,12 +27,21 @@ class Right extends PureComponent {
     const { selectList, selectId } = this.props;
     if (prevProps.selectId !== selectId) {
       let list = [];
-      const details = selectList && selectList.filter(it => it.field === selectId) ? selectList.filter(it => it.field === selectId)[0] : {};
+      const indexs = selectList && selectList.findIndex(it => it.field === selectId);
+      let details = {};
+      if (indexs > -1) {
+        details = selectList[indexs];
+      } else {
+        const arr = selectList.filter(it => Number(it.fieldType) === 3)[0].expandFieldVos;
+        const i = arr.findIndex(it => it.field === selectId);
+        details = arr[i];
+      }
       if (details.options) {
         list = details.options.map((it, index) => { return { name: it, id: `aa_${index}` }; });
       }
+      console.log('details', details);
       this.setState({
-        details: selectList && selectList.filter(it => it.field === selectId) ? selectList.filter(it => it.field === selectId)[0] : {},
+        details,
         list,
       });
     }
@@ -55,9 +66,7 @@ class Right extends PureComponent {
   onChange = (e, key) => {
     const { selectList } = this.props;
     const { details } = this.state;
-    const arr = [...selectList];
-    const index = arr.findIndex(it => it.field === details.field);
-    arr.splice(index, 1, {
+    const arr = this.onChangeChild(selectList, details.field, {
       ...details,
       [key]: e && e.length ? e[0] : false,
     });
@@ -73,9 +82,7 @@ class Right extends PureComponent {
   onInput = (e, key) => {
     const { selectList } = this.props;
     const { details } = this.state;
-    const arr = [...selectList];
-    const index = arr.findIndex(it => it.field === details.field);
-    arr.splice(index, 1, {
+    const arr = this.onChangeChild(selectList, details.field, {
       ...details,
       [key]: e.target.value
     });
@@ -135,9 +142,7 @@ class Right extends PureComponent {
           </p>
         ),
         onOk: () => {
-          const arr = [...selectList];
-          const index = arr.findIndex(it => it.field === details.field);
-          arr.splice(index, 1, {
+          const arr = this.onChangeChild(selectList, details.field, {
             ...details,
             field: this.idGenerator()
           });
@@ -193,9 +198,7 @@ class Right extends PureComponent {
   onChangeS = (op) => {
     const { selectList } = this.props;
     const { details } = this.state;
-    const arr = [...selectList];
-    const index = arr.findIndex(it => it.field === details.field);
-    arr.splice(index, 1, {
+    const arr = this.onChangeChild(selectList, details.field, {
       ...details,
       dateType: op
     });
@@ -208,16 +211,36 @@ class Right extends PureComponent {
     this.props.onChange(arr);
   }
 
+  onChangeChild = (oldList, field, newVal) => {
+    const arr = [...oldList];
+    const i = oldList.findIndex(it => it.field === field);
+    if (i > -1) {
+      arr.splice(i, 1, {...newVal});
+    } else {
+      const lI = oldList.findIndex(it => Number(it.fieldType) === 3);
+      const expand = oldList[lI].expandFieldVos;
+      const nI = expand.findIndex(it => it.field === field);
+      expand.splice(nI, 1, {
+        ...newVal,
+      });
+      arr.splice(lI, 1, {
+        ...arr[lI],
+        expandFieldVos: expand,
+      });
+    }
+    return arr;
+  }
+
   render() {
     const { details, list } = this.state;
-    const { selectId, type, templateType, isModifyInvoice, operateType } = this.props;
+    const { type, templateType, isModifyInvoice, operateType } = this.props;
 
     const {
       form: { getFieldDecorator, getFieldValue },
     } = this.props;
-    console.log('Right -> render -> selectId', selectId);
+    // console.log('Right -> render -> selectId', selectId);
     // console.log('Right -> render -> selectList', selectList);
-    console.log(details);
+    // console.log(details);
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
     const formItems = Number(details.fieldType) === 2 ? keys.map(it=> (
@@ -268,7 +291,9 @@ class Right extends PureComponent {
                     disabled={
                       details.disabled ||
                       (details.field.indexOf('self_') === -1 &&
-                      details.field.indexOf('expand_') === -1)
+                      details.field.indexOf('expand_') === -1 &&
+                      !dragDisabled.includes(details.field))
+                      || (Number(details.fieldType) === 3)
                     }
                     onBlur={e => this.onInput(e, 'name')}
                   />
@@ -282,21 +307,24 @@ class Right extends PureComponent {
                 <span className="fs-12 warn" style={{verticalAlign: 'middle'}}>公用字段标题修改后将应用到所有{type === 'invoice' ? '单据模板' : '支出类别'}</span>
               </p>
             }
-            <Form.Item label="默认文案">
-              {
-                getFieldDecorator(`note[${details.field}]`, {
-                  initialValue: details.note || '请输入',
-                  rules: [
-                    { max: 10, message: '限制10个字' },
-                  ]
-                })(
-                  <Input
-                    placeholder="请输入"
-                    onBlur={e => this.onInput(e, 'note')}
-                  />
-                )
-              }
-            </Form.Item>
+            {
+              Number(details.fieldType) !== 3 &&
+              <Form.Item label="默认文案">
+                {
+                  getFieldDecorator(`note[${details.field}]`, {
+                    initialValue: details.note || '请输入',
+                    rules: [
+                      { max: 10, message: '限制10个字' },
+                    ]
+                  })(
+                    <Input
+                      placeholder="请输入"
+                      onBlur={e => this.onInput(e, 'note')}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
             {
               Number(details.fieldType) === 2 && !details.disabled &&
               (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
@@ -342,7 +370,7 @@ class Right extends PureComponent {
                 })(
                   <Checkbox.Group
                     style={{ width: '100%' }}
-                    disabled={details.disabled}
+                    disabled={details.disabled || dragDisabled.includes(details.field)}
                     onChange={e => this.onChange(e, 'isWrite')}
                   >
                     <Checkbox value>必填</Checkbox>
@@ -382,7 +410,7 @@ class Right extends PureComponent {
                 </Form.Item>
             }
             {
-              details.field && (details.field.indexOf('self_') > -1) &&
+              details.field && (details.field.indexOf('self_') > -1) && !details.parentId &&
               <>
                 <Divider type="horizontal" />
                 <Form.Item label="其他设置">

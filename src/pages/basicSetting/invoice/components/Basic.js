@@ -2,7 +2,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox } from 'antd';
+import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
@@ -23,6 +23,16 @@ const labelInfo = {
 };
 const {Option} = Select;
 const { SHOW_CHILD } = TreeSelect;
+const categoryStatus = [{
+  key: '0',
+  value: '禁用'
+}, {
+  key: '1',
+  value: '启用非必填'
+}, {
+  key: '2',
+  value: '启用必填'
+}];
 @Form.create()
 class Basic extends React.PureComponent {
   constructor(props) {
@@ -39,6 +49,8 @@ class Basic extends React.PureComponent {
       visible: false,
       title: 'add',
       name: '',
+      costStatus: (this.props.data && this.props.data.categoryStatus) ?
+      `${this.props.data.categoryStatus}` : '0'
     };
   }
 
@@ -58,6 +70,8 @@ class Basic extends React.PureComponent {
           flowId: (this.props.data && this.props.data.approveId) || '',
           title: 'add',
           name: '',
+          costStatus: (this.props.data && this.props.data.categoryStatus) ?
+            `${this.props.data.categoryStatus}` : '0'
         });
     }
     if (prevProps.approveList !== this.props.approveList) {
@@ -82,6 +96,7 @@ class Basic extends React.PureComponent {
     const {
       form,
       costCategoryList,
+      templateType,
     } = this.props;
     let val = {};
     const { category, users, deptJson } = this.state;
@@ -133,6 +148,12 @@ class Basic extends React.PureComponent {
             });
           }
         }
+        if (templateType === 2) {
+          Object.assign(values, {
+            categoryStatus: Number(values.categoryStatus),
+          });
+        }
+
         Object.assign(val, {
           ...val,
           ...values,
@@ -174,9 +195,14 @@ class Basic extends React.PureComponent {
         users: [],
         deptJson: [],
       });
-    } else {
+    } else if (value === 'cost') {
       this.setState({
         category: [],
+      });
+    } else if (value === 'costStatus' && e.target.value === '0') {
+      this.setState({
+        category: [],
+        cost: true,
       });
     }
   }
@@ -266,7 +292,7 @@ class Basic extends React.PureComponent {
     } = this.props;
     const { cost, user, category, users,
       deptJson, flowId, approveList,
-      visible, name, title } = this.state;
+      visible, name, title, costStatus } = this.state;
     console.log('data', data);
     // eslint-disable-next-line
     const lists = (list && list.filter(it => (Number(it.type) === 0 && (it.templateType == templateType)))) || [];
@@ -348,7 +374,33 @@ class Basic extends React.PureComponent {
             }
           </Form.Item>
           {
-            !Number(templateType) &&
+            (Number(templateType) === 2) &&
+            <Form.Item label="支出明细">
+              {
+                getFieldDecorator('categoryStatus', {
+                  initialValue: costStatus,
+                })(
+                  <RadioGroup onChange={e => this.onChange(e, 'costStatus')}>
+                    {
+                      categoryStatus.map(item => (
+                        <Radio key={item.key} value={item.key}>
+                          {item.value}
+                          {
+                            item.key === '0' &&
+                            <Tooltip title="禁用后，该申请单模版不支持添加支出明细">
+                              <i className="iconfont iconIcon-yuangongshouce fs-14 m-l-8" />
+                            </Tooltip>
+                          }
+                        </Radio>
+                      ))
+                    }
+                  </RadioGroup>
+                )
+              }
+            </Form.Item>
+          }
+          {
+            (!Number(templateType) || (Number(templateType) === 2) && costStatus !== '0') &&
             <Form.Item label={labelInfo.isAllCostCategory}>
               {
                 getFieldDecorator('isAllCostCategory', {

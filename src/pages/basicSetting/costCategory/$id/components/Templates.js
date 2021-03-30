@@ -10,7 +10,7 @@ function Templates({ name, isWrite, fieldType }) {
   return (
     <div
       className={style.StrTemplates}
-      style={{boxShadow: '0px 2px 30px 1px rgba(0, 0, 0, 0.08)'}}
+      style={{boxShadow: '0px 2px 30px 1px rgba(0, 0, 0, 0.08)', background: '#fff'}}
     >
       <span className={isWrite ? style.required : style.requireds}>*</span>
       <div className={style.tmpCnt}>

@@ -374,7 +374,7 @@ class AddCost extends Component {
             };
           }
         }
-        const arr = _this.onGetForm('submit', val.categoryId);
+        const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
         if (!arr) {
           return;
         }
@@ -637,7 +637,8 @@ class AddCost extends Component {
       currencyList,
       currencyShow,
       againCost,
-      modify
+      modify,
+      templateType
     } = this.props;
 
     const list = this.onSelectTree();
@@ -959,22 +960,28 @@ class AddCost extends Component {
                   })
                 }
               </Row>
-              <Divider type="horizontal" />
-              <AddCostTable
-                costDetailShareVOS={costDetailShareVOS}
-                costSum={costSum}
-                shareAmount={shareAmount}
-                project={project}
-                currencySymbol={currencySymbol}
-                currencyId={currencyId}
-                exchangeRate={exchangeRate}
-                initDep={this.state.initDep}
-                onChange={(type, val) => this.onChangeState(type, val)}
-                invoiceId={this.props.invoiceId}
-                costType={this.props.costType}
-                onGetForm={fn=> { this.onGetForm = fn; }}
-                modify={modify}
-              />
+              {
+                !templateType &&
+                <>
+                  <Divider type="horizontal" />
+                  <AddCostTable
+                    costDetailShareVOS={costDetailShareVOS}
+                    costSum={costSum}
+                    shareAmount={shareAmount}
+                    project={project}
+                    currencySymbol={currencySymbol}
+                    currencyId={currencyId}
+                    exchangeRate={exchangeRate}
+                    initDep={this.state.initDep}
+                    onChange={(type, val) => this.onChangeState(type, val)}
+                    invoiceId={this.props.invoiceId}
+                    costType={this.props.costType}
+                    onGetForm={fn=> { this.onGetForm = fn; }}
+                    modify={modify}
+                  />
+                </>
+              }
+
             </Form>
           </div>
         </Modal>
