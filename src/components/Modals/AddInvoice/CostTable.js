@@ -40,7 +40,7 @@ class CostTable extends Component {
   }
 
   render() {
-    const { list, userInfo, invoiceId, modify } = this.props;
+    const { list, userInfo, invoiceId, modify, templateType } = this.props;
     console.log('CostTable -> render -> list', list);
     const newList = [];
     list.forEach(it => {
@@ -146,6 +146,7 @@ class CostTable extends Component {
             onAddCost={this.addCost}
             expandField={record.selfCostDetailFieldVos ? [...record.expandCostDetailFieldVos, ...record.selfCostDetailFieldVos] : [...record.expandCostDetailFieldVos]}
             costTitle="edit"
+            templateType={templateType}
             // onCancel={(val) => this.onBack(val, index)}
           >
             <a>编辑</a>

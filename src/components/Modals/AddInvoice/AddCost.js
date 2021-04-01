@@ -940,6 +940,7 @@ class AddCost extends Component {
                             >
                               {
                                 getFieldDecorator('img', {
+                                  initialValue: imgUrl.length ? imgUrl : null,
                                   rules: [{
                                     required: !!(showField.imgUrl.isWrite), message: '请选择图片'
                                   }]

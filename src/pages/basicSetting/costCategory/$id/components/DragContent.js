@@ -11,6 +11,7 @@ function DragContent({ fieldList,
     const childRef = useRef();
     useImperativeHandle(middleRef, () => ({
       getRightParams: () => {
+        console.log('走到这里了吗');
         return childRef.current.getRightParams();
       }
     }));

@@ -37,12 +37,16 @@ class Right extends PureComponent {
         details = arr[i];
       }
       if (details.options) {
-        list = details.options.map((it, index) => { return { name: it, id: `aa_${index}` }; });
+        list = details.options.map((it, index) => { return { name: it, id: `aa_${timeStampToHex()+index}` }; });
+      } else {
+        this.props.form.setFieldsValue({
+          keys: []
+        });
       }
       console.log('details', details);
       this.setState({
         details,
-        list,
+        list: [...list],
       });
     }
   }
@@ -126,7 +130,7 @@ class Right extends PureComponent {
         val = null;
       }
     });
-    console.log('Right -> getFormItems -> val', val);
+    this.props.form.resetFields();
     return val;
   }
 
@@ -238,11 +242,10 @@ class Right extends PureComponent {
     const {
       form: { getFieldDecorator, getFieldValue },
     } = this.props;
-    // console.log('Right -> render -> selectId', selectId);
-    // console.log('Right -> render -> selectList', selectList);
-    // console.log(details);
+    console.log(details);
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
+
     const formItems = Number(details.fieldType) === 2 ? keys.map(it=> (
       <div className={style.addForm}>
         <Form.Item

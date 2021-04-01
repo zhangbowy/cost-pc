@@ -2050,6 +2050,7 @@ class AddInvoice extends Component {
                                 >
                                   {
                                     getFieldDecorator('img', {
+                                      initialValue: imgUrl && imgUrl.length ? imgUrl : null,
                                       rules: [{
                                         required: !!(showField.imgUrl.isWrite),
                                         message: '请选择图片'
@@ -2280,6 +2281,7 @@ class AddInvoice extends Component {
                         onChangeData={(val) => this.onChangeData(val)}
                         addCost={this.onAddCost}
                         modify={modify}
+                        templateType={Number(templateType)}
                       />
                     }
                   </div>

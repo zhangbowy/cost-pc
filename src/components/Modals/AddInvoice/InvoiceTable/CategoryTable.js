@@ -276,14 +276,16 @@ class CategoryTable extends Component {
           let msg = record[it.field];
           if (Number(it.fieldType) === 5 && msg) {
             if (it.dateType === 1) {
-              msg = record[it.field] ?
+              msg = record[it.field].indexOf('~') === -1 ?
                     moment(moment(Number(record[it.field])).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
             } else {
               const str = record[it.field];
-              if (str) {
+              if (str && str.indexOf('~') > -1) {
                 const s = str.split('~');
                 msg = [moment(moment(Number(s[0])).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
                 moment(moment(Number(s[1])).format('YYYY-MM-DD'), 'YYYY-MM-DD')];
+              } else {
+                msg = [];
               }
             }
           } else if (msg && (it.field === 'detail_money' || it.field === 'detail_sale')) {

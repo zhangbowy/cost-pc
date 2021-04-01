@@ -56,8 +56,10 @@ const StrSetting = ({ fieldList,
   useImperativeHandle(childRef, () => ({
     getRightParams: () => {
       let val = null;
+      console.log('formRef', formRef);
       if (formRef && formRef.getFormItems) {
         val = formRef.getFormItems();
+        console.log('val', val);
       }
       return val;
     }
@@ -72,6 +74,7 @@ const StrSetting = ({ fieldList,
   };
 
   const changeDragId = (id, flag) => {
+    console.log('changeDragId -> formRef', formRef);
     if (flag && formRef && formRef.getFormItems) {
       const newValues = formRef.getFormItems();
       console.log('changeDragId -> newValues', newValues);

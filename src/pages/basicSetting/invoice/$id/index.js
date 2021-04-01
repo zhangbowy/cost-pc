@@ -268,7 +268,7 @@ class CategoryAdd extends PureComponent {
         status: values.status ? 1 : 0,
       });
     }
-
+    console.log('CategoryAdd -> onStep -> valStr', this.childRef);
     if (this.childRef && this.childRef.getRightParams) {
       const valStr = this.childRef.getRightParams();
       console.log('CategoryAdd -> onStep -> valStr', valStr);
@@ -541,7 +541,7 @@ class CategoryAdd extends PureComponent {
                     type="invoice"
                     isModifyInvoice={isModifyInvoice}
                     operateType={title}
-                    middleRef={this.childRef}
+                    middleRef={ref => {this.childRef = ref;}}
                     templateType={Number(templateType)}
                   />
                 </div>

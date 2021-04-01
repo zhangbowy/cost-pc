@@ -210,6 +210,7 @@ class CategoryAdd extends PureComponent {
         status: values.status ? 1 : 0,
       });
     }
+
     if (this.childRef && this.childRef.getRightParams) {
       const valStr = this.childRef.getRightParams();
       console.log('CategoryAdd -> onStep -> valStr', valStr);
@@ -371,7 +372,7 @@ class CategoryAdd extends PureComponent {
             onChangeData={this.onChangeData}
             isModifyInvoice={isModifyInvoice}
             operateType={title}
-            middleRef={this.childRef}
+            middleRef={ref => {this.childRef = ref;}}
             selectId="costCategory"
             type="cost"
           />
