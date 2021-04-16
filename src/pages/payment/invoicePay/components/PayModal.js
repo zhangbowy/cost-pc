@@ -3,6 +3,7 @@ import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from
 import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
+import UploadImg from '../../../../components/UploadImg';
 
 const { Option } = Select;
 const accountType = [{
@@ -32,6 +33,7 @@ class PayModal extends React.PureComponent {
       flag: false,
       status: '1',
       prod: '已选单据有非支付宝收款账户，不支持线上支付',
+      imgUrl: [],
     };
   }
 
@@ -120,7 +122,7 @@ class PayModal extends React.PureComponent {
       getAliAccounts,
       confirms
     } = this.props;
-    const { status } = this.state;
+    const { status, imgUrl } = this.state;
     // const _this = this;
     form.validateFieldsAndScroll((err, values) => {
       console.log(err);
@@ -151,6 +153,11 @@ class PayModal extends React.PureComponent {
             'account': payList[0].account,
             'payId': values.account,
             templateType
+          };
+        } else {
+          params = {
+            ...params,
+            payVoucher: imgUrl.length ? imgUrl [0].imgUrl : '',
           };
         }
         dispatch({
@@ -215,19 +222,26 @@ class PayModal extends React.PureComponent {
     }
   }
 
+  onChangeImg = (val) => {
+    this.setState({
+      imgUrl: val,
+    });
+  }
+
   render() {
     const {
       children,
       payAccount,
       form: { getFieldDecorator },
       getAliAccounts,
-      loading
+      loading,
+      userInfo,
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status, prod } = this.state;
+    const { visible, defAcc, count, amount, flag, status, prod, imgUrl } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 3 },
+        sm: { span: 4 },
       },
       wrapperCol: {
         xs: { span: 24 },
@@ -245,13 +259,16 @@ class PayModal extends React.PureComponent {
           footer={null}
           width="680px"
           bodyStyle={{
-            height: '450px',
-            padding: '40px'
+            height: '500px',
           }}
         >
-          <h1 className="fs-24 c-black-85 m-b-16">发起支付</h1>
+          <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1>
           <Form className="formItem">
-            <p className="c-black-85 fs-14 m-b-47">已选 {count}张单据，共计 <span className="fw-500 fs-20">¥{amount/100}</span></p>
+            <p
+              className="c-black-85 fs-14 m-b-47 m-l-16"
+            >
+              已选 {count}张单据，共计 <span className="fw-500 fs-20">¥{amount/100}</span>
+            </p>
             <Form.Item label="付款方式" {...formItemLayout}>
               {
                 getFieldDecorator('accountType', {
@@ -330,6 +347,17 @@ class PayModal extends React.PureComponent {
                     <DatePicker />
                   )
                 }
+              </Form.Item>
+            }
+            {
+              status === '1' &&
+              <Form.Item label="付款凭证" {...formItemLayout}>
+                <UploadImg
+                  onChange={(val) => this.onChangeImg(val)}
+                  imgUrl={imgUrl}
+                  userInfo={userInfo}
+                  maxLen={1}
+                />
               </Form.Item>
             }
           </Form>

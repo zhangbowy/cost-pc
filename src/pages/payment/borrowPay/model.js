@@ -23,6 +23,7 @@ export default {
         type: 'save',
         payload: {
           list: lists || [],
+          isViewVoucher: lists.length ? lists[0].viewVoucher : false,
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,

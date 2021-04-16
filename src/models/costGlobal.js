@@ -30,6 +30,12 @@ export default {
     areaCode: [],
     checkTemp: {},
     isModifyInvoice: false,
+    recordList: [], // 单据删除操作日志
+    recordPage: {
+      pageNo: 1,
+      pageSize: 10,
+      total: 0,
+    }
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -174,8 +180,27 @@ export default {
     *invoiceEdit({ payload }, { call }) {
       yield call(post, api.invoiceEdit, payload);
     },
+    // 管理员删除单据
+    *delInvoice({ payload }, { call }) {
+      yield call(get, api.delInvoice, payload);
+    },
     *loanEdit({ payload }, { call }) {
       yield call(post, api.loanEdit, payload);
+    },
+    // 删除的单据的记录
+    *recordList({ payload }, { call, put }) {
+      const response = yield call(get, api.recordList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          recordList: response.list || [],
+          recordPage: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize,
+            total: (response.page && response.page.total) || 0
+          }
+        },
+      });
     },
     *recordDetailLoan({ payload }, { call, put }) {
       const response = yield call(get, api.recordDetailLoan, payload);

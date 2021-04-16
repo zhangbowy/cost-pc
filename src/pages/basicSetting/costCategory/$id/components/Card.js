@@ -133,11 +133,11 @@ const Card = ({ name, isWrite, index,
           <span className={isWrite ? style.required : style.requireds}>*</span>
           <div className={style.tmpCnt}>
             {
-              types !== 3 &&
+              types !== 3 && types !== 9 &&
               <p className="fs-14 c-black-85">{name}</p>
             }
             {
-              types === 2 &&
+              (types === 2 || types === 8) &&
               <div className={style.inputs}>
                 <span className="fs-14 c-black-25">请选择</span>
                 <i className="iconfont icondown c-black-25" />
@@ -161,6 +161,12 @@ const Card = ({ name, isWrite, index,
               (types === 6 || types === 7) &&
               <div className={style.images}>
                 <i className="iconfont iconxinzengbaoxiao" />
+              </div>
+            }
+            {
+              (types === 9) &&
+              <div className={style.production}>
+                <span>说明文字</span>
               </div>
             }
           </div>

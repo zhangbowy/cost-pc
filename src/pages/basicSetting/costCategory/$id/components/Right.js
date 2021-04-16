@@ -246,7 +246,8 @@ class Right extends PureComponent {
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
 
-    const formItems = Number(details.fieldType) === 2 ? keys.map(it=> (
+    const formItems = (Number(details.fieldType) === 2
+    || Number(details.fieldType) === 8) ? keys.map(it=> (
       <div className={style.addForm}>
         <Form.Item
           key={it.id}
@@ -280,29 +281,32 @@ class Right extends PureComponent {
         </div>
         <div className={style.contents}>
           <Form style={{ padding: '0 24px' }} colon={false}>
-            <Form.Item label="字段标题">
-              {
-                getFieldDecorator(`name[${details.field}]`, {
-                  initialValue: details.name,
-                  rules: [
-                    { max: 10, message: '限制10个字' },
-                    { required: true, message: '请输入字段标题' }
-                  ]
-                })(
-                  <Input
-                    placeholder="请输入"
-                    disabled={
-                      details.disabled ||
-                      (details.field.indexOf('self_') === -1 &&
-                      details.field.indexOf('expand_') === -1 &&
-                      !dragDisabled.includes(details.field))
-                      || (Number(details.fieldType) === 3)
-                    }
-                    onBlur={e => this.onInput(e, 'name')}
-                  />
-                )
-              }
-            </Form.Item>
+            {
+              Number(details.fieldType) !== 9 &&
+              <Form.Item label="字段标题">
+                {
+                  getFieldDecorator(`name[${details.field}]`, {
+                    initialValue: details.name,
+                    rules: [
+                      { max: 10, message: '限制10个字' },
+                      { required: true, message: '请输入字段标题' }
+                    ]
+                  })(
+                    <Input
+                      placeholder="请输入"
+                      disabled={
+                        details.disabled ||
+                        (details.field.indexOf('self_') === -1 &&
+                        details.field.indexOf('expand_') === -1 &&
+                        !dragDisabled.includes(details.field))
+                        || (Number(details.fieldType) === 3)
+                      }
+                      onBlur={e => this.onInput(e, 'name')}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
             {
               details.field.indexOf('expand_') > -1 &&
               <p style={{ marginTop: '-20px', marginBottom: '8px' }}>
@@ -311,7 +315,7 @@ class Right extends PureComponent {
               </p>
             }
             {
-              Number(details.fieldType) !== 3 &&
+              Number(details.fieldType) !== 3 && Number(details.fieldType) !== 9 &&
               <Form.Item label="默认文案">
                 {
                   getFieldDecorator(`note[${details.field}]`, {
@@ -329,7 +333,8 @@ class Right extends PureComponent {
               </Form.Item>
             }
             {
-              Number(details.fieldType) === 2 && !details.disabled &&
+              (Number(details.fieldType) === 2 || Number(details.fieldType) === 8) &&
+               !details.disabled &&
               (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
               <div className={style.moveForm}>
                 <p>选项</p>
@@ -366,21 +371,24 @@ class Right extends PureComponent {
                 }
               </Form.Item>
             }
-            <Form.Item label="校验">
-              {
-                getFieldDecorator(`isWrite[${details.field}]`, {
-                  initialValue: details.isWrite ? [details.isWrite] : [],
-                })(
-                  <Checkbox.Group
-                    style={{ width: '100%' }}
-                    disabled={details.disabled || dragDisabled.includes(details.field)}
-                    onChange={e => this.onChange(e, 'isWrite')}
-                  >
-                    <Checkbox value>必填</Checkbox>
-                  </Checkbox.Group>
-                )
-              }
-            </Form.Item>
+            {
+              Number(details.fieldType) === 9 &&
+              <Form.Item label="校验">
+                {
+                  getFieldDecorator(`isWrite[${details.field}]`, {
+                    initialValue: details.isWrite ? [details.isWrite] : [],
+                  })(
+                    <Checkbox.Group
+                      style={{ width: '100%' }}
+                      disabled={details.disabled || dragDisabled.includes(details.field)}
+                      onChange={e => this.onChange(e, 'isWrite')}
+                    >
+                      <Checkbox value>必填</Checkbox>
+                    </Checkbox.Group>
+                  )
+                }
+              </Form.Item>
+            }
             {
               templateType !== 2 && isModifyInvoice &&
                 <Form.Item

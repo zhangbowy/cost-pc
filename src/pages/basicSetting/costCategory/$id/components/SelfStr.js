@@ -49,7 +49,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     name,
     fieldType,
     dateType: Number(fieldType) === 5 ? 1 : 0,
-    options: Number(fieldType) === 2 ? ['选项一', '选项二'] : [],
+    options: Number(fieldType) === 2 || Number(fieldType) === 8 ? ['选项一', '选项二'] : [],
     field: idGenerator(),
     isSelect: true,
     id: -1,

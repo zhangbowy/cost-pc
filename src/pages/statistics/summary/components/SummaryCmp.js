@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
-import { Table, Tooltip } from 'antd';
+import { Table, Tooltip, Popconfirm, message } from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
 
+const statusStr = {
+  1: '该单据审批中，可让发起人自行撤销',
+  2: '该单据待发放，可让发放人执行拒绝操作',
+  4: '该单据已撤销，可让发起人自行删除',
+  5: '该单据已审批拒绝，可让发起人自行删除',
+  11: '该单据已发放拒绝，可让发起人自行删除',
+};
 class SummaryCmp extends Component {
 
   constructor(props) {
@@ -54,7 +61,6 @@ class SummaryCmp extends Component {
         selectedRowKeys,
     } = rowSelect.onSelect(this.state, record, selected);
     let amount = 0;
-    console.log('SummaryCmp -> onSelect -> selectedRows', selectedRows);
 
     selectedRows.forEach(item => {
       amount+=item.money;
@@ -72,9 +78,25 @@ class SummaryCmp extends Component {
     });
   };
 
+  onDelete = (id) => {
+    const { templateType, query, searchContent } = this.props;
+    this.props.onDelInvoice({
+      id,
+      templateType
+    }, () => {
+      message.success('删除成功');
+      this.props.onQuery({
+        pageNo: query.pageNo,
+        pageSize: query.pageSize,
+        content: searchContent,
+      });
+    });
+  }
+
   render () {
     const { selectedRowKeys } = this.state;
-    const { list, loading, templateType, query, total, searchContent } = this.props;
+    const { list, loading, templateType,
+      query, total, searchContent, userInfo } = this.props;
     const rowSelection = {
       type: 'checkbox',
       selectedRowKeys,
@@ -290,6 +312,41 @@ class SummaryCmp extends Component {
         newColumns = column;
       } else if (templateType === 2) {
         newColumns = colum;
+      }
+      if (userInfo.isSupperAdmin) {
+        newColumns.push({
+          title: '操作',
+          dataIndex: 'operate',
+          render: (_, record) => {
+            const { status } = record;
+            console.log(status);
+            return (
+              <>
+                {
+                  (status === 3 && templateType === 0) ||
+                  (templateType === 1 && status === 3) ||
+                  (templateType === 2 && status === 2) ?
+                    <Popconfirm
+                      title="确认删除该单据吗？此操作不可恢复，需谨慎"
+                      onConfirm={() => this.onDelete(record.id)}
+                      placement="topRight"
+                    >
+                      <a>删单</a>
+                    </Popconfirm>
+                    :
+                    <Tooltip
+                      title={statusStr[status]}
+                      placement="topRight"
+                    >
+                      <span style={{ cursor: 'pointer',color: 'rgba(0,0,0,0.45)' }}>删单</span>
+                    </Tooltip>
+                }
+              </>
+            );
+          },
+          width: 70,
+          fixed: 'right'
+        });
       }
     return (
       <div>

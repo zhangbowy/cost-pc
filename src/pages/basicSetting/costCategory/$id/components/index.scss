@@ -97,7 +97,7 @@
 
 // 模板
 .StrTemplates{
-  min-height: 116px;
+  min-height: 56px;
   // width: 100%;
   margin: 0 24px;
   // background: #ffffff;
@@ -117,6 +117,7 @@
     line-height: 30px;
     max-width: 480px;
     min-width: 280px;
+    margin-bottom: 30px;
   }
   .dateType{
     max-width: 480px;
@@ -129,6 +130,7 @@
     display: flex;
     // justify-content: center;
     line-height: 30px;
+    margin-bottom: 30px;
   }
   .images{
     width: 48px;
@@ -138,16 +140,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 30px;
   }
   .lines{
     width: 4px;
-    min-height: 116px;
+    height: inherit;
     margin-bottom: 0;
     background: #00C795;
   }
   .linesD{
     width: 4px;
-    height: 116px;
+    height: inherit;
     margin-bottom: 0;
   }
   .tmpCnt{
@@ -167,6 +170,10 @@
     display: block;
     color: #fff;
     line-height: 22px;
+  }
+  .production{
+    color: rgba(0, 0, 0, 0.45);
+    line-height: 56px;
   }
   .operator{
     position: absolute;

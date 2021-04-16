@@ -49,7 +49,7 @@ class UploadImg extends Component {
   }
 
   render() {
-    const { userInfo, disabled } = this.props;
+    const { userInfo, disabled, maxLen } = this.props;
     const { imgUrl } = this.state;
     const uploadButton = (
       <div>
@@ -83,7 +83,7 @@ class UploadImg extends Component {
             token: localStorage.getItem('token') || ''
           }}
         >
-          {imgUrl && imgUrl.length < 9 && uploadButton}
+          {imgUrl && imgUrl.length < (maxLen || 9) && uploadButton}
         </Upload>
       </div>
     );

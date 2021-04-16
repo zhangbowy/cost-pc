@@ -43,6 +43,16 @@ const selfStr = [{
   fieldType: '3',
   name: '明细',
   icon: 'iconmingxi',
+}, {
+  key: '8',
+  fieldType: '8',
+  name: '多选',
+  icon: 'icondanxuan1',
+}, {
+  key: '9',
+  fieldType: '9',
+  name: '说明',
+  icon: 'iconshuomingwenzi',
 }];
 
 const StrSetting = ({ fieldList,

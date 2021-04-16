@@ -12,6 +12,7 @@ export default {
       pageSize: PAGE_SIZE,
     },
     total: 0,
+    isViewVoucher: false,
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -22,6 +23,7 @@ export default {
         type: 'save',
         payload: {
           list: lists || [],
+          isViewVoucher: lists.length ? lists[0].viewVoucher : false,
           // list: [{ id: 1 }, { id: 2 }],
           query: {
             pageSize: payload.pageSize,

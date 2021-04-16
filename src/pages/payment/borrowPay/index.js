@@ -13,6 +13,7 @@ import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
 import PayModal from '../invoicePay/components/payModal';
 import ConfirmPay from '../invoicePay/components/ConfirmPay';
+import { ddPreviewImage } from '../../../utils/ddApi';
 
 const { confirm } = Modal;
 const { APP_API } = constants;
@@ -22,6 +23,7 @@ const { APP_API } = constants;
   list: borrowPay.list,
   query: borrowPay.query,
   total: borrowPay.total,
+  isViewVoucher: borrowPay.isViewVoucher,
 }))
 class BorrowPay extends React.PureComponent {
   constructor(props) {
@@ -319,6 +321,13 @@ class BorrowPay extends React.PureComponent {
     });
   }
 
+  previewImage = (arr, index) => {
+    ddPreviewImage({
+      urlArray: [arr],
+      index,
+    });
+  }
+
   render() {
     const {
       list,
@@ -326,9 +335,9 @@ class BorrowPay extends React.PureComponent {
       total,
       loading,
       batchDetails,
-      dispatch
+      dispatch,
+      isViewVoucher
     } = this.props;
-    console.log(list);
     const {
       status,
       visibleConfirm,
@@ -509,7 +518,30 @@ class BorrowPay extends React.PureComponent {
         width: 140,
       });
     };
-    console.log('list', list);
+    if (isViewVoucher) {
+      columns.splice(12, 0, {
+        title: '付款凭证',
+        dataIndex: 'payVoucher',
+        width: 100,
+        render: (_, record) => {
+          return (
+            <div>
+              {
+                record.payVoucher ?
+                  <img
+                    src={record.payVoucher}
+                    alt="付款凭证"
+                    onClick={() => this.previewImage(record.payVoucher, 0)}
+                    className="tableImage"
+                  />
+                  :
+                  '-'
+              }
+            </div>
+          );
+        }
+      });
+    }
     return (
       <>
         <PayTemp

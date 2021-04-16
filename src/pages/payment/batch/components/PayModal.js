@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
 import ConfirmPay from '../../invoicePay/components/ConfirmPay';
+import UploadImg from '../../../../components/UploadImg';
 
 const { Option } = Select;
 const accountType = [{
@@ -33,6 +34,7 @@ class PayModal extends React.PureComponent {
       flag: false,
       status: '1',
       visibleConfirm: false,
+      imgUrl: [],
     };
   }
 
@@ -94,6 +96,13 @@ class PayModal extends React.PureComponent {
     this.props.form.resetFields();
     this.setState({
       visible: false,
+      imgUrl: [],
+    });
+  }
+
+  onChangeImg = (val) => {
+    this.setState({
+      imgUrl: val,
     });
   }
 
@@ -107,7 +116,7 @@ class PayModal extends React.PureComponent {
       templateType,
       getAliAccounts
     } = this.props;
-    const { status } = this.state;
+    const { status, imgUrl } = this.state;
     // const _this = this;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -130,6 +139,11 @@ class PayModal extends React.PureComponent {
             'account': values.account,
             outBatchNo: selectKey[0].outBatchNo,
             payId: payList[0] && payList[0].payId
+          };
+        } else {
+          params = {
+            ...params,
+            payVoucher: imgUrl.length ? imgUrl [0].imgUrl : '',
           };
         }
         dispatch({
@@ -166,9 +180,11 @@ class PayModal extends React.PureComponent {
       form: { getFieldDecorator },
       getAliAccounts,
       dispatch,
-      loading
+      loading,
+      userInfo
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status, visibleConfirm } = this.state;
+    const { visible, defAcc, count, amount,
+      flag, status, visibleConfirm, imgUrl } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -190,7 +206,7 @@ class PayModal extends React.PureComponent {
           footer={null}
           width="680px"
           bodyStyle={{
-            height: '450px',
+            height: '500px',
             padding: '40px'
           }}
         >
@@ -275,6 +291,17 @@ class PayModal extends React.PureComponent {
               </Form.Item>
             }
           </Form>
+          {
+            status === '1' &&
+            <Form.Item label="付款凭证" {...formItemLayout}>
+              <UploadImg
+                onChange={(val) => this.onChangeImg(val)}
+                imgUrl={imgUrl}
+                userInfo={userInfo}
+                maxLen={1}
+              />
+            </Form.Item>
+          }
           <div style={{ marginLeft: '12.5%' }}>
             <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
             <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>

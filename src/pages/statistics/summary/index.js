@@ -3,13 +3,15 @@
 import React from 'react';
 import { Menu, Form, message, Icon } from 'antd';
 import { connect } from 'dva';
+import moment from 'moment';
 import Search from 'antd/lib/input/Search';
 import DropBtn from '@/components/DropBtn';
 import SummaryCmp from './components/SummaryCmp';
 import style from './index.scss';
 import LevelSearch from './components/LevelSearch';
+import TableTemplate from '../../../components/Modals/TableTemplate';
 
-@connect(({ loading, summary }) => ({
+@connect(({ loading, summary, session, costGlobal }) => ({
   loading: loading.effects['summary/submitList'] ||
             loading.effects['summary/loanList'] ||
             loading.effects['summary/applicationList'] || false,
@@ -19,6 +21,9 @@ import LevelSearch from './components/LevelSearch';
   query: summary.query,
   total: summary.total,
   sum: summary.sum,
+  userInfo: session.userInfo,
+  recordList: costGlobal.recordList,
+  recordPage: costGlobal.recordPage,
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -152,10 +157,59 @@ class Summary extends React.PureComponent {
     });
   };
 
+  onRecord = (payload, callback) => {
+    this.props.dispatch({
+      type: 'costGlobal/recordList',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  onDelete = (payload, callback) => {
+    this.props.dispatch({
+      type: 'costGlobal/delInvoice',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
   render() {
-    const { loading, query, total, sum } = this.props;
-    const { current, selectedRowKeys, list, searchContent, sumAmount, levelSearch, selectedRows } = this.state;
-    console.log('Summary -> render -> selectedRowKeys', selectedRowKeys);
+    const { loading, query, total,
+       sum, userInfo, recordList, recordPage } = this.props;
+    const { current, selectedRowKeys, list,
+      searchContent, sumAmount, levelSearch,
+      selectedRows } = this.state;
+    const columns = [{
+      title: '姓名',
+      dataIndex: 'operationName',
+      width: 80,
+    }, {
+      title: '操作时间',
+      dataIndex: 'createTime',
+      width: 80,
+      render: (_, record) => (
+        <span>
+          {record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}
+        </span>
+      )
+    }, {
+      title: '操作内容',
+      dataIndex: 'operationType',
+      width: 80,
+      render: () => (
+        <span>单据删除</span>
+      )
+    }, {
+      title: '详情',
+      dataIndex: 'operationMsg',
+      width: 160,
+    }];
     return (
       <div>
         <div style={{background: '#fff', paddingTop: '16px'}}>
@@ -192,14 +246,34 @@ class Summary extends React.PureComponent {
                   />
                 </Form>
               </div>
-              <LevelSearch onOk={this.onOk} details={levelSearch} templateType={Number(current)}>
-                <div className="head_rg" style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
-                  <div className={style.activebg}>
-                    <Icon className="sub-color m-r-8" type="filter" />
+              <div className="head_rg">
+                <TableTemplate
+                  page={recordPage}
+                  onQuery={this.onRecord}
+                  columns={columns}
+                  list={recordList}
+                  placeholder="输入详情内容搜索"
+                  sWidth='800px'
+                >
+                  <div
+                    className="m-r-32"
+                    style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}
+                  >
+                    <div className={style.activebg}>
+                      <i className="iconfont iconcaozuojilu sub-color m-r-8" />
+                    </div>
+                    <span className="fs-14 sub-color">操作日志</span>
                   </div>
-                  <span className="fs-14 sub-color">高级搜索</span>
-                </div>
-              </LevelSearch>
+                </TableTemplate>
+                <LevelSearch onOk={this.onOk} details={levelSearch} templateType={Number(current)}>
+                  <div style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
+                    <div className={style.activebg}>
+                      <Icon className="sub-color m-r-8" type="filter" />
+                    </div>
+                    <span className="fs-14 sub-color">高级搜索</span>
+                  </div>
+                </LevelSearch>
+              </div>
             </div>
             <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，{selectedRowKeys.length ? `共计¥${sumAmount/100}` : `合计¥${sum/100}`} </p>
             <SummaryCmp
@@ -214,6 +288,8 @@ class Summary extends React.PureComponent {
               total={total}
               query={query}
               searchContent={searchContent}
+              userInfo={userInfo}
+              onDelInvoice={this.onDelete}
             />
           </div>
         </div>

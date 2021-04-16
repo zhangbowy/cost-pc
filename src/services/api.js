@@ -118,4 +118,6 @@ export default {
    area: `${APP_API}/cost/aw/area`,
    checkTemplate: `${APP_API}/cost/invoice/template/checkTemplate`,
    queryModify: `${APP_API}/cost/manage/querySysSwitch`, // 查询改单
+   delInvoice: `${APP_API}/cost/invoice/base/manageDel`, // 管理员删除单据
+   recordList: `${APP_API}/cost/invoice/record/recordList`, // 删除的单据的记录
 };

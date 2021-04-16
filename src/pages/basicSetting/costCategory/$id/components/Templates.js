@@ -14,16 +14,19 @@ function Templates({ name, isWrite, fieldType }) {
     >
       <span className={isWrite ? style.required : style.requireds}>*</span>
       <div className={style.tmpCnt}>
-        <p className="fs-14 c-black-85">{name}</p>
         {
-          types === 2 &&
+          types !== 9 &&
+          <p className="fs-14 c-black-85">{name}</p>
+        }
+        {
+          (types === 2) &&
           <div className={style.inputs}>
             <span className="fs-14 c-black-25">请选择</span>
             <i className="iconfont icondown c-black-25" />
           </div>
         }
         {
-          types === 5 &&
+          (types === 5 || types === 8) &&
           <div className={style.dateType}>
             <i className="iconfont iconriqi c-black-25 m-r-8" />
             <span className="fs-14 c-black-25">请选择</span>
@@ -43,9 +46,9 @@ function Templates({ name, isWrite, fieldType }) {
           </div>
         }
         {
-          types === 8 &&
-          <div className={style.images}>
-            <i className="iconfont iconxinzengbaoxiao" />
+          types === 9 &&
+          <div className={style.production}>
+            <span>说明文字</span>
           </div>
         }
       </div>

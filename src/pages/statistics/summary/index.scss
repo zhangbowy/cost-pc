@@ -5,6 +5,9 @@
   :global(.cnt-header .head_lf) {
     display: flex;
   }
+  :global(.cnt-header .head_rg) {
+    display: flex;
+  }
   :global(.ant-form-item) {
     display: flex;
     align-items: center;
