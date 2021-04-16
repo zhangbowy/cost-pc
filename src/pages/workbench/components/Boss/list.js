@@ -12,7 +12,7 @@ export default {
         dataIndex: 'reason',
         render: (_,record) => (
           <span>
-            <InvoiceDetail templateType={0} id={record.id}>
+            <InvoiceDetail templateType={record.templateType} id={record.id}>
               <Tooltip placement="topLeft" title={record.reason || ''}>
                 <span className="eslips-2 ope-btn" style={{ cursor: 'pointer' }}>{record.reason}</span>
               </Tooltip>
@@ -55,7 +55,7 @@ export default {
         dataIndex: 'reason',
         render: (_,record) => (
           <span>
-            <InvoiceDetail templateType={0} id={record.id}>
+            <InvoiceDetail templateType={record.templateType} id={record.id}>
               <Tooltip placement="topLeft" title={record.reason || ''}>
                 <span className="eslips-2 ope-btn" style={{ cursor: 'pointer' }}>{record.reason}</span>
               </Tooltip>
@@ -98,7 +98,7 @@ export default {
         dataIndex: 'reason',
         render: (_,record) => (
           <span>
-            <InvoiceDetail templateType={0} id={record.id}>
+            <InvoiceDetail templateType={record.templateType} id={record.id}>
               <Tooltip placement="topLeft" title={record.reason || ''}>
                 <span className="eslips-2 ope-btn" style={{ cursor: 'pointer' }}>{record.reason}</span>
               </Tooltip>
@@ -150,7 +150,7 @@ export default {
         dataIndex: 'reason',
         render: (_,record) => (
           <span>
-            <InvoiceDetail templateType={1} id={record.id}>
+            <InvoiceDetail templateType={record.templateType} id={record.id}>
               <Tooltip placement="topLeft" title={record.reason || ''}>
                 <span className="eslips-2 ope-btn" style={{ cursor: 'pointer' }}>{record.reason}</span>
               </Tooltip>
