@@ -33,12 +33,13 @@ function CountCmp({ expandFieldVos,
     // }
 
     console.log('继续执行', field);
+    if (!field) {
+      return;
+    }
     if (cIndex > -1) {
       child = update(child, {
         $splice: [[cIndex, 1], [hover, 0, drag]],
       });
-    } else if (field === 'detail_money') {
-      child.splice(hover+1, 0, drag);
     } else {
       child.splice(hover, 0, drag);
     }

@@ -272,14 +272,64 @@ class Right extends PureComponent {
     return (
       <div className={style.strRight}>
         <div className={style.header}>
-          <span className="fs-16 c-black-85 fw-500">{details.name}</span>
           {
-            details.field.indexOf('self_') === -1 &&
+            dragDisabled.includes(details.field) ?
+              <span className="fs-16 c-black-85 fw-500">
+                虚拟组件
+                <Tooltip title="根据填写内容自动计算，金额=单价*数量">
+                  <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                </Tooltip>
+              </span>
+              :
+              <span className="fs-16 c-black-85 fw-500">{details.name}</span>
+          }
+          {
+            details.field.indexOf('self_') === -1 && !dragDisabled.includes(details.field) &&
             <span className={style.tags}>{defaultString.includes(details.field) ? '默认字段' : '公用'}</span>
           }
         </div>
         <div className={style.contents}>
           <Form style={{ padding: '0 24px' }} colon={false}>
+            {
+              details.field === 'detail_money' &&
+              <Form.Item label="字段标题">
+                {
+                  getFieldDecorator('name[detail_sale]', {
+                    initialValue: '数量',
+                    rules: [
+                      { max: 10, message: '限制10个字' },
+                      { required: true, message: '请输入字段标题' }
+                    ]
+                  })(
+                    <Input
+                      placeholder="请输入"
+                      disabled
+                      onBlur={e => this.onInput(e, 'name')}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
+            {
+              details.field === 'detail_money' &&
+              <Form.Item label="字段标题">
+                {
+                  getFieldDecorator('name[detail_account]', {
+                    initialValue: '单价',
+                    rules: [
+                      { max: 10, message: '限制10个字' },
+                      { required: true, message: '请输入字段标题' }
+                    ]
+                  })(
+                    <Input
+                      placeholder="请输入"
+                      disabled
+                      onBlur={e => this.onInput(e, 'name')}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
             <Form.Item label="字段标题">
               {
                 getFieldDecorator(`name[${details.field}]`, {
@@ -295,7 +345,7 @@ class Right extends PureComponent {
                       details.disabled ||
                       (details.field.indexOf('self_') === -1 &&
                       details.field.indexOf('expand_') === -1 &&
-                      !dragDisabled.includes(details.field))
+                      dragDisabled.includes(details.field))
                       || (Number(details.fieldType) === 3)
                     }
                     onBlur={e => this.onInput(e, 'name')}

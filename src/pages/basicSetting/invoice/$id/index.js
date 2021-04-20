@@ -112,7 +112,7 @@ class CategoryAdd extends PureComponent {
           const newArr = fieldList.filter(it => it.isSelect);
           if (title === 'add' || titleType === 'child') {
             this.setState({
-              selectList: newArr.sort(this.compare('sort')),
+              selectList: this.changeList(newArr.sort(this.compare('sort'))),
             });
           }
           const data = {};
@@ -126,7 +126,7 @@ class CategoryAdd extends PureComponent {
           }
           this.setState({
             templateType,
-            fieldList,
+            fieldList: this.changeList(fieldList),
           });
           if (title !== 'add' && titleType !== 'child') {
             dispatch({
@@ -209,14 +209,64 @@ class CategoryAdd extends PureComponent {
                 reLoan: relation,
                 reApply: relations,
                 data: datas,
-                selectList: arrs,
+                selectList: this.changeList(arrs),
               });
             });
           }
         });
       });
     });
+  }
 
+  changeList = (list) => {
+    const newArr = [];
+    list.forEach(item => {
+      let obj = { ...item };
+      if (item.fieldType === 3) {
+        const expand = [...item.expandFieldVos];
+        if (expand.findIndex(it => it.field === 'detail_sale') > -1) {
+          const saleI = expand.findIndex(it => it.field === 'detail_sale');
+          expand.splice(saleI, 1);
+        }
+        if (expand.findIndex(it => it.field === 'detail_account') > -1) {
+          const accI = expand.findIndex(it => it.field === 'detail_account');
+          expand.splice(accI, 1);
+        }
+        console.log('expand', expand);
+        obj = {...obj, expandFieldVos: expand.map(it => {return { ...it, parentId: it.field };})};
+      }
+      newArr.push(obj);
+    });
+    return newArr;
+  }
+
+  changeListArr = (list) => {
+    const newArr = [];
+    list.forEach(it => {
+      let obj = {...it};
+      if (Number(it.fieldType) === 3) {
+        const expand = [...it.expandFieldVos];
+        if (expand.findIndex(item => item.field === 'detail_money') > -1) {
+          const mI = expand.findIndex(item => item.field === 'detail_money');
+          expand.splice(mI, 1, {
+            ...expand[mI],
+            name: '单价',
+            field: 'detail_sale',
+            note: expand[mI].note,
+          }, {
+            ...expand[mI],
+            name: '数量',
+            field: 'detail_account',
+            note: expand[mI].note,
+          }, {
+            ...expand[mI],
+          });
+        }
+        obj = {...it, expandFieldVos: expand};
+      }
+      newArr.push(obj);
+    });
+    return newArr;
   }
 
   compare = (property) => {
@@ -328,8 +378,8 @@ class CategoryAdd extends PureComponent {
         deptJson: !datas.isAllUse && datas.deptJson ?
                 JSON.stringify(datas.deptJson) : '',
         status: datas.status ? 1: 0,
-        expandField: newArr.filter(it => it.field.indexOf('expand_') > -1),
-        selfField: newArr.filter(it => it.field.indexOf('self_') > -1),
+        expandField: this.changeListArr(newArr.filter(it => it.field.indexOf('expand_') > -1)),
+        selfField: this.changeListArr(newArr.filter(it => it.field.indexOf('self_') > -1)),
         templatePdfVo: {
           ...templatePdfVo,
           templatePdfExpandVos: templatePdfVo.templatePdfExpandVos.map(it => { return{ ...it, isSelect: true }; })

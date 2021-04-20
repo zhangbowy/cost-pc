@@ -55,15 +55,14 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
 
   const onDelete = (field) => {
     const arr = [...cardList];
-    let flag = false;
+    // let flag = false;
     if (!defaultString.includes(field)) {
       const lessIndex = cardList.findIndex((item) => item.field === field);
       let newId = '';
       if (lessIndex > -1) {
         if (Number(arr[lessIndex].fieldType) === 3) {
-          flag = true;
+          // flag = true;
         }
-
         arr.splice(lessIndex, 1);
         newId = arr[lessIndex-1].field;
         changeCardList(update(cardList, {
@@ -73,19 +72,14 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
         const i = arr.findIndex(it => Number(it.fieldType) === 3);
         const expand = arr[i].expandFieldVos;
         const ci = expand.findIndex(it => it.field === field);
-        console.log('onDelete -> expand', expand);
-        if (field === 'detail_sale') {
-          expand.splice(ci, 3);
-        } else {
-          expand.splice(ci, 1);
-        }
+        expand.splice(ci, 1);
         if (expand.length) {
           arr.splice(i, 1, {
             ...arr[i],
             expandFieldVos: expand,
           });
         } else {
-          flag = true;
+          // flag = true;
           arr.splice(i, 1);
         }
         if (expand.length) {
@@ -97,13 +91,10 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
         } else {
           newId = arr[i-1].field;
         }
-        console.log('arr', arr);
         changeCardList(arr);
       }
 
-      if (dragId === newId || flag) {
-        changeDragId(newId);
-      }
+      changeDragId(newId);
     }
   };
 

@@ -26,6 +26,10 @@
     }
   }
 
+  .ant-table-fixed-left, .ant-table-fixed-right {
+    z-index: 10 !important;
+  }
+
   .ant-table-thead > tr > th,
   .ant-table-tbody > tr > td {
     word-wrap: break-word;
@@ -212,4 +216,5 @@
   .ant-menu-horizontal > .ant-menu-item-active,.ant-menu-horizontal > .ant-menu-item-selected{
     z-index: 10;
   }
+
 }
