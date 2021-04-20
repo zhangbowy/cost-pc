@@ -93,7 +93,7 @@ class CategoryAdd extends PureComponent {
           }
           _this.setState({
             data: datas,
-            selectList: showFiels.sort(this.compare('sort')),
+            selectList: this.changeList(showFiels.sort(this.compare('sort'))),
             shareField: details.shareField,
           });
         });
@@ -116,14 +116,35 @@ class CategoryAdd extends PureComponent {
       const newArr = fieldList.filter(it => it.isSelect);
       if (title === 'add' || title === 'child') {
         this.setState({
-          selectList: newArr,
+          selectList: this.changeList(newArr),
         });
       }
       this.setState({
-        fieldList,
+        fieldList: this.changeList(fieldList),
       });
     });
+  }
 
+  changeList = (list) => {
+    const newArr = [];
+    list.forEach(item => {
+      let obj = { ...item };
+      if (item.fieldType === 3) {
+        const expand = [...item.expandFieldVos];
+        if (expand.findIndex(it => it.field === 'detail_sale') > -1) {
+          const saleI = expand.findIndex(it => it.field === 'detail_sale');
+          expand.splice(saleI, 1);
+        }
+        if (expand.findIndex(it => it.field === 'detail_account') > -1) {
+          const accI = expand.findIndex(it => it.field === 'detail_account');
+          expand.splice(accI, 1);
+        }
+        console.log('expand', expand);
+        obj = {...obj, expandFieldVos: expand};
+      }
+      newArr.push(obj);
+    });
+    return newArr;
   }
 
   findIndexArray  = (data, id, indexArray) => {
@@ -248,7 +269,6 @@ class CategoryAdd extends PureComponent {
       });
     } else {
       const index = basicStr.findIndex(it => it.key === current);
-      console.log('CategoryAdd -> onStep -> index', index);
       this.setState({
         data: datas,
         current: flag === 'up' ? basicStr[index+1].key : basicStr[index-1].key,
@@ -275,7 +295,6 @@ class CategoryAdd extends PureComponent {
       if (add.length) {
         newArr=[...newArr, ...add];
       }
-      console.log('CategoryAdd -> onChangeData -> fields', fields);
       this.setState({
         fieldList: newArr.map(it => {
           if (fields.includes(it.field)) {
@@ -308,7 +327,6 @@ class CategoryAdd extends PureComponent {
     const title = id.split('_')[0];
     // const costId = id.split('_')[1];
     const { current, shareField, selectList, fieldList, data } = this.state;
-    console.log('CategoryAdd -> render -> selectList', selectList);
     const routes = [
       {
         path: '/basicSetting/costCategory',

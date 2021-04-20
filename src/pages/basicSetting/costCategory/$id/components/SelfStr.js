@@ -6,20 +6,6 @@ import style from './index.scss';
 import { timeStampToHex } from '../../../../../utils/common';
 
 const expand = [{
-  name: '单价',
-  dateType: 0,
-  fieldType: 0,
-  key: '104',
-  isWrite: true,
-  field: 'detail_sale',
-}, {
-  name: '数量',
-  dateType: 0,
-  fieldType: 0,
-  key: '103',
-  isWrite: true,
-  field: 'detail_account',
-}, {
   name: '金额',
   dateType: 0,
   fieldType: 0,
@@ -64,10 +50,9 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     item: box,
     begin: () => {
       const useless = cardList.find((item) => item.id === -1);
-      console.log('SelfStr -> cardList', cardList);
       // 拖拽开始时，向 cardList 数据源中插入一个占位的元素，如果占位元素已经存在，不再重复插入
       if (!useless) {
-          changeCardList([...cardList, { ...box }]);
+        changeCardList([...cardList, { ...box }]);
       }
       return box;
     },

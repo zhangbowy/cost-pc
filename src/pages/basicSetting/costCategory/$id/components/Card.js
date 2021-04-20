@@ -5,7 +5,7 @@
  * overview: 根据放入 Box 生成的 Card 组件
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
@@ -13,6 +13,7 @@ import { Popconfirm } from 'antd';
 import style from './index.scss';
 import { defaultString, dragDisabled, applyDefault } from '../../../../../utils/constants';
 import CountCmp from './CountCmp';
+import CountChild from './CountCmp/CountChild';
 
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 
@@ -20,7 +21,8 @@ const Card = ({ name, isWrite, index,
   moveCard, field, findCard, dragId, id,
   fieldType, changeDragId, onDelete, disabled, data,
   expandFieldVos, cardList, changeCardList, parentId,
-  dragType, expandLength, className}) => {
+  dragType, className}) => {
+    const ref = useRef(null);
   const [{ isDragging }, drag, preview] = useDrag({
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -45,30 +47,58 @@ const Card = ({ name, isWrite, index,
   const [, drop] = useDrop({
     accept: dragType === 'child' ? ['child', 'box'] : ['box', 'parent'],
     canDrop: () => !defaultString.includes(field),
-    hover(item) {
+    hover(item, monitor) {
       if (Number(item.fieldType) === 3) {
         return;
       }
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = findCard(item.field);
+      console.log('hover -> item', dragIndex);
+      const hoverIndex = index;
+      console.log('hover -> item', hoverIndex);
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+       // Determine rectangle on screen
+       const hoverBoundingRect = ref.current ? ref.current.getBoundingClientRect() : null;
+       // Get vertical middle
+       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+       // Determine mouse position
+       const clientOffset = monitor.getClientOffset();
+       // Get pixels to the top
+       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+       // Only perform the move when the mouse has crossed half of the items height
+       // When dragging downwards, only move when the cursor is below 50%
+       // When dragging upwards, only move when the cursor is above 50%
+       // Dragging downwards
+       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY && dragIndex !== -1) {
+          return;
+       }
+       // Dragging upwards
+       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+          return;
+       }
       if (dragType === 'child' && (item.field.indexOf('expand') > -1 ||
       applyDefault.includes(item.field))) {
         return;
       }
       if (dragType !== 'child') {
         if (item.field !== field && !defaultString.includes(field)) {
-          const hoverIndex = findCard(item.field);
-          moveCard(hoverIndex, index, { item, field });
+          const hoverIndexs = findCard(item.field);
+          moveCard(hoverIndexs, index, { item, field });
         }
-      } else if (item.field !== field && !defaultString.includes(field) &&
-        (!dragDisabled.includes(field) || (index === 0) ||
-        (index === expandLength))) {
-          if (!parentId || item.field.indexOf('expand_') > -1) {
-            const hoverIndex = findCard(item.field);
-            moveCard(hoverIndex, index, { item, field });
-          } else {
-            console.log('走这里-明细');
-            moveCard(item, { parentId, field });
-          }
+      } else if (item.field !== field && !defaultString.includes(field)) {
+        if (!parentId || item.field.indexOf('expand_') > -1) {
+          const hoverIndexs = findCard(item.field);
+          moveCard(hoverIndexs, index, { item, field });
+        } else {
+          console.log('走这里-明细');
+          moveCard(item, { parentId, field });
         }
+      }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -85,6 +115,7 @@ const Card = ({ name, isWrite, index,
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
   }, []);
+  drag(drop(ref));
   return (
     <>
       {
@@ -105,9 +136,9 @@ const Card = ({ name, isWrite, index,
         />
       }
       {
-        types !== 3 &&
+        types !== 3 && field !== 'detail_sale' && field !== 'detail_account' &&
         <div
-          ref={node => drag(drop(node))}
+          ref={ref}
           className={
             dragId === field ?
             cs(style.StrTemplates, style.activeStr, className) : cs(style.StrTemplates, className)
@@ -130,46 +161,55 @@ const Card = ({ name, isWrite, index,
               :
               <p className={style.linesD} />
           }
-          <span className={isWrite ? style.required : style.requireds}>*</span>
-          <div className={style.tmpCnt}>
-            {
-              types !== 3 && types !== 9 &&
-              <p className="fs-14 c-black-85">{name}</p>
-            }
-            {
-              (types === 2 || types === 8) &&
-              <div className={style.inputs}>
-                <span className="fs-14 c-black-25">请选择</span>
-                <i className="iconfont icondown c-black-25" />
+          {
+            !dragDisabled.includes(field) &&
+            <>
+              <span className={isWrite ? style.required : style.requireds}>*</span>
+              <div className={style.tmpCnt}>
+                {
+                  types !== 3 && types !== 9 &&
+                  <p className="fs-14 c-black-85">{name}</p>
+                }
+                {
+                  (types === 2 || types === 8) &&
+                  <div className={style.inputs}>
+                    <span className="fs-14 c-black-25">请选择</span>
+                    <i className="iconfont icondown c-black-25" />
+                  </div>
+                }
+                {
+                  types === 5 &&
+                  <div className={style.dateType}>
+                    <i className="iconfont iconriqi c-black-25 m-r-8" />
+                    <span className="fs-14 c-black-25">请选择</span>
+                  </div>
+                }
+                {
+                  (types === 0 || types === 1) &&
+                  <div className={style.inputs}>
+                    <span className="fs-14 c-black-25">请输入</span>
+                    {/* <i className="iconfont icondown c-black-25" /> */}
+                  </div>
+                }
+                {
+                  (types === 6 || types === 7) &&
+                  <div className={style.images}>
+                    <i className="iconfont iconxinzengbaoxiao" />
+                  </div>
+                }
+                {
+                  (types === 9) &&
+                  <div className={style.production}>
+                    <span>说明文字</span>
+                  </div>
+                }
               </div>
-            }
-            {
-              types === 5 &&
-              <div className={style.dateType}>
-                <i className="iconfont iconriqi c-black-25 m-r-8" />
-                <span className="fs-14 c-black-25">请选择</span>
-              </div>
-            }
-            {
-              (types === 0 || types === 1) &&
-              <div className={style.inputs}>
-                <span className="fs-14 c-black-25">请输入</span>
-                {/* <i className="iconfont icondown c-black-25" /> */}
-              </div>
-            }
-            {
-              (types === 6 || types === 7) &&
-              <div className={style.images}>
-                <i className="iconfont iconxinzengbaoxiao" />
-              </div>
-            }
-            {
-              (types === 9) &&
-              <div className={style.production}>
-                <span>说明文字</span>
-              </div>
-            }
-          </div>
+            </>
+          }
+          {
+            field === 'detail_money' &&
+            <CountChild />
+          }
           <div className={style.operator}>
             {
               !dragDisabled.includes(field) &&
@@ -188,7 +228,7 @@ const Card = ({ name, isWrite, index,
                 </p>
             }
             {
-              field === 'detail_sale' && expandLength === 2 &&
+              field === 'detail_money' &&
                 <Popconfirm
                   title="将同步删除明细组件，请先添加任意组件后再行删除"
                   onConfirm={(e) => {
@@ -207,34 +247,15 @@ const Card = ({ name, isWrite, index,
                   </p>
                 </Popconfirm>
             }
-            {
-              field === 'detail_sale' && expandLength !== 2 &&
-                <p
-                  className={
-                    defaultString.includes(field) ?
-                    cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
-                  }
-                  style={{ display: dragId === field ? 'block' : '' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(field, disabled);
-                  }}
-                >
-                  <i className="iconfont iconshanchu" />
-                </p>
-            }
-            {
-              (field !== 'detail_money' && field !== 'detail_account') &&
-              <p
-                className={defaultString.includes(field) || types === 3 ||
-                  dragDisabled.includes(field) ?
-                cs(style.delete,style.opacity, style.drag) :
-                cs(style.delete, style.drag)}
-                style={{ display: dragId === field ? 'block' : '' }}
-              >
-                <i className="iconfont icontuozhuai" />
-              </p>
-            }
+            <p
+              className={defaultString.includes(field) ||
+              types === 3 || field === 'detail_money' ?
+              cs(style.delete,style.opacity, style.drag) :
+              cs(style.delete, style.drag)}
+              style={{ display: dragId === field ? 'block' : '' }}
+            >
+              <i className="iconfont icontuozhuai" />
+            </p>
           </div>
         </div>
       }
