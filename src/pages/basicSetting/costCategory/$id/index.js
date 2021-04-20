@@ -321,61 +321,93 @@ class CategoryAdd extends PureComponent {
     ];
 
     return (
-      <div style={{height: '100%', minWidth: '1000px'}}>
-        <PageHead title={
-          <PageHeader
-            title={null}
-            breadcrumb={{routes}}
-            style={{background: '#fff'}}
+      <div style={{height: '100%'}}>
+        <div style={{width: '100%'}}>
+          <PageHead title={
+            <PageHeader
+              title={null}
+              breadcrumb={{routes}}
+              style={{background: '#fff'}}
+            />
+          }
           />
-        }
-        />
-        <div style={{background: '#fff', width: '100%'}}>
-          <Menu
-            mode="horizontal"
-            className="m-l-32 titleMenu"
-            selectedKeys={[current]}
-            onClick={(e) => this.onHandle(e)}
-          >
-            {
-              basicStr.map((it, index) => (
-                <Menu.Item key={it.key}>
-                  <span
-                    className={it.key === current ?
-                    cs('circle', 'active') : 'circle'}
-                  >
-                    {index+1}
-                  </span>
-                  <span>{it.value}</span>
-                </Menu.Item>
-              ))
-            }
-          </Menu>
+          <div style={{background: '#fff', width: '100%'}}>
+            <Menu
+              mode="horizontal"
+              className="m-l-32 titleMenu"
+              selectedKeys={[current]}
+              onClick={(e) => this.onHandle(e)}
+            >
+              {
+                basicStr.map((it, index) => (
+                  <Menu.Item key={it.key}>
+                    <span
+                      className={it.key === current ?
+                      cs('circle', 'active') : 'circle'}
+                    >
+                      {index+1}
+                    </span>
+                    <span>{it.value}</span>
+                  </Menu.Item>
+                ))
+              }
+            </Menu>
+          </div>
         </div>
         {
-          current === 'one' &&
-          <div className="content-dt" style={{height: 'calc(100% - 178px)', minWidth: '1000px'}}>
-            <LabelLeft title="基础设置" />
-            <Basic
-              wrappedComponentRef={form => {this.formRef = form;}}
-              list={allList}
-              data={data}
-              title={title}
-            />
-          </div>
-        }
-        {
-          current === 'two' &&
-          <DragContent
-            fieldList={fieldList}
-            selectList={selectList}
-            onChangeData={this.onChangeData}
-            isModifyInvoice={isModifyInvoice}
-            operateType={title}
-            middleRef={ref => {this.childRef = ref;}}
-            selectId="costCategory"
-            type="cost"
-          />
+          current !== 'three' &&
+            <div
+              style={{
+                position: 'relative',
+                height: 'calc(100% - 153px)',
+                overflow: 'scroll',
+                width: '100%'
+              }}
+            >
+              {
+              current === 'one' &&
+              <div
+                className="content-dt"
+                style={{
+                  height: '100%',
+                  minWidth: '1008px',
+                  width: 'inherit'
+                }}
+              >
+                <LabelLeft title="基础设置" />
+                <Basic
+                  wrappedComponentRef={form => {this.formRef = form;}}
+                  list={allList}
+                  data={data}
+                  title={title}
+                />
+              </div>
+            }
+              {
+              current === 'two' &&
+              <div
+                style={{
+                  height: '100%',
+                  padding: '24px 24px 0 24px',
+                  display: 'flex',
+                  position: 'absolute',
+                  minWidth: '1008px',
+                  width: 'inherit'
+                }}
+              >
+                <DragContent
+                  fieldList={fieldList}
+                  selectList={selectList}
+                  onChangeData={this.onChangeData}
+                  isModifyInvoice={isModifyInvoice}
+                  operateType={title}
+                  middleRef={ref => {this.childRef = ref;}}
+                  selectId="costCategory"
+                  type="cost"
+                />
+              </div>
+            }
+            </div>
         }
         {
           current === 'three' &&

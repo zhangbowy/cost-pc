@@ -86,7 +86,6 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
        *  2、如果否，则将占位元素删除
        */
       const items = monitor.getItem();
-      console.log('end', monitor.didDrop());
       if (monitor.didDrop()) {
           if (uselessIndex > -1) {
             if (uselessIndex-1 > 0 && Number(cardList[uselessIndex-1].fieldType) === 3) {
@@ -148,6 +147,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
       });
     }
     const uselessIndex = cardList.length;
+    console.log('handleAdd -> cardList', cardList);
     if (uselessIndex-1 > 0 && Number(cardList[uselessIndex-1].fieldType) === 3) {
       return;
     }

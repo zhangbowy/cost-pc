@@ -3,6 +3,7 @@
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
 import { timeStampToHex } from '../../../../../utils/common';
@@ -104,13 +105,14 @@ class Right extends PureComponent {
     const { details } = this.state;
     let val = null;
     form.validateFieldsAndScroll((err, values) => {
+      console.log('Right -> getFormItems -> err', err);
       if (!err) {
         val = {
           ...details,
           isWrite: !!values.isWrite[details.field].length,
           name: values.name[details.field],
         };
-        if (Number(details.fieldType) === 2) {
+        if (Number(details.fieldType) === 2 || Number(details.fieldType) === 8) {
           const newArr = [];
           if (values.keys) {
             const keys = values.keys.map(it => it.id);
@@ -308,6 +310,21 @@ class Right extends PureComponent {
               </Form.Item>
             }
             {
+              Number(details.fieldType) === 9 &&
+              <Form.Item>
+                {
+                  getFieldDecorator(`name[${details.field}]`, {
+                    initialValue: details.name,
+                    rules: [{
+                      max: 64, message: '限制64个字'
+                    }]
+                  })(
+                    <TextArea />
+                  )
+                }
+              </Form.Item>
+            }
+            {
               details.field.indexOf('expand_') > -1 &&
               <p style={{ marginTop: '-20px', marginBottom: '8px' }}>
                 <i className="iconfont iconxinxitishi warn fs-16 m-r-4" style={{verticalAlign: 'middle'}} />
@@ -372,7 +389,7 @@ class Right extends PureComponent {
               </Form.Item>
             }
             {
-              Number(details.fieldType) === 9 &&
+              Number(details.fieldType) !== 9 &&
               <Form.Item label="校验">
                 {
                   getFieldDecorator(`isWrite[${details.field}]`, {
@@ -391,6 +408,7 @@ class Right extends PureComponent {
             }
             {
               templateType !== 2 && isModifyInvoice &&
+              Number(details.fieldType) !== 9 &&
                 <Form.Item
                   label={(
                     <>
