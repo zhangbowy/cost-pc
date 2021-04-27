@@ -11,7 +11,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare, setTime } from '../../../utils/common';
+import { compare, setTime, handleProduction } from '../../../utils/common';
 // import TreeCatogory from './TreeCatogory';
 
 const { Option } = Select;
@@ -340,10 +340,27 @@ class AddCost extends Component {
         const selfCostDetailFieldVos = []; // 私有字段
         if (expandField && expandField.length > 0) {
           expandField.forEach(it => {
-            const obj = {
+            let obj = {
               ...it,
-              msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
             };
+            if (Number(it.fieldType) !== 9) {
+              obj = {
+                ...obj,
+                msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+              };
+            }
+            if (Number(it.fieldType) === 8) {
+              obj = {
+                ...obj,
+                msg: val[it.field] ? val[it.field].toString() : '',
+              };
+            }
+            if (Number(it.fieldType) === 9) {
+              obj = {
+                ...obj,
+                msg: it.note,
+              };
+            }
             if (Number(it.fieldType) === 5 && val[it.field]) {
               Object.assign(obj, {
                 startTime: Number(it.dateType) === 2 ?
@@ -658,7 +675,8 @@ class AddCost extends Component {
       currencySymbol,
       currencyId,
     } = this.state;
-    const newRenderField = [...newShowField, ...expandField].sort(compare('sort'));
+    const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
+    const newRenderField = handleProduction(oldRenderField);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -704,7 +722,7 @@ class AddCost extends Component {
         >
           <div className={style.addCosts}>
             <Form>
-              <Row>
+              <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Col span={12}>
                   <Form.Item label={labelInfo.costName} {...formItemLayout}>
                     {
@@ -759,30 +777,9 @@ class AddCost extends Component {
                     :
                     null
                 }
-                <Col span={12}>
-                  <Form.Item label={labelInfo.costSum} {...formItemLayout}>
-                    {
-                      getFieldDecorator('costSum', {
-                        initialValue: details.costSum || '',
-                        rules: [
-                          { required: true, message: '请输入金额' },
-                          { validator: this.checkMoney }
-                        ]
-                      })(
-                        <InputNumber
-                          placeholder={showField.amount && showField.amount.note ?
-                          showField.amount.note : '请输入'}
-                          onChange={(val) => this.onChangeAmm(val)}
-                          style={{width: '100%'}}
-                          disabled={modify && showField.amount && !showField.amount.isModify}
-                        />
-                      )
-                    }
-                  </Form.Item>
-                </Col>
                 {
                   newRenderField && (newRenderField.length > 0) &&
-                  newRenderField.map(it => {
+                  newRenderField.filter(it => it.fieldType !== 9).map(it => {
                     if (it.field && (it.field.indexOf('expand_') > -1 || it.field.indexOf('self_') > -1)) {
                       let renderForm = null;
                       let rule = [];
@@ -799,11 +796,15 @@ class AddCost extends Component {
                           disabled={modify && !it.isModify}
                         />);
                         rule = [{ max: 128, message: '限制128个字' }];
-                      } else if(Number(it.fieldType) === 2) {
+                      } else if(Number(it.fieldType) === 2 || Number(it.fieldType) === 8) {
+                        if (Number(it.fieldType) === 8) {
+                          initMsg = it.msg ? it.msg.split(',') : [];
+                        }
                         renderForm = (
                           <Select
                             placeholder={it.note ? it.note : '请选择'}
                             disabled={modify && !it.isModify}
+                            mode={Number(it.fieldType) === 8 ? 'multiple' : ''}
                           >
                             {
                               it.options && it.options.map(iteems => (
@@ -857,6 +858,14 @@ class AddCost extends Component {
                                         renderForm
                                       )
                                     }
+                                    {
+                                      it.itemExplain && !!(it.itemExplain.length) &&
+                                      it.itemExplain.map(item => (
+                                        <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                          {item.note}
+                                        </p>
+                                      ))
+                                    }
                                   </Form.Item>
                                 </Col>
                                 :
@@ -867,6 +876,38 @@ class AddCost extends Component {
                     }
                     return (
                       <>
+                        {
+                          it.field === 'amount' && !!(showField.amount.status) &&
+                          <Col span={12}>
+                            <Form.Item label={labelInfo.costSum} {...formItemLayout}>
+                              {
+                                getFieldDecorator('costSum', {
+                                  initialValue: details.costSum || '',
+                                  rules: [
+                                    { required: true, message: '请输入金额' },
+                                    { validator: this.checkMoney }
+                                  ]
+                                })(
+                                  <InputNumber
+                                    placeholder={showField.amount && showField.amount.note ?
+                                    showField.amount.note : '请输入'}
+                                    onChange={(val) => this.onChangeAmm(val)}
+                                    style={{width: '100%'}}
+                                    disabled={modify && showField.amount && !showField.amount.isModify}
+                                  />
+                                )
+                              }
+                              {
+                                it.itemExplain && !!(it.itemExplain.length) &&
+                                it.itemExplain.map(item => (
+                                  <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                    {item.note}
+                                  </p>
+                                ))
+                              }
+                            </Form.Item>
+                          </Col>
+                        }
                         {
                           it.field === 'costNote' && showField.costNote.status ?
                             <Col span={12}>
@@ -881,6 +922,14 @@ class AddCost extends Component {
                                       disabled={modify && !showField.costNote.isModify}
                                     />
                                   )
+                                }
+                                {
+                                  it.itemExplain && !!(it.itemExplain.length) &&
+                                  it.itemExplain.map(item => (
+                                    <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                      {item.note}
+                                    </p>
+                                  ))
                                 }
                               </Form.Item>
                             </Col>
@@ -928,6 +977,14 @@ class AddCost extends Component {
                                   />
                                 )
                               }
+                              {
+                                it.itemExplain && !!(it.itemExplain.length) &&
+                                it.itemExplain.map(item => (
+                                  <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                    {item.note}
+                                  </p>
+                                ))
+                              }
                             </Form.Item>
                           </Col>
                         }
@@ -952,6 +1009,14 @@ class AddCost extends Component {
                                     disabled={modify && !showField.imgUrl.isModify}
                                   />
                                 )
+                              }
+                              {
+                                it.itemExplain && !!(it.itemExplain.length) &&
+                                it.itemExplain.map(item => (
+                                  <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                    {item.note}
+                                  </p>
+                                ))
                               }
                             </Form.Item>
                           </Col>

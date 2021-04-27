@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import moment from 'moment';
 import cs from 'classnames';
 import TextArea from 'antd/lib/input/TextArea';
+import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import AddCost from './AddCost';
 import { fileUpload } from '../../../utils/ddApi';
@@ -16,7 +17,7 @@ import ApproveNode from '../ApproveNode';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
 import AddApply from './AddApply';
 import { invoiceJson } from '../../../utils/constants';
-import { JsonParse, setTime } from '../../../utils/common';
+import { JsonParse } from '../../../utils/common';
 import ApplyTable from './ApplyTable';
 import AddFolder from './AddFolder';
 import defaultFunc from './utils';
@@ -24,11 +25,6 @@ import CategoryTable from './InvoiceTable/CategoryTable';
 import ChangeForm from './ChangeForm';
 
 
-const typeObj = {
-  0: '银行卡',
-  1: '支付宝',
-  2: '现金',
-};
 const { confirm } = Modal;
 @connect(({ session, global, loading, costGlobal }) => ({
   userInfo: session.userInfo,
@@ -81,7 +77,9 @@ class AddInvoice extends Component {
       hisCostDetailsVo: [], // 历史分摊数据
       modifyNote: '',
       applyDetailList: [],  // 产品明细
+      expandVos: [], // 审批流的自定义信息
     };
+    this.changeForm = null;
   }
 
   componentDidUpdate(prevProps){
@@ -233,13 +231,6 @@ class AddInvoice extends Component {
         receiptNameJson: JSON.stringify(arr),
       };
     }
-    const params = {
-      creatorDeptId: detail.createDeptId || '',
-      processPersonId: djDetails.approveId,
-      loanUserId: detail.loanUserId,
-      loanDeptId: detail.loanDeptId,
-      createDingUserId: detail.createDingUserId,
-    };
     if (!contentJson) {
       this.setState({
         details: {
@@ -276,7 +267,7 @@ class AddInvoice extends Component {
         }
       });
       if (!this.props.costSelect) {
-        this.getNode(params);
+        this.getNode();
       }
     } else {
       const contents = JsonParse(contentJson);
@@ -356,7 +347,6 @@ class AddInvoice extends Component {
         userIds: [...new Set(userIds)],
       }
     });
-    let params = {};
     if (Number(djDetails.templateType) === 0) {
       this.setState({
         total: detail.submitSum/100,
@@ -374,42 +364,26 @@ class AddInvoice extends Component {
         total: detail.applicationSum/100,
         applicationSum: detail.applicationSum/100
       };
-      params = {
-        loanEntities: detail.loanEntities || [],
-        categorySumEntities: detail.categorySumEntities || [],
-        creatorDeptId: detail.createDeptId,
-        createDingUserId: userInfo.dingUserId,
-        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
-        loanDeptId: detail.deptId,
-        processPersonId: djDetails.approveId,
-        applicationSum: detail.applicationSum,
-        projectId: detail.projectId || '',
-        supplierId: detail.supplierId || '',
-      };
-      this.getNode(params);
     } else if (Number(djDetails.templateType) === 1) {
-      params = {
-        loanEntities: detail.loanEntities || [],
-        categorySumEntities: detail.categorySumEntities || [],
-        creatorDeptId: detail.createDeptId,
-        createDingUserId: userInfo.dingUserId,
-        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
-        loanDeptId: detail.deptId,
-        processPersonId: djDetails.approveId,
-        borrowArr: detail.loanSum,
-        projectId: detail.projectId || '',
-        supplierId: detail.supplierId || ''
-      };
       newDetail = {
         ...newDetail,
         total: detail.loanSum/100,
         loanSum: detail.loanSum/100
       };
-      this.getNode(params);
       this.setState({
         total: detail.loanSum/100
       });
     }
+    const expandVos = [];
+    expandField.forEach(it => {
+      if (it.fieldType === 2 && it.field.indexOf('expand_') > -1){
+        expandVos.push({
+          field: it.field,
+          msg: it.msg,
+        });
+      }
+    });
+
     await this.setState({
       depList: detail.userId ? this.props.userDeps[detail.userId] : this.props.userDeps['-1'], // 所在部门
       details: {
@@ -431,6 +405,9 @@ class AddInvoice extends Component {
       assessSum: detail.assessSum || 0, // 核销金额
       applyArr,
       applyDetailList: detail.detailList,
+      expandVos,
+    }, () => {
+      this.getNode();
     });
   }
 
@@ -621,7 +598,9 @@ class AddInvoice extends Component {
   }
 
   onCancel = () => {
-    this.props.form.resetFields();
+    if (this.changeForm && this.changeForm.onRest) {
+      this.changeForm.onRest();
+    }
     if (this.props.onChangeVisible) {
       this.props.onChangeVisible();
     }
@@ -649,6 +628,7 @@ class AddInvoice extends Component {
       historyParams: {}, // 历史数据
       hisCostDetailsVo: [], // 历史分摊数据
       applyDetailList: [],  // 产品明细
+      expandVos: [],
     });
   }
 
@@ -688,18 +668,6 @@ class AddInvoice extends Component {
     });
     const { loanUserId } = this.state;
     console.log('AddInvoice -> onAddCost -> loanUserId', loanUserId);
-    this.getNode({
-      loanEntities,
-      categorySumEntities,
-      creatorDeptId: detail.createDeptId || '',
-      loanUserId: loanUserId || '',
-      loanDeptId: detail.deptId || '',
-      processPersonId: detail.processPersonId,
-      createDingUserId: detail.createDingUserId,
-      total: ((mo * 1000)/10).toFixed(0),
-      projectId: detail.projectId || '',
-      supplierId: detail.supplierId || ''
-    });
     this.setState({
       costDetailsVo: share,
       total: mo.toFixed(2),
@@ -715,7 +683,11 @@ class AddInvoice extends Component {
       if (Number(total) === 0 && (djDetail.categoryStatus && djDetail.templateType === 2)) {
         this.setState({
           total: getFieldValue('applicationSum') || 0,
+        }, () => {
+          this.getNode();
         });
+      } else {
+        this.getNode();
       }
     });
   }
@@ -755,21 +727,34 @@ class AddInvoice extends Component {
 
   getNode = (payload) => {
     const { id, operateType } = this.props;
-    Object.assign(payload, {
-      deepQueryFlag: true,
-      invoiceTemplateId: id,
-    });
+    const { details, loanUserId, total, expandVos } = this.state;
+      console.log('AddInvoice -> getNode -> details', details);
+      const objs = {
+        ...payload,
+        deepQueryFlag: true,
+        invoiceTemplateId: id,
+        loanEntities: details.loanEntities,
+        categorySumEntities: details.categorySumEntities,
+        creatorDeptId: details.createDeptId || '',
+        loanUserId: loanUserId || '',
+        loanDeptId: details.deptId || '',
+        processPersonId: details.processPersonId || '',
+        createDingUserId: details.createDingUserId || '',
+        total: ((total * 1000)/10).toFixed(0),
+        projectId: details.projectId || '',
+        supplierId: details.supplierId || '',
+        expandVos,
+      };
     const { templateType } = this.props;
-    const { total } = this.state;
     if (Number(templateType) === 1) {
-      Object.assign(payload, { borrowAmount: payload.borrowArr || (total*1000)/10 });
+      Object.assign(objs, { borrowAmount: (payload && payload.borrowArr) || (total*1000)/10 });
     } else if (Number(templateType) === 2) {
-      Object.assign(payload, { applicationSum: payload.applicationSum || (total*1000)/10 });
+      Object.assign(objs, { applicationSum: (payload && payload.applicationSum) || (total*1000)/10 });
     }
     if (operateType !== 'modify') {
       this.props.dispatch({
         type: 'global/approveList',
-        payload,
+        payload: {...objs},
       }).then(() => {
         const { nodes } = this.props;
         this.setState({
@@ -787,179 +772,116 @@ class AddInvoice extends Component {
 
   handleOk = () => {
     const {
-      imgUrl,
-      fileUrl,
       nodes,
       costDetailsVo,
-      depList,
-      users,
       details,
-      createDepList,
       total,
-      expandField,
       showField,
       borrowArr,
       applyArr
     } = this.state;
-
-    const { id, templateType, djDetail, detailJson, detailType } = this.props;
-    this.props.form.validateFieldsAndScroll((err, val) => {
-      if (!err) {
-        const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
-        const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
-        const expandSubmitFieldVos = [];
-        const selfSubmitFieldVos = [];
-        if (expandField && expandField.length > 0) {
-          expandField.forEach(it => {
-            const obj = {
-              ...it,
-              msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
-            };
-            if (Number(it.fieldType) === 5 && val[it.field]) {
-              Object.assign(obj, {
-                startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
-                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
-              });
-            }
-            if (it.status && it.field.indexOf('expand_') > -1) {
-              expandSubmitFieldVos.push(obj);
-            } else if (it.status && it.field.indexOf('self_') > -1){
-              selfSubmitFieldVos.push(obj);
-            }
+    const { id, djDetail, detailJson, detailType } = this.props;
+    let params = {
+      ...details,
+      invoiceTemplateId: id,
+      userId: details.userId || '',
+      submitSum: ((total * 1000)/10).toFixed(0),
+    };
+    console.log('AddInvoice -> handleOk -> this.changeForm', this.changeForm);
+    if (this.changeForm &&
+      this.changeForm.onSaveForm &&
+      this.changeForm.onSaveForm()) {
+      params = {
+        ...params,
+        ...this.changeForm.onSaveForm(),
+      };
+    } else {
+      return;
+    }
+    const arr = [];
+    costDetailsVo.forEach((item, index) => {
+      arr.push({
+        id: item.id || '',
+        'categoryId': item.categoryId,
+        'icon': item.icon,
+        'categoryName': item.categoryName,
+        'costSum': (((item.costSum) * 1000)/10).toFixed(0),
+        'note': item.note,
+        'costDate':item.costDate,
+        'startTime':item.startTime || '',
+        'endTime':item.endTime || '',
+        'imgUrl':item.imgUrl,
+        'invoiceBaseId':id,
+        costDetailShareVOS: [],
+        currencyId: item.currencyId,
+        currencyName: item.currencyName,
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
+        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
+        detailFolderId: item.detailFolderId || '',
+        attribute: item.attribute,
+      });
+      if (item.costDetailShareVOS) {
+        item.costDetailShareVOS.forEach(it => {
+          arr[index].costDetailShareVOS.push({
+            id: it.id || '',
+            'shareAmount': (it.shareAmount * 1000)/10,
+            'shareScale': (it.shareScale * 1000)/10,
+            'deptId': it.deptId,
+            'userId': it.userId,
+            'userJson':it.users,
+            deptName: it.deptName,
+            userName: it.userName,
+            projectId: it.projectId,
           });
-        }
-        let params = {
-          ...details,
-          invoiceTemplateId: id,
-          reason: val.reason,
-          note: val.note || '',
-          userId: details.userId || '',
-          deptId: val.deptId,
-          deptName: dep && dep.length > 0 ? dep[0].name : '',
-          userJson: users,
-          createDeptId: val.createDeptId,
-          createDeptName: dept && dept.length > 0 ? dept[0].name : '',
-          nodeConfigInfo: nodes,
-          projectId: val.projectId || '',
-          supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
-          supplierId: val.supplier ? val.supplier.split('_')[1] : '',
-          imgUrl,
-          fileUrl,
-          submitSum: ((total * 1000)/10).toFixed(0),
-          expandSubmitFieldVos,
-          selfSubmitFieldVos
-        };
-        const arr = [];
-        costDetailsVo.forEach((item, index) => {
-          arr.push({
-            id: item.id || '',
-            'categoryId': item.categoryId,
-            'icon': item.icon,
-            'categoryName': item.categoryName,
-            'costSum': (((item.costSum) * 1000)/10).toFixed(0),
-            'note': item.note,
-            'costDate':item.costDate,
-            'startTime':item.startTime || '',
-            'endTime':item.endTime || '',
-            'imgUrl':item.imgUrl,
-            'invoiceBaseId':id,
-            costDetailShareVOS: [],
-            currencyId: item.currencyId,
-            currencyName: item.currencyName,
-            expandCostDetailFieldVos: item.expandCostDetailFieldVos,
-            selfCostDetailFieldVos: item.selfCostDetailFieldVos,
-            detailFolderId: item.detailFolderId || '',
-            attribute: item.attribute,
-          });
-          if (item.costDetailShareVOS) {
-            item.costDetailShareVOS.forEach(it => {
-              arr[index].costDetailShareVOS.push({
-                id: it.id || '',
-                'shareAmount': (it.shareAmount * 1000)/10,
-                'shareScale': (it.shareScale * 1000)/10,
-                'deptId': it.deptId,
-                'userId': it.userId,
-                'userJson':it.users,
-                deptName: it.deptName,
-                userName: it.userName,
-                projectId: it.projectId,
-              });
-            });
-          }
         });
-        params = {
-          ...params,
-          costDetailsVo: arr,
-        };
-        if(Number(templateType) === 1) {
-          console.log('时间',setTime({ time: val.repaymentTime }));
-          Object.assign(params, {
-            loanSum: (val.loanSum*1000)/10,
-            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
-          });
-        } else if (Number(templateType) === 2) {
-          Object.assign(params, {
-            applicationSum: (val.applicationSum*1000)/10,
-            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
-          });
-          if (showField.happenTime &&
-            (showField.happenTime.dateType === '2' ||
-            showField.happenTime.dateType === 2)) {
-            Object.assign(params, {
-              startTime: val.time ? setTime({ time: val.time[0], type: 'x' }) : '',
-              endTime: val.time ? setTime({ time: val.time[1], type: 'x' }) : ''
-            });
-          } else if (showField.happenTime &&
-            (showField.happenTime.dateType === '1' ||
-            showField.happenTime.dateType === 1)) {
-            Object.assign(params, {
-              startTime: val.time ? setTime({ time: val.time, type: 'x' }) : ''
-            });
-          }
-        }
-        if (djDetail.isRelationLoan) {
-          // if (showField.loan.isWrite && (borrowArr.length === 0)) {
-          //   message.error('请选择借款核销');
-          //   return;
-          // }
-          Object.assign(params, {
-            invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; }) || []
-          });
-        }
-        if (djDetail.isRelationApply) {
-          // if (showField.apply.isWrite && (applyArr.length === 0)) {
-          //   message.error('请选择关联申请单');
-          //   return;
-          // }
-          Object.assign(params, {
-            applicationIds: applyArr.map(it => it.id) || [],
-          });
-        }
-        if (showField.receiptId && !showField.receiptId.status) {
-          Object.assign(params, {
-            receiptId: '',
-            receiptName: '',
-            receiptNameJson: '',
-          });
-        }
-        if (this.onCategoryStatus && this.onCategoryStatus.onSave) {
-          if (this.onCategoryStatus.onSave() === false) {
-            return;
-          }
-          Object.assign(params, {
-            detailList: this.onCategoryStatus.onSave(),
-            detailJson,
-            detailType,
-          });
-        }
-        this.chargeHandle(params);
       }
     });
+    params = {
+      ...params,
+      nodeConfigInfo: nodes,
+      costDetailsVo: arr,
+    };
+    if (djDetail.isRelationLoan) {
+      // if (showField.loan.isWrite && (borrowArr.length === 0)) {
+      //   message.error('请选择借款核销');
+      //   return;
+      // }
+      Object.assign(params, {
+        invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; }) || []
+      });
+    }
+    if (djDetail.isRelationApply) {
+      // if (showField.apply.isWrite && (applyArr.length === 0)) {
+      //   message.error('请选择关联申请单');
+      //   return;
+      // }
+      Object.assign(params, {
+        applicationIds: applyArr.map(it => it.id) || [],
+      });
+    }
+    if (showField.receiptId && !showField.receiptId.status) {
+      Object.assign(params, {
+        receiptId: '',
+        receiptName: '',
+        receiptNameJson: '',
+      });
+    }
+    if (this.onCategoryStatus && this.onCategoryStatus.onSave) {
+      if (this.onCategoryStatus.onSave() === false) {
+        return;
+      }
+      Object.assign(params, {
+        detailList: this.onCategoryStatus.onSave(),
+        detailJson,
+        detailType,
+      });
+    }
+    this.chargeHandle(params);
   }
 
   // 保存草稿
   handelOkDraft = () => {
-    const val = this.props.form.getFieldsValue();
+    const val = (this.changeForm && this.changeForm.onGetVal()) || {};
     if (!val.reason) {
       message.error('请输入事由');
       return;
@@ -1216,9 +1138,13 @@ class AddInvoice extends Component {
   }
 
   // 子组件改变父组件的state
-  changeSetData = (val, key) => {
+  changeSetData = (val, flag) => {
     this.setState({
-      [key]: val,
+      ...val,
+    }, () => {
+      if (flag) {
+        this.getNode();
+      }
     });
   }
 
@@ -1274,28 +1200,29 @@ class AddInvoice extends Component {
     });
   }
 
+  sortData = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      const e = data[i];
+      if (e.children && e.children.length) {
+        this.sortData(e.children);
+      }
+    }
+    data.sort((a, b) => {
+      return a.sort - b.sort;
+    });
+  }
+
   onSelectTree = () => {
     const { usableSupplier } = this.props;
-    const list = [];
-    usableSupplier.forEach(item => {
-      const obj = {
-        value: item.id,
-        title: item.name,
-        children: [],
-        disabled: true,
-      };
-      item.supplierAccounts.forEach(it => {
-        obj.children.push({
-          value: `${it.id}_${it.supplierId}`,
-          title: it.name,
-          parentId: it.supplierId,
-          type: it.type,
-          account: it.account,
-          names: `${item.name}(${it.name} ${typeObj[it.type]} ${it.account})`,
-        });
-      });
-      list.push(obj);
-    });
+    const list = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      tName: 'title',
+      tId: 'value',
+      name: 'name',
+      otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type', 'status', 'sort', 'parentId', 'supplierAccounts']
+    }, usableSupplier);
+    this.sortData(list);
     return list;
   }
 
@@ -1334,6 +1261,7 @@ class AddInvoice extends Component {
       newshowField,
       modifyNote,
       applyDetailList,
+      expandVos,
     } = this.state;
 
     const modify = operateType === 'modify';
@@ -1410,6 +1338,9 @@ class AddInvoice extends Component {
               djDetail={djDetail}
               uploadFiles={this.onUploadFiles}
               onChangeData={this.changeSetData}
+              costDetailsVo={costDetailsVo}
+              wrappedComponentRef={form => {this.changeForm = form;}}
+              expandVos={expandVos}
             />
             {
               (!Number(templateType) || (Number(templateType) === 2 && !!djDetail.categoryStatus)) &&

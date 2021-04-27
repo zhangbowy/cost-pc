@@ -2,11 +2,37 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Tooltip } from 'antd';
 import moment from 'moment';
+import { compare, handleProduction } from '../../../utils/common';
 
 function ProductTable(props) {
-  const columns = props.cols.map(it => {
+  const { cols } = props;
+  const newArrs = cols.sort(compare('sort'));
+  const newArr = handleProduction(newArrs);
+  const columns = newArr.filter(it => it.fieldType !== 9).map(it => {
     return ({
-      title: it.name,
+      title: (
+        <>
+          <span>
+            {it.name}
+          </span>
+          {
+            it.itemExplain && !!(it.itemExplain.length) &&
+            <Tooltip
+              title={(
+                <>
+                  {
+                    it.itemExplain.map(its => (
+                      <p className="m-b-8">{its.note}</p>
+                    ))
+                  }
+                </>
+              )}
+            >
+              <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+            </Tooltip>
+          }
+        </>
+      ),
       dataIndex: it.field,
       render: (_, record) => {
         let str = it.field === 'detail_money' || it.field === 'detail_sale' ?

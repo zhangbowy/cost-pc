@@ -1,6 +1,49 @@
 /* eslint-disable no-param-reassign */
 import moment from 'moment';
+import { condExclude, condThan } from './constants';
 
+const conditionType = {
+  'condition_creator_user_dept': {
+    type: 'people',
+    ruleType: 'people',
+  },
+  'condition_bear_user_dept': {
+    type: 'people',
+    ruleType: 'people',
+  },
+  'cost_category': {
+    type: 'selectTree',
+    ruleType: 'category',
+  },
+  'invoice_submit_sum': {
+    type: 'inputNumber',
+    ruleType: 'submit_sum',
+  },
+  'cost_detail': {
+    type: 'inputNumber',
+    ruleType: 'detail_sum',
+  },
+  'project': {
+    type: 'selectTree',
+    ruleType: 'project',
+  },
+  'supplier': {
+    type: 'selectTree',
+    ruleType: 'supplier',
+  },
+  'loan_detail': {
+    type: 'inputNumber',
+    ruleType: 'loan_amount',
+  },
+  'application_sum': {
+    type: 'inputNumber',
+    ruleType: 'application_sum',
+  },
+  'other': {
+    type: 'select',
+    ruleType: 'other',
+  }
+};
 // /system/user/id => ['/system','/system/user,'/system/user/id']
 export function urlToList(url) {
   const urlList = url.split('/').filter(i => i);
@@ -309,3 +352,89 @@ export const setMoney = (_obj = {}) => {
   console.log('res', res);
   return ((res*100).toFixed(0))/100;
 };
+
+export const conditionOption = (list) => {
+  const newArr = [];
+  list.forEach(it => {
+    newArr.push({
+      key: it.field ? `${it.code}~${it.field}` : it.code,
+      value: it.name,
+      sel: it.type === 1 ? condExclude : condThan,
+      options: it.options,
+      ...conditionType[it.code],
+    });
+  });
+  console.log('newArr', newArr);
+  return newArr;
+};
+
+export const fn = ({ current, product }) => {
+  const { index } = current;
+  const itemExplain = [];
+  let tempIndex = Number(index + 1);
+  product.forEach(it => {
+    if (it.indexLen === tempIndex) {
+      tempIndex+=1;
+      itemExplain.push({...it});
+    }
+  });
+  if (current.index || current.index === 0) delete current.index;
+  return {
+    ...current,
+    itemExplain,
+  };
+};
+
+export const handleProduction = (list) => {
+  const oldArr = list.map((it, index) => { return {...it, indexLen: index}; });
+  const product = oldArr.filter(it => it.fieldType === 9);
+  const newArr = [];
+  list.forEach((it, index) => {
+    let obj = {...it};
+    if (it.fieldType !== 9) {
+      obj = fn({ current: {...it, index}, product });
+    }
+    newArr.push(obj);
+  });
+  return newArr;
+};
+
+export  const handleNum = (result) => {
+  if (result === '一十'){
+    result = '十';
+  }
+  if (result.match(/^一/) && result.length === 3){
+    result = result.replace('一', '');
+  }
+  return result;
+};
+
+export const intToChinese = ( str ) => {
+  str +='';
+  const len = str.length-1;
+  const idxs = ['','十','百','千','万','十','百','千','亿','十','百','千','万','十','百','千','亿'];
+  const num = ['零','一','二','三','四','五','六','七','八','九'];
+  return str.replace(/([1-9]|0+)/g,function( $, $1, idx) {
+   let pos = 0;
+   if( $1[0] !== '0' ){
+    pos = len-idx;
+    if( idx === 0 && $1[0] === 1 && idxs[len-idx] === '十'){
+     return handleNum(idxs[len-idx]);
+    }
+    return handleNum(num[$1[0]] + idxs[len-idx]);
+   }
+    const left = len - idx;
+    const right = len - idx + $1.length;
+    if( Math.floor(right/4) - Math.floor(left/4) > 0 ){
+     pos = left - left%4;
+    }
+    if( pos ){
+     return handleNum(idxs[pos] + num[$1[0]]);
+    } if( idx + $1.length >= len ){
+     return '';
+    }
+    return handleNum(num[$1[0]]);
+
+  });
+ };
+

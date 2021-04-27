@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Divider, Form, Input, Select, DatePicker, Table, Button, InputNumber } from 'antd';
+import { Divider, Form, Input, Select, DatePicker, Table, Button, InputNumber, Tooltip } from 'antd';
 import style from '../index.scss';
-import { setMoney, timeStampToHex } from '../../../../utils/common';
+import { setMoney, timeStampToHex, handleProduction } from '../../../../utils/common';
 import { numAdd } from '../../../../utils/float';
 import { dragDisabled } from '../../../../utils/constants';
 
@@ -162,11 +162,16 @@ class CategoryTable extends Component {
                   [item]: `${moment(val[item][it][0]).format('x')}~${moment(val[item][it][1]).format('x')}`
                 };
               }
+            } else if (fieldObj[item].fieldType === 9 ) {
+              obj = {
+                ...obj,
+                [item]: fieldObj[item].note
+              };
             } else {
               obj = {
                 ...obj,
                 [item]: item=== 'detail_money' || item === 'detail_sale'
-                 ? Number(val[item][it] * 100).toFixed(0) : val[item][it],
+                 ? Number(val[item][it] * 100).toFixed(0) : val[item][it].toString(),
               };
             }
           });
@@ -210,7 +215,8 @@ class CategoryTable extends Component {
   getColumns = (list) => {
     const { form: { getFieldDecorator } } = this.props;
     const arr = [];
-    list.forEach((it) => {
+    const newList = handleProduction(list);
+    newList.filter(it => it.fieldType !== 9).forEach((it) => {
       let nodes = null;
       const type = it.fieldType;
       if (dragDisabled.includes(it.field)) {
@@ -221,11 +227,12 @@ class CategoryTable extends Component {
         nodes = (
           <Input placeholder={it.note ? it.note : '请输入'} style={{width: '100%'}} />
         );
-      } else if (type === 2) {
+      } else if (type === 2 || type === 8) {
         nodes = (
           <Select
             placeholder={it.note ? it.note : '请输入'}
             style={{width: '100%'}}
+            mode={type === 8 ? 'multiple' : ''}
           >
             {
               it.options && it.options.map(its => (
@@ -268,7 +275,24 @@ class CategoryTable extends Component {
               >
                 *
               </span>
-              : ''}{it.name}
+              : ''}
+            <span>{it.name}</span>
+            {
+              it.itemExplain && !!(it.itemExplain.length) &&
+              <Tooltip
+                title={(
+                  <>
+                    {
+                      it.itemExplain.map(item => (
+                        <p>{item.note}</p>
+                      ))
+                    }
+                  </>
+                )}
+              >
+                <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+              </Tooltip>
+            }
           </span>
         ),
         dataIndex: it.field,
@@ -292,6 +316,8 @@ class CategoryTable extends Component {
             msg /=100;
           } else if(msg && it.field === 'detail_account') {
             msg = (msg*100).toFixed(0)/100;
+          } else if (msg && it.fieldType === 8) {
+            msg = msg.split(',');
           }
           const checkObj = [{
             required: it.isWrite,

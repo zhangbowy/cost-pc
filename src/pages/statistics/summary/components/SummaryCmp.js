@@ -8,9 +8,10 @@ import { rowSelect } from '../../../../utils/common';
 const statusStr = {
   1: '该单据审批中，可让发起人自行撤销',
   2: '该单据待发放，可让发放人执行拒绝操作',
+  3: '该单据待还款，请将欠款核销后再行删除',
   4: '该单据已撤销，可让发起人自行删除',
-  5: '该单据已审批拒绝，可让发起人自行删除',
-  11: '该单据已发放拒绝，可让发起人自行删除',
+  55: '该单据已审批拒绝，可让发起人自行删除',
+  52: '该单据已发放拒绝，可让发起人自行删除',
 };
 class SummaryCmp extends Component {
 
@@ -318,13 +319,13 @@ class SummaryCmp extends Component {
           title: '操作',
           dataIndex: 'operate',
           render: (_, record) => {
-            const { status } = record;
+            const { status, approveStatus } = record;
             console.log(status);
             return (
               <>
                 {
                   (status === 3 && templateType === 0) ||
-                  (templateType === 1 && status === 3) ||
+                  (templateType === 1 && status === 6) ||
                   (templateType === 2 && status === 2) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"
@@ -335,17 +336,18 @@ class SummaryCmp extends Component {
                     </Popconfirm>
                     :
                     <Tooltip
-                      title={statusStr[status]}
+                      title={status === 5 ? statusStr[`${status}${approveStatus}`] : statusStr[status]}
                       placement="topRight"
                     >
-                      <span style={{ cursor: 'pointer',color: 'rgba(0,0,0,0.45)' }}>删单</span>
+                      <span style={{ cursor: 'pointer',color: 'rgba(0,0,0,0.25)' }}>删单</span>
                     </Tooltip>
                 }
               </>
             );
           },
-          width: 70,
-          fixed: 'right'
+          width: 80,
+          fixed: 'right',
+          className: 'fixCenter'
         });
       }
     return (

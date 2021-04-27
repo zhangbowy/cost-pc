@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react';
 import { Table, Tooltip, Popover, Tag } from 'antd';
 import moment from 'moment';
 import style from './index.scss';
+import { handleProduction, compare } from '../../../utils/common';
 
 class CostDetailTable extends PureComponent {
 
@@ -49,14 +50,37 @@ class CostDetailTable extends PureComponent {
       obj[next.field] ? '' : obj[next.field] = true && item.push(next);
       return item;
     }, []);
-    console.log('CostDetailTable -> onHandle -> newArr', newArr);
+    const handleArr = handleProduction(newArr.sort(compare('sort')));
+    console.log('CostDetailTable -> onHandle -> handleArr', handleArr);
 
-    newArr.forEach(item => {
+    handleArr.filter(it => it.fieldType !== 9).forEach(item => {
       let objs = {};
-      if (item.field !== 'costCategory' && item.field !== 'amount') {
+      if (item.field !== 'costCategory') {
         if (item.field === 'happenTime') {
           objs = {
-            title: '发生日期',
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+                {
+                  item.itemExplain && !!(item.itemExplain.length) &&
+                  <Tooltip
+                    title={(
+                      <>
+                        {
+                          item.itemExplain.map(its => (
+                            <p className="m-b-8">{its.msg}</p>
+                          ))
+                        }
+                      </>
+                    )}
+                  >
+                    <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                  </Tooltip>
+                }
+              </>
+            ),
             dataIndex: 'happenTime',
             render: (_, record) => (
               <span>
@@ -68,7 +92,29 @@ class CostDetailTable extends PureComponent {
           };
         } else if (item.field === 'costNote') {
           objs = {
-            title: '备注',
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+                {
+                  item.itemExplain && !!(item.itemExplain.length) &&
+                  <Tooltip
+                    title={(
+                      <>
+                        {
+                          item.itemExplain.map(its => (
+                            <p className="m-b-8">{its.msg}</p>
+                          ))
+                        }
+                      </>
+                    )}
+                  >
+                    <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                  </Tooltip>
+                }
+              </>
+            ),
             dataIndex: 'note',
             width: 120,
             ellipsis: true,
@@ -89,7 +135,29 @@ class CostDetailTable extends PureComponent {
           };
         } else if (item.field === 'imgUrl') {
           objs = {
-            title: '图片',
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+                {
+                  item.itemExplain && !!(item.itemExplain.length) &&
+                  <Tooltip
+                    title={(
+                      <>
+                        {
+                          item.itemExplain.map(its => (
+                            <p className="m-b-8">{its.msg}</p>
+                          ))
+                        }
+                      </>
+                    )}
+                  >
+                    <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                  </Tooltip>
+                }
+              </>
+            ),
             dataIndex: 'imgUrl',
             render: (_, record) => (
               <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
@@ -103,9 +171,98 @@ class CostDetailTable extends PureComponent {
             textWrap: 'word-break',
             width: 150
           };
-        } else {
+        } else if (item.field === 'amount'){
           objs = {
-            title: item.name,
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+                {
+                  item.itemExplain && !!(item.itemExplain.length) &&
+                  <Tooltip
+                    title={(
+                      <>
+                        {
+                          item.itemExplain.map(its => (
+                            <p className="m-b-8">{its.msg}</p>
+                          ))
+                        }
+                      </>
+                    )}
+                  >
+                    <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                  </Tooltip>
+                }
+              </>
+            ),
+            dataIndex: 'costSum',
+            render: (_, record) => (
+              <span>
+                <span>{record.currencySumStr && record.currencyId &&  record.currencyId !== -1 ?
+                `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}
+                </span>
+                {
+                  record.costDetailShareVOS && record.costDetailShareVOS.length > 0 ?
+                    <Popover
+                      content={(
+                        <div
+                          className={style.share_cnt}
+                        >
+                          <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">
+                            分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}
+                          </p>
+                          {
+                            record.costDetailShareVOS.map(it => (
+                              <p key={it.id} className="c-black-36 fs-13">
+                                <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
+                                {
+                                  it.projectName &&
+                                  <span className="m-r-8">{it.projectName}</span>
+                                }
+                                <span>¥{it.shareAmount/100}{it.currencySumStr && record.currencyId &&  record.currencyId !== -1 ? `(${it.currencySumStr})` : ''}</span>
+                              </p>
+                            ))
+                          }
+                        </div>
+                    )}
+                    >
+                      <Tag className="m-l-8">分摊明细</Tag>
+                    </Popover>
+                    :
+                    null
+                }
+              </span>
+            ),
+            className: 'moneyCol',
+            width: 250
+          };
+        }
+        else {
+          objs = {
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+                {
+                  item.itemExplain && !!(item.itemExplain.length) &&
+                  <Tooltip
+                    title={(
+                      <>
+                        {
+                          item.itemExplain.map(its=> (
+                            <p className="m-b-8">{its.msg}</p>
+                          ))
+                        }
+                      </>
+                    )}
+                  >
+                    <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                  </Tooltip>
+                }
+              </>
+            ),
             dataIndex: item.field,
             render: (_, itField) => {
               console.log('InvoiceDetail -> render -> records', itField);
@@ -165,48 +322,6 @@ class CostDetailTable extends PureComponent {
       ),
       width: 150,
       fixed: 'left'
-    }, {
-      title: '金额（元）',
-      dataIndex: 'costSum',
-      render: (_, record) => (
-        <span>
-          <span>{record.currencySumStr && record.currencyId &&  record.currencyId !== -1 ?
-          `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}
-          </span>
-          {
-            record.costDetailShareVOS && record.costDetailShareVOS.length > 0 ?
-              <Popover
-                content={(
-                  <div
-                    className={style.share_cnt}
-                  >
-                    <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">
-                      分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}
-                    </p>
-                    {
-                      record.costDetailShareVOS.map(it => (
-                        <p key={it.id} className="c-black-36 fs-13">
-                          <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
-                          {
-                            it.projectName &&
-                            <span className="m-r-8">{it.projectName}</span>
-                          }
-                          <span>¥{it.shareAmount/100}{it.currencySumStr && record.currencyId &&  record.currencyId !== -1 ? `(${it.currencySumStr})` : ''}</span>
-                        </p>
-                      ))
-                    }
-                  </div>
-              )}
-              >
-                <Tag className="m-l-8">分摊明细</Tag>
-              </Popover>
-              :
-              null
-          }
-        </span>
-      ),
-      className: 'moneyCol',
-      width: 250
     }];
     if (allData.columns && allData.columns.length > 0) {
       columns = [...columns, ...allData.columns];

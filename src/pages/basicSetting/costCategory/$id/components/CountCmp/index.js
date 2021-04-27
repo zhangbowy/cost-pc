@@ -62,7 +62,9 @@ function CountCmp({ expandFieldVos,
       }}
       onClick={(e) => {
         e.stopPropagation();
-        changeDragId(keyField);
+        if (dragId !== keyField) {
+          changeDragId(keyField);
+        }
       }}
     >
       {

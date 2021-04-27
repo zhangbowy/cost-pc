@@ -158,6 +158,10 @@ class Summary extends React.PureComponent {
   };
 
   onRecord = (payload, callback) => {
+    const { current } = this.state;
+    Object.assign(payload, {
+      templateType: current,
+    });
     this.props.dispatch({
       type: 'costGlobal/recordList',
       payload,
@@ -203,7 +207,7 @@ class Summary extends React.PureComponent {
       dataIndex: 'operationType',
       width: 80,
       render: () => (
-        <span>单据删除</span>
+        <span>删除单据</span>
       )
     }, {
       title: '详情',

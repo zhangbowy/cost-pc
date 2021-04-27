@@ -2,7 +2,7 @@ import { get, post } from '@/utils/request';
 import api from '@/services/api';
 import treeConvert from '@/utils/treeConvert';
 import { ddConfig } from '@/utils/ddApi';
-import { compare } from '../utils/common';
+import { compare, conditionOption } from '../utils/common';
 // import { message } from 'antd';
 
 export default {
@@ -55,6 +55,7 @@ export default {
     msnUrl: '', // 小程序二维码链接
     detailJson: [],
     detailType: 0,
+    getCondition: [], // 获取条件分支的条件
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -395,10 +396,11 @@ export default {
     // 获取可用的供应商
     *usableSupplier({ payload }, { call, put }) {
       const response = yield call(get, api.usableSupplier, payload);
+      const newArr = response && response.length ? response.sort(compare('sort')) : [];
       yield put({
         type: 'save',
         payload: {
-          usableSupplier: response || [],
+          usableSupplier: newArr,
         },
       });
     },
@@ -582,6 +584,16 @@ export default {
         },
       });
     },
+    *getCondition({ payload }, { call, put }) {
+      const response = yield call(get, api.getCondition, payload);
+      console.log('*getCondition -> response', conditionOption(response));
+      yield put({
+        type: 'save',
+        payload: {
+          getCondition: response && response.length ? conditionOption(response) : [],
+        },
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
 import { Form, Radio, Select, Button, InputNumber, TreeSelect } from 'antd';
-import { condExclude, conditionObj } from '@/utils/constants';
+import { condExclude } from '@/utils/constants';
 import UserSelector from '@/components/Modals/SelectPeople';
 import treeConvert from '@/utils/treeConvert';
 import { connect } from 'dva';
@@ -69,11 +69,11 @@ class Conditions extends Component {
    */
   onChange = (val, index) => {
     const {lists} = this.state;
-    const { templateType } = this.props;
+    const { getCondition } = this.props;
     const list = [...lists];
     const items = lists[index];
     const { form } = this.props;
-    conditionObj[templateType].forEach(item => {
+    getCondition.forEach(item => {
       if (item.key === val) {
         list[index] = {
           id: items.id,
@@ -186,7 +186,7 @@ class Conditions extends Component {
   getItems = () => {
     const {
       form,
-      templateType
+      getCondition
     } = this.props;
     let vals = null;
     form.validateFieldsAndScroll((err, val) => {
@@ -196,7 +196,7 @@ class Conditions extends Component {
         let flag = true;
         if (val.keys) {
           val.keys.forEach((it, index) => {
-            content+=`${getArrayValue(it.key, conditionObj[templateType])}${index !== (val.keys.length-1) ? '、' : ''}`;
+            content+=`${getArrayValue(it.key, getCondition)}${index !== (val.keys.length-1) ? '、' : ''}`;
             let rules = {};
             let values = [];
             if (it.type === 'people') {
@@ -221,7 +221,7 @@ class Conditions extends Component {
               }];
             }
             rules = {
-              type: it.key,
+              type: it.key.indexOf('other') > -1 ? 'other' : it.key,
               typeName: it.value,
               method: val.method,
               rule: {
@@ -229,6 +229,11 @@ class Conditions extends Component {
                 values,
               },
             };
+            if (it.key.indexOf('other') > -1) {
+              Object.assign(rules, {
+                childType: it.key.split('~')[1],
+              });
+            }
             conditions.push(rules);
           });
         }
@@ -282,6 +287,7 @@ class Conditions extends Component {
       projectList,
       templateType,
       supplierList,
+      getCondition,
     } = this.props;
     const PriArr = this.numToArr(priorityLength);
     const list = treeConvert({
@@ -346,7 +352,7 @@ class Conditions extends Component {
                   className="m-r-16"
                 >
                   {
-                    conditionObj[templateType].map(it => (
+                    getCondition.map(it => (
                       <Option key={it.key}>{it.value}</Option>
                     ))
                   }
@@ -423,6 +429,25 @@ class Conditions extends Component {
                   dropdownStyle={{height: '300px'}}
                   placeholder="请选择"
                 />
+              )
+            }
+            {
+              item && item.type === 'select' &&
+              getFieldDecorator(`value[${item.id}]`, {
+                initialValue: item.ruleValue ? item.ruleValue : [],
+                rules: [{ required: true, message: '请选择' }]
+              })(
+                <Select
+                  style={{ width: '100%', height: '32px'}}
+                  className="m-r-16"
+                  mode="multiple"
+                >
+                  {
+                    item.options.map(it => (
+                      <Option key={it}>{it}</Option>
+                    ))
+                  }
+                </Select>
               )
             }
             {

@@ -294,8 +294,20 @@ class CategoryAdd extends PureComponent {
         });
       }
     }
+    const { selectList } = this.state;
+    const newSelectList = [...selectList];
+    if (this.childRef && this.childRef.getRightParams) {
+      const valStr = this.childRef.getRightParams();
+      console.log('CategoryAdd -> onStep -> valStr', valStr);
+      if (!valStr) {
+        return;
+      }
+      const indexs = selectList.findIndex(it => it.field === valStr.field);
+      newSelectList.splice(indexs, 1, valStr);
+    }
     this.setState({
       current: e.key,
+      selectList: newSelectList
     });
   }
 
@@ -338,6 +350,9 @@ class CategoryAdd extends PureComponent {
           expandFieldVos: expandDetail,
         });
       }
+      this.setState({
+        selectList: newSelectList,
+      });
     }
 
     if ((current === 'three'

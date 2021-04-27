@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { Form, Input, Row, Col, Divider, Button,
   Icon, Select, TreeSelect, InputNumber, DatePicker, message } from 'antd';
@@ -8,12 +9,17 @@ import UploadImg from '../../UploadImg';
 import SelectPeople from '../SelectPeople';
 import ReceiptModal from '../ReceiptModal';
 import { placeholderType } from '../../../utils/constants';
-import { compare } from '../../../utils/common';
+import { compare, setTime, handleProduction } from '../../../utils/common';
 import defaultFunc from './utils';
 import style from './index.scss';
 
 const {Option} = Select;
 const { RangePicker } = DatePicker;
+const typeObj = {
+  0: '银行卡',
+  1: '支付宝',
+  2: '现金',
+};
 const labelInfo = {
   reason: '事由',
   userId: '报销人',
@@ -32,11 +38,7 @@ class ChangeForm extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      users: [],
-      depList: [],
-      loanUserId: [],
-    };
+    this.state = {};
   }
 
   checkMoney = (rule, value, callback) => {
@@ -61,8 +63,7 @@ class ChangeForm extends Component {
 
   selectPle = (val) => {
     let detail = this.state.details;
-    const { total } = this.state;
-    let params = {};
+    const { onChangeData } = this.props;
     if (val.users && val.users.length > 0) {
       this.props.dispatch({
         type: 'global/users',
@@ -71,7 +72,7 @@ class ChangeForm extends Component {
         }
       }).then(() => {
         const { deptInfo } = this.props;
-        this.setState({
+        onChangeData({
           users: val.users,
           depList: deptInfo,
         });
@@ -84,18 +85,6 @@ class ChangeForm extends Component {
             userId: this.props.userId,
             deptId: deptInfo[0].deptId,
           };
-          params = {
-            loanEntities: detail.loanEntities || [],
-            categorySumEntities: detail.categorySumEntities || [],
-            creatorDeptId: detail.createDeptId,
-            loanUserId: val.users[0].userId,
-            loanDeptId: deptInfo[0].deptId,
-            processPersonId: detail.processPersonId,
-            createDingUserId: detail.createDingUserId,
-            total: (total * 1000)/10,
-            projectId: detail.projectId || '',
-            supplierId: detail.supplierId || ''
-          };
         } else {
           this.props.form.setFieldsValue({
             deptId: '',
@@ -104,20 +93,8 @@ class ChangeForm extends Component {
             ...detail,
             userId: this.props.userId,
           };
-          params = {
-            loanEntities: detail.loanEntities || [],
-            categorySumEntities: detail.categorySumEntities || [],
-            creatorDeptId: detail.createDeptId,
-            loanUserId: val.users[0].userId,
-            processPersonId: detail.processPersonId,
-            createDingUserId: detail.createDingUserId,
-            total: (total * 1000)/10,
-            projectId: detail.projectId || '',
-            supplierId: detail.supplierId || ''
-          };
         }
-        this.getNode(params);
-        this.setState({
+        onChangeData({
           users: val.users,
           details: {
             ...detail,
@@ -125,36 +102,24 @@ class ChangeForm extends Component {
             loanUserId: val.users[0].userId,
           },
           loanUserId: val.users[0].userId,
-        });
+        }, true);
       });
     }
   }
 
   onChangeDept = (val) => {
-    const detail = this.state.details;
-    const { loanUserId, total } = this.state;
-    this.getNode({
-      creatorDeptId: detail.createDeptId,
-      loanUserId: loanUserId || '',
-      loanDeptId: val,
-      loanEntities: detail.loanEntities || [],
-      categorySumEntities: detail.categorySumEntities || [],
-      processPersonId: detail.processPersonId,
-      createDingUserId: detail.createDingUserId,
-      total: (total * 1000)/10,
-      projectId: detail.projectId || '',
-      supplierId: detail.supplierId || ''
-    });
-    this.setState({
+    const { details, onChangeData } = this.props;
+    onChangeData({
       details: {
-        ...detail,
+        ...details,
         loanDeptId: val,
       },
-    });
+    }, true);
   }
 
   onChangePro = (val, name) => {
-    let data = this.props.details;
+    const { onChangeData, details } = this.props;
+    let data = {...details};
     if (name === 'project') {
       data = {
         ...data,
@@ -166,22 +131,9 @@ class ChangeForm extends Component {
         supplierId: val.split('_')[1],
       };
     }
-    const { loanUserId, total } = this.state;
-    this.getNode({
-      creatorDeptId: data.createDeptId || '',
-      loanUserId: loanUserId || '',
-      loanDeptId: data.deptId || '',
-      loanEntities: data.loanEntities || [],
-      categorySumEntities: data.categorySumEntities || [],
-      processPersonId: data.processPersonId,
-      createDingUserId: data.createDingUserId,
-      total: (total * 1000)/10,
-      projectId: data.projectId || '',
-      supplierId: data.supplierId || ''
-    });
-    this.setState({
+    onChangeData({
       details: data,
-    });
+    }, true);
   }
 
   treeNodeRender = (treeNode) => {
@@ -199,7 +151,12 @@ class ChangeForm extends Component {
           searchs={v.title}
           disabled
         >
-          {v.children && this.treeNodeChildRender(v.children, v.title)}
+          {
+            (v.children || v.supplierAccounts) && v.type === 1 ?
+            this.treeNodeChildRender(v.supplierAccounts, v.title)
+            :
+            this.treeNodeRender(v.children)
+          }
         </TreeNode>
       );
     });
@@ -208,10 +165,10 @@ class ChangeForm extends Component {
   treeNodeChildRender = (list, titles) => {
     return list.map(it => (
       <TreeNode
-        key={it.value}
-        value={it.value}
-        name={it.title}
-        newName={it.names}
+        key={`${it.id}_${it.supplierId}`}
+        value={`${it.id}_${it.supplierId}`}
+        name={it.name}
+        newName={`${titles}(${it.name} ${typeObj[it.type]} ${it.account})`}
         searchs={titles}
         title={(
           <div>
@@ -228,12 +185,10 @@ class ChangeForm extends Component {
                 it.type === 2 &&
                 <i className="iconfont iconxianjin" />
               }
-              {it.title}
+              {it.name}
             </div>
             <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
-              {it.type === 0 && '银行卡'}
-              {it.type === 1 && '支付宝'}
-              {it.type === 2 && '现金'}
+              {typeObj[it.type]}
               {it.account}
             </p>
           </div>
@@ -243,39 +198,33 @@ class ChangeForm extends Component {
   }
 
   inputMoney = (value) => {
-    const { details } = this.state;
-    const { djDetail } = this.props;
-    const { costDetailsVo } = this.state;
+    const { djDetail, onChangeData } = this.props;
+    const { costDetailsVo } = this.props;
     if (!djDetail.categoryStatus || (costDetailsVo.length === 0)) {
-      this.setState({
+      let flag = true;
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        flag = false;
+      }
+      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+        flag = false;
+      }
+      if (value > 100000000 || value === 100000000) {
+        flag = false;
+      }
+      if (value < 0) {
+        flag = false;
+      }
+      onChangeData({
         total: value
-      }, () => {
-        if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
-          return;
-        }
-        if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
-          return;
-        }
-        if (value > 100000000 || value === 100000000) {
-          return;
-        }
-        if (value < 0) {
-          return;
-        }
-        this.getNode({
-          projectId: details.projectId || '',
-          supplierId: details.supplierId || '',
-          createDingUserId: details.createDingUserId,
-          creatorDeptId: details.createDeptId || '',
-          processPersonId: details.processPersonId,
-        });
-    });
-  }
+      }, flag);
+    }
   }
 
   onChangeImg = (val) => {
     const { onChangeData } = this.props;
-    onChangeData(val, 'imgUrl');
+    onChangeData({
+      imgUrl: val,
+    });
   }
 
   onDelFile = (index, e, flag) => {
@@ -287,7 +236,9 @@ class ChangeForm extends Component {
     }
     const files = this.props.fileUrl;
     files.splice(index, 1);
-    onChangeData(files, 'fileUrl');
+    onChangeData({
+      fileUrl: files,
+    });
   }
 
   //  预览附件
@@ -305,7 +256,7 @@ class ChangeForm extends Component {
 
   onChangeAcc = (val) => {
     let detail = this.props.details;
-    const { accountList } = this.props;
+    const { accountList, onChangeData } = this.props;
     accountList.forEach(item => {
       if (item.id === val) {
         const arr = [item];
@@ -320,32 +271,165 @@ class ChangeForm extends Component {
     this.props.form.setFieldsValue({
       receiptId: val,
     });
-    this.setState({
+    onChangeData({
       details: detail,
     });
   }
 
   onChangeCreate = (val) => {
-    const detail = this.state.details;
-    const { loanUserId, total } = this.state;
-    this.getNode({
-      creatorDeptId: val,
-      loanUserId: loanUserId || '',
-      loanDeptId: detail.deptId || '',
-      loanEntities: detail.loanEntities || [],
-      categorySumEntities: detail.categorySumEntities || [],
-      processPersonId: detail.processPersonId,
-      createDingUserId: detail.createDingUserId,
-      total: (total * 1000)/10,
-      projectId: detail.projectId || '',
-      supplierId: detail.supplierId || ''
-    });
-    this.setState({
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
       details: {
         ...detail,
         createDeptId: val,
       },
+    }, true);
+  }
+
+  onSaveForm = () => {
+    const { form } = this.props;
+    const {
+      depList,
+      createDepList,
+      imgUrl,
+      fileUrl,
+      expandField,
+      templateType,
+      details,
+      users,
+      showField,
+    } = this.props;
+    let params = {};
+    form.validateFieldsAndScroll((err, val) => {
+      if (!err) {
+        const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
+        const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
+        const expandSubmitFieldVos = [];
+        const selfSubmitFieldVos = [];
+        if (expandField && expandField.length > 0) {
+          expandField.forEach(it => {
+            let obj = {
+              ...it,
+            };
+            console.log(val[it.field]);
+            if (Number(it.fieldType) !== 9) {
+              obj = {
+                ...obj,
+                msg: Number(it.fieldType) === 5 && val[it.field] ?
+                JSON.stringify(val[it.field]) : val[it.field] ? val[it.field].toString() : val[it.field],
+              };
+            }
+            if (Number(it.fieldType) === 5 && val[it.field]) {
+              Object.assign(obj, {
+                startTime: Number(it.dateType) === 2 ?
+                moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
+              });
+            }
+            if (Number(it.fieldType) === 9) {
+              obj = {
+                ...obj,
+                msg: it.note,
+              };
+            }
+            if (it.status && it.field.indexOf('expand_') > -1) {
+              expandSubmitFieldVos.push(obj);
+            } else if (it.status && it.field.indexOf('self_') > -1){
+              selfSubmitFieldVos.push(obj);
+            }
+          });
+        }
+        params = {
+          ...details,
+          reason: val.reason,
+          note: val.note || '',
+          userId: details.userId || '',
+          deptId: val.deptId,
+          deptName: dep && dep.length > 0 ? dep[0].name : '',
+          userJson: users,
+          createDeptId: val.createDeptId,
+          createDeptName: dept && dept.length > 0 ? dept[0].name : '',
+          projectId: val.projectId || '',
+          supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
+          supplierId: val.supplier ? val.supplier.split('_')[1] : '',
+          imgUrl,
+          fileUrl,
+          expandSubmitFieldVos,
+          selfSubmitFieldVos
+        };
+
+        if(Number(templateType) === 1) {
+          console.log('时间',setTime({ time: val.repaymentTime }));
+          Object.assign(params, {
+            loanSum: (val.loanSum*1000)/10,
+            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
+          });
+        } else if (Number(templateType) === 2) {
+          Object.assign(params, {
+            applicationSum: (val.applicationSum*1000)/10,
+            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
+          });
+          if (showField.happenTime &&
+            (showField.happenTime.dateType === '2' ||
+            showField.happenTime.dateType === 2)) {
+            Object.assign(params, {
+              startTime: val.time ? setTime({ time: val.time[0], type: 'x' }) : '',
+              endTime: val.time ? setTime({ time: val.time[1], type: 'x' }) : ''
+            });
+          } else if (showField.happenTime &&
+            (showField.happenTime.dateType === '1' ||
+            showField.happenTime.dateType === 1)) {
+            Object.assign(params, {
+              startTime: val.time ? setTime({ time: val.time, type: 'x' }) : ''
+            });
+          }
+        }
+        if (showField.receiptId && !showField.receiptId.status) {
+          Object.assign(params, {
+            receiptId: '',
+            receiptName: '',
+            receiptNameJson: '',
+          });
+        }
+      } else {
+        params = null;
+      }
     });
+    return params;
+  }
+
+  onGetVal = () => {
+    const val = this.props.form.getFieldsValue();
+    return val;
+  }
+
+  onChangeSelect = (val, obj) => {
+    const { onChangeData, expandVos } = this.props;
+    const list = [...expandVos];
+    const index = list.findIndex(it => it.field === obj.field);
+    let flag = false;
+    if (obj.field.indexOf('expand_') > -1 && obj.fieldType !== 8) {
+      flag = true;
+    }
+    if (index > -1) {
+      list.splice(index, 1, {
+        field: obj.field,
+        msg: val.toString(),
+      });
+    } else {
+      list.push({
+        field: obj.field,
+        msg: val.toString(),
+      });
+    }
+    onChangeData({
+      expandVos: list,
+    }, flag);
+  }
+
+  onRest = () => {
+    this.props.form.resetFields();
   }
 
   render () {
@@ -367,12 +451,14 @@ class ChangeForm extends Component {
       supplierList,
       handelAcc,
       uploadFiles,
-    } = this.props;
-    const {
       users,
       depList,
-    } = this.state;
-    const newForm = [...newshowField, ...expandField].sort(compare('sort'));
+    } = this.props;
+    console.log('render -> supplierList', supplierList);
+
+    const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
+    const newForm = handleProduction(oldForm);
+    console.log('render -> newForm', newForm);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -395,89 +481,10 @@ class ChangeForm extends Component {
     };
     return (
       <Form className="formItem" refs={forms => {this.invoice = forms;}}>
-        <Row>
-          <Col span={12}>
-            <Form.Item label={showField.reason && showField.reason.name} {...formItemLayout}>
-              {
-                getFieldDecorator('reason', {
-                  initialValue: details.reason || '',
-                  rules:[{ required: true, message: '请输入事由' }]
-                })(
-                  <Input
-                    disabled={modify && showField.reason && !showField.reason.isModify}
-                    placeholder={showField.reason && showField.reason.note ? showField.reason.note : '请输入'}
-                  />
-                )
-              }
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label={showField.userJson && showField.userJson.name} {...formItemLayout}>
-              <SelectPeople
-                users={users}
-                placeholder='请选择'
-                onSelectPeople={(val) => this.selectPle(val)}
-                invalid={false}
-                disabled={Number(templateType) || modify}
-                flag="users"
-                isInput
-                multiple={false}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
         <Row style={{display: 'flex', flexWrap: 'wrap'}}>
-          <Col span={12}>
-            <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
-              {
-                getFieldDecorator('deptId', {
-                  rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
-                })(
-                  <Select
-                    placeholder={showField.deptId && showField.deptId.note ? showField.deptId.note : '请选择'}
-                    onChange={this.onChangeDept}
-                    disabled={modify}
-                  >
-                    {
-                      depList && depList.map(it => (
-                        <Option key={it.deptId}>{it.name}</Option>
-                      ))
-                    }
-                  </Select>
-                )
-              }
-            </Form.Item>
-          </Col>
-          {
-            !modify &&
-              <Col span={12}>
-                <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
-                  {
-                    getFieldDecorator('createDeptId', {
-                      initialValue: details.createDeptId ? `${details.createDeptId}` : '',
-                      rules: [{ required: true, message: '请选择部门' }]
-                    })(
-                      <Select
-                        placeholder={showField.createDeptId && showField.createDeptId.note
-                        ? showField.createDeptId.note : '请选择'}
-                        onChange={this.onChangeCreate}
-                        getPopupContainer={triggerNode => triggerNode.parentNode}
-                        disabled={modify}
-                      >
-                        {
-                          createDepList && createDepList.map(it => (
-                            <Option key={`${it.deptId}`}>{it.name}</Option>
-                          ))
-                        }
-                      </Select>
-                    )
-                  }
-                </Form.Item>
-              </Col>
-          }
           {
             newForm && (newForm.length > 0) &&
-            newForm.map(itw => {
+            newForm.filter(it => it.fieldType !== 9).map(itw => {
               if (itw.field.indexOf('expand_') > -1 || itw.field.indexOf('self_') > -1) {
                 let renderForm = null;
                 let rule = [];
@@ -498,11 +505,19 @@ class ChangeForm extends Component {
                     />
                   );
                   rule = [{ max: 128, message: '限制128个字' }];
-                } else if(Number(itw.fieldType) === 2) {
+                } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
+                  if (Number(itw.fieldType) === 8) {
+                    console.log('render -> itw.msg', itw.msg);
+
+                    initMsg = itw.msg && itw.msg.indexOf(',') > -1 ? itw.msg.split(',') : [];
+                  }
                   renderForm = (
                     <Select
                       placeholder={itw.note ? itw.note : '请选择'}
                       disabled={modify && !itw.isModify}
+                      mode={Number(itw.fieldType) === 8 ? 'multiple' : ''}
+                      onChange={val => this.onChangeSelect(val, {
+                        fieldType: itw.fieldType, field: itw.field })}
                     >
                       {
                         itw.options && itw.options.map(iteems => (
@@ -539,11 +554,10 @@ class ChangeForm extends Component {
                     );
                   }
                 }
-                console.log('itw.field', itw.field);
                 return (
                   <>
                     {
-                      itw.status && (itw.fieldType !== 3) ?
+                      itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9 ?
                         <Col span={12}>
                           <Form.Item label={itw.name} {...formItemLayout}>
                             {
@@ -560,6 +574,14 @@ class ChangeForm extends Component {
                                 renderForm
                               )
                             }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
                           </Form.Item>
                         </Col>
                         :
@@ -570,6 +592,101 @@ class ChangeForm extends Component {
               }
                 return (
                   <>
+                    {
+                      itw.field === 'reason' && !!(itw.status) &&
+                      <Col span={12}>
+                        <Form.Item label={showField.reason && showField.reason.name} {...formItemLayout}>
+                          {
+                            getFieldDecorator('reason', {
+                              initialValue: details.reason || '',
+                              rules:[{ required: true, message: '请输入事由' }]
+                            })(
+                              <Input
+                                disabled={modify && showField.reason && !showField.reason.isModify}
+                                placeholder={showField.reason && showField.reason.note ? showField.reason.note : '请输入'}
+                              />
+                            )
+                          }
+                        </Form.Item>
+                      </Col>
+                    }
+                    {
+                      itw.field === 'userJson' && !!(itw.status) &&
+                      <Col span={12}>
+                        <Form.Item label={showField.userJson && showField.userJson.name} {...formItemLayout}>
+                          <SelectPeople
+                            users={users}
+                            placeholder='请选择'
+                            onSelectPeople={(val) => this.selectPle(val)}
+                            invalid={false}
+                            disabled={Number(templateType) || modify}
+                            flag="users"
+                            isInput
+                            multiple={false}
+                          />
+                        </Form.Item>
+                      </Col>
+                    }
+                    {
+                      itw.field === 'deptId' && !!(itw.status) &&
+                      <Col span={12}>
+                        <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
+                          {
+                            getFieldDecorator('deptId', {
+                              initialValue: details.deptId ? `${details.createDeptId}` : '',
+                              rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
+                            })(
+                              <Select
+                                placeholder={showField.deptId && showField.deptId.note ? showField.deptId.note : '请选择'}
+                                onChange={this.onChangeDept}
+                                disabled={modify}
+                              >
+                                {
+                                  depList && depList.map(it => (
+                                    <Option key={it.deptId}>{it.name}</Option>
+                                  ))
+                                }
+                              </Select>
+                            )
+                          }
+                          {
+                            itw.itemExplain && !!(itw.itemExplain.length) &&
+                            itw.itemExplain.map(item => (
+                              <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                {item.note}
+                              </p>
+                            ))
+                          }
+                        </Form.Item>
+                      </Col>
+                    }
+                    {
+                      itw.field === 'deptId' && !modify &&
+                        <Col span={12}>
+                          <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
+                            {
+                              getFieldDecorator('createDeptId', {
+                                initialValue: details.createDeptId ? `${details.createDeptId}` : '',
+                                rules: [{ required: true, message: '请选择部门' }]
+                              })(
+                                <Select
+                                  placeholder={showField.createDeptId && showField.createDeptId.note
+                                  ? showField.createDeptId.note : '请选择'}
+                                  onChange={this.onChangeCreate}
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  disabled={modify}
+                                >
+                                  {
+                                    createDepList && createDepList.map(it => (
+                                      <Option key={`${it.deptId}`}>{it.name}</Option>
+                                    ))
+                                  }
+                                </Select>
+                              )
+                            }
+                          </Form.Item>
+                        </Col>
+                    }
                     {
                       itw.field === 'loanSum' && itw.status ?
                         <Col span={12}>
@@ -592,6 +709,14 @@ class ChangeForm extends Component {
                                   style={{width: '100%'}}
                                 />
                               )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
                             }
                           </Form.Item>
                         </Col>
@@ -621,6 +746,14 @@ class ChangeForm extends Component {
                                 />
                               )
                             }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
                           </Form.Item>
                         </Col>
                         :
@@ -645,6 +778,14 @@ class ChangeForm extends Component {
                                   disabled={modify && !showField.repaymentTime.isModify}
                                 />
                               )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
                             }
                           </Form.Item>
                         </Col>
@@ -691,6 +832,14 @@ class ChangeForm extends Component {
                                 />
                               )
                             }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
                           </Form.Item>
                         </Col>
                         :
@@ -719,6 +868,14 @@ class ChangeForm extends Component {
                                 />
                               )
                             }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
                           </Form.Item>
                         </Col>
                         :
@@ -735,6 +892,14 @@ class ChangeForm extends Component {
                             >
                               <Icon type="upload" /> 上传文件
                             </Button>
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
                             <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
                               支持扩展名：.rar .zip .doc .docx .pdf .jpg...
                             </p>
@@ -780,7 +945,7 @@ class ChangeForm extends Component {
                                   showSearch
                                   optionFilterProp="name"
                                   filterOption={(input, option) =>
-                                    option.props.children[0].toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                 >
                                   {
                                     usableProject.map(it => (
@@ -789,6 +954,14 @@ class ChangeForm extends Component {
                                   }
                                 </Select>
                               )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
                             }
                           </Form.Item>
                         </Col>
@@ -821,6 +994,14 @@ class ChangeForm extends Component {
                                 </TreeSelect>
                               )
                             }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
                           </Form.Item>
                         </Col>
                         :
@@ -840,6 +1021,14 @@ class ChangeForm extends Component {
                                   disabled={modify && !showField.note.isModify}
                                 />
                               )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
                             }
                           </Form.Item>
                         </Col>
@@ -877,6 +1066,14 @@ class ChangeForm extends Component {
                                   }
                                 </Select>
                               )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
                             }
                           </Form.Item>
                           {

@@ -234,7 +234,7 @@ function FlowCard(props) {
     const res = [];
     let branchNode = '';
     const selfNode = data.nodeType && (data.nodeType !== 'route') && (
-      <div className={style['node-wrap']}>
+      <div className={style['node-wrap']} key={data.nodeId}>
         <div className={cs(style['node-wrap-box'], `${showErrorTip ? style.error : ''}`, style[data.nodeType])}>
           <Tooltip content="未设置条件" placement="top" effect="dark">
             <div className={style['error-tip']} onClick={(e) => eventLancher(e, 'edit', data)}>!!!</div>
@@ -249,7 +249,7 @@ function FlowCard(props) {
       // 如果节点是数组 一定为条件分支 添加分支样式包裹
       // {data.childNode && NodeFactory.call(ctx, ctx, data.childNode, h)}
       branchNode = (
-        <div className={style['branch-wrap']}>
+        <div className={style['branch-wrap']} key={data.nodeId}>
           <div className={style['branch-box-wrap']}>
             <div className={cs(style['branch-box'], style.flex, style['justify-center'], style.relative)}>
               <button
@@ -268,7 +268,7 @@ function FlowCard(props) {
 
     if (isCondition(data)) {
       return (
-        <div className={style['col-box']}>
+        <div className={style['col-box']} key={data.nodeId}>
           <div className={style['center-line']} />
           <div className={style['top-cover-line']} />
           <div className={style['bottom-cover-line']} />

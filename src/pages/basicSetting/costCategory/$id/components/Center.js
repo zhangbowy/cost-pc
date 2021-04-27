@@ -93,7 +93,6 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId}) => {
         }
         changeCardList(arr);
       }
-
       changeDragId(newId);
     }
   };

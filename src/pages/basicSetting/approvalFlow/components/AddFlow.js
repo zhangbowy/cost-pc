@@ -10,7 +10,8 @@ import Process from './Process';
   nodes: global.nodes,
   initDetailNode: global.initDetailNode,
   initNode: global.initNode,
-  detailNode: global.detailNode
+  detailNode: global.detailNode,
+  getCondition: global.getCondition,
 }))
 class AddFlow extends Component {
   constructor(props) {
@@ -36,13 +37,18 @@ class AddFlow extends Component {
   }
 
   onShow = async() => {
-    console.log('点击了');
     // e.preventDefault();
     // e.stopPropagation();
     const { title, processPersonId, name, templateType } = this.props;
     this.props.dispatch({
       type: 'global/costList',
       payload: {}
+    });
+    this.props.dispatch({
+      type: 'global/getCondition',
+      payload: {
+        templateType,
+      }
     });
     this.props.dispatch({
       type: 'global/projectList',
@@ -209,7 +215,8 @@ class AddFlow extends Component {
   }
 
   render() {
-    const { children, templateType } = this.props;
+    const { children, templateType, getCondition } = this.props;
+    console.log('AddFlow -> render -> getCondition', getCondition);
     const { visible, flag, ccPosition, nodes, repeatMethods, name } = this.state;
     console.log('AddFlow -> render -> ccPosition', ccPosition);
     return (
@@ -277,6 +284,7 @@ class AddFlow extends Component {
                   onChangePosition={this.onChangePosition}
                   ccPosition={ccPosition}
                   templateType={templateType}
+                  getCondition={getCondition}
                 />
               </div>
             </div>

@@ -12,7 +12,7 @@ import FlowCard from './FlowCard';
 import { NodeUtils } from './FlowCard/util.js';
 import style from './index.scss';
 import PropPanel from './PropPanel';
-import { getObjValue, conditionObj } from '../../../../../utils/constants';
+import { getObjValue } from '../../../../../utils/constants';
 
 
 class Process extends Component {
@@ -73,7 +73,7 @@ class Process extends Component {
    * @param { Object } data - 含有event(事件名称)/args(参数)两个属性
    */
   eventReciver = ({ event, args }) => {
-    const { templateType } = this.props;
+    const { getCondition } = this.props;
     if (event === 'edit') {
       console.log(args[0]);
       const data = args[0];
@@ -86,9 +86,10 @@ class Process extends Component {
         conditionNodes = data.bizData && data.bizData.conditionNode ? data.bizData.conditionNode : {};
         const conditions = conditionNodes.conditions || [];
         conditions.forEach((item, index) => {
+          const type = item.type === 'other' ? `${item.type}~${item.childType}` : item.type;
           let obj = {
             id: `a_${index}`,
-            ...getObjValue(conditionObj[templateType],item.type),
+            ...getObjValue(getCondition,type),
             methods: item.rule.method,
           };
           if (item.rule && item.rule.values) {
@@ -262,7 +263,7 @@ class Process extends Component {
 
   render() {
     const { scaleVal, step, updateId, data, verifyMode, visible, conditions, approveNode } = this.state;
-    const { ccPosition } = this.props;
+    const { ccPosition, getCondition } = this.props;
     console.log('Process -> render -> ccPosition', ccPosition);
     const { templateType } = this.props;
     return (
@@ -298,6 +299,7 @@ class Process extends Component {
           conditions={conditions}
           approveNode={approveNode}
           templateType={templateType}
+          getCondition={getCondition}
         />
       </div>
     );

@@ -28,7 +28,7 @@ class TableTemplate extends Component {
   }
 
   onCancel = () => {
-    this.props.form.resetFields();
+    this.searchInput.input.state.value = '';
     this.setState({
       visible: false,
       searchContent: '',
@@ -40,10 +40,10 @@ class TableTemplate extends Component {
     onQuery({
       pageNo: 1,
       pageSize: 10,
-      searchContent: e,
+      searchContent: e || '',
     }, () => {
       this.setState({
-        searchContent: e,
+        searchContent: e || '',
       });
     });
   }
@@ -93,9 +93,13 @@ class TableTemplate extends Component {
           <div className="m-b-16">
             {/* <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" /> */}
             <Search
+              ref={node => {
+                this.searchInput = node;
+              }}
               placeholder={placeholder}
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
+              allowClear="true"
             />
           </div>
           <div className={style.addCosts}>

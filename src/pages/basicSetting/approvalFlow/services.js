@@ -11,4 +11,5 @@ export default{
   approvalList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 审批流列表
   del: `${APP_API}/cost/approve/apProcessPerson/deleteProcess`, // 删除
   initList: `${APP_API}/cost/approve/apProcessPerson/defaultProcess`, // 初始化
+  getCondition: `${APP_API}/cost/approve/apProcessPerson/getCondition`, // 获取审批条件
 };

@@ -10,6 +10,7 @@ import StrCenter from './Center';
 import Box from './Box';
 import Right from './Right';
 import SelfStr from './SelfStr';
+// import { message } from 'antd';
 
 const title = [{
   key: 'show',
@@ -32,7 +33,7 @@ const selfStr = [{
   key: '2',
   fieldType: '2',
   name: '单选',
-  icon: 'icondanxuan',
+  icon: 'icondanxuan1',
 }, {
   key: '5',
   fieldType: '5',
@@ -47,7 +48,7 @@ const selfStr = [{
   key: '8',
   fieldType: '8',
   name: '多选',
-  icon: 'icondanxuan1',
+  icon: 'icondanxuan',
 }, {
   key: '9',
   fieldType: '9',
@@ -83,6 +84,32 @@ const StrSetting = ({ fieldList,
     onChangeData('selectList', [...list], flag);
   };
 
+  const changeRight = () => {
+    const newArr = [...cardList];
+    if ( formRef && formRef.getFormItems) {
+      const newValues = formRef.getFormItems();
+      console.log('changeDragId -> newValues', newValues);
+      if (!newValues) {
+        return;
+      }
+
+      const index = cardList.findIndex(it => it.field === newValues.field);
+      if (index > -1) {
+        newArr.splice(index, 1, newValues);
+      } else {
+        const i = newArr.findIndex(it => Number(it.fieldType) === 3);
+        const expands = newArr[i].expandFieldVos;
+        const mod = expands.findIndex(it => it.field === newValues.field);
+        expands.splice(mod, 1, newValues);
+        newArr.splice(i, 1, {
+          ...newArr[i],
+          expandFieldVos: expands
+        });
+      }
+    }
+    return newArr;
+  };
+
   const changeDragId = (id, flag) => {
     console.log('changeDragId -> formRef', formRef);
     if (flag && formRef && formRef.getFormItems) {
@@ -107,7 +134,7 @@ const StrSetting = ({ fieldList,
         });
       }
       console.log('changeDragId -> newArr', newArr);
-      changeCardList(newArr);
+      changeCardList(newArr, true);
     }
     setDragId(id);
   };
@@ -146,6 +173,7 @@ const StrSetting = ({ fieldList,
                       cardList={cardList}
                       changeCardList={changeCardList}
                       changeDragId={changeDragId}
+                      changeRight={changeRight}
                     />
                   ))
                 }
@@ -161,6 +189,7 @@ const StrSetting = ({ fieldList,
                       cardList={cardList}
                       changeCardList={changeCardList}
                       changeDragId={changeDragId}
+                      changeRight={changeRight}
                     />
                   ))
                 }
@@ -194,6 +223,7 @@ const StrSetting = ({ fieldList,
         templateType={templateType}
         isModifyInvoice={isModifyInvoice}
         operateType={operateType}
+        changeDragId={changeDragId}
       />
     </div>
   );

@@ -254,7 +254,7 @@ class Product extends React.PureComponent {
       lists = list;
     }
     this.sortData(lists);
-
+    console.log('Product -> render -> lists', lists);
     return (
       <div>
         <PageHead title={`${typeEnum[type]}管理`} />

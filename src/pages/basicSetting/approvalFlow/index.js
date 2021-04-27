@@ -25,6 +25,10 @@ function ApprovalFlow(props) {
   const [status, setStatus] = useState('0');
 
   useEffect(() => {
+    const { userInfo } = props;
+    if (userInfo.costConfigCheckVo && userInfo.costConfigCheckVo.version === '个人试用版本') {
+      message.error('个人试用版本，钉钉暂不支持该功能的试用，请邀请企业管理员开通试用', 5);
+    }
     props.dispatch({
       type: 'approvalFlow/approvalList',
       payload: {
@@ -170,7 +174,8 @@ ApprovalFlow.propTypes = {
   approveList: PropTypes.array,
 };
 
-export default connect(({ approvalFlow }) => ({
+export default connect(({ approvalFlow, session }) => ({
   approveList: approvalFlow.approveList,
+  userInfo: session.userInfo,
 }))(ApprovalFlow);
 

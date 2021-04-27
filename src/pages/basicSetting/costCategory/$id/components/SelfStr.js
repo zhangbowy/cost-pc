@@ -14,7 +14,7 @@ const expand = [{
   field: 'detail_money',
 }];
 let id = 1000;
-function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId }) {
+function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId, changeRight }) {
   const idGenerator = () => {
     let qutient = 10000;
     const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
@@ -40,6 +40,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     isSelect: true,
     id: -1,
     isWrite: false,
+    note: Number(fieldType) === 9 ? '说明文案' : '',
   };
   if (Number(fieldType) === 3) {
     Object.assign(box, {
@@ -49,10 +50,11 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
   const [, drag, preview] = useDrag({
     item: box,
     begin: () => {
-      const useless = cardList.find((item) => item.id === -1);
+      const newCards = changeRight();
+      const useless = newCards.find((item) => item.id === -1);
       // 拖拽开始时，向 cardList 数据源中插入一个占位的元素，如果占位元素已经存在，不再重复插入
       if (!useless) {
-        changeCardList([...cardList, { ...box }]);
+        changeCardList([...newCards, { ...box }]);
       }
       return box;
     },
@@ -125,6 +127,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
       dateType: Number(fieldType) === 5 ? 1 : 0,
       options: Number(fieldType) === 2 ? ['选项一', '选项二'] : [],
       isWrite: false,
+      note: Number(fieldType) === 9 ? '说明文案' : '',
     };
     if (Number(fieldType) === 3) {
       Object.assign(boxs, {

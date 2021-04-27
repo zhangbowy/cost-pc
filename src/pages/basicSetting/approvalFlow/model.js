@@ -1,6 +1,7 @@
 import { post, get } from '@/utils/request';
 // import constants from '@/utils/constants';
 import api from './services';
+import { conditionOption } from '../../../utils/common';
 
 // const { PAGE_SIZE } = constants;
 export default {
@@ -12,6 +13,7 @@ export default {
     approveList: [],
     initDetailNode: {},
     initNode: {},
+    getCondition: [], // 获取审批条件
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -52,6 +54,15 @@ export default {
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
     },
+    *getCondition({ payload }, { call, put }) {
+      const response = yield call(get, api.getCondition, payload);
+      yield put({
+        type: 'changeNodes',
+        payload: {
+          getCondition: response && response.length ? conditionOption(response) : [],
+        },
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {

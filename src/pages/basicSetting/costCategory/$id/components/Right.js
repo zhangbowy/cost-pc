@@ -6,7 +6,7 @@ import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from '
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
-import { timeStampToHex } from '../../../../../utils/common';
+import { timeStampToHex, intToChinese } from '../../../../../utils/common';
 
 let id = 1000;
 @Form.create()
@@ -26,6 +26,7 @@ class Right extends PureComponent {
 
   componentDidUpdate(prevProps){
     const { selectList, selectId } = this.props;
+    // this.props.form.resetFields();
     if (prevProps.selectId !== selectId) {
       let list = [];
       const indexs = selectList && selectList.findIndex(it => it.field === selectId);
@@ -86,6 +87,7 @@ class Right extends PureComponent {
 
   onInput = (e, key) => {
     const { selectList } = this.props;
+    console.log('Right -> onInput -> selectList', selectList);
     const { details } = this.state;
     const arr = this.onChangeChild(selectList, details.field, {
       ...details,
@@ -105,13 +107,16 @@ class Right extends PureComponent {
     const { details } = this.state;
     let val = null;
     form.validateFieldsAndScroll((err, values) => {
-      console.log('Right -> getFormItems -> err', err);
       if (!err) {
         val = {
           ...details,
-          isWrite: !!values.isWrite[details.field].length,
-          name: values.name[details.field],
         };
+        if (Number(details.fieldType) !== 9) {
+          Object.assign(val, {
+            isWrite: !!values.isWrite[details.field].length,
+            name: values.name[details.field],
+          });
+        }
         if (Number(details.fieldType) === 2 || Number(details.fieldType) === 8) {
           const newArr = [];
           if (values.keys) {
@@ -121,24 +126,27 @@ class Right extends PureComponent {
             });
           }
           Object.assign(val, {
-            options: newArr,
+            options: [...new Set(newArr)],
           });
         } else if (Number(details.fieldType) === 5) {
           Object.assign(val, {
             dateType: values.dataType[details.field],
           });
         }
+        this.props.form.resetFields();
+        // this.setState({
+        //   list: [],
+        // });
       } else {
         val = null;
       }
     });
-    this.props.form.resetFields();
     return val;
   }
 
   onChangeMore = (e) => {
     const { details } = this.state;
-    const { selectList } = this.props;
+    const { selectList, changeDragId } = this.props;
     if (e.target.checked) {
       Modal.confirm({
         title: `确认要添加${details.name}到公用库吗`,
@@ -148,17 +156,23 @@ class Right extends PureComponent {
           </p>
         ),
         onOk: () => {
+          const newField = this.idGenerator();
+          const items = this.getFormItems();
+          console.log('Right -> onChangeMore -> items', items);
           const arr = this.onChangeChild(selectList, details.field, {
             ...details,
-            field: this.idGenerator()
+            ...items,
+            field: newField
           });
           this.setState({
             details: {
               ...details,
-              field: this.idGenerator()
-            }
+              ...items,
+              field: newField
+            },
           });
           this.props.onChange(arr);
+          changeDragId(newField);
         }
       });
     }
@@ -171,9 +185,10 @@ class Right extends PureComponent {
     const { form } = this.props;
     // can use data-binding to get
     const keys = form.getFieldValue('keys');
+
     const nextKeys = keys.concat([{
       id: ++id,
-      name: '',
+      name: `选项${intToChinese(keys.length+1)}`,
     }]);
     form.setFieldsValue({
       keys: nextKeys,
@@ -250,13 +265,13 @@ class Right extends PureComponent {
 
     const formItems = (Number(details.fieldType) === 2
     || Number(details.fieldType) === 8) ? keys.map(it=> (
-      <div className={style.addForm}>
+      <div className={style.addForm} key={it.id}>
         <Form.Item
           key={it.id}
         >
           {
             getFieldDecorator(`${it.id}`, {
-              initialValue:it.name,
+              initialValue: it.name,
               rules: [
                 { max: 15, message: '限制15个字' },
                 { required: true, message: '请输入' }
@@ -301,7 +316,7 @@ class Right extends PureComponent {
                     initialValue: '数量',
                     rules: [
                       { max: 10, message: '限制10个字' },
-                      { required: true, message: '请输入字段标题' }
+                      { required: true, message: '请输入字段标题', type: 'string' }
                     ]
                   })(
                     <Input
@@ -321,7 +336,7 @@ class Right extends PureComponent {
                     initialValue: '单价',
                     rules: [
                       { max: 10, message: '限制10个字' },
-                      { required: true, message: '请输入字段标题' }
+                      { required: true, message: '请输入字段标题', type: 'string' }
                     ]
                   })(
                     <Input
@@ -335,10 +350,19 @@ class Right extends PureComponent {
             }
             {
               Number(details.fieldType) === 9 ?
-                <Form.Item>
+                <Form.Item label="文案内容">
                   {
-                    getFieldDecorator(`name[${details.field}]`)(
-                      <TextArea />
+                    getFieldDecorator(`note[${details.field}]`, {
+                      initialValue: details.note || '请输入',
+                      rules: [
+                        { max: 30, message: '限制30个字' },
+                      ]
+                    })(
+                      <TextArea
+                        style={{ height: '80px' }}
+                        onBlur={e => this.onInput(e, 'note')}
+                        placeholder="请输入说明文案"
+                      />
                     )
                   }
                 </Form.Item>
@@ -349,7 +373,7 @@ class Right extends PureComponent {
                       initialValue: details.name,
                       rules: [
                         { max: 10, message: '限制10个字' },
-                        { required: true, message: '请输入字段标题' }
+                        { required: true, message: '请输入字段标题', type: 'string' }
                       ]
                     })(
                       <Input
@@ -405,7 +429,6 @@ class Right extends PureComponent {
                   type="dashed"
                   className={style.addSelect}
                   onClick={() => this.onAdd()}
-                  disabled={list && (list.length > 15 || (list.length === 15))}
                 >
                   添加选项
                 </Button>

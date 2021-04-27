@@ -55,9 +55,9 @@ const Card = ({ name, isWrite, index,
         return;
       }
       const dragIndex = findCard(item.field);
-      console.log('hover -> item', dragIndex);
+      // console.log('hover -> item', dragIndex);
       const hoverIndex = index;
-      console.log('hover -> item', hoverIndex);
+      // console.log('hover -> item', hoverIndex);
 
       if (dragIndex === hoverIndex) {
         return;
@@ -150,8 +150,9 @@ const Card = ({ name, isWrite, index,
           }}
           onClick={(e) => {
             e.stopPropagation();
-            console.log('子组件', field);
-            changeDragId(field, true);
+            if (dragId !== field) {
+              changeDragId(field, true);
+            }
           }}
         >
           {/* { field !== -1 && drag && drag(<img alt="" src={OrderListSvg} style={svgStyle} />) } */}
@@ -200,7 +201,7 @@ const Card = ({ name, isWrite, index,
                 {
                   (types === 9) &&
                   <div className={style.production}>
-                    <span>说明文字</span>
+                    <span>{data.note}</span>
                   </div>
                 }
               </div>

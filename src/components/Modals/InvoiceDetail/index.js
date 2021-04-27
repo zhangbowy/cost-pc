@@ -19,6 +19,7 @@ import RecordHistory from './RecordHistory';
 import CostDetailTable from './CostDetailTable';
 import ProductTable from './ProductTable';
 import { numAdd } from '../../../utils/float';
+import { handleProduction, compare } from '../../../utils/common';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
@@ -52,6 +53,8 @@ class InvoiceDetail extends Component {
       invoiceVisible: {},
       productSum: 0,
       totalCost: 0,
+      expandSubmitFieldVos: [],
+      selfSubmitFieldVos: [],
     };
   }
 
@@ -126,21 +129,38 @@ class InvoiceDetail extends Component {
           productSum=numAdd(productSum, it.detail_money);
         });
       }
+      let expandSubmitFieldVos = [];
+      let selfSubmitFieldVos = [];
       const showObj = {};
       if (details.showField) {
         const arr = JsonParse(details.showField);
-        arr.forEach(it => {
+        const newEx = details.expandSubmitFieldVos;
+        const selfs = details.selfSubmitFieldVos;
+        const newArr = [...arr, ...newEx, ...selfs];
+        const sortNew = newArr.sort(compare('sort'));
+        let newArrs = [];
+        if (newArr.filter(it => it.fieldType === 9) &&
+          newArr.filter(it => it.fieldType === 9).length) {
+            newArrs = handleProduction(sortNew);
+        } else {
+          newArrs = [...sortNew];
+        }
+        expandSubmitFieldVos = newArrs.filter(it => it.field.indexOf('expand_') > -1);
+        selfSubmitFieldVos = newArrs.filter(it => it.field.indexOf('self_') > -1);
+        newArrs.filter(it =>
+          it.field.indexOf('expand_') === -1 && it.field.indexOf('self_') === -1).
+          forEach(it => {
           showObj[it.field] = {...it};
         });
       }
-      this.setState({
-        showFields: showObj,
-      });
       this.setState({
         details,
         isModify: details.isModify,
         productSum,
         totalCost,
+        showFields: showObj,
+        expandSubmitFieldVos,
+        selfSubmitFieldVos,
       });
       this.props.dispatch({
         type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
@@ -326,6 +346,8 @@ class InvoiceDetail extends Component {
       invoiceVisible,
       productSum,
       totalCost,
+      expandSubmitFieldVos,
+      selfSubmitFieldVos,
     } = this.state;
     const {
       children,
@@ -416,7 +438,7 @@ class InvoiceDetail extends Component {
             <div className={style.line} />
             <span>单据基础信息</span>
           </div>
-          <Row className="fs-14 m-l-10">
+          <Row className="fs-14 m-l-10" style={{display: 'flex',flexWrap: 'wrap'}}>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据类型：</span>
               <span className="fs-14 c-black-65">{details.invoiceTemplateName}</span>
@@ -519,8 +541,24 @@ class InvoiceDetail extends Component {
             {
               Number(templateType) === 1 ?
                 <Col span={8} className="m-t-16">
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款日期：</span>
-                  <span className="fs-14 c-black-65">{details.repaymentTime ? moment(details.repaymentTime).format('YYYY-MM-DD') : '-'}</span>
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款日期：</span>
+                    <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                      <p className="fs-14 c-black-65" style={{marginBottom: 0}}>{details.repaymentTime ? moment(details.repaymentTime).format('YYYY-MM-DD') : '-'}</p>
+                      {
+                        showFields.repaymentTime &&
+                        showFields.repaymentTime.itemExplain && showFields.repaymentTime.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.repaymentTime.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
+                      }
+                    </span>
+                  </div>
                 </Col>
                 :
                 null
@@ -528,9 +566,24 @@ class InvoiceDetail extends Component {
             {
               showFields.happenTime && showFields.happenTime.status ?
                 <Col span={8} className="m-t-16">
-                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发生日期：</span>
-                  <span className="fs-14 c-black-65">{details.startTime ? moment(details.startTime).format('YYYY-MM-DD') : '-'}</span>
-                  <span className="fs-14 c-black-65">{details.endTime ? `-${moment(details.endTime).format('YYYY-MM-DD')}` : ''}</span>
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发生日期：</span>
+                    <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                      <span className="fs-14 c-black-65">{details.startTime ? moment(details.startTime).format('YYYY-MM-DD') : '-'}</span>
+                      <span className="fs-14 c-black-65">{details.endTime ? `-${moment(details.endTime).format('YYYY-MM-DD')}` : ''}</span>
+                      {
+                        showFields.happenTime.itemExplain && showFields.happenTime.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.happenTime.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
+                      }
+                    </span>
+                  </div>
                 </Col>
                 :
                 null
@@ -552,7 +605,19 @@ class InvoiceDetail extends Component {
                       <span className="m-r-8">{ receipt.name }</span>
                       { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
                       <span className="m-r-8">{ receipt.bankName }</span>
-                      {receipt.account}
+                      {receipt.account}<br />
+                      <span className="m-r-8">{receipt.bankNameBranch}</span>
+                      {
+                        showFields.receiptId.itemExplain && showFields.receiptId.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.receiptId.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
+                      }
                     </span>
                   </div>
                 </Col>
@@ -566,6 +631,17 @@ class InvoiceDetail extends Component {
                     <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目：</span>
                     <span className="fs-14 c-black-65" style={{flex: 1}}>
                       {details.projectName}
+                      {
+                        showFields.project.itemExplain && showFields.project.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.project.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
+                      }
                     </span>
                   </div>
                 </Col>
@@ -579,6 +655,17 @@ class InvoiceDetail extends Component {
                     <span className={cs('fs-14', 'c-black-85', style.nameTil)}>供应商：</span>
                     <span className="fs-14 c-black-65" style={{flex: 1}}>
                       {details.supplierName}
+                      {
+                        showFields.supplier.itemExplain && showFields.supplier.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.supplier.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
+                      }
                     </span>
                   </div>
                 </Col>
@@ -594,7 +681,8 @@ class InvoiceDetail extends Component {
                       <span className="m-r-8">{ supplierAccountVo.supplierAccountName }</span>
                       { supplierAccountVo.accountType ? getArrayValue(supplierAccountVo.accountType, accountType) : ''}
                       <span className="m-r-8">{ supplierAccountVo.bankName }</span>
-                      {supplierAccountVo.supplierAccount}
+                      <span className="m-r-8">{supplierAccountVo.supplierAccount}</span>
+                      {supplierAccountVo.bankNameBranch || ''}
                     </span>
                   </div>
                 </Col>
@@ -613,12 +701,13 @@ class InvoiceDetail extends Component {
               </Col>
             }
             {
-              details.expandSubmitFieldVos &&
-              (details.expandSubmitFieldVos.length > 0) &&
-              details.expandSubmitFieldVos.filter(it => (Number(it.fieldType) !== 3 && it.name !== '明细')).map(itField => {
+              expandSubmitFieldVos &&
+              (expandSubmitFieldVos.length > 0) &&
+              expandSubmitFieldVos.filter(
+                it => (Number(it.fieldType) !== 3 && it.name !== '明细' && Number(it.fieldType) !== 9)
+              ).map(itField => {
                 let texts = itField.msg;
                 if (itField.startTime) {
-                console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
                 texts = itField.endTime ?
                 `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
                   :
@@ -629,7 +718,18 @@ class InvoiceDetail extends Component {
                     <div style={{display: 'flex'}}>
                       <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{itField.name}：</span>
                       <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                        {texts}
+                        <p style={{marginBottom: 0}}>{texts}</p>
+                        {
+                          itField.itemExplain && itField.itemExplain.map((its, i) => {
+                            return(
+                              <p className="c-black-45 fs-12 m-b-0">
+                                {i===0 ? '(' : ''}
+                                {its.msg}
+                                {(i+1) === itField.itemExplain.length ? ')' : ''}
+                              </p>
+                            );
+                          })
+                        }
                       </span>
                     </div>
                   </Col>
@@ -637,12 +737,13 @@ class InvoiceDetail extends Component {
               })
             }
             {
-              details.selfSubmitFieldVos &&
-              (details.selfSubmitFieldVos.length > 0) &&
-              details.selfSubmitFieldVos.filter(it => (Number(it.fieldType) !== 3 && it.name !== '明细')).map(itField => {
+              selfSubmitFieldVos &&
+              (selfSubmitFieldVos.length > 0) &&
+              selfSubmitFieldVos.filter(it =>
+                (Number(it.fieldType) !== 3 && it.name !== '明细' && it.fieldType !== 9)
+              ).map(itField => {
                 let texts = itField.msg;
                 if (itField.startTime) {
-                console.log('InvoiceDetail -> render -> moment(Number(itField.startTime)).format(\'YYYY-MM-DD\')', moment(Number(itField.startTime)).format('YYYY-MM-DD'));
                 texts = itField.endTime ?
                 `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
                   :
@@ -653,7 +754,18 @@ class InvoiceDetail extends Component {
                     <div style={{display: 'flex'}}>
                       <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{itField.name}：</span>
                       <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                        {texts}
+                        <p style={{marginBottom: 0}}>{texts}</p>
+                        {
+                          itField.itemExplain && itField.itemExplain.map((its, i) => {
+                            return(
+                              <p className="c-black-45 fs-12 m-b-0">
+                                {i===0 ? '(' : ''}
+                                {its.msg}
+                                {(i+1) === itField.itemExplain.length ? ')' : ''}
+                              </p>
+                            );
+                          })
+                        }
                       </span>
                     </div>
                   </Col>
@@ -661,7 +773,7 @@ class InvoiceDetail extends Component {
               })
             }
           </Row>
-          <Divider type="horizontal" className="m-t-16 m-b-23" />
+          <Divider type="horizontal" className="m-t-16" />
           <Row className="m-l-10">
             <Col span={24}>
               <div style={{display: 'flex'}}>
@@ -699,6 +811,17 @@ class InvoiceDetail extends Component {
                         :
                         '-'
                       }
+                      {
+                        showFields.imgUrl.itemExplain && showFields.imgUrl.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.imgUrl.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
+                      }
                     </span>
                   </div>
                 </Col>
@@ -726,6 +849,17 @@ class InvoiceDetail extends Component {
                         ))
                         :
                         <span>-</span>
+                      }
+                      {
+                        showFields.fileUrl.itemExplain && showFields.fileUrl.itemExplain.map((its, i) => {
+                          return(
+                            <p className="c-black-45 fs-12 m-b-0">
+                              {i===0 ? '(' : ''}
+                              {its.msg}
+                              {(i+1) === showFields.fileUrl.itemExplain.length ? ')' : ''}
+                            </p>
+                          );
+                        })
                       }
                     </span>
                   </div>
