@@ -128,6 +128,7 @@ class Draft extends Component {
 
   render() {
     const { draftList, total, loading, page, draftTotal } = this.props;
+    console.log('Draft -> render -> page', page);
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     const columns = [{
       title: '序号',
@@ -227,7 +228,7 @@ class Draft extends Component {
             searchPro="请输入事由、收款账户"
             total={total}
             loading={loading}
-            onQuery={() => { this.onQuery({ ...page,searchContent }); }}
+            onQuery={this.onQuery}
             searchContent={searchContent}
             page={page}
             btn={(

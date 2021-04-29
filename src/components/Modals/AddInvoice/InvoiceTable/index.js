@@ -52,9 +52,9 @@ function InvoiceTable(props) {
             pagination={{
               hideOnSinglePage: true,
               current: page.pageNo,
-              onChange: (pageNumber) => {
+              onChange: (pagenation) => {
                 onQuery({
-                  pageNo: pageNumber,
+                  pageNo: pagenation,
                   pageSize: page.pageSize,
                   searchContent
                 });

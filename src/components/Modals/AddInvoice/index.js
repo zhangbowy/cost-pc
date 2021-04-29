@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
@@ -909,13 +910,21 @@ class AddInvoice extends Component {
     const selfSubmitFieldVos = [];
     if (expandField && expandField.length > 0) {
       expandField.forEach(it => {
-        const obj = {
+        let obj = {
           ...it,
-          msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
         };
+        console.log(val[it.field]);
+        if (Number(it.fieldType) !== 9) {
+          obj = {
+            ...obj,
+            msg: Number(it.fieldType) === 5 && val[it.field] ?
+            JSON.stringify(val[it.field]) : val[it.field] ? val[it.field].toString() : val[it.field],
+          };
+        }
         if (Number(it.fieldType) === 5 && val[it.field]) {
           Object.assign(obj, {
-            startTime: Number(it.dateType) === 2 ? moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+            startTime: Number(it.dateType) === 2 ?
+            moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
             endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
           });
         }

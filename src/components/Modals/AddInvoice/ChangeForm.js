@@ -508,8 +508,7 @@ class ChangeForm extends Component {
                 } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
                   if (Number(itw.fieldType) === 8) {
                     console.log('render -> itw.msg', itw.msg);
-
-                    initMsg = itw.msg && itw.msg.indexOf(',') > -1 ? itw.msg.split(',') : [];
+                    initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
                   }
                   renderForm = (
                     <Select
