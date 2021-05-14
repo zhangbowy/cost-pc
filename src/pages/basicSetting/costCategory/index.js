@@ -13,6 +13,7 @@ import PageHead from '@/components/PageHead';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
 import Tags from '../../../components/Tags';
+import Sort from '../../../components/TreeSort';
 
 const namespace = 'costCategory';
 const { confirm } = Modal;
@@ -115,22 +116,71 @@ class CostCategory extends React.PureComponent {
     });
   }
 
+  // 获得排序结果
+  getSort = (list, callback) => {
+    const result = this.openTree(list, []);
+    // 传给后端数据
+    this.props.dispatch({
+      type: 'costCategory/sort',
+      payload: {
+        sortList: result
+      }
+    }).then(() => {
+      message.success('排序成功!');
+      this.setState({
+        costName: '',
+      }, () => {
+        this.onQuery({});
+      });
+      callback();
+    });
+  }
+
+  // 展开树
+  openTree = (list, arr) => {
+    const result = arr;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if (e.children && e.children.length) {
+        const res = this.openTree(e.children, result);
+        e.children = '';
+        result.concat(res);
+      }
+      result.push(e);
+    }
+    return result;
+  }
+
+  sortData = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      const e = data[i];
+      if (e.children && e.children.length) {
+        this.sortData(e.children);
+      }
+    }
+    data.sort((a, b) => {
+      return a.sort - b.sort;
+    });
+  }
+
   render() {
     const {
       list,
       loading
     } = this.props;
+    const newArrs = list.map(it => ({ ...it, name: it.costName}));
     const { typeVisible } = this.state;
     let lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
       tName: 'costName',
       name: 'costName',
-      otherKeys: ['icon', 'note', 'type', 'parentId', 'status', 'attribute']
+      otherKeys: ['icon', 'note', 'type', 'parentId', 'status', 'attribute', 'sort']
     }, list);
     if (this.state.costName) {
       lists = list;
     }
+    this.sortData(lists);
     const columns = [{
       title: '名称',
       dataIndex: 'costName',
@@ -322,11 +372,11 @@ class CostCategory extends React.PureComponent {
                 </Form.Item>
               </Form>
             </div>
-            {/* <div style={{float: 'right', marginTop: '-30px'}}>
-              <SortModal>
-                <span>排序</span>
-              </SortModal>
-            </div> */}
+            <div>
+              <Sort list={newArrs} callback={this.getSort}>
+                <Button type="default">排序</Button>
+              </Sort>
+            </div>
           </div>
           <Table
             rowKey="id"

@@ -39,11 +39,16 @@ export default {
       });
     },
     *add({ payload }, { call }) {
-      const res = yield call(post, api.addCostGroup, payload);
-      console.log(res);
+      yield call(post, api.addCostGroup, payload);
+    },
+    *copy({ payload }, { call }) {
+      yield call(get, api.copy, payload);
     },
     *del({ payload }, { call }) {
       yield call(post, api.delCostGroup, payload);
+    },
+    *sort({ payload }, { call }) {
+      yield call(post, api.sorts, payload);
     },
     *delCheck({ payload }, { call, put }) {
       const response = yield call(get, api.delCheck, payload);

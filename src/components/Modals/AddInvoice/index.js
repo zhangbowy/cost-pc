@@ -1296,26 +1296,31 @@ class AddInvoice extends Component {
                       <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
                         报销金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span>
                       </span>
-                      <Divider type="vertical" />
-                      <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
-                        核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span>
-                      </span>
-                      <Divider type="vertical" />
-                      <span className={cs('fs-15', 'c-black-50', style.moneyList, 'm-r-8')}>
-                        收款金额：
-                        <span className="fs-20 fw-500 c-black-85">
-                          ¥{total-assessSum > 0 ? (numSub(total,assessSum)) : 0}
-                        </span>
-                      </span>
+                      {
+                        djDetail.isRelationLoan &&
+                        <>
+                          <Divider type="vertical" />
+                          <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
+                            核销金额：<span className="fs-20 fw-500 c-black-85">¥{assessSum}</span>
+                          </span>
+                          <Divider type="vertical" />
+                          <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
+                            收款金额：
+                            <span className="fs-20 fw-500 c-black-85">
+                              ¥{total-assessSum > 0 ? (numSub(total,assessSum)) : 0}
+                            </span>
+                          </span>
+                        </>
+                      }
                     </>
                   :
-                    <span className={cs('fs-15', 'c-black-50', 'm-r-8', style.moneyList)}>
+                    <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
                       合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span>
                     </span>
                 }
                 {
                   !modify &&
-                  <Button key="draft" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
+                  <Button key="draft" className="m-l-8" onClick={() => this.handelOkDraft()} loading={draftLoading}>保存</Button>
                 }
                 <Button key="save" type="primary" onClick={() => this.handleOk()} loading={loading}>确定</Button>
               </div>

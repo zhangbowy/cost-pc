@@ -116,7 +116,14 @@ function FlowCard(props) {
             </div>
             <span className={style.priority}>优先级{conf.priority}</span>
             <div className={style.actions}>
-
+              <i
+                className="iconfont iconfuzhi1 m-r-8 fs-16"
+                onClick={(e) => eventLancher(e,
+                  'copyNode',
+                  conf,
+                  ctx.data
+                )}
+              />
               <Icon
                 type="close"
                 className={cs(style['el-icon-close'], style.icon)}

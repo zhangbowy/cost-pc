@@ -11,10 +11,17 @@ const labelItem = {
   parentId: '所属分组',
   attribute: '类型'
 };
+const urlObj = {
+  add: 'costCategory/add',
+  edit: 'costCategory/edit',
+  copy: 'costCategory/copy'
+};
 const { Option } = Select;
 @Form.create()
 @connect(({ loading, session, costCategory }) => ({
-  loading: loading.effects['costCategory/add'] || loading.effects['costCategory/edit'],
+  loading: loading.effects['costCategory/add'] ||
+  loading.effects['costCategory/edit']||
+  loading.effects['costCategory/copy'] || false,
   userInfo: session.userInfo,
   allList: costCategory.allList,
 }))
@@ -58,16 +65,18 @@ class AddGroup extends React.PureComponent {
             parentId: 0,
           });
         }
-
-        let action = 'costCategory/add';
-        if (title === 'edit') {
-          action = 'costCategory/edit';
+        if (title !== 'add') {
           Object.assign(payload, {
             id: data.id,
           });
         }
+        if (title === 'copy') {
+          Object.assign(payload, {
+            isGroup: 1,
+          });
+        }
         dispatch({
-          type: action,
+          type: urlObj[title],
           payload,
         }).then(() => {
           message.success(`${defaultTitle[title]}成功`);

@@ -210,12 +210,17 @@ export class NodeUtils {
     }
     return this.getMockData(data, nodeData, 'del');
   }
-  // TODO:
-  // static copyNode ( nodeData, processData ) {
-  //   let prevNode = this.getPreviousNode( nodeData.prevId, processData )
-  //   let index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId )
 
-  // }
+  // TODO:
+  static copyNode ( data, nodeData, processData ) {
+    console.log('NodeUtils -> copyNode -> nodeData', nodeData);
+    const prevNode = this.getPreviousNode( nodeData.prevId, processData );
+    console.log('NodeUtils -> copyNode -> prevNode', prevNode);
+    const index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId );
+    const conditionNodes = prevNode.conditionNodes;
+    const copyNode = conditionNodes[index];
+
+  }
 
   /**
    * 添加审计节点（普通节点 approver）

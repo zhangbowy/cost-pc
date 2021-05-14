@@ -20,7 +20,8 @@ const {
 
 @Form.create()
 @connect(({ global, loading }) => ({
-  loading: loading.effects['global/uploadSupplierFile'] || loading.effects['global/uploadProjectFile'] || false,
+  loading: loading.effects['global/uploadSupplierFile'] ||
+  loading.effects['global/uploadProjectFile'] || false,
   uploadRes: global.uploadRes
 }))
 class BatchImport extends React.PureComponent {

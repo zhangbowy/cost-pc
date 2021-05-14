@@ -8,9 +8,16 @@ const labelItem = {
   parentId: '所属分组',
   type: '类型选择'
 };
+const urlObj = {
+  add: 'invoice/addGroup',
+  edit: 'invoice/editGroup',
+  copy: 'invoice/copyGroup'
+};
 @Form.create()
 @connect(({ loading }) => ({
-  loading: loading.effects['invoice/addGroup'] || loading.effects['invoice/editGroup'] || false,
+  loading: loading.effects['invoice/addGroup'] ||
+  loading.effects['invoice/editGroup'] ||
+  loading.effects['invoice/copyGroup'] || false,
   allList: invoiceStatus.allList,
 }))
 class AddGroup extends React.PureComponent {
@@ -56,15 +63,18 @@ class AddGroup extends React.PureComponent {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const payload = { ...values };
-        let action = 'invoice/addGroup';
-        if (title === 'edit') {
-          action = 'invoice/editGroup';
+        if (title !== 'edit') {
           Object.assign(payload, {
             id: data.id,
           });
         }
+        if (title === 'copy') {
+          Object.assign(payload, {
+            isGroup: 1,
+          });
+        }
         dispatch({
-          type: action,
+          type: urlObj[title],
           payload,
         }).then(() => {
           message.success(`${defaultTitle[title]}成功`);

@@ -67,6 +67,12 @@ export default {
     *editGroup({ payload }, { call }) {
       yield call(post, api.editGroup, payload);
     },
+    *copyGroup({ payload }, { call }) {
+      yield call(get, api.copyGroup, payload);
+    },
+    *sort({ payload }, { call }) {
+      yield call(post, api.sorts, payload);
+    },
     *delPer({ payload }, { call, put }) {
       const response = yield call(get, api.delPer, payload);
       yield put({

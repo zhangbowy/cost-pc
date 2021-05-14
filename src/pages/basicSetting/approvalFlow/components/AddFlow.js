@@ -120,6 +120,15 @@ class AddFlow extends Component {
     });
   }
 
+  onConfirmCancel = () => {
+    Modal.confirm({
+      title: '确定关闭审批流设置？',
+      onOk: () => {
+        this.handleCancel();
+      }
+    });
+  }
+
   handleTitle = () => {
     const { flag } = this.state;
     this.setState({
@@ -247,7 +256,7 @@ class AddFlow extends Component {
           <div>
             <div className={style.titles}>
               <div className={style.inputs}>
-                <Icon className="m-r-8 cur-p" type="left" onClick={() => this.handleCancel()} />
+                <Icon className="m-r-8 cur-p" type="left" onClick={() => this.onConfirmCancel()} />
                 {
                   flag ?
                     <span>{name}</span>

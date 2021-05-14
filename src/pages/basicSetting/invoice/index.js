@@ -14,6 +14,7 @@ import PageHead from '@/components/PageHead';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
 import Tags from '../../../components/Tags';
+import Sort from '../../../components/TreeSort';
 
 const namespace = 'invoice';
 const { confirm } = Modal;
@@ -116,6 +117,53 @@ class Invoice extends React.PureComponent {
     this.props.history.push(`/basicSetting/invoice/${id}`);
   }
 
+  // 获得排序结果
+  getSort = (list, callback) => {
+    const result = this.openTree(list, []);
+    // 传给后端数据
+    this.props.dispatch({
+      type: 'invoice/sort',
+      payload: {
+        sortList: result
+      }
+    }).then(() => {
+      message.success('排序成功!');
+      this.setState({
+        name: '',
+      }, () => {
+        this.onQuery({});
+      });
+      callback();
+    });
+  }
+
+  // 展开树
+  openTree = (list, arr) => {
+    const result = arr;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if (e.children && e.children.length) {
+        const res = this.openTree(e.children, result);
+        e.children = '';
+        result.concat(res);
+      }
+      result.push(e);
+    }
+    return result;
+  }
+
+  sortData = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      const e = data[i];
+      if (e.children && e.children.length) {
+        this.sortData(e.children);
+      }
+    }
+    data.sort((a, b) => {
+      return a.sort - b.sort;
+    });
+  }
+
   render() {
     const {
       list,
@@ -130,9 +178,10 @@ class Invoice extends React.PureComponent {
       lists = treeConvert({
         rootId: 0,
         pId: 'parentId',
-        otherKeys: ['status', 'note', 'type', 'sort', 'templateType', 'parentId'],
+        otherKeys: ['status', 'note', 'type', 'sort', 'templateType', 'parentId', 'sort'],
       },list);
     }
+    this.sortData(lists);
     const columns = [{
       title: '单据模版名称',
       dataIndex: 'name',
@@ -285,6 +334,11 @@ class Invoice extends React.PureComponent {
                   />
                 </Form.Item>
               </Form>
+            </div>
+            <div>
+              <Sort list={list} callback={this.getSort}>
+                <Button type="default">排序</Button>
+              </Sort>
             </div>
           </div>
           <Table

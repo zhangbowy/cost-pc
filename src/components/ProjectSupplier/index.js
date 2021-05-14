@@ -18,7 +18,8 @@ const typeEnum = {
 
 @connect(({ session, loading }) => ({
   userInfo: session.userInfo,
-  loading: loading.effects['global/project_list'] || loading.effects['global/supplier_list'],
+  loading: loading.effects['global/project_list'] ||
+  loading.effects['global/supplier_list'],
 }))
 class Product extends React.PureComponent {
   static propsTypes = {
@@ -254,7 +255,6 @@ class Product extends React.PureComponent {
       lists = list;
     }
     this.sortData(lists);
-    console.log('Product -> render -> lists', lists);
     return (
       <div>
         <PageHead title={`${typeEnum[type]}管理`} />
@@ -270,6 +270,7 @@ class Product extends React.PureComponent {
               <BatchImport callback={this.onQuery} type={type}>
                 <Button style={{ marginRight: '8px' }}>批量导入</Button>
               </BatchImport>
+              <Button style={{ marginRight: '8px' }}>批量导出</Button>
               <Form style={{ display: 'inline-block' }}>
                 <Form.Item>
                   <Search
