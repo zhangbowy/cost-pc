@@ -33,6 +33,7 @@ const labelInfo = {
   supplier: '供应商'
 };
 const { TreeNode } = TreeSelect;
+
 @Form.create()
 class ChangeForm extends Component {
 
@@ -61,17 +62,11 @@ class ChangeForm extends Component {
     }
   }
 
-  selectPle = (val) => {
-    let detail = this.state.details;
+  selectPle = async(val) => {
+    let detail = this.props.details;
     const { onChangeData } = this.props;
     if (val.users && val.users.length > 0) {
-      this.props.dispatch({
-        type: 'global/users',
-        payload: {
-          userJson: JSON.stringify(val.users),
-        }
-      }).then(() => {
-        const { deptInfo } = this.props;
+        const deptInfo = await this.props.selectPle(JSON.stringify(val.users));
         onChangeData({
           users: val.users,
           depList: deptInfo,
@@ -103,7 +98,6 @@ class ChangeForm extends Component {
           },
           loanUserId: val.users[0].userId,
         }, true);
-      });
     }
   }
 
