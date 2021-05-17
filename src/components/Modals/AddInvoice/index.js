@@ -693,6 +693,20 @@ class AddInvoice extends Component {
     });
   }
 
+  selectPle = (val) => {
+    return new Promise((resolve) => {
+      this.props.dispatch({
+        type: 'global/users',
+        payload: {
+          userJson: val,
+        }
+      }).then(() => {
+        const { deptInfo } = this.props;
+        resolve(deptInfo);
+      });
+    });
+  }
+
   //  选择借款
   onAddBorrow = (val) => {
     console.log('AddInvoice -> onAddBorrow -> val', val);
@@ -1353,6 +1367,7 @@ class AddInvoice extends Component {
               uploadFiles={this.onUploadFiles}
               onChangeData={this.changeSetData}
               costDetailsVo={costDetailsVo}
+              selectPle={this.selectPle}
               wrappedComponentRef={form => {this.changeForm = form;}}
               expandVos={expandVos}
             />
