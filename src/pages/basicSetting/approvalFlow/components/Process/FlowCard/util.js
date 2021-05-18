@@ -219,7 +219,41 @@ export class NodeUtils {
     const index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId );
     const conditionNodes = prevNode.conditionNodes;
     const copyNode = conditionNodes[index];
+    console.log('NodeUtils -> copyNode -> copyNode', copyNode);
+    const appendNode = this.changeNodeId(copyNode);
+    conditionNodes.splice(index, 1, appendNode);
+    conditionNodes.map((it, index) => {
+      return {
+        ...it,
+        priority: index + 1,
+      };
+    });
+    return this.getMockData(data, nodeData, 'del');
+  }
 
+  static changeNodeId = (data) => {
+    const _this = this;
+    function nodes(oldData) {
+      for (const key in oldData) {
+        if (
+          Object.prototype.hasOwnProperty.call(oldData, key) === true
+        ) {
+          const ids = _this.idGenerator(oldData.nodeType);
+          oldData.nodeId = ids;
+          if (key === 'childNode') {
+            oldData.childNode.prevId = ids;
+            nodes(oldData.childNode);
+          } else if (key === 'conditionNodes') {
+            oldData.conditionNodes.forEach(it => {
+              nodes(it);
+            });
+          }
+        }
+      }
+    }
+    nodes(data);
+    console.log('copy -》data', data);
+    return data;
   }
 
   /**

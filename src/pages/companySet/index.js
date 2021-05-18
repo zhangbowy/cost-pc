@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { Button, Table, PageHeader } from 'antd';
+import Sort from '@/components/TreeSort';
 import AddComp from './component/AddComp';
-import Sort from '../../../components/TreeSort';
 
 
 class CompanySet extends Component {
