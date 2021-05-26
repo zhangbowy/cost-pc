@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col, message, Tooltip } from 'antd';
 import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { connect } from 'dva';
-import { getArrayValue } from '../../../../../../utils/constants';
+import { getArrayValue, approveCreateObj } from '../../../../../../utils/constants';
 import { choosePeople } from '../../../../../../utils/ddApi';
 
 const RadioGroup = Radio.Group;
@@ -41,10 +41,12 @@ class ApproveModal extends Component {
     const {
       form,
       details,
-      nodeType
+      nodeType,
+      approverRoleList
     } = this.props;
     const { users } = this.state;
     let vals = { ...details };
+    let prods = '';
     form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         let approveNodes = {
@@ -58,7 +60,9 @@ class ApproveModal extends Component {
           message.error('请选择指定人员');
           return;
         }
+        prods = users.length ? users.map(it => it.userName).join(',') : '';
         if (val.type === 'leader') {
+          prods = `${approveCreateObj[val.methods]}${approveCreateObj[val.ruleType]}`;
           approveNodes = {
             ...approveNodes,
             rule: {
@@ -69,6 +73,8 @@ class ApproveModal extends Component {
             }
           };
         } else if (val.type === 'approverRole') {
+          const objs = approverRoleList.filter(it => it.id === val.value);
+          prods = objs[0].approveRoleName;
           approveNodes = {
             ...approveNodes,
             rule: {
@@ -96,7 +102,7 @@ class ApproveModal extends Component {
         vals = {
           ...vals,
           name: val.name,
-          content: approveNodes.name,
+          content: prods ? `${approveNodes.name}-${prods}` : approveNodes.name,
           bizData: {
             approveNode: approveNodes,
           },

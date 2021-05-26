@@ -46,6 +46,7 @@ const { confirm } = Modal;
   expenseList: global.expenseList,
   currencyList: global.currencyList,
   userDeps: costGlobal.userDeps,
+  officeList: costGlobal.officeList,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
 }))
@@ -143,6 +144,12 @@ class AddInvoice extends Component {
     await this.props.dispatch({
       type: 'global/getApplyList',
       payload: {}
+    });
+    await this.props.dispatch({
+      type: 'costGlobal/officeList',
+      payload: {
+        userId: userInfo.userId
+      }
     });
     const create = await _this.props.deptInfo;
     await this.setState({
@@ -1261,6 +1268,7 @@ class AddInvoice extends Component {
       operateType, // 操作类型，改单：modify, 复制：copy
       detailJson,
       usableProject,
+      officeList, // 所在公司列表
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1370,6 +1378,7 @@ class AddInvoice extends Component {
               selectPle={this.selectPle}
               wrappedComponentRef={form => {this.changeForm = form;}}
               expandVos={expandVos}
+              officeList={officeList}
             />
             {
               (!Number(templateType) || (Number(templateType) === 2 && !!djDetail.categoryStatus)) &&

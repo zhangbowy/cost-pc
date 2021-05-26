@@ -7,7 +7,7 @@ import UserSelector from '@/components/Modals/SelectPeople';
 import { formItemLayout, defaultTitle } from '@/utils/constants';
 import Lines from '@/components/StyleCom/Lines';
 
-const { SHOW_CHILD } = TreeSelect;
+const { SHOW_PARENT } = TreeSelect;
 @Form.create()
 @connect(({ global, loading, approveRole }) => ({
   costCategoryList: global.costCategoryList,
@@ -235,7 +235,7 @@ class AddRole extends Component {
                     labelInValue
                     treeCheckable
                     style={{width: '100%'}}
-                    showCheckedStrategy={SHOW_CHILD}
+                    showCheckedStrategy={SHOW_PARENT}
                     dropdownStyle={{height: '300px'}}
                   />
                 )

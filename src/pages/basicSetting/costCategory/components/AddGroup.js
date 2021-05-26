@@ -215,7 +215,7 @@ class AddGroup extends React.PureComponent {
                   initialValue: (data && data.attribute) || 0,
                 })(
                   <Radio.Group
-                    disabled={title === 'edit'}
+                    disabled={title === 'edit' || title === 'copy'}
                   >
                     {
                       costType.map(it => (

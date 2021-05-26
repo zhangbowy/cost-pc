@@ -5,13 +5,14 @@ import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
 import styles from './index.scss';
 
-const { SHOW_CHILD } = TreeSelect;
+const { SHOW_CHILD, SHOW_ALL } = TreeSelect;
 @Form.create()
-@connect(({ global }) => ({
+@connect(({ global, costGlobal }) => ({
   costCategoryList: global.costCategoryList,
   invoiceList: global.invoiceList,
   projectList: global.projectList,
   supplierList: global.supplierList,
+  officeTree: costGlobal.officeTree,
 }))
 class LevelSearch extends Component {
   constructor(props) {
@@ -30,6 +31,10 @@ class LevelSearch extends Component {
     });
     await this.props.dispatch({
       type: 'global/supplierList',
+      payload: {}
+    });
+    await this.props.dispatch({
+      type: 'costGlobal/officeTree',
       payload: {}
     });
     await this.props.dispatch({
@@ -128,6 +133,7 @@ class LevelSearch extends Component {
       projectList,
       supplierList,
       type,
+      officeTree,
     } = this.props;
     const formItemLayout = {
       labelCol: {
@@ -154,6 +160,13 @@ class LevelSearch extends Component {
       tName: 'title',
       tId: 'value'
     }, projectList);
+    const officeList = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'officeName',
+      tName: 'title',
+      tId: 'value'
+    }, officeTree);
     console.log(supplierList);
     const { visible, deptVos, details } = this.state;
     return (
@@ -226,7 +239,30 @@ class LevelSearch extends Component {
                 </Col>
               }
               {
-                type !== 'project' && type !== 'supplier' &&
+                type === 'branch' &&
+                <Col span={12}>
+                  <Form.Item label="分公司" {...formItemLayout}>
+                    {
+                      getFieldDecorator('officeIds', {
+                        initialValue: details.officeIds || [],
+                      })(
+                        <TreeSelect
+                          showSearch
+                          treeData={officeList}
+                          treeNodeFilterProp='title'
+                          placeholder="请选择分公司"
+                          treeCheckable
+                          style={{width: '100%'}}
+                          showCheckedStrategy={SHOW_ALL}
+                          dropdownStyle={{height: '300px'}}
+                        />
+                      )
+                    }
+                  </Form.Item>
+                </Col>
+              }
+              {
+                type !== 'project' && type !== 'supplier' && type !== 'branch' &&
                 <Col span={12}>
                   <Form.Item label="部门" {...formItemLayout}>
                     <UserSelector

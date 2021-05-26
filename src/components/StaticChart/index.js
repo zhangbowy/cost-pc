@@ -300,7 +300,8 @@ class StaticChart extends Component {
         <Invoice
           lists={detailList}
           onQuery={this.inVoiceQuery}
-          id={record.deptId || record.userId || record.supplierId || record.projectId || record.categoryId}
+          id={record.deptId || record.userId || record.supplierId
+          || record.projectId || record.categoryId || record.id}
           query={query}
           total={total}
           projectType={record.projectType}

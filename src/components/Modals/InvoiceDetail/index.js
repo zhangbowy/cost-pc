@@ -469,7 +469,7 @@ class InvoiceDetail extends Component {
                 </Col>
             }
             {
-              !Number(templateType) &&
+              !Number(templateType) && details.isRelationLoan &&
               <>
                 <Col span={8} className="m-t-16">
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>核销金额：</span>
@@ -597,6 +597,13 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.deptName}</span>
             </Col>
             {
+              details.officeName &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>所在公司：</span>
+                <span className="fs-14 c-black-65">{details.officeName}</span>
+              </Col>
+            }
+            {
               showFields.receiptId && showFields.receiptId.status ?
                 <Col span={8} className="m-t-16">
                   <div style={{display: 'flex'}}>
@@ -606,7 +613,10 @@ class InvoiceDetail extends Component {
                       { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
                       <span className="m-r-8">{ receipt.bankName }</span>
                       {receipt.account}<br />
-                      <span className="m-r-8">{receipt.bankNameBranch}</span>
+                      {
+                        !!receipt.bankNameBranch &&
+                        <span className="m-r-8">{receipt.bankNameBranch}</span>
+                      }
                       {
                         showFields.receiptId.itemExplain && showFields.receiptId.itemExplain.map((its, i) => {
                           return(

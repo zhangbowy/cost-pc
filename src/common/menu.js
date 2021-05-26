@@ -195,6 +195,11 @@ const menuData = [
       name: '支出费用明细',
       myIcon: '',
       path: 'costDetail',
+    }, {
+      id: 'statistics_branchOffice',
+      name: '分公司支出表',
+      myIcon: '',
+      path: 'branchOffice',
     }]
   },{
     id: 'basicSettings',

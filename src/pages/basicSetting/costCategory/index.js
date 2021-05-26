@@ -257,7 +257,7 @@ class CostCategory extends React.PureComponent {
               className="m-l-8 pd-20-9 c-black-65"
               onClick={() => this.onAddCategory(`child_${record.id}_${record.attribute}`)}
             >
-              创建子支出类别
+              创建子类别
             </span>
           ),
         }, {

@@ -512,6 +512,16 @@ export const approveCreate = [{
   value: '承担人/部门'
 }];
 
+export const approveCreateObj = {
+  'make_user': '提交人',
+  'bear_user_or_dept': '承担人/部门',
+  'first_leader': '一级主管',
+  'second_leader': '二级主管',
+  'third_leader': '三级主管',
+  'forth_leader': '四级主管',
+  'fifth_leader': '五级主管',
+};
+
 
 export const peopleType = {
   'START': '提交人',

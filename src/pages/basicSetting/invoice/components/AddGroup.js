@@ -151,7 +151,7 @@ class AddGroup extends React.PureComponent {
                   getFieldDecorator('templateType', {
                     initialValue: (data && data.templateType) || 0,
                   })(
-                    <Radio.Group>
+                    <Radio.Group disabled={title === 'copy'}>
                       <Radio value={0}>报销单</Radio>
                       <Radio value={1}>借款单</Radio>
                       <Radio value={2}>申请单</Radio>

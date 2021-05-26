@@ -4,7 +4,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
-import { Tooltip, Icon, Popover } from 'antd';
+import { Tooltip, Icon, Popover, Modal } from 'antd';
 import cs from 'classnames';
 import { NodeUtils } from './util.js';
 import style from './index.scss';
@@ -127,11 +127,17 @@ function FlowCard(props) {
               <Icon
                 type="close"
                 className={cs(style['el-icon-close'], style.icon)}
-                onClick={(e) => eventLancher(e,
-                  'deleteNode',
-                  conf,
-                  ctx.data
-                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  Modal.confirm({
+                    title: '确认删除该条件分支？',
+                    onOk: () => eventLancher(e,
+                        'deleteNode',
+                        conf,
+                        ctx.data
+                      )
+                  });
+                }}
               />
             </div>
           </header>

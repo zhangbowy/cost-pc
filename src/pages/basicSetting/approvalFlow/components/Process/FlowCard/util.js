@@ -216,23 +216,26 @@ export class NodeUtils {
     console.log('NodeUtils -> copyNode -> nodeData', nodeData);
     const prevNode = this.getPreviousNode( nodeData.prevId, processData );
     console.log('NodeUtils -> copyNode -> prevNode', prevNode);
-    const index = prevNode.conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId );
-    const conditionNodes = prevNode.conditionNodes;
-    const copyNode = conditionNodes[index];
+    const conditionNodes = [...prevNode.conditionNodes];
+    const index = conditionNodes.findIndex( c => c.nodeId === nodeData.nodeId );
+    const copyNode = JSON.parse(JSON.stringify(conditionNodes[index]));
     console.log('NodeUtils -> copyNode -> copyNode', copyNode);
-    const appendNode = this.changeNodeId(copyNode);
-    conditionNodes.splice(index, 1, appendNode);
-    conditionNodes.map((it, index) => {
+    const appendNode = this.changeNodeId({...copyNode});
+    console.log('NodeUtils -> copyNode -> appendNode', appendNode);
+    conditionNodes.splice(index, 0, { ...appendNode });
+    console.log('NodeUtils -> copyNode -> conditionNodes', conditionNodes);
+    const newArrs = conditionNodes.map((it, i) => {
       return {
         ...it,
-        priority: index + 1,
+        priority: (i + 1),
       };
     });
-    return this.getMockData(data, nodeData, 'del');
+    return this.getMockData(data, {...prevNode, conditionNodes: [...newArrs]}, 'edit');
   }
 
   static changeNodeId = (data) => {
     const _this = this;
+    const newData = {...data};
     function nodes(oldData) {
       for (const key in oldData) {
         if (
@@ -245,15 +248,16 @@ export class NodeUtils {
             nodes(oldData.childNode);
           } else if (key === 'conditionNodes') {
             oldData.conditionNodes.forEach(it => {
+              it.prevId = ids;
               nodes(it);
             });
           }
         }
       }
     }
-    nodes(data);
-    console.log('copy -》data', data);
-    return data;
+    nodes(newData);
+    console.log('copy -》data', newData);
+    return newData;
   }
 
   /**

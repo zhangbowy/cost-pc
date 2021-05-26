@@ -35,7 +35,8 @@ export default {
       pageNo: 1,
       pageSize: 10,
       total: 0,
-    }
+    },
+    officeTree: []
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -258,6 +259,24 @@ export default {
         payload: {
           isModifyInvoice: response.isModifyInvoice,
           isModifyReload: response.isModifyReload,
+        },
+      });
+    },
+    *officeList({ payload }, { call, put }) {
+      const response = yield call(get, api.officeList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          officeList: response || [],
+        },
+      });
+    },
+    *officeTree({ payload }, { call, put }) {
+      const response = yield call(get, api.officeTree, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          officeTree: response || [],
         },
       });
     },

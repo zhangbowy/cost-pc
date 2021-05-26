@@ -52,13 +52,13 @@ class PayModal extends React.PureComponent {
       }
     }).then(() => {
       const { payAccount } = this.props;
-      const accountList = payAccount.filter(it => (Number(it.status) === 1 || Number(it.status) === 0));
+      const accountList = payAccount.filter(it => (Number(it.status) === 1));
       const defaultAccount = accountList.filter(it => it.isDefault);
       let acc = '';
       let cout = 1;
       let flags = false;
       let amount = 0;
-      let prod = '已选单据有非支付宝、银行卡收款账户，不支持线上支付';
+      let prod = '已选单据有非支付宝收款账户，不支持线上支付';
       if (defaultAccount && defaultAccount.length > 0) {
         acc = defaultAccount[0].id;
       }
@@ -70,7 +70,7 @@ class PayModal extends React.PureComponent {
         cout = selectKey.length;
         selectKey.forEach(item => {
           if (item.submitSum) amount+=item.submitSum;
-          if (item.accountType !== 1 && item.accountType !== 0) {
+          if (item.accountType !== 1) {
             flags = true;
           }
         });
@@ -262,9 +262,7 @@ class PayModal extends React.PureComponent {
             height: '500px',
           }}
         >
-          <h1 className="fs-24 c-black-85 m-b-16 m-l-16">
-            发起支付
-          </h1>
+          <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1>
           <Form className="formItem">
             <p
               className="c-black-85 fs-14 m-b-47 m-l-16"

@@ -9,7 +9,11 @@ import Setting from '@/components/Setting';
 import BatchImport from '@/components/BatchImport/index';
 import Sort from '@/components/TreeSort/index';
 import PageHead from '@/components/PageHead';
+import constants from '@/utils/constants';
 
+const {
+  APP_API,
+} = constants;
 const { confirm } = Modal;
 const typeEnum = {
   'project': '项目',
@@ -135,6 +139,11 @@ class Product extends React.PureComponent {
     });
   }
 
+  onExport = () => {
+    const { type } = this.props;
+    window.location.href=`${APP_API}/cost/export/${type}?token=${localStorage.getItem('token')}`;
+  }
+
   // 展开树
   openTree = (list, arr) => {
     const result = arr;
@@ -160,6 +169,14 @@ class Product extends React.PureComponent {
         <span>
           <span style={{ marginRight: '8px' }}>{record.name}</span>
           {(record.type === 1 && record.status === 0) && <Tag color="red">已停用</Tag>}
+        </span>
+      )
+    },{
+      title: '编号',
+      dataIndex: 'no',
+      render: (_, record) => (
+        <span>
+          <span>{record[`${type}No`]}</span>
         </span>
       )
     }, {
@@ -249,7 +266,8 @@ class Product extends React.PureComponent {
       pId: 'parentId',
       tName: 'name',
       name: 'name',
-      otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type', 'status', 'sort', 'parentId', 'supplierAccounts']
+      otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type',
+      'status', 'sort', 'parentId', 'supplierAccounts', 'supplierNo', 'projectNo']
     }, list);
     if (searchName) {
       lists = list;
@@ -270,7 +288,7 @@ class Product extends React.PureComponent {
               <BatchImport callback={this.onQuery} type={type}>
                 <Button style={{ marginRight: '8px' }}>批量导入</Button>
               </BatchImport>
-              <Button style={{ marginRight: '8px' }}>批量导出</Button>
+              <Button style={{ marginRight: '8px' }} onClick={() => this.onExport()}>批量导出</Button>
               <Form style={{ display: 'inline-block' }}>
                 <Form.Item>
                   <Search

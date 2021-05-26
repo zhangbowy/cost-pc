@@ -27,6 +27,7 @@ const labelInfo = {
   note: '单据备注',
   receiptId: '收款账户',
   createDeptId: '所在部门',
+  officeId: '所在公司',
   imgUrl: '图片',
   fileUrl: '附件',
   project: '项目',
@@ -347,6 +348,7 @@ class ChangeForm extends Component {
           projectId: val.projectId || '',
           supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
           supplierId: val.supplier ? val.supplier.split('_')[1] : '',
+          officeId: val.officeId || '',
           imgUrl,
           fileUrl,
           expandSubmitFieldVos,
@@ -447,6 +449,7 @@ class ChangeForm extends Component {
       uploadFiles,
       users,
       depList,
+      officeList,
     } = this.props;
     console.log('render -> supplierList', supplierList);
 
@@ -672,6 +675,31 @@ class ChangeForm extends Component {
                                   {
                                     createDepList && createDepList.map(it => (
                                       <Option key={`${it.deptId}`}>{it.name}</Option>
+                                    ))
+                                  }
+                                </Select>
+                              )
+                            }
+                          </Form.Item>
+                        </Col>
+                    }
+                    {
+                      itw.field === 'deptId' && officeList.length > 1 && !modify &&
+                        <Col span={12}>
+                          <Form.Item label={labelInfo.officeId} {...formItemLayout}>
+                            {
+                              getFieldDecorator('officeId', {
+                                initialValue: details.officeId ? `${details.officeId}` : officeList[0].id,
+                                rules: [{ required: true, message: '请选择公司' }]
+                              })(
+                                <Select
+                                  placeholder='请选择'
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  disabled={modify}
+                                >
+                                  {
+                                    officeList && officeList.map(it => (
+                                      <Option key={`${it.id}`}>{it.officeName}</Option>
                                     ))
                                   }
                                 </Select>

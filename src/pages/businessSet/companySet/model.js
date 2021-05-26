@@ -9,12 +9,11 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-
-      const response = yield call(post, api.list, payload);
+      const response = yield call(get, api.list, payload);
       yield put({
         type: 'save',
         payload: {
-          list: response.list || [],
+          list: response || [],
         },
       });
     },
@@ -22,13 +21,13 @@ export default {
       yield call(get, api.del, payload);
     },
     *add({ payload }, { call }) {
-      yield call(get, api.add, payload);
+      yield call(post, api.add, payload);
     },
     *edit({ payload }, { call }) {
-      yield call(get, api.edit, payload);
+      yield call(post, api.edit, payload);
     },
-    *sorts({ payload }, { call }) {
-      yield call(get, api.sorts, payload);
+    *sort({ payload }, { call }) {
+      yield call(post, api.sorts, payload);
     },
   },
   reducers: {
