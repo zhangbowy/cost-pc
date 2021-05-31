@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
-import { Modal, Form, Input, Cascader, message } from 'antd';
+import { Modal, Form, Input, Cascader } from 'antd';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeopleNew';
 import { formItemLayout } from '../../../../utils/constants';
@@ -64,9 +64,9 @@ class AddComp extends Component {
             userVos: users,
           });
         }
-        if (details && (details.id === newVal.parentId)) {
-          message.error('上级公司不能选择自己');
-        }
+        // if (details && (details.id === newVal.parentId)) {
+        //   message.error('上级公司不能选择自己');
+        // }
         new Promise((resolve) => {
           onOk(newVal, resolve);
         }).then(() => {

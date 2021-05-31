@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Modal, Form, Row, Col, Button, TreeSelect } from 'antd';
+import { Modal, Form, Row, Col, Button, TreeSelect, DatePicker } from 'antd';
 import { connect } from 'dva';
+import moment from 'moment';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
 import styles from './index.scss';
@@ -76,6 +77,11 @@ class LevelSearch extends Component {
           ...val,
           deptVos,
         };
+        if (val.costTime) {
+          Object.assign(detail, {
+            costTime: moment(val.costTime).format('x'),
+          });
+        }
         this.onCancel();
         this.props.onOk(detail);
       }
@@ -167,8 +173,8 @@ class LevelSearch extends Component {
       tName: 'title',
       tId: 'value'
     }, officeTree);
-    console.log(supplierList);
     const { visible, deptVos, details } = this.state;
+
     return (
       <span>
         <span onClick={this.onShow}>{children}</span>
@@ -273,6 +279,21 @@ class LevelSearch extends Component {
                       disabled={false}
                       flag="dept"
                     />
+                  </Form.Item>
+                </Col>
+              }
+              {
+                type === 'classify' &&
+                <Col span={12}>
+                  <Form.Item label="发生日期" {...formItemLayout}>
+                    {
+                      getFieldDecorator('costTime', {
+                        initialValue: details.costTime ?
+                        moment(moment(Number(details.costTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : null
+                      })(
+                        <DatePicker placeholder="请选择时间" format="YYYY-MM-DD" />
+                      )
+                    }
                   </Form.Item>
                 </Col>
               }

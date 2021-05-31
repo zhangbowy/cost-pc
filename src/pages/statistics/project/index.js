@@ -49,7 +49,7 @@ class Project extends Component {
 
   inVoiceQuery = (payload) => {
     Object.assign(payload, {
-      projectId: payload.id,
+      projectId: payload.id === -1 ? '' : payload.id,
     });
     this.props.dispatch({
       type: 'projectS/detailList',

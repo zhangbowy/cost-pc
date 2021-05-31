@@ -49,7 +49,7 @@ class Supplier extends Component {
 
   inVoiceQuery = (payload) => {
     Object.assign(payload, {
-      supplierId: payload.id,
+      supplierId: payload.id === -1 ? '' : payload.id,
     });
     this.props.dispatch({
       type: 'supplierS/detailList',

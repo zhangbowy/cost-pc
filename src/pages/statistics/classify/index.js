@@ -48,7 +48,7 @@ class Classify extends Component {
 
   inVoiceQuery = (payload) => {
     Object.assign(payload, {
-      categoryId: payload.id,
+      categoryId: payload.id === -1 ? '' : payload.id,
     });
     this.props.dispatch({
       type: 'classifyS/detailList',
