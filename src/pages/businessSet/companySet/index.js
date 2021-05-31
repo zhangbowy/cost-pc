@@ -109,34 +109,66 @@ class CompanySet extends Component {
       rootId: 0,
       pId: 'parentId',
       name: 'officeName',
-      otherKeys: ['note', 'sort', 'parentId', 'officeName', 'officeNo', 'parentName', 'userVos', 'deptVos'],
+      otherKeys: ['note', 'sort', 'id',
+      'parentId', 'officeName', 'officeNo', 'parentName', 'userVos', 'deptVos'],
     },list);
     this.sortData(lists);
     const columns = [{
       title: '公司名称',
       dataIndex: 'officeName',
       width: 120,
+      ellipsis: true,
+      textWrap: 'word-break',
+      render: (text) => (
+        <Tooltip title={text || ''} placement="topLeft">
+          {text}
+        </Tooltip>
+      )
     }, {
       title: '公司编号',
       dataIndex: 'officeNo',
       width: 100,
+      ellipsis: true,
+      textWrap: 'word-break',
+      render: (text) => {
+        if (text) {
+          return (
+            <Tooltip title={text || ''} placement="topLeft">
+              {text}
+            </Tooltip>
+          );
+        }
+          return '-';
+      }
     }, {
       title: '上级公司',
       dataIndex: 'parentName',
       width: 100,
+      ellipsis: true,
+      textWrap: 'word-break',
+      render: (text) => {
+        if (text) {
+          return (
+            <Tooltip title={text || ''} placement="topLeft">
+              {text}
+            </Tooltip>
+          );
+        }
+          return '-';
+      }
     }, {
       title: '关联部门/人员',
       dataIndex: 'userVoss',
       width: 100,
+      ellipsis: true,
+      textWrap: 'word-break',
       render: (_, record) => {
         const depts = record.deptVos.map(it => it.name).join(',');
         const users = record.userVos.map(it => it.name).join(',');
         return (
-          <span>
-            <Tooltip title={`${depts} ${users}` || ''}>
-              <span className="eslips-2">{depts} {users}</span>
-            </Tooltip>
-          </span>
+          <Tooltip title={`${depts} ${users}` || ''} placement="topLeft">
+            <span>{depts} {users}</span>
+          </Tooltip>
         );
       }
     }, {
@@ -145,7 +177,7 @@ class CompanySet extends Component {
       width: 100,
       render: (text) => (
         <span>
-          <Tooltip title={text || ''}>
+          <Tooltip title={text || ''} placement="topLeft">
             <span className="eslips-2">{text}</span>
           </Tooltip>
         </span>
@@ -156,18 +188,6 @@ class CompanySet extends Component {
       render: (_, record) =>
       (
         <div>
-          <AddComp
-            onOk={this.onOk}
-            details={record}
-            list={list}
-            loading={addLoading}
-          >
-            <a>编辑</a>
-          </AddComp>
-          {
-            record.parentId !== 0 &&
-            <Divider type="vertical" />
-          }
           {
             record.parentId !== 0 &&
             <Popconfirm
@@ -177,20 +197,35 @@ class CompanySet extends Component {
               <span className="deleteColor">删除</span>
             </Popconfirm>
           }
+          {
+            record.parentId !== 0 &&
+            <Divider type="vertical" />
+          }
+          <AddComp
+            onOk={this.onOk}
+            details={record}
+            list={list}
+            loading={addLoading}
+          >
+            <a>编辑</a>
+          </AddComp>
         </div>
       ),
-      fixed: 'right',
       className: 'fixCenter',
-      width: '120px'
+      width: 80
     }];
     return (
       <div className="mainContainer">
-        <PageHead title="分公司管理" />
+        <PageHead
+          title="分公司管理"
+          note="1.针对一个组织架构存在多个分/子公司，支持管理和统计各分公司的支出。
+                2.设置好分公司与各部门的对应关系，即可按各分公司纬度查看支出数据。"
+        />
         <div className="content-dt">
           <div className="cnt-header">
             <div className="head_lf">
               <AddComp onOk={this.onOk} title="add" list={list} loading={addLoading}>
-                <Button style={{marginRight: '8px'}}>新增公司</Button>
+                <Button style={{marginRight: '8px'}} type="primary">新增公司</Button>
               </AddComp>
             </div>
             <div>

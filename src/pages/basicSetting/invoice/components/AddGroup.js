@@ -71,6 +71,7 @@ class AddGroup extends React.PureComponent {
         if (title === 'copy') {
           Object.assign(payload, {
             isGroup: 1,
+            templateName: values.name,
           });
         }
         dispatch({

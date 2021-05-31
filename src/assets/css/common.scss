@@ -262,6 +262,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     word-break: break-all;
+    -webkit-line-clamp: 2;
     white-space: nowrap;
     /*! autoprefixer: off */
     -webkit-box-orient: vertical;

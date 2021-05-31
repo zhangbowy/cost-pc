@@ -103,7 +103,8 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
                 pageNo: pageNumber,
                 pageSize: query.pageSize,
                 id,
-                projectType
+                projectType,
+                searchContent: search,
               });
             },
             total,
@@ -117,7 +118,8 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
                 pageNo: cur,
                 pageSize: size,
                 id,
-                projectType
+                projectType,
+                searchContent: search,
               });
             }
           }}

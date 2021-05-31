@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
-import { Modal, Form, Input, Cascader } from 'antd';
+import { Modal, Form, Input, Cascader, message } from 'antd';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeopleNew';
 import { formItemLayout } from '../../../../utils/constants';
@@ -64,6 +64,9 @@ class AddComp extends Component {
             userVos: users,
           });
         }
+        if (details && (details.id === newVal.parentId)) {
+          message.error('上级公司不能选择自己');
+        }
         new Promise((resolve) => {
           onOk(newVal, resolve);
         }).then(() => {
@@ -83,10 +86,14 @@ class AddComp extends Component {
   onSelectPeople = (val) => {
     this.setState({
       ...val,
+    }, () => {
+      const { form: { validateFields } } = this.props;
+      validateFields(['dept'], { force: true });
     });
   }
 
   check = (rule, value, callback) => {
+    console.log('checks');
     const { users, depts } = this.state;
     if (users.length || depts.length) {
       callback();
@@ -156,9 +163,9 @@ class AddComp extends Component {
               <Form.Item label="关联部门/人" {...formItemLayout}>
                 {
                   getFieldDecorator('dept', {
+                    initialValue: users.length ? users : depts,
                     rules: [{
                       validator: this.check,
-                      required: true,
                     }]
                   })(
                     <UserSelector

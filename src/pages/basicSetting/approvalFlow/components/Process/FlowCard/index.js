@@ -124,9 +124,8 @@ function FlowCard(props) {
                   ctx.data
                 )}
               />
-              <Icon
-                type="close"
-                className={cs(style['el-icon-close'], style.icon)}
+              <i
+                className="iconfont iconguanbi fs-16"
                 onClick={(e) => {
                   e.stopPropagation();
                   Modal.confirm({

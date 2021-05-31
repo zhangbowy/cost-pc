@@ -1,11 +1,8 @@
 @font-face {
-  font-family: 'iconfont';  /* project id 1803032 */
-  src: url('//at.alicdn.com/t/font_1803032_to7nt6in4v.eot');
-  src: url('//at.alicdn.com/t/font_1803032_to7nt6in4v.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_1803032_to7nt6in4v.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_1803032_to7nt6in4v.woff') format('woff'),
-  url('//at.alicdn.com/t/font_1803032_to7nt6in4v.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_1803032_to7nt6in4v.svg#iconfont') format('svg');
+  font-family: 'iconfont';  /* Project id 1803032 */
+  src: url('//at.alicdn.com/t/font_1803032_grbqwpb84q9.woff2?t=1622186019975') format('woff2'),
+       url('//at.alicdn.com/t/font_1803032_grbqwpb84q9.woff?t=1622186019975') format('woff'),
+       url('//at.alicdn.com/t/font_1803032_grbqwpb84q9.ttf?t=1622186019975') format('truetype');
 }
 :global{
   .iconfont {
@@ -14,6 +11,10 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  .iconguanbi:before {
+    content: "\e6fc";
   }
 
   .icondanxuan1:before {

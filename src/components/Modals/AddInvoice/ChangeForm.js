@@ -689,7 +689,9 @@ class ChangeForm extends Component {
                           <Form.Item label={labelInfo.officeId} {...formItemLayout}>
                             {
                               getFieldDecorator('officeId', {
-                                initialValue: details.officeId ? `${details.officeId}` : officeList[0].id,
+                                initialValue: details.officeId &&
+                                officeList.findIndex(it => it.id === details.officeId) > -1 ?
+                                `${details.officeId}` : officeList[0].id,
                                 rules: [{ required: true, message: '请选择公司' }]
                               })(
                                 <Select

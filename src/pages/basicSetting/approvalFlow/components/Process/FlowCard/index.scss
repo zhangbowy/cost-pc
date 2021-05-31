@@ -202,9 +202,11 @@ $base-size: 14px;
     width: 14px;
     box-sizing: border-box;&.left  {
       left: 0;
-    }&.right  {
-      right: 0;
-    }>  {
+    }
+    &.right  {
+      right: 8px;
+    }
+    >  {
       .right-arrow, .left-arrow  {
         position: absolute;
         top: 50%;
@@ -224,7 +226,7 @@ $base-size: 14px;
       color: #15bc83;
     }
   }.body  {
-    padding: 8px 14px;
+    padding: 14px 0px;
   }.icon-wrapper  {
     &:hover  {
       background-color: #f1f1f1;

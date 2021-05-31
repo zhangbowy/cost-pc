@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Button, Form, Table, Divider, Modal, message, Tag, Tooltip } from 'antd';
+import { Button, Form, Table, Divider, Modal, message, Tag, Tooltip, Dropdown, Icon, Menu } from 'antd';
 import PropTypes from 'prop-types';
 // import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
@@ -139,7 +139,8 @@ class Product extends React.PureComponent {
     });
   }
 
-  onExport = () => {
+  onExport = (e) => {
+    e.stopPropagation();
     const { type } = this.props;
     window.location.href=`${APP_API}/cost/export/${type}?token=${localStorage.getItem('token')}`;
   }
@@ -285,10 +286,25 @@ class Product extends React.PureComponent {
               <Setting type="group" target={type} list={list} onOk={this.onOk}>
                 <Button style={{ marginRight: '8px' }}>新增分组</Button>
               </Setting>
-              <BatchImport callback={this.onQuery} type={type}>
-                <Button style={{ marginRight: '8px' }}>批量导入</Button>
-              </BatchImport>
-              <Button style={{ marginRight: '8px' }} onClick={() => this.onExport()}>批量导出</Button>
+              <Dropdown
+                overlay={(
+                  <Menu>
+                    <Menu.Item key="2">
+                      <BatchImport callback={this.onQuery} type={type}>
+                        <span className="pd-20-9 c-black-65">批量导入</span>
+                      </BatchImport>
+                    </Menu.Item>
+                    <Menu.Item key="3">
+                      <span className="pd-20-9 c-black-65" onClick={e => this.onExport(e)}>批量导出</span>
+                    </Menu.Item>
+                  </Menu>
+                )}
+                overlayClassName="menuBtn"
+              >
+                <Button className="m-r-8">
+                  批量操作 <Icon type="down" />
+                </Button>
+              </Dropdown>
               <Form style={{ display: 'inline-block' }}>
                 <Form.Item>
                   <Search
