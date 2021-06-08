@@ -7,6 +7,7 @@ import UserSelector from '@/components/Modals/SelectPeople';
 import styles from './index.scss';
 
 const { SHOW_CHILD, SHOW_ALL } = TreeSelect;
+const { RangePicker } = DatePicker;
 @Form.create()
 @connect(({ global, costGlobal }) => ({
   costCategoryList: global.costCategoryList,
@@ -77,10 +78,15 @@ class LevelSearch extends Component {
           ...val,
           deptVos,
         };
+        console.log(val.costTime);
         if (val.costTime) {
-          Object.assign(detail, {
-            costTime: moment(val.costTime).format('x'),
-          });
+          if (val.costTime.length > 1) {
+            Object.assign(detail, {
+              costTimeStart: moment(val.costTime[0]).format('x'),
+              costTimeEnd: moment(val.costTime[1]).format('x'),
+            });
+          }
+          delete detail.costTime;
         }
         this.onCancel();
         this.props.onOk(detail);
@@ -282,21 +288,6 @@ class LevelSearch extends Component {
                   </Form.Item>
                 </Col>
               }
-              {
-                type === 'classify' &&
-                <Col span={12}>
-                  <Form.Item label="发生日期" {...formItemLayout}>
-                    {
-                      getFieldDecorator('costTime', {
-                        initialValue: details.costTime ?
-                        moment(moment(Number(details.costTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : null
-                      })(
-                        <DatePicker placeholder="请选择时间" format="YYYY-MM-DD" />
-                      )
-                    }
-                  </Form.Item>
-                </Col>
-              }
               <Col span={12}>
                 <Form.Item label="支出类别" {...formItemLayout}>
                   {
@@ -318,6 +309,32 @@ class LevelSearch extends Component {
                   }
                 </Form.Item>
               </Col>
+              {
+                type === 'classify' &&
+                <Col span={12}>
+                  <Form.Item label="发生日期" {...formItemLayout}>
+                    {
+                      getFieldDecorator('costTime', {
+                      initialValue: details.costTimeStart && details.costTimeEnd ?
+                        [moment(moment(Number(details.costTimeStart)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                        moment(moment(Number(details.costTimeEnd)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                        :
+                        [],
+                    })(
+                      <RangePicker
+                        placeholder='请选择时间'
+                        format="YYYY-MM-DD"
+                        style={{width: '100%'}}
+                        showTime={{
+                          hideDisabledOptions: true,
+                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                        }}
+                      />
+                    )
+                    }
+                  </Form.Item>
+                </Col>
+              }
             </Row>
           </Form>
         </Modal>
