@@ -16,7 +16,7 @@ function PieChart({ data, total, current }) {
     title: {
       zlevel: 0,
       text: [
-        '{name|总金额}',
+        '{name|部门支出合计}',
         `{value|￥${  total/100  }}`,
       ].join('\n'),
       rich: {
@@ -147,7 +147,7 @@ function PieChart({ data, total, current }) {
       {
         data.length ?
           <ReactEcharts
-            style={{height: '400px', width: '100%'}}
+            style={{height: '323px', width: '100%'}}
             className='echarts-for-echarts'
             notMerge
             lazyUpdate

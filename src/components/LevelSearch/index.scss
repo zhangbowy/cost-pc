@@ -1,5 +1,22 @@
-.footerBtn{
+.popover{
+  width: 360px;
+  max-height: 532px;
+  :global(.ant-popover-arrow){
+    display: none;
+  }
+  :global(.ant-popover-inner-content){
+    padding: 0;
+  }
+}
+.delBtn{
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
+  height: 49px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #00C795;
+}
+.formCnt{
+  padding: 24px 24px 24px 24px ;
 }

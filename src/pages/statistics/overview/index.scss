@@ -164,3 +164,13 @@
   height: 1px;
   background: #E8E8E8;
 }
+.searchLevel{
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  &:hover{
+    color: #00C795;
+  }
+}

@@ -1,121 +1,71 @@
 /* eslint-disable react/no-did-update-set-state */
-import React, { PureComponent } from 'react';
+import React from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Select, DatePicker } from 'antd';
-import moment from 'moment';
-import fields from '@/utils/fields';
-import styles from './leftPie.scss';
-import RightLine from './RightLine';
-import { dateToTime } from '../../../../utils/util';
+import { Divider } from 'antd';
+import styles from './index.scss';
 
-const { Option } = Select;
-const { RangePicker } = DatePicker;
-@Form.create()
-class RightChart extends PureComponent {
-
-  state = {
-    isShow: false,
-    lineData: {},
-  }
-
-  componentDidUpdate(prev) {
-    if (prev.lineData !== this.props.lineData) {
-      this.setState({
-        lineData: this.props.lineData,
-      });
-    }
-  }
-
-  onChange = op => {
-    const { chart, onChangeData } = this.props;
-    if (op === '-1') {
-      this.setState({
-        isShow: true,
-      });
-    } else {
-      chart({
-        url: 'brokenLine',
-        payload: {
-          ...dateToTime(op),
-        }
-      }, () => {
-        onChangeData('lineChart', {
-          ...dateToTime(op),
-          type: op
-        });
-        this.setState({
-          isShow: false,
-        });
-      });
-    }
-  }
-
-  onChangeDate = (date, dateString) => {
-    const { chart, onChangeData } = this.props;
-    chart({
-      url: 'brokenLine',
-      payload: {
-        startTime: dateString.length ?
-          moment(`${dateString[0]} 00:00:01`).format('x') : '',
-        endTime: dateString.length ?
-          moment(`${dateString[1]} 23:59:59`).format('x') : '',
-      }
-    }, () => {
-      onChangeData('lineChart', {
-        type: '-1',
-        startTime: dateString.length ?
-          moment(`${dateString[0]} 00:00:01`).format('x') : '',
-        endTime: dateString.length ?
-          moment(`${dateString[1]} 23:59:59`).format('x') : '',
-      });
-    });
-  }
-
-  render() {
-    const { monthType } = fields;
-    const { form: { getFieldDecorator } } = this.props;
-    const { isShow, lineData } = this.state;
-    return (
-      <div className={styles.left} style={{ marginRight: 0 }}>
-        <div className={styles.top} style={{ borderBottom: '1px solid #E8E8E8' }}>
-          <p>支出趋势</p>
-          <Form layout="inline">
-            <Form.Item>
-              {
-                getFieldDecorator('type', {
-                  initialValue: '3_cm'
-                })(
-                  <Select
-                    style={{ width: '120px' }}
-                    onChange={this.onChange}
-                  >
-                    {
-                      monthType.map(it => (
-                        <Option key={it.key} value={it.key}>{it.value}</Option>
-                      ))
-                    }
-                  </Select>
-                )
-              }
-            </Form.Item>
-            {
-              isShow &&
-              <Form.Item>
-                <RangePicker
-                  style={{ width: '136px' }}
-                  onChange={this.onChangeDate}
-                  className="m-l-8"
-                  allowClear={false}
-                />
-              </Form.Item>
-            }
-          </Form>
+const list = [{
+  name: '同比',
+  icon: 'iconshangsheng',
+  key: 'up',
+}, {
+  name: '环比',
+  icon: 'iconxiajiang',
+  key: 'up',
+}];
+const RightChart = () => {
+  return (
+    <div className={styles.lefts}>
+      <div className={styles.head}>
+        <div className={styles.headL}>
+          <i className="iconfont iconjifenquanicon" style={{ color: '#00C795' }} />
         </div>
-        <RightLine data={lineData} />
+        <div>
+          <p className="fs-16 c-black-85 fw-500">企业总支出</p>
+          <p className="fs-12 c-black-45">总支出包含审批通过，已确定会支出的数据</p>
+        </div>
       </div>
-    );
-  }
-}
+      <div className={styles.price}>
+        <p className="fs-36 fw-500 c-black-85 li-36">¥ 1,026,560.40</p>
+        <div className={styles.pro}>
+          {
+            list.map(it => (
+              <div key={it.key} className="m-r-24">
+                <span className="c-black-65 fs-12">{it.name}</span>
+                <i className={`iconfont ${it.icon}`} />
+                <span className="c-black-85 fs-12">12%</span>
+              </div>
+            ))
+          }
+
+        </div>
+      </div>
+      <Divider type="horizontal" style={{margin: '20px 0 0 0'}} />
+      <div className={styles.centers}>
+        <div className={styles.cPrice}>
+          <p className="fs-20 fw-500 c-black-85">¥5,000.00</p>
+          <p className="fs-14 c-black-45">待付金额</p>
+        </div>
+        <Divider type="vertical" style={{ margin: 0, height: '48px' }} />
+        <div className={styles.cPrice}>
+          <p className="fs-20 fw-500 c-black-85">¥5,000.00</p>
+          <p className="fs-14 c-black-45">待付金额</p>
+        </div>
+      </div>
+      <div className={styles.footer}>
+        <div className={styles.footL}>
+          <div className={styles.footLI}>
+            <i className="iconfont" />
+          </div>
+          <span>借款待还金额</span>
+        </div>
+        <div>
+          <span className="fs-14" style={{ color: '#FF2F00' }}>¥ 12,423</span>
+          <i className="iconfont iconenter c-black-45" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default RightChart;
-

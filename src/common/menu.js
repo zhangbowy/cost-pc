@@ -156,15 +156,15 @@ const menuData = [
     myIcon: 'iconzhichufeiyongtongji',
     path: 'statistics',
     children: [{
-      id: 'statistics_overview',
-      name: '统计概览',
-      myIcon: '',
-      path: 'overview',
-    }, {
       id: 'statistics_summary',
       name: '台账汇总',
       myIcon: '',
       path: 'summary',
+    }, {
+      id: 'statistics_overview',
+      name: ' 支出分析表',
+      myIcon: '',
+      path: 'overview',
     }, {
       id: 'statistics_department',
       name: '部门支出表',

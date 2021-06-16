@@ -1,5 +1,6 @@
 // import { func } from "prop-types";
 import moment from 'moment';
+import { debounce } from 'lodash-decorators';
 
 export const getQueryString = (name) => {
   const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
@@ -39,31 +40,6 @@ export const findIndexArray = (data, id, indexArray) => {
     arr.pop();
   }
   return false;
-};
-
-// 函数防抖
-// export const debounce = (fun, delay, that) => {
-//   return (args, bol) => {
-//     const _args = args;
-//     const _bol = bol;
-//     clearTimeout(fun.id)
-//     fun.id = setTimeout(() => {
-//       fun.call(that || this, _args, _bol)
-//     }, delay)
-//   }
-// }
-
-export const debounce = (func, wait) => {
-  let timeout;
-  return (...args) => {
-      const context = this;
-
-      if (timeout) clearTimeout(timeout);
-
-      timeout = setTimeout(() => {
-          func.apply(context, args);
-      }, wait);
-  };
 };
 
 export const eventChange = ((() =>{

@@ -12,16 +12,12 @@ import moment from 'moment';
 import { getArrayValue, invoiceStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
-// import banner from '@/assets/img/banner.png';
-// import adCode from '@/assets/img/adCode.png';
 import HeadRight from '@/pages/workbench/components/HeadRight';
 import style from './index.scss';
 import Header from './components/Header';
 import HeadLeft from './components/HeadLeft';
 import StepShow from '../../components/StepShow';
-// import { accountType } from '../../utils/constants';
 import wave from '../../utils/wave';
-import SubmitReport from './components/Boss/SubmitReport';
 import LeftPie from './components/Boss/LeftPie';
 import RightChart from './components/Boss/RightChart';
 import Boss from './components/Boss';
@@ -139,25 +135,10 @@ class Workbench extends PureComponent {
         type: 'workbench/deptTree',
         payload: {}
       });
-      // this.props.dispatch({
-      //   type: 'workbench/ejectFrame',
-      //   payload: {}
-      // }).then((e) => {
-      //   console.log(e);
-      //   this.setState({huaVisible:this.props.huaVisible});
-      // });
     });
 
   }
 
-  // componentDidUpdate(prev) {
-  //   console.log('prev',prev.location);
-  //   if (prev.location.state && prev.location.state.id) {
-  //     this.setState({
-  //       isBoss: prev.location.state.id === 1,
-  //     });
-  //   }
-  // }
 
   onQuery = (payload) => {
     const { invoiceTemplateIds, isComplete, reason } = this.state;
@@ -282,18 +263,6 @@ class Workbench extends PureComponent {
     return obj;
   }
 
-  // closeHua = (type) => {
-  //   if(type){
-  //     this.props.dispatch({
-  //       type: 'workbench/unRemind',
-  //       payload: {
-  //         isCompany: true
-  //       }
-  //     });
-  //   }
-  //   this.setState({ huaVisible: false });
-  // }
-
   onComplete = (value, type) => {
     this.setState({
       [type]: value,
@@ -382,13 +351,10 @@ class Workbench extends PureComponent {
   render() {
     const { list, total, query,
         userInfo, loading, invoiceList,
-        OftenTemplate, submitReport,
-        fyCategory, cbCategory,deptTree,
-        reportPage, reportTotal,
-        loanSumVo,
-        submitReportDetail, pieList, totalSum } = this.props;
+        OftenTemplate,pieList,
+        fyCategory, cbCategory, totalSum } = this.props;
     const { personal, isComplete,
-      invoiceTemplateIds, reason, submitTime,
+      invoiceTemplateIds, reason,
       pieChart, lineChart,
       isBoss, bossVisible } = this.state;
     const columns = [{
@@ -506,24 +472,19 @@ class Workbench extends PureComponent {
               }
               {
                 isBoss &&
-                <div className={style.ad}>
-                  <SubmitReport
-                    submitReport={submitReport}
-                    submitReportDetail={submitReportDetail}
-                    reportPage={reportPage}
-                    reportChange={this.reportChange}
-                    submitTime={submitTime}
-                    chart={this.chart}
-                    deptTree={deptTree}
-                    onChangeData={this.onChangeState}
-                    reportTotal={reportTotal}
-                    loanSumVo={loanSumVo}
-                  />
+                <div className={style.ad} style={{ margin: '24px 0 16px 24px' }}>
+                  <p className="c-black-85 fs-18 fw-500">阿米巴支出简报</p>
                 </div>
               }
               {
                 isBoss &&
-                <div className={style.ad}>
+                <div className={style.ad} style={{ marginTop: 0 }}>
+                  <RightChart
+                    chart={this.chart}
+                    lineData={{ cbCategory, fyCategory }}
+                    onChangeData={this.onChangeState}
+                    lineChart={lineChart}
+                  />
                   <LeftPie
                     chart={this.chart}
                     data={pieList}
@@ -531,18 +492,26 @@ class Workbench extends PureComponent {
                     pieChart={pieChart}
                     onChangeData={this.onChangeState}
                   />
-                  <RightChart
-                    chart={this.chart}
-                    lineData={{ cbCategory, fyCategory }}
-                    onChangeData={this.onChangeState}
-                    lineChart={lineChart}
-                  />
                 </div>
               }
-              <div className="content-dt" style={{ padding: '0 0 32px 0', height: 'auto' }}>
+              {
+                isBoss &&
+                <p className="fw-500 fs-18 c-black-85 m-l-24 m-b-12">我发起的单据</p>
+              }
+              <div
+                className="content-dt"
+                style={{
+                  padding: '0 0 32px 0',
+                  height: 'auto',
+                  margin: isBoss ? '0 24px 24px 24px' : '24px'
+                }}
+              >
                 <div style={{ margin: '0 32px' }}>
-                  <p className="fw-500 fs-14 c-black-85 m-t-16 m-b-16">我发起的单据</p>
-                  <div className={style.searchs}>
+                  {
+                    !isBoss &&
+                    <p className="fw-500 fs-14 c-black-85 m-t-16">我发起的单据</p>
+                  }
+                  <div className={style.searchs} style={{ marginTop: isBoss ? '24px' : '16px' }}>
                     <Form layout="inline" style={{display: 'flex'}}>
                       <Form.Item label="单据状态" style={{marginRight: '24px'}}>
                         <Select style={{width: '160px'}} value={isComplete} onChange={(val) => this.onComplete(val, 'isComplete')}>
@@ -582,10 +551,6 @@ class Workbench extends PureComponent {
                       value={reason}
                     />
                   </div>
-                  {/* {
-                    Number(type) === 7 &&
-                    <p className="c-black-85 m-b-8">借款共计：¥{loanSum.loanSumAll ? loanSum.loanSumAll/100 : 0}，待核销共计：¥{loanSum.waitAssessSumAll ? loanSum.waitAssessSumAll/100 : 0}</p>
-                  } */}
                   <Table
                     columns={columns}
                     dataSource={list}
@@ -619,51 +584,6 @@ class Workbench extends PureComponent {
               </div>
             </>
         }
-
-        {/* 花呗工作花开通指引 */}
-        {/* <Modal
-          footer={null}
-          header={null}
-          closable={false}
-          visible={huaVisible}
-          width="728px"
-          bodyStyle={{
-            padding: '0',
-          }}
-        >
-          <div className={style.banner_wrapper}>
-            <Icon onClick={() => {this.closeHua();}} type="close" className={style.close} />
-            <img className={style.banner} src={banner} alt="" />
-            <div className={style.banner_footer}>
-              <div className={style.footer_left}>
-                <div className={style.left_top}>企业无预支，员工无垫付</div>
-                <div calssName={style.left_bottom} style={{position:'absolute'}}>鑫支出联合支付宝花呗工作花，为企业提供“报销备用金”</div>
-              </div>
-              <div className={style.footer_left_btn}>
-                <span
-                  style={{color:'#00C795',fontSize:'12px',cursor:'pointer'}}
-                  onClick={() => {window.open('https://www.yuque.com/docs/share/09880e09-a80a-410a-86c6-7a7c7f31dc9a?#');}}
-                >
-                  查看签约流程 &gt;
-                </span>
-              </div>
-              <div className={style.footer_right}>
-                <div className={style.jumpout} onselectstart="return false;" onClick={() => {this.closeHua(1);}}>不再提醒 &gt;</div>
-                <Popover
-                  content={(
-                    <div>
-                      <img alt="二维码" src={adCode} style={{ width: '200px' }} />
-                    </div>
-                  )}
-                  placement="top"
-                  trigger="hover"
-                >
-                  <Button type="primary" className={style.opening}>立刻咨询开通</Button>
-                </Popover>
-              </div>
-            </div>
-          </div>
-        </Modal> */}
       </div>
     );
   }

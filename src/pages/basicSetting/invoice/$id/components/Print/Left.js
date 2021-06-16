@@ -34,6 +34,10 @@ const basicSet = {
   2: [{
     key: 'isQrCode',
     value: '单据详情二维码',
+  }],
+  3: [{
+    key: 'isQrCode',
+    value: '单据详情二维码',
   }]
 };
 @Form.create()

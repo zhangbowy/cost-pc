@@ -10,6 +10,12 @@ const pdf = {
   1: 'pdf5',
   2: 'pdfb5',
 };
+const tempObj = {
+  0: '报销',
+  1: '借款',
+  2: '申请',
+  3: '薪资'
+};
 function Right({ templateType, templatePdfVo, corpName,
   isRelationLoan, invoiceName, categoryStatus }) {
   const list = templatePdfVo.templatePdfExpandVos || [];
@@ -31,9 +37,7 @@ function Right({ templateType, templatePdfVo, corpName,
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                 <div className={style['cont-cell-label']}>
-                  { templateType === 0 && '报销' }
-                  { templateType === 1 && '借款' }
-                  { templateType === 2 && '申请' }
+                  { tempObj[templateType] }
                   单号
                 </div>
               </div>
@@ -44,9 +48,7 @@ function Right({ templateType, templatePdfVo, corpName,
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                 <div className={style['cont-cell-label']}>
-                  { templateType === 0 && '提交' }
-                  { templateType === 1 && '借款' }
-                  { templateType === 2 && '申请' }
+                  { tempObj[templateType] }
                   人
                 </div>
               </div>
@@ -125,6 +127,7 @@ function Right({ templateType, templatePdfVo, corpName,
         }
         {
           (!templateType ||
+            templateType === 3 ||
           (templateType === 2 && !!Number(categoryStatus))) &&
           <div className={style.contents}>
             {

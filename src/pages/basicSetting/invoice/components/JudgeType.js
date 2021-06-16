@@ -36,6 +36,11 @@ export default function JudgeType(props) {
             <p className="fs-20 c-black-85 m-l-24 m-b-10" style={{paddingTop: '45px'}}>申请单</p>
             <p className="c-black-36 fs-12 m-l-24">· 适用于出差、采购事前申请</p>
           </div>
+          <div className={style.applyType} onClick={() => cancel('add_3')}>
+            <p className="fs-20 c-black-85 m-l-24 m-b-10" style={{paddingTop: '45px'}}>薪资单</p>
+            <p className="c-black-36 fs-12 m-l-24">· 适用于工资、奖金、社保等保密性支出</p>
+            <p className="c-black-36 fs-12 m-l-24">· 一般由人事/财务发起申请</p>
+          </div>
         </div>
       </Modal>
     </span>

@@ -282,6 +282,81 @@ export const applyJson = [{
   note: '',
 }];
 
+export const payJson = [{
+  key: 'reason',
+  field: 'reason',
+  name: '事由',
+  status: true,
+  isWrite: true,
+  note: '',
+  disabled: true,
+}, {
+  key: 'userJson',
+  field: 'userJson',
+  name: '申请人',
+  status: true,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}, {
+  key: 'deptId',
+  field: 'deptId',
+  name: '申请部门',
+  status: true,
+  isWrite: true,
+  note: '',
+  disabled: true,
+}, {
+  key: 'month',
+  field: 'month',
+  name: '所属月份',
+  status: true,
+  isWrite: true,
+  note: '',
+  dateType: '1',
+  disabled: true,
+}, {
+  key: 'project',
+  field: 'project',
+  name: '项目',
+  status: false,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}, {
+  key: 'note',
+  field: 'note',
+  name: '单据备注',
+  status: false,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}, {
+  key: 'receiptId',
+  field: 'receiptId',
+  name: '收款账户',
+  status: true,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}, {
+  key: 'imgUrl',
+  field: 'imgUrl',
+  name: '图片',
+  status: true,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}, {
+  key: 'fileUrl',
+  field: 'fileUrl',
+  name: '附件',
+  status: true,
+  isWrite: false,
+  note: '',
+  disabled: true,
+}];
+
 export const applyDefault =
 ['reason', 'userJson', 'deptId', 'applicationSum', 'happenTime', 'project', 'supplier', 'note', 'imgUrl', 'fileUrl'];
 
@@ -1008,6 +1083,10 @@ export const invoiceJson = {
   '2': {
     jsonStr: applyJson,
     addUrl: 'global/addApply',
+  },
+  '3': {
+    jsonStr: payJson,
+    addUrl: 'global/addPay',
   }
 };
 
@@ -1083,5 +1162,28 @@ export const newApplyStatus = [{
   value: '已拒绝'
 }];
 
+export const invoiceType = {
+  0: {
+    type: 0,
+    color: 'rgba(38, 128, 242, 0.08)',
+    name: '报销'
+  },
+  1: {
+    type: 1,
+    color: 'rgba(0, 199, 149, 0.08)',
+    name: '借款'
+  },
+  2: {
+    type: 2,
+    color: 'rgba(255, 159, 0, 0.08)',
+    name: '申请'
+  },
+  3: {
+    type: 3,
+    color: 'rgba(38, 128, 242, 0.08)',
+    name: '薪资'
+  },
+};
 
-export const defaultColor = ['#3BA0FF', '#36CBCB', '#4DCB73', '#FAD337', '#F2637B', '#975FE4', '#3B56FF', '#FF943E', '#FF7FA5', '#FFD2AD', 'rgba(0,0,0,0.25)'];
+export const defaultColor = ['#3BA0FF', '#36CBCB', '#4DCB73', '#FAD337', '#F2637B', '#975FE4',
+'#3B56FF', '#FF943E', '#FF7FA5', '#FFD2AD', 'rgba(0,0,0,0.25)'];

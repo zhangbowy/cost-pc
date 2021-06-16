@@ -15,6 +15,7 @@ import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
 import Tags from '../../../components/Tags';
 import Sort from '../../../components/TreeSort';
+import { invoiceType } from '../../../utils/constants';
 
 const namespace = 'invoice';
 const { confirm } = Modal;
@@ -192,22 +193,8 @@ class Invoice extends React.PureComponent {
           {
             (record.type === 0 || (record.parentId === 0)) &&
             record.templateType === 0 &&
-            <Tags color='rgba(38, 128, 242, 0.08)'>
-              报销
-            </Tags>
-          }
-          {
-            (record.type === 0 || (record.parentId === 0)) &&
-            record.templateType === 1 &&
-            <Tags color='rgba(0, 199, 149, 0.08)'>
-              借款
-            </Tags>
-          }
-          {
-            (record.type === 0 || (record.parentId === 0)) &&
-            record.templateType === 2 &&
-            <Tags color='rgba(255, 159, 0, 0.08)'>
-              申请
+            <Tags color={invoiceType[record.templateType].color}>
+              {invoiceType[record.templateType].name}
             </Tags>
           }
         </span>
@@ -259,7 +246,12 @@ class Invoice extends React.PureComponent {
         if (record.type === 1) {
           btns = [{
             node: (
-              <span className="pd-20-9 c-black-65" onClick={() => this.onAddCategory(`${record.id}_${record.templateType}_copy`)}>复制</span>
+              <span
+                className="pd-20-9 c-black-65"
+                onClick={() => this.onAddCategory(`${record.id}_${record.templateType}_copy`)}
+              >
+                复制
+              </span>
             ),
           }, {
             node: (
