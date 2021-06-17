@@ -451,7 +451,7 @@ class Workbench extends PureComponent {
       render: (_, record) => (
         <span>
           {
-            ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
+            ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) &&
             <Popconfirm
               title="是否确认删除？"
               onConfirm={() => this.onDelete(record.invoiceId, record.templateType)}
@@ -460,7 +460,7 @@ class Workbench extends PureComponent {
             </Popconfirm>
           }
           {
-            ((Number(record.approveStatus) === 4) || (Number(record.approveStatus) === 5)) &&
+            ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) &&
             <Divider type="vertical" />
           }
           <InvoiceDetail
