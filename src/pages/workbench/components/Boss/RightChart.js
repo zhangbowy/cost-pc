@@ -11,7 +11,7 @@ const list = [{
 }, {
   name: '环比',
   icon: 'iconxiajiang',
-  key: 'up',
+  key: 'down',
 }];
 const RightChart = () => {
   return (
