@@ -20,12 +20,11 @@ class SearchBanner extends PureComponent {
 
   render () {
     const { list } = this.props;
-    const arr = list && list.filter(it => it.out);
     const showStr = list.filter(it => it.valueStr);
     return (
       <div className={style.search}>
         <div className={style.top}>
-          <FormStyle type="out" fields={arr} onChangeSearch={this.props.onChange} />
+          <FormStyle type="out" fields={list} onChangeSearch={this.props.onChange} />
           <div className="head_rf">
             <Popover
               trigger="click"
