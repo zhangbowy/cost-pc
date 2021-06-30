@@ -5,7 +5,7 @@ import getDateUtil from '@/utils/tool';
 import moment from 'moment';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
-import Invoice from './component/Invoice';
+import Invoice from '../../pages/statistics/overview/components/Invoice';
 import Chart from './component/Chart';
 import LevelSearch from './component/LevelSearch';
 import style from './index.scss';

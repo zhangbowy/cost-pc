@@ -1,13 +1,32 @@
 import React, { Component } from 'react';
 import cs from 'classnames';
 import PageHead from '@/components/PageHead';
-import { Switch, Modal, Checkbox, Button } from 'antd';
+import { Switch, Modal, Checkbox, Button, Radio } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
 
-@connect(({ systemControl }) => ({
+const viewSum = [{
+  title: '以提交时间为准',
+  name: '提交时间',
+  value: 0,
+  pro: '5月数据包含：5月提交，且已审核通过'
+}, {
+  title: '以审核通过时间为准',
+  name: '审核通过时间',
+  value: 1,
+  pro: '5月数据包含：5月审核通过的单据。（示例：4月提交 5月审批通过 6月发放拒绝，这笔支出统计进5月，6月冲掉本笔支出）'
+}, {
+  title: '以发生日期为准',
+  name: '发生时间',
+  value: 2,
+  pro: '5月数据包含：支出明细发生日期在本月范围内，且已审核通过'
+}];
+@connect(({ systemControl, loading }) => ({
   isModifyInvoice: systemControl.isModifyInvoice,
   isModifyReload: systemControl.isModifyReload,
+  isOpenProject: systemControl.isOpenProject,
+  statisticsDimension: systemControl.statisticsDimension,
+  loading: loading.effects['systemControl/query'] || false,
 }))
 class SystemControl extends Component {
 
@@ -16,7 +35,9 @@ class SystemControl extends Component {
     this.state = {
       visible: false,
       switchCheck: false,
-      changeReload: false
+      changeReload: false,
+      statisticsDimension: 0,
+      isOpenProject: false,
     };
   }
 
@@ -36,10 +57,12 @@ class SystemControl extends Component {
   }
 
   onInit = () => {
-    const { isModifyInvoice, isModifyReload } = this.props;
+    const { isModifyInvoice, isModifyReload, statisticsDimension, isOpenProject } = this.props;
     this.setState({
       changeReload: isModifyReload,
       switchCheck: isModifyInvoice,
+      statisticsDimension,
+      isOpenProject,
     });
   }
 
@@ -83,6 +106,27 @@ class SystemControl extends Component {
     }
   }
 
+  onChanges = (e, key) => {
+    const { switchCheck, changeReload, isOpenProject, statisticsDimension } = this.state;
+    const params = {
+      isModifyReload: changeReload,
+      isModifyInvoice: switchCheck,
+      isOpenProject,
+      statisticsDimension,
+      [key]: key === 'isOpenProject' ? e : e.target.value,
+    };
+    this.props.dispatch({
+      type: 'systemControl/change',
+      payload: {
+        ...params,
+      }
+    }).then(() => {
+      this.setState({
+        [key]: key === 'isOpenProject' ? e : e.target.value,
+      });
+    });
+  }
+
   onLink = (type) => {
     if (!type) {
       this.props.history.push('/basicSetting/invoice');
@@ -95,8 +139,11 @@ class SystemControl extends Component {
     const {
       visible,
       switchCheck,
-      changeReload
+      changeReload,
+      isOpenProject,
+      statisticsDimension,
     } = this.state;
+    // const { loading } = this.props;
     return (
       <div>
         <PageHead title="控制开关" />
@@ -104,7 +151,7 @@ class SystemControl extends Component {
           <Switch className={style.switch} onChange={e => this.onChange(e)} checked={switchCheck} />
           <p className="fs-16 c-black-85 fw-500">允许发放环节改单</p>
           <p className={style.production}>
-            <span>开启后，在单据发放环节，发放人可对单据的部分信息进行修改后发放，无需重新打回。比如事由、金额等，如需支持更多信息的修改，请至</span>
+            <span>开启后，在单据发放环节，发放人可对单据的部分信息进行修改后发放，无需重新打回。比如事由、金额等。<br />如需支持更多信息的修改，请至</span>
             <span className="sub-color">
               <a onClick={() => this.onLink(0)}>单据模版设置</a>/<a onClick={() => this.onLink(1)}>支出类别设置</a>
             </span>
@@ -120,6 +167,35 @@ class SystemControl extends Component {
               <span>{ changeReload ? '已开启留痕' : '已关闭留痕' }</span>
             </div>
           </div>
+        </div>
+        <div className={style.content}>
+          <Switch className={style.switch} onChange={e => this.onChanges(e, 'isOpenProject')} checked={isOpenProject} />
+          <p className="fs-16 c-black-85 fw-500">项目责任制</p>
+          <p className={style.production}>
+            <p>与设置-角色管理-操作权限设置配合使用。</p>
+            <p>
+              1.操作权限设置开启后，默认可见项目管理页面所有项目2.项目责任制开启后，项目负责人增加一层限制，仅可见作为项目负责人的项目列表
+            </p>
+          </p>
+          <div className={style.label}>
+            <div className={style.lables}>
+              <span className={isOpenProject ? cs(style.circle, style.active) : style.circle} />
+              <span>{ isOpenProject ? '已开启' : '已关闭' }</span>
+            </div>
+          </div>
+        </div>
+        <div className={style.content}>
+          <p className="fs-16 c-black-85 fw-500">统计维度设置</p>
+          <Radio.Group className="m-t-16" value={statisticsDimension} onChange={e => this.onChanges(e, 'statisticsDimension')}>
+            {
+              viewSum.map(it => (
+                <Radio value={it.value} style={{ display: 'block' }} key={it.value}>
+                  <span className="fs-14 c-black-85">{it.title}</span>
+                  <p className="fs-14 c-black-45" style={{marginLeft: '23px'}}>{it.pro}</p>
+                </Radio>
+              ))
+            }
+          </Radio.Group>
         </div>
         <Modal
           visible={visible}

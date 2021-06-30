@@ -1381,7 +1381,9 @@ class AddInvoice extends Component {
               officeList={officeList}
             />
             {
-              (!Number(templateType) || (Number(templateType) === 2 && !!djDetail.categoryStatus)) &&
+              (!Number(templateType) ||
+              Number(templateType) === 3 ||
+              (Number(templateType) === 2 && !!djDetail.categoryStatus)) &&
               <>
                 <Divider type="horizontal" />
                 <div style={{paddingTop: '24px', paddingBottom: '30px'}}>

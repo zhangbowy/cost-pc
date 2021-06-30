@@ -44,6 +44,9 @@
     p{
       margin-bottom: 0;
     }
+    &:nth-child(even){
+      margin-right: 0;
+    }
   }
   .tags:hover{
     border: 1px solid #E9E9E9;

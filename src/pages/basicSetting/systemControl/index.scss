@@ -1,15 +1,16 @@
 .content{
-  width: 384px;
-  height: 224px;
-  padding: 30px;
+  // width: 384px;
+  // height: 224px;
+  padding: 24px 100px 24px 32px;
   background: #ffffff;
   margin: 24px;
   position: relative;
   border-radius: 4px;
   .switch{
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 50%;
+    right: 100px;
+    margin-top: -11px;
   }
   p{
     margin-bottom: 0px;
@@ -18,7 +19,7 @@
     font-size: 14px;
     line-height: 22px;
     color: rgba(0,0,0,0.45);
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     margin-top: 6px;
   }
   .label{

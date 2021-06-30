@@ -8,6 +8,8 @@ export default {
   state: {
     isModifyInvoice: false,
     isModifyReload: false,
+    statisticsDimension: 0,
+    isOpenProject: false
   },
   effects: {
     *query({ payload }, { call, put }) {
@@ -18,6 +20,8 @@ export default {
         payload: {
           isModifyInvoice: response.isModifyInvoice,
           isModifyReload: response.isModifyReload,
+          isOpenProject: response.isOpenProject,
+          statisticsDimension: response.statisticsDimension
         },
       });
     },

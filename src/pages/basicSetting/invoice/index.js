@@ -192,7 +192,6 @@ class Invoice extends React.PureComponent {
           { (record.status === 0) && <Tag color="red">已停用</Tag> }
           {
             (record.type === 0 || (record.parentId === 0)) &&
-            record.templateType === 0 &&
             <Tags color={invoiceType[record.templateType].color}>
               {invoiceType[record.templateType].name}
             </Tags>

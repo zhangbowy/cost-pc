@@ -93,36 +93,7 @@ class Statistics extends React.PureComponent {
     });
   }
 
-  onSelectAll = (selected, selectedRows, changeRows) => {
-    const result = rowSelect.onSelectAll(this.state, selected, changeRows);
-    const _selectedRows = result.selectedRows;
-    const { selectedRowKeys } = result;
-    let amount = 0;
-    _selectedRows.forEach(item => {
-      amount+=item.submitSum;
-    });
-    this.setState({
-        selectedRows: _selectedRows,
-        selectedRowKeys,
-        sumAmount: amount,
-    });
-  };
 
-onSelect = (record, selected) => {
-    const {
-        selectedRows,
-        selectedRowKeys,
-    } = rowSelect.onSelect(this.state, record, selected);
-    let amount = 0;
-    selectedRows.forEach(item => {
-      amount+=item.submitSum;
-    });
-    this.setState({
-        selectedRows,
-        selectedRowKeys,
-        sumAmount: amount,
-    });
-};
 
 onDelete = (id) => {
     const {

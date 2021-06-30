@@ -58,11 +58,11 @@
 .judgeType{
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   div{
-    height: 224px;
-    width: 208px;
+    height: 137px;
+    width: 325px;
     cursor: pointer;
-    padding-right: 24px;
     border-radius: 4px;
   }
   p{
@@ -75,7 +75,6 @@
   transition:all .4s ease;
   cursor: pointer;
   margin-left: 12px;
-  margin-right: 12px;
   &:hover{
     background-size: 120%;
     transform: translateY(-6px);
@@ -86,7 +85,6 @@
   box-shadow: 0 0 0 2px transparent inset;
   transition:all .4s ease;
   cursor: pointer;
-  margin-left: 12px;
   margin-right: 12px;
   &:hover{
     background-size: 120%;
@@ -99,7 +97,19 @@
   transition:all .4s ease;
   cursor: pointer;
   margin-right: 12px;
-  margin-bottom: 36px;
+  margin-bottom: 24px;
+  &:hover{
+    background-size: 120%;
+    transform: translateY(-10px);
+  }
+}
+.salaryType{
+  background: url('../../../../assets/img/salary.png') no-repeat center / 100%;
+  box-shadow: 0 0 0 2px transparent inset;
+  transition:all .4s ease;
+  cursor: pointer;
+  margin-left: 12px;
+  margin-bottom: 24px;
   &:hover{
     background-size: 120%;
     transform: translateY(-10px);

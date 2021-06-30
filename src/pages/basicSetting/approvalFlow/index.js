@@ -47,12 +47,7 @@ function ApprovalFlow(props) {
         templateType: val,
       },
     }).then(() => {
-      // const { nodes, detailNode } = props;
-      // this.setState({
-      //   nodes,
-      //   ccPosition: detailNode.ccPosition,
-      //   repeatMethods: detailNode.repeatMethod,
-      // });
+      console.log('成功');
     });
   };
 
@@ -91,16 +86,18 @@ function ApprovalFlow(props) {
     dataIndex: 'operate',
     render: (_, record) => (
       <span>
-        <AddFlow
-          title="edit"
-          templateType={status}
-          processPersonId={record.id}
-          name={record.templateName}
-          onOk={() => onQuery()}
-        >
-          <a>编辑</a>
-        </AddFlow>
-        <Divider type="vertical" />
+        {
+          !record.isDefault &&
+          <>
+            <Popconfirm
+              title="确认删除吗？"
+              onConfirm={() => onDel(record.id)}
+            >
+              <span className="deleteColor">删除</span>
+            </Popconfirm>
+            <Divider type="vertical" />
+          </>
+        }
         <AddFlow
           title="copy"
           templateType={status}
@@ -110,18 +107,16 @@ function ApprovalFlow(props) {
         >
           <a>复制</a>
         </AddFlow>
-        {
-          !record.isDefault &&
-          <>
-            <Divider type="vertical" />
-            <Popconfirm
-              title="确认删除吗？"
-              onConfirm={() => onDel(record.id)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
-          </>
-        }
+        <Divider type="vertical" />
+        <AddFlow
+          title="edit"
+          templateType={status}
+          processPersonId={record.id}
+          name={record.templateName}
+          onOk={() => onQuery()}
+        >
+          <a>编辑</a>
+        </AddFlow>
       </span>
     ),
     width: '170px',

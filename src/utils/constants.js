@@ -1180,7 +1180,7 @@ export const invoiceType = {
   },
   3: {
     type: 3,
-    color: 'rgba(38, 128, 242, 0.08)',
+    color: 'rgba(110, 0, 255, 0.06)',
     name: '薪资'
   },
 };

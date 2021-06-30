@@ -1,0 +1,33 @@
+
+.message{
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(0, 199, 149, 0.08);
+  border: 1px solid rgba(0, 199, 149, 0.15);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  span{
+    line-height: 1;
+  }
+}
+.chartLeft{
+  width: 328px;
+  background: rgba(250, 250, 250, 1);
+  height: 100%;
+  .chartLeftTop{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 22px;
+    margin-left: 24px;
+    margin-right: 16px;
+    p{
+      margin-bottom: 0px;
+    }
+  }
+}
+.chartRight{
+  flex: 1;
+  padding: 16px 24px;
+  width: 652px;
+  height: 100%;
+}

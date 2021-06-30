@@ -105,3 +105,4 @@ export const dateToTime = str => {
     endTime: moment(endTime).format('x')
   };
 };
+

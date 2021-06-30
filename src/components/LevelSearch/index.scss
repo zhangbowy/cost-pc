@@ -1,11 +1,21 @@
 .popover{
   width: 360px;
   max-height: 532px;
-  :global(.ant-popover-arrow){
-    display: none;
-  }
-  :global(.ant-popover-inner-content){
-    padding: 0;
+  :global{
+    .ant-form-inline .ant-form-item > .ant-form-item-label{
+      text-align: left;
+    }
+    .ant-popover-inner-content{
+      padding: 0;
+    }
+    .ant-popover-arrow{
+      display: none;
+    }
+    .ant-form-inline .ant-form-item{
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
   }
 }
 .delBtn{
@@ -18,5 +28,40 @@
   color: #00C795;
 }
 .formCnt{
-  padding: 24px 24px 24px 24px ;
+  padding: 24px 24px 4px 24px ;
+  display: flex;
+  flex-direction: column;
+  min-height: 256px;
+  max-height: 404px;
+  overflow-y: scroll;
+}
+.formItem{
+  display: flex;
+  margin-bottom: 24px;
+  .label{
+    line-height: 32px;
+    width: 84px;
+    margin-right: 24px;
+    overflow: hidden;
+    color:rgba(0, 0, 0, 0.85);
+    font-size: 14px;
+  }
+}
+.price{
+  display: flex;
+  img{
+    width: 24px;
+    height: 24px;
+  }
+  .priceS{
+    margin: 0 6px;
+    line-height: 32px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.85);
+  }
+  .names{
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 27px;
+    margin-left: 5px;
+  }
 }

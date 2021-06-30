@@ -1027,7 +1027,7 @@ class AddCost extends Component {
                 }
               </Row>
               {
-                !templateType &&
+                (!templateType || templateType === 3) &&
                 <>
                   <Divider type="horizontal" />
                   <AddCostTable

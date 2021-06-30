@@ -18,7 +18,7 @@ const RightChart = () => {
     <div className={styles.lefts}>
       <div className={styles.head}>
         <div className={styles.headL}>
-          <i className="iconfont iconjifenquanicon" style={{ color: '#00C795' }} />
+          <i className="iconfont iconzongzhichu fs-24" style={{ color: '#00C795' }} />
         </div>
         <div>
           <p className="fs-16 c-black-85 fw-500">企业总支出</p>

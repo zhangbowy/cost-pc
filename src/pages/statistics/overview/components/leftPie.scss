@@ -1,0 +1,124 @@
+.left{
+  flex: 1;
+  min-width: 464px;
+  background-color: #fff;
+  border-radius: 2px;
+  p{
+    margin-bottom: 0;
+  }
+  :global(.ant-menu-horizontal) {
+    line-height: 53px;
+  }
+  :global(.ant-menu-item){
+    padding: 0;
+    margin: 0 16px;
+  }
+  :global(.ant-form-inline .ant-form-item) {
+    margin-right: 0px;
+  }
+}
+ .top{
+   display: flex;
+   height: 56px;
+   align-items: center;
+   justify-content: space-between;
+   padding: 0 32px;
+   p{
+     margin: 0;
+     font-size: 16px;
+     color: rgba(0,0,0,0.85);
+     font-weight: 500;
+   }
+ }
+.chart {
+  width: 100%;
+  height: 510px;
+}
+.leftTop{
+  height: 56px;
+  border-bottom: 1px solid #E8E8E8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px 0 16px;
+}
+.leftMenu{
+  font-size: 16px;
+  color: rgba(0,0,0,0.36);
+  margin-left: 32px;
+  span{
+    cursor: pointer;
+    margin-right: 32px;
+    position: relative;
+    &::after{
+      width: 96px;
+      height: 2px;
+      background: #00C795;
+    }
+    &:hover{
+      color: #00C795;
+    }
+  }
+}
+.chart{
+  .noData{
+    width: 180px;
+    height: 180px;
+    border: 20px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 30px;
+    text-align: center;
+    left: 50%;
+    margin-left: -100px;
+    border-radius: 50%;
+    .noDataChild{
+      width: 210px;
+      height: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      p{
+        margin-bottom: 0;
+      }
+    }
+  }
+
+}
+
+.tooltip{
+  min-width: 150px;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border: 0;
+  position: absolute;
+  z-index: 100000;
+  .tooltipTit{
+    font-size: 12px;
+    font-family: HelveticaNeue;
+    color: rgba(0, 0, 0, 0.45);
+    margin-bottom: 4px;
+    line-height: 20px;
+  }
+  .tooltipBall{
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .tooltipCont{
+    font-size: 12px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
