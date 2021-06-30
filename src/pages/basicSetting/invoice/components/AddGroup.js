@@ -63,7 +63,7 @@ class AddGroup extends React.PureComponent {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const payload = { ...values };
-        if (title !== 'edit') {
+        if (title !== 'add') {
           Object.assign(payload, {
             id: data.id,
           });
@@ -141,26 +141,23 @@ class AddGroup extends React.PureComponent {
                 )
               }
             </Form.Item>
-            {
-              title !== 'edit' &&
-              <Form.Item
-                key="templateType"
-                label={labelItem.type}
-                {...formItemLayout}
-              >
-                {
-                  getFieldDecorator('templateType', {
-                    initialValue: (data && data.templateType) || 0,
-                  })(
-                    <Radio.Group disabled={title === 'copy'}>
-                      <Radio value={0}>报销单</Radio>
-                      <Radio value={1}>借款单</Radio>
-                      <Radio value={2}>申请单</Radio>
-                    </Radio.Group>
-                  )
-                }
-              </Form.Item>
-            }
+            <Form.Item
+              key="templateType"
+              label={labelItem.type}
+              {...formItemLayout}
+            >
+              {
+                getFieldDecorator('templateType', {
+                  initialValue: (data && data.templateType) || 0,
+                })(
+                  <Radio.Group disabled={(title === 'copy') || (title === 'edit')}>
+                    <Radio value={0}>报销单</Radio>
+                    <Radio value={1}>借款单</Radio>
+                    <Radio value={2}>申请单</Radio>
+                  </Radio.Group>
+                )
+              }
+            </Form.Item>
           </Form>
         </Modal>
       </span>
