@@ -1,13 +1,19 @@
 import { get, post } from '@/utils/request';
-// import constants from '@/utils/constants';
+import constants from '@/utils/constants';
 import api from './service';
 
+const { PAGE_SIZE } = constants;
 export default {
   namespace: 'approveRole',
   state: {
     list: [],
     details: {},
     detail: {},
+    query: {
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+    },
+    total: 0,
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -16,6 +22,11 @@ export default {
         type: 'save',
         payload: {
           list: response.list || [],
+          query: {
+            pageSize: payload.pageSize,
+            pageNo: payload.pageNo,
+          },
+          total: response.page ? response.page.total : 0,
         },
       });
     },

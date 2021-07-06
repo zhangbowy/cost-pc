@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 /* eslint-disable no-param-reassign */
 import moment from 'moment';
 import { condExclude, condThan } from './constants';
@@ -55,6 +56,14 @@ export function urlToList(url) {
     return `/${urlList.slice(0, index + 1).join('/')}`;
   });
 }
+
+export function guid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+};
 
 // antd列数据配置
 export function setColumns(data = [], w = 120) {

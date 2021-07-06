@@ -12,6 +12,8 @@ import AddRole from '../components/AddRole';
 @connect(({ approveRole, loading }) => ({
   list: approveRole.list,
   detail: approveRole.detail,
+  query: approveRole.query,
+  total: approveRole.total,
   loading: loading.effects['approveRole/list'] || false,
 }))
 class SettingPeople extends Component {
@@ -28,7 +30,10 @@ class SettingPeople extends Component {
         id,
       }
     });
-    this.onQuery({});
+    this.onQuery({
+      pageNo: 1,
+      pageSize: 10,
+    });
   }
 
   onQuery = (payload) => {
@@ -41,7 +46,10 @@ class SettingPeople extends Component {
   }
 
   handleOk = () => {
-    this.onQuery({});
+    this.onQuery({
+      pageNo: 1,
+      pageSize: 10,
+    });
   }
 
   onDelete = (id) => {
@@ -64,7 +72,7 @@ class SettingPeople extends Component {
 
   render() {
     const {id} = this.props.match.params;
-    const { detail } = this.props;
+    const { detail, query, total } = this.props;
     const columns = [{
       title: '人员',
       dataIndex: 'userName',
@@ -123,7 +131,26 @@ class SettingPeople extends Component {
             columns={columns}
             dataSource={list}
             loading={loading}
-            pagination={false}
+            pagination={{
+              current: query.pageNo,
+              onChange: (pageNumber) => {
+                this.onQuery({
+                  pageNo: pageNumber,
+                  pageSize: query.pageSize
+                });
+              },
+              size: 'small',
+              showTotal: () => (`共${total}条数据`),
+              showSizeChanger: true,
+              showQuickJumper: true,
+              total,
+              onShowSizeChange: (cur, size) => {
+                this.onQuery({
+                  pageNo: cur,
+                  pageSize: size
+                });
+              }
+            }}
           />
         </div>
       </div>
