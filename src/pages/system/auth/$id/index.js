@@ -2,12 +2,13 @@
 
 import React from 'react';
 import moment from 'moment';
-import { Button, Table, Popconfirm, message } from 'antd';
+import { Button, Table, Popconfirm, message, Modal } from 'antd';
 import { connect } from 'dva';
 import { choosePeople } from '@/utils/ddApi';
 // import SubHeader from '@/components/SubHeader';
 import PageHead from '@/components/PageHead';
 
+const { confirm } = Modal;
 @connect(({ loading, setUser }) => ({
   loading: loading.effects['setUser/list'] || false,
   list: setUser.list,
@@ -91,6 +92,30 @@ class setUser extends React.PureComponent {
 
   }
 
+  again = () => {
+    confirm({
+      title: '确认将钉钉已设置好的审批角色，同步至鑫支出吗？',
+      content: '如角色名称重复，同步后，会覆盖现有角色名称、人员、管理范围',
+      okText: '继续同步',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'auth/syncApproveRole',
+          payload: {}
+        }).then(() => {
+          message.success('数据同步中，请稍后查看');
+          const { query } = this.props;
+          this.onQuery({
+            pageNo: 1,
+            pageSize: query.pageSize
+          });
+        });
+      },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+    });
+  }
+
   render() {
     const { list, query, role, total } = this.props;
     const columns = [{
@@ -123,7 +148,10 @@ class setUser extends React.PureComponent {
         {/* <SubHeader type="role" content={role} {...this.props} /> */}
         <PageHead title={role.roleName} note={role.note} />
         <div className="content-dt">
-          <Button type="primary" style={{marginBottom: '15px'}} onClick={this.handleClick}>新增人员</Button>
+          <div style={{ display: 'flex' }}>
+            <Button type="primary" style={{marginBottom: '15px'}} onClick={this.handleClick}>新增人员</Button>
+            <Button type="default" className="m-l-8" onClick={() => this.again()}>同步钉钉角色</Button>
+          </div>
           <Table
             columns={columns}
             dataSource={list}

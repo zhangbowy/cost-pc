@@ -2,8 +2,18 @@ import constants from '@/utils/constants';
 
 const { APP_API } = constants;
 
+// 供应商和员工详情没写
 export default {
   detail: `${APP_API}/cost/statistics/v3/pc/detail`,
   dept: `${APP_API}/cost/statistics/v3/dept/pc`,
   deptDetail: `${APP_API}/cost/statistics/v3/dept/list`,
+  classifyDetail: `${APP_API}/cost/statistics/v3/category/list`,
+  projectDetail: `${APP_API}/cost/statistics/v3/project/list`,
+  supplierDetail: `${APP_API}/cost/statistics/v3/supplier/list`,
+  peopleDetail: `${APP_API}/cost/statistics/v3/staff/list`,
+  classify: `${APP_API}/cost/statistics/v3/category/pc`,
+  project: `${APP_API}/cost/statistics/v3/project/pc`,
+  supplier: `${APP_API}/cost/statistics/v3/supplier/pc`,
+  people: `${APP_API}/cost/statistics/v3/staff/pc`,
+  exports: `${APP_API}/cost/export/v3/statistics`,
 };

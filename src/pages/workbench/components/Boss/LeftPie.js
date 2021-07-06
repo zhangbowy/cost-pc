@@ -4,11 +4,22 @@ import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import moment from 'moment';
 // import echarts from 'echarts';
+import { Radio } from 'antd';
 import style from './leftPie.scss';
 // import { defaultColor } from '../../../../utils/constants';
 import { dateToTime } from '../../../../utils/util';
 import PieChart from './PieChart';
 
+const btn = [{
+  key: '0',
+  value: '按部门'
+}, {
+  key: '1',
+  value: '按类别'
+}, {
+  key: '2',
+  value: '按项目'
+}];
 class LeftPie extends PureComponent {
 
   state = {
@@ -96,6 +107,13 @@ class LeftPie extends PureComponent {
       <div className={style.left}>
         <div className={style.leftTop}>
           <p className="fs-16 c-black-85 fw-500">支出分析</p>
+          <Radio.Group value='0'>
+            {
+              btn.map(it => (
+                <Radio.Button key={it.key} value={it.key}>{it.value}</Radio.Button>
+              ))
+            }
+          </Radio.Group>
         </div>
         <PieChart
           data={data}

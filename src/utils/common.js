@@ -39,6 +39,10 @@ const conditionType = {
     type: 'inputNumber',
     ruleType: 'application_sum',
   },
+  'salary_amount': {
+    type: 'inputNumber',
+    ruleType: 'salary_amount',
+  },
   'other': {
     type: 'select',
     ruleType: 'other',
@@ -438,3 +442,17 @@ export const intToChinese = ( str ) => {
   });
  };
 
+ export const handleTime = (val) => {
+   let startTime = null;
+   let endTime = null;
+    if (Array.isArray(val)) {
+      const start = `${moment(val[0], 'YYYY-MM-DD')} 00:00:01`;
+      const end = `${moment(val[1], 'YYYY-MM-DD')} 23:59:59`;
+      startTime = moment(start).format('X');
+      endTime = moment(end).format('X');
+    }
+    return {
+      startTime,
+      endTime,
+    };
+ };

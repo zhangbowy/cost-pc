@@ -14,7 +14,7 @@ import defaultFunc from './utils';
 import style from './index.scss';
 
 const {Option} = Select;
-const { RangePicker } = DatePicker;
+const { RangePicker, MonthPicker } = DatePicker;
 const typeObj = {
   0: '银行卡',
   1: '支付宝',
@@ -335,6 +335,7 @@ class ChangeForm extends Component {
             }
           });
         }
+
         params = {
           ...details,
           reason: val.reason,
@@ -354,7 +355,11 @@ class ChangeForm extends Component {
           expandSubmitFieldVos,
           selfSubmitFieldVos
         };
-
+        if (val.month) {
+          Object.assign(params, {
+            month: moment(`${moment(val.month).format('YYYY-MM')}-01 00:00:01`).format('x'),
+          });
+        }
         if(Number(templateType) === 1) {
           console.log('时间',setTime({ time: val.repaymentTime }));
           Object.assign(params, {
@@ -800,6 +805,35 @@ class ChangeForm extends Component {
                                   disabledTime={defaultFunc.disabledDateTime}
                                   disabled={modify && !showField.repaymentTime.isModify}
                                 />
+                              )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
+                          </Form.Item>
+                        </Col>
+                        :
+                        null
+                    }
+                    {
+                      itw.field === 'month' && itw.status ?
+                        <Col span={12}>
+                          <Form.Item label={showField.month && showField.month.name} {...formItemLayout}>
+                            {
+                              getFieldDecorator('month', {
+                                initialValue: details.month ?
+                                moment(Number(details.month)).format('YYYY-MM') : '',
+                                rules: [{
+                                  required: !!(showField.month && showField.month.isWrite),
+                                  message: `请选择${showField.month && showField.month.name}`
+                                }]
+                              })(
+                                <MonthPicker placeholder={showField.month.note || '请选择'} />
                               )
                             }
                             {

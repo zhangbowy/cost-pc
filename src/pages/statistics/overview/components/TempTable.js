@@ -1,9 +1,14 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon, Menu, Dropdown, Table } from 'antd';
+import { Button, Icon, Menu, Dropdown, Table, message } from 'antd';
 import style from './index.scss';
 import { rowSelect } from '../../../../utils/common';
+import { ddOpenLink } from '../../../../utils/ddApi';
+import constants from '../../../../utils/constants';
 
+const {
+  APP_API
+} = constants;
 class TempTable extends PureComponent {
 
   state = {
@@ -42,16 +47,82 @@ class TempTable extends PureComponent {
     });
   };
 
-  // handleTableChange = (pagination, filters, sorter) => {
-  //   let current = 0;
-  //   if (pagination) {
-  //     current = pagination.current;
-  //   }
-  // }
+  handleTableChange = (pagination, filters, sorter) => {
+    const params = {
+      ...filters,
+    };
+    if (pagination) {
+      const { current, pageSize } = pagination;
+      Object.assign(params, {
+        pageNo: current,
+        pageSize,
+      });
+    }
+    if (sorter) {
+      let order = '';
+      if (sorter.order === 'ascend') {
+        order = 1;
+      } else if (sorter.order === 'descend') {
+        order = 2;
+      }
+      Object.assign(params, {
+        sortType: order,
+      });
+    }
+    this.props.onQuery(params);
+  }
+
+  handleCancel = () => {
+    this.setState({
+      selectedRows: [],
+      selectedRowKeys: [],
+    });
+  }
+
+  print = () => {
+    const { selectedRows } = this.state;
+    if (selectedRows.length > 10) {
+      message.error('最多支持打印十条数据');
+      return;
+    }
+    if (selectedRows.length === 0) {
+      message.error('请选择一条数据打印');
+      return;
+    }
+    const id = selectedRows.map(it => it.invoiceSubmitId);
+    const lists = Array.from(new Set(id));
+    const ids = lists.join(',');
+    ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`);
+  }
+
+  // 导出
+  onExport = (key) => {
+    const { onExports } = this.props;
+    const { selectedRowKeys } = this.state;
+    console.log('TempTable -> onExport -> selectedRowKeys', key);
+    if (selectedRowKeys.length === 0 && key === '1') {
+      message.error('请选择要导出的数据');
+      return;
+    }
+    let params = {};
+    if (Number(key) === 1) {
+      params = {
+        ids: selectedRowKeys,
+      };
+    }
+    onExports(params, key);
+  }
+
+  onInit = () => {
+    this.setState({
+      selectedRowKeys: [],
+      selectedRows: [],
+    });
+  }
 
   render () {
     const { list, columns, tableProps,
-      pagination, hisRecord, currentType } = this.props;
+      pagination, hisRecord, currentType, loading } = this.props;
     const { selectedRowKeys, sumAmount } = this.state;
     const rowSelection = {
       type: 'checkbox',
@@ -67,7 +138,11 @@ class TempTable extends PureComponent {
             <div className="head_lf" style={{display: 'flex'}}>
               <Dropdown
                 overlay={(
-                  <Menu onClick={e => this.onExport(e)}>
+                  <Menu onClick={e => this.onExport(e.key)}>
+                    {
+                      !currentType &&
+                      <Menu.Item key="1"><span className="pd-20-9 c-black-65">导出选中（{selectedRowKeys.length}）</span></Menu.Item>
+                    }
                     <Menu.Item key="2"><span className="pd-20-9 c-black-65">导出高级搜索结果</span></Menu.Item>
                     <Menu.Item key="3"><span className="pd-20-9 c-black-65">导出全部</span></Menu.Item>
                   </Menu>
@@ -78,6 +153,10 @@ class TempTable extends PureComponent {
                   导出 <Icon type="down" />
                 </Button>
               </Dropdown>
+              {
+                !currentType &&
+                <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
+              }
             </div>
           </div>
           {
@@ -94,6 +173,7 @@ class TempTable extends PureComponent {
           <Table
             dataSource={list}
             columns={columns}
+            loading={loading}
             {...tableProps}
             rowSelection={currentType === 0 ? rowSelection : null}
             onChange={this.handleTableChange}

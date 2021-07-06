@@ -25,35 +25,38 @@ class SearchBanner extends PureComponent {
       <div className={style.search}>
         <div className={style.top}>
           <FormStyle type="out" fields={list} onChangeSearch={this.props.onChange} />
-          <div className="head_rf">
-            <Popover
-              trigger="click"
-              title={null}
-              placement="bottomRight"
-              overlayClassName={style.popover}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              content={(
-                <>
-                  <div className={style.formCnt}>
-                    <FormStyle
-                      fields={list}
-                      onChangeSearch={this.props.onChange}
-                    />
-                  </div>
-                  <Divider type="horizontal" style={{ margin: 0 }} />
-                  <div className={style.delBtn} onClick={() => this.onCancel()}>
-                    <i className="iconfont iconshanchu" />
-                    <span>清除所有筛选条件</span>
-                  </div>
-                </>
-              )}
-            >
-              <span className={style.searchLevel}>
-                <i className="iconfont iconshaixuan" />
-                <span className="fs-16">高级筛选</span>
-              </span>
-            </Popover>
-          </div>
+          {
+            list.length > 5 &&
+              <div className="head_rf">
+                <Popover
+                  trigger="click"
+                  title={null}
+                  placement="bottomRight"
+                  overlayClassName={style.popover}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  content={(
+                    <>
+                      <div className={style.formCnt}>
+                        <FormStyle
+                          fields={list}
+                          onChangeSearch={this.props.onChange}
+                        />
+                      </div>
+                      <Divider type="horizontal" style={{ margin: 0 }} />
+                      <div className={style.delBtn} onClick={() => this.onCancel()}>
+                        <i className="iconfont iconshanchu" />
+                        <span>清除所有筛选条件</span>
+                      </div>
+                    </>
+                  )}
+                >
+                  <span className={style.searchLevel}>
+                    <i className="iconfont iconshaixuan" />
+                    <span className="fs-16">高级筛选</span>
+                  </span>
+                </Popover>
+              </div>
+          }
         </div>
         {
           showStr && (showStr.length > 0) &&

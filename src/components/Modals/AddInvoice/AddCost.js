@@ -25,7 +25,7 @@ const labelInfo = {
   happenTime: '发生日期',
 };
 @Form.create()
-@connect(({ global, costGlobal, session }) => ({
+@connect(({ global, costGlobal, session, loading }) => ({
   expenseList: global.expenseList,
   deptInfo: global.deptInfo,
   userId: global.userId,
@@ -37,6 +37,8 @@ const labelInfo = {
   detailFolder: costGlobal.detailFolder,
   userInfo: session.userInfo,
   userDeps: costGlobal.userDeps,
+  uploadStatus: costGlobal.uploadStatus,
+  uploadLoading: loading.effects['costGlobal/upload'] || false,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -293,6 +295,18 @@ class AddCost extends Component {
     return list;
   }
 
+  upload = (val) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/upload',
+        payload: val,
+      }).then(() => {
+        const { uploadStatus } = this.props;
+        resolve(uploadStatus);
+      });
+    });
+  }
+
   //  提交
   handleOk = (flag) => {
     const {
@@ -520,6 +534,7 @@ class AddCost extends Component {
         ...detail,
         categoryName: lbDetail.costName,
         icon: lbDetail.icon,
+        categoryId: lbDetail.id,
       };
       this.props.form.setFieldsValue({
         time: null
@@ -675,6 +690,7 @@ class AddCost extends Component {
       currencySymbol,
       currencyId,
     } = this.state;
+    console.log('details', details);
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
     const formItemLayout = {
@@ -705,7 +721,7 @@ class AddCost extends Component {
           title="添加支出"
           visible={visible}
           width="880px"
-          bodyStyle={{height: '470px', overflowY: 'scroll'}}
+          bodyStyle={{height: '494px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           maskClosable={false}
           footer={(
@@ -1044,6 +1060,9 @@ class AddCost extends Component {
                     costType={this.props.costType}
                     onGetForm={fn=> { this.onGetForm = fn; }}
                     modify={modify}
+                    expenseId={details.categoryId}
+                    upload={this.upload}
+                    uploadLoading={this.props.uploadLoading}
                   />
                 </>
               }

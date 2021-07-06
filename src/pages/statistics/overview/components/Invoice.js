@@ -18,10 +18,15 @@ const selects = [{
   value: '项目',
 }];
 const { Option } = Select;
-function InvoicePrice({ children, detailList, onQuery, id, query, total, projectType, pageDetail, chartList }) {
+function InvoicePrice({ children, onQuery, id, title,
+   projectType, pageDetail }) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
   const [pieChart, setPieChart] = useState('0');
+  const [list, setList] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [chartList, setChartList] = useState([]);
+  const [query, setQuery] = useState('0');
 
   const columns = [{
       title: '序号',
@@ -81,26 +86,40 @@ function InvoicePrice({ children, detailList, onQuery, id, query, total, project
       ),
       fixed: 'right',
     }];
+
+    const onNewQuery = async(payload) => {
+      let result = {};
+      if (payload.isTurnPage) {
+        result = await pageDetail(payload);
+      } else {
+        result = await onQuery(payload);
+      }
+      // detailList, pieChartVos, listQuery, listTotal 返回参数
+      if (result.detailList) setList(result.detailList);
+      if (result.pieChartVos) setChartList(result.pieChartVos);
+      if (result.listQuery) setQuery(result.listQuery);
+      if (result.listTotal) setTotal(result.listTotal);
+    };
+
     const onSearch = (e) => {
       setSearch(e);
-      pageDetail({ pageNo: 1, pageSize: 10, deptId: id, projectType, searchContent: e, pieChart });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart });
     };
 
     const onChange = val => {
       setPieChart(val);
-      onQuery({ pageNo: 1, pageSize: 10, deptId: id, projectType, searchContent: search, pieChart: val });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val });
     };
   return (
     <span>
       <span onClick={() => {
-        console.log(onQuery);
-        onQuery({ pageNo: 1, pageSize: 10, deptId: id, projectType, pieChart });
+        onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, pieChart });
         setVisible(true);  }}
       >
         { children }
       </span>
       <Modal
-        title="单据列表"
+        title={title}
         visible={visible}
         onCancel={() => { setSearch('');setVisible(false); }}
         footer={null}
@@ -115,7 +134,7 @@ function InvoicePrice({ children, detailList, onQuery, id, query, total, project
           <div className={style.chartLeft}>
             <div className={style.chartLeftTop}>
               <div className={style.chartLeftTopL}>
-                <p className="fs-16 c-black-85 fw-500">支出分部</p>
+                <p className="fs-16 c-black-85 fw-500">支出分布</p>
                 <p className="c-black-36 fs-12">默认展示费用不为零的Top 10类别</p>
               </div>
               <Select
@@ -132,7 +151,7 @@ function InvoicePrice({ children, detailList, onQuery, id, query, total, project
             </div>
             <Chart
               data={chartList}
-              total={0}
+              total={total}
               fileName={{
                 name: 'dimensionName',
                 price: 'costSum'
@@ -140,26 +159,29 @@ function InvoicePrice({ children, detailList, onQuery, id, query, total, project
             />
           </div>
           <div className={style.chartRight}>
-            <Search
-              placeholder="请输入单号、事由、收款账户名称"
-              style={{ width: '292px',marginRight:'20px', marginBottom: '16px' }}
-              onSearch={(e) => onSearch(e)}
-              value={search}
-              onInput={e => setSearch(e.target.value)}
-            />
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <p className="fs-16 c-black-85 fw-500" style={{ lineHeight: '32px' }}>支出明细</p>
+              <Search
+                placeholder="请输入单号、事由、收款账户名称"
+                style={{ width: '292px',marginRight:'20px', marginBottom: '16px' }}
+                onSearch={(e) => onSearch(e)}
+                value={search}
+                onInput={e => setSearch(e.target.value)}
+              />
+            </div>
             <Table
-              dataSource={detailList}
+              dataSource={list}
               columns={columns}
               rowKey="invoiceSubmitId"
-              scroll={{y: '280px', x: '1090px'}}
+              scroll={{y: '380px', x: '1090px'}}
               onChange={(page, filter) => {
-                const { pageNumber } = page;
-                console.log('onChange');
-                pageDetail({
-                  pageNo: pageNumber,
-                  pageSize: query.pageSize,
-                  ...filter,
+                const { current, pageSize } = page;
+                console.log('onChange', page);
+                onNewQuery({
                   id,
+                  pageNo: current,
+                  pageSize,
+                  ...filter,
                   projectType,
                   searchContent: search,
                   pieChart,
@@ -169,9 +191,9 @@ function InvoicePrice({ children, detailList, onQuery, id, query, total, project
               pagination={{
                 current: query.pageNo,
                 hideOnSinglePage: true,
-                total,
+                total: query.total,
                 size: 'small',
-                showTotal: () => (`共${total}条数据`),
+                showTotal: () => (`共${query.total}条数据`),
                 showSizeChanger: true,
                 showQuickJumper: true,
               }}

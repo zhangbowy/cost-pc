@@ -808,6 +808,7 @@ class AddInvoice extends Component {
       invoiceTemplateId: id,
       userId: details.userId || '',
       submitSum: ((total * 1000)/10).toFixed(0),
+      salaryAmount: ((total * 1000)/10).toFixed(0),
     };
     console.log('AddInvoice -> handleOk -> this.changeForm', this.changeForm);
     if (this.changeForm &&

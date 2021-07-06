@@ -15,6 +15,7 @@ export default {
     },
     total: 0,
     sum: 0,
+    salaryList: [],
   },
   effects: {
     *submitList({ payload }, { call, put }) {
@@ -56,6 +57,22 @@ export default {
         type: 'save',
         payload: {
           applicationList: newArr || [],
+          query: {
+            pageSize: payload.pageSize,
+            pageNo: payload.pageNo,
+          },
+          total: response.page ? response.page.total : 0,
+          sum: response.sum || 0
+        },
+      });
+    },
+    *salaryList({ payload }, { call, put }) {
+      const response = yield call(post, api.salaryList, payload);
+      const newArr = response.list && response.list.map(it => { return { ...it, money: it.salaryAmount }; });
+      yield put({
+        type: 'save',
+        payload: {
+          salaryList: newArr || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,

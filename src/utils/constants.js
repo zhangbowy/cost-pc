@@ -1086,8 +1086,12 @@ export const invoiceJson = {
   },
   '3': {
     jsonStr: payJson,
+    addUrl: 'global/addSalary',
+  },
+  '4': {
+    jsonStr: payJson,
     addUrl: 'global/addPay',
-  }
+  },
 };
 
 export const newInvoiceStatus = [{

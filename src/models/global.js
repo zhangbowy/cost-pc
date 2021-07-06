@@ -50,6 +50,7 @@ export default {
     UseTemplate: [], // 普通列表
     OftenTemplate: [], // 常用单据列表
     applyDetail: {}, // 申请单详情
+    salaryDetail: {}, // 薪资单详情
     BasicSettingMenus:[], // 获取设置内容
     isApproval: false, // 判断是否是钉钉空间
     msnUrl: '', // 小程序二维码链接
@@ -176,6 +177,16 @@ export default {
         type: 'save',
         payload: {
           applyDetail: response || {},
+        },
+      });
+    },
+    // 薪资单
+    *salaryDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.salaryDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          salaryDetail: response || {},
         },
       });
     },
@@ -441,6 +452,10 @@ export default {
     // 添加申请单(单据)
     *addApply({ payload }, { call }) {
       yield call(post, api.addApply, payload);
+    },
+    // 添加薪资单(单据)
+    *addSalary({ payload }, { call }) {
+      yield call(post, api.addSalary, payload);
     },
     // 批量下单
     *addBatch({ payload }, { call, put }) {

@@ -22,7 +22,6 @@ export default {
     listTotal: 0,
     pieChartVos: [], // 弹窗的饼图
     detailList: [], // 弹窗的列表
-    subSum: 0, // 总金额
   },
   effects: {
     *detail({ payload }, { call, put }) {
@@ -121,19 +120,259 @@ export default {
         },
       });
     },
+    *classify({ payload }, { call, put }) {
+      const response = yield call(post, api.classify, payload);
+      const submitSum = response && response.length ?
+      response.reduce((prev, next) => {
+        return prev + next.submitSumAll;
+      }, 0) : 0;
+      const submitSumAnnulus = response && response.length ?
+      response.reduce((prev, next) => {
+        return prev + next.submitSumAnnulusAll;
+      }, 0) : 0;
+      const annuls = submitSumAnnulus ?
+      Number(((((submitSum - submitSumAnnulus) / submitSumAnnulus).toFixed(2)) * 100).toFixed(0))
+      : 0;
+      const submitSumYear = response && response.length ?
+      response.reduce((prev, next) => {
+        return prev + next.submitSumYearAll;
+      }, 0) : 0;
+      const yearOnYear = submitSumYear ?
+      Number(((((submitSum - submitSumYear) / submitSumYear).toFixed(2)) * 100).toFixed(0))
+      : 0;
+      response.unshift({
+        categoryName: '合计',
+        id: -1,
+        'submitSum': submitSum,
+        'submitSumAll': submitSum,
+        'submitSumAnnulus': submitSumAnnulus,
+        'submitSumAnnulusAll': 0,
+        'submitSumYear': submitSumYear,
+        'submitSumYearAll': 0,
+        'submitUserCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitUserCountAll;
+        }, 0) : 0,
+        'submitUserCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitUserCountAll;
+        }, 0) : 0,
+        'submitCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitCountAll;
+        }, 0) : 0,
+        'submitCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitCountAll;
+        }, 0) : 0,
+        'categoryCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.categoryCountAll;
+        }, 0) : 0,
+        'categoryCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.categoryCountAll;
+        }, 0) : 0,
+        'yearOnYear': Math.abs(yearOnYear),
+        'annulus': Math.abs(annuls),
+        'yearOnYearSymbolType': submitSumYear === 0 ? null : yearOnYear > 0 ? 0 : 1,
+        'annulusSymbolType': submitSumAnnulus === 0 ? null : annuls > 0 ? 0 : 1,
+        children: [],
+        childrens: [...response],
+      });
+      console.log('*list -> response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          list: response || [],
+        },
+      });
+    },
+    *project({ payload }, { call, put }) {
+      const response = yield call(post, api.project, payload);
+      console.log('*list -> response', response);
+      response.unshift({
+        projectName: '合计',
+        id: -1,
+        'submitSum': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumAll;
+        }, 0) : 0,
+        'submitSumAll': response && response.length ? response.reduce((prev, next) => {
+          return prev + next.submitSumAll;
+        }, 0) : 0,
+        'submitSumAnnulus': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumAnnulusAll;
+        }, 0) : 0,
+        'submitSumAnnulusAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumAnnulusAll;
+        }, 0) : 0,
+        'submitSumYear': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumYearAll;
+        }, 0) : 0,
+        'submitSumYearAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumYearAll;
+        }, 0) : 0,
+        'submitUserCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitUserCountAll;
+        }, 0) : 0,
+        'submitUserCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitUserCountAll;
+        }, 0) : 0,
+        'submitCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitCountAll;
+        }, 0) : 0,
+        'submitCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitCountAll;
+        }, 0) : 0,
+        'categoryCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.categoryCountAll;
+        }, 0) : 0,
+        'categoryCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.categoryCountAll;
+        }, 0) : 0,
+        'yearOnYear': response && response.length ?
+        response[0].yearOnYear : 0,
+        'annulus': response && response.length ?
+        response[0].annulus : 0,
+        'yearOnYearSymbolType': response && response.length ?
+        response[0].yearOnYearSymbolType : 0,
+        'annulusSymbolType': response && response.length ?
+        response[0].annulusSymbolType : 0,
+        children: []
+      });
+      yield put({
+        type: 'save',
+        payload: {
+          list: response.map(it => { return { ...it, submitSum: it.submitSumAll }; }) || [],
+        },
+      });
+    },
+    *people({ payload }, { call, put }) {
+      const response = yield call(post, api.people, payload);
+      console.log('*list -> response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          list: response.list || [],
+          querys: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize
+          },
+          totals: response.page.total || 0,
+        },
+      });
+    },
+    *supplier({ payload }, { call, put }) {
+      const response = yield call(post, api.supplier, payload);
+      console.log('*list -> response', response);
+      response.unshift({
+        supplierName: '合计',
+        id: -1,
+        'submitSum': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumAll;
+        }, 0) : 0,
+        'submitSumAll': response && response.length ? response.reduce((prev, next) => {
+          return prev + next.submitSumAll;
+        }, 0) : 0,
+        'submitSumAnnulus': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumAnnulusAll;
+        }, 0) : 0,
+        'submitSumAnnulusAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumAnnulusAll;
+        }, 0) : 0,
+        'submitSumYear': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumYearAll;
+        }, 0) : 0,
+        'submitSumYearAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitSumYearAll;
+        }, 0) : 0,
+        'submitUserCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitUserCountAll;
+        }, 0) : 0,
+        'submitUserCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitUserCountAll;
+        }, 0) : 0,
+        'submitCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitCountAll;
+        }, 0) : 0,
+        'submitCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.submitCountAll;
+        }, 0) : 0,
+        'categoryCount': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.categoryCountAll;
+        }, 0) : 0,
+        'categoryCountAll': response && response.length ?
+        response.reduce((prev, next) => {
+          return prev + next.categoryCountAll;
+        }, 0) : 0,
+        'yearOnYear': response && response.length ?
+        response[0].yearOnYear : 0,
+        'annulus': response && response.length ?
+        response[0].annulus : 0,
+        'yearOnYearSymbolType': response && response.length ?
+        response[0].yearOnYearSymbolType : 0,
+        'annulusSymbolType': response && response.length ?
+        response[0].annulusSymbolType : 0,
+        children: []
+      });
+      yield put({
+        type: 'save',
+        payload: {
+          list: response || [],
+        },
+      });
+    },
     *deptDetail({ payload }, { call, put }) {
-      const response = yield call(post, api.deptDetail, payload);
+      let url = api.deptDetail;
+      switch(Number(payload.currentType)) {
+        case 2:
+          url = api.classifyDetail;
+        break;
+        case 3:
+          url = api.projectDetail;
+        break;
+        case 4:
+          url = api.deptDetail;
+        break;
+        case 5:
+          url = api.supplierDetail;
+        break;
+        default:
+          break;
+      }
+      const response = yield call(post, url, payload);
       console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {
           detailList: response.pageResult ? response.pageResult.list : [],
-          listTotal: response.pageResult && response.pageResult.page ? response.pageResult.page.total : 0,
+          listTotal: response.submitSum || 0,
           pieChartVos: response.pieChartVos || [],
-          subSum: response.submitSum || 0,
           listQuery: {
             pageNo: payload.pageNo,
-            pageSize: payload.pageSize
+            pageSize: payload.pageSize,
+            total: response.pageResult && response.pageResult.page ? response.pageResult.page.total : 0,
           },
         },
       });
@@ -147,10 +386,15 @@ export default {
           detailList: response.pageResult ? response.pageResult.list : [],
           listQuery: {
             pageNo: payload.pageNo,
-            pageSize: payload.pageSize
+            pageSize: payload.pageSize,
+            total: response.pageResult && response.pageResult.page ? response.pageResult.page.total : 0,
           },
         },
       });
+    },
+    *export({ payload }, { call }) {
+      Object.assign(payload, { exportType:'export', fileName: '支出明细' });
+      yield call(post, api.exports, payload);
     },
   },
   reducers: {

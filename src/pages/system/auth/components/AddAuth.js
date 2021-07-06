@@ -314,6 +314,16 @@ class AddAuth extends Component {
           <div className={style.cnt_foot}>
             <div className={style.header}>
               <div className={style.line} />
+              <span>项目权限</span>
+            </div>
+          </div>
+          <Checkbox value="4" checked className="m-l-8">
+            <span className="fs-14 c-black-65">所有项目</span>
+            <span className="fs-14 c-black-45">（不受项目责任制的限制，默认可见所有项目）</span>
+          </Checkbox>
+          <div className={style.cnt_foot}>
+            <div className={style.header}>
+              <div className={style.line} />
               <span>数据权限</span>
             </div>
           </div>

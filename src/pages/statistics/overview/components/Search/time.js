@@ -24,15 +24,6 @@ export const getQuarter = (date,isValue) => {
     const end =  date.split('~')[1] + ((date.split('~')[1].split('-')[1]==='06'||date.split('~')[1].split('-')[1]==='09')?'-30 23:59:59':'-31 23:59:59');
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
-    // let valueStr = '第四季度';
-    // const month = new Date(start).getMonth()+1;
-    // if(month <= 3){
-    //   valueStr = '第一季度';
-    // }if(month <= 6){
-    //   valueStr = '第二季度';
-    // }if(month <= 9){
-    //   valueStr = '第三季度';
-    // }
     return {
       startTime,
       endTime,

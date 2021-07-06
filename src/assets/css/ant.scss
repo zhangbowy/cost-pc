@@ -29,6 +29,13 @@
     }
   }
 
+  .ant-table-body {
+    overflow-x: hidden !important;
+    &:hover {
+      overflow-x: auto !important;
+    }
+  }
+
   .ant-table-fixed-left, .ant-table-fixed-right {
     z-index: 10 !important;
   }

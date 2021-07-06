@@ -46,6 +46,10 @@
       position: relative;
       width: 158px;
       cursor: pointer;
+      :global(.ant-select-selection--multiple) {
+        max-height: 32px;
+        overflow: hidden;
+      }
     }
     .selectI{
       width: 158px;
@@ -149,6 +153,10 @@
     overflow: hidden;
     color:rgba(0, 0, 0, 0.85);
     font-size: 14px;
+  }
+  :global(.ant-select-selection--multiple) {
+    max-height: 64px;
+    overflow-y: scroll;
   }
 }
 .price{

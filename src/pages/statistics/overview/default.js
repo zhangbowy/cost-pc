@@ -1,9 +1,13 @@
 import React from 'react';
 import { Tooltip, Badge } from 'antd';
 import moment from 'moment';
+import { projectType } from '@/utils/fields';
 import { getArrayValue, invoiceStatus, approveStatus } from '../../../utils/constants';
 import InvoiceDetail from '../../../components/Modals/InvoiceDetail';
+import { defaultMonth } from './components/Search/time';
 
+const times = defaultMonth();
+const initMonth = { ...times };
 export default {
   '0': {
     query: 'detail',
@@ -29,11 +33,16 @@ export default {
       title: '报销事由',
       dataIndex: 'reason',
       width: 150,
-      render: (text) => (
+      render: (_, record) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <a className="eslips-2">{text}</a>
-          </Tooltip>
+          <InvoiceDetail
+            id={record.invoiceSubmitId}
+            templateType={0}
+          >
+            <Tooltip placement="topLeft" title={record.reason || ''}>
+              <a className="eslips-2">{record.reason}</a>
+            </Tooltip>
+          </InvoiceDetail>
         </span>
       ),
     }, {
@@ -113,19 +122,22 @@ export default {
     }, {
       title: '单据状态',
       dataIndex: 'status',
-      render: (text) => (
-        <span>
-          {
-            (Number(text) === 2 )|| (Number(text) === 3) ?
-              <Badge
-                color={Number(text) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
-                text={getArrayValue(text, invoiceStatus)}
-              />
-            :
-              <span>{getArrayValue(text, invoiceStatus)}</span>
-          }
-        </span>
-      ),
+      render: (_, record) => {
+        const { status } = record;
+        return (
+          <span>
+            {
+              (Number(status) === 2 )|| (Number(status) === 3) ?
+                <Badge
+                  color={Number(status) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
+                  text={getArrayValue(status, invoiceStatus)}
+                />
+              :
+                <span>{getArrayValue(status, invoiceStatus)}</span>
+            }
+          </span>
+        );
+      },
       width: 110,
       fixed: 'right',
       filters: [
@@ -197,7 +209,12 @@ export default {
       label: '单据状态',
       placeholder: '请选择',
       key: 'status',
-      id: 'status'
+      id: 'status',
+      options: invoiceStatus,
+      fileName: {
+        key: 'key',
+        name: 'value'
+      }
     }, {
       type: 'deptAndUser',
       label: '提交部门/人',
@@ -205,7 +222,7 @@ export default {
       key: ['createUserVOS', 'createDeptVOS'],
       id: 'createUserVOS',
     }, {
-      type: 'select',
+      type: 'tree',
       label: '单据类型',
       placeholder: '请选择',
       key: 'invoiceTemplateIds',
@@ -220,18 +237,8 @@ export default {
       type: 'tree',
       label: '供应商',
       placeholder: '请选择',
-      key: 'supplierId',
+      key: 'supplierIds',
       id: 'supplierId',
-    }, {
-      type: 'timeC',
-      label: '选择月份',
-      placeholder: '单号、事由、收款人',
-      key: 'content',
-      id: 'timeC',
-      out: 1,
-      value: {
-        dateType: 0,
-      }
     }, {
       type: 'search',
       label: '外部选择',
@@ -260,13 +267,40 @@ export default {
       width: 70,
     }],
     chartName: 'deptName',
-    type: 'dept',
+    type: 'deptId',
     tableProps: {
       rowKey: 'id'
     },
+    searchList: [{
+      type: 'timeC',
+      label: '选择月份',
+      key: ['startTime', 'endTime'],
+      id: 'timeC',
+      out: 1,
+      value: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      valueStr: initMonth.valueStr,
+    }, {
+      type: 'dept',
+      label: '部门',
+      placeholder: '请选择',
+      key: 'deptVos',
+      id: 'deptVos',
+      out: 1,
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '支出类别',
+      placeholder: '请选择',
+      key: 'categoryIds',
+      id: 'categoryIds',
+      out: 1,
+    }]
   },
   2: {
-    query: 'dept',
+    query: 'classify',
     columns: [{
       title: '支出类别',
       dataIndex: 'categoryName',
@@ -284,32 +318,55 @@ export default {
       width: 70,
     }],
     chartName: 'categoryName',
-    type: 'classify',
+    type: 'categoryId',
     tableProps: {
       rowKey: 'id'
-    }
+    },
+    searchList: [{
+      type: 'timeC',
+      label: '选择月份',
+      placeholder: '单号、事由、收款人',
+      key: ['startTime', 'endTime'],
+      id: 'timeC',
+      out: 1,
+      value: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      valueStr: initMonth.valueStr,
+    }, {
+      type: 'dept',
+      label: '部门',
+      placeholder: '请选择',
+      key: 'deptVos',
+      id: 'deptVos',
+      out: 1,
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '支出类别',
+      placeholder: '请选择',
+      key: 'categoryIds',
+      id: 'categoryIds',
+      out: 1,
+    }, {
+      type: 'rangeTime',
+      label: '发生日期',
+      placeholder: '请选择',
+      key: ['repayStartTime', 'endTime'],
+      id: 'submitStartTime',
+      out: 1,
+    }]
   },
   3: {
-    query: 'dept',
+    query: 'project',
     columns: [{
-      title: '部门',
-      dataIndex: 'deptName',
-      width: 150,
+      title: '项目',
+      dataIndex: 'projectName',
+      width: 100,
       render: (_, record) => (
-        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.deptName}</span>
+        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.projectName}</span>
       )
-    }, {
-      title: '金额（元）',
-      dataIndex: 'submitSumAll',
-      render: (_, record) => (
-        <a>
-          {record.submitSumAll ? (record.submitSumAll).toFixed(2) : 0}
-          { record.submitSum && record.id !== -1 && record.children
-           && record.children.length ?  `（本部${(record.submitSum).toFixed(2)}）` : ''}
-        </a>
-      ),
-      className: 'moneyCol',
-      width: 160,
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
@@ -319,33 +376,70 @@ export default {
       dataIndex: 'categoryCountAll',
       width: 70,
     }],
-    chartName: 'deptName',
-    type: 'dept',
+    chartName: 'projectName',
+    type: 'projectId',
     tableProps: {
       rowKey: 'id'
-    }
+    },
+    searchList: [{
+      type: 'timeC',
+      label: '选择月份',
+      placeholder: '单号、事由、收款人',
+      key: ['startTime', 'endTime'],
+      id: 'timeC',
+      out: 1,
+      value: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      valueStr: initMonth.valueStr,
+    }, {
+      type: 'deptAndUser',
+      label: '提交部门/人',
+      placeholder: '请选择',
+      key: ['createUserVOS', 'createDeptVOS'],
+      id: 'createUserVOS',
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '项目',
+      placeholder: '请选择',
+      key: 'projectIds',
+      id: 'projectIds',
+      out: 1,
+    }, { // 搜索部分数据
+      type: 'select',
+      label: '项目角色',
+      placeholder: '请选择',
+      key: 'queryType',
+      id: 'queryType',
+      out: 1,
+      options: projectType,
+      fileName: {
+        key: 'key',
+        name: 'value'
+      },
+      value: {
+        queryType: 0,
+      },
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '支出类别',
+      placeholder: '请选择',
+      key: 'categoryIds',
+      id: 'categoryIds',
+      out: 1,
+    }]
   },
   4: {
-    query: 'dept',
+    query: 'people',
     columns: [{
-      title: '部门',
-      dataIndex: 'deptName',
-      width: 150,
+      title: '姓名',
+      dataIndex: 'userName',
+      width: 80,
       render: (_, record) => (
-        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.deptName}</span>
+        <span style={{fontWeight: record.userId === -1 ? 'bolder' : 'normal'}}>{record.userName}</span>
       )
-    }, {
-      title: '金额（元）',
-      dataIndex: 'submitSumAll',
-      render: (_, record) => (
-        <a>
-          {record.submitSumAll ? (record.submitSumAll).toFixed(2) : 0}
-          { record.submitSum && record.id !== -1 && record.children
-           && record.children.length ?  `（本部${(record.submitSum).toFixed(2)}）` : ''}
-        </a>
-      ),
-      className: 'moneyCol',
-      width: 160,
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
@@ -355,33 +449,48 @@ export default {
       dataIndex: 'categoryCountAll',
       width: 70,
     }],
-    chartName: 'deptName',
-    type: 'dept',
+    chartName: 'userName',
+    type: 'id',
     tableProps: {
       rowKey: 'id'
-    }
+    },
+    searchList: [{
+      type: 'timeC',
+      label: '选择月份',
+      placeholder: '单号、事由、收款人',
+      key: ['startTime', 'endTime'],
+      id: 'timeC',
+      out: 1,
+      value: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      valueStr: initMonth.valueStr,
+    }, {
+      type: 'deptAndUser',
+      label: '承担部门/人',
+      placeholder: '请选择',
+      key: ['createUserVOS', 'createDeptVOS'],
+      id: 'createUserVOS',
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '支出类别',
+      placeholder: '请选择',
+      key: 'categoryIds',
+      id: 'categoryIds',
+      out: 1,
+    }]
   },
   5: {
-    query: 'dept',
+    query: 'supplier',
     columns: [{
-      title: '部门',
-      dataIndex: 'deptName',
-      width: 150,
+      title: '供应商',
+      dataIndex: 'supplierName',
+      width: 80,
       render: (_, record) => (
-        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.deptName}</span>
+        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.supplierName}</span>
       )
-    }, {
-      title: '金额（元）',
-      dataIndex: 'submitSumAll',
-      render: (_, record) => (
-        <a>
-          {record.submitSumAll ? (record.submitSumAll).toFixed(2) : 0}
-          { record.submitSum && record.id !== -1 && record.children
-           && record.children.length ?  `（本部${(record.submitSum).toFixed(2)}）` : ''}
-        </a>
-      ),
-      className: 'moneyCol',
-      width: 160,
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
@@ -391,10 +500,38 @@ export default {
       dataIndex: 'categoryCountAll',
       width: 70,
     }],
-    chartName: 'deptName',
-    type: 'dept',
+    chartName: 'supplierName',
+    type: 'supplierId',
     tableProps: {
       rowKey: 'id'
-    }
+    },
+    searchList: [{
+      type: 'timeC',
+      label: '选择月份',
+      placeholder: '单号、事由、收款人',
+      key: ['startTime', 'endTime'],
+      id: 'timeC',
+      out: 1,
+      value: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      valueStr: initMonth.valueStr,
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '供应商',
+      placeholder: '请选择',
+      key: 'supplierIds',
+      id: 'supplierIds',
+      out: 1,
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '支出类别',
+      placeholder: '请选择',
+      key: 'categoryIds',
+      id: 'categoryIds',
+      out: 1,
+    }]
   }
 };

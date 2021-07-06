@@ -4,10 +4,12 @@
 //   getTestTokenByCode
 // } from '@/services/api';
 import 'dingtalk-jsapi/entry/mobile';
+import moment from 'moment';
 // import store from '@/store/index';
-import {
+import dd, {
   config,
   runtime,
+  version,
   // error
 } from 'dingtalk-jsapi';
 import choose from 'dingtalk-jsapi/api/biz/contact/choose';
@@ -104,7 +106,8 @@ export const ddConfig = (agentId, corpId, timeStamp, nonceStr, signature) => {
     nonceStr: `${nonceStr}`, // 必填，生成签名的随机串
     signature: `${signature}`, // 必填，签名
     type: 0, // 选填，0表示微应用的jsapi，1表示服务窗的jsapi，不填默认为0。该参数从dingtalk.js的0.8.3版本开始支持
-    jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker', 'biz.cspace.preview', 'biz.util.uploadAttachment', 'biz.util.downloadFile'] // 必填，需要使用的jsapi列表，注意：不要带dd。
+    jsApiList: ['biz.contact.choose', 'biz.contact.complexPicker', 'biz.contact.departmentsPicker', 'biz.cspace.preview',
+    'biz.util.uploadAttachment', 'biz.util.downloadFile', 'biz.ding.create'] // 必填，需要使用的jsapi列表，注意：不要带dd。
   });
   console.log('config',config);
   // message.error(`corpId_${corpId}`,1000000);
@@ -422,3 +425,54 @@ export const ddSetTitle = (title = '', sCallBack, fCallBack) => {
     }
   });
 };
+
+// 发钉
+export const ddDing = payload => new Promise((resolve, reject) => {
+  // const version = env.version;
+  console.log(version);
+  const [main, sub, fix] = version.split('.') || '';
+  if (
+    main > 4 ||
+    (main === 4 && sub > 5) ||
+    (main === 4 && sub === 5 && fix > 9)
+  ) {
+    const defaultParams = {
+      users: [],
+      corpId: localStorage.getItem('corpId'),
+      type: 2,
+      alertType: 2,
+      alertDate: {
+        format: 'yyyy-MM-dd HH:mm',
+        value: moment(Date.now(), 'YYYY-MM-dd hh:mm')
+      },
+      attachment: { title: '', url: '' },
+      text: '',
+      bizType: 0
+    };
+    dd.biz.ding.create({
+      ...defaultParams,
+      ...payload,
+      onSuccess: result => resolve(result),
+      onFail: err => reject(err)
+    });
+  } else {
+    const defaultParams = {
+      users: [],
+      corpId: localStorage.getItem('corpId'),
+      type: 2,
+      alertType: 2,
+      alertDate: {
+        format: 'yyyy-MM-dd HH:mm',
+        value: moment(Date.now(), 'yyyy-MM-dd hh:mm')
+      },
+      attachment: { title: '', url: '' },
+      text: ''
+    };
+    dd.biz.post({
+      ...defaultParams,
+      ...payload,
+      onSuccess: result => resolve(result),
+      onFail: err => reject(err)
+    });
+  }
+});

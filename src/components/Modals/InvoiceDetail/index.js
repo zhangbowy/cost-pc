@@ -29,6 +29,7 @@ const { APP_API } = constants;
   djDetail: global.djDetail,
   loanDetail: global.loanDetail,
   applyDetail: global.applyDetail,
+  salaryDetail: global.salaryDetail,
   isApproval: global.isApproval,
   recordDetailInvoice: costGlobal.recordDetailInvoice,
   recordDetailLoan: costGlobal.recordDetailLoan,
@@ -60,6 +61,7 @@ class InvoiceDetail extends Component {
 
   onShow = () => {
     const { id, templateType } = this.props;
+    console.log('InvoiceDetail -> onShow -> templateType', templateType);
     let url = 'global/invoiceDetail';
     let params = { id };
     if (Number(templateType) === 1) {
@@ -68,18 +70,23 @@ class InvoiceDetail extends Component {
     } else if (Number(templateType) === 2) {
       url = 'global/applyDetail';
       params = { applicationId: id };
+    } else if (Number(templateType) === 3) {
+      url = 'global/salaryDetail';
+      params = { id };
     }
     this.props.dispatch({
       type: url,
       payload: params
     }).then(() => {
-      const { invoiceDetail, loanDetail, applyDetail } = this.props;
+      const { invoiceDetail, loanDetail, applyDetail, salaryDetail } = this.props;
       let details = invoiceDetail;
       let productSum = 0;
       if (Number(templateType) === 1) {
         details = loanDetail;
       } else if (Number(templateType) === 2) {
         details = applyDetail;
+      } else if (Number(templateType) === 3) {
+        details = salaryDetail;
       }
       if (details.costDetailsVo) {
         this.setState({
@@ -190,12 +197,14 @@ class InvoiceDetail extends Component {
   // 审批详情跳转
   onLinkDetail = () => {
     const { templateType } = this.props;
-    const { invoiceDetail, loanDetail, applyDetail } = this.props;
+    const { invoiceDetail, loanDetail, applyDetail, salaryDetail } = this.props;
     let details = invoiceDetail;
     if (Number(templateType) === 1) {
       details = loanDetail;
     } else if (Number(templateType) === 2) {
       details = applyDetail;
+    } else if (Number(templateType) === 3) {
+      details = salaryDetail;
     }
     if (details.proInsId) {
       this.props.dispatch({
@@ -237,8 +246,10 @@ class InvoiceDetail extends Component {
       ddOpenLink(`${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${id}`);
     } else if (Number(templateType) === 0) {
       ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${id}`);
-    } else {
+    } else if (Number(templateType) === 2) {
       ddOpenLink(`${APP_API}/cost/pdf/batch/application?token=${localStorage.getItem('token')}&ids=${id}`);
+    } else {
+      ddOpenLink(`${APP_API}/cost/pdf/batch/salary?token=${localStorage.getItem('token')}&ids=${id}`);
     }
   }
 
@@ -899,7 +910,9 @@ class InvoiceDetail extends Component {
             </>
           }
           {
-            (!Number(templateType) || (Number(templateType) === 2 && category.length > 0)) &&
+            (!Number(templateType) ||
+            (Number(templateType) === 2 && category.length > 0)
+            || Number(templateType) === 3)&&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />

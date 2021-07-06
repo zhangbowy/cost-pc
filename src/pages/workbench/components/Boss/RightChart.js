@@ -2,6 +2,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { Divider } from 'antd';
+import warn from '../../../../assets/img/warn.png';
 import styles from './index.scss';
 
 const list = [{
@@ -55,7 +56,7 @@ const RightChart = () => {
       <div className={styles.footer}>
         <div className={styles.footL}>
           <div className={styles.footLI}>
-            <i className="iconfont" />
+            <img alt="警告" src={warn} />
           </div>
           <span>借款待还金额</span>
         </div>

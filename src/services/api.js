@@ -51,6 +51,7 @@ export default {
   approvePersonList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 获取所有的审批模版
   applyList: `${APP_API}/cost/invoice/application/associate`, // 查询可关联的申请单
   addApply:  `${APP_API}/cost/invoice/application/add`, // 新增申请单（单据）
+  addSalary: `${APP_API}/cost/invoice/salary/add`, //  新增薪资单
   // 汇率
   configuration: `${APP_API}/cost/currency/configuration`,
   costCateList: `${APP_API}/cost/invoice/template/listForUser`, // 常用单据
@@ -100,6 +101,7 @@ export default {
    listDraft: `${APP_API}/cost/draft/list`, // 账本列表
    loanList: `${APP_API}/cost/invoice/base/loanList`,
    applyDetail: `${APP_API}/cost/invoice/application/detail`, // 申请单详情
+   salaryDetail: `${APP_API}/cost/invoice/salary/detail`, // 薪资单详情
    userDep:  `${APP_API}/cost/user/userInfo4UserIds`,
    queryTemplateIds: `${APP_API}/cost/category/queryTemplateIds`, // 单据模板
    applyIds: `${APP_API}/cost/invoice/application/checkRelevance`,
@@ -123,4 +125,5 @@ export default {
    getCondition: `${APP_API}/cost/approve/apProcessPerson/getCondition`, // 获取审批条件
    officeList: `${APP_API}/cost/branch/office/officeList`,
    officeTree: `${APP_API}/cost/branch/office/list`, // 分公司列表
+   upload: `${APP_API}/cost/invoice/salary/import/costDetail/share`, // 分公司列表
 };

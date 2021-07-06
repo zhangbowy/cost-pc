@@ -31,7 +31,7 @@ function Chart({ data, total, fileName }) {
           fontSize: 14
         },
       },
-      top: '15%',
+      top: '13%',
       left: '49%',
       textAlign: 'center',
       textStyle: {

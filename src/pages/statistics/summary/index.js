@@ -14,10 +14,12 @@ import TableTemplate from '../../../components/Modals/TableTemplate';
 @connect(({ loading, summary, session, costGlobal }) => ({
   loading: loading.effects['summary/submitList'] ||
             loading.effects['summary/loanList'] ||
-            loading.effects['summary/applicationList'] || false,
+            loading.effects['summary/applicationList'] ||
+            loading.effects['summary/salaryList'] || false,
   submitList: summary.submitList,
   applicationList: summary.applicationList,
   loanList: summary.loanList,
+  salaryList: summary.salaryList,
   query: summary.query,
   total: summary.total,
   sum: summary.sum,
@@ -56,6 +58,8 @@ class Summary extends React.PureComponent {
       url = 'summary/loanExport';
     } else if (Number(current) === 2) {
       url = 'summary/applicationExport';
+    } else if (Number(current) === 3) {
+      url = 'summary/salaryExport';
     }
     let params = {};
     const { searchContent, levelSearch } = this.state;
@@ -105,6 +109,8 @@ class Summary extends React.PureComponent {
       url = 'summary/loanList';
     } else if (Number(current) === 2) {
       url = 'summary/applicationList';
+    } else if (Number(current) === 3) {
+      url = 'summary/salaryList';
     }
     Object.assign(payload, {
       content: searchContent,
@@ -117,13 +123,16 @@ class Summary extends React.PureComponent {
       const {
         submitList,
         applicationList,
-        loanList
+        loanList,
+        salaryList,
       } = this.props;
       let lists = submitList;
       if (Number(current) === 1) {
         lists = loanList;
       } else if (Number(current) === 2) {
         lists = applicationList;
+      } else if (Number(current) === 3) {
+        lists = salaryList;
       }
       this.setState({
         list: lists,
@@ -227,6 +236,7 @@ class Summary extends React.PureComponent {
             <Menu.Item key={0}>报销单</Menu.Item>
             <Menu.Item key={1}>借款单</Menu.Item>
             <Menu.Item key={2}>申请单</Menu.Item>
+            <Menu.Item key={3}>薪资单</Menu.Item>
           </Menu>
         </div>
         <div className="content-dt" style={{padding: 0}}>

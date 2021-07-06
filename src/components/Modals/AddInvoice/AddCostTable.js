@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import { numAdd, numMulti } from '../../../utils/float';
+import ExportFile from '../ExportFile';
 
 const Option = {Select};
 @Form.create()
@@ -50,6 +51,34 @@ class AddCostTable extends Component {
         currencySymbol: this.props.currencySymbol || '',
       });
     }
+  }
+
+  onAddCost = (obj) => {
+    const { costDetailShareVOS } = this.state;
+    const { modify } = this.props;
+    const { initDep } = this.state;
+    const details = [...costDetailShareVOS];
+    if (modify) {
+      message.error('改单不允许更改分摊');
+      return;
+    }
+    let newArr = [...details];
+    if (obj.content) {
+      newArr = [...details, obj.content];
+    }
+    const keyArr = newArr.map((it, index) => {
+      if (!it.key) {
+        return {
+          key: `aaa_${index}`,
+          ...it,
+        };
+      }
+      return { ...it };
+    });
+    this.props.onChange('costDetailShareVOS', details);
+    this.setState({
+      costDetailShareVOS: details,
+    });
   }
 
   onAdd = () => {
@@ -285,7 +314,8 @@ class AddCostTable extends Component {
       form: { getFieldDecorator },
       project,
       usableProject,
-      modify
+      modify,
+      expenseId,
     } = this.props;
     const { costDetailShareVOS, shareAmount, costSum, currencyId, currencySymbol, exchangeRate } = this.state;
     const columns = [{
@@ -414,19 +444,32 @@ class AddCostTable extends Component {
     }
     return (
       <div style={{paddingTop: '24px'}}>
-        <div className={style.header}>
+        <div className={style.header} style={{ display: 'flex' }}>
           <div className={style.line} />
           <span>分摊</span>
+          {
+            costDetailShareVOS && costDetailShareVOS.length > 0 &&
+            <p style={{marginBottom: 0}} className="li-24 c-black-85 fw-500">
+              （¥{ currencyId && currencyId !== '-1' ?
+              `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}
+              已分摊：¥{ currencyId && currencyId !== '-1' ?
+              `${Number(numMulti(Number(shareAmount), exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}）
+            </p>
+          }
         </div>
-        <div style={{textAlign: 'center'}} className={style.addbtn}>
-          <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
+        <div className="m-b-12">
+          <Button className="m-r-8" type="primary" onClick={() => this.onAdd()}>添加分摊</Button>
+          <ExportFile
+            expenseId={expenseId}
+            upload={this.props.upload}
+            uploadLoading={this.props.uploadLoading}
+            onChangeAdd={this.onAddCost}
+          >
+            <Button className="m-r-8" type="default">批量导入</Button>
+          </ExportFile>
+          <Button className="m-r-8" type="default" onClick={() => this.onAdd()}>平均分摊</Button>
+          <Button className="m-r-8" onClick={() => this.onAdd()}>添加分摊</Button>
         </div>
-        {
-          costDetailShareVOS && costDetailShareVOS.length > 0 &&
-          <p style={{marginBottom: 0}} className="m-b-8 li-24 c-black-85 fw-500">
-            ¥{ currencyId && currencyId !== '-1' ? `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}  已分摊：¥{ currencyId && currencyId !== '-1' ? `${Number(numMulti(Number(shareAmount), exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}
-          </p>
-        }
         {
           costDetailShareVOS && costDetailShareVOS.length > 0 &&
           <div className={style.addTable}>

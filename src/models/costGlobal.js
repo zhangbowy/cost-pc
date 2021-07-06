@@ -36,7 +36,8 @@ export default {
       pageSize: 10,
       total: 0,
     },
-    officeTree: []
+    officeTree: [],
+    uploadStatus: {}, // 上传文件之后返回的参数
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -277,6 +278,15 @@ export default {
         type: 'save',
         payload: {
           officeTree: response || [],
+        },
+      });
+    },
+    *upload({ payload }, { call, put }) {
+      const response = yield call(post, api.upload, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          uploadStatus: response || {},
         },
       });
     },

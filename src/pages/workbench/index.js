@@ -22,6 +22,7 @@ import LeftPie from './components/Boss/LeftPie';
 import RightChart from './components/Boss/RightChart';
 import Boss from './components/Boss';
 import { dateToTime } from '../../utils/util';
+import TimeComp from './components/TimeComp';
 
 @Form.create()
 @connect(({ loading, workbench, session, global }) => ({
@@ -472,8 +473,9 @@ class Workbench extends PureComponent {
               }
               {
                 isBoss &&
-                <div className={style.ad} style={{ margin: '24px 0 16px 24px' }}>
+                <div className={style.ad} style={{ margin: '24px 0 16px 24px', alignItems: 'center' }}>
                   <p className="c-black-85 fs-18 fw-500">阿米巴支出简报</p>
+                  <TimeComp />
                 </div>
               }
               {

@@ -7,22 +7,26 @@
  */
 
 import React, { Component } from 'react';
-import { Modal, Button, Form, Input, Cascader, Radio, Switch, Table, message } from 'antd';
+import { Modal, Button, Form, Input, Cascader, Radio, Switch, Table, message, DatePicker } from 'antd';
 import { connect } from 'dva';
 import RadioGroup from 'antd/lib/radio/group';
+import moment from 'moment';
 import { formItemLayout, isAllUse } from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
+import SelectPeople from '@/components/Modals/SelectPeople';
 import { findIndexArray } from '@/utils/util';
 import AccountSetting from '@/components/AccountSetting';
+import update from 'immutability-helper';
 import UserSelector from '../pages/basicSetting/invoice/components/UserSelector';
 
 const labelItem = {
   prodName: '名称',
   parentId: '所属分组',
-  isAllUse: '可用人员',
+  isAllUse: '参与人',
   account: '供应商账户',
   remakes: '备注',
-  status: '启用'
+  status: '启用',
+  time: '项目期限'
 };
 
 const { TextArea } = Input;
@@ -35,7 +39,7 @@ const accountType = {
   '1': '支付宝',
   '2': '现金'
 };
-
+const { RangePicker } = DatePicker;
 @Form.create()
 @connect(({ global }) => ({
   accountCanDelRes: global.accountCanDelRes,
@@ -51,7 +55,7 @@ class Setting extends Component {
       data: {}, // 父组件传入的详情数据
       delIds: [],
       action: '', // 供应商账户的操作
-      editIndex: 0
+      editIndex: 0,
     };
   }
 
@@ -62,7 +66,6 @@ class Setting extends Component {
     if (target === 'supplier' && !detail.supplierAccounts) {
       datas.supplierAccounts = [];
     }
-
     // 生成树形分组结构
     const lists = (list && list.filter(it => Number(it.type) === 0 && it.id !== detail.id)) || [];
     const groupList = treeConvert({
@@ -86,6 +89,7 @@ class Setting extends Component {
           status: Number(detail.status) === 1,
           userJson: !detail.userJson ? [] : JSON.parse(detail.userJson),
           deptJson: !detail.deptJson ? [] : JSON.parse(detail.deptJson),
+          projectManagerJson: !newDetail.projectManagerJson ? [] : JSON.parse(newDetail.projectManagerJson)
         };
       });
     } else { // 新增
@@ -138,6 +142,18 @@ class Setting extends Component {
     this.setState({ data });
   }
 
+  selectPle = (res) => {
+    const { data } = this.state;
+    console.log(res);
+    this.setState({
+      data: update(data, {
+        projectManagerJson: {
+          $set: res.users || [],
+        }
+      })
+    });
+  }
+
   // 保存设置
   onSave = (e) => {
     e.preventDefault();
@@ -151,6 +167,14 @@ class Setting extends Component {
           ...values,
           status: values.status ? 1 : 0,
         });
+        if (target === 'project') {
+          Object.assign(val, {
+            projectManagerJson: JSON.stringify(data.projectManagerJson),
+            startTime: moment(values.time[0]).format('x'),
+            endTime: moment(values.time[1]).format('x'),
+          });
+          delete val.time;
+        }
         if (!values.isAllUse && type !== 'group') {
           if (!data.userJson.length && !data.deptJson.length) {
             form.setFields({
@@ -163,7 +187,7 @@ class Setting extends Component {
           }
           Object.assign(val, {
             userJson: JSON.stringify(data.userJson),
-            deptJson: JSON.stringify(data.deptJson)
+            deptJson: JSON.stringify(data.deptJson),
           });
         } else {
           Object.assign(val, {
@@ -280,6 +304,7 @@ class Setting extends Component {
 
   render() {
     const { title, visible, data, groupList } = this.state;
+    console.log('Setting -> render -> data', data);
     const { form: { getFieldDecorator }, type, target } = this.props;
     const columns = [
       {
@@ -352,6 +377,24 @@ class Setting extends Component {
                 )
               }
             </Form.Item>
+            {
+              target === 'project' && type === 'item' &&
+              <Form.Item label="负责人">
+                {
+                  getFieldDecorator('projectManagerJson')(
+                    <SelectPeople
+                      users={data.projectManagerJson || []}
+                      placeholder='请选择'
+                      onSelectPeople={(val) => this.selectPle(val)}
+                      invalid={false}
+                      flag="users"
+                      isInput
+                      multiple={false}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
             <Form.Item
               key="parentId"
               label={labelItem.parentId}
@@ -378,6 +421,28 @@ class Setting extends Component {
             {type === 'item'
               ? (
                 <>
+                  {
+                    target === 'project' &&
+                    <Form.Item label={labelItem.time} key="time">
+                      {
+                        getFieldDecorator('time', {
+                          initialValue: data.startTime ?
+                          [moment(moment(Number(data.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                          moment(moment(Number(data.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined,
+                          rules: [{ required: true, message: '请选择项目期限' }]
+                        })(
+                          <RangePicker
+                            placeholder="请选择项目期限"
+                            format="YYYY-MM-DD"
+                            showTime={{
+                              hideDisabledOptions: true,
+                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                            }}
+                          />
+                        )
+                      }
+                    </Form.Item>
+                  }
                   <Form.Item key="isAllUse" label={labelItem.isAllUse}>
                     {
                       getFieldDecorator('isAllUse', {

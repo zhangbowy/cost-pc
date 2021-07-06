@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import update from 'immutability-helper';
 import moment from 'moment';
 import cs from 'classnames';
-import { Input, Select, DatePicker } from 'antd';
+import { Input, Select, DatePicker, TreeSelect } from 'antd';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
 import add from '@/assets/img/addP.png';
@@ -14,6 +14,7 @@ import { yearChange, monthChage, getQuarter, defaultMonth } from './time';
 const { Option } = Select;
 const { RangePicker, MonthPicker } = DatePicker;
 const { Group } = Input;
+const { SHOW_CHILD, SHOW_ALL } = TreeSelect;
 const timeObj = [{
   key: 0,
   Comp: MonthPicker,
@@ -29,6 +30,11 @@ const timeObj = [{
   Comp: YearPicker,
   name: '年度',
   placeholder: '选择年份'
+}, {
+  key: -1,
+  Comp: RangePicker,
+  name: '自定义',
+  placeholder: '选择时间区间'
 }];
 class FormStyle extends Component {
   constructor(props) {
@@ -126,7 +132,7 @@ class FormStyle extends Component {
     }));
   }
 
-  onChangeTime = (val, index) => {
+  onChangeDate = (val, index) => {
     const { fields, onChangeSearch } = this.props;
     const obj = {};
     fields[index].key.forEach((it, i) => {
@@ -151,29 +157,39 @@ class FormStyle extends Component {
   }
 
   onChangeTime = (val, index, dateType) => {
-    let obj = {
-      ...monthChage(val),
-    };
+    let obj = {};
     switch(dateType) {
+      case 0:
+        obj = {
+          ...monthChage(val),
+        };
+      break;
       case 1:
         obj = {
-          ...getQuarter(val),
+          ...getQuarter(val, true),
         };
         break;
-        case 2:
+      case 2:
         obj = {
           ...yearChange(val),
         };
-        break;
+      break;
+      case -1:
+        obj = {
+          startTime: moment(val[0]).format('x'),
+          endTime: moment(val[1]).format('x'),
+        };
+      break;
         default:
           break;
     }
+    console.log('切换时间', obj);
     const value = [obj.startTime, obj.endTime];
     this.onChanges({
       value,
       valueStr: obj.valueStr,
       others: {
-        dateType: 2,
+        dateType,
       }
     }, index, {
       compareStr: 'start'
@@ -213,14 +229,31 @@ class FormStyle extends Component {
         [keys]: val[other.value]
       });
     }
-    onChangeSearch(fields, {
+    onChangeSearch(update(fields, {
       $splice: [[i, 1, {
+        ...fields[i],
         valueStr: val.valueStr,
         value: {
           ...obj,
         }
       }]]
-    });
+    }));
+  }
+
+  onChangeTree = (val, index) => {
+    const ids = val.map(it => it.value);
+    const str = val.map(it => it.label);
+    const { fields, onChangeSearch } = this.props;
+    onChangeSearch(update(fields, {
+      $splice: [[index, 1, {
+        ...fields[index],
+        valueStr: str.join(','),
+        value: {
+          [fields[index].key]: ids,
+        }
+      }]]
+    }));
+    console.log('树的结构', val);
   }
 
   timeType = (val, index) => {
@@ -240,6 +273,12 @@ class FormStyle extends Component {
       case 2:
         Object.assign(obj, {
           ...yearChange(),
+        });
+      break;
+      // TO DO
+      case -1:
+        Object.assign(obj, {
+          ...fields[index].value,
         });
       break;
       default:
@@ -262,142 +301,188 @@ class FormStyle extends Component {
 
   onNode = (item, index) => {
     let node = null;
-    switch(item.type) {
-      case 'deptAndUser':
-        node = (
-          <div className={style.select} key={item.id} onClick={() => this.onPeople(index)}>
-            <div className={cs(style.selectI, style.selectBorder)} style={{ position: 'relative' }}>
-              <span>{item.label}</span>
-              <i className="iconfont icondown" />
+    if (item.out) {
+      switch(item.type) {
+        case 'deptAndUser':
+          node = (
+            <div className={style.select} key={item.id} onClick={() => this.onPeople(index)}>
+              <div className={cs(style.selectI, style.selectBorder)} style={{ position: 'relative' }}>
+                <span>{item.label}</span>
+                <i className="iconfont icondown" />
+              </div>
             </div>
-          </div>
-        );
-      break;
-      case 'rangeTime':
-        node = (
-          <div className={style.select} key={item.id}>
-            <div className={style.selectI}>
-              <span>{item.label}</span>
-              <i className="iconfont icondown" />
-            </div>
-            <RangePicker
-              style={{ width: '160px' }}
-              format="YYYY-MM-DD"
-              showTime={{
-                hideDisabledOptions: true,
-                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-              }}
-              onChange={(val) => this.onChangeTime(val,index)}
-            />
-          </div>
-        );
-      break;
-      case 'select':
-      case 'tree':
-        node = (
-          <div className={style.select} key={item.id}>
-            <div className={style.selectI}>
-              <span>{item.label}</span>
-              <i className="iconfont icondown" />
-            </div>
-            <Select
-              style={{ width: '160px' }}
-              value={item.value ? { key: item.value[item.key] } : undefined}
-              onChange={val => this.onChangeSelect(val, index)}
-              labelInValue
-            >
-              <Option value={1}>请输入</Option>
-              <Option value={2}>请输入2</Option>
-              <Option value={3}>请输入3</Option>
-            </Select>
-          </div>
-        );
-      break;
-      case 'search':
-        node = (
-          <Input
-            key={item.id}
-            placeholder={item.placeholder}
-            style={{ width: '272px' }}
-            onInput={e => this.onChangeIn(e, index)}
-          />
-        );
-      break;
-      case 'timeC':
-        node = (
-          <div className={style.select} style={{ width: '232px' }} key={item.id}>
-            <div
-              className={style.selectI}
-              style={{
-                position: 'absolute', right: '2px',
-                zIndex: 10, borderLeft: 'none',left: 'auto'
-              }}
-            >
-              <span>{item.label}</span>
-              <i className="iconfont icondown" />
-            </div>
-            <Group style={{ width: '232px' }} compact>
-              <Select
-                style={{ width: '31%' }}
-                onChange={val => this.timeType(val, index)}
-                value={item.value ? item.value.dateType : 0}
-              >
-                {
-                  timeObj.map(its => (
-                    <Option key={its.key} value={its.key}>{its.name}</Option>
-                  ))
-                }
-              </Select>
-              {
-                item.value.dateType === 0 &&
-                <MonthPicker
-                  // value={item.valueStr}
-                  onChange={(_,str) => this.onChangeTime(str, index, 0)}
-                  style={{ width: '69%' }}
-                />
-              }
-              {
-                item.value.dateType === 1 &&
-                <QuarterPicker
-                  onChange={(str) => this.onChangeTime(str, index, 1)}
-                  style={{ width: '69%' }}
-                  value={item.valueStr}
-                />
-              }
-              {
-                item.value.dateType === 2 &&
-                <YearPicker
-                  onChange={(str) => this.onChangeTime(str, index, 2)}
-                  style={{ width: '69%' }}
-                  value={item.valueStr}
-                />
-              }
-            </Group>
-          </div>
-        );
-      break;
-      default:
+          );
         break;
+        case 'dept':
+          node = (
+            <div className={style.select} key={item.id} onClick={() => this.onSelectDept(index)}>
+              <div className={cs(style.selectI, style.selectBorder)} style={{ position: 'relative' }}>
+                <span>{item.label}</span>
+                <i className="iconfont icondown" />
+              </div>
+            </div>
+          );
+        break;
+        case 'rangeTime':
+          node = (
+            <div className={style.select} key={item.id}>
+              <div className={style.selectI}>
+                <span>{item.label}</span>
+                <i className="iconfont icondown" />
+              </div>
+              <RangePicker
+                style={{ width: '160px' }}
+                format="YYYY-MM-DD"
+                showTime={{
+                  hideDisabledOptions: true,
+                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                }}
+                onChange={(val) => this.onChangeDate(val,index)}
+              />
+            </div>
+          );
+        break;
+        case 'select':
+        case 'tree':
+          node = (
+            <div className={style.select} key={item.id}>
+              <div className={style.selectI}>
+                <span>{item.label}</span>
+                <i className="iconfont icondown" />
+              </div>
+              {
+                item.type === 'select' ?
+                  <Select
+                    style={{ width: '160px' }}
+                    value={item.value ? { key: item.value[item.key] } : undefined}
+                    onChange={val => this.onChangeSelect(val, index)}
+                    labelInValue
+                  >
+                    {
+                      item.options && item.options.map(it => (
+                        <Option key={it[item.fileName.key]}>{it[item.fileName.name]}</Option>
+                      ))
+                    }
+                  </Select>
+                  :
+                  <TreeSelect
+                    style={{ width: '160px', height: '32px' }}
+                    treeData={item.options || []}
+                    placeholder={item.placeholder}
+                    treeCheckable
+                    showCheckedStrategy={item.isShowAll ? SHOW_ALL : SHOW_CHILD}
+                    dropdownStyle={{height: '300px'}}
+                    showSearch
+                    treeNodeFilterProp='title'
+                    treeDefaultExpandAll
+                    labelInValue
+                    onChange={val => this.onChangeTree(val, index)}
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                  />
+              }
+            </div>
+          );
+        break;
+        case 'search':
+          node = (
+            <Input
+              key={item.id}
+              placeholder={item.placeholder}
+              style={{ width: '272px' }}
+              onInput={e => this.onChangeIn(e, index)}
+            />
+          );
+        break;
+        case 'timeC':
+          node = (
+            <div className={style.select} style={{ width: '232px' }} key={item.id}>
+              <div
+                className={style.selectI}
+                style={{
+                  position: 'absolute', right: '2px',
+                  zIndex: 10, borderLeft: 'none',left: 'auto'
+                }}
+              >
+                <span>{item.label}</span>
+                <i className="iconfont icondown" />
+              </div>
+              <Group style={{ width: '232px' }} compact>
+                <Select
+                  style={{ width: '31%' }}
+                  onChange={val => this.timeType(val, index)}
+                  value={item.value ? item.value.dateType : 0}
+                >
+                  {
+                    timeObj.map(its => (
+                      <Option key={its.key} value={its.key}>{its.name}</Option>
+                    ))
+                  }
+                </Select>
+                {
+                  item.value.dateType === 0 &&
+                  <MonthPicker
+                    // value={item.valueStr}
+                    onChange={(_,str) => this.onChangeTime(str, index, 0)}
+                    style={{ width: '69%' }}
+                  />
+                }
+                {
+                  item.value.dateType === 1 &&
+                  <QuarterPicker
+                    onChange={(str) => this.onChangeTime(str, index, 1)}
+                    style={{ width: '69%' }}
+                    value={item.valueStr}
+                  />
+                }
+                {
+                  item.value.dateType === 2 &&
+                  <YearPicker
+                    onChange={(str) => this.onChangeTime(str, index, 2)}
+                    style={{ width: '69%' }}
+                    value={item.valueStr}
+                  />
+                }
+                {
+                  item.value.dateType === -1 &&
+                  <RangePicker
+                    onChange={(str) => this.onChangeTime(str, index, -1)}
+                    style={{ width: '69%' }}
+                    value={item.valueStr}
+                  />
+                }
+              </Group>
+            </div>
+          );
+        break;
+        default:
+          break;
+      }
     }
     return node;
   }
 
   onField = (item, index) => {
     let node = null;
+    console.log('fileName', item.fileName);
     switch(item.type){
       case 'tree':
         node = (
           <div className={style.formItem} key={item.id}>
             <span className={style.label}>{item.label}</span>
-            <Select
+            <TreeSelect
               style={{ width: '204px' }}
+              treeData={item.options || []}
               placeholder={item.placeholder}
+              treeCheckable
+              showCheckedStrategy={item.isShowAll ? SHOW_ALL : SHOW_CHILD}
+              dropdownStyle={{height: '300px'}}
+              showSearch
+              treeNodeFilterProp='title'
+              treeDefaultExpandAll
               labelInValue
-              value={item.value ? { key: item.value[item.key] } : undefined}
-              onChange={val => this.onChangeSelect(val, index)}
-            >
-              <Option value={12}>测试</Option>
-            </Select>
+              onChange={val => this.onChangeTree(val, index)}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+            />
           </div>
         );
       break;
@@ -426,10 +511,21 @@ class FormStyle extends Component {
       break;
       case 'deptAndUser':
         node = (
-          <div className={style.formItem} key={item.id}>
+          <div className={style.formItem} key={item.id} onClick={() => this.onPeople(index)}>
             <span className={style.label}>{item.label}</span>
             <div className={style.price}>
               <img src={add} alt="部门/人"  />
+              <span className={style.names}>待选择</span>
+            </div>
+          </div>
+        );
+      break;
+      case 'dept':
+        node = (
+          <div className={style.formItem} key={item.id} onClick={() => this.onSelectDept(index)}>
+            <span className={style.label}>{item.label}</span>
+            <div className={style.price}>
+              <img src={add} alt="部门"  />
               <span className={style.names}>待选择</span>
             </div>
           </div>
@@ -442,6 +538,12 @@ class FormStyle extends Component {
             <RangePicker
               style={{ width: '204px' }}
               placeholder={item.placeholder}
+              format="YYYY-MM-DD"
+              showTime={{
+                hideDisabledOptions: true,
+                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+              }}
+              onChange={(val) => this.onChangeDate(val,index)}
             />
           </div>
         );
@@ -451,7 +553,11 @@ class FormStyle extends Component {
           <div className={style.formItem} key={item.id}>
             <span className={style.label}>{item.label}</span>
             <Select style={{ width: '204px' }} placeholder={item.placeholder}>
-              <Option value={12}>测试</Option>
+              {
+                item.options && item.options.map(it => (
+                  <Option key={it[item.fileName.key]}>{it[item.fileName.name]}</Option>
+                ))
+              }
             </Select>
           </div>
         );
@@ -472,7 +578,7 @@ class FormStyle extends Component {
           type === 'out' ?
             <div className={style.left}>
               {
-                fields.filter(it => it.out).map((it, index) => this.onNode(it, index))
+                fields.map((it, index) => this.onNode(it, index))
               }
             </div>
             :

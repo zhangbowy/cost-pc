@@ -10,6 +10,7 @@ import BatchImport from '@/components/BatchImport/index';
 import Sort from '@/components/TreeSort/index';
 import PageHead from '@/components/PageHead';
 import constants from '@/utils/constants';
+import update from 'immutability-helper';
 
 const {
   APP_API,
@@ -163,7 +164,7 @@ class Product extends React.PureComponent {
   render() {
     const { loading, list, type } = this.props;
     const { searchName, historyList, searchValue } = this.state;
-    const columns = [{
+    let columns = [{
       title: '名称',
       dataIndex: 'name',
       render: (_, record) => (
@@ -181,7 +182,7 @@ class Product extends React.PureComponent {
         </span>
       )
     }, {
-      title: '可用人员',
+      title: '参与人',
       dataIndex: 'availablePpersonnel',
       render: (_, record) => {
         let ele = null;
@@ -262,13 +263,25 @@ class Product extends React.PureComponent {
         );
       }
     }];
+    if (type === 'project') {
+      columns = update(columns, {
+        $splice: [[2, 0, {
+          title: '负责人',
+          dataIndex: 'projectManagerName',
+        }], [4,0,{
+          title: '项目期限',
+          dataIndex: 'dateRangeStr',
+        }]]
+      });
+    }
     let lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
       tName: 'name',
       name: 'name',
       otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type',
-      'status', 'sort', 'parentId', 'supplierAccounts', 'supplierNo', 'projectNo']
+      'status', 'sort', 'parentId', 'supplierAccounts', 'supplierNo',
+      'projectNo', 'projectManagerName', 'dateRangeStr']
     }, list);
     if (searchName) {
       lists = list;
