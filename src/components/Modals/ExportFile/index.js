@@ -44,11 +44,12 @@ class ExportFile extends Component {
     //  instanceof FileList
     console.log('ExportFile -> onUpload -> files', files instanceof FileList);
     console.log('ExportFile -> onUpload -> files', files[0]);
-    const { upload, expenseId } = this.props;
+    const { upload, expenseId, uniqueId } = this.props;
     const formData = new FormData();
     formData.append('file',files[0]);
     console.log('ExportFile -> onUpload -> formData', formData);
     formData.append('expenseId',expenseId);
+    formData.append('uniqueId',uniqueId);
     const results = await upload(formData);
     console.log(results);
   }

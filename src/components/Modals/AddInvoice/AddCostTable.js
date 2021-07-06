@@ -316,6 +316,7 @@ class AddCostTable extends Component {
       usableProject,
       modify,
       expenseId,
+      uniqueId,
     } = this.props;
     const { costDetailShareVOS, shareAmount, costSum, currencyId, currencySymbol, exchangeRate } = this.state;
     const columns = [{
@@ -464,6 +465,7 @@ class AddCostTable extends Component {
             upload={this.props.upload}
             uploadLoading={this.props.uploadLoading}
             onChangeAdd={this.onAddCost}
+            uniqueId={uniqueId}
           >
             <Button className="m-r-8" type="default">批量导入</Button>
           </ExportFile>

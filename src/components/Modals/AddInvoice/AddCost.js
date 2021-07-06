@@ -11,9 +11,10 @@ import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare, setTime, handleProduction } from '../../../utils/common';
+import { compare, setTime, handleProduction, guid } from '../../../utils/common';
 // import TreeCatogory from './TreeCatogory';
 
+const uniqueId = guid();
 const { Option } = Select;
 const { TreeNode } = Tree;
 const { RangePicker } = DatePicker;
@@ -1063,6 +1064,7 @@ class AddCost extends Component {
                     expenseId={details.categoryId}
                     upload={this.upload}
                     uploadLoading={this.props.uploadLoading}
+                    uniqueId={uniqueId}
                   />
                 </>
               }
