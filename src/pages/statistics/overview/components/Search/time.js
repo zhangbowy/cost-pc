@@ -1,4 +1,5 @@
 import getDateUtil from '@/utils/tool';
+import moment from 'moment';
 
 const getMaxDay = (year,month) => {
   const temp = new Date(year,month,'0');
@@ -66,4 +67,21 @@ export const monthChage = (str) =>{
     endTime,
     valueStr: str
   };
+};
+
+export const selfTime = ({ startTime, endTime, dateType, handle }) => {
+
+  let start = null;
+  let end = null;
+  if (handle === 'value') {
+    if (dateType === -1) {
+      start = moment(moment(Number(startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      end = moment(moment(Number(endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      return [start, end];
+    }
+  } else {
+    start = moment(startTime).format('YYYY-MM-DD');
+    end = moment(endTime).format('YYYY-MM-DD');
+  }
+  return `${start}~${end}`;
 };

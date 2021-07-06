@@ -9,7 +9,7 @@ import QuarterPicker from '@/components/QuarterPicker';
 import add from '@/assets/img/addP.png';
 import style from './index.scss';
 import { ddComplexPicker, ddDepartmentsPicker } from '../../../../../utils/ddApi';
-import { yearChange, monthChage, getQuarter, defaultMonth } from './time';
+import { yearChange, monthChage, getQuarter, defaultMonth, selfTime } from './time';
 
 const { Option } = Select;
 const { RangePicker, MonthPicker } = DatePicker;
@@ -126,9 +126,20 @@ class FormStyle extends Component {
   onChangeSelect = (obj, index) => {
     const { fields, onChangeSearch } = this.props;
     console.log('obj', obj);
+    const params = {};
+    if (Array.isArray(obj)) {
+      Object.assign(params, {
+        value: obj.map(it => it.key),
+        valueStr: obj.map(it => it.label).join(',')
+      });
+    } else {
+      Object.assign(params, {
+        value: obj.key,
+        valueStr: obj.label
+      });
+    }
     onChangeSearch( update(fields, {
-      $splice: [[index, 1, { ...fields[index],
-        value: { [fields[index].key]: obj.key }, valueStr: obj.label }]]
+      $splice: [[index, 1, { ...fields[index], ...params }]]
     }));
   }
 
@@ -279,6 +290,7 @@ class FormStyle extends Component {
       case -1:
         Object.assign(obj, {
           ...fields[index].value,
+          valueStr: selfTime(fields[index].value),
         });
       break;
       default:
@@ -447,7 +459,7 @@ class FormStyle extends Component {
                   <RangePicker
                     onChange={(str) => this.onChangeTime(str, index, -1)}
                     style={{ width: '69%' }}
-                    value={item.valueStr}
+                    value={item.valueStr ? selfTime({ ...item.value, handle: 'value' }) : undefined}
                   />
                 }
               </Group>
@@ -552,7 +564,13 @@ class FormStyle extends Component {
         node = (
           <div className={style.formItem} key={item.id}>
             <span className={style.label}>{item.label}</span>
-            <Select style={{ width: '204px' }} placeholder={item.placeholder}>
+            <Select
+              style={{ width: '204px' }}
+              placeholder={item.placeholder}
+              mode="multiple"
+              labelInValue
+              onChange={(val) => this.onChangeSelect(val, index)}
+            >
               {
                 item.options && item.options.map(it => (
                   <Option key={it[item.fileName.key]}>{it[item.fileName.name]}</Option>
