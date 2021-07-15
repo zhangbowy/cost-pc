@@ -357,7 +357,7 @@ class ChangeForm extends Component {
         };
         if (val.month) {
           Object.assign(params, {
-            month: moment(`${moment(val.month).format('YYYY-MM')}-01 00:00:01`).format('x'),
+            month: moment(`${moment(val.month).format('YYYY-MM')}-01 00:00:00`).format('x'),
           });
         }
         if(Number(templateType) === 1) {

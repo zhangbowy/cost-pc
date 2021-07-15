@@ -74,7 +74,7 @@ class Basic extends React.PureComponent {
             `${this.props.data.categoryStatus}` : '0'
         });
     }
-    if (prevProps.approveList !== this.props.approveList) {
+    if (prevProps.approveList.length !== this.props.approveList.length) {
       this.setState({
         approveList: this.props.approveList,
       });
@@ -237,9 +237,12 @@ class Basic extends React.PureComponent {
 
   onChangeSelect = (type) => {
     this.onCancel();
+    const { templateType } = this.props;
     this.props.dispatch({
       type: 'addInvoice/approveList',
-      payload: {}
+      payload: {
+        templateType,
+      }
     }).then(() => {
       const { approveList, onChangeData } = this.props;
       console.log('Basic -> onChangeSelect -> approveList', approveList);

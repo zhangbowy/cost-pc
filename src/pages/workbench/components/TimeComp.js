@@ -48,7 +48,7 @@ class TimeComp extends PureComponent {
       type: '-1',
       dateType: -1,
       startTime: dateString.length ?
-        moment(`${dateString[0]} 00:00:01`).format('x') : '',
+        moment(`${dateString[0]} 00:00:00`).format('x') : '',
       endTime: dateString.length ?
         moment(`${dateString[1]} 23:59:59`).format('x') : '',
     });

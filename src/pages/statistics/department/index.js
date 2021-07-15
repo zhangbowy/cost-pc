@@ -9,7 +9,7 @@ const getMaxDay = (year,month) => {
   return temp.getDate();
 };
 const time =  getDateUtil(new Date().getTime()).split('-');
-const startDate = `${time[0]}-${time[1]}-01 00:00:01`;
+const startDate = `${time[0]}-${time[1]}-01 00:00:00`;
 const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
 @connect(({ department, loading }) => ({
   loading: loading.effects['department/list'] || false,

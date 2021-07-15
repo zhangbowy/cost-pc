@@ -78,7 +78,7 @@ class LevelSearch extends Component {
         let startTime = '';
         let endTime = '';
         if (createTime && createTime.length > 0) {
-          startTime = moment(moment(createTime[0]).format('YYYY-MM-DD 00:00:01')).format('x');
+          startTime = moment(moment(createTime[0]).format('YYYY-MM-DD 00:00:00')).format('x');
           endTime = moment(moment(createTime[1]).format('YYYY-MM-DD 23:59:59')).format('x');
         }
         // eslint-disable-next-line no-param-reassign
