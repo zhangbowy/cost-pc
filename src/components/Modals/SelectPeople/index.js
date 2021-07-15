@@ -133,14 +133,15 @@ class UserSelector extends PureComponent {
   }
 
   render () {
-    const { users = [], depts = [], placeholder, invalid, disabled, isInput } = this.props;
+    const { users = [], depts = [], placeholder, invalid, disabled, isInput, className } = this.props;
     const usersLength = users.length;
     const deptsLength = depts.length;
     const showPlaceholder = !usersLength && !deptsLength;
     return (
       <div
         className={classnames(
-          isInput?style.pmc_form_user_selector:'', { invalid, 'is-disabled': disabled }
+          isInput?style.pmc_form_user_selector:'', { invalid, 'is-disabled': disabled },
+          className
               )}
         onClick={disabled ? null : this.openSelector}
       >

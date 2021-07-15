@@ -115,16 +115,48 @@ class SystemControl extends Component {
       statisticsDimension,
       [key]: key === 'isOpenProject' ? e : e.target.value,
     };
-    this.props.dispatch({
-      type: 'systemControl/change',
-      payload: {
-        ...params,
-      }
-    }).then(() => {
-      this.setState({
-        [key]: key === 'isOpenProject' ? e : e.target.value,
+    if (key === 'statisticsDimension') {
+      Modal.confirm({
+        title: `确定将统计维度切换到${viewSum[e.target.value].name}吗？`,
+          okText: '确定',
+          cancelText: '取消',
+          onOk: () => {
+            this.props.dispatch({
+              type: 'systemControl/change',
+              payload: {
+                ...params,
+              }
+            }).then(() => {
+              this.setState({
+                [key]: key === 'isOpenProject' ? e : e.target.value,
+              });
+              if(key === 'statisticalDimension') {
+                localStorage.removeItem('statisticalDimension');
+                localStorage.setItem('statisticalDimension', e.target.value);
+              }
+            });
+          },
+          onCancel: () => {
+            console.log('Cancel');
+          },
       });
-    });
+    } else {
+      this.props.dispatch({
+        type: 'systemControl/change',
+        payload: {
+          ...params,
+        }
+      }).then(() => {
+        this.setState({
+          [key]: key === 'isOpenProject' ? e : e.target.value,
+        });
+        if(key === 'statisticalDimension') {
+          localStorage.removeItem('statisticalDimension');
+          localStorage.setItem('statisticalDimension', e.target.value);
+        }
+      });
+    }
+
   }
 
   onLink = (type) => {

@@ -51,7 +51,7 @@ function Chart({ data, total, fileName }) {
     },
     tooltip: {
       trigger: 'item',
-      backgroundColor:'#fff',
+      backgroundColor:'#fafafa',
       padding: 0,
       formatter: (params) => {
         console.log(params);
@@ -78,13 +78,13 @@ function Chart({ data, total, fileName }) {
         }
         const arr = [
           `{a|${ name.length > 9 ? `${name.slice(0,8)  }...` : name }}`,
-          `{b|｜${  obj.proportion}}`,
+          `{b|｜${  obj.proportionStr}}`,
           `{c|¥${obj[fileName.price]/100}}`
         ];
         return arr.join('');
       },
-      itemWidth: 4,
-      itemHeight: 4,
+      itemWidth: 6,
+      itemHeight: 6,
       // backgroundColor: '#fff',
       textStyle:{
         rich:{
@@ -122,7 +122,7 @@ function Chart({ data, total, fileName }) {
         zlevel: 1,
         itemStyle: {
           normal: {
-            borderColor: '#fff',
+            borderColor: '#FAFAFA',
             borderWidth: data.length === 1 ? 0 : 5
           }
         },

@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import fields from '@/utils/fields';
 import { Form, DatePicker, Select } from 'antd';
-// import { dateToTime } from '../../../utils/util';
+import { dateToTime } from '../../../utils/util';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -18,50 +18,39 @@ class TimeComp extends PureComponent {
   }
 
   onChange = value => {
-    // const { chart, submitTime } = this.props;
+    const { submitTime } = this.props;
+    console.log('TimeComp -> submitTime', submitTime);
     if (value === '-1') {
       this.setState({
         isShow: true,
+      }, () => {
+        this.props.onChangeData('submitTime', {
+          ...submitTime,
+          dateType: -1
+        });
       });
     } else {
-      // chart({
-      //   url: 'submitReport',
-      //   payload: this.setVal({
-      //     ...submitTime,
-      //     ...dateToTime(value),
-      //   })
-      // }, () => {
-      //   this.props.onChangeData('submitTime', {
-      //     ...submitTime,
-      //     ...dateToTime(value),
-      //     type: value
-      //   });
-      //   this.setState({
-      //     isShow: false,
-      //   });
-      // });
+      this.setState({
+        isShow: false,
+      });
+      this.props.onChangeData('submitTime', {
+        ...submitTime,
+        ...dateToTime(value),
+        type: value
+      });
     }
   }
 
   onChangeDate = (date, dateString) => {
-    const { chart, submitTime } = this.props;
-    chart({
-      url: 'submitReport',
-      payload: this.setVal({
-        ...submitTime,
-        type: '-1',
-        startTime: dateString.length ? moment(`${dateString[0]} 00:00:01`).format('x') : '',
-        endTime: dateString.length ? moment(`${dateString[1]} 23:59:59`).format('x') : '',
-      })
-    }, () => {
-      this.props.onChangeData('submitTime', {
-        ...submitTime,
-        type: '-1',
-        startTime: dateString.length ?
-          moment(`${dateString[0]} 00:00:01`).format('x') : '',
-        endTime: dateString.length ?
-          moment(`${dateString[1]} 23:59:59`).format('x') : '',
-      });
+    const { submitTime } = this.props;
+    this.props.onChangeData('submitTime', {
+      ...submitTime,
+      type: '-1',
+      dateType: -1,
+      startTime: dateString.length ?
+        moment(`${dateString[0]} 00:00:01`).format('x') : '',
+      endTime: dateString.length ?
+        moment(`${dateString[1]} 23:59:59`).format('x') : '',
     });
   }
 
@@ -70,10 +59,11 @@ class TimeComp extends PureComponent {
   render() {
     const { dateType } = fields;
     const {
-      isShow
+      isShow,
     } = this.state;
     const {
-      form: { getFieldDecorator }
+      form: { getFieldDecorator },
+      submitTime
     } = this.props;
     return (
       <Form layout="inline" className="m-l-16">
@@ -104,6 +94,9 @@ class TimeComp extends PureComponent {
               className="m-l-8"
               onChange={this.onChangeDate}
               allowClear={false}
+              value={submitTime.startTime ?
+                [moment(moment(Number(submitTime.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                moment(moment(Number(submitTime.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined}
             />
           </Form.Item>
         }

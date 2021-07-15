@@ -8,4 +8,6 @@ export default {
   del: `${APP_API}/cost/role/roleUserDel`,
   menu: `${APP_API}/cost/menu/nav`,
   userIdList: `${APP_API}/cost/role/dingUserIdList`,
+  roleLists: `${APP_API}/cost/role/ding/role/list`,
+  addddRole: `${APP_API}/cost/role/syn/ding/role`,
 };

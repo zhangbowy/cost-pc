@@ -40,7 +40,7 @@ function Header(props) {
             <p>
               <i className={cs(style.loan, 'iconfont', 'icondaihuankuan')} />
               <span className="c-black-45 fs-14 m-l-4">
-                待还款<span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
+                待还款 <span className={style.loan}>{personal.loanCount ? personal.loanCount : 0}</span>单
               </span>
             </p>
             {
@@ -55,7 +55,7 @@ function Header(props) {
             <p>
               <i className={cs(style.cost, 'iconfont', 'iconfeiyongjia')} />
               <span className="c-black-45 fs-14 m-l-4">
-                账本<span className="c-black-85 fs-14">{personal.folderCount ? personal.folderCount : 0}</span>笔
+                账本 <span className="c-black-85 fs-14">{personal.folderCount ? personal.folderCount : 0}</span>笔
               </span>
             </p>
             {
@@ -70,7 +70,7 @@ function Header(props) {
             <p>
               <i className={cs(style.caogao, 'iconfont', 'iconcaogaoxiang')} />
               <span className="c-black-45 fs-14 m-l-4">
-                草稿箱
+                草稿箱&nbsp;
                 {
                   isBoss ?
                     <><span className={style.loan}>{personal.draftCount ? personal.draftCount : 0}</span>笔</>

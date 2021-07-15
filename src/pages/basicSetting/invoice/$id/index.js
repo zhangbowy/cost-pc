@@ -28,7 +28,8 @@ const basicStr = [{
 }];
 @connect(({ loading, session, addInvoice, global, costGlobal }) => ({
   loading: loading.effects['addInvoice/add'] || loading.effects['addInvoice/edit'],
-  detailLoading: loading.effects['addInvoice/detail'] || false,
+  detailLoading: loading.effects['addInvoice/detail'] ||
+  loading.effects['global/costList'] || loading.effects['addInvoice/allList'] || false,
   userInfo: session.userInfo,
   allList: addInvoice.allList,
   costCategoryList: global.costCategoryList,
@@ -45,7 +46,7 @@ class CategoryAdd extends PureComponent {
     data: {},
     selectList: [],
     categoryList: [],
-    templateType: 2,
+    templateType: 3,
     fieldList: [],
     templatePdfVo: {
       'templateType':0,
@@ -100,6 +101,7 @@ class CategoryAdd extends PureComponent {
         console.log('CategoryAdd -> componentDidMount -> list', list);
         this.setState({
           categoryList: list,
+          templateType
         });
         this.props.dispatch({
           type: 'addInvoice/fieldList',
@@ -125,7 +127,6 @@ class CategoryAdd extends PureComponent {
             });
           }
           this.setState({
-            templateType,
             fieldList: this.changeList(fieldList),
           });
           if (title !== 'add' && titleType !== 'child') {

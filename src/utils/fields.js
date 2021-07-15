@@ -14,13 +14,13 @@ export default {
   costType: [{ key: 0, value: '费用支出'},
   { key: 1, value: '成本支出'}],
   projectType: [{
-    key: '2',
+    key: '1',
     value: '我负责的'
   }, {
-    key: '3',
+    key: '2',
     value: '我参与的项目'
   }, {
-    key: '4',
+    key: '3',
     value: '我团队的项目'
   }]
 };

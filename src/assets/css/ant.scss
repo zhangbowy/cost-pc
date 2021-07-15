@@ -8,6 +8,10 @@
     // width: 190px !important;
     // min-width: 190px !important;
   }
+  // .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
+  // .ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+  //   background: #fff!important;
+  // }
 
   .app-table-responsive {
     display: flex;
@@ -28,6 +32,9 @@
       }
     }
   }
+  // .ant-layout{
+  //   min-width: 1000px;
+  // }
 
   .ant-table-body {
     overflow-x: hidden !important;

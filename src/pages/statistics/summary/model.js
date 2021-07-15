@@ -94,6 +94,10 @@ export default {
       Object.assign(payload, { exportType:'export', fileName: '申请单列表' });
       yield call(post, api.applicationExport, payload);
     },
+    *salaryExport({ payload }, { call }) {
+      Object.assign(payload, { exportType:'export', fileName: '薪资单列表' });
+      yield call(post, api.salaryExport, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

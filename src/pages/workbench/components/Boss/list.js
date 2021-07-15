@@ -165,7 +165,7 @@ export default {
         className: 'moneyCol',
         render: (text) => (
           <span>{text ? text/100 : 0}</span>
-        )
+        ),
       },
       {
         title: '待核销金额（元）',
@@ -173,7 +173,7 @@ export default {
         className: 'moneyCol',
         render: (text) => (
           <span>{text ? text/100 : 0}</span>
-        )
+        ),
       },
       {
         title: '核销中金额',

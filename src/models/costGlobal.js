@@ -38,6 +38,13 @@ export default {
     },
     officeTree: [],
     uploadStatus: {}, // 上传文件之后返回的参数
+    exportList: [],
+    exportPage: {
+      pageNo: 1,
+      pageSize: 100,
+    },
+    projectList: [], // 查询项目列表
+    roleStatics: [], // 支出统计的接口
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -272,6 +279,19 @@ export default {
         },
       });
     },
+    *exportList({ payload }, { call, put }) {
+      const response = yield call(get, api.exportList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          exportList: response.list || [],
+          exportPage: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize,
+          }
+        },
+      });
+    },
     *officeTree({ payload }, { call, put }) {
       const response = yield call(get, api.officeTree, payload);
       yield put({
@@ -290,6 +310,25 @@ export default {
         },
       });
     },
+    // 项目列表
+    *projectList({ payload }, { call, put }) {
+      const response = yield call(get, api.newProjectList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          projectList: response || [],
+        },
+      });
+    },
+    *roleStatics({ payload }, { call, put }) {
+      const response = yield call(get, api.roleStatics, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          roleStatics: response || [],
+        },
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {

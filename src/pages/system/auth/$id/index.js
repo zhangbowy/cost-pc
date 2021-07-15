@@ -7,6 +7,7 @@ import { connect } from 'dva';
 import { choosePeople } from '@/utils/ddApi';
 // import SubHeader from '@/components/SubHeader';
 import PageHead from '@/components/PageHead';
+import DdPeople from './component/DdPeople';
 
 const { confirm } = Modal;
 @connect(({ loading, setUser }) => ({
@@ -116,6 +117,13 @@ class setUser extends React.PureComponent {
     });
   }
 
+  onOk = () => {
+    this.onQuery({
+      pageNo: 1,
+      pageSize: 10
+    });
+  }
+
   render() {
     const { list, query, role, total } = this.props;
     const columns = [{
@@ -141,16 +149,16 @@ class setUser extends React.PureComponent {
       width: '80px',
       className: 'fixCenter'
     }];
-    console.log(31231323,role);
-    console.log(2342342343241234,this,this.props);
     return (
       <div>
         {/* <SubHeader type="role" content={role} {...this.props} /> */}
         <PageHead title={role.roleName} note={role.note} />
-        <div className="content-dt">
+        <div className="content-dt" style={{ height: 'auto' }}>
           <div style={{ display: 'flex' }}>
             <Button type="primary" style={{marginBottom: '15px'}} onClick={this.handleClick}>新增人员</Button>
-            <Button type="default" className="m-l-8" onClick={() => this.again()}>同步钉钉角色</Button>
+            <DdPeople onOk={this.onOk} roleId={role.id}>
+              <Button type="default" className="m-l-8">同步钉钉角色</Button>
+            </DdPeople>
           </div>
           <Table
             columns={columns}

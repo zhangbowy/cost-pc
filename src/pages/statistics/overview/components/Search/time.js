@@ -6,7 +6,7 @@ const getMaxDay = (year,month) => {
   return temp.getDate();
 };
 const time =  getDateUtil(new Date().getTime()).split('-');
-export const startDate = `${time[0]}-${time[1]}-01 00:00:01`;
+export const startDate = `${time[0]}-${time[1]}-01 00:00:00`;
 export const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
 
 export const defaultMonth = () => {
@@ -21,7 +21,7 @@ export const defaultMonth = () => {
 export const getQuarter = (date,isValue) => {
   console.log('date', date);
   if(isValue){
-    const start = `${date.split('~')[0]  }-01 00:00:01`;
+    const start = `${date.split('~')[0]  }-01 00:00:00`;
     const end =  date.split('~')[1] + ((date.split('~')[1].split('-')[1]==='06'||date.split('~')[1].split('-')[1]==='09')?'-30 23:59:59':'-31 23:59:59');
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
@@ -45,7 +45,7 @@ export const getQuarter = (date,isValue) => {
 
 export const  yearChange = (str) => {
   const strs = str || time[0];
-  const start = `${strs}-01-01 00:00:01`;
+  const start = `${strs}-01-01 00:00:00`;
   const end = `${strs}-12-31 23:59:59`;
   const startTime = new Date(start).getTime();
   const endTime = new Date(end).getTime();
@@ -58,7 +58,7 @@ export const  yearChange = (str) => {
 
 export const monthChage = (str) =>{
   console.log('月份', str);
-  const start = `${str}-01 00:00:01`;
+  const start = `${str}-01 00:00:00`;
   const end = `${str}-${ getMaxDay(str.split('-')[0],str.split('-')[1]) } 23:59:59`;
   const startTime = new Date(start).getTime();
   const endTime = new Date(end).getTime();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Button, Form, Table, Divider, Modal, message, Tag, Tooltip, Dropdown, Icon, Menu } from 'antd';
+import { Button, Form, Table, Divider, Modal, message, Tag, Tooltip, Dropdown, Icon, Menu, Badge } from 'antd';
 import PropTypes from 'prop-types';
 // import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
@@ -11,6 +11,7 @@ import Sort from '@/components/TreeSort/index';
 import PageHead from '@/components/PageHead';
 import constants from '@/utils/constants';
 import update from 'immutability-helper';
+import style from './index.scss';
 
 const {
   APP_API,
@@ -19,6 +20,21 @@ const { confirm } = Modal;
 const typeEnum = {
   'project': '项目',
   'supplier': '供应商'
+};
+
+const statusObj = {
+  0: {
+    color: 'rgba(255, 90, 95, 1)',
+    text: '已停用'
+  },
+  1: {
+    color: 'rgba(0, 199, 149, 1)',
+    text: '进行中'
+  },
+  2: {
+    color: 'rgba(0, 0, 0, 0.25)',
+    text: '已完结'
+  }
 };
 
 @connect(({ session, loading }) => ({
@@ -176,6 +192,7 @@ class Product extends React.PureComponent {
     },{
       title: '编号',
       dataIndex: 'no',
+      width: '120px',
       render: (_, record) => (
         <span>
           <span>{record[`${type}No`]}</span>
@@ -184,6 +201,7 @@ class Product extends React.PureComponent {
     }, {
       title: '参与人',
       dataIndex: 'availablePpersonnel',
+      width: '120px',
       render: (_, record) => {
         let ele = null;
         if (record.type === 1) {
@@ -261,16 +279,50 @@ class Product extends React.PureComponent {
             </Setting>
           </div>
         );
-      }
+      },
+      fixed: 'right',
     }];
     if (type === 'project') {
       columns = update(columns, {
         $splice: [[2, 0, {
           title: '负责人',
           dataIndex: 'projectManagerName',
+          width: '120px',
         }], [4,0,{
           title: '项目期限',
           dataIndex: 'dateRangeStr',
+          width: '220px',
+        }], [1, 0, {
+          title: '项目状态',
+          dataIndex: 'projectStatus',
+          filterDropdown: () => (
+            <div className={style.dropDown}>
+              <div>进行中</div>
+              <div>已停用</div>
+              <div>已完结</div>
+            </div>
+          ),
+          width: '120px',
+          render: (_, record) => {
+            let ele = null;
+            console.log(statusObj[record.projectStatus]);
+
+            if (record.type === 1) {
+              ele = (
+                <span>
+                  <Badge
+                    color={statusObj[record.projectStatus] ?
+                    statusObj[record.projectStatus].color : 'rgba(255, 90, 95, 1)'}
+                    text={statusObj[record.projectStatus] ?
+                    statusObj[record.projectStatus].text : '已完结'}
+                  />
+                </span>
+              );
+            } else {
+              ele = <span>—</span>;
+            }
+            return ele;
+          }
         }]]
       });
     }
@@ -281,7 +333,7 @@ class Product extends React.PureComponent {
       name: 'name',
       otherKeys: ['note', 'id', 'userJson', 'deptJson', 'isAllUse', 'type',
       'status', 'sort', 'parentId', 'supplierAccounts', 'supplierNo',
-      'projectNo', 'projectManagerName', 'dateRangeStr']
+      'projectNo', 'projectManagerName', 'dateRangeStr', 'projectStatus']
     }, list);
     if (searchName) {
       lists = list;
@@ -340,6 +392,9 @@ class Product extends React.PureComponent {
             columns={columns}
             dataSource={lists}
             pagination={false}
+            scroll={{
+              x: type === 'project' ? '1300px' : null
+            }}
           />
         </div>
       </div>

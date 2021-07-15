@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Icon, Menu, Dropdown, Table, message } from 'antd';
+import NoRole from '@/components/StaticChart/component/NoRole';
+import noData from '@/assets/img/noData.png';
 import style from './index.scss';
 import { rowSelect } from '../../../../utils/common';
 import { ddOpenLink } from '../../../../utils/ddApi';
 import constants from '../../../../utils/constants';
+
 
 const {
   APP_API
@@ -51,6 +54,11 @@ class TempTable extends PureComponent {
     const params = {
       ...filters,
     };
+    if (params.status) {
+      Object.assign(params, {
+        status: filters.status[0] || '',
+      });
+    }
     if (pagination) {
       const { current, pageSize } = pagination;
       Object.assign(params, {
@@ -95,6 +103,37 @@ class TempTable extends PureComponent {
     ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`);
   }
 
+  customExpandIcon = (props) => {
+    if(props.record.children.length > 0){
+      if (props.expanded) {
+          return (
+            <a
+              style={{ marginRight:8 }}
+              className="c-black-65"
+              onClick={e => {
+                        props.onExpand(props.record, e);
+                      }}
+            >
+              <i className="table-minus" />
+            </a>
+        );
+
+      }
+          return (
+            <a
+              style={{ marginRight:8 }}
+              onClick={e => {
+                props.onExpand(props.record, e);
+              }}
+              className="c-black-65"
+            >
+              <i className="table-plus" />
+            </a>
+          );
+    }
+      return <span />;
+  }
+
   // 导出
   onExport = (key) => {
     const { onExports } = this.props;
@@ -122,7 +161,7 @@ class TempTable extends PureComponent {
 
   render () {
     const { list, columns, tableProps,
-      pagination, hisRecord, currentType, loading } = this.props;
+      pagination, hisRecord, currentType, loading, isNoRole, expandIds } = this.props;
     const { selectedRowKeys, sumAmount } = this.state;
     const rowSelection = {
       type: 'checkbox',
@@ -133,7 +172,7 @@ class TempTable extends PureComponent {
     };
     return (
       <>
-        <div className="content-dt">
+        <div className="content-dt" style={{ height: 'auto' }}>
           <div className="cnt-header">
             <div className="head_lf" style={{display: 'flex'}}>
               <Dropdown
@@ -166,25 +205,62 @@ class TempTable extends PureComponent {
                 { selectedRowKeys.length ? `已选${selectedRowKeys.length}` : `共${hisRecord.total}` }条记录，合计
               </span>
               <span className="fs-16 c-black-85 fw-500">
-                ¥{ selectedRowKeys.length ? sumAmount : hisRecord.sum}
+                ¥{ selectedRowKeys.length ? sumAmount/100 : hisRecord.sum/100}
               </span>
             </div>
           }
-          <Table
-            dataSource={list}
-            columns={columns}
-            loading={loading}
-            {...tableProps}
-            rowSelection={currentType === 0 ? rowSelection : null}
-            onChange={this.handleTableChange}
-            pagination={currentType === 0 ? {
-              ...pagination,
-              size: 'small',
-              showTotal: () => (`共${pagination.total}条数据`),
-              showSizeChanger: true,
-              showQuickJumper: true,
-            } : false}
-          />
+          {
+            currentType === 0 || (currentType === 4) ?
+              <Table
+                dataSource={list}
+                columns={columns}
+                loading={loading}
+                {...tableProps}
+                rowSelection={currentType === 0 ? rowSelection : null}
+                onChange={this.handleTableChange}
+                // rowKey="id"
+                pagination={{
+                  ...pagination,
+                  size: 'small',
+                  showTotal: () => (`共${pagination.total}条数据`),
+                  showSizeChanger: true,
+                  showQuickJumper: true,
+                }}
+              />
+              :
+              <Table
+                dataSource={list}
+                columns={columns}
+                loading={loading}
+                {...tableProps}
+                rowSelection={currentType === 0 ? rowSelection : null}
+                onChange={this.handleTableChange}
+                defaultExpandAllRows
+                // expandRowByClick
+                expandedRowKeys={expandIds}
+                onExpand={(b, r) => {
+                  this.props.onChangeDatas('expandIds',
+                  b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id));
+                }}
+                // rowKey="id"
+                expandIcon={(props) => this.customExpandIcon(props)}
+                locale={{
+                  emptyText: isNoRole ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <img src={noData} alt="暂无数据" style={{ width: '200px' }} />
+                      <span>
+                        暂无查看权限，
+                        <NoRole>
+                          <a>点击查看原因 &gt;</a>
+                        </NoRole>
+                      </span>
+                    </div>
+                    ) : '暂无数据'
+                }}
+                pagination={false}
+              />
+          }
+
         </div>
       </>
     );

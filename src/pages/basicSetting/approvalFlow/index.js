@@ -87,17 +87,19 @@ function ApprovalFlow(props) {
     render: (_, record) => (
       <span>
         {
-          !record.isDefault &&
-          <>
-            <Popconfirm
-              title="确认删除吗？"
-              onConfirm={() => onDel(record.id)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
-            <Divider type="vertical" />
-          </>
+          !record.isDefault ?
+            <>
+              <Popconfirm
+                title="确认删除吗？"
+                onConfirm={() => onDel(record.id)}
+              >
+                <span className="deleteColor">删除</span>
+              </Popconfirm>
+            </>
+            :
+            <span className="delBtn">删除</span>
         }
+        <Divider type="vertical" />
         <AddFlow
           title="copy"
           templateType={status}

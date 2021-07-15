@@ -16,4 +16,11 @@ export default {
   supplier: `${APP_API}/cost/statistics/v3/supplier/pc`,
   people: `${APP_API}/cost/statistics/v3/staff/pc`,
   exports: `${APP_API}/cost/export/v3/statistics`,
+  chart: `${APP_API}/cost/statistics/v3/project/category`,
+  supplierChart: `${APP_API}/cost/statistics/v3/supplier/pie/chart`,
+  deptExport: `${APP_API}/cost/export/dept/pc`,
+  classifyExport: `${APP_API}/cost/export/category/pc`,
+  projectExport: `${APP_API}/cost/export/project/pc`,
+  peopleExport: `${APP_API}/cost/export/staff/pc`,
+  supplierExport: `${APP_API}/cost/export/supplier/pc`,
 };

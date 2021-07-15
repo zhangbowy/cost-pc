@@ -60,3 +60,19 @@ p{
   width: 88px;
   height: 32px;
 }
+
+.progress{
+  display: flex;
+  align-items: center;
+  margin-top: 165px;
+  flex-direction: column;
+  justify-content: center;
+  img{
+    height: 80px;
+    width: auto;
+    margin-bottom: 41px;
+  }
+  .inPro{
+    display: flex;
+  }
+}

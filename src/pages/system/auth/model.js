@@ -20,6 +20,7 @@ export default {
       pageSize: PAGE_SIZE,
     },
     approveTotal: 0,
+    openProjectStatus: false,
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -59,6 +60,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
+          openProjectStatus: response.openProjectStatus || false,
           detailRoleList: response.rolePurviewOperateVOS || [],
           rolePurviewDataVos: response.rolePurviewDataVos || [],
         },

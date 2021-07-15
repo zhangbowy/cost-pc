@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Table, Tooltip, Popconfirm, message } from 'antd';
+import { Table, Tooltip, Popconfirm, message, Badge } from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
-import { getArrayValue, invoiceStatus } from '../../../../utils/constants';
+import { getArrayValue, invoiceStatus, getArrayColor } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
 
 const statusStr = {
@@ -151,13 +151,6 @@ class SummaryCmp extends Component {
       ),
       width: 150,
     }, {
-      title: '单据状态',
-      dataIndex: 'statusStr',
-      width: 150,
-      render: (_, record) => (
-        <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
-      )
-    }, {
       title: '支付时间',
       dataIndex: 'payTime',
       render: (_, record) => (
@@ -168,6 +161,22 @@ class SummaryCmp extends Component {
       title: '发放人',
       dataIndex: 'payUserName',
       width: 150,
+    }, {
+      title: '单据状态',
+      dataIndex: 'statusStr',
+      width: 120,
+      render: (_, record) => (
+        <span>
+          <Badge
+            color={
+              getArrayColor(`${record.status}`, invoiceStatus) === '-' ?
+              'rgba(255, 148, 62, 1)' : getArrayColor(`${record.status}`, invoiceStatus)
+            }
+            text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
+          />
+        </span>
+      ),
+      fixed: 'right'
     }];
     const column = [{
       title: '事由',
@@ -230,13 +239,6 @@ class SummaryCmp extends Component {
         ),
         width: 150,
       }, {
-        title: '单据状态',
-        dataIndex: 'statusStr',
-        width: 150,
-        render: (_, record) => (
-          <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
-        )
-      }, {
         title: '支付时间',
         dataIndex: 'payTime',
         render: (_, record) => (
@@ -247,6 +249,22 @@ class SummaryCmp extends Component {
         title: '发放人',
         dataIndex: 'payUserName',
         width: 150,
+      }, {
+        title: '单据状态',
+        dataIndex: 'statusStr',
+        width: 120,
+        render: (_, record) => (
+          <span>
+            <Badge
+              color={
+                getArrayColor(`${record.status}`, invoiceStatus) === '-' ?
+                'rgba(255, 148, 62, 1)' : getArrayColor(`${record.status}`, invoiceStatus)
+              }
+              text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
+            />
+          </span>
+        ),
+        fixed: 'right'
       }];
       const colum = [{
         title: '事由',
@@ -294,19 +312,28 @@ class SummaryCmp extends Component {
           ),
           width: 150,
         }, {
-          title: '单据状态',
-          dataIndex: 'statusStr',
-          width: 150,
-          render: (_, record) => (
-            <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
-          )
-        }, {
           title: '是否关联',
           dataIndex: 'hasRelevance',
           render: (_, record) => (
             <span>{record.hasRelevance ? '是' : '否'}</span>
           ),
           width: 150,
+        }, {
+          title: '单据状态',
+          dataIndex: 'statusStr',
+          width: 120,
+          render: (_, record) => (
+            <span>
+              <Badge
+                color={
+                  getArrayColor(`${record.status}`, invoiceStatus) === '-' ?
+                  'rgba(255, 148, 62, 1)' : getArrayColor(`${record.status}`, invoiceStatus)
+                }
+                text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
+              />
+            </span>
+          ),
+          fixed: 'right'
         }];
         const colmn = [{
           title: '事由',
@@ -356,14 +383,20 @@ class SummaryCmp extends Component {
           }, {
             title: '单据状态',
             dataIndex: 'statusStr',
-            width: 150,
+            width: 120,
             render: (_, record) => (
-              <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
-            )
-          }, {
-            title: '发放人',
-            dataIndex: 'payUserName',
-            width: 150,
+              <span>
+                <Badge
+                  color={
+                    getArrayColor(`${record.status}`, invoiceStatus) === '-' ?
+                    'rgba(255, 148, 62, 1)' : getArrayColor(`${record.status}`, invoiceStatus)
+                  }
+                  text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
+                />
+                {/* {record.statusStr || getArrayValue(record.status, invoiceStatus)} */}
+              </span>
+            ),
+            fixed: 'right'
           }];
         let newColumns = columns;
       if (templateType === 1) {
@@ -383,6 +416,7 @@ class SummaryCmp extends Component {
             return (
               <>
                 {
+                  (status === 3 && templateType === 3) ||
                   (status === 3 && templateType === 0) ||
                   (templateType === 1 && status === 6) ||
                   (templateType === 2 && status === 2) ?

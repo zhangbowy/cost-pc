@@ -72,6 +72,7 @@ export default {
       localStorage.setItem('workbenchIsBoss', response.workbenchIsBoss);
       localStorage.setItem('isSetWorkbench', response.isSetWorkbench);
       localStorage.setItem('token', response.token);
+      localStorage.setItem('statisticalDimension', response.statisticalDimension);
       yield put({
         type: 'save',
         payload: {

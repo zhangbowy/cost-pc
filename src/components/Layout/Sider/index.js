@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 import React from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
@@ -26,7 +27,7 @@ const getMenuKey = (props) => {
   if(props.location.params&&props.location.params.selectUrl){
     url = props.location.params.selectUrl;
   }
-  console.log(url);
+  console.log('url', url);
   return urlToList(url);
 };
 // Allow menu.js config icon
@@ -57,12 +58,25 @@ class App extends React.PureComponent {
 
   state = {
     openKeys: getMenuKey(this.props),
+    prevPath: '',
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log('走了没有啊，走了就不用了', nextProps);
+    if (nextProps.location.pathname !== prevState.prevPath) {
+      return {
+        openKeys: getMenuKey(nextProps),
+        prevPath: nextProps.location.pathname
+      };
+    }
+    return null;
+	}
 
   // 获取菜单节点
   getMenuItems = (data = []) => {
     return data.map(item => {
       if (item.children && item.children.length > 0) {
+        console.log('path', item.path);
         return (
           <Menu.SubMenu
             key={item.path}
@@ -81,7 +95,6 @@ class App extends React.PureComponent {
           </Menu.SubMenu>
         );
       }
-
       return (
         <Menu.Item key={item.path}>
           <Link to={item.path}>
@@ -111,12 +124,11 @@ class App extends React.PureComponent {
   render() {
     const {
       collapsed,
-      // onCollapse,
+      onCollapse,
       menus,
       userInfo,
       status,
     } = this.props;
-    console.log('menus', this.props);
     const { openKeys } = this.state;
     const selectedKeys = getMenuKey(this.props);
     const menuProps = collapsed ? {} : { openKeys };
@@ -126,7 +138,7 @@ class App extends React.PureComponent {
         trigger={null}
         // collapsible
         collapsed={false}
-        // onCollapse={onCollapse}
+        onCollapse={onCollapse}
         breakpoint="lg"
         className={styles.sider}
       >

@@ -75,6 +75,12 @@ export const dateToTime = str => {
   const arr = str.split('_');
   let startTime = '';
   let endTime = '';
+  let dateType = 0;
+  if (arr[1] === 'q') {
+    dateType = 1;
+  } else if (arr[1] === 'y') {
+    dateType = 2;
+  }
   if (arr[0] === '0' && arr[1] === 'm') { // 当前月
     startTime = moment().startOf('month').valueOf();
     endTime = moment().endOf('month').valueOf();
@@ -102,7 +108,8 @@ export const dateToTime = str => {
   }
   return {
     startTime: moment(startTime).format('x'),
-    endTime: moment(endTime).format('x')
+    endTime: moment(endTime).format('x'),
+    dateType,
   };
 };
 

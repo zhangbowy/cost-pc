@@ -26,7 +26,7 @@ const labelInfo = {
   happenTime: '发生日期',
 };
 @Form.create()
-@connect(({ global, costGlobal, session, loading }) => ({
+@connect(({ global, costGlobal, session }) => ({
   expenseList: global.expenseList,
   deptInfo: global.deptInfo,
   userId: global.userId,
@@ -38,8 +38,7 @@ const labelInfo = {
   detailFolder: costGlobal.detailFolder,
   userInfo: session.userInfo,
   userDeps: costGlobal.userDeps,
-  uploadStatus: costGlobal.uploadStatus,
-  uploadLoading: loading.effects['costGlobal/upload'] || false,
+  exportList: costGlobal.exportList,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -108,7 +107,6 @@ class AddCost extends Component {
             }
           }).then(async() => {
             const { detailFolder, currencyList } = this.props;
-            console.log('AddCost -> onShow -> detailFolder', detailFolder);
             const userIds = detailFolder.costDetailShareVOS.map(it => it.userId).filter(item => item);
             const arr = [];
             let currency = {};
@@ -222,26 +220,65 @@ class AddCost extends Component {
         payload: {
           id: this.props.invoiceId
         }
-      }).then(() => {
+      }).then(async() => {
         const { index, detail, expandField } = this.props;
+        const listArr = detail && detail.costDetailShareVOS ? [...detail.costDetailShareVOS] : [];
+        const userIdArr = listArr.map(it => it.userId).filter(item => item);
+        const deptFlag = listArr.filter(it => it.depList && it.depList.length);
+        console.log('AddCost -> onShow -> deptFlag', deptFlag);
+        let newArray = [...listArr];
+        if (userIdArr && userIdArr.length && (deptFlag.length !== listArr.length)) {
+          newArray = await this.handleDept(listArr, userIdArr);
+        }
         if (index === 0 || index) {
           this.setState({
             details: detail,
-            costDetailShareVOS: detail.costDetailShareVOS,
+            costDetailShareVOS: newArray,
             expandField,
             imgUrl: detail.imgUrl || [],
             costSum: detail.costSum,
             shareAmount: detail.shareTotal,
+            visible: true,
           }, () => {
             const newExpands = expandField;
             this.onChange(this.props.detail.categoryId, 'folder', newExpands);
           });
+        } else {
+          this.setState({
+            visible: true,
+          });
         }
-        this.setState({
-          visible: true,
-        });
       });
     }
+  }
+
+  handleDept = (lists, userIds) => {
+    const arr = [];
+     return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/userDep',
+        payload: {
+          userIds: [...new Set(userIds)],
+        }
+      }).then(async() => {
+        lists.forEach((it) => {
+          const { userDeps } = this.props;
+          console.log('AddCost -> onShow -> userDeps', userDeps);
+          const obj = {
+            ...it,
+          };
+          if (it.userId) {
+            Object.assign(obj, {
+              users: it.userJson ? it.userJson.map(its => { return { ...its, userName: its.name }; }) : [],
+              depList: userDeps[`${it.userId}`],
+            });
+          }
+          arr.push(obj);
+        });
+        });
+        resolve(arr);
+     });
+
   }
 
   onCancel = (flag) => {
@@ -265,6 +302,7 @@ class AddCost extends Component {
       currencyName: '',
       exchangeRate: '1',
       currencySymbol: '¥',
+      details: {},
     });
   }
 
@@ -296,14 +334,14 @@ class AddCost extends Component {
     return list;
   }
 
-  upload = (val) => {
+  upload = (payload) => {
     return new Promise(resolve => {
       this.props.dispatch({
-        type: 'costGlobal/upload',
-        payload: val,
+        type: 'costGlobal/exportList',
+        payload,
       }).then(() => {
-        const { uploadStatus } = this.props;
-        resolve(uploadStatus);
+        const { exportList } = this.props;
+        resolve(exportList);
       });
     });
   }
@@ -331,6 +369,7 @@ class AddCost extends Component {
       currencySymbol
     } = this.state;
     const _this = this;
+    console.log('AddCost -> handleOk -> costDetailShareVOS', costDetailShareVOS);
 
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -407,6 +446,7 @@ class AddCost extends Component {
           }
         }
         const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
+        console.log('AddCost -> handleOk -> arr', arr);
         if (!arr) {
           return;
         }
@@ -722,7 +762,7 @@ class AddCost extends Component {
           title="添加支出"
           visible={visible}
           width="880px"
-          bodyStyle={{height: '494px', overflowY: 'scroll'}}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           maskClosable={false}
           footer={(
@@ -1063,7 +1103,6 @@ class AddCost extends Component {
                     modify={modify}
                     expenseId={details.categoryId}
                     upload={this.upload}
-                    uploadLoading={this.props.uploadLoading}
                     uniqueId={uniqueId}
                   />
                 </>

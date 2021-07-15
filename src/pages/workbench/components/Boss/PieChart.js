@@ -5,18 +5,21 @@ import { defaultColor } from '@/utils/constants';
 import style from './leftPie.scss';
 
 const tabList = [{
-  key: '0',
-  value: '费用支出'
+  key: 'appDeptStatisticReturnVo',
+  value: '部门支出'
 }, {
-  key: '1',
-  value: '成本支出'
+  key: 'appCategoryStatisticReturnVo',
+  value: '类别支出'
+}, {
+  key: 'appProjectStatisticReturnVo',
+  value: '项目支出'
 }];
-function PieChart({ data, total, current }) {
+function PieChart({ data, total, current, title }) {
   const option = {
     title: {
       zlevel: 0,
       text: [
-        '{name|部门支出合计}',
+        `{name|${title}支出合计}`,
         `{value|￥${  total/100  }}`,
       ].join('\n'),
       rich: {
@@ -24,6 +27,7 @@ function PieChart({ data, total, current }) {
           color: 'rgba(0,0,0,0.85)',
           fontSize: 18,
           lineHeight: 32,
+          fontFamily: 'Helvetica, sans-serif, Arial'
         },
         name: {
           color: 'rgba(0,0,0,0.45)',
@@ -32,7 +36,7 @@ function PieChart({ data, total, current }) {
         },
       },
       top: 'center',
-      left: '24%',
+      left: '22%',
       textAlign: 'center',
       textStyle: {
         rich: {
@@ -40,6 +44,7 @@ function PieChart({ data, total, current }) {
             color: 'rgba(0,0,0,0.85)',
             fontSize: 24,
             lineHeight: 32,
+            fontFamily: 'Helvetica, sans-serif, Arial'
           },
           name: {
             color: 'rgba(0,0,0,0.45)',
@@ -65,22 +70,22 @@ function PieChart({ data, total, current }) {
       }
     },
     legend: {
-      left: '50%',
+      left: '42%',
       top: 'center',
-      bottom: '20',
+      bottom: '16',
       orient: 'vertical',
       icon: 'circle',
       formatter: name => {
         let obj = {};
         for (let i = 0, l = data.length; i < l; i++) {
-          if (data[i].categoryName === name) {
+          if (data[i].dimensionName === name) {
             obj = data[i];
           }
         }
         const arr = [
           `{a|${ name.length > 9 ? `${name.slice(0,8)  }...` : name }}`,
-          `{b|｜${  obj.proportion}}`,
-          `{c|¥${obj.submitSum/100}}`
+          `{b|｜${  obj.proportionStr}}`,
+          `{c|¥${obj.costSum/100}}`
         ];
         return arr.join('');
       },
@@ -92,19 +97,20 @@ function PieChart({ data, total, current }) {
             fontSize:12,
             align:'left',
             color: 'rgba(0,0,0,0.65)',
-            width: 96,
+            width: 104,
             lineHeight: 22
           },
           b:{
             fontSize:12,
             align:'left',
             color: 'rgba(0,0,0,0.45)',
-            width: 68
+            width: 68,
           },
           c:{
             fontSize:12,
             align:'left',
-            color: 'rgba(0,0,0,0.65)'
+            color: 'rgba(0,0,0,0.65)',
+            fontFamily: 'Helvetica Neue'
           },
         }
       }
@@ -115,7 +121,7 @@ function PieChart({ data, total, current }) {
         name: tabList[current].value,
         type: 'pie',
         radius: ['43%', '55%'],
-        center: ['25%', '50%'],
+        center: ['23%', '50%'],
         avoidLabelOverlap: true,
         minAngle: 10,
         stillShowZeroSum: false,
@@ -135,8 +141,8 @@ function PieChart({ data, total, current }) {
         },
         data: data.map(it => {
           return {
-            value: it.submitSum/100,
-            name: it.categoryName
+            value: it.costSum/100,
+            name: it.dimensionName
           };
         })
       }

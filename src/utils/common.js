@@ -52,6 +52,9 @@ const conditionType = {
 // /system/user/id => ['/system','/system/user,'/system/user/id']
 export function urlToList(url) {
   const urlList = url.split('/').filter(i => i);
+  console.log('urlToList -> urlList', urlList.map((_, index) => {
+    return `/${urlList.slice(0, index + 1).join('/')}`;
+  }));
   return urlList.map((_, index) => {
     return `/${urlList.slice(0, index + 1).join('/')}`;
   });
@@ -465,3 +468,22 @@ export const intToChinese = ( str ) => {
       endTime,
     };
  };
+
+ export const getTimeId = () => {
+  let qutient = 10000;
+  const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
+  const charArr = chars.split( '' );
+  const radix = chars.length;
+  const res = [];
+  const time = timeStampToHex();
+  do {
+    const mod = qutient % radix;
+    qutient = ( qutient - mod ) / radix;
+    res.push( charArr[mod] );
+  } while ( qutient );
+  return `${res.join('')}_${time+1}`;
+
+  // const time = timeStampToHex();
+  // return `${nodeType}_${time+1}`;
+
+};

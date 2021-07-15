@@ -1,32 +1,66 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Tooltip, Select } from 'antd';
+import { Modal, Table, Tooltip, Select, Spin } from 'antd';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
-import { getArrayValue, invoiceStatus } from '@/utils/constants';
 import style from './index.scss';
 import Chart from './Chart';
 
-const selects = [{
-  key: '0',
-  value: '部门',
-}, {
-  key: '1',
-  value: '类别',
-}, {
-  key: '2',
-  value: '项目',
-}];
+const exportKey = {
+  1: [{
+    key: '0',
+    value: '部门',
+  }, {
+    key: '1',
+    value: '类别',
+  }, {
+    key: '2',
+    value: '项目',
+  }],
+  2: [{
+    key: '0',
+    value: '部门',
+  }, {
+    key: '1',
+    value: '类别',
+  }, {
+    key: '2',
+    value: '项目',
+  }],
+  3: [{
+    key: '1',
+    value: '类别',
+  }, {
+    key: '5',
+    value: '人员',
+  }],
+  5: [{
+    key: '1',
+    value: '类别',
+  }, {
+    key: '5',
+    value: '人员',
+  }],
+  4: [{
+    key: '1',
+    value: '类别',
+  }, {
+    key: '2',
+    value: '项目',
+  }]
+};
 const { Option } = Select;
 function InvoicePrice({ children, onQuery, id, title,
-   projectType, pageDetail }) {
+   projectType, pageDetail, currentType }) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
-  const [pieChart, setPieChart] = useState('0');
+  const [pieChart, setPieChart] = useState(currentType === 1 ? '0' : '1');
   const [list, setList] = useState([]);
   const [total, setTotal] = useState(0);
   const [chartList, setChartList] = useState([]);
   const [query, setQuery] = useState('0');
+  const [tableLoading, setTableLoading] = useState(false);
+  const [chartLoading, setChartLoading] = useState(false);
 
   const columns = [{
       title: '序号',
@@ -38,18 +72,16 @@ function InvoicePrice({ children, onQuery, id, title,
         </span>
       ),
     }, {
-    title: '事由',
-      dataIndex: 'reason',
-      width: 150,
-      render: (_, record) => (
-        <InvoiceDetail id={record.invoiceSubmitId} templateType={0}>
-          <span>
-            <Tooltip placement="topLeft" title={record.reason || ''}>
-              <a className="eslips-2">{record.reason}</a>
-            </Tooltip>
-          </span>
-        </InvoiceDetail>
-      ),
+      title: '支出类别',
+        dataIndex: 'costCategoryName',
+        width: 150,
+        ellipsis: true,
+        textWrap: 'word-break',
+        render: (text) => (
+          <Tooltip title={text || ''} placement="topLeft">
+            {text}
+          </Tooltip>
+        )
     }, {
       title: '金额(元)',
       dataIndex: 'submitSum',
@@ -57,8 +89,44 @@ function InvoicePrice({ children, onQuery, id, title,
         <span>{text && text / 100}</span>
       ),
       className: 'moneyCol',
-      width: 140,
+      width: 120,
     }, {
+    title: '事由',
+      dataIndex: 'reason',
+      ellipsis: true,
+      textWrap: 'word-break',
+      width: 150,
+      render: (_, record) => (
+        <InvoiceDetail id={record.invoiceSubmitId} templateType={record.templateType}>
+          <span>
+            <Tooltip placement="topLeft" title={record.reason || ''}>
+              <a className="eslips-2">
+                {record.reason.length > 6 ? `${record.reason.substring(0, 6)}...` : record.reason}
+              </a>
+            </Tooltip>
+          </span>
+        </InvoiceDetail>
+      ),
+    }, {
+      title: '项目',
+      dataIndex: 'projectName',
+      width: 150,
+      render: (_, record) => (
+        <span>
+          <Tooltip placement="topLeft" title={record.projectName || ''}>
+            <span className="eslips-1">{record.projectName}</span>
+          </Tooltip>
+        </span>
+      ),
+    },  {
+      title: '承担人',
+      dataIndex: 'userName',
+      width: 150,
+    }, {
+      title: '承担部门',
+      dataIndex: 'deptName',
+      width: 180,
+    },{
       title: '单号',
       dataIndex: 'invoiceNo',
       width: 160,
@@ -77,14 +145,6 @@ function InvoicePrice({ children, onQuery, id, title,
         <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}</span>
       ),
       width: 150,
-    }, {
-      title: '单据状态',
-      dataIndex: 'statusStr',
-      width: 100,
-      render: (_, record) => (
-        <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
-      ),
-      fixed: 'right',
     }];
 
     const onNewQuery = async(payload) => {
@@ -94,6 +154,8 @@ function InvoicePrice({ children, onQuery, id, title,
       } else {
         result = await onQuery(payload);
       }
+      setTableLoading(false);
+      setChartLoading(false);
       // detailList, pieChartVos, listQuery, listTotal 返回参数
       if (result.detailList) setList(result.detailList);
       if (result.pieChartVos) setChartList(result.pieChartVos);
@@ -103,18 +165,25 @@ function InvoicePrice({ children, onQuery, id, title,
 
     const onSearch = (e) => {
       setSearch(e);
+      setTableLoading(true);
       onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart });
     };
 
     const onChange = val => {
       setPieChart(val);
+      setTableLoading(true);
+      setChartLoading(true);
       onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val });
     };
   return (
     <span>
-      <span onClick={() => {
-        onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, pieChart });
-        setVisible(true);  }}
+      <span
+        onClick={() => {
+          setTableLoading(true);
+          setChartLoading(true);
+          onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, pieChart });
+          setVisible(true);
+        }}
       >
         { children }
       </span>
@@ -141,22 +210,25 @@ function InvoicePrice({ children, onQuery, id, title,
                 style={{ width: '88px' }}
                 onChange={v => onChange(v)}
                 value={pieChart}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
               >
                 {
-                  selects.map(it => (
+                  exportKey[currentType].map(it => (
                     <Option key={it.key}>{it.value}</Option>
                   ))
                 }
               </Select>
             </div>
-            <Chart
-              data={chartList}
-              total={total}
-              fileName={{
-                name: 'dimensionName',
-                price: 'costSum'
-              }}
-            />
+            <Spin spinning={chartLoading}>
+              <Chart
+                data={chartList}
+                total={total}
+                fileName={{
+                  name: 'dimensionName',
+                  price: 'costSum'
+                }}
+              />
+            </Spin>
           </div>
           <div className={style.chartRight}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -172,11 +244,11 @@ function InvoicePrice({ children, onQuery, id, title,
             <Table
               dataSource={list}
               columns={columns}
-              rowKey="invoiceSubmitId"
-              scroll={{y: '380px', x: '1090px'}}
+              rowKey="id"
+              scroll={{y: '380px', x: '1600px'}}
+              loading={tableLoading}
               onChange={(page, filter) => {
                 const { current, pageSize } = page;
-                console.log('onChange', page);
                 onNewQuery({
                   id,
                   pageNo: current,

@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable guard-for-in */
 import React, { Component } from 'react';
-import { Form, Select, InputNumber, Table, Button, message } from 'antd';
+import { Form, Select, InputNumber, Table, Button, message, Popconfirm } from 'antd';
 import { connect } from 'dva';
+import cs from 'classnames';
 import SelectPeople from '../SelectPeople';
 import style from './index.scss';
 import { numAdd, numMulti } from '../../../utils/float';
 import ExportFile from '../ExportFile';
+import { rowSelect, getTimeId } from '../../../utils/common';
 
-const Option = {Select};
+const { Option } = Select;
 @Form.create()
 @connect(({ global }) => ({
   expenseList: global.expenseList,
@@ -25,11 +27,13 @@ class AddCostTable extends Component {
     super(props);
     this.state = {
       costDetailShareVOS: this.props.costDetailShareVOS,
-      shareAmount: this.props.shareAmount,
+      shareAmount: this.props.shareAmount || 0,
       costSum: this.props.costSum,
       initDep: this.props.initDep,
       currencyId: '-1',
       exchangeRate: '1',
+      selectedRowKeys: [],
+      selectedRows: [],
     };
     props.onGetForm(this.onGetForm);
   }
@@ -43,7 +47,7 @@ class AddCostTable extends Component {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         costDetailShareVOS: this.props.costDetailShareVOS || [],
-        shareAmount: this.props.shareAmount,
+        shareAmount: this.props.shareAmount || 0,
         costSum: this.props.costSum,
         initDep: this.props.initDep,
         currencyId: this.props.currencyId || '-1',
@@ -81,6 +85,28 @@ class AddCostTable extends Component {
     });
   }
 
+
+  onSelectAll = (selected, selectedRows, changeRows) => {
+    const result = rowSelect.onSelectAll(this.state, selected, changeRows, 'key');
+    const _selectedRows = result.selectedRows;
+    const { selectedRowKeys } = result;
+    this.setState({
+        selectedRowKeys,
+        selectedRows: _selectedRows,
+    });
+  };
+
+  onSelect = (record, selected) => {
+    const {
+        selectedRows,
+        selectedRowKeys,
+    } = rowSelect.onSelect(this.state, record, selected, 'key');
+    this.setState({
+        selectedRowKeys,
+        selectedRows,
+    });
+  };
+
   onAdd = () => {
     const { costDetailShareVOS } = this.state;
     const { modify } = this.props;
@@ -90,7 +116,6 @@ class AddCostTable extends Component {
       message.error('改单不允许更改分摊');
       return;
     }
-    console.log('initDep', initDep);
     details.push({
       key: `a${costDetailShareVOS.length}`,
       shareAmount: 0,
@@ -207,17 +232,19 @@ class AddCostTable extends Component {
     }
   }
 
+  // 删除操作
   onDelete = (key) => {
     const { costDetailShareVOS } = this.state;
     const { modify } = this.props;
     if (modify) return;
     const detail = [...costDetailShareVOS];
-    console.log('onDelete -> costDetailShareVOS', costDetailShareVOS);
-    const count = detail.findIndex(it => it.key === key);
-    console.log('onDelete -> count', count);
-    if (count > -1) {
-      detail.splice(count, 1);
-    }
+    // console.log('onDelete -> costDetailShareVOS', costDetailShareVOS);
+    // const count = detail.findIndex(it => it.key === key);
+    // console.log('onDelete -> count', count);
+    // if (count > -1) {
+    //   detail.splice(count, 1);
+    // }
+    const newArr = detail.filter(it => !key.includes(it.key));
     let shareMount = 0;
     const amm = this.props.form.getFieldValue('shareAmount');
     // eslint-disable-next-line no-restricted-syntax
@@ -226,10 +253,10 @@ class AddCostTable extends Component {
         shareMount+=amm[keys];
       }
     }
-    this.props.onChange('costDetailShareVOS', detail);
+    this.props.onChange('costDetailShareVOS', newArr || []);
     this.props.onChange('shareAmount', shareMount.toFixed(2));
     this.setState({
-      costDetailShareVOS: detail,
+      costDetailShareVOS: newArr || [],
       shareAmount: shareMount.toFixed(2),
     });
   }
@@ -306,7 +333,80 @@ class AddCostTable extends Component {
         }
       });
     }
+    console.log('测试分摊的数组', arr);
     return arr;
+  }
+
+  onAdds = async({ exportList }) => {
+    const list = exportList && exportList.length ? exportList : [];
+    const arrs = [];
+    const { costDetailShareVOS, costSum, shareAmount } = this.state;
+    console.log('onAdds -> costSum', costSum);
+    const { modify } = this.props;
+    const details = [...costDetailShareVOS];
+    if (modify) {
+      message.error('改单不允许更改分摊');
+      return;
+    }
+    const old = shareAmount ? Number((shareAmount * 100).toFixed(0)) : 0;
+    let amount = old;
+    list.forEach((it, index) => {
+      amount+=it.costAmount;
+      console.log('onAdds -> amount', amount);
+      arrs.push({
+        ...it,
+        key: `export_${getTimeId()}_${index}`,
+        shareAmount: it.costAmount/100,
+        shareScale: ((((it.costAmount/100)/costSum) * 10000).toFixed(0))/100,
+        depList: it.deptObject,
+        invoiceBaseId: details.invoiceBaseId,
+        users: it.userId ? [{ userId: it.userId, name: it.userName, userName: it.userName }] : [],
+      });
+    });
+    console.log(shareAmount, shareAmount*100 + amount);
+    const newArr = [...details, ...arrs];
+    this.props.onChange('costDetailShareVOS', newArr);
+    this.props.onChange('shareAmount', amount/100);
+    this.setState({
+      costDetailShareVOS: newArr,
+      shareAmount: amount/100,
+    });
+  }
+
+  // 平均分摊
+  onPro = () => {
+    const { costDetailShareVOS, costSum } = this.state;
+    const arr = [];
+    let sum = 0;
+    let scaleSum = 0;
+    const len = costDetailShareVOS.length;
+    costDetailShareVOS.forEach((it, index) => {
+      let mon = Number(((costSum/(len)) * 100).toFixed(0));
+      let scale = Number(((100/len) * 100).toFixed(0));
+      if (index === (len-1)) {
+        mon = (costSum - sum/100).toFixed(2);
+        scale = (100-scaleSum/100).toFixed(2);
+      }
+      sum+=mon;
+      scaleSum+=scale;
+      arr.push({
+        ...it,
+        shareAmount: index === (len-1) ? mon : mon/100,
+        shareScale: index === (len-1) ? scale : scale/100,
+      });
+      this.props.form.setFieldsValue({
+        [`shareAmount[${it.key}]`]: index === (len-1) ? mon : mon/100,
+        [`shareScale[${it.key}]`]: index === (len-1) ? scale : scale/100,
+      });
+    });
+    console.log('平均分摊', arr);
+    console.log('平均分摊', costSum);
+    this.props.onChange('costDetailShareVOS', arr);
+    this.props.onChange('shareAmount', costSum);
+    this.setState({
+      costDetailShareVOS: arr,
+      shareAmount: costSum,
+    });
   }
 
   render () {
@@ -318,7 +418,9 @@ class AddCostTable extends Component {
       expenseId,
       uniqueId,
     } = this.props;
-    const { costDetailShareVOS, shareAmount, costSum, currencyId, currencySymbol, exchangeRate } = this.state;
+    const { costDetailShareVOS, shareAmount, costSum, currencyId,
+      currencySymbol, exchangeRate, selectedRowKeys } = this.state;
+
     const columns = [{
       title: '承担人员',
       dataIndex: 'userId',
@@ -332,6 +434,7 @@ class AddCostTable extends Component {
             disabled={modify}
             flag="users"
             multiple={false}
+            className={style.selPeople}
           />
         </div>
       )
@@ -343,10 +446,15 @@ class AddCostTable extends Component {
           <Form.Item>
             {
               getFieldDecorator(`deptId[${record.key}]`, {
-                initialValue: record.deptId ? `${record.deptId}` : '',
+                initialValue: record.deptId ? `${record.deptId}` : undefined,
                 rules:[{ required: true, message: '请选择承担部门' }]
               })(
-                <Select getPopupContainer={triggerNode => triggerNode.parentNode} disabled={modify}>
+                <Select
+                  disabled={modify}
+                  style={{ width: '120px' }}
+                  placeholder="请选择"
+                  dropdownMatchSelectWidth={false}
+                >
                   {
                     record.depList && record.depList.map(it => (
                       <Option key={`${it.deptId}`}>{it.name}</Option>
@@ -358,7 +466,7 @@ class AddCostTable extends Component {
           </Form.Item>
         </Form>
       ),
-      width: '200px'
+      width: '150px'
     }, {
       title: '承担金额(元)',
       dataIndex: 'shareAmount',
@@ -404,13 +512,18 @@ class AddCostTable extends Component {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record, index) => (
-        <span
-          className="deleteColor"
-          onClick={() => this.onDelete(record.key,index)}
-          id={record.id}
+        <Popconfirm
+          placement="topRight"
+          title="确认删除分摊项吗？"
+          onConfirm={() => this.onDelete([record.key])}
         >
-          删除
-        </span>
+          <span
+            className="deleteColor"
+            id={record.id}
+          >
+            删除
+          </span>
+        </Popconfirm>
       ),
       width: '70px'
     }];
@@ -426,7 +539,11 @@ class AddCostTable extends Component {
                   initialValue: record.projectId,
                   rules: [{ required: (!!(project.isWrite) && !modify), message: '请选择项目' }]
                 })(
-                  <Select disabled={modify}>
+                  <Select
+                    disabled={modify}
+                    style={{ width: '120px' }}
+                    placeholder="请选择"
+                  >
                     {
                       usableProject.map(it => (
                         <Option key={it.id}>{it.name}</Option>
@@ -438,11 +555,18 @@ class AddCostTable extends Component {
             </Form.Item>
           </Form>
         ),
-        width: '180px'
+        width: '150px'
       });
     } else if (columns.length > 5) {
       columns.splice(2,1);
     }
+    const rowSelection = {
+      type: 'checkbox',
+      selectedRowKeys,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
+      columnWidth: '24px'
+    };
     return (
       <div style={{paddingTop: '24px'}}>
         <div className={style.header} style={{ display: 'flex' }}>
@@ -451,27 +575,48 @@ class AddCostTable extends Component {
           {
             costDetailShareVOS && costDetailShareVOS.length > 0 &&
             <p style={{marginBottom: 0}} className="li-24 c-black-85 fw-500">
-              （¥{ currencyId && currencyId !== '-1' ?
+              （共{costDetailShareVOS.length}个分摊项，
+              总金额：¥{ currencyId && currencyId !== '-1' ?
               `${Number(numMulti(costSum, exchangeRate)).toFixed(2)}(${currencySymbol}${costSum})` : costSum}
-              已分摊：¥{ currencyId && currencyId !== '-1' ?
+              <span className="m-l-8">
+                已分摊：¥{ currencyId && currencyId !== '-1' ?
               `${Number(numMulti(Number(shareAmount), exchangeRate)).toFixed(2)}(${currencySymbol}${shareAmount})` : shareAmount}）
+              </span>
             </p>
           }
         </div>
-        <div className="m-b-12">
-          <Button className="m-r-8" type="primary" onClick={() => this.onAdd()}>添加分摊</Button>
-          <ExportFile
-            expenseId={expenseId}
-            upload={this.props.upload}
-            uploadLoading={this.props.uploadLoading}
-            onChangeAdd={this.onAddCost}
-            uniqueId={uniqueId}
-          >
-            <Button className="m-r-8" type="default">批量导入</Button>
-          </ExportFile>
-          <Button className="m-r-8" type="default" onClick={() => this.onAdd()}>平均分摊</Button>
-          <Button className="m-r-8" onClick={() => this.onAdd()}>添加分摊</Button>
-        </div>
+        {
+          costDetailShareVOS && costDetailShareVOS.length > 0 ?
+            <div className="m-b-12">
+              <Button className="m-r-8" type="primary" onClick={() => this.onAdd()}>添加分摊</Button>
+              <ExportFile
+                expenseId={expenseId}
+                callback={this.onAdds}
+                uniqueId={uniqueId}
+              >
+                <Button className="m-r-8" type="default" disabled={!costSum}>批量导入</Button>
+              </ExportFile>
+              <Button className="m-r-8" type="default" onClick={() => this.onPro()} disabled={!costSum}>平均分摊</Button>
+              <Popconfirm
+                placement="topRight"
+                title="确认删除分摊项吗？"
+                onConfirm={() => this.onDelete(selectedRowKeys)}
+              >
+                <Button
+                  disabled={!(selectedRowKeys.length)}
+                  className={cs(selectedRowKeys.length && style.delButton, 'm-r-8')}
+                >
+                  批量删除
+                </Button>
+              </Popconfirm>
+            </div>
+            :
+            <div style={{textAlign: 'center'}} className={style.addbtn}>
+              <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加分摊</Button>
+            </div>
+        }
+
+
         {
           costDetailShareVOS && costDetailShareVOS.length > 0 &&
           <div className={style.addTable}>
@@ -479,6 +624,7 @@ class AddCostTable extends Component {
               columns={columns}
               dataSource={costDetailShareVOS}
               pagination={false}
+              rowSelection={rowSelection}
               rowKey="key"
             />
           </div>

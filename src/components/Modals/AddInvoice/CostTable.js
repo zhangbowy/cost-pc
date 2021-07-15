@@ -74,18 +74,20 @@ class CostTable extends Component {
               content={(
                 <div className={style.share_cnt}>
                   <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">分摊明细：金额 ¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(record.costSum), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${record.costSum})` : record.costSum}</p>
-                  {
-                    record.costDetailShareVOS.map(it => (
-                      <p key={it.id} className="c-black-36 fs-13">
-                        <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
-                        {
-                          it.projectName &&
-                          <span className="m-r-8">{it.projectName}</span>
-                        }
-                        <span>¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(it.shareAmount), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${it.shareAmount})` : it.shareAmount}</span>
-                      </p>
-                    ))
-                  }
+                  <div style={{ maxHeight: '176px', overflowY: 'scroll' }}>
+                    {
+                      record.costDetailShareVOS.map(it => (
+                        <p key={it.id} className="c-black-36 fs-13">
+                          <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
+                          {
+                            it.projectName &&
+                            <span className="m-r-8">{it.projectName}</span>
+                          }
+                          <span>¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(it.shareAmount), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${it.shareAmount})` : it.shareAmount}</span>
+                        </p>
+                      ))
+                    }
+                  </div>
                 </div>
               )}
             >

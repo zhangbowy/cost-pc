@@ -287,11 +287,18 @@ class Invoice extends React.PureComponent {
           <span>
             {
               record.type === 0 &&
-                <AddGroup data={record} onOk={() => _this.onOk()} title="edit"><a>编辑组</a></AddGroup>
+                <AddGroup data={record} onOk={() => _this.onOk()} title="edit">
+                  <a style={{ width: '90px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}>编辑组</a>
+                </AddGroup>
             }
             {
               record.type === 1 &&
-                <a onClick={() => this.onAddCategory(`${record.id}_${record.templateType}`)}>编辑单据模板</a>
+                <a
+                  style={{ width: '90px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}
+                  onClick={() => this.onAddCategory(`${record.id}_${record.templateType}`)}
+                >
+                  编辑单据模板
+                </a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>

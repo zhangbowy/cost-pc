@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import PageHead from '@/components/PageHead';
 import { Button } from 'antd';
+import moment from 'moment';
 import style from './index.scss';
 import { ddDing } from '../../../utils/ddApi';
 
@@ -43,9 +44,9 @@ class SendDing extends Component {
   }
 
   render() {
-    // const {
-    //   // list,
-    // } = this.props;
+    const {
+      list,
+    } = this.props;
     return (
       <div className="mainContainer">
         <PageHead
@@ -59,7 +60,10 @@ class SendDing extends Component {
             </div>
           </div>
           <Button type="default" onClick={() => this.onDing()}>一键发Ding</Button>
-          <p className="m-t-8 c-black-45 fs-14">上次时间：2019-04-22 22:03</p>
+          {
+            list.alertDate &&
+            <p className="m-t-8 c-black-45 fs-12">上次时间：{list.alertDate ? moment(list.alertDate).format('YYYY-MM-DD hh:mm:ss') : ''}</p>
+          }
         </div>
       </div>
     );

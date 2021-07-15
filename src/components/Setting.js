@@ -304,7 +304,6 @@ class Setting extends Component {
 
   render() {
     const { title, visible, data, groupList } = this.state;
-    console.log('Setting -> render -> data', data);
     const { form: { getFieldDecorator }, type, target } = this.props;
     const columns = [
       {

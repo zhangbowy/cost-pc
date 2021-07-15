@@ -16,7 +16,7 @@ function Templates({ name, isWrite, fieldType }) {
       <div className={style.tmpCnt}>
         {
           types !== 9 &&
-          <p className="fs-14 c-black-85">{name}</p>
+          <p className="fs-14 c-black-85 m-b-16">{name}</p>
         }
         {
           (types === 2) &&

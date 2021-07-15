@@ -456,11 +456,9 @@ class ChangeForm extends Component {
       depList,
       officeList,
     } = this.props;
-    console.log('render -> supplierList', supplierList);
 
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
-    console.log('render -> newForm', newForm);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -827,7 +825,7 @@ class ChangeForm extends Component {
                             {
                               getFieldDecorator('month', {
                                 initialValue: details.month ?
-                                moment(Number(details.month)).format('YYYY-MM') : '',
+                                moment(moment(Number(details.month)).format('YYYY-MM'), 'YYYY-MM') : undefined,
                                 rules: [{
                                   required: !!(showField.month && showField.month.isWrite),
                                   message: `请选择${showField.month && showField.month.name}`

@@ -473,7 +473,7 @@ class Right extends PureComponent {
               </Form.Item>
             }
             {
-              templateType !== 2 && isModifyInvoice &&
+              templateType !== 2 && templateType !== 3 && isModifyInvoice &&
               Number(details.fieldType) !== 9 &&
                 <Form.Item
                   label={(

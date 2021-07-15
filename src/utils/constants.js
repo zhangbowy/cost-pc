@@ -128,7 +128,7 @@ export const isAllCostCategory = [{
   key: false,
   value: '部分类别'
 }];
-export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum'];
+export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month'];
 export const dragDisabled = ['detail_money', 'detail_sale', 'detail_account'];
 export const costCategoryJson = [{
   key: 'reason',
@@ -659,26 +659,32 @@ export const invoiceStatus = [
 // },
 {
   key: '1',
-  value: '审核中'
+  value: '审核中',
+  color: 'rgba(255, 148, 62, 1)'
 },
 {
   key: '2',
-  value: '待发放'
+  value: '待发放',
+  color: 'rgba(3, 122, 254, 1)'
 }, {
   key: '3',
-  value: '已发放'
+  value: '已发放',
+  color: 'rgba(0, 199, 149, 1)',
 },
 {
   key: '4',
-  value: '已撤销'
+  value: '已撤销',
+  color: 'rgba(255, 90, 95, 1)'
 },
 {
   key: '5',
-  value: '已拒绝'
+  value: '已拒绝',
+  color: 'rgba(255, 90, 95, 1)'
 },
 {
   key: '6',
-  value: '已还款'
+  value: '已还款',
+  color: 'rgba(0, 199, 149, 1)',
 }];
 
 // 审批状态
@@ -1068,7 +1074,8 @@ export const workbenchStatus = [{
 export const templateTypeList = {
   '0': '报销单',
   '1': '借款单',
-  '2': '申请单'
+  '2': '申请单',
+  '3': '薪资单'
 };
 
 export const invoiceJson = {

@@ -16,11 +16,13 @@ const labelInfo = {
 };
 const { TreeNode } = Tree;
 @Form.create()
-@connect(({ loading, auth }) => ({
+@connect(({ loading, auth, session }) => ({
   loading: loading.effects['account/add'] || false,
   menuList: auth.menuList,
   detailRoleList: auth.detailRoleList,
-  rolePurviewDataVos: auth.rolePurviewDataVos
+  rolePurviewDataVos: auth.rolePurviewDataVos,
+  userInfo: session.userInfo,
+  openProjectStatus: auth.openProjectStatus,
 }))
 class AddAuth extends Component {
 
@@ -34,6 +36,7 @@ class AddAuth extends Component {
     dataRole: [],
     checkKeys: {},
     dep: {},
+    openProjectStatus: 0,
   };
 
   static defaultProps = {
@@ -95,6 +98,7 @@ class AddAuth extends Component {
         checkedKeys,
         checkKeys: check,
         dataRole: roleData,
+        openProjectStatus: this.props.openProjectStatus,
         treeData: treeConvert({
           rootId: 0,
           pId: 'parentId',
@@ -119,8 +123,9 @@ class AddAuth extends Component {
       onOk,
       dispatch,
       detailRoleList,
+      userInfo,
     } = this.props;
-    const { checkedKeys, checkKeys, dep } = this.state;
+    const { checkedKeys, checkKeys, dep, openProjectStatus } = this.state;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const menus = [];
@@ -137,7 +142,9 @@ class AddAuth extends Component {
         }
         for(const iKey in checkKeys) {
           let arr = {};
-          if (checkKeys[iKey].includes(`${iKey}_0`) || checkKeys[iKey].includes(`${iKey}_1`)) {
+          if (checkKeys[iKey].includes(`${iKey}_0`) ||
+          checkKeys[iKey].includes(`${iKey}_1`) ||
+          checkKeys[iKey].includes(`${iKey}_2`)) {
             arr = {
               invoiceId: iKey,
               purviewDataVos: [],
@@ -153,10 +160,15 @@ class AddAuth extends Component {
                 type: 1,
               });
             }
+            if (checkKeys[iKey].includes(`${iKey}_2`)) {
+              arr.purviewDataVos.push({
+                type: 2,
+              });
+            }
             rolePurviewDataVOS.push(arr);
           }
         }
-        const payload = { ...values, menus, rolePurviewDataVOS };
+        const payload = { ...values, menus, rolePurviewDataVOS, openProjectStatus: openProjectStatus ? 1 : 0 };
         let action = 'auth/add';
         let cont = '新增成功';
         if (data) {
@@ -227,6 +239,12 @@ class AddAuth extends Component {
     });
   }
 
+  onChangeOp = e => {
+    this.setState({
+      openProjectStatus: e.target.checked ? 1 : 0,
+    });
+  }
+
   render() {
     const {
       children,
@@ -235,8 +253,9 @@ class AddAuth extends Component {
       form: { getFieldDecorator },
       loading,
       isSupperAdmin,
+      userInfo,
     } = this.props;
-    const { visible, treeData, dataRole, checkKeys } = this.state;
+    const { visible, treeData, dataRole, checkKeys, openProjectStatus } = this.state;
     const myTitle = data ? `编辑${title}` : `添加${title}`;
     return (
       <span>
@@ -317,7 +336,15 @@ class AddAuth extends Component {
               <span>项目权限</span>
             </div>
           </div>
-          <Checkbox value="4" checked className="m-l-8">
+          <Checkbox
+            value={1}
+            checked={openProjectStatus}
+            className="m-l-8"
+            disabled={isSupperAdmin === 1 ||
+              isSupperAdmin === 2 ||
+            (isSupperAdmin === 0 && userInfo.adminType !== 1)}
+            onChange={e => this.onChangeOp(e)}
+          >
             <span className="fs-14 c-black-65">所有项目</span>
             <span className="fs-14 c-black-45">（不受项目责任制的限制，默认可见所有项目）</span>
           </Checkbox>
@@ -331,7 +358,12 @@ class AddAuth extends Component {
             dataRole.map(item => (
               <div key={item.invoiceId} style={{display: 'flex'}}>
                 <p className={style.checkT}>{item.invoiceName}：</p>
-                <Checkbox.Group value={checkKeys[item.invoiceId]} disabled={isSupperAdmin}>
+                <Checkbox.Group
+                  value={checkKeys[item.invoiceId]}
+                  disabled={(isSupperAdmin === 1) ||
+                  (isSupperAdmin === 2 && userInfo.adminType === 1 && item.templateType !== 3) ||
+                  (isSupperAdmin === 2 && userInfo.adminType !== 1)}
+                >
                   <Checkbox value="4" checked className="m-r-30">我负责的</Checkbox>
                   {
                     item.purviewDataVos.map(it => (
@@ -340,6 +372,7 @@ class AddAuth extends Component {
                         value={`${item.invoiceId}_${it.type}`}
                         onClick={e => this.onChecks(e, item.invoiceId, item.type)}
                         className="m-r-30"
+                        disabled={userInfo.adminType !== 1 &&  item.templateType === 3}
                       >
                         {it.purviewDataName}
                       </Checkbox>

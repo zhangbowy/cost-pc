@@ -14,7 +14,7 @@ const tempObj = {
   0: '报销',
   1: '借款',
   2: '申请',
-  3: '薪资'
+  3: '提交'
 };
 function Right({ templateType, templatePdfVo, corpName,
   isRelationLoan, invoiceName, categoryStatus }) {
@@ -56,14 +56,14 @@ function Right({ templateType, templatePdfVo, corpName,
                 <div className={style['cont-cell-label']}>
                   { templateType === 0 && '承担者' }
                   { templateType === 1 && '借款部门' }
-                  { templateType === 2 && '申请部门' }
+                  { (templateType === 2 || templateType === 3) && '申请部门' }
                 </div>
               </div>
               <div className={style['cont-cell']}>
                 <div className={style['cont-cell-label']}>
                   { templateType === 0 && '提交' }
                   { templateType === 1 && '借款' }
-                  { templateType === 2 && '申请' }
+                  { (templateType === 2 || templateType === 3) && '申请' }
                   日期
                 </div>
               </div>
@@ -155,7 +155,7 @@ function Right({ templateType, templatePdfVo, corpName,
                   </tr>
                   :
                   <tr>
-                    <td className={style['cont-line-r']} colSpan="3">报销金额（元）</td>
+                    <td className={style['cont-line-r']} colSpan="3">{tempObj[templateType]}金额（元）</td>
                   </tr>
               }
             </table>

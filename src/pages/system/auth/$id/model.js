@@ -12,6 +12,12 @@ export default {
       pageNo: 1,
       pageSize: PAGE_SIZE,
     },
+    roleLists: [],
+    roleQuery: {
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+    },
+
     total: 0,
     userIdList: [],
   },
@@ -31,6 +37,15 @@ export default {
         },
       });
     },
+    *roleLists({ payload }, { call, put }) {
+      const response = yield call(get, api.roleLists, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          roleLists: response.openRoleGroups || [],
+        },
+      });
+    },
     *userIdList({ payload }, { call, put }) {
       const response = yield call(get, api.userIdList, payload);
       yield put({
@@ -42,6 +57,9 @@ export default {
     },
     *add({ payload }, { call }) {
       yield call(post, api.add, payload);
+    },
+    *addddRole({ payload }, { call }) {
+      yield call(get, api.addddRole, payload);
     },
     *delRole({ payload }, { call }) {
       yield call(get, api.del, payload);

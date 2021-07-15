@@ -2,7 +2,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip } from 'antd';
+import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
@@ -309,109 +309,55 @@ class Basic extends React.PureComponent {
       },
     };
     return (
-      <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
-        <Form {...formItemLayout} className="formItem" style={{ width: '450px' }}>
-          <Form.Item label={labelInfo.name}>
-            {
-              getFieldDecorator('name', {
-                initialValue: data && data.name,
-                rules: [{ required: true, message: '请输入名称' }]
-              })(
-                <Input placeholder="请输入名称" />
-              )
-            }
-          </Form.Item>
-          <Form.Item label={labelInfo.parentId}>
-            {
-              getFieldDecorator('parentId', {
-                initialValue: (data && data.parentId) || '0',
-              })(
-                <Select>
-                  <Option key="0">无</Option>
-                  {
-                    lists.map(item => (
-                      <Option key={item.id}>{item.name}</Option>
-                    ))
-                  }
-                </Select>
-              )
-            }
-          </Form.Item>
-          <Form.Item
-            label={labelInfo.note}
-          >
-            {
-              getFieldDecorator('note', {
-                initialValue: data && data.note,
-                rules: [{ max: 50, message: '不能超过50字' }]
-              })(
-                <TextArea max={50} />
-              )
-            }
-          </Form.Item>
-          <Form.Item label={labelInfo.isAllUse}>
-            {
-              getFieldDecorator('isAllUse', {
-                initialValue: user,
-              })(
-                <RadioGroup onChange={e => this.onChange(e, 'user')}>
-                  {
-                    isAllUse.map(item => (
-                      <Radio key={item.key} value={item.key}>{item.value}</Radio>
-                    ))
-                  }
-                </RadioGroup>
-              )
-            }
-            {
-              !user &&
-              <UserSelector
-                users={users}
-                depts={deptJson}
-                placeholder='请选择'
-                onSelectPeople={(val) => this.selectPle(val)}
-                invalid={false}
-                disabled={false}
-              />
-            }
-          </Form.Item>
-          {
-            (Number(templateType) === 2) &&
-            <Form.Item label="支出明细">
+      <Spin spinning={this.props.detailLoading}>
+        <div style={{ width: '100%', paddingTop: '24px', overflowY: 'scroll' }}>
+          <Form {...formItemLayout} className="formItem" style={{ width: '450px' }}>
+            <Form.Item label={labelInfo.name}>
               {
-                getFieldDecorator('categoryStatus', {
-                  initialValue: costStatus,
+                getFieldDecorator('name', {
+                  initialValue: data && data.name,
+                  rules: [{ required: true, message: '请输入名称' }]
                 })(
-                  <RadioGroup onChange={e => this.onChange(e, 'costStatus')}>
-                    {
-                      categoryStatus.map(item => (
-                        <Radio key={item.key} value={item.key}>
-                          {item.value}
-                          {
-                            item.key === '0' &&
-                            <Tooltip title="禁用后，该申请单模版不支持添加支出明细">
-                              <i className="iconfont iconIcon-yuangongshouce fs-14 m-l-8" />
-                            </Tooltip>
-                          }
-                        </Radio>
-                      ))
-                    }
-                  </RadioGroup>
+                  <Input placeholder="请输入名称" />
                 )
               }
             </Form.Item>
-          }
-          {
-            (!Number(templateType) || (Number(templateType) === 3) ||
-            (Number(templateType) === 2) && costStatus !== '0') &&
-            <Form.Item label={labelInfo.isAllCostCategory}>
+            <Form.Item label={labelInfo.parentId}>
               {
-                getFieldDecorator('isAllCostCategory', {
-                  initialValue: cost,
+                getFieldDecorator('parentId', {
+                  initialValue: (data && data.parentId) || '0',
                 })(
-                  <RadioGroup onChange={e => this.onChange(e, 'cost')}>
+                  <Select>
+                    <Option key="0">无</Option>
                     {
-                      isAllCostCategory.map(item => (
+                      lists.map(item => (
+                        <Option key={item.id}>{item.name}</Option>
+                      ))
+                    }
+                  </Select>
+                )
+              }
+            </Form.Item>
+            <Form.Item
+              label={labelInfo.note}
+            >
+              {
+                getFieldDecorator('note', {
+                  initialValue: data && data.note,
+                  rules: [{ max: 50, message: '不能超过50字' }]
+                })(
+                  <TextArea max={50} />
+                )
+              }
+            </Form.Item>
+            <Form.Item label={labelInfo.isAllUse}>
+              {
+                getFieldDecorator('isAllUse', {
+                  initialValue: user,
+                })(
+                  <RadioGroup onChange={e => this.onChange(e, 'user')}>
+                    {
+                      isAllUse.map(item => (
                         <Radio key={item.key} value={item.key}>{item.value}</Radio>
                       ))
                     }
@@ -419,155 +365,211 @@ class Basic extends React.PureComponent {
                 )
               }
               {
-                !cost &&
-                getFieldDecorator('costCategory', {
-                  initialValue: category,
+                !user &&
+                <UserSelector
+                  users={users}
+                  depts={deptJson}
+                  placeholder='请选择'
+                  onSelectPeople={(val) => this.selectPle(val)}
+                  invalid={false}
+                  disabled={false}
+                />
+              }
+            </Form.Item>
+            {
+              (templateType === 2) &&
+              <Form.Item label="支出明细">
+                {
+                  getFieldDecorator('categoryStatus', {
+                    initialValue: costStatus,
+                  })(
+                    <RadioGroup onChange={e => this.onChange(e, 'costStatus')}>
+                      {
+                        categoryStatus.map(item => (
+                          <Radio key={item.key} value={item.key}>
+                            {item.value}
+                            {
+                              item.key === '0' &&
+                              <Tooltip title="禁用后，该申请单模版不支持添加支出明细">
+                                <i className="iconfont iconIcon-yuangongshouce fs-14 m-l-8" />
+                              </Tooltip>
+                            }
+                          </Radio>
+                        ))
+                      }
+                    </RadioGroup>
+                  )
+                }
+              </Form.Item>
+            }
+            {
+              (!templateType || (templateType === 3) ||
+              ((templateType === 2) && costStatus !== '0')) &&
+              <Form.Item label={labelInfo.isAllCostCategory}>
+                {
+                  getFieldDecorator('isAllCostCategory', {
+                    initialValue: cost,
+                  })(
+                    <RadioGroup onChange={e => this.onChange(e, 'cost')}>
+                      {
+                        isAllCostCategory.map(item => (
+                          <Radio key={item.key} value={item.key}>{item.value}</Radio>
+                        ))
+                      }
+                    </RadioGroup>
+                  )
+                }
+                {
+                  !cost &&
+                  getFieldDecorator('costCategory', {
+                    initialValue: category,
+                  })(
+                    <TreeSelect
+                      onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
+                      treeData={costCategoryList}
+                      treeCheckable
+                      style={{width: '100%'}}
+                      showCheckedStrategy={SHOW_CHILD}
+                      dropdownStyle={{height: '300px'}}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
+            <Form.Item label={labelInfo.approveId}>
+              {
+                getFieldDecorator('approveId', {
+                  initialValue: flowId,
+                  rules: [{ required: true, message: '请选择审批流' }]
                 })(
-                  <TreeSelect
-                    onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
-                    treeData={costCategoryList}
-                    treeCheckable
-                    style={{width: '100%'}}
-                    showCheckedStrategy={SHOW_CHILD}
+                  <Select
+                    key="flow"
+                    placeholder="请选择"
+                    optionLabelProp="label"
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                    dropdownClassName={style.addSel}
+                    onChange={(val) => { this.setState({ flowId: val }); }}
                     dropdownStyle={{height: '300px'}}
-                  />
-                )
-              }
-            </Form.Item>
-          }
-          <Form.Item label={labelInfo.approveId}>
-            {
-              getFieldDecorator('approveId', {
-                initialValue: flowId,
-                rules: [{ required: true, message: '请选择审批流' }]
-              })(
-                <Select
-                  key="flow"
-                  placeholder="请选择"
-                  optionLabelProp="label"
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  dropdownClassName={style.addSel}
-                  onChange={(val) => { this.setState({ flowId: val }); }}
-                  dropdownStyle={{height: '300px'}}
-                  dropdownRender={(menu) => {
-                    return (
-                      <div>
-                        <span onMouseDown={(e) => { e.preventDefault();}}>
-                          {menu}
-                        </span>
-                        {
-                          approveList.length && !approveList[0].processOperationPermission &&
-                          <>
-                            <Divider style={{margin: '0'}} />
-                            <div
-                              key="event"
-                              style={{height: '50px', textAlign: 'center', lineHeight: '50px'}}
-                              onClick={() => this.edit('add')}
-                              onMouseDown={e => {e.preventDefault();}}
-                            >
-                              <Icon type="plus" className="sub-color m-r-8" />
-                              <a className="fs-14">新建审批流</a>
-                            </div>
-                          </>
-                        }
-                      </div>
-                    );
-                  }}
-                >
-                  {
-                    approveList.filter(it => (it.templateType === Number(templateType))).map(it => (
-                      <Option
-                        key={it.id}
-                        label={it.templateName}
-                        className={style.flowOption}
-                      >
-                        <span>
-                          <span className="m-r-8">{it.templateName}</span>
-                          {
-                            this.state.flowId === it.id &&
-                            <i className="iconfont icondui sub-color" />
-                          }
-                        </span>
-                        {
-                          !it.processOperationPermission &&
-                          <span
-                            key="flowEdit"
-                          >
-                            <a
-                              className={style.editFlow}
-                              onClick={() => this.edit('edit', it)}
-                              onMouseDown={(e) => { e.preventDefault();}}
-                            >
-                              编辑
-                            </a>
+                    dropdownRender={(menu) => {
+                      return (
+                        <div>
+                          <span onMouseDown={(e) => { e.preventDefault();}}>
+                            {menu}
                           </span>
-                        }
-                      </Option>
-                    ))
-                  }
-                </Select>
-              )
-            }
-          </Form.Item>
-          {
-            !Number(templateType) &&
-            <Form.Item label="借款核销">
-              {
-                getFieldDecorator('relation', {
-                  initialValue: data && data.relation ? data.relation : [],
-                })(
-                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reLoan')}>
-                    <Checkbox value="isRelationLoan">允许关联</Checkbox>
+                          {
+                            approveList.length && !approveList[0].processOperationPermission &&
+                            <>
+                              <Divider style={{margin: '0'}} />
+                              <div
+                                key="event"
+                                style={{height: '50px', textAlign: 'center', lineHeight: '50px'}}
+                                onClick={() => this.edit('add')}
+                                onMouseDown={e => {e.preventDefault();}}
+                              >
+                                <Icon type="plus" className="sub-color m-r-8" />
+                                <a className="fs-14">新建审批流</a>
+                              </div>
+                            </>
+                          }
+                        </div>
+                      );
+                    }}
+                  >
                     {
-                      reLoan.includes('isRelationLoan') &&
-                        <Checkbox value="isWriteByRelationLoan">必填</Checkbox>
+                      approveList.filter(it => (it.templateType === Number(templateType))).map(it => (
+                        <Option
+                          key={it.id}
+                          label={it.templateName}
+                          className={style.flowOption}
+                        >
+                          <span>
+                            <span className="m-r-8">{it.templateName}</span>
+                            {
+                              this.state.flowId === it.id &&
+                              <i className="iconfont icondui sub-color" />
+                            }
+                          </span>
+                          {
+                            !it.processOperationPermission &&
+                            <span
+                              key="flowEdit"
+                            >
+                              <a
+                                className={style.editFlow}
+                                onClick={() => this.edit('edit', it)}
+                                onMouseDown={(e) => { e.preventDefault();}}
+                              >
+                                编辑
+                              </a>
+                            </span>
+                          }
+                        </Option>
+                      ))
                     }
-                  </Checkbox.Group>
+                  </Select>
                 )
               }
             </Form.Item>
-          }
-          {
-            Number(templateType) !== 2 && (Number(templateType) !== 3) &&
-            <Form.Item label="申请单">
-              {
-                getFieldDecorator('relations', {
-                  initialValue: data && data.relations ? data.relations : [],
-                })(
-                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reApply')}>
-                    <Checkbox value="isRelationApply">允许关联</Checkbox>
-                    {
-                      reApply.includes('isRelationApply') &&
-                        <Checkbox value="isWriteByRelationApply">必填</Checkbox>
-                    }
-                  </Checkbox.Group>
-                )
-              }
-            </Form.Item>
-          }
-          <Form.Item label={labelInfo.status}>
             {
-              getFieldDecorator('status', {
-                initialValue: data.status === undefined ? true :!!(data.status),
-                valuePropName: 'checked'
-              })(
-                <Switch />
-              )
+              !Number(templateType) &&
+              <Form.Item label="借款核销">
+                {
+                  getFieldDecorator('relation', {
+                    initialValue: data && data.relation ? data.relation : [],
+                  })(
+                    <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reLoan')}>
+                      <Checkbox value="isRelationLoan">允许关联</Checkbox>
+                      {
+                        reLoan.includes('isRelationLoan') &&
+                          <Checkbox value="isWriteByRelationLoan">必填</Checkbox>
+                      }
+                    </Checkbox.Group>
+                  )
+                }
+              </Form.Item>
             }
-          </Form.Item>
-        </Form>
-        <AddFlow
-          // {...this.props}
-          templateType={templateType}
-          title={title}
-          name={name}
-          processPersonId={flowId}
-          onOk={() => this.onChangeSelect(title)}
-          dispatch={dispatch}
-          visible={visible}
-          onCancel={() => this.onCancel()}
-        />
-      </div>
+            {
+              Number(templateType) !== 2 && (Number(templateType) !== 3) &&
+              <Form.Item label="申请单">
+                {
+                  getFieldDecorator('relations', {
+                    initialValue: data && data.relations ? data.relations : [],
+                  })(
+                    <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reApply')}>
+                      <Checkbox value="isRelationApply">允许关联</Checkbox>
+                      {
+                        reApply.includes('isRelationApply') &&
+                          <Checkbox value="isWriteByRelationApply">必填</Checkbox>
+                      }
+                    </Checkbox.Group>
+                  )
+                }
+              </Form.Item>
+            }
+            <Form.Item label={labelInfo.status}>
+              {
+                getFieldDecorator('status', {
+                  initialValue: data.status === undefined ? true :!!(data.status),
+                  valuePropName: 'checked'
+                })(
+                  <Switch />
+                )
+              }
+            </Form.Item>
+          </Form>
+          <AddFlow
+            // {...this.props}
+            templateType={templateType}
+            title={title}
+            name={name}
+            processPersonId={flowId}
+            onOk={() => this.onChangeSelect(title)}
+            dispatch={dispatch}
+            visible={visible}
+            onCancel={() => this.onCancel()}
+          />
+        </div>
+      </Spin>
     );
   }
 }

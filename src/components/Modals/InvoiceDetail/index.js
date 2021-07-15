@@ -235,6 +235,8 @@ class InvoiceDetail extends Component {
       window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${id}`;
     } else if (Number(templateType) === 0) {
       window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${id}`;
+    } else if (Number(templateType) === 3) {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Salary?token=${localStorage.getItem('token')}&id=${id}`;
     } else {
       window.location.href = `${APP_API}/cost/export/pdfDetail4Application?token=${localStorage.getItem('token')}&id=${id}`;
     }
@@ -476,7 +478,16 @@ class InvoiceDetail extends Component {
                 :
                 <Col span={8} className="m-t-16">
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>申请金额：</span>
-                  <span className="fs-14 c-black-65">¥{ details.applicationSum ? details.applicationSum/100 : 0}</span>
+                  {
+                    Number(templateType === 2) ?
+                      <span className="fs-14 c-black-65">
+                        ¥{ details.applicationSum ? details.applicationSum/100 : 0}
+                      </span>
+                      :
+                      <span className="fs-14 c-black-65">
+                        ¥{ details.salaryAmount ? details.salaryAmount/100 : 0}
+                      </span>
+                  }
                 </Col>
             }
             {
@@ -500,7 +511,7 @@ class InvoiceDetail extends Component {
               </Col>
             }
             {
-              Number(templateType) === 2 &&
+              (Number(templateType) === 2 || Number(templateType) === 3) &&
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>申请人：</span>
                 <span className="fs-14 c-black-65">{details.userName}</span>
@@ -514,10 +525,17 @@ class InvoiceDetail extends Component {
               </Col>
             }
             {
-              Number(templateType) === 2 &&
+              (Number(templateType) === 2 || Number(templateType) === 3) &&
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>申请人部门：</span>
                 <span className="fs-14 c-black-65">{details.deptName}</span>
+              </Col>
+            }
+            {
+              Number(templateType) === 3 &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>所属月份：</span>
+                <span className="fs-14 c-black-65">{moment(details.month).format('YYYY-MM')}</span>
               </Col>
             }
             <Col span={8} className="m-t-16">
@@ -525,7 +543,7 @@ class InvoiceDetail extends Component {
               <span className="fs-14 c-black-65">{details.createTime && moment(details.createTime).format('YYYY-MM-DD')}</span>
             </Col>
             {
-              Number(templateType) !== 2 &&
+              (Number(templateType) !== 2 && Number(templateType) !== 3) &&
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
                 <span className="fs-14 c-black-65">{Number(templateType) ? getArrayValue(details.grantStatus, invoiceStatus) : getArrayValue(details.status, invoiceStatus)}</span>

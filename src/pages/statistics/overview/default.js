@@ -1,27 +1,41 @@
 import React from 'react';
-import { Tooltip, Badge } from 'antd';
+import { Tooltip } from 'antd';
 import moment from 'moment';
-import { projectType } from '@/utils/fields';
-import { getArrayValue, invoiceStatus, approveStatus } from '../../../utils/constants';
+import fields from '@/utils/fields';
+import { getArrayValue, approveStatus, statusList } from '../../../utils/constants';
 import InvoiceDetail from '../../../components/Modals/InvoiceDetail';
 import { defaultMonth } from './components/Search/time';
 
 const times = defaultMonth();
 const initMonth = { ...times };
+const statusTime = localStorage.getItem('statisticalDimension') === 'undefined' ? 0 : localStorage.getItem('statisticalDimension');
+const staticsObj = {
+  0: {
+    name: '提交时间',
+  },
+  1: {
+    name: '审核通过时间'
+  },
+  2: {
+    name: '发生日期'
+  }
+};
+const { projectType } = fields;
+console.log('项目角色', projectType);
 export default {
   '0': {
     query: 'detail',
     columns: [{
       title: '支出类别',
       dataIndex: 'categoryName',
+      ellipsis: true,
+      textWrap: 'word-break',
       width: 100,
       render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
+        <Tooltip title={text || ''} placement="topLeft">
+          {text}
+        </Tooltip>
+      )
     }, {
       title: '金额（元）',
       dataIndex: 'submitSum',
@@ -34,17 +48,15 @@ export default {
       dataIndex: 'reason',
       width: 150,
       render: (_, record) => (
-        <span>
-          <InvoiceDetail
-            id={record.invoiceSubmitId}
-            templateType={0}
-          >
-            <Tooltip placement="topLeft" title={record.reason || ''}>
-              <a className="eslips-2">{record.reason}</a>
-            </Tooltip>
-          </InvoiceDetail>
-        </span>
-      ),
+        <InvoiceDetail
+          id={record.invoiceSubmitId}
+          templateType={record.templateType}
+        >
+          <Tooltip placement="topLeft" title={record.reason || ''}>
+            <a className="eslips-1">{record.reason}</a>
+          </Tooltip>
+        </InvoiceDetail>
+      )
     }, {
       title: '承担人',
       dataIndex: 'userName',
@@ -119,47 +131,6 @@ export default {
         <span>{getArrayValue(text, approveStatus)}</span>
       ),
       width: 100,
-    }, {
-      title: '单据状态',
-      dataIndex: 'status',
-      render: (_, record) => {
-        const { status } = record;
-        return (
-          <span>
-            {
-              (Number(status) === 2 )|| (Number(status) === 3) ?
-                <Badge
-                  color={Number(status) === 2 ? 'rgba(255, 148, 62, 1)' : 'rgba(0, 0, 0, 0.25)'}
-                  text={getArrayValue(status, invoiceStatus)}
-                />
-              :
-                <span>{getArrayValue(status, invoiceStatus)}</span>
-            }
-          </span>
-        );
-      },
-      width: 110,
-      fixed: 'right',
-      filters: [
-        { text: '已发放', value: '1' },
-        { text: '待发放', value: '3' }
-      ],
-    },{
-      title: '操作',
-      dataIndex: 'ope',
-      render: (_, record) => (
-        <span>
-          <InvoiceDetail
-            id={record.invoiceSubmitId}
-            templateType={0}
-          >
-            <a>查看</a>
-          </InvoiceDetail>
-        </span>
-      ),
-      width: 80,
-      fixed: 'right',
-      className: 'fixCenter'
     }],
     tableProps: {
       scroll: { x: 3000 },
@@ -176,7 +147,7 @@ export default {
       type: 'inSector',
       label: '金额',
       placeholder: ['请输入', '请输入'],
-      key: ['up', 'down'],
+      key: ['minSum', 'maxSum'],
       id: 'price',
     }, {
       type: 'deptAndUser',
@@ -189,8 +160,8 @@ export default {
       type: 'rangeTime',
       label: '提交时间',
       placeholder: '请选择',
-      key: ['submitStartTime', 'submitEndTime'],
-      id: 'submitStartTime',
+      key: ['startTime', 'endTime'],
+      id: 'startTime',
     }, {
       type: 'rangeTime',
       label: '审核通过时间',
@@ -208,9 +179,9 @@ export default {
       type: 'select',
       label: '单据状态',
       placeholder: '请选择',
-      key: 'status',
-      id: 'status',
-      options: invoiceStatus,
+      key: 'statusList',
+      id: 'statusList',
+      options: statusList,
       fileName: {
         key: 'key',
         name: 'value'
@@ -265,15 +236,62 @@ export default {
       title: '明细数',
       dataIndex: 'categoryCountAll',
       width: 70,
+    }, {
+      title: (
+        <span>
+          <span className="m-r-8">环比增长</span>
+          <Tooltip title="环比上月/上季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'annulus',
+      render: (_, record) => (
+        <span>
+          { record.annulusSymbolType === null && '-' }
+          { record.annulusSymbolType !== null &&
+          (
+            <span className="icons">
+              <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+            </span>
+          )}
+        </span>
+      ),
+      width: 80,
+    }, {
+      title: (
+        <span className="icons">
+          <span className="m-r-8">同比增长</span>
+          <Tooltip title="同比去年同月/同季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'yearOnYear',
+      width: 80,
+      render: (_, record) => (
+        <span>
+          { record.yearOnYearSymbolType === null && '-' }
+          { record.yearOnYearSymbolType !== null &&
+          (
+            <span className="icons">
+              <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+            </span>
+          )}
+        </span>
+      ),
     }],
     chartName: 'deptName',
     type: 'deptId',
     tableProps: {
-      rowKey: 'id'
+      rowKey: 'id',
+      scroll: { x: '1200px' }
     },
     searchList: [{
       type: 'timeC',
-      label: '选择月份',
+      label: staticsObj[statusTime].name,
       key: ['startTime', 'endTime'],
       id: 'timeC',
       out: 1,
@@ -282,10 +300,17 @@ export default {
         startTime: initMonth.startTime,
         endTime: initMonth.endTime,
       },
+      isFixed: true,
+      initialValue: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      initialValueStr: initMonth.valueStr,
       valueStr: initMonth.valueStr,
     }, {
       type: 'dept',
-      label: '部门',
+      label: '承担部门',
       placeholder: '请选择',
       key: 'deptVos',
       id: 'deptVos',
@@ -316,15 +341,62 @@ export default {
       title: '明细数',
       dataIndex: 'categoryCountAll',
       width: 70,
+    }, {
+      title: (
+        <span>
+          <span className="m-r-8">环比增长</span>
+          <Tooltip title="环比上月/上季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'annulus',
+      render: (_, record) => (
+        <span>
+          { record.annulusSymbolType === null && '-' }
+          { record.annulusSymbolType !== null &&
+          (
+            <span className="icons">
+              <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+            </span>
+          )}
+        </span>
+      ),
+      width: 80,
+    }, {
+      title: (
+        <span className="icons">
+          <span className="m-r-8">同比增长</span>
+          <Tooltip title="同比去年同月/同季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'yearOnYear',
+      width: 80,
+      render: (_, record) => (
+        <span>
+          { record.yearOnYearSymbolType === null && '-' }
+          { record.yearOnYearSymbolType !== null &&
+          (
+            <span className="icons">
+              <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+            </span>
+          )}
+        </span>
+      ),
     }],
     chartName: 'categoryName',
     type: 'categoryId',
     tableProps: {
-      rowKey: 'id'
+      rowKey: 'id',
+      scroll: { x: '1200px' }
     },
     searchList: [{
       type: 'timeC',
-      label: '选择月份',
+      label: staticsObj[statusTime].name,
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -334,10 +406,17 @@ export default {
         startTime: initMonth.startTime,
         endTime: initMonth.endTime,
       },
+      initialValue: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      isFixed: true,
+      initialValueStr: initMonth.valueStr,
       valueStr: initMonth.valueStr,
     }, {
       type: 'dept',
-      label: '部门',
+      label: '承担部门',
       placeholder: '请选择',
       key: 'deptVos',
       id: 'deptVos',
@@ -348,13 +427,6 @@ export default {
       placeholder: '请选择',
       key: 'categoryIds',
       id: 'categoryIds',
-      out: 1,
-    }, {
-      type: 'rangeTime',
-      label: '发生日期',
-      placeholder: '请选择',
-      key: ['repayStartTime', 'endTime'],
-      id: 'submitStartTime',
       out: 1,
     }]
   },
@@ -383,7 +455,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: '选择月份',
+      label: staticsObj[statusTime].name,
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -393,6 +465,13 @@ export default {
         startTime: initMonth.startTime,
         endTime: initMonth.endTime,
       },
+      initialValue:  {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      isFixed: true,
+      initialValueStr: initMonth.valueStr,
       valueStr: initMonth.valueStr,
     }, {
       type: 'deptAndUser',
@@ -406,6 +485,7 @@ export default {
       placeholder: '请选择',
       key: 'projectIds',
       id: 'projectIds',
+      linkKey: 'queryType',
       out: 1,
     }, { // 搜索部分数据
       type: 'select',
@@ -415,9 +495,14 @@ export default {
       id: 'queryType',
       out: 1,
       options: projectType,
+      linkUrl: 'costGlobal/projectList',
+      linkKey: 'projectIds',
       fileName: {
         key: 'key',
         name: 'value'
+      },
+      initialValue: {
+        queryType: 0,
       },
       value: {
         queryType: 0,
@@ -436,27 +521,69 @@ export default {
     columns: [{
       title: '姓名',
       dataIndex: 'userName',
-      width: 80,
+      width: 100,
       render: (_, record) => (
         <span style={{fontWeight: record.userId === -1 ? 'bolder' : 'normal'}}>{record.userName}</span>
       )
     }, {
-      title: '报销人数',
-      dataIndex: 'submitUserCountAll',
-      width: 70,
+      title: (
+        <span>
+          <span className="m-r-8">环比增长</span>
+          <Tooltip title="环比上月/上季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'annulus',
+      render: (_, record) => (
+        <span>
+          { record.annulusSymbolType === null && '-' }
+          { record.annulusSymbolType !== null &&
+          (
+            <span className="icons">
+              <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+            </span>
+          )}
+        </span>
+      ),
+      width: 100,
+    }, {
+      title: (
+        <span className="icons">
+          <span className="m-r-8">同比增长</span>
+          <Tooltip title="同比去年同月/同季度/上年度的增长率">
+            <i className="iconfont iconIcon-yuangongshouce fs-16" />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'yearOnYear',
+      width: 100,
+      render: (_, record) => (
+        <span>
+          { record.yearOnYearSymbolType === null && '-' }
+          { record.yearOnYearSymbolType !== null &&
+          (
+            <span className="icons">
+              <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+            </span>
+          )}
+        </span>
+      ),
     }, {
       title: '明细数',
       dataIndex: 'categoryCountAll',
-      width: 70,
+      width: 100,
     }],
     chartName: 'userName',
-    type: 'id',
+    type: 'userIdSelect',
     tableProps: {
-      rowKey: 'id'
+      rowKey: 'userId'
     },
     searchList: [{
       type: 'timeC',
-      label: '选择月份',
+      label: staticsObj[statusTime].name,
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -466,6 +593,12 @@ export default {
         startTime: initMonth.startTime,
         endTime: initMonth.endTime,
       },
+      initialValue: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      initialValueStr: initMonth.valueStr,
       valueStr: initMonth.valueStr,
     }, {
       type: 'deptAndUser',
@@ -473,6 +606,7 @@ export default {
       placeholder: '请选择',
       key: ['createUserVOS', 'createDeptVOS'],
       id: 'createUserVOS',
+      out: 1,
     }, { // 搜索部分数据
       type: 'tree',
       label: '支出类别',
@@ -494,11 +628,11 @@ export default {
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
-      width: 70,
+      width: 100,
     }, {
       title: '明细数',
       dataIndex: 'categoryCountAll',
-      width: 70,
+      width: 100,
     }],
     chartName: 'supplierName',
     type: 'supplierId',
@@ -507,7 +641,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: '选择月份',
+      label: staticsObj[statusTime].name,
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -517,6 +651,13 @@ export default {
         startTime: initMonth.startTime,
         endTime: initMonth.endTime,
       },
+      initialValue: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      initialValueStr: initMonth.valueStr,
+      isFixed: true,
       valueStr: initMonth.valueStr,
     }, { // 搜索部分数据
       type: 'tree',

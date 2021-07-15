@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import { post } from '@/utils/request';
 import constants from '@/utils/constants';
@@ -5,6 +6,32 @@ import { message } from 'antd';
 import api from './services';
 
 const { PAGE_SIZE } = constants;
+const exportObj = {
+  0: {
+    exportUrl: api.exports,
+    fileName: '支出明细',
+  },
+  1: {
+    exportUrl: api.deptExport,
+    fileName: '部门支出'
+  },
+  2: {
+    exportUrl: api.classifyExport,
+    fileName: '类别支出'
+  },
+  3: {
+    exportUrl: api.projectExport,
+    fileName: '项目支出'
+  },
+  4: {
+    exportUrl: api.peopleExport,
+    fileName: '员工支出'
+  },
+  5: {
+    exportUrl: api.supplierExport,
+    fileName: '供应商支出'
+  }
+};
 export default {
   namespace: 'overview',
   state: {
@@ -22,6 +49,7 @@ export default {
     listTotal: 0,
     pieChartVos: [], // 弹窗的饼图
     detailList: [], // 弹窗的列表
+    chartList: [],
   },
   effects: {
     *detail({ payload }, { call, put }) {
@@ -265,11 +293,11 @@ export default {
         type: 'save',
         payload: {
           list: response.list || [],
-          querys: {
+          queryPage: {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize
           },
-          totals: response.page.total || 0,
+          total: response.page.total || 0,
         },
       });
     },
@@ -353,7 +381,7 @@ export default {
           url = api.projectDetail;
         break;
         case 4:
-          url = api.deptDetail;
+          url = api.peopleDetail;
         break;
         case 5:
           url = api.supplierDetail;
@@ -362,7 +390,6 @@ export default {
           break;
       }
       const response = yield call(post, url, payload);
-      console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {
@@ -393,8 +420,24 @@ export default {
       });
     },
     *export({ payload }, { call }) {
-      Object.assign(payload, { exportType:'export', fileName: '支出明细' });
-      yield call(post, api.exports, payload);
+      const { exportUrl, fileName } = exportObj[payload.currentType];
+      Object.assign(payload, { exportType:'export', fileName });
+      yield call(post, exportUrl, payload);
+    },
+    *chart({ payload }, { call, put }) {
+      let url = api.chart;
+      if (payload.chartTypes === 'supplier') {
+        url = api.supplierChart;
+        delete payload.chartTypes;
+      }
+      const response = yield call(post, url, payload);
+      console.log('*list -> response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          chartList: response || [],
+        },
+      });
     },
   },
   reducers: {

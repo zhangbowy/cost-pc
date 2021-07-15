@@ -1,17 +1,101 @@
 
 
 import React from 'react';
-import { Menu, Form, message, Icon } from 'antd';
+import { Menu, message, Tooltip } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import Search from 'antd/lib/input/Search';
 import DropBtn from '@/components/DropBtn';
+import treeConvert from '@/utils/treeConvert';
 import SummaryCmp from './components/SummaryCmp';
 import style from './index.scss';
-import LevelSearch from './components/LevelSearch';
 import TableTemplate from '../../../components/Modals/TableTemplate';
+import { invoiceStatus } from '../../../utils/constants';
+import SearchBanner from '../overview/components/Search/Searchs';
 
-@connect(({ loading, summary, session, costGlobal }) => ({
+const listSearch = [{
+  type: 'deptAndUser',
+  label: '提交部门/人',
+  placeholder: '请选择',
+  key: ['createUserVOS', 'createDeptVOS'],
+  id: 'createUserVOS',
+  out: 1,
+}, {
+  type: 'rangeTime',
+  label: '提交时间',
+  placeholder: '请选择',
+  key: ['startTime', 'endTime'],
+  id: 'startTime',
+  out: 1,
+}, {
+  type: 'select',
+  label: '单据状态',
+  placeholder: '请选择',
+  key: 'statuses',
+  id: 'statuses',
+  options: invoiceStatus,
+  fileName: {
+    key: 'key',
+    name: 'value'
+  },
+}, {
+  type: 'tree',
+  label: '单据类型',
+  placeholder: '请选择',
+  key: 'invoiceTemplateIds',
+  id: 'invoiceTemplateIds',
+  out: 1,
+}, {
+  type: 'tree',
+  label: '项目',
+  placeholder: '请选择',
+  key: 'projectIds',
+  id: 'projectIds',
+}, {
+  type: 'tree',
+  label: '供应商',
+  placeholder: '请选择',
+  key: 'supplierIds',
+  id: 'supplierIds',
+}, {
+  type: 'search',
+  label: '外部选择',
+  placeholder: '单号、事由、收款人',
+  key: 'content',
+  id: 'content',
+  out: 1,
+}];
+const apply = [{
+  key: '1',
+  value: '审核中'
+},
+{
+  key: '2',
+  value: '审批通过'
+},
+{
+  key: '4',
+  value: '已撤销'
+},
+{
+  key: '5',
+  value: '已拒绝'
+}];
+const salary = [{
+  key: '1',
+  value: '审核中'
+}, {
+  key: '3',
+  value: '已发放'
+},
+{
+  key: '4',
+  value: '已撤销'
+},
+{
+  key: '5',
+  value: '已拒绝'
+}];
+@connect(({ loading, summary, session, costGlobal, global }) => ({
   loading: loading.effects['summary/submitList'] ||
             loading.effects['summary/loanList'] ||
             loading.effects['summary/applicationList'] ||
@@ -26,6 +110,10 @@ import TableTemplate from '../../../components/Modals/TableTemplate';
   userInfo: session.userInfo,
   recordList: costGlobal.recordList,
   recordPage: costGlobal.recordPage,
+  costCategoryList: global.costCategoryList,
+  invoiceList: global.invoiceList,
+  projectList: costGlobal.projectList,
+  supplierList: global.supplierList,
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -37,6 +125,7 @@ class Summary extends React.PureComponent {
       list: [],
       searchContent: '',
       sumAmount: 0,
+      searchList: listSearch,
     };
   }
 
@@ -44,7 +133,71 @@ class Summary extends React.PureComponent {
     const {
       query,
     } = this.props;
-    this.onQuery({...query});
+    this.onQuery({...query}, () => {
+      this.search();
+    });
+  }
+
+  search = () => {
+    const { dispatch } = this.props;
+    const { current } = this.state;
+    const _this = this;
+    const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
+    const arr = fetchs.map(it => {
+      const params = {};
+      if (it === 'invoiceList') {
+        Object.assign(params, {
+          templateType: current,
+        });
+      }
+      return dispatch({
+        type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
+        payload: params,
+      });
+    });
+    const { searchList } = this.state;
+    Promise.all(arr).then(() => {
+      const { costCategoryList, invoiceList, projectList, supplierList } = _this.props;
+      const treeList = [costCategoryList, projectList, invoiceList];
+      console.log('search -> treeList', treeList);
+      const keys = ['costIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds'];
+      const obj = {};
+      const newTree = treeList.map((it, i) => {
+        return treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          name: i === 0 ? 'costName' : 'name',
+          tName: 'title',
+          tId: 'value'
+        }, it);
+      });
+
+      newTree.push(supplierList);
+      newTree.forEach((it, index) => {
+        Object.assign(obj, {
+          [keys[index]]: it,
+        });
+      });
+      console.log('newSearch', obj);
+
+      const newSearch = searchList.map(it => {
+        if (keys.includes(it.key)) {
+          return {
+            ...it,
+            options: obj[it.key],
+            fileName: {
+              key: 'id',
+              name: 'name'
+            }
+          };
+        }
+        return { ...it };
+      });
+      console.log('newSearch', newSearch);
+      this.setState({
+        searchList: newSearch,
+      });
+    });
   }
 
   export = (key) => {
@@ -101,8 +254,8 @@ class Summary extends React.PureComponent {
     });
   }
 
-  onQuery = (payload) => {
-    const { current, searchContent, levelSearch } = this.state;
+  onQuery = (payload, callback) => {
+    const { current, searchList } = this.state;
     console.log('AuthIndex -> onQuery -> current', current);
     let url = 'summary/submitList';
     if (Number(current) === 1) {
@@ -112,9 +265,12 @@ class Summary extends React.PureComponent {
     } else if (Number(current) === 3) {
       url = 'summary/salaryList';
     }
-    Object.assign(payload, {
-      content: searchContent,
-      ...levelSearch,
+    searchList.forEach(it => {
+      if (it.value) {
+        Object.assign(payload, {
+          ...it.value,
+        });
+      }
     });
     this.props.dispatch({
       type: url,
@@ -134,9 +290,13 @@ class Summary extends React.PureComponent {
       } else if (Number(current) === 3) {
         lists = salaryList;
       }
+      this.search();
       this.setState({
         list: lists,
       });
+      if (callback) {
+        callback();
+      }
     });
   }
 
@@ -153,11 +313,18 @@ class Summary extends React.PureComponent {
   }
 
   handleClick = e => {
+    const arr = [...listSearch];
+    if (e.key === '2') {
+      arr[2].options = apply;
+    } else if (e.key === '3') {
+      arr[2].options = salary;
+    }
     this.setState({
       current: e.key,
       selectedRowKeys: [],
       selectedRows: [],
       levelSearch: {},
+      searchList: arr,
     }, () => {
       this.onQuery({
         pageNo: 1,
@@ -165,6 +332,17 @@ class Summary extends React.PureComponent {
       });
     });
   };
+
+  onChangeSearch = (val) => {
+    this.setState({
+      searchList: val
+    }, () => {
+      this.onQuery({
+        pageNo: 1,
+        pageSize: 10,
+      });
+    });
+  }
 
   onRecord = (payload, callback) => {
     const { current } = this.state;
@@ -196,8 +374,8 @@ class Summary extends React.PureComponent {
     const { loading, query, total,
        sum, userInfo, recordList, recordPage } = this.props;
     const { current, selectedRowKeys, list,
-      searchContent, sumAmount, levelSearch,
-      selectedRows } = this.state;
+      searchContent, sumAmount,
+      selectedRows, searchList } = this.state;
     const columns = [{
       title: '姓名',
       dataIndex: 'operationName',
@@ -224,7 +402,7 @@ class Summary extends React.PureComponent {
       width: 160,
     }];
     return (
-      <div>
+      <div style={{ minWidth: '1000px' }}>
         <div style={{background: '#fff', paddingTop: '16px'}}>
           <p className="m-l-32 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>台账汇总</p>
           <Menu
@@ -236,10 +414,18 @@ class Summary extends React.PureComponent {
             <Menu.Item key={0}>报销单</Menu.Item>
             <Menu.Item key={1}>借款单</Menu.Item>
             <Menu.Item key={2}>申请单</Menu.Item>
-            <Menu.Item key={3}>薪资单</Menu.Item>
+            <Menu.Item key={3}>
+              <Tooltip title="薪资单为保密数据，如对权限控制范围有疑问请联系超管处理">
+                <span>薪资单</span>
+              </Tooltip>
+            </Menu.Item>
           </Menu>
         </div>
-        <div className="content-dt" style={{padding: 0}}>
+        <SearchBanner
+          list={searchList || []}
+          onChange={this.onChangeSearch}
+        />
+        <div className="content-dt" style={{padding: 0, height: 'auto'}}>
           <div className={style.payContent}>
             <div className="cnt-header" style={{display: 'flex'}}>
               <div className="head_lf">
@@ -251,14 +437,6 @@ class Summary extends React.PureComponent {
                 >
                   导出
                 </DropBtn>
-                {/* <Button className="m-l-8" onClick={() => this.print()}>打印</Button> */}
-                <Form style={{display: 'flex', marginLeft: '8px'}}>
-                  <Search
-                    placeholder="单号 事由 收款账户名称"
-                    style={{ width: '272px', marginLeft: '8px' }}
-                    onSearch={(e) => this.onSearch(e)}
-                  />
-                </Form>
               </div>
               <div className="head_rg">
                 <TableTemplate
@@ -270,7 +448,6 @@ class Summary extends React.PureComponent {
                   sWidth='800px'
                 >
                   <div
-                    className="m-r-32"
                     style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}
                   >
                     <div className={style.activebg}>
@@ -279,17 +456,16 @@ class Summary extends React.PureComponent {
                     <span className="fs-14 sub-color">操作日志</span>
                   </div>
                 </TableTemplate>
-                <LevelSearch onOk={this.onOk} details={levelSearch} templateType={Number(current)}>
-                  <div style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}>
-                    <div className={style.activebg}>
-                      <Icon className="sub-color m-r-8" type="filter" />
-                    </div>
-                    <span className="fs-14 sub-color">高级搜索</span>
-                  </div>
-                </LevelSearch>
               </div>
             </div>
-            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>已选{selectedRowKeys.length}笔费用，{selectedRowKeys.length ? `共计¥${sumAmount/100}` : `合计¥${sum/100}`} </p>
+            <div className={style.message}>
+              <span className="fs-14 c-black-65">
+                { selectedRowKeys.length ? `已选${selectedRowKeys.length}` : `共${total}` }条记录，合计
+              </span>
+              <span className="fs-16 c-black-85 fw-500">
+                ¥{ selectedRowKeys.length ? sumAmount/100 : sum/100}
+              </span>
+            </div>
             <SummaryCmp
               list={list}
               templateType={Number(current)}

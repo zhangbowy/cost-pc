@@ -381,6 +381,16 @@ class AddInvoice extends Component {
       this.setState({
         total: detail.loanSum/100
       });
+    } else if (Number(djDetails.templateType) === 3) {
+      newDetail = {
+        ...newDetail,
+        total: detail.salaryAmount/100,
+        loanSum: detail.salaryAmount/100
+      };
+      this.setState({
+        total: detail.salaryAmount/100
+      });
+      this.onInitBorrow([], detail.costDetailsVo || []);
     }
     const expandVos = [];
     expandField.forEach(it => {
@@ -810,7 +820,6 @@ class AddInvoice extends Component {
       submitSum: ((total * 1000)/10).toFixed(0),
       salaryAmount: ((total * 1000)/10).toFixed(0),
     };
-    console.log('AddInvoice -> handleOk -> this.changeForm', this.changeForm);
     if (this.changeForm &&
       this.changeForm.onSaveForm &&
       this.changeForm.onSaveForm()) {
@@ -865,19 +874,11 @@ class AddInvoice extends Component {
       costDetailsVo: arr,
     };
     if (djDetail.isRelationLoan) {
-      // if (showField.loan.isWrite && (borrowArr.length === 0)) {
-      //   message.error('请选择借款核销');
-      //   return;
-      // }
       Object.assign(params, {
         invoiceLoanAssessVos: borrowArr.map(it => { return { loanId: it.loanId, sort: it.sort }; }) || []
       });
     }
     if (djDetail.isRelationApply) {
-      // if (showField.apply.isWrite && (applyArr.length === 0)) {
-      //   message.error('请选择关联申请单');
-      //   return;
-      // }
       Object.assign(params, {
         applicationIds: applyArr.map(it => it.id) || [],
       });
@@ -905,6 +906,7 @@ class AddInvoice extends Component {
   // 保存草稿
   handelOkDraft = () => {
     const val = (this.changeForm && this.changeForm.onGetVal()) || {};
+    console.log('AddInvoice -> handelOkDraft -> val', val);
     if (!val.reason) {
       message.error('请输入事由');
       return;
@@ -969,6 +971,7 @@ class AddInvoice extends Component {
       createDeptId: val.createDeptId,
       createDeptName: dept && dept.length > 0 ? dept[0].name : '',
       nodeConfigInfo: nodes,
+      month: val.month ? moment(val.month).format('x') : undefined,
       projectId: val.projectId || '',
       supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
       supplierId: val.supplier ? val.supplier.split('_')[1] : '',
@@ -980,7 +983,6 @@ class AddInvoice extends Component {
     };
     const arr = [];
     costDetailsVo.forEach((item, index) => {
-    console.log('handelOkDraft -> costDetailsVo', costDetailsVo);
       arr.push({
         'categoryId': item.categoryId,
         'categoryName': item.categoryName,

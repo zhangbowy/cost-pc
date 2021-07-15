@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-did-update-set-state */
 /**
  * Routes:
@@ -25,7 +26,7 @@ import { dateToTime } from '../../utils/util';
 import TimeComp from './components/TimeComp';
 
 @Form.create()
-@connect(({ loading, workbench, session, global }) => ({
+@connect(({ loading, workbench, session, global, costGlobal }) => ({
   loading: loading.effects['workbench/list'] || false,
   list: workbench.list,
   query: workbench.query,
@@ -46,6 +47,8 @@ import TimeComp from './components/TimeComp';
   deptTree: workbench.deptTree,
   reportTotal: workbench.reportTotal,
   loanSumVo: workbench.loanSumVo,
+  roleStatics: costGlobal.roleStatics,
+  chartLoading: loading.effects['workbench/submitReport'] || false,
 }))
 class Workbench extends PureComponent {
 
@@ -71,15 +74,8 @@ class Workbench extends PureComponent {
         ...dateToTime('0_m'),
         type: '0_m'
       },
-      pieChart: {
-        ...dateToTime('0_m'),
-        type: '0_m',
-        attribute: 0,
-      },
-      lineChart: {
-        ...dateToTime('3_cm'),
-        type: '0_m',
-      }
+      submitReport: {},
+      flagMenu: false,
     };
   }
 
@@ -87,57 +83,67 @@ class Workbench extends PureComponent {
     if (document.querySelector('#svg-area')) {
       wave.init();
     }
-    this.props.dispatch({
-      type: 'workbench/personal',
-      payload: {}
-    }).then(() => {
-      const { personal } = this.props;
+    const { dispatch } = this.props;
+    const fetchList = [{
+      url: 'workbench/personal',
+      params: {}
+    }, {
+      url: 'costGlobal/roleStatics',
+      params: {id: '470538850289750017'}
+    }, {
+      url: 'workbench/costList',
+      params: {}
+    }, {
+      url: 'global/invoiceList',
+      params: {}
+    }, {
+      url: 'workbench/deptTree',
+      params: {}
+    }];
+    const fetchs = fetchList.map(it => it.url);
+    const arr = fetchs.map((it, index) => {
+      return dispatch({
+        type: it,
+        payload: {
+          ...fetchList[index].params
+        },
+      });
+    });
+    Promise.all(arr).then(() => {
+      const { personal, roleStatics } = this.props;
+      const arrs = roleStatics.filter(it => it.url === 'statistics_department');
+      let flagMenu = false;
+      if (arrs && arrs.length) {
+        flagMenu = true;
+      }
       this.setState({
         personal,
+        flagMenu,
       });
       this.onQuery({
         isComplete: false,
         pageNo: 1,
         pageSize: 10,
       });
-      this.props.dispatch({
-        type: 'workbench/costList',
-        payload: {}
-      });
-      this.props.dispatch({
-        type: 'global/invoiceList',
-        payload: {
-          type: 1,
-        }
-      });
       // 支出简报
-      this.props.dispatch({
-        type: 'workbench/submitReport',
-        payload: {
-          ...dateToTime('0_m'),
-        }
-      });
-       // 右侧图表
-      this.props.dispatch({
-        type: 'workbench/brokenLine',
-        payload: {
-          ...dateToTime('3_cm'),
-        }
-      });
-      // 左侧图表
-      this.props.dispatch({
-        type: 'workbench/chartPie',
-        payload: {
-          ...dateToTime('0_m'),
-          attribute: 0,
-        }
-      });
-      this.props.dispatch({
-        type: 'workbench/deptTree',
-        payload: {}
+      this.onQueryChart({
+        ...dateToTime('0_m'),
+        dateType: 0,
       });
     });
 
+  }
+
+  onQueryChart = payload => {
+    this.props.dispatch({
+      type: 'workbench/submitReport',
+      payload,
+    }).then(() => {
+      const { submitReport } = this.props;
+      this.setState({
+        submitReport,
+      });
+    });
   }
 
 
@@ -208,27 +214,13 @@ class Workbench extends PureComponent {
         personal
       });
     });
-    const { submitTime, pieChart, lineChart } = this.state;
+    const { submitTime } = this.state;
     if (isBoss) {
       this.chart({
         url: 'submitReport',
         payload: this.setVal({
           url: 'submitReport',
           payload:{...submitTime},
-        })
-      });
-      this.chart({
-        url: 'brokenLine',
-        payload: this.setVal({
-          url: 'brokenLine',
-          payload:{...lineChart},
-        })
-      });
-      this.chart({
-        url: 'chartPie',
-        payload: this.setVal({
-          url: 'chartPie',
-          payload:{...pieChart},
         })
       });
     }
@@ -346,18 +338,41 @@ class Workbench extends PureComponent {
   onChangeState = (key, val) => {
     this.setState({
       [key]: val,
+    }, () => {
+      if (key === 'submitTime') {
+        if (val.type) { delete val.type; }
+        this.onQueryChart({
+          ...val,
+        });
+      }
     });
+  }
+
+  onLink = (type, status) => {
+    const { submitTime } = this.state;
+    localStorage.removeItem('linkType');
+    localStorage.removeItem('linkStatus');
+    localStorage.setItem('linkType', type);
+    localStorage.removeItem('submitTime');
+    localStorage.setItem('submitTime', JSON.stringify(submitTime));
+    if(status) {
+      localStorage.setItem('linkStatus', status);
+    }
+    this.props.history.push('/statistics/overview');
   }
 
   render() {
     const { list, total, query,
         userInfo, loading, invoiceList,
-        OftenTemplate,pieList,
-        fyCategory, cbCategory, totalSum } = this.props;
+        OftenTemplate,
+        submitReportDetail, reportPage,
+        reportTotal,
+        loanSumVo,
+        chartLoading
+   } = this.props;
     const { personal, isComplete,
       invoiceTemplateIds, reason,
-      pieChart, lineChart,
-      isBoss, bossVisible } = this.state;
+      isBoss, bossVisible, submitTime, submitReport, flagMenu } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -372,12 +387,12 @@ class Workbench extends PureComponent {
             onCallback={() => this.onPersonal()}
           >
             <Tooltip placement="topLeft" title={record.reason || ''}>
-              <span
-                className="eslips-2 ope-btn"
+              <a
+                className="eslips-2"
                 style={{ cursor: 'pointer' }}
               >
                 {record.reason}
-              </span>
+              </a>
             </Tooltip>
           </InvoiceDetail>
         </span>
@@ -475,24 +490,32 @@ class Workbench extends PureComponent {
                 isBoss &&
                 <div className={style.ad} style={{ margin: '24px 0 16px 24px', alignItems: 'center' }}>
                   <p className="c-black-85 fs-18 fw-500">阿米巴支出简报</p>
-                  <TimeComp />
+                  <TimeComp onChangeData={this.onChangeState} submitTime={submitTime} />
                 </div>
               }
               {
                 isBoss &&
                 <div className={style.ad} style={{ marginTop: 0 }}>
-                  <RightChart
-                    chart={this.chart}
-                    lineData={{ cbCategory, fyCategory }}
-                    onChangeData={this.onChangeState}
-                    lineChart={lineChart}
-                  />
+                  <div className={style.rightCharts}>
+                    <RightChart
+                      data={submitReport || {}}
+                      submitReport={submitReport}
+                      submitReportDetail={submitReportDetail}
+                      reportPage={reportPage}
+                      reportChange={this.reportChange}
+                      submitTime={submitTime}
+                      onChangeData={this.onChangeState}
+                      reportTotal={reportTotal}
+                      loanSumVo={loanSumVo}
+                      onLink={this.onLink}
+                      loading={chartLoading}
+                    />
+                  </div>
                   <LeftPie
-                    chart={this.chart}
-                    data={pieList}
-                    totalSum={totalSum}
-                    pieChart={pieChart}
-                    onChangeData={this.onChangeState}
+                    {...this.props}
+                    data={submitReport || {}}
+                    loading={chartLoading}
+                    flagMenu={flagMenu}
                   />
                 </div>
               }

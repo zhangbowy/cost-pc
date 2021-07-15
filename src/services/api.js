@@ -126,4 +126,7 @@ export default {
    officeList: `${APP_API}/cost/branch/office/officeList`,
    officeTree: `${APP_API}/cost/branch/office/list`, // 分公司列表
    upload: `${APP_API}/cost/invoice/salary/import/costDetail/share`, // 分公司列表
+   exportList: `${APP_API}/cost/invoice/salary/costDetail/share/detail`, // 分摊获取数据
+   newProjectList: `${APP_API}/cost/project/list/v2`,
+   roleStatics: `${APP_API}/cost/menu/v2/navByParentId`, // 支出分析表的权限
 };

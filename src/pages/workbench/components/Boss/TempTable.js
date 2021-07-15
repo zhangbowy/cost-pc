@@ -73,11 +73,6 @@ class TempTable extends Component {
       <>
         <span
           onClick={() => this.onShow()}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            flex: 1
-          }}
         >
           {children}
         </span>

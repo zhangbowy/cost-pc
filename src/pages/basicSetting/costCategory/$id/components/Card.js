@@ -169,7 +169,7 @@ const Card = ({ name, isWrite, index,
               <div className={style.tmpCnt}>
                 {
                   types !== 3 && types !== 9 &&
-                  <p className="fs-14 c-black-85">{name}</p>
+                  <p className="fs-14 c-black-85 m-b-16">{name}</p>
                 }
                 {
                   (types === 2 || types === 8) &&

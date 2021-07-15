@@ -5,11 +5,12 @@ import { Button, Table, Divider, Popconfirm, message, Tooltip } from 'antd';
 import { connect } from 'dva';
 import AddAuth from './components/AddAuth';
 
-@connect(({ loading, auth }) => ({
+@connect(({ loading, auth, session }) => ({
   loading: loading.effects['auth/list'] || false,
   list: auth.list,
   query: auth.query,
   total: auth.total,
+  userInfo: session.userInfo,
 }))
 class Auth extends React.PureComponent {
   constructor(props) {
@@ -73,6 +74,7 @@ class Auth extends React.PureComponent {
       query,
       total,
       loading,
+      userInfo,
     } = this.props;
     const columns = [{
       title: '角色名称',
@@ -94,28 +96,35 @@ class Auth extends React.PureComponent {
       render: (_, record) => (
         <span>
           {
-            !record.isSupperAdmin &&
-            <Popconfirm
-              title="确认删除该角色吗?"
-              onConfirm={() => this.onDelete(record.id)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
+            !record.isSupperAdmin ?
+              <Popconfirm
+                title="确认删除该角色吗?"
+                onConfirm={() => this.onDelete(record.id)}
+              >
+                <span className="deleteColor">删除</span>
+              </Popconfirm>
+              :
+              <span className="fs-14 c-black-45">删除</span>
           }
-          {
-            !record.isSupperAdmin &&
-            <Divider type="vertical" />
-          }
+          <Divider type="vertical" />
           <AddAuth isSupperAdmin={record.isSupperAdmin} onOk={this.onOk} data={record} visible={visible}>
             {
-              record.isSupperAdmin ?
+              record.isSupperAdmin === 1 ||
+              (record.isSupperAdmin === 2 && userInfo.adminType !== 1) ?
                 <a>查看</a>
               :
                 <a>编辑</a>
             }
           </AddAuth>
           <Divider type="vertical" />
-          <a onClick={() => this.onLink(record.id)}>设置人员</a>
+          {
+            userInfo.adminType === 1 ||
+            (userInfo.adminType === 2 && (record.isSupperAdmin !== 1)) ||
+            !record.isSupperAdmin ?
+              <a onClick={() => this.onLink(record.id)}>设置人员</a>
+              :
+              <span className="fs-14 c-black-45">设置人员</span>
+          }
         </span>
       ),
       width: '190px',
