@@ -549,6 +549,13 @@ class InvoiceDetail extends Component {
                 <span className="fs-14 c-black-65">{Number(templateType) ? getArrayValue(details.grantStatus, invoiceStatus) : getArrayValue(details.status, invoiceStatus)}</span>
               </Col>
             }
+            {
+              (Number(templateType) === 3) &&
+              <Col span={8} className="m-t-16">
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发放状态：</span>
+                <span className="fs-14 c-black-65">{getArrayValue(details.status, invoiceStatus)}</span>
+              </Col>
+            }
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
               <span className="fs-14 c-black-65">

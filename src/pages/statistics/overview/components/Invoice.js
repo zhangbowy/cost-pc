@@ -97,7 +97,10 @@ function InvoicePrice({ children, onQuery, id, title,
       textWrap: 'word-break',
       width: 150,
       render: (_, record) => (
-        <InvoiceDetail id={record.invoiceSubmitId} templateType={record.templateType}>
+        <InvoiceDetail
+          id={record.invoiceSubmitId}
+          templateType={record.templateType === 9 ? record.oldTemplateType : record.templateType}
+        >
           <span>
             <Tooltip placement="topLeft" title={record.reason || ''}>
               <a className="eslips-2">

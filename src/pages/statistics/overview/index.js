@@ -364,7 +364,6 @@ class EchartsTest extends Component {
         callback();
       }
       const { list, queryPage, total } = this.props;
-      console.log('EchartsTest -> onQuery -> total', total);
       this.setState({
         list,
         queryPage,
