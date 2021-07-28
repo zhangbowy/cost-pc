@@ -569,7 +569,7 @@ class Workbench extends PureComponent {
                       </div>
                     </Form>
                     <Search
-                      placeholder="单号、事由、收款账户名称"
+                      placeholder="单号、事由、收款人"
                       style={{ width: '272px' }}
                       onSearch={(e) => this.onSearch(e)}
                       onInput={e => this.setState({ reason: e.target.value })}

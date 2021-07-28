@@ -163,7 +163,7 @@ class Account extends Component {
            }
         </span>
       ),
-      width: 100,
+      width: 120,
       className: 'fixCenter'
     }];
     return (

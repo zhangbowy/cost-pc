@@ -83,7 +83,7 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
         bodyStyle={{height: '470px', overflowY: 'scroll'}}
       >
         <Search
-          placeholder="请输入单号、事由、收款账户名称"
+          placeholder="请输入单号、事由、收款人"
           style={{ width: '292px',marginRight:'20px', marginBottom: '16px' }}
           onSearch={(e) => onSearch(e)}
           value={search}

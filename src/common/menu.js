@@ -178,6 +178,12 @@ const menuData = [
     path: 'basicSettings',
   },
   {
+    id: 'approvalList',
+    name: '设置',
+    myIcon: 'iconshenpi1',
+    path: 'approvalList',
+  },
+  {
     id: 'basicSetting',
     name: '基础设置',
     myIcon: 'iconjichushezhi',

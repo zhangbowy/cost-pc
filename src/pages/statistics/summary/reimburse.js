@@ -398,25 +398,8 @@ onDelete = (id) => {
               </DropBtn>
               {/* <Button className="m-l-8" onClick={() => this.print()}>打印</Button> */}
               <Form style={{display: 'flex', marginLeft: '8px'}}>
-                {/* <Form.Item label="提交时间">
-                  {
-                    getFieldDecorator('createTime')(
-                      <RangePicker
-                        className="m-l-8"
-                        placeholder="请选择时间"
-                        format="YYYY-MM-DD"
-                        showTime={{
-                          hideDisabledOptions: true,
-                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                        }}
-                        onOk={() => this.onOk()}
-                        onChange={() => this.handChange()}
-                      />
-                    )
-                  }
-                </Form.Item> */}
                 <Search
-                  placeholder="单号 事由 收款账户名称"
+                  placeholder="单号 事由 收款人"
                   style={{ width: '272px', marginLeft: '8px' }}
                   onSearch={(e) => this.onSearch(e)}
                 />

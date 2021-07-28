@@ -654,6 +654,15 @@ class InvoiceDetail extends Component {
                         <span className="m-r-8">{receipt.bankNameBranch}</span>
                       }
                       {
+                        !!receipt.qrUrl &&
+                        <img
+                          src={receipt.qrUrl}
+                          alt="二维码"
+                          style={{ width: '58px', height: '58px' }}
+                          onClick={() => this.previewImage([{ imgUrl: receipt.qrUrl }], 0)}
+                        />
+                      }
+                      {
                         showFields.receiptId.itemExplain && showFields.receiptId.itemExplain.map((its, i) => {
                           return(
                             <p className="c-black-45 fs-12 m-b-0">

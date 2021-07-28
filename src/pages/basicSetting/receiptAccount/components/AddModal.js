@@ -3,6 +3,7 @@ import { Modal, Form, Input, Select, Button, message, Switch, Checkbox, Cascader
 import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
+import UploadImg from '@/components/UploadImg';
 import treeConvert from '@/utils/treeConvert';
 import { compare } from '../../../../utils/common';
 
@@ -14,7 +15,8 @@ const labelInfo = {
   defaultStatus: '启用',
   status: '启用',
   bankNameBranch: '开户支行',
-  awAreas: '开户省市'
+  awAreas: '开户省市',
+  imgUrl: '二维码'
 };
 const {Option} = Select;
 @Form.create()
@@ -30,6 +32,7 @@ class AddAccount extends React.PureComponent {
     this.state = {
       type: '0',
       visible: false,
+      imgUrl: [],
     };
   }
 
@@ -62,6 +65,7 @@ class AddAccount extends React.PureComponent {
         this.setState({
           visible: true,
           type,
+          imgUrl: detail.qrUrl ? [{ imgUrl: detail.qrUrl }] : [],
           data: {
             ...detail,
             awAreas: detail.awAreas ?
@@ -99,7 +103,7 @@ class AddAccount extends React.PureComponent {
       title,
       areaCode
     } = this.props;
-
+    const { imgUrl } = this.state;
     form.validateFieldsAndScroll((err, value) => {
       if (!err) {
         const payload = {
@@ -113,6 +117,11 @@ class AddAccount extends React.PureComponent {
               return { ...items };
             }) : [],
         };
+        if (Number(value.type) === 1 && imgUrl.length > 0) {
+          Object.assign(payload, {
+            qrUrl: imgUrl[0].imgUrl,
+          });
+        }
         let action = 'receiptAcc/add';
         if (title === 'edit') {
           action = 'receiptAcc/edit';
@@ -120,6 +129,7 @@ class AddAccount extends React.PureComponent {
             id: detail.id,
           });
         }
+
         dispatch({
           type: action,
           payload,
@@ -141,12 +151,11 @@ class AddAccount extends React.PureComponent {
     });
   }
 
-  check = (rule, value, callback) => {
-    if (!value && (this.state.type === 0) ) {
-      callback('请选择开户行');
-    } else {
-      callback();
-    }
+  onChangeImg = val => {
+  console.log('AddAccount -> val', val);
+    this.setState({
+      imgUrl: val,
+    });
   }
 
   render() {
@@ -154,13 +163,15 @@ class AddAccount extends React.PureComponent {
       children,
       form: { getFieldDecorator },
       title,
+      userInfo,
     } = this.props;
     const {
       type,
       visible,
       loading,
       data,
-      treeList
+      treeList,
+      imgUrl,
     } = this.state;
     return (
       <span>
@@ -168,7 +179,7 @@ class AddAccount extends React.PureComponent {
         <Modal
           title={title && `${defaultTitle[title]}收款账户`}
           visible={visible}
-          bodyStyle={{height: '470px', overflowY: 'scroll'}}
+          bodyStyle={{height: '400px', overflowY: 'scroll'}}
           onCancel={() => {
             this.onRest();
             this.setState({ visible: false });
@@ -244,12 +255,12 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('bankName', {
                     initialValue: data && data.bankName,
-                    rules: [
+                    /* rules: [
                       {
-                        required: Number(type) === 0,
+                        required: !!(Number(type) === 0),
                         message: '请选择开户行'
                       }
-                    ]
+                    ] */
                   })(
                     <Select
                       showSearch
@@ -304,6 +315,26 @@ class AddAccount extends React.PureComponent {
                 )
               }
             </Form.Item>
+            {
+              (Number(type) === 1 || Number(type) === 3) &&
+              <Form.Item
+                label={labelInfo.imgUrl}
+                {...formItemLayout}
+              >
+                {
+                  getFieldDecorator('img', {
+                    initialValue: imgUrl.length ? imgUrl : null,
+                  })(
+                    <UploadImg
+                      onChange={(val) => this.onChangeImg(val)}
+                      imgUrl={imgUrl}
+                      userInfo={userInfo}
+                      maxLen={1}
+                    />
+                  )
+                }
+              </Form.Item>
+            }
             <Form.Item label={labelInfo.status}>
               <div>
                 {

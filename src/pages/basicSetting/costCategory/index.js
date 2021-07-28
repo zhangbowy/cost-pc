@@ -184,6 +184,8 @@ class CostCategory extends React.PureComponent {
     const columns = [{
       title: '名称',
       dataIndex: 'costName',
+      ellipsis: true,
+      textWrap: 'word-break',
       render: (_, record) => (
         <span>
           <span style={{ marginRight: '8px' }}>{record.costName}</span>

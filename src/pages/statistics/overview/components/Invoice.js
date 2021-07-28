@@ -237,7 +237,7 @@ function InvoicePrice({ children, onQuery, id, title,
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <p className="fs-16 c-black-85 fw-500" style={{ lineHeight: '32px' }}>支出明细</p>
               <Search
-                placeholder="请输入单号、事由、收款账户名称"
+                placeholder="请输入单号、事由、收款人"
                 style={{ width: '292px',marginRight:'20px', marginBottom: '16px' }}
                 onSearch={(e) => onSearch(e)}
                 value={search}

@@ -1,0 +1,47 @@
+.payContent{
+  min-height: 500px;
+  padding: 24px 32px;
+  :global(.cnt-header .head_lf) {
+    display: flex;
+  }
+  :global(.cnt-header .head_rg) {
+    display: flex;
+  }
+  :global(.ant-form-item) {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  .acctive-bg{
+    background: rgba(0, 199, 149, 0.12);
+  }
+}
+
+.message{
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(0, 199, 149, 0.08);
+  border: 1px solid rgba(0, 199, 149, 0.15);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  span{
+    line-height: 1;
+  }
+}
+.active{
+  min-width: 18px;
+  height: 18px;
+  background: rgba(0, 199, 149, 0.1);
+  border-radius: 10px;
+  font-size: 12px;
+  padding: 0 6px;
+  margin-left: 6px;
+}
+.search{
+  display: flex;
+  .label{
+    line-height: 32px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}

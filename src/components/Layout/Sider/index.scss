@@ -75,3 +75,17 @@
 .sider > :global(.ant-menu-item-selected span) {
   font-weight: bold;
 }
+.corner{
+  // width: 24px;
+  height: 16px;
+  background: #FF5A5F;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 12px;
+  padding: 0 4px;
+  display: inline-block;
+  line-height: 14px;
+  text-align: center;
+  margin-left: 12px;
+}

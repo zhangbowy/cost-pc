@@ -177,7 +177,6 @@ class AddRole extends Component {
           title={`${defaultTitle[title]}人员`}
           onCancel={this.onCancel}
           bodyStyle={{
-            height: '470px',
             overflowY: 'scroll'
           }}
           footer={[

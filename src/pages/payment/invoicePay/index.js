@@ -403,6 +403,15 @@ class Payment extends React.PureComponent {
             {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
             { account && account[0] && account[0].bankName }
             { account && account[0] && account[0].account }
+            {
+              account && account[0] && account[0].qrUrl &&
+              <img
+                src={account[0].qrUrl}
+                onClick={() => this.previewImage(account[0].qrUrl, 0)}
+                alt="二维码"
+                style={{ width: '40px', height: '40px', borderRadius: '4px', marginLeft: '4px' }}
+              />
+            }
             {!account && '-'}
           </span>
         );

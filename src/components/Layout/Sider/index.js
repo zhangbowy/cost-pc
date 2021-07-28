@@ -76,7 +76,6 @@ class App extends React.PureComponent {
   getMenuItems = (data = []) => {
     return data.map(item => {
       if (item.children && item.children.length > 0) {
-        console.log('path', item.path);
         return (
           <Menu.SubMenu
             key={item.path}
@@ -100,6 +99,10 @@ class App extends React.PureComponent {
           <Link to={item.path}>
             {(item.icon || item.myIcon) && getIcon(item)}
             <span>{item.name}</span>
+            {
+              item.name === '审批' &&
+              <div className={styles.corner}>2</div>
+            }
           </Link>
         </Menu.Item>
       );

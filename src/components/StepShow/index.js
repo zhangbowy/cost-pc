@@ -13,9 +13,9 @@ class StepShow extends Component {
 
   onOpen = (key) => {
     if (key === '1') {
-      ddOpenLink('dingtalk://dingtalkclient/page/link?url=https://www.yuque.com/wangcongwen/xzcyg');
+      ddOpenLink('dingtalk://dingtalkclient/page/link?url=https://www.yuque.com/yifei-zszlu/ref3g8/ro7wnh');
     } else if (key === '2') {
-      ddOpenLink('dingtalk://dingtalkclient/page/link?url=https://www.yuque.com/wangcongwen/xzcgly');
+      ddOpenLink('dingtalk://dingtalkclient/page/link?url=https://www.yuque.com/yifei-zszlu/ref3g8/vemhig');
     } else if (key === '2') {
       ddOpenLink('dingtalk://dingtalkclient/page/link?url=https://www.yuque.com/wangcongwen/xzcgly');
     } else if (key === '3') {
