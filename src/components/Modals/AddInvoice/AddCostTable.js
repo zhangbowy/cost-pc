@@ -29,7 +29,6 @@ class AddCostTable extends Component {
       costDetailShareVOS: this.props.costDetailShareVOS,
       shareAmount: this.props.shareAmount || 0,
       costSum: this.props.costSum,
-      initDep: this.props.initDep,
       currencyId: '-1',
       exchangeRate: '1',
       selectedRowKeys: [],
@@ -49,7 +48,6 @@ class AddCostTable extends Component {
         costDetailShareVOS: this.props.costDetailShareVOS || [],
         shareAmount: this.props.shareAmount || 0,
         costSum: this.props.costSum,
-        initDep: this.props.initDep,
         currencyId: this.props.currencyId || '-1',
         exchangeRate: this.props.exchangeRate || 1,
         currencySymbol: this.props.currencySymbol || '',
@@ -60,7 +58,6 @@ class AddCostTable extends Component {
   onAddCost = (obj) => {
     const { costDetailShareVOS } = this.state;
     const { modify } = this.props;
-    const { initDep } = this.state;
     const details = [...costDetailShareVOS];
     if (modify) {
       message.error('改单不允许更改分摊');
@@ -110,7 +107,7 @@ class AddCostTable extends Component {
   onAdd = () => {
     const { costDetailShareVOS } = this.state;
     const { modify } = this.props;
-    const { initDep } = this.state;
+    const { initDep } = this.props;
     const details = [...costDetailShareVOS];
     if (modify) {
       message.error('改单不允许更改分摊');
