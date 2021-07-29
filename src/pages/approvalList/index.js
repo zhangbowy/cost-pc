@@ -82,8 +82,14 @@ class Summary extends React.PureComponent {
   }
 
   onChangeTime = (val) => {
+    const { query } = this.props;
     this.setState({
       time: val,
+    }, () => {
+      this.onQuery({
+        pageNo: 1,
+        pageSize: query.pageSize,
+      });
     });
   }
 
