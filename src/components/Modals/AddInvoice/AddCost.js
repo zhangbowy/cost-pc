@@ -86,6 +86,7 @@ class AddCost extends Component {
     });
     Promise.all(arr).then(() => {
       const { deptInfo } = this.props;
+      console.log('AddCost -> fetchInit -> deptInfo', deptInfo);
       this.setState({
         initDep: deptInfo,
       }, () => {

@@ -89,8 +89,12 @@ class Setting extends Component {
           status: Number(detail.status) === 1,
           userJson: !detail.userJson ? [] : JSON.parse(detail.userJson),
           deptJson: !detail.deptJson ? [] : JSON.parse(detail.deptJson),
-          projectManagerJson: !newDetail.projectManagerJson ? [] : JSON.parse(newDetail.projectManagerJson)
         };
+        if(newDetail.projectManagerJson) {
+          Object.assign(datas, {
+            projectManagerJson: !newDetail.projectManagerJson ? [] : JSON.parse(newDetail.projectManagerJson)
+          });
+        }
       });
     } else { // 新增
       Object.assign(datas, {
@@ -167,7 +171,7 @@ class Setting extends Component {
           ...values,
           status: values.status ? 1 : 0,
         });
-        if (target === 'project') {
+        if (target === 'project' && type !== 'group') {
           Object.assign(val, {
             projectManagerJson: JSON.stringify(data.projectManagerJson),
             startTime: moment(values.time[0]).format('x'),
