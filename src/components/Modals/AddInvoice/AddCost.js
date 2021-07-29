@@ -63,37 +63,45 @@ class AddCost extends Component {
     };
   }
 
+  fetchInit = (callback) => {
+    const { dispatch } = this.props;
+    const arrs = [{
+      url: 'global/users',
+      params: { type: 1 }
+    }, {
+      url: 'global/getCurrency',
+      params: {  }
+    }, {
+      url: 'global/usableSupplier',
+      params: {  }
+    }, {
+      url: 'global/usableProject',
+      params: { type: 1 }
+    }];
+    const arr = arrs.map(it => {
+      return dispatch({
+        type: it.url,
+        payload: it.params,
+      });
+    });
+    Promise.all(arr).then(() => {
+      const { deptInfo } = this.props;
+      this.setState({
+        initDep: deptInfo,
+      }, () => {
+        callback();
+      });
+    });
+  }
+
   onShow = async() => {
-    const _this = this;
     const { costType, id, isDelete4Category } = this.props;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
       return;
     }
-    await this.props.dispatch({
-      type: 'global/users',
-      payload: {
-        type: 1
-      }
-    });
-    const dep = await _this.props.deptInfo;
-    this.setState({
-      initDep: dep,
-    });
-    this.props.dispatch({
-      type: 'global/getCurrency',
-      payload: {},
-    });
-    await this.props.dispatch({
-      type: 'global/usableSupplier',
-      payload: {},
-    });
-    await this.props.dispatch({
-      type: 'global/usableProject',
-      payload: {
-        type: 1,
-      },
-    });
+    this.fetchInit(async() => {
+      const { initDep } = this.state;
     if (costType) {
       await this.props.dispatch({
         type: 'global/costList',
@@ -132,7 +140,7 @@ class AddCost extends Component {
                   };
                   if (!it.userId) {
                     Object.assign(obj, {
-                      depList: dep,
+                      depList: initDep,
                     });
                   } else {
                     Object.assign(obj, {
@@ -173,7 +181,7 @@ class AddCost extends Component {
                   key: it.id,
                   shareScale: it.shareScale/100,
                   shareAmount: currency.id ? it.currencySum/100 : it.shareAmount/100,
-                  depList: dep,
+                  depList: initDep,
                 };
                 arr.push(obj);
               });
@@ -250,6 +258,7 @@ class AddCost extends Component {
         }
       });
     }
+    });
   }
 
   handleDept = (lists, userIds) => {

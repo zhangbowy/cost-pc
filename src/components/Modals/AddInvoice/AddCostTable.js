@@ -117,7 +117,7 @@ class AddCostTable extends Component {
       return;
     }
     details.push({
-      key: `a${costDetailShareVOS.length}`,
+      key: `a${getTimeId()}_${costDetailShareVOS.length}`,
       shareAmount: 0,
       shareScale: 0,
       deptName: '',
