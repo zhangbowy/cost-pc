@@ -69,7 +69,7 @@ class PeopleSetting extends Component {
 
   selectPeople = () => {
     const { users } = this.state;
-    const { allUserCount, payUserCount, checkAll } = this.props;
+    const { allUserCount, checkAll } = this.props;
     const _this = this;
     choosePeople(users.map(it => it.userId) || [], (res) => {
       let user = users;
@@ -94,8 +94,6 @@ class PeopleSetting extends Component {
       _this.setState({
         users: user,
       });
-    }, {
-      max: checkAll ? allUserCount : payUserCount,
     });
   }
 
@@ -176,7 +174,7 @@ class PeopleSetting extends Component {
               <span className="sub-color" style={{cursor: 'pointer'}}>查看全部授权人员&gt;</span>
             </LookAll>
           </span>
-          <ControllerCom 
+          <ControllerCom
             dispatch={this.props.dispatch}
             userInfo={this.props.userInfo}
             synCompanyTime={this.props.synCompanyTime}
