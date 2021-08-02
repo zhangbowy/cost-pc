@@ -702,6 +702,25 @@ export const approveStatus = [{
   value: '审批拒绝'
 }];
 
+// 审批状态
+export const approveStatusColor = [{
+  key: '1',
+  value: '审批中',
+  color: 'rgba(255, 148, 62, 1)'
+}, {
+  key: '2',
+  value: '审批通过',
+  color: 'rgba(0, 199, 149, 1)'
+}, {
+  key: '4',
+  value: '已撤销',
+  color: 'rgba(255, 148, 62, 1)'
+}, {
+  key: '5',
+  value: '审批拒绝',
+  color: 'rgba(255, 90, 95, 1)'
+}];
+
 // 还款状态
 export  const loanStatus = [{
   key: '3',

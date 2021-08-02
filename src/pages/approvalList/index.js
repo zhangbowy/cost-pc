@@ -7,7 +7,7 @@ import moment from 'moment';
 import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import style from './index.scss';
-import { getArrayValue, invoiceStatus, getArrayColor } from '../../utils/constants';
+import { getArrayValue, invoiceStatus, getArrayColor, approveStatusColor } from '../../utils/constants';
 import { ddOpenSlidePanel } from '../../utils/ddApi';
 
 const { RangePicker } = DatePicker;
@@ -97,7 +97,7 @@ class Summary extends React.PureComponent {
     const _this = this;
     const { query } = this.props;
     ddOpenSlidePanel(url, '审批详情', (res) => {
-      console.log(res);
+      console.log('res', res);
       _this.onQuery({
         ...query,
       });
@@ -206,10 +206,10 @@ class Summary extends React.PureComponent {
             <span>
               <Badge
                 color={
-                  getArrayColor(`${approveStatus}`, invoiceStatus) === '-' ?
-                  'rgba(255, 148, 62, 1)' : getArrayColor(`${approveStatus}`, invoiceStatus)
+                  getArrayColor(`${approveStatus}`, approveStatusColor) === '-' ?
+                  'rgba(255, 148, 62, 1)' : getArrayColor(`${approveStatus}`, approveStatusColor)
                 }
-                text={record.statusStr || getArrayValue(approveStatus, invoiceStatus)}
+                text={record.statusStr || getArrayValue(approveStatus, approveStatusColor)}
               />
             </span>
           );

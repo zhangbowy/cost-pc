@@ -1113,7 +1113,7 @@ class ChangeForm extends Component {
                                       <Option key={it.id} value={it.id} label={it.name}>
                                         <div className={style.selects}>
                                           <p className="c-black fs-14">{it.name} </p>
-                                          <p className="c-black-36 fs-13">{it.account}</p>
+                                          <p className="c-black-36 fs-13">{typeObj[it.type]}{it.account}</p>
                                         </div>
                                         <Divider type="horizontal" />
                                       </Option>

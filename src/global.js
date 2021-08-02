@@ -72,6 +72,10 @@ if (isInDingTalk && (window.location.href.indexOf('transformPage') === -1)) {
         type: 'session/getLeftMenu',
         payload: {},
       });
+      await window.g_app._store.dispatch({
+        type: 'session/getApproval',
+        payload: {},
+      });
     });
 
     // console.log(window.g_app._store);

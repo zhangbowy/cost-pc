@@ -20,6 +20,7 @@ export default {
     isLogin: false, // 登录标识
     userInfo: {},
     status: 0,
+    approvalNum: 0,
   },
   effects: {
     * getLeftMenu({ payload }, { call, put }) {
@@ -42,6 +43,20 @@ export default {
           menus: menuFilter(menus, localMenu),
           // menus: localMenu,
           isMenuReady: true,
+        },
+      });
+    },
+    * getApproval({ payload }, { call, put }) {
+      const response = yield call(
+        get,
+        api.getApprovalNum,
+        payload,
+      );
+      yield put({
+        type: 'save',
+        payload: {
+          // newmenus: response,
+          approvalNum: response || 0,
         },
       });
     },

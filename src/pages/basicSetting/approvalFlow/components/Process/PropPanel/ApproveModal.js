@@ -282,7 +282,11 @@ class ApproveModal extends Component {
                   initialValue: approveNode.ruleValue,
                   rules:[{ required: true, message: '请选择审批角色' }]
                 })(
-                  <Select>
+                  <Select
+                    showSearch
+                    filterOption={(input, option) =>
+                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
                     {
                       approverRoleList.map(it => (
                         <Option key={it.id}>{it.approveRoleName}</Option>

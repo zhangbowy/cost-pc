@@ -129,4 +129,5 @@ export default {
    exportList: `${APP_API}/cost/invoice/salary/costDetail/share/detail`, // 分摊获取数据
    newProjectList: `${APP_API}/cost/project/list/v2`,
    roleStatics: `${APP_API}/cost/menu/v2/navByParentId`, // 支出分析表的权限
+   getApprovalNum: `${APP_API}/cost/approve/instance/count`,
 };
