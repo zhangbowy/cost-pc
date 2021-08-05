@@ -1,13 +1,14 @@
 
 
 import React from 'react';
-import { Menu, Tooltip, DatePicker, Table, Badge } from 'antd';
+import { Menu, Tooltip, DatePicker, Table } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
+import cs from 'classnames';
 import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import style from './index.scss';
-import { getArrayValue, invoiceStatus, getArrayColor, approveStatusColor } from '../../utils/constants';
+import { getArrayValue, invoiceStatus } from '../../utils/constants';
 import { ddOpenSlidePanel } from '../../utils/ddApi';
 
 const { RangePicker } = DatePicker;
@@ -102,7 +103,10 @@ class Summary extends React.PureComponent {
         ...query,
       });
     }, (e) => {
-      console.log(e);
+      console.log('关闭的', e);
+      _this.onQuery({
+        ...query,
+      });
     });
   }
 
@@ -176,7 +180,7 @@ class Summary extends React.PureComponent {
       dataIndex: 'statusStr',
       width: 100,
       render: (_, record) => (
-        <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
+        <span>{record.statusMsg || getArrayValue(record.status, invoiceStatus)}</span>
       )
     }];
 
@@ -187,34 +191,17 @@ class Summary extends React.PureComponent {
         render: (_, record) => (
           <a onClick={() => this.handle(record.url)}>去处理</a>
         ),
-        fixed: 'right'
+        fixed: 'right',
+        width: 100,
       });
     } else if (Number(current) === 1) {
       columns.splice(7,0,{
         title: '审批时间',
         dataIndex: 'resultTime',
         render: (_, record) => (
-          <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}</span>
+          <span>{record.resultTime ? moment(record.resultTime).format('YYYY-MM-DD') : '-'}</span>
         ),
         width: 150
-      },{
-        title: '审批结果',
-        dataIndex: 'approveStatus',
-        render: (_, record) => {
-          const { approveStatus } = record;
-          return (
-            <span>
-              <Badge
-                color={
-                  getArrayColor(`${approveStatus}`, approveStatusColor) === '-' ?
-                  'rgba(255, 148, 62, 1)' : getArrayColor(`${approveStatus}`, approveStatusColor)
-                }
-                text={record.statusStr || getArrayValue(approveStatus, approveStatusColor)}
-              />
-            </span>
-          );
-        },
-        fixed: 'right'
       });
     }
     return (
@@ -229,7 +216,7 @@ class Summary extends React.PureComponent {
           >
             <Menu.Item key={0}>
               待我审批
-              <span className={style.active}>{totals}</span>
+              <span className={Number(current) !== 0 ? cs(style.active, style.noActive) : style.active}>{totals}</span>
             </Menu.Item>
             <Menu.Item key={1}>我已审批</Menu.Item>
             <Menu.Item key={2}>抄送我的</Menu.Item>
@@ -245,10 +232,14 @@ class Summary extends React.PureComponent {
                     placeholder="请选择"
                     style={{ width: '220px' }}
                     onChange={val => this.onChangeTime(val)}
+                    showTime={{
+                      hideDisabledOptions: true,
+                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                    }}
                   />
                 </div>
                 <Search
-                  placeholder="请输入单号、事由"
+                  placeholder="请输入单号、事由、收款人"
                   style={{ width: '292px', marginLeft: '16px' }}
                   onSearch={(e) => this.onSearch(e)}
                 />
@@ -260,7 +251,7 @@ class Summary extends React.PureComponent {
               dataSource={list}
               onChange={this.onChange}
               rowKey="invoiceId"
-              scroll={{ x: 1200 }}
+              scroll={{ x: 1080 }}
               pagination={{
                 total,
                 current: query.pageNo,

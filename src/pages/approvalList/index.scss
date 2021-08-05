@@ -1,5 +1,5 @@
 .payContent{
-  min-height: 500px;
+  height: calc(100vh - 215px);
   padding: 24px 32px;
   :global(.cnt-header .head_lf) {
     display: flex;
@@ -36,6 +36,9 @@
   font-size: 12px;
   padding: 0 6px;
   margin-left: 6px;
+}
+.noActive{
+  background: rgba(0, 0, 0, 0.05);
 }
 .search{
   display: flex;

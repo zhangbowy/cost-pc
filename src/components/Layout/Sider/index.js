@@ -75,7 +75,7 @@ class App extends React.PureComponent {
 
   // 获取菜单节点
   getMenuItems = (data = []) => {
-    const { approvalNum } = this.props;
+    // const { approvalNum } = this.props;
     return data.map(item => {
       if (item.children && item.children.length > 0) {
         return (
@@ -101,10 +101,10 @@ class App extends React.PureComponent {
           <Link to={item.path}>
             {(item.icon || item.myIcon) && getIcon(item)}
             <span>{item.name}</span>
-            {
+            {/* {
               item.name === '审批' &&
               <div className={styles.corner}>{approvalNum}</div>
-            }
+            } */}
           </Link>
         </Menu.Item>
       );

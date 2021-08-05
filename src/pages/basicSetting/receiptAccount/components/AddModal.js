@@ -16,7 +16,7 @@ const labelInfo = {
   status: '启用',
   bankNameBranch: '开户支行',
   awAreas: '开户省市',
-  imgUrl: '二维码'
+  imgUrl: '收款码'
 };
 const {Option} = Select;
 @Form.create()
@@ -88,7 +88,8 @@ class AddAccount extends React.PureComponent {
   onRest = () => {
     this.props.form.resetFields();
     this.setState({
-      type: '0'
+      type: '0',
+      imgUrl: [],
     });
   }
 
@@ -117,9 +118,9 @@ class AddAccount extends React.PureComponent {
               return { ...items };
             }) : [],
         };
-        if (Number(value.type) === 1 && imgUrl.length > 0) {
+        if ((Number(value.type) === 1 || Number(value.type) === 3)) {
           Object.assign(payload, {
-            qrUrl: imgUrl[0].imgUrl,
+            qrUrl: imgUrl.length ? imgUrl[0].imgUrl : '',
           });
         }
         let action = 'receiptAcc/add';

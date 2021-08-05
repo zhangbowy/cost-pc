@@ -38,6 +38,7 @@ class UploadImg extends Component {
     this.setState({
       imgUrl: imgs,
     });
+    this.props.onChange(imgs);
   }
 
   previewImage = (index) => {

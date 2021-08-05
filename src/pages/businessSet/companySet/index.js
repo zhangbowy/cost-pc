@@ -189,18 +189,17 @@ class CompanySet extends Component {
       (
         <div>
           {
-            record.parentId !== 0 &&
-            <Popconfirm
-              title="确认删除吗？"
-              onConfirm={() => this.onDeletes(record.id)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
+            record.parentId !== 0 ?
+              <Popconfirm
+                title="确认删除吗？"
+                onConfirm={() => this.onDeletes(record.id)}
+              >
+                <span className="deleteColor">删除</span>
+              </Popconfirm>
+              :
+              <span className="fs-14 c-black-45">删除</span>
           }
-          {
-            record.parentId !== 0 &&
-            <Divider type="vertical" />
-          }
+          <Divider type="vertical" />
           <AddComp
             onOk={this.onOk}
             details={record}

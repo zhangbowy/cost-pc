@@ -111,7 +111,7 @@ class Account extends Component {
           { record.status === 0 && <Tag color="red">已停用</Tag> }
         </span>
       ),
-      width: 180
+      width: 220
     }, {
       title: '账户类型',
       dataIndex: 'type',
@@ -148,7 +148,7 @@ class Account extends Component {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record) => (
-        <span>
+        <span style={{ width: '120px', display: 'inline-block', textAlign: 'left' }}>
           <span className="deleteColor" onClick={() => this.handleVisibleChange(record.id)}>删除</span>
           <Divider type="vertical" />
           <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
@@ -163,8 +163,9 @@ class Account extends Component {
            }
         </span>
       ),
-      width: 120,
-      className: 'fixCenter'
+      width: '120px',
+      className: 'fixCenter',
+      fix: 'right'
     }];
     return (
       <div>
@@ -181,6 +182,7 @@ class Account extends Component {
             columns={columns}
             dataSource={list}
             loading={loading}
+            scroll={{ x: '640px' }}
             pagination={{
               current: query.pageNo,
               total,

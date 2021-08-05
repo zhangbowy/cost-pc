@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /**
  * @param {object} data 编辑时传入的数据, 新增W不填即可
  * @param {function} callback 完成填写后的回调
@@ -5,10 +6,11 @@
  */
 
 import React, { Component } from 'react';
-import { Modal, Form, Select, Input, Button, Cascader } from 'antd';
+import { Modal, Form, Select, Input, Button, Cascader, message } from 'antd';
 import { formItemLayout, bankList } from '@/utils/constants';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
+import UploadImg from '@/components/UploadImg';
 import { compare } from '../utils/common';
 
 const { Option } = Select;
@@ -37,8 +39,9 @@ const accountType = [
 ];
 
 @Form.create()
-@connect(({ costGlobal }) => ({
+@connect(({ costGlobal, session }) => ({
   areaCode: costGlobal.areaCode,
+  userInfo: session.userInfo
 }))
 class AccountSetting extends Component {
   constructor(props) {
@@ -47,6 +50,7 @@ class AccountSetting extends Component {
       visible: false,
       data: { type: 0 },
       treeList: [],
+      imgUrl: [],
     };
   }
 
@@ -78,6 +82,7 @@ class AccountSetting extends Component {
           awAreas: datas.awAreas ?
           datas.awAreas.sort(compare('level')).map(it => it.areaCode) : undefined,
         },
+        imgUrl: datas.qrUrl ? [{ imgUrl: datas.qrUrl }] : [],
         treeList
       });
     });
@@ -90,7 +95,7 @@ class AccountSetting extends Component {
 
   onSave = () => {
     const {form: { validateFields }, callback, areaCode } = this.props;
-    const { data } = this.state;
+    const { data, imgUrl } = this.state;
     const val = { ...data };
     validateFields((err, values) => {
       if(!err) {
@@ -100,6 +105,15 @@ class AccountSetting extends Component {
             const items = areaCode.filter(item => item.areaCode === it)[0];
             return { ...items };
           });
+        }
+        if (imgUrl && imgUrl.length) {
+          Object.assign(val, {
+            ...values,
+            qrUrl: imgUrl[0].imgUrl
+          });
+        }
+        if (values.img) {
+          delete values.img;
         }
         Object.assign(val, {
           ...values,
@@ -119,6 +133,8 @@ class AccountSetting extends Component {
           errors: [new Error('名字重复')]
         }
       });
+    } else if(type === 'repeatAccount') {
+      message.error('账号重复');
     } else {
       this.closeModal();
     }
@@ -128,12 +144,19 @@ class AccountSetting extends Component {
     const { data } = this.state;
     data.type = e;
     this.props.form.resetFields();
-    this.setState({ data });
+    this.setState({ data, imgUrl: [] });
+  }
+
+  onChangeImg = val => {
+    console.log('AddAccount -> val', val);
+    this.setState({
+      imgUrl: val,
+    });
   }
 
   render() {
-    const { visible, data, treeList } = this.state;
-    const { form: { getFieldDecorator } } = this.props;
+    const { visible, data, treeList, imgUrl } = this.state;
+    const { form: { getFieldDecorator }, userInfo } = this.props;
     return (
       <span>
         <span onClick={() => this.show()}>{this.props.children}</span>
@@ -241,22 +264,41 @@ class AccountSetting extends Component {
               </>
             ) : null}
             {data.type === 1 ? (
-              <Form.Item key="account" label={formLabel.alipay}>
-                {
-                  getFieldDecorator('account', {
-                    initialValue: data.account,
-                    rules: [{
-                      required: true,
-                      message: '请输入支付宝账号',
-                    },{
-                      max: 32,
-                      message: '长度不能超过20个字符'
-                    }]
-                  })(
-                    <Input placeholder="请输入账号" />
-                  )
-                }
-              </Form.Item>
+              <>
+                <Form.Item key="account" label={formLabel.alipay}>
+                  {
+                    getFieldDecorator('account', {
+                      initialValue: data.account,
+                      rules: [{
+                        required: true,
+                        message: '请输入支付宝账号',
+                      },{
+                        max: 32,
+                        message: '长度不能超过20个字符'
+                      }]
+                    })(
+                      <Input placeholder="请输入账号" />
+                    )
+                  }
+                </Form.Item>
+                <Form.Item
+                  label="收款码"
+                  {...formItemLayout}
+                >
+                  {
+                    getFieldDecorator('img', {
+                      initialValue: imgUrl.length ? imgUrl : null,
+                    })(
+                      <UploadImg
+                        onChange={(val) => this.onChangeImg(val)}
+                        imgUrl={imgUrl}
+                        userInfo={userInfo}
+                        maxLen={1}
+                      />
+                    )
+                  }
+                </Form.Item>
+              </>
             ) : null}
           </Form>
         </Modal>

@@ -238,8 +238,11 @@ class Setting extends Component {
       callback();
     } else {
       const res = supplierAccounts.filter(item => item.name === val.name);
+      const accounts = supplierAccounts.filter(item => item.account === val.account);
       if (res.length) {
         callback('repeat');
+      } else if (accounts.length) {
+        callback('repeatAccount');
       } else {
         supplierAccounts.push(val);
         callback();

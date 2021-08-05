@@ -738,6 +738,15 @@ class InvoiceDetail extends Component {
                       <span className="m-r-8">{ supplierAccountVo.bankName }</span>
                       <span className="m-r-8">{supplierAccountVo.supplierAccount}</span>
                       {supplierAccountVo.bankNameBranch || ''}
+                      {
+                        !!supplierAccountVo.qrUrl &&
+                        <img
+                          src={supplierAccountVo.qrUrl}
+                          alt="二维码"
+                          style={{ width: '58px', height: '58px' }}
+                          onClick={() => this.previewImage([{ imgUrl: supplierAccountVo.qrUrl }], 0)}
+                        />
+                      }
                     </span>
                   </div>
                 </Col>

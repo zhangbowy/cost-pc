@@ -1,8 +1,10 @@
+/* eslint-disable no-param-reassign */
 import React from 'react';
 import { Modal, Form, Input, Select, Button, message, Switch, Checkbox, Cascader } from 'antd';
 import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
+import UploadImg from '@/components/UploadImg';
 import treeConvert from '@/utils/treeConvert';
 
 const labelInfo = {
@@ -13,7 +15,8 @@ const labelInfo = {
   defaultStatus: '启用',
   status: '启用',
   bankNameBranch: '开户支行',
-  awAreas: '开户省市'
+  awAreas: '开户省市',
+  imgUrl: '收款码'
 };
 const {Option} = Select;
 @Form.create()
@@ -30,6 +33,7 @@ class AddAccount extends React.PureComponent {
       type: '0',
       visible: false,
       treeList: [],
+      imgUrl: []
     };
   }
 
@@ -75,7 +79,7 @@ class AddAccount extends React.PureComponent {
       userInfo,
       areaCode
     } = this.props;
-
+    const { imgUrl } = this.state;
     form.validateFieldsAndScroll((err, value) => {
       if (!err) {
         const payload = {
@@ -89,6 +93,12 @@ class AddAccount extends React.PureComponent {
               return { ...items };
             }) : [],
         };
+        if ((Number(value.type) === 1 || Number(value.type) === 3) && imgUrl.length > 0) {
+          Object.assign(payload, {
+            qrUrl: imgUrl[0].imgUrl,
+          });
+        }
+        if (value.img) delete value.img;
         const action = 'global/addAcc';
         dispatch({
           type: action,
@@ -116,13 +126,15 @@ class AddAccount extends React.PureComponent {
       children,
       form: { getFieldDecorator },
       title,
+      userInfo
     } = this.props;
     const {
       type,
       visible,
       loading,
       data,
-      treeList
+      treeList,
+      imgUrl
     } = this.state;
     return (
       <span>
@@ -244,6 +256,26 @@ class AddAccount extends React.PureComponent {
                     initialValue: data && data.bankNameBranch,
                   })(
                     <Input placeholder={`请输入${labelInfo.bankNameBranch}`} />
+                  )
+                }
+              </Form.Item>
+            }
+            {
+              (Number(type) === 1 || Number(type) === 3) &&
+              <Form.Item
+                label={labelInfo.imgUrl}
+                {...formItemLayout}
+              >
+                {
+                  getFieldDecorator('img', {
+                    initialValue: imgUrl.length ? imgUrl : null,
+                  })(
+                    <UploadImg
+                      onChange={(val) => this.onChangeImg(val)}
+                      imgUrl={imgUrl}
+                      userInfo={userInfo}
+                      maxLen={1}
+                    />
                   )
                 }
               </Form.Item>

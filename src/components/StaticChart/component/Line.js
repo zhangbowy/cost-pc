@@ -24,13 +24,6 @@ function Line({ data, series, changeType, changeMoney }) {
           </div>`;
       }
     },
-    toolbox: {
-      feature: {
-        saveAsImage: {
-          pixelRatio: 2
-        }
-      }
-    },
     title:{
       // show,// show 可以在上面顶一个一个 let show = null;
       textStyle: {
