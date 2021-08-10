@@ -1,0 +1,17 @@
+.travel{
+  :global{
+    .ant-steps-item-icon{
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+    }
+    .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail{
+      padding: 28px 0 0px;
+    }
+  }
+}
+.first{
+  margin-bottom: 60px;
+  font-size: 16px;
+  color: rgba(0,0,0,0.85);
+}

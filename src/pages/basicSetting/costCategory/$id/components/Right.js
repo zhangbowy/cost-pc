@@ -9,6 +9,7 @@ import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../
 import { timeStampToHex, intToChinese } from '../../../../../utils/common';
 
 let id = 1000;
+const disabledDefault = ['costCategory'];
 @Form.create()
 class Right extends PureComponent {
   constructor(props) {
@@ -400,6 +401,7 @@ class Right extends PureComponent {
             }
             {
               Number(details.fieldType) !== 3 && Number(details.fieldType) !== 9 &&
+              !disabledDefault.includes(details.field) &&
               <Form.Item label="默认文案">
                 {
                   getFieldDecorator(`note[${details.field}]`, {

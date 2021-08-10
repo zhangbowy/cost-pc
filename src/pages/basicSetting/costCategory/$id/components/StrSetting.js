@@ -39,12 +39,7 @@ const selfStr = [{
   fieldType: '5',
   name: '日期',
   icon: 'iconriqi',
-}, {
-  key: '3',
-  fieldType: '3',
-  name: '明细',
-  icon: 'iconmingxi',
-}, {
+},{
   key: '8',
   fieldType: '8',
   name: '多选',
@@ -54,6 +49,16 @@ const selfStr = [{
   fieldType: '9',
   name: '说明',
   icon: 'iconshuomingwenzi',
+}, {
+  key: '3',
+  fieldType: '3',
+  name: '明细',
+  icon: 'iconmingxi',
+},  {
+  key: '4',
+  fieldType: '4',
+  name: '行程',
+  icon: 'iconmingxi',
 }];
 
 const StrSetting = ({ fieldList,
