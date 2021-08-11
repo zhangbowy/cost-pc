@@ -604,7 +604,7 @@ export default {
       type: 'deptAndUser',
       label: '承担部门/人',
       placeholder: '请选择',
-      key: ['createUserVOS', 'createDeptVOS'],
+      key: ['userVOS', 'deptVOS'],
       id: 'createUserVOS',
       out: 1,
     }, { // 搜索部分数据

@@ -112,6 +112,8 @@ class FormStyle extends Component {
     e.stopPropagation();
 
     const { fields, onChangeSearch } = this.props;
+    console.log('FormStyle -> onSelectDept -> fields', fields);
+
     if (handle === 'del') {
       onChangeSearch( update(fields, {
         $splice: [[index, 1, { ...fields[index],
@@ -119,7 +121,8 @@ class FormStyle extends Component {
       }) );
     } else {
       ddDepartmentsPicker({
-        departments: fields[index].value ? fields[index].value.map(it => it.deptId) : [],
+        departments: fields[index].value && fields[index].value[fields[index].key] ?
+        fields[index].value[fields[index].key].map(it => it.deptId) : [],
         multiple: true,
         max: 100,
       }, res => {
