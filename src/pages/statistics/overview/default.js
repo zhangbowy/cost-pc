@@ -604,8 +604,8 @@ export default {
       type: 'deptAndUser',
       label: '承担部门/人',
       placeholder: '请选择',
-      key: ['userVOS', 'deptVOS'],
-      id: 'createUserVOS',
+      key: ['userVos', 'deptVos'],
+      id: 'userVos',
       out: 1,
     }, { // 搜索部分数据
       type: 'tree',
