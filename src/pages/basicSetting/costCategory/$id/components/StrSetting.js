@@ -55,8 +55,8 @@ const selfStr = [{
   name: '明细',
   icon: 'iconmingxi',
 },  {
-  key: '4',
-  fieldType: '4',
+  key: '10',
+  fieldType: '10',
   name: '行程',
   icon: 'iconmingxi',
 }];

@@ -5,6 +5,9 @@ import cs from 'classnames';
 import style from './index.scss';
 import { timeStampToHex } from '../../../../../utils/common';
 
+// 只能拖拽一次
+const disabledField = [3, 10];
+
 const expand = [{
   name: '金额',
   dateType: 0,
@@ -58,8 +61,9 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
       }
       return box;
     },
-    canDrag: () => Number(fieldType) !== 3 ||
-      (Number(fieldType) === 3 && (cardList.findIndex(it => Number(it.fieldType) === 3) === -1)),
+    canDrag: () => !disabledField.includes(Number(fieldType)) ||
+      (disabledField.includes(Number(fieldType)) &&
+      (cardList.findIndex(it => Number(it.fieldType) === Number(fieldType)) === -1)),
     end: (item, monitor) => {
       const result = monitor.getDropResult();
       console.log('result', result);
