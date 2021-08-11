@@ -439,7 +439,6 @@ export const ddDing = payload => new Promise((resolve, reject) => {
     const defaultParams = {
       users: [],
       corpId: localStorage.getItem('corpId'),
-      type: 2,
       alertType: 2,
       alertDate: {
         format: 'yyyy-MM-dd HH:mm',
@@ -459,7 +458,6 @@ export const ddDing = payload => new Promise((resolve, reject) => {
     const defaultParams = {
       users: [],
       corpId: localStorage.getItem('corpId'),
-      type: 2,
       alertType: 2,
       alertDate: {
         format: 'yyyy-MM-dd HH:mm',
