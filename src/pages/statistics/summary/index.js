@@ -201,7 +201,7 @@ class Summary extends React.PureComponent {
   }
 
   export = (key) => {
-    const { current, selectedRowKeys } = this.state;
+    const { current, selectedRowKeys, searchList } = this.state;
     if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
@@ -215,15 +215,23 @@ class Summary extends React.PureComponent {
       url = 'summary/salaryExport';
     }
     let params = {};
-    const { searchContent, levelSearch } = this.state;
+    const { searchContent } = this.state;
     if (key === '1') {
       params = {
         ids: selectedRowKeys,
       };
     } else if (key === '2') {
+      searchList.forEach(it => {
+        if (it.value) {
+          Object.assign(params, {
+            ...it.value,
+            searchContent,
+          });
+        }
+      });
+    } else if (key === '3') {
       params = {
-        searchContent,
-        ...levelSearch,
+        isAll: true,
       };
     }
     this.props.dispatch({
@@ -300,18 +308,6 @@ class Summary extends React.PureComponent {
     });
   }
 
-  onOk = (search) => {
-    const { query } = this.props;
-    this.setState({
-      levelSearch: search,
-    }, () => {
-      this.onQuery({
-        pageNo: 1,
-        pageSize: query.pageSize
-      });
-    });
-  }
-
   handleClick = e => {
     const arr = [...listSearch];
     if (e.key === '2') {
@@ -323,7 +319,6 @@ class Summary extends React.PureComponent {
       current: e.key,
       selectedRowKeys: [],
       selectedRows: [],
-      levelSearch: {},
       searchList: arr,
     }, () => {
       this.onQuery({
