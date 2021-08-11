@@ -24,6 +24,7 @@ import AddFolder from './AddFolder';
 import defaultFunc from './utils';
 import CategoryTable from './InvoiceTable/CategoryTable';
 import ChangeForm from './ChangeForm';
+import AddTravel from './InvoiceTable/AddTravel';
 
 
 const { confirm } = Modal;
@@ -1444,6 +1445,10 @@ class AddInvoice extends Component {
                 onRef={ref => {this.onCategoryStatus = ref;}}
                 detailList={applyDetailList}
               />
+            }
+            {
+              Number(templateType) === 2 &&
+              <AddTravel />
             }
             {
               djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&

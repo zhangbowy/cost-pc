@@ -17,6 +17,24 @@ import CountChild from './CountCmp/CountChild';
 
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 
+const defaultArrs = [{
+  key: '0',
+  name: '成本中心',
+  isRequired: true,
+}, {
+  key: '1',
+  name: '发票抬头',
+  isRequired: true,
+}, {
+  key: '2',
+  name: '同行人',
+  isRequired: false,
+}, {
+  key: '3',
+  name: '费用归属',
+  isRequired: true,
+}];
+
 const Card = ({ name, isWrite, index,
   moveCard, field, findCard, dragId, id,
   fieldType, changeDragId, onDelete, disabled, data,
@@ -207,15 +225,28 @@ const Card = ({ name, isWrite, index,
                 {
                   types === 10 &&
                   <div>
-                    <p>
-                      <span>行程</span>
-                      <span>（行程组件不支持自定义字段）</span>
+                    <p style={{ borderBottom: '1px solid rgba(233, 233, 233, 1)', paddingBottom: '16px' }}>
+                      <span className="fw-500 fs-14 c-black-85">行程</span>
+                      <span className="fs-12 c-black-45">（行程组件不支持自定义字段）</span>
                     </p>
-                    <p>+添加行程</p>
-                    <div className={style.inputs}>
-                      <span className="fs-14 c-black-25">请选择</span>
-                      <i className="iconfont icondown c-black-25" />
-                    </div>
+                    <p className={style.addNames}>+  添加行程</p>
+                    {
+                      defaultArrs.map(it => (
+                        <div className={style.xc} key={it.key}>
+                          <p className={style.xcName}>
+                            {
+                              !it.isRequired &&
+                              <span className={style.required}>*</span>
+                            }
+                            <span className="fs-14 c-black-85">{it.name}</span>
+                          </p>
+                          <div className={style.inputs}>
+                            <span className="fs-14 c-black-25">请选择</span>
+                            <i className="iconfont icondown c-black-25" />
+                          </div>
+                        </div>
+                      ))
+                    }
                   </div>
                 }
               </div>

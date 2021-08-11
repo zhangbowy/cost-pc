@@ -7,6 +7,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
 import { timeStampToHex, intToChinese } from '../../../../../utils/common';
+import ThirdSet from './RightCheck/ThirdSet';
 
 let id = 1000;
 const disabledDefault = ['costCategory'];
@@ -401,7 +402,7 @@ class Right extends PureComponent {
             }
             {
               Number(details.fieldType) !== 3 && Number(details.fieldType) !== 9 &&
-              !disabledDefault.includes(details.field) &&
+              !disabledDefault.includes(details.field) && Number(details.fieldType) !== 10 &&
               <Form.Item label="默认文案">
                 {
                   getFieldDecorator(`note[${details.field}]`, {
@@ -505,6 +506,10 @@ class Right extends PureComponent {
                     )
                   }
                 </Form.Item>
+            }
+            {
+              Number(details.fieldType) === 10 &&
+              <ThirdSet />
             }
             {
               details.field && (details.field.indexOf('self_') > -1) && !details.parentId &&
