@@ -34,7 +34,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     return `self_${res.join('')}${time+1}`;
   };
   const box = {
-    type: 'box',
+    type: Number(fieldType) !== 10 ? 'box' : 'parent',
     name,
     fieldType,
     dateType: Number(fieldType) === 5 ? 1 : 0,

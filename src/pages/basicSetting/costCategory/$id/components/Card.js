@@ -168,7 +168,7 @@ const Card = ({ name, isWrite, index,
               <span className={isWrite ? style.required : style.requireds}>*</span>
               <div className={style.tmpCnt}>
                 {
-                  types !== 3 && types !== 9 &&
+                  types !== 3 && types !== 9 && types !== 10 &&
                   <p className="fs-14 c-black-85 m-b-16">{name}</p>
                 }
                 {
@@ -202,6 +202,20 @@ const Card = ({ name, isWrite, index,
                   (types === 9) &&
                   <div className={style.production}>
                     <span>{data.note}</span>
+                  </div>
+                }
+                {
+                  types === 10 &&
+                  <div>
+                    <p>
+                      <span>行程</span>
+                      <span>（行程组件不支持自定义字段）</span>
+                    </p>
+                    <p>+添加行程</p>
+                    <div className={style.inputs}>
+                      <span className="fs-14 c-black-25">请选择</span>
+                      <i className="iconfont icondown c-black-25" />
+                    </div>
                   </div>
                 }
               </div>
