@@ -5,6 +5,7 @@ import styles from './index.scss';
 import { defaultColor } from '../../../utils/constants';
 
 function Line({ data, series, changeType, changeMoney }) {
+  console.log('line-data', data);
   const option = {
     tooltip: {
       trigger: 'axis',
@@ -138,15 +139,15 @@ function Line({ data, series, changeType, changeMoney }) {
         }
       }
     ],
-    dataZoom : [
-      {
-        type: 'slider',
-        show: data.length > 20,
-        start: 0,
-        end: 30,
-        xAxisIndex: [0],
-      },
-    ],
+    // dataZoom : [
+    //   {
+    //     type: 'slider',
+    //     // show: data.length > 20,
+    //     start: data.length > 20 ? (data.length - 20) : 20,
+    //     end: data.length - 1,
+    //     // xAxisIndex: [0],
+    //   },
+    // ],
     series: [
       {
         name: series[0],
