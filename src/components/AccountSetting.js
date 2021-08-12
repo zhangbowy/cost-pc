@@ -214,8 +214,8 @@ class AccountSetting extends Component {
                         required: true,
                         message: '请输入银行卡号'
                       },{
-                        max: 20,
-                        message: '长度不能超过20个字符'
+                        max: 50,
+                        message: '长度不能超过50个字符'
                       }]
                     })(
                       <Input placeholder="请输入卡号" />

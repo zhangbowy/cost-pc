@@ -149,6 +149,11 @@ class Setting extends Component {
   selectPle = (res) => {
     const { data } = this.state;
     console.log(res);
+    if (res.users.length) {
+      this.props.form.setFieldsValue({
+        projectManagerJson: res.users
+      });
+    }
     this.setState({
       data: update(data, {
         projectManagerJson: {
@@ -387,7 +392,10 @@ class Setting extends Component {
               target === 'project' && type === 'item' &&
               <Form.Item label="负责人">
                 {
-                  getFieldDecorator('projectManagerJson')(
+                  getFieldDecorator('projectManagerJson', {
+                    initialValue: data.projectManagerJson || null,
+                    rules: [{ required: true, message: '请选择负责人' }]
+                  })(
                     <SelectPeople
                       users={data.projectManagerJson || []}
                       placeholder='请选择'
