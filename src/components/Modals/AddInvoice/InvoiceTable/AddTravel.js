@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Divider, Button, Form, Input, Row, Col } from 'antd';
 import style from '../index.scss';
+import AddTravelForm from './AddTravelForm';
 
 @Form.create()
 class AddTravel extends PureComponent {
@@ -26,14 +27,15 @@ class AddTravel extends PureComponent {
           </div>
         </div>
         <div style={{textAlign: 'center'}} className={style.addbtn}>
-          <Button
-            icon="plus"
-            style={{ width: '231px', marginBottom: '16px' }}
-            key="handle"
-            onClick={() => this.onHandle()}
-          >
-            添加行程
-          </Button>
+          <AddTravelForm>
+            <Button
+              icon="plus"
+              style={{ width: '231px', marginBottom: '16px' }}
+              key="handle"
+            >
+              添加行程
+            </Button>
+          </AddTravelForm>
         </div>
         <Form>
           <Row>
@@ -68,7 +70,12 @@ class AddTravel extends PureComponent {
             </Col>
             <Col span={12}>
               <Form.Item
-                label={(<span>费用归属<i className="iconfont iconshuomingwenzi" /></span>)}
+                label={(
+                  <span>
+                    <span>费用归属</span>
+                    <i className="iconfont iconshuomingwenzi c-black-36 m-l-4 m-r-4" style={{ verticalAlign: 'middle' }} />
+                  </span>
+                )}
                 {...formItemLayout}
               >
                 {

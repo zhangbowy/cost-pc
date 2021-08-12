@@ -54,14 +54,16 @@ class PayTemp extends React.PureComponent {
       selectedRows: [],
       sumAmount: 0,
     });
+
     this.props.onChangeStatus(e.key);
     this.onQuery({
       ...query,
-      status: e.key,
+      status: Number(e.key) === 1 ? 2 : e.key,
       searchContent,
       startTime,
       endTime,
       pageNo: 1,
+      isSign: Number(e.key) === 1,
     });
   };
 
@@ -328,6 +330,40 @@ class PayTemp extends React.PureComponent {
 
   };
 
+  onMove = () => {
+    const { selectedRowKeys, accountTypes, searchContent, status } = this.state;
+    const { templateType, query } = this.props;
+    if (!selectedRowKeys.length) {
+      message.error('请至少选择一条数据');
+      return;
+    }
+    const createTime = this.props.form.getFieldValue('createTime');
+    let startTime = '';
+    let endTime = '';
+    if (createTime && createTime.length > 0) {
+      startTime = moment(createTime[0]).format('x');
+      endTime = moment(createTime[1]).format('x');
+    }
+    this.props.operationSign({
+      invoiceIds: selectedRowKeys,
+      templateType,
+      isSign: Number(status) === 2,
+    }, () => {
+      this.setState({
+        selectedRowKeys: [],
+      });
+      this.onQuery({
+        pageNo: 1,
+        pageSize: query.pageSize,
+        accountTypes,
+        searchContent,
+        status: status === '1' ? 2 : status,
+        endTime,
+        startTime,
+      });
+    });
+  }
+
   render() {
     const {
       status,
@@ -361,6 +397,9 @@ class PayTemp extends React.PureComponent {
           <Menu.Item key={2}>
             待发放
           </Menu.Item>
+          <Menu.Item key={1}>
+            已票签
+          </Menu.Item>
           <Menu.Item key={3}>
             已发放
           </Menu.Item>
@@ -369,10 +408,13 @@ class PayTemp extends React.PureComponent {
           <div className="cnt-header" style={{display: 'flex'}}>
             <div className="head_lf">
               {
-                Number(status) === 2 &&
-                <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
-                  <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
-                </PayModal>
+                (Number(status) === 2 || Number(status) === 1) &&
+                <>
+                  <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
+                    <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
+                  </PayModal>
+                  <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? '移至已票签' : '移回待发放'}</Button>
+                </>
               }
               <DropBtn
                 selectKeys={selectedRowKeys}
@@ -421,26 +463,6 @@ class PayTemp extends React.PureComponent {
             onChange={this.handleTableChange}
             pagination={{
               current: query.pageNo,
-              // onChange: (pageNumber) => {
-              //   const createTime = this.props.form.getFieldValue('createTime');
-              //   let startTime = '';
-              //   let endTime = '';
-              //   if (createTime && createTime.length > 0) {
-              //     startTime = moment(createTime[0]).format('x');
-              //     endTime = moment(createTime[1]).format('x');
-              //   }
-              //   console.log('分页信息');
-              //   const { searchContent } = this.state;
-              //   this.onQuery({
-              //     pageNo: pageNumber,
-              //     pageSize: query.pageSize,
-              //     searchContent,
-              //     status,
-              //     endTime,
-              //     startTime,
-              //     accountTypes
-              //   });
-              // },
               total,
               size: 'small',
               showTotal: () => (`共${total}条数据`),

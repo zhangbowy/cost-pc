@@ -328,6 +328,15 @@ class BorrowPay extends React.PureComponent {
     });
   }
 
+  operationSign = (id) => {
+    this.props.dispatch({
+      type: 'payment/operationSign',
+      payload: {
+        id,
+      }
+    });
+  }
+
   render() {
     const {
       list,
@@ -558,6 +567,7 @@ class BorrowPay extends React.PureComponent {
           confirm={() => this.onConfirm()}
           selectedRowKeys={selectedRowKeys}
           selectedRows={selectedRows}
+          operationSign={this.operationSign}
         />
         <ConfirmPay
           batchDetails={batchDetails}

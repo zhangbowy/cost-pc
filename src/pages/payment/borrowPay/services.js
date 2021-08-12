@@ -9,4 +9,5 @@ export default {
   payedExport: `${APP_API}/cost/export/payed4Loan`, // 已发放
   detail: `${APP_API}/cost/account/receipt/detail`,
   refuse: `${APP_API}/cost/invoice/payment/reject`, // 拒绝
+  operationSign: `${APP_API}/cost/invoice/payment/operationSign`,
 };

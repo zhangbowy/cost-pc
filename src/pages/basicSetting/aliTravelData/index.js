@@ -2,26 +2,49 @@ import React, { PureComponent } from 'react';
 import PageHead from '@/components/PageHead';
 import { Steps, Button, Table } from 'antd';
 import cs from 'classnames';
+import { connect } from 'dva';
 import style from './index.scss';
 
-
+const aliTravel = {
+  0: '飞机',
+  1: '火车',
+  2: '酒店',
+  3: '打的',
+};
 const { Step } = Steps;
+@connect(({ aliTravelData }) => ({
+  authorize: aliTravelData.authorize,
+  list: aliTravelData.list,
+}))
 class AllTravelData extends PureComponent {
   state = {
     current: 1,
   }
 
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'aliTravelData/authorize',
+      payload: {},
+    }).then(() => {
+      console.log(this.props.authorize);
+    });
+  }
+
   render () {
     const { current } = this.state;
+    const { list } = this.props;
     const columns = [{
       title: '支出类别',
-      dataIndex: 'cost',
+      dataIndex: 'costCategoryName',
     }, {
       title: '阿里商旅订单类型',
       dataIndex: 'type',
+      render: (_, record) => (
+        <span>{aliTravel[record.type]}</span>
+      )
     }, {
       title: '说明',
-      dataIndex: 'production',
+      dataIndex: 'note',
     }];
     return (
       <div>
@@ -54,6 +77,7 @@ class AllTravelData extends PureComponent {
                   <Table
                     columns={columns}
                     pagination={false}
+                    dataSource={list}
                   />
                 </div>
               )}

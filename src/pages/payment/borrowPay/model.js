@@ -32,6 +32,9 @@ export default {
         },
       });
     },
+    *operationSign({ payload }, { call }) {
+      yield call(post, api.operationSign, payload);
+    },
     *send({ payload }, { call }) {
       yield call(post, api.send, payload);
     },

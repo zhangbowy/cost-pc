@@ -319,6 +319,17 @@ class Payment extends React.PureComponent {
     });
   }
 
+  operationSign = (payload, callback) => {
+    this.props.dispatch({
+      type: 'payment/operationSign',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
   render() {
     const {
       list,
@@ -540,6 +551,7 @@ class Payment extends React.PureComponent {
           confirm={() => this.onConfirm()}
           selectedRowKeys={selectedRowKeys}
           selectedRows={selectedRows}
+          operationSign={this.operationSign}
         />
         <ConfirmPay
           batchDetails={batchDetails}

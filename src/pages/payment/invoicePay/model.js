@@ -36,6 +36,9 @@ export default {
     *send({ payload }, { call }) {
       yield call(post, api.send, payload);
     },
+    *operationSign({ payload }, { call }) {
+      yield call(post, api.operationSign, payload);
+    },
     // 已发放
     *exported({ payload }, { call }) {
       Object.assign(payload, { exportType:'export', fileName: '已发放列表' });
