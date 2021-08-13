@@ -12,3 +12,25 @@
   }
 
 }
+.production{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  background: #FFFBE6;
+  border-radius: 4px;
+  color: rgba(0, 0, 0, 0.65);
+  margin: 16px 32px;
+  padding: 0 16px;
+  .texts{
+    i {
+      color: rgba(250, 173, 20, 1);
+      font-size: 20px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  }
+}
+.noPadding{
+  padding-top: 0;
+}

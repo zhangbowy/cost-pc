@@ -231,21 +231,26 @@ const Card = ({ name, isWrite, index,
                     </p>
                     <p className={style.addNames}>+  添加行程</p>
                     {
-                      defaultArrs.map(it => (
-                        <div className={style.xc} key={it.key}>
-                          <p className={style.xcName}>
-                            {
-                              !it.isRequired &&
-                              <span className={style.required}>*</span>
-                            }
-                            <span className="fs-14 c-black-85">{it.name}</span>
-                          </p>
-                          <div className={style.inputs}>
-                            <span className="fs-14 c-black-25">请选择</span>
-                            <i className="iconfont icondown c-black-25" />
-                          </div>
-                        </div>
-                      ))
+                      data.alitripSetting && data.alitripSetting.isEnable &&
+                      <>
+                        {
+                          defaultArrs.map(it => (
+                            <div className={style.xc} key={it.key}>
+                              <p className={style.xcName}>
+                                {
+                                  !it.isRequired &&
+                                  <span className={style.required}>*</span>
+                                }
+                                <span className="fs-14 c-black-85">{it.name}</span>
+                              </p>
+                              <div className={style.inputs}>
+                                <span className="fs-14 c-black-25">请选择</span>
+                                <i className="iconfont icondown c-black-25" />
+                              </div>
+                            </div>
+                          ))
+                        }
+                      </>
                     }
                   </div>
                 }

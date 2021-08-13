@@ -2,13 +2,18 @@ import React from 'react';
 import { Divider, Checkbox } from 'antd';
 import style from './index.scss';
 
-const ThirdSet = () => {
+const ThirdSet = ({ onChange, aliTripSetting }) => {
   return (
     <div>
       <Divider type="horizontal" />
       <div className={style.modules}>
         <p className="fs-14 c-black-85 m-b-8">行程同步至第三方平台</p>
-        <Checkbox>阿里商旅</Checkbox>
+        <Checkbox
+          onChange={(e) => onChange(e, 'isEnable')}
+          checked={!!(aliTripSetting.isEnable)}
+        >
+          阿里商旅
+        </Checkbox>
       </div>
       <div className={style.modules}>
         <p className="fs-14 c-black-85 m-b-8">成本中心</p>
@@ -20,7 +25,12 @@ const ThirdSet = () => {
       </div>
       <div className={style.modules}>
         <p className="fs-14 c-black-85 m-b-8">同行人(通讯录选择，支持多人)</p>
-        <Checkbox>启用</Checkbox>
+        <Checkbox
+          onChange={(e) => onChange(e, 'hasFellowTraveler')}
+          checked={!!(aliTripSetting.hasFellowTraveler)}
+        >
+          启用
+        </Checkbox>
       </div>
       <div className={style.modules}>
         <p className="fs-14 c-black-85 m-b-8">费用归属</p>

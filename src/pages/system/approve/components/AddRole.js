@@ -140,6 +140,7 @@ class AddRole extends Component {
 
   onChangeTree = (value, label, extra) => {
     console.log(extra);
+    console.log(value, 'value');
     this.setState({
       category: value,
     });
@@ -158,7 +159,8 @@ class AddRole extends Component {
       pId: 'parentId',
       name: 'costName',
       tName: 'title',
-      tId: 'value'
+      tId: 'value',
+      other: 'type'
     }, costCategoryList);
     const {
       visible,

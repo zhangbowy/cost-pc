@@ -24,6 +24,9 @@ const { APP_API } = constants;
   query: borrowPay.query,
   total: borrowPay.total,
   isViewVoucher: borrowPay.isViewVoucher,
+  recordList: borrowPay.recordList,
+  recordPage: borrowPay.recordPage,
+  recordTotal: borrowPay.recordTotal,
 }))
 class BorrowPay extends React.PureComponent {
   constructor(props) {
@@ -172,7 +175,11 @@ class BorrowPay extends React.PureComponent {
   }
 
   onQuery = (payload) => {
-    console.log('借款', payload);
+    if (payload.status) {
+      Object.assign(payload, {
+        status: Number(payload.status) === 1 ? 2 : payload.status
+      });
+    }
     this.props.dispatch({
       type: 'borrowPay/list',
       payload: {
@@ -328,11 +335,27 @@ class BorrowPay extends React.PureComponent {
     });
   }
 
-  operationSign = (id) => {
+  operationSign = (payload, callback) => {
     this.props.dispatch({
-      type: 'payment/operationSign',
-      payload: {
-        id,
+      type: 'borrowPay/operationSign',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  onRecord = (payload, callback) => {
+    Object.assign(payload, {
+      templateType: 1,
+    });
+    this.props.dispatch({
+      type: 'borrowPay/record',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
       }
     });
   }
@@ -345,7 +368,10 @@ class BorrowPay extends React.PureComponent {
       loading,
       batchDetails,
       dispatch,
-      isViewVoucher
+      isViewVoucher,
+      recordList,
+      recordPage,
+      recordTotal,
     } = this.props;
     const {
       status,
@@ -568,6 +594,9 @@ class BorrowPay extends React.PureComponent {
           selectedRowKeys={selectedRowKeys}
           selectedRows={selectedRows}
           operationSign={this.operationSign}
+          recordList={recordList}
+          recordPage={{...recordPage, total: recordTotal}}
+          onRecord={this.onRecord}
         />
         <ConfirmPay
           batchDetails={batchDetails}

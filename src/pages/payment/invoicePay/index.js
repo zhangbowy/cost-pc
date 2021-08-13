@@ -25,6 +25,9 @@ const { APP_API } = constants;
   total: payment.total,
   isViewVoucher: payment.isViewVoucher,
   batchDetails: global.batchDetails,
+  recordList: payment.recordList,
+  recordPage: payment.recordPage,
+  recordTotal: payment.recordTotal,
 }))
 class Payment extends React.PureComponent {
   constructor(props) {
@@ -174,6 +177,11 @@ class Payment extends React.PureComponent {
   }
 
   onQuery = (payload) => {
+    if (payload.status) {
+      Object.assign(payload, {
+        status: Number(payload.status) === 1 ? 2 : payload.status
+      });
+    }
     this.props.dispatch({
       type: 'payment/list',
       payload: {
@@ -330,6 +338,20 @@ class Payment extends React.PureComponent {
     });
   }
 
+  onRecord = (payload, callback) => {
+    Object.assign(payload, {
+      templateType: 0,
+    });
+    this.props.dispatch({
+      type: 'payment/record',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
   render() {
     const {
       list,
@@ -339,6 +361,9 @@ class Payment extends React.PureComponent {
       batchDetails,
       dispatch,
       isViewVoucher,
+      recordList,
+      recordPage,
+      recordTotal,
     } = this.props;
     const { status, visibleConfirm, selectedRowKeys, selectedRows } = this.state;
     const columns = [{
@@ -552,6 +577,9 @@ class Payment extends React.PureComponent {
           selectedRowKeys={selectedRowKeys}
           selectedRows={selectedRows}
           operationSign={this.operationSign}
+          recordList={recordList}
+          recordPage={{...recordPage, total: recordTotal}}
+          onRecord={this.onRecord}
         />
         <ConfirmPay
           batchDetails={batchDetails}

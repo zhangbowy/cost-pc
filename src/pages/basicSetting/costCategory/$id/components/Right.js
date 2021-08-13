@@ -254,6 +254,11 @@ class Right extends PureComponent {
     return arr;
   }
 
+  onChangeThird = (e, key) => {
+    console.log('点击e', e);
+    console.log(key);
+  }
+
   render() {
     const { details, list } = this.state;
     const { type, templateType, isModifyInvoice, operateType } = this.props;
@@ -261,7 +266,6 @@ class Right extends PureComponent {
     const {
       form: { getFieldDecorator, getFieldValue },
     } = this.props;
-    console.log(details);
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
 
@@ -385,7 +389,7 @@ class Right extends PureComponent {
                           (details.field.indexOf('self_') === -1 &&
                           details.field.indexOf('expand_') === -1 &&
                           dragDisabled.includes(details.field))
-                          || (Number(details.fieldType) === 3)
+                          || disabledDefault.includes(Number(details.fieldType))
                         }
                         onBlur={e => this.onInput(e, 'name')}
                       />
@@ -466,7 +470,9 @@ class Right extends PureComponent {
                   })(
                     <Checkbox.Group
                       style={{ width: '100%' }}
-                      disabled={details.disabled || dragDisabled.includes(details.field)}
+                      disabled={details.disabled ||
+                      dragDisabled.includes(details.field) ||
+                      (Number(details.fieldType) === 10)}
                       onChange={e => this.onChange(e, 'isWrite')}
                     >
                       <Checkbox value>必填</Checkbox>
@@ -509,7 +515,7 @@ class Right extends PureComponent {
             }
             {
               Number(details.fieldType) === 10 &&
-              <ThirdSet />
+              <ThirdSet onChange={this.onChangeThird} aliTripSetting={details.alitripSetting || {}} />
             }
             {
               details.field && (details.field.indexOf('self_') > -1) && !details.parentId &&

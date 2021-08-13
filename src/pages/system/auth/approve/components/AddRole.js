@@ -88,7 +88,8 @@ class AddRole extends Component {
       title,
       id,
       onOk,
-      detail
+      detail,
+      costCategoryList,
     } = this.props;
     const {
       userVo,
@@ -100,6 +101,8 @@ class AddRole extends Component {
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        const group = costCategoryList.filter(it => !it.type);
+        const groupArr = group.map(it => it.id);
         dispatch({
           type: `approveRole/${title}`,
           payload: {
@@ -107,6 +110,7 @@ class AddRole extends Component {
               return {
                 costName: it.label,
                 id: it.value,
+                isGroup: groupArr.includes(it.value),
               };
             }),
             userVo: userVo[0],
@@ -140,6 +144,7 @@ class AddRole extends Component {
 
   onChangeTree = (value, label, extra) => {
     console.log(extra);
+    console.log(value);
     this.setState({
       category: value,
     });
@@ -158,7 +163,8 @@ class AddRole extends Component {
       pId: 'parentId',
       name: 'costName',
       tName: 'title',
-      tId: 'value'
+      tId: 'value',
+      otherKeys: ['type']
     }, costCategoryList);
     const {
       visible,

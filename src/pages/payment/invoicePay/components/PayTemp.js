@@ -6,6 +6,8 @@ import Search from 'antd/lib/input/Search';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
 import constants from '@/utils/constants';
+import cs from 'classnames';
+import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
 import PayModal from './payModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
@@ -25,6 +27,7 @@ class PayTemp extends React.PureComponent {
       selectedRows: [],
       accountType: [],
       pageNo: 1,
+      show: true,
     };
   }
 
@@ -364,13 +367,20 @@ class PayTemp extends React.PureComponent {
     });
   }
 
+  handle = () => {
+    this.setState({
+      show: false,
+    });
+  }
+
   render() {
     const {
       status,
       selectedRowKeys,
       sumAmount,
       selectedRows,
-      accountTypes
+      accountTypes,
+      show,
     } = this.state;
     const {
       list,
@@ -380,9 +390,24 @@ class PayTemp extends React.PureComponent {
       loading,
       columns,
       templateType,
-      confirm
+      confirm,
+      recordList,
+      recordPage,
+      onRecord,
     } = this.props;
-
+    const recordColumns = [{
+      title: '姓名',
+      dataIndex: 'createName',
+    }, {
+      title: '操作时间',
+      dataIndex: 'createTime',
+    }, {
+      title: '操作内容',
+      dataIndex: 'operationMsg',
+    }, {
+      title: '详情',
+      dataIndex: 'operationDetail',
+    }];
     const rowSelection = {
       type: 'checkbox',
       selectedRowKeys,
@@ -404,7 +429,19 @@ class PayTemp extends React.PureComponent {
             已发放
           </Menu.Item>
         </Menu>
-        <div className={style.payContent}>
+        <>
+          {
+            Number(status) === 1 && show &&
+            <div className={style.production}>
+              <div className={style.texts}>
+                <i className="iconfont iconinfo-cirlce" />
+                <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放</span>
+              </div>
+              <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
+            </div>
+          }
+        </>
+        <div className={Number(status) === 1 && show ? cs(style.payContent, style.noPadding) : style.payContent}>
           <div className="cnt-header" style={{display: 'flex'}}>
             <div className="head_lf">
               {
@@ -449,6 +486,24 @@ class PayTemp extends React.PureComponent {
                 />
               </Form>
             </div>
+            {
+              Number(status) === 1 &&
+              <div className="head_rf">
+                <TableTemplate
+                  page={recordPage}
+                  onQuery={onRecord}
+                  columns={recordColumns}
+                  list={recordList}
+                  placeholder="输入详情内容搜索"
+                  sWidth='800px'
+                >
+                  <div className="head_rf" style={{ cursor: 'pointer' }}>
+                    <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+                    <span className="fs-14 c-black-65">操作记录</span>
+                  </div>
+                </TableTemplate>
+              </div>
+            }
           </div>
           <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
             已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}

@@ -12,6 +12,12 @@ export default {
       pageSize: PAGE_SIZE,
     },
     total: 0,
+    recordPage: {
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+    },
+    recordList: [],
+    recordTotal: 0,
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -29,6 +35,20 @@ export default {
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+        },
+      });
+    },
+    *record({ payload }, { call, put }) {
+      const response = yield call(get, api.record, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          recordList: response.list || [],
+          recordPage: {
+            pageSize: payload.pageSize,
+            pageNo: payload.pageNo,
+          },
+          recordTotal: response.page ? response.page.total : 0,
         },
       });
     },
