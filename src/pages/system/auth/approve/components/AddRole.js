@@ -89,7 +89,7 @@ class AddRole extends Component {
       id,
       onOk,
       detail,
-      costCategoryList,
+      costCategoryList
     } = this.props;
     const {
       userVo,
@@ -102,7 +102,7 @@ class AddRole extends Component {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const group = costCategoryList.filter(it => !it.type);
-        const groupArr = group.map(it => it.id);
+        const groupArr = group && group.length ? group.map(it => it.id) : [];
         dispatch({
           type: `approveRole/${title}`,
           payload: {

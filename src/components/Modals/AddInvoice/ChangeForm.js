@@ -103,11 +103,12 @@ class ChangeForm extends Component {
   }
 
   onChangeDept = (val) => {
+    console.log('onChangeDept -> val', val);
     const { details, onChangeData } = this.props;
     onChangeData({
       details: {
         ...details,
-        loanDeptId: val,
+        deptId: val,
       },
     }, true);
   }
@@ -632,7 +633,7 @@ class ChangeForm extends Component {
                         <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
                           {
                             getFieldDecorator('deptId', {
-                              initialValue: details.deptId ? `${details.createDeptId}` : '',
+                              initialValue: details.deptId ? `${details.deptId}` : '',
                               rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
                             })(
                               <Select
