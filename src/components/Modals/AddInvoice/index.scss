@@ -188,3 +188,48 @@
   color: rgba(255, 77, 79, 1);
   border-color: rgba(255, 77, 79, 1);
 }
+
+// 行程
+.travelDetail{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.singleContent{
+  width: 290px;
+  height: 88px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 6px;
+  display: flex;
+  margin-left: 16px;
+  margin-bottom: 24px;
+  position: relative;
+  cursor: pointer;
+  .iconImg{
+    width: 24px;
+    height: 24px;
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 12px;
+    img{
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+.singleContent .singleDel{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: rgba(255, 90, 95, 1);
+  cursor: pointer;
+}
+.singleBtn{
+  width: 280px;
+  height: 88px;
+  background: #FFFFFF;
+  border: 1px dashed #D9D9D9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

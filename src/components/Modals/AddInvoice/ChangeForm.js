@@ -557,7 +557,8 @@ class ChangeForm extends Component {
                 return (
                   <>
                     {
-                      itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9 ?
+                      itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
+                      && itw.fieldType !== 10 ?
                         <Col span={12}>
                           <Form.Item label={itw.name} {...formItemLayout}>
                             {

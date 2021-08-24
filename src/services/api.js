@@ -130,4 +130,9 @@ export default {
    newProjectList: `${APP_API}/cost/project/list/v2`,
    roleStatics: `${APP_API}/cost/menu/v2/navByParentId`, // 支出分析表的权限
    getApprovalNum: `${APP_API}/cost/approve/instance/count`,
+   costCAndITitle: `${APP_API}/cost/alitrip/costCenterAndInvoiceTitle`, // 阿里商旅查用户发票抬头 + 用户成本中心
+   aliTripCity: `${APP_API}/cost/alitrip/city`, // 阿里商旅查火车站城市或者机场城市
+   provinceAndCity: `${APP_API}/cost/aw/proviceAndCity`,
+   aliTripLink: `${APP_API}/cost/alitrip/reserve`,
+   deptTree: `${APP_API}/cost/dept/listWithUser`, // 部门树
 };

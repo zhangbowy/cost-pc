@@ -8,6 +8,7 @@ import fileIcon from '@/utils/fileIcon.js';
 import { invoiceStatus, getArrayValue, approveStatus, loanStatus } from '@/utils/constants';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
+import fields from '@/utils/fields';
 import style from './index.scss';
 import constants, { accountType } from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
@@ -19,9 +20,11 @@ import RecordHistory from './RecordHistory';
 import CostDetailTable from './CostDetailTable';
 import ProductTable from './ProductTable';
 import { numAdd } from '../../../utils/float';
-import { handleProduction, compare } from '../../../utils/common';
+import { handleProduction, compare, getParams } from '../../../utils/common';
+import AliLink from './AliLink';
 // import { DownloadFile } from '../../../utils/ddApi';
 
+const { aliTraffic } = fields;
 const { APP_API } = constants;
 @connect(({ global, costGlobal, session }) => ({
   invoiceDetail: global.invoiceDetail,
@@ -35,6 +38,7 @@ const { APP_API } = constants;
   recordDetailLoan: costGlobal.recordDetailLoan,
   checkTemp: costGlobal.checkTemp,
   userInfo: session.userInfo,
+  aliTripLink: costGlobal.aliTripLink
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -56,6 +60,7 @@ class InvoiceDetail extends Component {
       totalCost: 0,
       expandSubmitFieldVos: [],
       selfSubmitFieldVos: [],
+      aliTrip: {},
     };
   }
 
@@ -124,6 +129,15 @@ class InvoiceDetail extends Component {
           ...details,
           applicationIds: details.applicationAssociageVOS.map(it => it.applicationId)
         };
+      }
+      if (details.trip) {
+        const { alitripCostCenterJson, alitripInvoiceTitleJson } = details.trip;
+        this.setState({
+          aliTrip: {
+            ...details.trip,
+            alitripCostCenterJson: alitripCostCenterJson ? JSON.parse(alitripCostCenterJson)[0] : {},
+            alitripInvoiceTitleJson: alitripInvoiceTitleJson ? JSON.parse(alitripInvoiceTitleJson)[0] : {}, },
+        });
       }
       let totalCost = 0;
       if (details.costDetailsVo) {
@@ -342,6 +356,23 @@ class InvoiceDetail extends Component {
     });
   }
 
+  onAliTrip = payload => {
+    const { details } = this.state;
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/aliTripLink',
+        payload: {
+          ddUserId: details.userJson[0].userId,
+          invoiceId: details.id,
+          ...payload
+        },
+      }).then(() => {
+        const { aliTripLink } = this.props;
+        resolve(aliTripLink);
+      });
+    });
+  }
+
   render() {
     const {
       visible,
@@ -361,6 +392,7 @@ class InvoiceDetail extends Component {
       totalCost,
       expandSubmitFieldVos,
       selfSubmitFieldVos,
+      aliTrip,
     } = this.state;
     const {
       children,
@@ -765,6 +797,28 @@ class InvoiceDetail extends Component {
               </Col>
             }
             {
+              aliTrip && aliTrip.alitripCostCenterJson &&
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>成本中心：</span>
+                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                    {aliTrip.alitripCostCenterJson.label}
+                  </span>
+                </div>
+              </Col>
+            }
+            {
+              aliTrip && aliTrip.alitripInvoiceTitleJson &&
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发票抬头：</span>
+                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                    {aliTrip.alitripInvoiceTitleJson.label}
+                  </span>
+                </div>
+              </Col>
+            }
+            {
               expandSubmitFieldVos &&
               (expandSubmitFieldVos.length > 0) &&
               expandSubmitFieldVos.filter(
@@ -804,7 +858,8 @@ class InvoiceDetail extends Component {
               selfSubmitFieldVos &&
               (selfSubmitFieldVos.length > 0) &&
               selfSubmitFieldVos.filter(it =>
-                (Number(it.fieldType) !== 3 && it.name !== '明细' && it.fieldType !== 9)
+                (Number(it.fieldType) !== 3 && Number(it.fieldType) !== 10
+                && it.name !== '明细' && it.fieldType !== 9)
               ).map(itField => {
                 let texts = itField.msg;
                 if (itField.startTime) {
@@ -933,6 +988,17 @@ class InvoiceDetail extends Component {
               null
           }
           {
+            aliTrip.alitripCostCenterJson &&
+            <>
+              <AliLink
+                status={details.approveStatus}
+                onGetLink={this.onAliTrip}
+                subTrip={aliTrip.subTrip || []}
+              />
+              <Divider type="horizontal" />
+            </>
+          }
+          {
             invoiceLoanRepayRecords && invoiceLoanRepayRecords.length > 0 &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
@@ -950,6 +1016,35 @@ class InvoiceDetail extends Component {
                 <span>借款核销</span>
               </div>
               <Borrow list={invoiceLoanAssessVos} type={1} />
+            </>
+          }
+          {
+            aliTrip.subTrip &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>行程（共{aliTrip.subTrip.length}个行程）</span>
+              </div>
+              <div style={{ display: 'flex' }}>
+                {
+                  aliTrip.subTrip.map(item => (
+                    <div className={style.singleContent} key={item.startDate}>
+                      <div className={style.iconImg}>
+                        <img
+                          src={getParams({res: item.traffic, list: aliTraffic, key: 'label', resultKey: 'icon'})}
+                          alt="模式"
+                        />
+                      </div>
+                      <div className="m-t-16">
+                        <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}</p>
+                        <p className="c-black-65 fs-14">
+                          {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
             </>
           }
           {

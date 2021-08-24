@@ -27,7 +27,7 @@ class MyRadio extends Component {
     return this.isOptionsValid() ? (
       <RadioGroup {...otherProps}>
         {options.map(option => (
-          <Radio key={option.label} value={option.value}>
+          <Radio key={option.value} value={option.value}>
             {option.label}
           </Radio>
         ))}

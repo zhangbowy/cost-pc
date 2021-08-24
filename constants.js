@@ -3,7 +3,8 @@
  */
 
 // 基于根目录的项目路径
-const APP_BASE = process.env.APP_BASE || 'costhtml';
+const APP_BASE = process.env.APP_BASE || 'dist';
+// const APP_BASE = process.env.APP_BASE || 'dist';
 // 环境变量
 const SPD_ENV = process.env.SPD_ENV || 'dev';
 
@@ -12,8 +13,8 @@ const APP_NAME = '鑫支出';
 const APP_API = {
   // dev: 'http://framework-api.dev.jimistore.com',
   // dev: 'http://10.255.0.169:8080', // debug
-  // dev: 'http://172.17.9.211',
-  dev: 'https://cost.forwe.store',
+  dev: 'http://172.17.9.211',
+  // dev: 'https://cost.forwe.store',
   // dev: '/api',
   // dev: 'http://127.0.0.1:8083/api', // debug
   // dev: 'https://pretest.forwe.store',

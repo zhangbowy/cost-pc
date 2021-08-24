@@ -250,7 +250,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
       field: idGenerator(),
       dateType: Number(fieldType) === 5 ? 1 : 0,
       options: Number(fieldType) === 2 ? ['选项一', '选项二'] : [],
-      isWrite: false,
+      isWrite: Number(fieldType) === 10,
       note: Number(fieldType) === 9 ? '说明文案' : '',
     };
     if (Number(fieldType) === 3) {
@@ -260,7 +260,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     }
     if (Number(fieldType) === 10) {
       Object.assign(boxs, {
-        expandFieldVos: travel,
+        expandFieldVos: [...travel],
         alitripSetting : {
           isEnable: false, // 是否关联阿里商旅
           hasFellowTraveler : false // 是否开启同行人
@@ -272,7 +272,8 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     if (uselessIndex-1 > 0 && Number(cardList[uselessIndex-1].fieldType) === 3) {
       return;
     }
-    if (Number(fieldType) === 3 && (cardList.findIndex(it => Number(it.fieldType) === 3) === -1)) {
+    if ((Number(fieldType) === 3 && (cardList.findIndex(it => Number(it.fieldType) === 3) === -1)) ||
+    (Number(fieldType) === 10) && (cardList.findIndex(it => Number(it.fieldType) === 10) === -1)) {
       changeCardList([...cardList, boxs]);
     }
   };

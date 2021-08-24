@@ -1,3 +1,8 @@
+import train from '../assets/img/aliTrip/train.png';
+import plant from '../assets/img/aliTrip/plant.png';
+import car from '../assets/img/aliTrip/car.png';
+import other from '../assets/img/aliTrip/other.png';
+
 // 固定字段
 export default {
   dateType: [{key: '0_m', value: '本月' }, // 日期格式
@@ -22,5 +27,29 @@ export default {
   }, {
     key: '3',
     value: '我团队的项目'
+  }],
+  aliTraffic: [{
+    value: '0',
+    label: '飞机',
+    icon: plant
+  }, {
+    value: '1',
+    label: '火车',
+    icon: train
+  }, {
+    value: '2',
+    label: '汽车',
+    icon: car
+  }, {
+    value: '3',
+    label: '其他',
+    icon: other
+  }],
+  aliWay: [{
+    value: '0',
+    label: '单程'
+  }, {
+    value: '1',
+    label: '往返'
   }]
 };

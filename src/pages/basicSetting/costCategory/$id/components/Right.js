@@ -257,6 +257,25 @@ class Right extends PureComponent {
   onChangeThird = (e, key) => {
     console.log('点击e', e);
     console.log(key);
+    const { selectList } = this.props;
+    const { details } = this.state;
+    const arr = this.onChangeChild(selectList, details.field, {
+      ...details,
+      alitripSetting: {
+        ...details.alitripSetting,
+        [key]: e.target.checked,
+      }
+    });
+    this.setState({
+      details: {
+        ...details,
+        alitripSetting: {
+          ...details.alitripSetting,
+          [key]: e.target.checked,
+        }
+      }
+    });
+    this.props.onChange(arr);
   }
 
   render() {

@@ -1,0 +1,36 @@
+.radios{
+  width: 79px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+  border: none!important;
+  margin-left: 8px;
+  text-align: center;
+  &::before{
+    display: none;
+    width: 0;
+    left: 0;
+  }
+}
+.selfRadio{
+  :global(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)) {
+    background: rgba(0, 199, 149, 0.08);
+    box-shadow: none;
+  }
+  :global{
+    .ant-radio-button-wrapper:not(:first-child)::before{
+      width: 0;
+      left: 0;
+    }
+    .ant-radio-button-wrapper:not(:first-child)::before{
+      width: 0;
+      left: 0;
+    }
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):focus-within{
+      outline: none;
+    }
+    .ant-radio-button-wrapper:first-child{
+      margin-left: 0px;
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import React from 'react';
 import moment from 'moment';
 import { changeDefaultStr } from '../../../utils/constants';
 
@@ -74,5 +75,55 @@ export default {
       newParams = {...newParams, costDetailEditVos, costDetailIds};
     }
     return {...newParams};
+  },
+  handleAliTrip: ({ costArr, invoiceArr }) => {
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 7 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 15 },
+      },
+    };
+    const fields = [{
+      field: 'alitripCostCenterId',
+      label: '成本中心',
+      type: 'Select',
+      options: costArr,
+      formItemLayout,
+    }, {
+      field: 'alitripInvoiceTitleId',
+      label: '发票抬头',
+      type: 'Select',
+      options: invoiceArr,
+      formItemLayout,
+    }, {
+      field: 'fellowTravelers',
+      label: '同行人',
+      type: 'Select',
+      options: costArr,
+      formItemLayout,
+      required: false,
+    }, {
+      field: 'alitripExpensesOwner',
+      type: 'Select',
+      label: (
+        <span>
+          <span>费用归属</span>
+          <i className="iconfont iconshuomingwenzi c-black-36 m-l-4 m-r-4" style={{ verticalAlign: 'middle' }} />
+        </span>
+      ),
+      options: [{
+        label: '按分摊计入',
+        value: '按分摊计入',
+      }, {
+        label: '均计入申请人',
+        value: '均计入申请人',
+      }],
+      formItemLayout,
+    }];
+    return fields;
   }
 };

@@ -487,3 +487,38 @@ export const intToChinese = ( str ) => {
   // return `${nodeType}_${time+1}`;
 
 };
+
+
+export const getParams = ({ list, key, resultKey, res }) => {
+  let str = '';
+  list.forEach(it => {
+    if (it[key] === res) {
+      str = it[resultKey];
+    }
+  });
+  return str;
+};
+
+export const  isEmpty = (str) => {
+  return str == null || str.length() === 0;
+};
+/**
+ * 取出中括号内的内容
+ * @param text
+ * @returns {string}
+ */
+export function getBracketStr(text) {
+  let result = '';
+  console.log('text', text);
+  if (isEmpty(text))
+      return result;
+  const regex = /\[(.+?)\]/g;
+  const options = text.match(regex);
+  if (!isEmpty(options)) {
+      const option = options[0];
+      if (!isEmpty(option)) {
+          result = option.substring(1, option.length - 1);
+      }
+  }
+  return result;
+}

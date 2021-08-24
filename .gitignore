@@ -10,13 +10,12 @@
 
 # production
 /costhtml
-/dist
 
 # misc
 .DS_Store
 /.vscode
 /.idea
-.gitignore
+# .gitignore
 
 
 # umi

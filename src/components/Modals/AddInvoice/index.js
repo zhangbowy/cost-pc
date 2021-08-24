@@ -48,6 +48,8 @@ const { confirm } = Modal;
   currencyList: global.currencyList,
   userDeps: costGlobal.userDeps,
   officeList: costGlobal.officeList,
+  aliCostAndI: costGlobal.aliCostAndI,
+  deptTree: costGlobal.deptTree,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
 }))
@@ -81,6 +83,8 @@ class AddInvoice extends Component {
       modifyNote: '',
       applyDetailList: [],  // 产品明细
       expandVos: [], // 审批流的自定义信息
+      travelList: {}, // 行程的form表单以及数据
+      aliTripFields: [],
     };
     this.changeForm = null;
   }
@@ -98,15 +102,113 @@ class AddInvoice extends Component {
     }
   }
 
-  onShowHandle = async() => {
-    let detail = this.state.details;
+  fetchList = (callback) => {
     const {
       id,
       userInfo,
       templateType,
+      dispatch
+    } = this.props;
+    const userJson = [{
+      userName: userInfo.name,
+      userId: userInfo.dingUserId,
+      avatar: userInfo.avatar,
+      name: userInfo.name,
+    }];
+    const arr = [{
+      url: 'global/getCurrency',
+      payload: {}
+    }, {
+      url: 'global/users',
+      payload: {
+        userJson: JSON.stringify(userJson),
+      }
+    }, {
+      url: 'global/getApplyList',
+      payload: {}
+    }, {
+      url: 'costGlobal/officeList',
+      payload: {
+        userId: userInfo.userId
+      }
+    }, {
+      url: 'global/users',
+      payload: {}
+    }, {
+      url: 'global/djDetail',
+      payload: {
+        id,
+        type: 1,
+        templateType,
+      }
+    }, {
+      url: 'global/expenseList',
+      payload: {
+        id
+      }
+    }, {
+      url: 'global/usableSupplier',
+      payload: {}
+    }, {
+      url: 'global/receiptAcc',
+      payload: {
+        pageNo: 1,
+        pageSize: 100,
+      }
+    }, {
+      url: 'global/usableProject',
+      payload: {
+        type: 1,
+      }
+    }];
+    if (!Number(templateType)) {
+      arr.push({
+        url: 'costGlobal/waitLists',
+        payload: {
+          pageNo: 1,
+          pageSize: 200,
+        }
+      });
+    }
+    if (Number(templateType) === 2) {
+      arr.push({
+        url: 'costGlobal/aliTripCostAndI',
+        payload: {},
+      });
+      arr.push({
+        url: 'costGlobal/deptTree',
+        payload: {},
+      });
+    }
+    const newArr = arr.map(it => {
+      return dispatch({
+        type: it.url,
+        payload: it.payload,
+      });
+    });
+    Promise.all(newArr).then(() => {
+      const create = this.props.deptInfo;
+      this.setState({
+        depList: create,
+        users: userJson,
+        loanUserId: userInfo.dingUserId,
+      }, () => {
+        if (callback) {
+          callback();
+        }
+      });
+
+    });
+  }
+
+  onShowHandle = async() => {
+    let detail = this.state.details;
+    const {
+      templateType,
       contentJson,
       isTemplateDel,
       isTemplateUsed,
+      userInfo,
     } = this.props;
     const _this = this;
     if (isTemplateDel) {
@@ -117,179 +219,115 @@ class AddInvoice extends Component {
       message.error('该单据模板不可用，草稿无效请删除');
       return;
     }
-    this.props.dispatch({
-      type: 'global/getCurrency',
-      payload: {},
-    });
-    if (!Number(templateType)) {
-      this.props.dispatch({
-        type: 'costGlobal/waitLists',
-        payload: {
-          pageNo: 1,
-          pageSize: 200,
-        }
-      });
-    }
-    const userJson = [{
-      userName: userInfo.name,
-      userId: userInfo.dingUserId,
-      avatar: userInfo.avatar,
-      name: userInfo.name,
-    }];
-    await this.props.dispatch({
-      type: 'global/users',
-      payload: {
-        userJson: JSON.stringify(userJson),
-      }
-    });
-    await this.props.dispatch({
-      type: 'global/getApplyList',
-      payload: {}
-    });
-    await this.props.dispatch({
-      type: 'costGlobal/officeList',
-      payload: {
-        userId: userInfo.userId
-      }
-    });
-    const create = await _this.props.deptInfo;
-    await this.setState({
-      depList: create,
-      users: userJson,
-      loanUserId: userInfo.dingUserId,
-    });
-    if (create && create.length > 0) {
-      this.props.form.setFieldsValue({
-        deptId: `${create[0].deptId}`,
-      });
-      detail = await {
-        ...detail,
-        userId: this.props.userId,
-        userName: userInfo.name,
-        deptId: create[0].deptId,
-        loanUserId: userInfo.dingUserId,
-        loanDeptId: create[0].deptId,
-        createDingUserId: userInfo.dingUserId,
-      };
-    } else {
-      message.error('部门无法同步，请联系管理员检查应用可见范围设置');
-    }
-    await this.props.dispatch({
-      type: 'global/users',
-      payload: {}
-    });
-    const dep = await _this.props.deptInfo;
-    if (dep && dep.length > 0) {
-      detail = {
-        ...detail,
-        createDeptId: `${dep[0].deptId}`,
-        createDepName: dep[0].name,
-      };
-    }
-    this.setState({
-      createDepList: dep
-    });
-
-    await this.props.dispatch({
-      type: 'global/djDetail',
-      payload: {
-        id,
-        type: 1,
-        templateType,
-      }
-    });
-    await this.props.dispatch({
-      type: 'global/expenseList',
-      payload: {
-        id
-      }
-    });
-    await this.props.dispatch({
-      type: 'global/receiptAcc',
-      payload: {
-        pageNo: 1,
-        pageSize: 100,
-      }
-    });
-    await this.props.dispatch({
-      type: 'global/usableSupplier',
-      payload: {},
-    });
-    await this.props.dispatch({
-      type: 'global/usableProject',
-      payload: {
-        type: 1,
-      },
-    });
-
-    const djDetails = await this.props.djDetail;
-    const obj = {};
-    if (djDetails.showField && djDetails.showField.length) {
-      djDetails.showField.forEach(item => {
-        obj[item.field] = {...item};
-      });
-    }
-    const account = await _this.props.receiptAcc;
-    const arr = account.filter(it => it.isDefault);
-
-    if (arr && arr.length > 0 && (Number(templateType) !== 2)) {
-      detail = {
-        ...detail,
-        receiptId: arr[0].id,
-        receiptName: arr[0].name,
-        receiptNameJson: JSON.stringify(arr),
-      };
-    }
-    if (!contentJson) {
-      this.setState({
-        details: {
+    this.fetchList(() => {
+      const create = this.state.depList;
+      if (create && create.length > 0) {
+        this.props.form.setFieldsValue({
+          deptId: `${create[0].deptId}`,
+        });
+        detail = {
           ...detail,
-          processPersonId: djDetails.approveId
-        },
-        showField: obj,
-        newshowField: djDetails.showField,
-        expandField: djDetails.expandField,
-        accountList: account,
-        inDetails: djDetails,
-        visible: true,
-      }, () => {
-        if (this.props.costSelect) {
-          // if (this.props.onFolder) {
-          //   this.props.onFolder();
-          // }
-          const { costSelect, expenseList } = this.props;
-          const arrs = [];
-          const categoryIds = expenseList.map(it => it.id);
-          const category = [];
-          costSelect.forEach(it => {
-            if (it.isDelete4Category) {
-              category.push(it.categoryName);
-            } else if (categoryIds.includes(it.categoryId)) {
-              arrs.push(it);
+          userId: this.props.userId,
+          userName: userInfo.name,
+          deptId: create[0].deptId,
+          loanUserId: userInfo.dingUserId,
+          loanDeptId: create[0].deptId,
+          createDingUserId: userInfo.dingUserId,
+        };
+      } else {
+        message.error('部门无法同步，请联系管理员检查应用可见范围设置');
+      }
+      this.props.dispatch({
+        type: 'global/users',
+        payload: {}
+      }).then(async() => {
+        const dep = _this.props.deptInfo;
+        if (dep && dep.length > 0) {
+          detail = {
+            ...detail,
+            createDeptId: `${dep[0].deptId}`,
+            createDepName: dep[0].name,
+          };
+        }
+        const djDetails = this.props.djDetail;
+        const selfTravel = djDetails.selfField.filter(it => Number(it.fieldType) === 10);
+        this.setState({
+          createDepList: dep,
+          travelList: selfTravel && selfTravel.length ? selfTravel[0] : {},
+        });
+
+        const obj = {};
+        if (djDetails.showField && djDetails.showField.length) {
+          djDetails.showField.forEach(item => {
+            obj[item.field] = {...item};
+          });
+        }
+        const account = _this.props.receiptAcc;
+        const arr = account.filter(it => it.isDefault);
+
+        if (arr && arr.length > 0 && (Number(templateType) !== 2)) {
+          detail = {
+            ...detail,
+            receiptId: arr[0].id,
+            receiptName: arr[0].name,
+            receiptNameJson: JSON.stringify(arr),
+          };
+        }
+        const { aliCostAndI } = this.props;
+        if (aliCostAndI) {
+          this.setState({
+            aliTripFields: defaultFunc.handleAliTrip(aliCostAndI),
+          });
+        }
+        if (!contentJson) {
+          this.setState({
+            details: {
+              ...detail,
+              processPersonId: djDetails.approveId
+            },
+            showField: obj,
+            newshowField: djDetails.showField,
+            expandField: djDetails.expandField,
+            accountList: account,
+            inDetails: djDetails,
+            visible: true,
+          }, () => {
+            if (this.props.costSelect) {
+              const { costSelect, expenseList } = this.props;
+              const arrs = [];
+              const categoryIds = expenseList.map(it => it.id);
+              const category = [];
+              costSelect.forEach(it => {
+                if (it.isDelete4Category) {
+                  category.push(it.categoryName);
+                } else if (categoryIds.includes(it.categoryId)) {
+                  arrs.push(it);
+                }
+              });
+              if (category && category.length) {
+                const msg = Array.from(new Set(category)).join('、');
+                message.error(`${msg}支出类别被删除，请重新选择`);
+              }
+              this.onAddCost(arrs);
             }
           });
-          if (category && category.length) {
-            const msg = Array.from(new Set(category)).join('、');
-            message.error(`${msg}支出类别被删除，请重新选择`);
+          if (!this.props.costSelect) {
+            this.getNode();
           }
-          this.onAddCost(arrs);
+        } else {
+          const contents = JsonParse(contentJson);
+          this.onInit(contents, djDetails);
+          await this.setState({
+            showField: obj,
+            newshowField: djDetails.showField,
+            accountList: account,
+            inDetails: djDetails,
+            visible: true,
+            historyParams: JsonParse(contentJson),
+          });
         }
       });
-      if (!this.props.costSelect) {
-        this.getNode();
-      }
-    } else {
-      const contents = JsonParse(contentJson);
-      this.onInit(contents, djDetails);
-      await this.setState({
-        showField: obj,
-        newshowField: djDetails.showField,
-        accountList: account,
-        inDetails: djDetails,
-        visible: true,
-        historyParams: JsonParse(contentJson),
-      });
-    }
+    });
   }
 
   // 编辑初始化数据
@@ -803,7 +841,7 @@ class AddInvoice extends Component {
     });
   }
 
-  handleOk = () => {
+  handleOk = async() => {
     const {
       nodes,
       costDetailsVo,
@@ -899,6 +937,13 @@ class AddInvoice extends Component {
         detailList: this.onCategoryStatus.onSave(),
         detailJson,
         detailType,
+      });
+    }
+    if (this.handleOpenModal) {
+      const aliTrips = await this.handleOpenModal();
+      console.log('AddInvoice -> handleOk -> aliTrips', aliTrips);
+      Object.assign(params, {
+        trip: aliTrips,
       });
     }
     this.chargeHandle(params);
@@ -1160,7 +1205,6 @@ class AddInvoice extends Component {
     } else {
       this.onSubmit(params);
     }
-
   }
 
   onChangeData = (val) => {
@@ -1272,7 +1316,8 @@ class AddInvoice extends Component {
       operateType, // 操作类型，改单：modify, 复制：copy
       detailJson,
       usableProject,
-      officeList, // 所在公司列表
+      officeList, // 所在公司列表,
+      aliCostAndI,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1297,6 +1342,8 @@ class AddInvoice extends Component {
       modifyNote,
       applyDetailList,
       expandVos,
+      travelList,
+      aliTripFields
     } = this.state;
 
     const modify = operateType === 'modify';
@@ -1448,7 +1495,14 @@ class AddInvoice extends Component {
             }
             {
               Number(templateType) === 2 &&
-              <AddTravel />
+              <AddTravel
+                travelList={travelList}
+                aliTripFields={aliTripFields}
+                aliCostAndI={aliCostAndI}
+                onGetFunc={func => {
+                  this.handleOpenModal = func;
+                }}
+              />
             }
             {
               djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&

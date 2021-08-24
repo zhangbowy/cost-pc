@@ -45,6 +45,11 @@ export default {
     },
     projectList: [], // 查询项目列表
     roleStatics: [], // 支出统计的接口
+    aliCostAndI: {}, // 阿里商旅成本中心
+    aliTripCity: false, // 阿里商旅查询火车或者飞机
+    provinceAndCity: [], // 查询省市
+    aliTripLink: '',
+    deptTree: [], // 部门树
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -328,7 +333,69 @@ export default {
           roleStatics: response || [],
         },
       });
-    }
+    },
+    *aliTripCostAndI({ payload }, { call, put }) {
+      const response = yield call(get, api.costCAndITitle, payload);
+      const { costCenterList, invoice } = response;
+      const invoiceArr = [];
+      const costArr = [];
+      costCenterList.forEach(item => {
+        costArr.push({
+          label: item.title,
+          value: item.id,
+        });
+      });
+      invoice.forEach(item => {
+        invoiceArr.push({
+          label: item.title,
+          value: item.id,
+        });
+      });
+      const params = {invoiceArr, costArr};
+      yield put({
+        type: 'save',
+        payload: {
+          aliCostAndI: params || {},
+        },
+      });
+    },
+    *aliTripCity({ payload }, { call, put }) {
+      const response = yield call(get, api.aliTripCity, payload);
+      console.log('*aliTripCity -> response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          aliTripCity: response || false,
+        },
+      });
+    },
+    *provinceAndCity({ payload }, { call, put }) {
+      const response = yield call(get, api.provinceAndCity, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          provinceAndCity: response || [],
+        },
+      });
+    },
+    *aliTripLink({ payload }, { call, put }) {
+      const response = yield call(get, api.aliTripLink, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          aliTripLink: response || '',
+        },
+      });
+    },
+    *deptTree({ payload }, { call, put }) {
+      const response = yield call(get, api.deptTree, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          deptTree: response || [],
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {

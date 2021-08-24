@@ -49,7 +49,7 @@ export default {
   history: 'hash',
   hash: true,
   publicPath,
-  outputPath: isInProd ? `./costhtml/${pkg.version}` : './costhtml',
+  outputPath: isInProd ? `./dist/${pkg.version}` : './dist',
   context: {
     name: pkg.description,
     version: pkg.version,
