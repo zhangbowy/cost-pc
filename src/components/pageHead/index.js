@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React from './node_modules/react';
-import PropTypes from './node_modules/prop-types';
-import { connect } from './node_modules/dva';
-import withRouter from './node_modules/umi/withRouter';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'dva';
 import {
   // Dropdown,
   // Menu,
   // Icon,
   Tooltip,
   Breadcrumb,
-} from './node_modules/antd';
+} from 'antd';
+import { withRouter } from 'react-router';
 import styles from './index.scss';
 
 @withRouter
@@ -50,7 +50,7 @@ class App extends React.PureComponent {
           }
         </Breadcrumb>
         {
-          typeof(title) === 'string' &&  
+          typeof(title) === 'string' &&
           <div className={styles.title}>
             {title}{note?(
               <Tooltip title={note}>
