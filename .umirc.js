@@ -6,15 +6,15 @@ const constants = require('./constants');
 
 // const isInProd = process.env.SPD_ENV === 'production'; // 生产环境标识
 const isInProd = process.env.SPD_ENV === 'prod' || process.env.SPD_ENV === 'test'; // 生产环境标识
-let publicPath = './';
-if (isInProd) {
-  if (constants.APP_BASE) {
-    // 非根目录部署
-    publicPath = `/${constants.APP_BASE}/${pkg.version}/`;
-  } else {
-    publicPath = `/${pkg.version}/`;
-  }
-}
+let publicPath = `/${pkg.version}/`;
+// if (isInProd) {
+//   if (constants.APP_BASE) {
+//     // 非根目录部署
+//     publicPath = `/${constants.APP_BASE}/${pkg.version}/`;
+//   } else {
+//     publicPath = `/${pkg.version}/`;
+//   }
+// }
 
 // ref: https://umijs.org/config/
 export default {
