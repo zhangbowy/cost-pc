@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import PageHead from '@/components/PageHead';
 import { Button } from 'antd';
 import moment from 'moment';
+import PageHead from '@/components/pageHead';
 import style from './index.scss';
 import { ddDing } from '../../../utils/ddApi';
 

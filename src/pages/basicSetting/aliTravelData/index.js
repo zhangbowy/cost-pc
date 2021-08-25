@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import PageHead from '@/components/PageHead';
 import { Steps, Button, Table } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
+import PageHead from '@/components/pageHead';
 import style from './index.scss';
 
 const aliTravel = {

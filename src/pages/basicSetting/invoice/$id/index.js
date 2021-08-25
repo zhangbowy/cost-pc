@@ -5,7 +5,7 @@ import cs from 'classnames';
 // import { HTML5Backend } from 'react-dnd-html5-backend';
 // import { DndProvider } from 'react-dnd';
 import treeConvert from '@/utils/treeConvert';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import LabelLeft from '../../../../components/LabelLeft';
 // import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';

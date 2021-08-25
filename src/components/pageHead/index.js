@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'dva';
-import withRouter from 'umi/withRouter';
+import React from './node_modules/react';
+import PropTypes from './node_modules/prop-types';
+import { connect } from './node_modules/dva';
+import withRouter from './node_modules/umi/withRouter';
 import {
   // Dropdown,
   // Menu,
   // Icon,
   Tooltip,
   Breadcrumb,
-} from 'antd';
+} from './node_modules/antd';
 import styles from './index.scss';
 
 @withRouter

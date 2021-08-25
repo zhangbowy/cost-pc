@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import group from '@/assets/img/group.jpg';
-import group1 from '@/assets/img/group1.png';
 import { Divider } from 'antd';
+import group from '@/assets/img/group.jpg';
+import group1 from '@/assets/img/Group1.png';
 
 const config = {
   403: '尊敬的用户！ 你当前暂无鑫支出的使用权限',

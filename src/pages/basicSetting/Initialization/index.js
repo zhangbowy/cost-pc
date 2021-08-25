@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Tooltip, Button, message, Modal } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import Lines from '../../../components/StyleCom/Lines';
 
 

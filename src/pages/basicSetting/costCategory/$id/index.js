@@ -3,7 +3,7 @@ import { PageHeader, Menu, Button } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import treeConvert from '@/utils/treeConvert';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import LabelLeft from '../../../../components/LabelLeft';
 // import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';

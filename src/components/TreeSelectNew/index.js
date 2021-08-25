@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Tree, Icon, Input } from 'antd';
-import Modal from '@/Components/Modal';
+import Modal from '@/components/Modal';
 // import treeConvert from '@/utils/treeConvert';
-// import styles from './index.scss';  
+// import styles from './index.scss';
 
 const { TreeNode } = Tree;
 const { Search } = Input;

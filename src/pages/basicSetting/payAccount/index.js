@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Divider, Button, Tag, message, Modal, Tooltip } from 'antd';
 import { connect } from 'dva';
 import { accountType, getArrayValue } from '@/utils/constants';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
 import { signStatus } from '../../../utils/constants';
 

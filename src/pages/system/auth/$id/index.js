@@ -6,7 +6,7 @@ import { Button, Table, Popconfirm, message, Modal } from 'antd';
 import { connect } from 'dva';
 import { choosePeople } from '@/utils/ddApi';
 // import SubHeader from '@/components/SubHeader';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import DdPeople from './component/DdPeople';
 
 const { confirm } = Modal;

@@ -3,13 +3,13 @@ import React from 'react';
 import { Table, Menu, Button, Form, DatePicker, message } from 'antd';
 import moment from 'moment';
 import Search from 'antd/lib/input/Search';
+import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
 import constants from '@/utils/constants';
-import cs from 'classnames';
 import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
-import PayModal from './payModal';
+import PayModal from './PayModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
 
 const { RangePicker } = DatePicker;

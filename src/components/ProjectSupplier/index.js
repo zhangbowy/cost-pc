@@ -3,14 +3,14 @@ import { connect } from 'dva';
 import { Button, Form, Table, Divider, Modal, message, Tag, Tooltip, Dropdown, Icon, Menu, Badge } from 'antd';
 import PropTypes from 'prop-types';
 // import cs from 'classnames';
-import treeConvert from '@/utils/treeConvert';
 import Search from 'antd/lib/input/Search';
+import update from 'immutability-helper';
+import treeConvert from '@/utils/treeConvert';
 import Setting from '@/components/Setting';
 import BatchImport from '@/components/BatchImport/index';
 import Sort from '@/components/TreeSort/index';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import constants from '@/utils/constants';
-import update from 'immutability-helper';
 import style from './index.scss';
 
 const {

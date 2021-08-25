@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, message, Checkbox } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import ControllerCom from '@/components/ControllerCom';
 import style from './index.scss';
 import { choosePeople } from '../../../utils/ddApi';

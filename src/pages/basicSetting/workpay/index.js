@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Tooltip, Button, message,Steps,Upload } from 'antd';
 import { connect } from 'dva';
+import QRCode from 'qrcode.react';
 import constants from '@/utils/constants';
 import getDateUtil from '@/utils/tool';
-import QRCode from 'qrcode.react';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import style from './index.scss';
 import Lines from '../../../components/StyleCom/Lines';
 
@@ -24,7 +24,7 @@ function Controller(props) {
   const [ failFileId, setFailFileId] = useState('');
   const [ failNum, setFailNum] = useState(0);
   const [ successNum, setSuccessNum] = useState(0);
-  
+
   const { Step } = Steps;
   const propsUpload = {
     name: 'file',
@@ -85,12 +85,12 @@ function Controller(props) {
   };
   const getText = () => {
     if(importInfo.lastImportTime){
-      return `${getDateUtil(importInfo.lastImportTime,'yyyy-MM-dd hh:mm') 
+      return `${getDateUtil(importInfo.lastImportTime,'yyyy-MM-dd hh:mm')
       }，累计导入人数：${  importInfo.importNum  }人` +
       `，开通人数：${  importInfo.openNum  }人`;
     }
       return '无';
-    
+
   };
   const next = () => {
     dispatch({
@@ -129,7 +129,7 @@ function Controller(props) {
       status: 'process',
       description: (
         <span
-          style={{color:'#00C795',fontSize:'12px',cursor:'pointer'}} 
+          style={{color:'#00C795',fontSize:'12px',cursor:'pointer'}}
           onClick={() => {window.open('https://www.yuque.com/docs/share/09880e09-a80a-410a-86c6-7a7c7f31dc9a?#');}}
         >
           如何签约？

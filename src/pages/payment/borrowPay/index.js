@@ -11,7 +11,7 @@ import Tags from '@/components/Tags';
 import PayTemp from '../invoicePay/components/PayTemp';
 import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
-import PayModal from '../invoicePay/components/payModal';
+import PayModal from '../invoicePay/components/PayModal';
 import ConfirmPay from '../invoicePay/components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
 

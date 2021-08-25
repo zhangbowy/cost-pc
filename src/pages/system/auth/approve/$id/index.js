@@ -6,7 +6,7 @@ import moment from 'moment';
 import { Button, Table, Popconfirm, Divider, message } from 'antd';
 import { connect } from 'dva';
 // import SubHeader from '@/components/SubHeader';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import AddRole from '../components/AddRole';
 
 @connect(({ approveRole, loading }) => ({

@@ -4,7 +4,7 @@ import { Button, Table, message, Divider, Popconfirm, Tooltip } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import Sort from '@/components/TreeSort';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import AddComp from './component/AddComp';
 
 @connect(({ companySet, loading }) => ({

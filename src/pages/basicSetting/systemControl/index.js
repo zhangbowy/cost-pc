@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import cs from 'classnames';
-import PageHead from '@/components/PageHead';
 import { Switch, Modal, Checkbox, Button, Radio } from 'antd';
 import { connect } from 'dva';
+import PageHead from '@/components/pageHead';
 import style from './index.scss';
 
 const viewSum = [{

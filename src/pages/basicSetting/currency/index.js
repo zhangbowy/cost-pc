@@ -6,7 +6,7 @@ import { Table, Form, Modal, Button, message, Input, Icon } from 'antd';
 import getDateUtil from '@/utils/tool';
 import { formItemLayout } from '@/utils/constants';
 // import addAvatar from '@/assets/img/allAvatars.png';
-import PageHead from '@/components/PageHead';
+import PageHead from '@/components/pageHead';
 import style from './index.scss';
 
 const { confirm } = Modal;

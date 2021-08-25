@@ -9,7 +9,7 @@ import { rowSelect } from '@/utils/common';
 import constants from '@/utils/constants';
 import Tags from '@/components/Tags';
 import PayTemp from './components/PayTemp';
-import PayModal from './components/payModal';
+import PayModal from './components/PayModal';
 import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
 import ConfirmPay from './components/ConfirmPay';

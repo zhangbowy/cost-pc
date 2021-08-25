@@ -7,14 +7,14 @@
 import React, { PureComponent } from 'react';
 import { Table, Divider, Modal, Button, Message, Icon } from 'antd';
 import { connect } from 'dva';
+import Search from 'antd/lib/input/Search';
 import getDateUtil from '@/utils/tool';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { batchStatus, invoiceStatus } from '@/utils/constants';
-import Search from 'antd/lib/input/Search';
 import style from './index.scss';
 import StepShow from '../../../components/StepShow';
 // import PayModal from '../invoicePay/components/payModal';
-import PayModal from './components/payModal';
+import PayModal from './components/PayModal';
 import ComfirmPay from './components/ComfirmPay';
 import CostTable from './components/CostTable';
 
@@ -244,10 +244,10 @@ class Batch extends PureComponent {
                 <a style={{padding: '0'}} type="link" >发起支付</a>
               </PayModal>}
             {status === '1' &&
-              <ComfirmPay 
-                dispatch={this.props.dispatch} 
+              <ComfirmPay
+                dispatch={this.props.dispatch}
                 selectKey={record}
-                onOk={() => this.onOk()} 
+                onOk={() => this.onOk()}
                 close={this.closeComfirmPay}
                 templateType={0}
               >
@@ -276,7 +276,7 @@ class Batch extends PureComponent {
             :
             <>
               <div>
-                <div style={{ marginBottom: '24px',position: 'relative' }}>  
+                <div style={{ marginBottom: '24px',position: 'relative' }}>
                   <Button style={{padding: 0}} onClick={this.onOk} type="link" className={style.reload}><Icon type="sync" />刷新</Button>
                   <MenuItems
                     lists={batchStatus}
