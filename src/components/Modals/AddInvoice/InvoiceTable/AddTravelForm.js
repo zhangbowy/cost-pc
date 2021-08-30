@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Form, Button, Cascader, DatePicker, Radio, message } from 'antd';
+import { Modal, Form, Button, Cascader, DatePicker, Radio, message, Input } from 'antd';
 import { connect } from 'dva';
-import treeConvert from '@/utils/treeConvert';
 import moment from 'moment';
+import treeConvert from '@/utils/treeConvert';
 import fields from '@/utils/fields';
 import style from './index.scss';
 import { getParams } from '../../../../utils/common';
@@ -29,23 +29,30 @@ class AddTravelForm extends Component {
       visible: false,
       list: [],
       errorArr: [],
+      isShow: [],
     };
     this.easyForm = null;
 
   }
 
-  onShow = () => {
+  onShow = (e) => {
+    e.stopPropagation();
+
     this.props.dispatch({
       type: 'costGlobal/provinceAndCity',
       payload: {}
     }).then(() => {
       const { list } = this.props;
       const newArr = [];
+      const showArr = [];
       if (list && list.length) {
         list.forEach((it, index) => {
           const startCity = this.handleCity(it.startCityCode);
           console.log('AddTravelForm -> onShow -> startCity', startCity);
           const endCity = this.handleCity(it.endCityCode);
+          if (it.traffic === '其他') {
+            showArr.push(`${index}_aa`);
+          }
           newArr.push({
             key: `${index}_aa`,
             ...it,
@@ -59,6 +66,7 @@ class AddTravelForm extends Component {
         });
       }
       this.setState({
+        isShow: showArr,
         visible: true,
         list: newArr && newArr.length ? newArr : [{ key: '00_11' }],
       });
@@ -122,6 +130,7 @@ class AddTravelForm extends Component {
           const end = value.endCity[item].length;
           newArrs.push({
             key: `${index}_aa`,
+            trafficName: value.trafficName && value.trafficName[item] ? value.trafficName[item][start-1] : '',
             traffic: getParams({ res: value.traffic[item], list: aliTraffic, key: 'value', resultKey: 'label' }),
             startCity: this.handleCity(value.startCity[item][start-1]).areaName,
             startCityCode: value.startCity[item][start-1],
@@ -178,6 +187,13 @@ class AddTravelForm extends Component {
     const { form: { getFieldValue } } = this.props;
     const startCity = getFieldValue(`startCity[${key}]`);
     const endCity = getFieldValue(`endCity[${key}]`);
+    const { isShow } = this.state;
+    if (Number(e.target.value) === 3 && !isShow.includes(key)) {
+      isShow.push(key);
+      this.setState({
+        isShow,
+      });
+    }
     if (startCity && endCity) {
       const start = this.handleCity(startCity[startCity.length - 1]).areaName;
       const end = this.handleCity(endCity[endCity.length - 1]).areaName;
@@ -199,6 +215,7 @@ class AddTravelForm extends Component {
         } else {
           arrs = errorArr.filter(it => it === `[${key}]`);
         }
+
         this.setState({
           errorArr: arrs,
         });
@@ -207,7 +224,7 @@ class AddTravelForm extends Component {
   }
 
   render () {
-    const { list, errorArr } = this.state;
+    const { list, errorArr, isShow } = this.state;
     const {
       children,
       form: { getFieldDecorator, getFieldValue },
@@ -253,6 +270,18 @@ class AddTravelForm extends Component {
                 )
               }
             </Form.Item>
+            {
+              isShow.includes(it.key) &&
+              <Form.Item label="其他交通工具">
+                {
+                  getFieldDecorator(`trafficName[${it.key}]`, {
+                    initialValue: it.trafficName || '',
+                  })(
+                    <Input placeholder="请输入" />
+                  )
+                }
+              </Form.Item>
+            }
             <Form.Item label="单程往返">
               {
                 getFieldDecorator(`way[${it.key}]`, {
@@ -348,7 +377,7 @@ class AddTravelForm extends Component {
     const { visible } = this.state;
     return (
       <div>
-        <span onClick={() =>this.onShow()}>{children}</span>
+        <span onClick={(e) =>this.onShow(e)}>{children}</span>
         <Modal
           title="添加行程"
           visible={visible}

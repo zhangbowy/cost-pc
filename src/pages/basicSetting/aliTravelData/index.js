@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table } from 'antd';
+import { Steps, Button, Table, Icon, Popconfirm, Tree } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
+import Search from 'antd/lib/input/Search';
 import PageHead from '@/components/pageHead';
+import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 
 const aliTravel = {
@@ -12,16 +14,24 @@ const aliTravel = {
   3: '打的',
 };
 const { Step } = Steps;
-@connect(({ aliTravelData }) => ({
+const { TreeNode } = Tree;
+@connect(({ aliTravelData, global }) => ({
   authorize: aliTravelData.authorize,
   list: aliTravelData.list,
+  costCategoryList: global.costCategoryList,
 }))
 class AllTravelData extends PureComponent {
   state = {
     current: 1,
+    costCategoryId: '',
+    type: ''
   }
 
   componentDidMount() {
+    this.props.dispatch({
+      type: 'global/costList',
+      payload: {},
+    });
     this.props.dispatch({
       type: 'aliTravelData/authorize',
       payload: {},
@@ -30,12 +40,116 @@ class AllTravelData extends PureComponent {
     });
   }
 
+  confirm = () => {
+    const { type, costCategoryId } = this.state;
+    this.props.dispatch({
+      type: 'aliTravelData/editRef',
+      payload: {
+        type,
+        costCategoryId
+      }
+    }).then(() => {
+      this.props.dispatch({
+        type: 'aliTravelData/authorize',
+        payload: {},
+      });
+    });
+  }
+
+  // 循环渲染树结构
+  loop = data => data.map(item => {
+    if (item.children && item.children.length) {
+      return (
+        <TreeNode
+          key={item.value}
+          label={item.title}
+          value={item.value}
+          disabled={item.disabled}
+          title={(
+            <div>
+              {
+                item.type ?
+                  <i className={cs(`icon${item.icon}`, 'iconfont')} />
+                  :
+                  null
+              }
+              <span>{item.title}</span>
+            </div>
+          )}
+        >
+          {this.loop(item.children)}
+        </TreeNode>
+      );
+    }
+    return <TreeNode
+      key={item.value}
+      label={item.title}
+      value={item.value}
+      disabled={item.disabled}
+      title={(
+        <div className="icons" style={{ width: '100%' }}>
+          {
+            item.type ?
+              <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
+              :
+              null
+          }
+          <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
+        </div>
+      )}
+    />;
+  });
+
+  onSelect = (selectedKeys, info, type) => {
+    console.log('selected', selectedKeys, info);
+    this.setState({
+      costCategoryId: selectedKeys,
+      type,
+    });
+  };
+
   render () {
     const { current } = this.state;
-    const { list } = this.props;
+    const { list, costCategoryList, authorize } = this.props;
+    const tree = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tId: 'value',
+      tName: 'title',
+      otherKeys: ['type','showField', 'icon']
+    }, costCategoryList);
     const columns = [{
       title: '支出类别',
       dataIndex: 'costCategoryName',
+      render: (_, record) =>  {
+        return (
+          <span>
+            <span className="m-r-8">{record.costCategoryName}</span>
+            <Popconfirm
+              overlayClassName={style.popStyle}
+              icon={false}
+              title={(
+                <div style={{height: '300px', width: '100%'}}>
+                  <Search style={{ marginBottom: 8 }} placeholder="请输入" onChange={this.onChange} />
+                  <Tree
+                    dropdownStyle={{height: '300px'}}
+                    style={{width: '100%'}}
+                    onSelect={(selectedKeys, info) =>this.onSelect(selectedKeys, info, record.type)}
+                  >
+                    {this.loop(tree)}
+                  </Tree>
+                </div>
+              )}
+              onConfirm={this.confirm}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Icon type="edit" style={{ color: 'rgba(0, 199, 149, 1)' }} />
+            </Popconfirm>
+          </span>
+        );
+      },
     }, {
       title: '阿里商旅订单类型',
       dataIndex: 'type',
@@ -48,7 +162,7 @@ class AllTravelData extends PureComponent {
     }];
     return (
       <div>
-        <PageHead title="阿里商旅" />
+        <PageHead title="阿里商旅" isShowBtn disabled={authorize.isAuthorize} />
         <div className={cs(style.travel, 'content-dt')}>
           <Steps current={current} onChange={this.onChange} direction="vertical">
             <Step

@@ -11,4 +11,6 @@ export default {
   applicationList: `${APP_API}/cost/statistics/detail/apply`,
   applicationExport: `${APP_API}/cost/export/detail/apply`,
   salaryExport: `${APP_API}/cost/export/detail/salary`,
+  thirdList: `${APP_API}/cost/statistics/detail/third`,
+  thirdExport: `${APP_API}/cost/export/detail/third`,
 };

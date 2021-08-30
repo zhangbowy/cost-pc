@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Divider, Form, Row, Button } from 'antd';
 import cs from 'classnames';
-import fields from '@/utils/fields';
 import moment from 'moment';
+import fields from '@/utils/fields';
 import style from '../index.scss';
 import AddTravelForm from './AddTravelForm';
 import EasyForm from '../../FormScame.js';
@@ -38,8 +38,8 @@ class AddTravel extends PureComponent {
     params = {
       ...res,
       subTrip,
-      alitripCostCenterJson: JSON.stringify(alitripCostCenterJson),
-      alitripInvoiceTitleJson: JSON.stringify(alitripInvoiceTitleJson)
+      alitripCostCenterJson: JSON.stringify(alitripCostCenterJson[0]),
+      alitripInvoiceTitleJson: JSON.stringify(alitripInvoiceTitleJson[0])
     };
     console.log(res);
     console.log('子行程', subTrip);
@@ -51,6 +51,7 @@ class AddTravel extends PureComponent {
 
   onDel = (e, key) => {
     e.stopPropagation();
+    console.log('删除一下');
     const { subTrip } = this.state;
     this.setState({
       subTrip: subTrip.filter(it => it.key !== key),
@@ -93,21 +94,23 @@ class AddTravel extends PureComponent {
               <>
                 {
                   subTrip.map(item => (
-                    <div className={style.singleContent} key={item.startDate}>
-                      <div className={style.iconImg}>
-                        <img
-                          src={getParams({res: item.traffic, list: aliTraffic, key: 'label', resultKey: 'icon'})}
-                          alt="模式"
-                        />
+                    <AddTravelForm onOk={this.onGetTrip} list={[item]}>
+                      <div className={style.singleContent} key={item.startDate}>
+                        <div className={style.iconImg}>
+                          <img
+                            src={getParams({res: item.traffic, list: aliTraffic, key: 'label', resultKey: 'icon'})}
+                            alt="模式"
+                          />
+                        </div>
+                        <div className="m-t-16">
+                          <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}</p>
+                          <p className="c-black-65 fs-14">
+                            {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
+                          </p>
+                        </div>
+                        <i className={cs(style.singleDel, 'iconfont', 'icona-shanchu3x')} onClick={e => this.onDel(e, e.key)} />
                       </div>
-                      <div className="m-t-16">
-                        <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}</p>
-                        <p className="c-black-65 fs-14">
-                          {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
-                        </p>
-                      </div>
-                      <i className={cs(style.singleDel, 'iconfont', 'icona-shanchu3x')} onClick={e => this.onDel(e, e.key)} />
-                    </div>
+                    </AddTravelForm>
                   ))
                 }
               </>

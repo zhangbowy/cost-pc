@@ -16,6 +16,7 @@ export default {
     total: 0,
     sum: 0,
     salaryList: [],
+    thirdList: [],
   },
   effects: {
     *submitList({ payload }, { call, put }) {
@@ -82,6 +83,22 @@ export default {
         },
       });
     },
+    *thirdList({ payload }, { call, put }) {
+      const response = yield call(post, api.thirdList, payload);
+      const newArr = response.list && response.list.map(it => { return { ...it, money: it.salaryAmount }; });
+      yield put({
+        type: 'save',
+        payload: {
+          thirdList: newArr || [],
+          query: {
+            pageSize: payload.pageSize,
+            pageNo: payload.pageNo,
+          },
+          total: response.page ? response.page.total : 0,
+          sum: response.sum || 0
+        },
+      });
+    },
     *submitExport({ payload }, { call }) {
       Object.assign(payload, { exportType:'export', fileName: '报销单列表' });
       yield call(post, api.submitExport, payload);
@@ -97,6 +114,10 @@ export default {
     *salaryExport({ payload }, { call }) {
       Object.assign(payload, { exportType:'export', fileName: '薪资单列表' });
       yield call(post, api.salaryExport, payload);
+    },
+    *thirdExport({ payload }, { call }) {
+      Object.assign(payload, { exportType:'export', fileName: '薪资单列表' });
+      yield call(post, api.thirdExport, payload);
     },
   },
   reducers: {

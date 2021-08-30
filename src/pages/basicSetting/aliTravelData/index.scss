@@ -15,3 +15,31 @@
   font-size: 16px;
   color: rgba(0,0,0,0.85);
 }
+.popStyle{
+  width: 300px;
+  height: 360px;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 0;
+  :global{
+    .ant-popover-message{
+      height: 319px;
+      overflow-y: scroll;
+      padding: 10px;
+      border-bottom: 1px solid rgba(233, 233, 233, 1);
+    }
+    .ant-popover-inner-content{
+      padding: 0;
+    }
+    .ant-popover-buttons{
+      padding: 8px;
+    }
+    // .ant-tree li{
+    //   display: flex;
+    // }
+    // .ant-tree li .ant-tree-node-content-wrapper{
+    //   flex: 1;
+    // }
+  }
+}

@@ -7,6 +7,7 @@ import moment from 'moment';
 import { connect } from 'dva';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
+import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
 import { sortBy } from '../../../utils/common';
 
@@ -17,9 +18,10 @@ import { sortBy } from '../../../utils/common';
 //   imgUrl: '图片',
 //   happenTime: '发生日期'
 // };
-@connect(({ workbench }) => ({
+@connect(({ workbench, costGlobal }) => ({
   associateLists: workbench.associateLists,
   waitLoanSum: workbench.waitLoanSum,
+  checkFolderList: costGlobal.checkFolderList
 }))
 @Form.create()
 class AddApply extends Component {
@@ -77,8 +79,55 @@ class AddApply extends Component {
   handleOk = () => {
     const { details, selectedRowKeys } = this.state;
     const newArr = details.sort(sortBy('createTime', true));
+    const showArrs = newArr.filter(it => it.isAlitrip && !it.hasAlitripOrder);
+    if (showArrs.length) {
+      Modal.confirm({
+        title: '该行程还未获得对应的发票，请获取对应发票之后再进行提交',
+        okText: '稍后再提',
+        cancelText: '仍要提交',
+        onOk: () => {
+
+        },
+        onCancel: () => {
+          console.log('稍后再提交');
+        }
+      });
+    }
+
     this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
     this.onCancel();
+  }
+
+  changeErr = (arr) => {
+    this.props.dispatch({
+      type: 'costGlobal/checkFolderAlc',
+      payload: {
+        applicationIds: arr
+      }
+    }).then(() => {
+      const { checkFolderList, costList } = this.props;
+      const detailFolderId = costList.map(it => it.detailFolderId);
+      const checkIds = checkFolderList.map(it => it.checkFolderList);
+      const arrs = [];
+      detailFolderId.forEach(item => {
+        if (!checkIds.includes(item)) {
+          arrs.push(item);
+        }
+      });
+      if (arrs.length) {
+        Modal.confirm({
+          title: '是否导入该申请单所有行程的费用明细',
+          okText: '同步导入',
+          cancelText: '自行添加',
+          onOk: () => {
+
+          },
+          onCancel: () => {
+            console.log('稍后再提交');
+          }
+        });
+      }
+    });
   }
 
   onSelectAll = (selected, selectedRows, changeRows) => {
@@ -159,6 +208,15 @@ class AddApply extends Component {
       {
         title: '申请单号',
         dataIndex: 'invoiceNo',
+        render: (_, record) => (
+          <span>
+            <span>{record.invoiceNo}</span>
+            {
+              record.isAlitrip &&
+              <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+            }
+          </span>
+        )
       },
       {
         title: '金额（元）',

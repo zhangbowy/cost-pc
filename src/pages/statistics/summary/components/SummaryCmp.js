@@ -393,11 +393,72 @@ class SummaryCmp extends Component {
                   }
                   text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
                 />
-                {/* {record.statusStr || getArrayValue(record.status, invoiceStatus)} */}
               </span>
             ),
             fixed: 'right'
           }];
+          const third = [{
+            title: '事由',
+              dataIndex: 'reason',
+              width: 150,
+              render: (_, record) => (
+                <InvoiceDetail id={record.id} templateType={3}>
+                  <span>
+                    <Tooltip placement="topLeft" title={record.reason || ''}>
+                      <a className="eslips-2">{record.reason}</a>
+                    </Tooltip>
+                  </span>
+                </InvoiceDetail>
+              ),
+              fixed: 'left'
+            }, {
+              title: '金额(元)',
+              dataIndex: 'salaryAmount',
+              render: (text) => (
+                <span>{text && text / 100}</span>
+              ),
+              className: 'moneyCol',
+              width: 140,
+            }, {
+              title: '单号',
+              dataIndex: 'invoiceNo',
+              width: 160,
+            }, {
+              title: '单据类型',
+              dataIndex: 'invoiceTemplateName',
+              width: 160,
+            }, {
+              title: '关联申请单',
+              dataIndex: 'projectName',
+              width: 150,
+            }, {
+              title: '提交人',
+              dataIndex: 'createUserName',
+              width: 150,
+            }, {
+              title: '提交时间',
+              dataIndex: 'createTime',
+              render: (_, record) => (
+                <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}</span>
+              ),
+              width: 150,
+            }, {
+              title: '单据状态',
+              dataIndex: 'statusStr',
+              width: 120,
+              render: (_, record) => (
+                <span>
+                  <Badge
+                    color={
+                      getArrayColor(`${record.status}`, invoiceStatus) === '-' ?
+                      'rgba(255, 148, 62, 1)' : getArrayColor(`${record.status}`, invoiceStatus)
+                    }
+                    text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
+                  />
+                </span>
+              ),
+              fixed: 'right'
+            }];
         let newColumns = columns;
       if (templateType === 1) {
         newColumns = column;
@@ -405,6 +466,8 @@ class SummaryCmp extends Component {
         newColumns = colum;
       } else if (templateType === 3) {
         newColumns = colmn;
+      } else if (templateType === 4) {
+        newColumns = third;
       }
       if (userInfo.isSupperAdmin) {
         newColumns.push({

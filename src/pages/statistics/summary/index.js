@@ -114,6 +114,7 @@ const salary = [{
   invoiceList: global.invoiceList,
   projectList: costGlobal.projectList,
   supplierList: global.supplierList,
+  thirdList: summary.thirdList,
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -213,6 +214,8 @@ class Summary extends React.PureComponent {
       url = 'summary/applicationExport';
     } else if (Number(current) === 3) {
       url = 'summary/salaryExport';
+    } else if (Number(current) === 4) {
+      url = 'summary/thirdExport';
     }
     let params = {};
     const { searchContent } = this.state;
@@ -272,6 +275,8 @@ class Summary extends React.PureComponent {
       url = 'summary/applicationList';
     } else if (Number(current) === 3) {
       url = 'summary/salaryList';
+    } else if (Number(current) === 4) {
+      url = 'summary/thirdList';
     }
     searchList.forEach(it => {
       if (it.value) {
@@ -289,6 +294,7 @@ class Summary extends React.PureComponent {
         applicationList,
         loanList,
         salaryList,
+        thirdList
       } = this.props;
       let lists = submitList;
       if (Number(current) === 1) {
@@ -297,6 +303,8 @@ class Summary extends React.PureComponent {
         lists = applicationList;
       } else if (Number(current) === 3) {
         lists = salaryList;
+      } else if (Number(current) === 4) {
+        lists = thirdList;
       }
       this.search();
       this.setState({
@@ -414,6 +422,7 @@ class Summary extends React.PureComponent {
                 <span>薪资单</span>
               </Tooltip>
             </Menu.Item>
+            <Menu.Item key={4}>三方导入</Menu.Item>
           </Menu>
         </div>
         <SearchBanner

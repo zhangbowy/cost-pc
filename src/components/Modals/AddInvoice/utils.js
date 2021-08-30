@@ -76,7 +76,7 @@ export default {
     }
     return {...newParams};
   },
-  handleAliTrip: ({ costArr, invoiceArr }) => {
+  handleAliTrip: ({ costArr, invoiceArr }, arr) => {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -102,10 +102,18 @@ export default {
     }, {
       field: 'fellowTravelers',
       label: '同行人',
-      type: 'Select',
-      options: costArr,
+      type: 'TreeSelect',
+      options: arr,
       formItemLayout,
       required: false,
+      otherProps: {
+        placeholder: '请选择',
+        style: {width: '100%'},
+        dropdownStyle: {height: '300px'},
+        treeCheckable: true,
+        getPopupContainer: triggerNode => triggerNode.parentNode,
+        showSearch: true,
+      }
     }, {
       field: 'alitripExpensesOwner',
       type: 'Select',

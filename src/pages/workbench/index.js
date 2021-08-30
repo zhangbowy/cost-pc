@@ -10,9 +10,9 @@ import React, { PureComponent } from 'react';
 import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
+import Search from 'antd/lib/input/Search';
 import { getArrayValue, invoiceStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
-import Search from 'antd/lib/input/Search';
 import HeadRight from '@/pages/workbench/components/HeadRight';
 import style from './index.scss';
 import Header from './components/Header';
@@ -24,6 +24,7 @@ import RightChart from './components/Boss/RightChart';
 import Boss from './components/Boss';
 import { dateToTime } from '../../utils/util';
 import TimeComp from './components/TimeComp';
+import aliLogo from '@/assets/img/aliTrip/alitrip.png';
 
 @Form.create()
 @connect(({ loading, workbench, session, global, costGlobal }) => ({
@@ -409,6 +410,15 @@ class Workbench extends PureComponent {
       title: '单号',
       dataIndex: 'invoiceNo',
       width: 160,
+      render: (_, record) => (
+        <span>
+          <span>{record.invoiceNo}</span>
+          {
+            record.showAlitripIcon &&
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+          }
+        </span>
+      )
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',

@@ -273,10 +273,10 @@ class AddInvoice extends Component {
             receiptNameJson: JSON.stringify(arr),
           };
         }
-        const { aliCostAndI } = this.props;
+        const { aliCostAndI, deptTree } = this.props;
         if (aliCostAndI) {
           this.setState({
-            aliTripFields: defaultFunc.handleAliTrip(aliCostAndI),
+            aliTripFields: defaultFunc.handleAliTrip(aliCostAndI, deptTree),
           });
         }
         if (!contentJson) {
@@ -1556,6 +1556,7 @@ class AddInvoice extends Component {
                           invoiceId={id}
                           onAddBorrow={arr => this.onAddApply(arr)}
                           list={applyArr}
+                          costList={costDetailsVo}
                         >
                           <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
                         </AddApply>

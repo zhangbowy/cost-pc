@@ -8,6 +8,7 @@ import {
   // Icon,
   Tooltip,
   Breadcrumb,
+  Button,
 } from 'antd';
 import { withRouter } from 'react-router';
 import styles from './index.scss';
@@ -28,36 +29,46 @@ class App extends React.PureComponent {
     const {
       title,
       note,
+      disabled,
+      isShowBtn
       // collapsed,
     } = this.props;
     return (
-      <div className={styles.headerBox}>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <a onClick={()=>{
-              if(this.props.history){
-                console.log(9999999999999999,this.props.history);
-                this.props.history.goBack();
-              }
-            }}
-            >返回上一页
-            </a>
-          </Breadcrumb.Item>
+      <div className={styles.headerTitle}>
+        <div className={styles.headerBox}>
+          <Breadcrumb>
+            <Breadcrumb.Item>
+              <a onClick={()=>{
+                if(this.props.history){
+                  console.log(9999999999999999,this.props.history);
+                  this.props.history.goBack();
+                }
+              }}
+              >返回上一页
+              </a>
+            </Breadcrumb.Item>
+            {
+              typeof(title) === 'string'?
+                <Breadcrumb.Item>{title}</Breadcrumb.Item>
+              : <div style={{display: 'inline-block'}}>{title}</div>
+            }
+          </Breadcrumb>
           {
-            typeof(title) === 'string'?
-              <Breadcrumb.Item>{title}</Breadcrumb.Item>
-            : <div style={{display: 'inline-block'}}>{title}</div>
+            typeof(title) === 'string' &&
+            <div className={styles.title}>
+              {title}{note?(
+                <Tooltip title={note}>
+                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                </Tooltip>
+              ):''}
+            </div>
           }
-        </Breadcrumb>
+        </div>
         {
-          typeof(title) === 'string' &&
-          <div className={styles.title}>
-            {title}{note?(
-              <Tooltip title={note}>
-                <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-              </Tooltip>
-            ):''}
-          </div>
+          isShowBtn &&
+          <Button type="primary" disabled={disabled}>
+            { disabled ? '未开启' : '开启' }
+          </Button>
         }
       </div>
     );

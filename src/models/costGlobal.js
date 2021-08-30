@@ -50,6 +50,8 @@ export default {
     provinceAndCity: [], // 查询省市
     aliTripLink: '',
     deptTree: [], // 部门树
+    checkLinkCost: [], // 关联的申请单
+    checkFolderList: [], // 关联申请单之后判断账本
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -393,6 +395,24 @@ export default {
         type: 'save',
         payload: {
           deptTree: response || [],
+        },
+      });
+    },
+    *checkLinkCost({ payload }, { call, put }) {
+      const response = yield call(post, api.checkLinkCost, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          checkLinkCost: response || {},
+        },
+      });
+    },
+    *checkFolderAlc({ payload }, { call, put }) {
+      const response = yield call(get, api.checkFolderList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          checkFolderList: response || [],
         },
       });
     },

@@ -11,6 +11,7 @@ import Radio from '../Radio';
 import Checkbox from '../CheckBox';
 import ItemGroup from '../ItemGroup';
 import MyCascader from '../Cascader';
+import MyTreeSelect from '../TreeSelect';
 
 const { RangePicker } = DatePicker;
 
@@ -46,6 +47,9 @@ function TypeConversion(item) {
       break;
     case 'Cascader':
       C = MyCascader;
+    break;
+    case 'TreeSelect':
+      C = MyTreeSelect;
     break;
     case 'Input':
     default:

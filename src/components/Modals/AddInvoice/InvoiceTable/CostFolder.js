@@ -9,12 +9,14 @@ import style from './index.scss';
 import { getArrayColor, classifyIcon } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
 import SelectInvoice from '../../SelectInvoice';
+import aliLogo from '../../../../assets/img/aliTrip/alitrip.png';
 
 @connect(({ costGlobal, loading }) => ({
   folderList: costGlobal.folderList,
   folderSum: costGlobal.folderSum,
   total: costGlobal.total,
   page: costGlobal.page,
+  checkLinkCost: costGlobal.checkLinkCost,
   loading: loading.effects['costGlobal/listFolder'] || false,
 }))
 class CostFolder extends Component {
@@ -99,9 +101,43 @@ class CostFolder extends Component {
   }
 
   slInvoice = () => {
-    this.setState({
-      slVisible: true,
+    const { selectedRows } = this.state;
+    console.log('selectedRows', selectedRows);
+    const arrs = [];
+    selectedRows.forEach(it => {
+      arrs.push({
+        id: it.id,
+        applicationInvoiceId: it.applicationInvoiceId
+      });
     });
+    this.props.dispatch({
+      type: 'costGlobal/checkLinkCost',
+      payload: {
+        query: arrs,
+      }
+    }).then(() => {
+      const { checkLinkCost } = this.props;
+      if (checkLinkCost.unassociatedCount) {
+        Modal.confirm({
+          title: `该申请单还有${checkLinkCost.unassociatedCount}条明细，是否同步导入`,
+          okText: '是',
+          cancelText: '否',
+          onOk: () => {
+            console.log('OK');
+          },
+          onCancel: () => {
+            this.setState({
+              slVisible: true,
+            });
+          },
+        });
+      } else {
+        this.setState({
+          slVisible: true,
+        });
+      }
+    });
+
   }
 
   onChangeVisible = () => {
@@ -165,6 +201,10 @@ class CostFolder extends Component {
             }}
           />
           <span style={{verticalAlign: 'middle'}}>{record.categoryName}</span>
+          {
+            record.showAlitripIcon &&
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+          }
         </span>
       ),
       width: '280px'

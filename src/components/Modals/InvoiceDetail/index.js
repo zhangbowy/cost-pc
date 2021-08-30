@@ -132,11 +132,13 @@ class InvoiceDetail extends Component {
       }
       if (details.trip) {
         const { alitripCostCenterJson, alitripInvoiceTitleJson } = details.trip;
+        console.log('InvoiceDetail -> onShow -> alitripCostCenterJson', alitripCostCenterJson);
         this.setState({
           aliTrip: {
             ...details.trip,
-            alitripCostCenterJson: alitripCostCenterJson ? JSON.parse(alitripCostCenterJson)[0] : {},
-            alitripInvoiceTitleJson: alitripInvoiceTitleJson ? JSON.parse(alitripInvoiceTitleJson)[0] : {}, },
+            alitripCostCenterJson: alitripCostCenterJson ? JSON.parse(alitripCostCenterJson) : {},
+            alitripInvoiceTitleJson: alitripInvoiceTitleJson ? JSON.parse(alitripInvoiceTitleJson) : {},
+          },
         });
       }
       let totalCost = 0;
@@ -401,6 +403,7 @@ class InvoiceDetail extends Component {
       allow,
       userInfo
     } = this.props;
+    console.log('aliTrip', aliTrip);
     return (
       <span>
         <span onClick={() => this.onShow()}>
