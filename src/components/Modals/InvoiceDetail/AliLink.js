@@ -9,7 +9,6 @@ import { getParams } from '../../../utils/common';
 
 const { aliTraffic } = fields;
 const AliLink = ({ status, subTrip, onGetLink }) => {
-console.log('AliLink -> status', status);
 const [visible, setVisible] = useState(false);
 const [oderType, setOrderType] = useState(1);
 const handleClick = (key) => {

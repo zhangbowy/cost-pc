@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { Menu, Badge } from 'antd';
 import { connect } from 'dva';
-import treeConvert from '@/utils/treeConvert';
 import update from 'immutability-helper';
+import treeConvert from '@/utils/treeConvert';
 import TempTable from './components/TempTable';
 import defaultData from './default';
 import Chart from '../../../components/StaticChart/component/Chart';

@@ -17,24 +17,6 @@ import CountChild from './CountCmp/CountChild';
 
 // import OrderListSvg from '../../../../../assets/img/menuImg/dbzyhl.png';
 
-const defaultArrs = [{
-  key: '0',
-  name: '成本中心',
-  isRequired: true,
-}, {
-  key: '1',
-  name: '发票抬头',
-  isRequired: true,
-}, {
-  key: '2',
-  name: '同行人',
-  isRequired: false,
-}, {
-  key: '3',
-  name: '费用归属',
-  isRequired: true,
-}];
-
 const Card = ({ name, isWrite, index,
   moveCard, field, findCard, dragId, id,
   fieldType, changeDragId, onDelete, disabled, data,
@@ -45,7 +27,7 @@ const Card = ({ name, isWrite, index,
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
     }),
-    canDrag: () => !defaultString.includes(field) && !dragDisabled.includes(field),
+    canDrag: () => !defaultString.includes(field) && !dragDisabled.includes(field) && (Number(fieldType) !== 10),
     // item 中包含 index 属性，则在 drop 组件 hover 和 drop 是可以根据第一个参数获取到 index 值
     item: { ...data, type: dragType || 'parent', index, field,  },
     end: (dropResult, monitor) => {
@@ -67,6 +49,9 @@ const Card = ({ name, isWrite, index,
     canDrop: () => !defaultString.includes(field),
     hover(item, monitor) {
       if (Number(item.fieldType) === 3) {
+        return;
+      }
+      if (Number(item.fieldType) === 10) {
         return;
       }
       if (!ref.current) {
@@ -232,23 +217,30 @@ const Card = ({ name, isWrite, index,
                     <p className={style.addNames}>+  添加行程</p>
                     {
                       data.alitripSetting && data.alitripSetting.isEnable &&
+                      /* data.alitripSetting.hasFellowTraveler && */
                       <>
                         {
-                          defaultArrs.map(it => (
-                            <div className={style.xc} key={it.key}>
-                              <p className={style.xcName}>
-                                {
-                                  !it.isRequired &&
-                                  <span className={style.required}>*</span>
-                                }
-                                <span className="fs-14 c-black-85">{it.name}</span>
-                              </p>
-                              <div className={style.inputs}>
-                                <span className="fs-14 c-black-25">请选择</span>
-                                <i className="iconfont icondown c-black-25" />
+                          data.expandFieldVos.map(it => {
+                            console.log('扩展的字符串', data.expandFieldVos);
+                            if (it.expandFieldVos.length > 1) {
+                              return null;
+                            }
+                            return (
+                              <div className={style.xc} key={it.key}>
+                                <p className={style.xcName}>
+                                  {
+                                    it.isWrite &&
+                                    <span className={style.required}>*</span>
+                                  }
+                                  <span className="fs-14 c-black-85">{it.name}</span>
+                                </p>
+                                <div className={style.inputs}>
+                                  <span className="fs-14 c-black-25">请选择</span>
+                                  <i className="iconfont icondown c-black-25" />
+                                </div>
                               </div>
-                            </div>
-                          ))
+                            );
+                          })
                         }
                       </>
                     }
@@ -300,7 +292,7 @@ const Card = ({ name, isWrite, index,
             }
             <p
               className={defaultString.includes(field) ||
-              types === 3 || field === 'detail_money' ?
+              types === 3 || field === 'detail_money' || (types === 10) ?
               cs(style.delete,style.opacity, style.drag) :
               cs(style.delete, style.drag)}
               style={{ display: dragId === field ? 'block' : '' }}

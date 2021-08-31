@@ -61,7 +61,7 @@ class PayTemp extends React.PureComponent {
     this.props.onChangeStatus(e.key);
     this.onQuery({
       ...query,
-      status: Number(e.key) === 1 ? 2 : e.key,
+      status: e.key,
       searchContent,
       startTime,
       endTime,
@@ -167,7 +167,6 @@ class PayTemp extends React.PureComponent {
   }
 
   onQuery = (payload) => {
-    console.log('模板', payload);
     this.props.onQuerys(payload);
   }
 
@@ -235,14 +234,16 @@ class PayTemp extends React.PureComponent {
         endTime,
       };
     }
-    if(Number(status) !== 2) {
+    if(Number(status) !== 2 && Number(status) !== 1) {
       url = `${namespace}/exported`;
     }
+    console.log('是这里吗', url);
     this.props.dispatch({
       type: url,
       payload: {
         ...params,
         accountTypes,
+        isSign: Number(status) === 1,
       }
     }).then(() => {
       message.success('导出成功');
@@ -360,7 +361,7 @@ class PayTemp extends React.PureComponent {
         pageSize: query.pageSize,
         accountTypes,
         searchContent,
-        status: status === '1' ? 2 : status,
+        status,
         endTime,
         startTime,
       });

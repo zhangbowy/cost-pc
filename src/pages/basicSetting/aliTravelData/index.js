@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Icon, Popconfirm, Tree } from 'antd';
+import { Steps, Button, Table, Icon, Popconfirm, Tree, Tooltip } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import Search from 'antd/lib/input/Search';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
+import qrCode from '@/assets/img/qrcode.png';
 import style from './index.scss';
 
 const aliTravel = {
@@ -37,6 +38,8 @@ class AllTravelData extends PureComponent {
       payload: {},
     }).then(() => {
       console.log(this.props.authorize);
+      const { authorize } = this.props;
+      localStorage.setItem('aliTripAuthorize', authorize.isAuthorize ? '0' : '1');
     });
   }
 
@@ -46,7 +49,7 @@ class AllTravelData extends PureComponent {
       type: 'aliTravelData/editRef',
       payload: {
         type,
-        costCategoryId
+        costCategoryId: costCategoryId[0]
       }
     }).then(() => {
       this.props.dispatch({
@@ -126,27 +129,30 @@ class AllTravelData extends PureComponent {
         return (
           <span>
             <span className="m-r-8">{record.costCategoryName}</span>
-            <Popconfirm
-              overlayClassName={style.popStyle}
-              icon={false}
-              title={(
-                <div style={{height: '300px', width: '100%'}}>
-                  <Search style={{ marginBottom: 8 }} placeholder="请输入" onChange={this.onChange} />
-                  <Tree
-                    dropdownStyle={{height: '300px'}}
-                    style={{width: '100%'}}
-                    onSelect={(selectedKeys, info) =>this.onSelect(selectedKeys, info, record.type)}
-                  >
-                    {this.loop(tree)}
-                  </Tree>
-                </div>
-              )}
-              onConfirm={this.confirm}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Icon type="edit" style={{ color: 'rgba(0, 199, 149, 1)' }} />
-            </Popconfirm>
+            {
+              authorize.isAuthorize &&
+              <Popconfirm
+                overlayClassName={style.popStyle}
+                icon={false}
+                title={(
+                  <div style={{height: '300px', width: '100%'}}>
+                    <Search style={{ marginBottom: 8 }} placeholder="请输入" onChange={this.onChange} />
+                    <Tree
+                      dropdownStyle={{height: '300px'}}
+                      style={{width: '100%'}}
+                      onSelect={(selectedKeys, info) =>this.onSelect(selectedKeys, info, record.type)}
+                    >
+                      {this.loop(tree)}
+                    </Tree>
+                  </div>
+                )}
+                onConfirm={this.confirm}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Icon type="edit" style={{ color: 'rgba(0, 199, 149, 1)' }} />
+              </Popconfirm>
+            }
           </span>
         );
       },
@@ -162,7 +168,7 @@ class AllTravelData extends PureComponent {
     }];
     return (
       <div>
-        <PageHead title="阿里商旅" isShowBtn disabled={authorize.isAuthorize} />
+        <PageHead title="阿里商旅" isShowBtn disabled={!authorize.isAuthorize} />
         <div className={cs(style.travel, 'content-dt')}>
           <Steps current={current} onChange={this.onChange} direction="vertical">
             <Step
@@ -180,7 +186,9 @@ class AllTravelData extends PureComponent {
                 <div>
                   <p className="c-black-45 fs-14">- 企业：财务对账简单，阿里商旅平台数据自动导入，保证数据真实性</p>
                   <p className="c-black-45 fs-14">- 员工：阿里商旅的行程订单自动导入账本，单据提报更便捷</p>
-                  <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }}>联系咨询</Button>
+                  <Tooltip placement="top" title={(<img alt="二维码" src={qrCode} className={style.qrCode} />)} color="#ffffff">
+                    <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }}>联系咨询</Button>
+                  </Tooltip>
                 </div>
               )}
             />

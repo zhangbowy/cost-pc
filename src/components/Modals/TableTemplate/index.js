@@ -17,6 +17,7 @@ class TableTemplate extends Component {
 
   onShow = async() => {
     const { onQuery, page } = this.props;
+    console.log('在这里吗', page);
     onQuery({
       pageNo: page.pageNo,
       pageSize: page.pageSize,
@@ -112,6 +113,7 @@ class TableTemplate extends Component {
                 pagination={{
                   hideOnSinglePage: true,
                   current: page.pageNo,
+                  pageSize: page.pageSize,
                   onChange: (pageNumber) => {
                     onQuery({
                       pageNo: pageNumber,

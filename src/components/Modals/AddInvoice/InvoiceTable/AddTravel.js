@@ -59,7 +59,7 @@ class AddTravel extends PureComponent {
   }
 
   render () {
-    const { aliTripFields } = this.props;
+    const { aliTripFields, aliTripAuth } = this.props;
     console.log('阿里商旅', aliTripFields);
     const { subTrip } = this.state;
     return (
@@ -74,7 +74,10 @@ class AddTravel extends PureComponent {
         {
           subTrip.length === 0 ?
             <div style={{textAlign: 'center'}} className={style.addbtn}>
-              <AddTravelForm onOk={this.onGetTrip}>
+              <AddTravelForm
+                onOk={this.onGetTrip}
+                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+              >
                 <Button
                   icon="plus"
                   style={{ width: '231px', marginBottom: '16px' }}
@@ -87,14 +90,22 @@ class AddTravel extends PureComponent {
             :
             <div className={style.travelDetail}>
               <div className={style.singleBtn}>
-                <AddTravelForm onOk={this.onGetTrip} list={subTrip}>
+                <AddTravelForm
+                  onOk={this.onGetTrip}
+                  list={subTrip}
+                  hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                >
                   <span className="fs-14 c-black-65">+ 编辑行程</span>
                 </AddTravelForm>
               </div>
               <>
                 {
                   subTrip.map(item => (
-                    <AddTravelForm onOk={this.onGetTrip} list={[item]}>
+                    <AddTravelForm
+                      onOk={this.onGetTrip}
+                      list={[item]}
+                      hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                    >
                       <div className={style.singleContent} key={item.startDate}>
                         <div className={style.iconImg}>
                           <img
@@ -116,15 +127,18 @@ class AddTravel extends PureComponent {
               </>
             </div>
         }
-        <Row>
-          <EasyForm
-            isModal={false}
-            fields={aliTripFields}
-            ref={ref => { this.easyForm = ref; }}
-            mode="plain"
-            separate
-          />
-        </Row>
+        {
+          aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler &&
+          <Row>
+            <EasyForm
+              isModal={false}
+              fields={aliTripFields}
+              ref={ref => { this.easyForm = ref; }}
+              mode="plain"
+              separate
+            />
+          </Row>
+        }
       </div>
     );
   }

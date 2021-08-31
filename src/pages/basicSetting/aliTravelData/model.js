@@ -1,4 +1,4 @@
-import { get, post } from '@/utils/request';
+import { get } from '@/utils/request';
 import api from './services';
 
 export default {
@@ -19,7 +19,7 @@ export default {
       });
     },
     *editRef({ payload }, { call }) {
-      yield call(post, api.editRef, payload);
+      yield call(get, api.editRef, payload);
     },
   },
   reducers: {

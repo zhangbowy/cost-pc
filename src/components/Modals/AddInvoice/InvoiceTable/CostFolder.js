@@ -113,7 +113,7 @@ class CostFolder extends Component {
     this.props.dispatch({
       type: 'costGlobal/checkLinkCost',
       payload: {
-        query: arrs,
+        list: arrs,
       }
     }).then(() => {
       const { checkLinkCost } = this.props;
@@ -124,6 +124,23 @@ class CostFolder extends Component {
           cancelText: '否',
           onOk: () => {
             console.log('OK');
+            const { folderIds } = checkLinkCost;
+            const oldIds = selectedRows.map(it => it.id);
+            const newArr = [...selectedRows];
+            folderIds.forEach(it => {
+              if (!oldIds.includes(it.id)) {
+                selectedRows.push({
+                  ...it,
+                });
+              }
+            });
+            this.setState({
+              selectedRows: newArr,
+            }, () => {
+              this.setState({
+                slVisible: true,
+              });
+            });
           },
           onCancel: () => {
             this.setState({

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import { Modal, Table, Tooltip, Select, Spin } from 'antd';
-import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
+import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
 import Chart from './Chart';
 
@@ -133,6 +134,15 @@ function InvoicePrice({ children, onQuery, id, title,
       title: '单号',
       dataIndex: 'invoiceNo',
       width: 160,
+      render: (_, record) => (
+        <span>
+          <span>{record.invoiceNo}</span>
+          {
+            record.showAlitripIcon &&
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+          }
+        </span>
+      )
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',

@@ -61,6 +61,7 @@ class InvoiceDetail extends Component {
       expandSubmitFieldVos: [],
       selfSubmitFieldVos: [],
       aliTrip: {},
+      isSign: false,
     };
   }
 
@@ -184,6 +185,7 @@ class InvoiceDetail extends Component {
         showFields: showObj,
         expandSubmitFieldVos,
         selfSubmitFieldVos,
+        isSign: details.isSign,
       });
       this.props.dispatch({
         type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
@@ -375,6 +377,28 @@ class InvoiceDetail extends Component {
     });
   }
 
+  onChangeSign = async() => {
+    const { details, isSign } = this.state;
+    const { templateType, signCallback } = this.props;
+    if (signCallback) {
+      try {
+        const res = await signCallback({
+          isSign: !isSign,
+          invoiceIds: [details.id],
+          templateType,
+        });
+        if (res) {
+          this.setState({
+            isSign: !isSign,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+    }
+  }
+
   render() {
     const {
       visible,
@@ -395,6 +419,7 @@ class InvoiceDetail extends Component {
       expandSubmitFieldVos,
       selfSubmitFieldVos,
       aliTrip,
+      isSign
     } = this.state;
     const {
       children,
@@ -403,7 +428,6 @@ class InvoiceDetail extends Component {
       allow,
       userInfo
     } = this.props;
-    console.log('aliTrip', aliTrip);
     return (
       <span>
         <span onClick={() => this.onShow()}>
@@ -411,7 +435,25 @@ class InvoiceDetail extends Component {
         </span>
         <Modal
           visible={visible}
-          title="单据详情"
+          title={(
+            <div className={style.modalBtn}>
+              <span>单据详情</span>
+              <div className={style.btnIcon}>
+                <Tooltip title="打印">
+                  <i className="iconfont icona-dayin3x" onClick={() => this.handelOkPrint()} />
+                </Tooltip>
+                <Tooltip title="下载">
+                  <i className="iconfont icona-xiazai3x" onClick={() => this.handelOk()} />
+                </Tooltip>
+                {
+                  allow === 'copy' && (userInfo.userId === details.userId) &&
+                    <Tooltip title="复制">
+                      <i className="iconfont icona-fuzhi3x" onClick={() => this.onChangeType('copy')} />
+                    </Tooltip>
+                }
+              </div>
+            </div>
+          )}
           width="980px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
@@ -420,35 +462,15 @@ class InvoiceDetail extends Component {
               <div>
                 {
                   canRefuse &&
-                  <RefuseModal refuse={val => this.handleRefuse(val)}>
-                    <Button key="refuse" className="m-r-16">拒绝</Button>
-                  </RefuseModal>
+                  <Button className="m-r-8" onClick={() => this.onChangeSign()}>
+                    { isSign ? '移至待发放' : '移至已票签' }
+                  </Button>
                 }
-                <Button
-                  key="cancel"
-                  type="default"
-                  onClick={() => this.handelOk()}
-                >
-                  下载
-                </Button>
-                <Button
-                  key="print"
-                  type="default"
-                  onClick={() => this.handelOkPrint()}
-                >
-                  打印
-                </Button>
                 {
-                  allow === 'copy' && (userInfo.userId === details.userId) &&
-                    <Button
-                      key="again"
-                      type="default"
-                      operateType="copy"
-                      className="m-l-8"
-                      onClick={() => this.onChangeType('copy')}
-                    >
-                      复制
-                    </Button>
+                  canRefuse &&
+                  <RefuseModal refuse={val => this.handleRefuse(val)}>
+                    <Button key="refuse">拒绝发放</Button>
+                  </RefuseModal>
                 }
                 {
                   isModify && allow === 'modify' ?

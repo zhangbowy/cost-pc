@@ -10,4 +10,5 @@ export default {
   detail: `${APP_API}/cost/account/receipt/detail`,
   refuse: `${APP_API}/cost/invoice/payment/reject`, // 拒绝
   operationSign: `${APP_API}/cost/invoice/payment/operationSign`,
+  record: `${APP_API}/cost/invoice/payment/operationSign/record`,
 };

@@ -66,8 +66,8 @@ class App extends React.PureComponent {
         </div>
         {
           isShowBtn &&
-          <Button type="primary" disabled={disabled}>
-            { disabled ? '未开启' : '开启' }
+          <Button type="primary" disabled={disabled} style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
+            { disabled ? '暂未开启' : '开启' }
           </Button>
         }
       </div>

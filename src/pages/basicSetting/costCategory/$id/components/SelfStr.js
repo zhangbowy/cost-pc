@@ -4,6 +4,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
 import style from './index.scss';
 import { timeStampToHex } from '../../../../../utils/common';
+import { aliTrip } from './ItemTypes';
 
 // 只能拖拽一次
 const disabledField = [3, 10];
@@ -16,126 +17,6 @@ const expand = [{
   isWrite: true,
   field: 'detail_money',
 }];
-const travel = [
-  {
-      'dateType': 0,
-      'expandFieldVos': [
-          {
-              'dateType': 0,
-              'expandFieldVos': [],
-              'field': 'trip_traffic',
-              'fieldType': 2,
-              'isModify': false,
-              'isWrite': true,
-              'name': '交通工具',
-              'note': '',
-              'options': ['飞机','火车','汽车','其他'],
-              'sort': 1,
-              'status': 1
-          },
-          {
-              'dateType': 0,
-              'expandFieldVos': [],
-              'field': 'trip_way',
-              'fieldType': 2,
-              'isModify': false,
-              'isWrite': true,
-              'name': '单程往返',
-              'note': '',
-              'options': ['单程','往返'],
-              'sort': 3,
-              'status': 1
-          },
-          {
-              'dateType': 0,
-              'expandFieldVos': [],
-              'field': 'start_and_end_city',
-              'fieldType': 0,
-              'isModify': false,
-              'isWrite': true,
-              'name': '起止城市',
-              'note': '',
-              'options': [],
-              'sort': 4,
-              'status': 1
-          },
-          {
-              'dateType': 2,
-              'expandFieldVos': [],
-              'field': 'start_and_end_time',
-              'fieldType': 5,
-              'isModify': false,
-              'isWrite': true,
-              'name': '起止日期',
-              'note': '',
-              'options': [],
-              'sort': 5,
-              'status': 1
-          }
-      ],
-      'field': 'sub_trip',
-      'fieldType': 11,
-      'isModify': false,
-      'isWrite': true,
-      'name': '子行程',
-      'note': '',
-      'options': [],
-      'sort': 1,
-      'status': 1
-  },
-  {
-      'dateType': 0,
-      'expandFieldVos': [],
-      'field': 'alitrip_cost_center',
-      'fieldType': 2,
-      'isModify': false,
-      'isWrite': true,
-      'name': '成本中心',
-      'note': '',
-      'options': [],
-      'sort': 2,
-      'status': 1
-  },
-  {
-      'dateType': 0,
-      'expandFieldVos': [],
-      'field': 'alitrip_invoice_title',
-      'fieldType': 2,
-      'isModify': false,
-      'isWrite': true,
-      'name': '发票抬头',
-      'note': '',
-      'options': [],
-      'sort': 3,
-      'status': 1
-  },
-  {
-      'dateType': 0,
-      'expandFieldVos': [],
-      'field': 'alitrip_fellow_travelers',
-      'fieldType': 8,
-      'isModify': false,
-      'isWrite': true,
-      'name': '同行人',
-      'note': '',
-      'options': [],
-      'sort': 4,
-      'status': 1
-  },
-  {
-      'dateType': 0,
-      'expandFieldVos': [],
-      'field': 'alitrip_expenses_owner',
-      'fieldType': 2,
-      'isModify': false,
-      'isWrite': true,
-      'name': '费用归属',
-      'note': '',
-      'options': ['按分摊计入', '均计入申请人'],
-      'sort': 5,
-      'status': 1
-  }
-];
 let id = 1000;
 function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId, changeRight }) {
   const idGenerator = () => {
@@ -162,12 +43,17 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     field: idGenerator(),
     isSelect: true,
     id: -1,
-    isWrite: false,
+    isWrite: Number(fieldType) === 10,
     note: Number(fieldType) === 9 ? '说明文案' : '',
   };
   if (Number(fieldType) === 3) {
     Object.assign(box, {
       expandFieldVos: expand.map(it => { return {...it, parentId: box.field}; })
+    });
+  }
+  if (Number(fieldType) === 10) {
+    Object.assign(box, {
+      expandFieldVos: aliTrip,
     });
   }
   const [, drag, preview] = useDrag({
@@ -260,7 +146,7 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     }
     if (Number(fieldType) === 10) {
       Object.assign(boxs, {
-        expandFieldVos: [...travel],
+        expandFieldVos: [...aliTrip],
         alitripSetting : {
           isEnable: false, // 是否关联阿里商旅
           hasFellowTraveler : false // 是否开启同行人

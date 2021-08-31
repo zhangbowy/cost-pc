@@ -7,6 +7,7 @@ import moment from 'moment';
 import { connect } from 'dva';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
+import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
 // import AddCost from './AddCost';
 import { getArrayColor, classifyIcon } from '../../../utils/constants';
@@ -164,6 +165,7 @@ class AddFolder extends Component {
         currencySymbol: currency.currencySymbol || '¥',
       });
     });
+
     this.props.onAddCost(arr);
     this.onCancel();
   }
@@ -250,6 +252,10 @@ class AddFolder extends Component {
                   }}
                 />
                 <span style={{opacity: 0.25}}>{record.categoryName}</span>
+                {
+                  record.showAlitripIcon &&
+                  <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+                }
               </Tooltip>
               :
               <>
@@ -262,6 +268,10 @@ class AddFolder extends Component {
                   }}
                 />
                 <span>{record.categoryName}</span>
+                {
+                  record.showAlitripIcon &&
+                  <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+                }
               </>
           }
         </span>

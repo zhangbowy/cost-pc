@@ -85,6 +85,7 @@ class AddInvoice extends Component {
       expandVos: [], // 审批流的自定义信息
       travelList: {}, // 行程的form表单以及数据
       aliTripFields: [],
+      aliTripAuth: {}, // 判断是否有商旅权限
     };
     this.changeForm = null;
   }
@@ -273,12 +274,15 @@ class AddInvoice extends Component {
             receiptNameJson: JSON.stringify(arr),
           };
         }
+        const aliTripArr = [...djDetails.selfField, ...djDetails.expandField];
+        const aliTripAuth = aliTripArr.filter(it => it.fieldType === 10);
         const { aliCostAndI, deptTree } = this.props;
-        if (aliCostAndI) {
+        if (aliCostAndI && aliTripAuth && aliTripAuth.length) {
           this.setState({
-            aliTripFields: defaultFunc.handleAliTrip(aliCostAndI, deptTree),
+            aliTripFields: defaultFunc.handleAliTrip(aliCostAndI, deptTree, aliTripAuth[0]),
           });
         }
+
         if (!contentJson) {
           this.setState({
             details: {
@@ -291,6 +295,7 @@ class AddInvoice extends Component {
             accountList: account,
             inDetails: djDetails,
             visible: true,
+            aliTripAuth: aliTripAuth && aliTripAuth.length ? aliTripAuth[0] : {},
           }, () => {
             if (this.props.costSelect) {
               const { costSelect, expenseList } = this.props;
@@ -324,6 +329,7 @@ class AddInvoice extends Component {
             inDetails: djDetails,
             visible: true,
             historyParams: JsonParse(contentJson),
+            aliTripAuth: aliTripAuth && aliTripAuth.length ? aliTripAuth[0] : {},
           });
         }
       });
@@ -1343,7 +1349,8 @@ class AddInvoice extends Component {
       applyDetailList,
       expandVos,
       travelList,
-      aliTripFields
+      aliTripFields,
+      aliTripAuth,
     } = this.state;
 
     const modify = operateType === 'modify';
@@ -1494,11 +1501,12 @@ class AddInvoice extends Component {
               />
             }
             {
-              Number(templateType) === 2 &&
+              Number(templateType) === 2 && aliTripAuth.status &&
               <AddTravel
                 travelList={travelList}
                 aliTripFields={aliTripFields}
                 aliCostAndI={aliCostAndI}
+                aliTripAuth={aliTripAuth}
                 onGetFunc={func => {
                   this.handleOpenModal = func;
                 }}
@@ -1557,6 +1565,7 @@ class AddInvoice extends Component {
                           onAddBorrow={arr => this.onAddApply(arr)}
                           list={applyArr}
                           costList={costDetailsVo}
+                          onAddCost={this.onAddCost}
                         >
                           <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
                         </AddApply>

@@ -77,7 +77,7 @@ class AddApply extends Component {
 
   //  提交
   handleOk = () => {
-    const { details, selectedRowKeys } = this.state;
+    const { details } = this.state;
     const newArr = details.sort(sortBy('createTime', true));
     const showArrs = newArr.filter(it => it.isAlitrip && !it.hasAlitripOrder);
     if (showArrs.length) {
@@ -86,23 +86,22 @@ class AddApply extends Component {
         okText: '稍后再提',
         cancelText: '仍要提交',
         onOk: () => {
-
+          console.log('稍后再提交');
+          this.onCancel();
         },
         onCancel: () => {
-          console.log('稍后再提交');
+          this.changeErr(newArr);
         }
       });
     }
-
-    this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
-    this.onCancel();
   }
 
-  changeErr = (arr) => {
+  changeErr = (newArr) => {
+    const { selectedRowKeys } = this.state;
     this.props.dispatch({
       type: 'costGlobal/checkFolderAlc',
       payload: {
-        applicationIds: arr
+        list: newArr.map(it => it.applicationId),
       }
     }).then(() => {
       const { checkFolderList, costList } = this.props;
@@ -120,12 +119,19 @@ class AddApply extends Component {
           okText: '同步导入',
           cancelText: '自行添加',
           onOk: () => {
-
+            const costs = [...costList, ...arrs];
+            this.props.onAddCost(costs);
+            this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+            this.onCancel();
           },
           onCancel: () => {
-            console.log('稍后再提交');
+            this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+            this.onCancel();
           }
         });
+      } else {
+        this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+        this.onCancel();
       }
     });
   }

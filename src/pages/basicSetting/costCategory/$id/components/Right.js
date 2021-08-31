@@ -2,12 +2,13 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from 'antd';
+import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
 import { timeStampToHex, intToChinese } from '../../../../../utils/common';
 import ThirdSet from './RightCheck/ThirdSet';
+import { aliTrip, aliTripStr, aliTripHasTrip } from './ItemTypes';
 
 let id = 1000;
 const disabledDefault = ['costCategory'];
@@ -255,25 +256,32 @@ class Right extends PureComponent {
   }
 
   onChangeThird = (e, key) => {
-    console.log('点击e', e);
-    console.log(key);
+    const auths = localStorage.getItem('aliTripAuthorize');
+    if (auths && auths === '0') {
+      message.error('请先开通阿里商旅并完成授权');
+      return;
+    }
     const { selectList } = this.props;
     const { details } = this.state;
-    const arr = this.onChangeChild(selectList, details.field, {
+    let expands = [...aliTrip];
+    const obj = {
       ...details,
       alitripSetting: {
         ...details.alitripSetting,
         [key]: e.target.checked,
       }
+    };
+    if (obj.alitripSetting.hasFellowTraveler) {
+      expands = [...expands, ...aliTripStr];
+    } else if (obj.alitripSetting.isEnable) {
+      expands = [...expands, ...aliTripHasTrip];
+    }
+    Object.assign(obj, {
+      expandFieldVos: expands,
     });
+    const arr = this.onChangeChild(selectList, details.field, obj);
     this.setState({
-      details: {
-        ...details,
-        alitripSetting: {
-          ...details.alitripSetting,
-          [key]: e.target.checked,
-        }
-      }
+      details: obj,
     });
     this.props.onChange(arr);
   }

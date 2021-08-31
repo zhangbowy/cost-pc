@@ -15,7 +15,7 @@ export default {
     isViewVoucher: false,
     recordPage: {
       pageNo: 1,
-      pageSize: PAGE_SIZE,
+      pageSize: 5,
     },
     recordList: [],
     recordTotal: 0,
@@ -40,6 +40,7 @@ export default {
       });
     },
     *record({ payload }, { call, put }) {
+      console.log('在这里了吗', payload);
       const response = yield call(get, api.record, payload);
       yield put({
         type: 'save',
@@ -66,7 +67,12 @@ export default {
     },
     // 待发放
     *exporting({ payload }, { call }) {
-      Object.assign(payload, { exportType:'export', fileName: '待发放列表' });
+      console.log('走到了这里了吗，奇怪', payload);
+      if (payload.isSign) {
+        Object.assign(payload, { exportType:'export', fileName: '待票签列表' });
+      } else {
+        Object.assign(payload, { exportType:'export', fileName: '待发放列表' });
+      }
       yield call(post, api.payingExport, payload);
     },
     *refuse({ payload }, { call }) {

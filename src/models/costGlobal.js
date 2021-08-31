@@ -408,7 +408,7 @@ export default {
       });
     },
     *checkFolderAlc({ payload }, { call, put }) {
-      const response = yield call(get, api.checkFolderList, payload);
+      const response = yield call(post, api.checkFolderList, payload);
       yield put({
         type: 'save',
         payload: {

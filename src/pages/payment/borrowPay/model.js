@@ -14,7 +14,7 @@ export default {
     total: 0,
     recordPage: {
       pageNo: 1,
-      pageSize: PAGE_SIZE,
+      pageSize: 5,
     },
     recordList: [],
     recordTotal: 0,
@@ -65,7 +65,12 @@ export default {
     },
     // 待发放
     *exporting({ payload }, { call }) {
-      Object.assign(payload, { exportType:'export', fileName: '待发放列表' });
+      console.log('走了这里了吗', payload);
+      if (payload.isSign) {
+        Object.assign(payload, { exportType:'export', fileName: '待票签列表' });
+      } else {
+        Object.assign(payload, { exportType:'export', fileName: '待发放列表' });
+      }
       yield call(post, api.payingExport, payload);
     },
     *refuse({ payload }, { call }) {

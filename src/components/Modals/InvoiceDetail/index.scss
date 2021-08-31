@@ -164,3 +164,23 @@
     }
   }
 }
+.modalBtn{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .btnIcon{
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: 700;
+    font-size: 24px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+  }
+  .btnIcon i{
+    margin-right: 28px;
+    cursor: pointer;
+  }
+  .btnIcon i:hover{
+    color: rgba(0, 0, 0, 0.65);
+  }
+}

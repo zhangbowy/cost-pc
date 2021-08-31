@@ -2,6 +2,7 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import moment from 'moment';
 import fields from '@/utils/fields';
+import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import { getArrayValue, approveStatus, statusList } from '../../../utils/constants';
 import InvoiceDetail from '../../../components/Modals/InvoiceDetail';
 import { defaultMonth } from './components/Search/time';
@@ -120,6 +121,15 @@ export default {
       title: '单号',
       dataIndex: 'invoiceNo',
       width: 140,
+      render: (_, record) => (
+        <span>
+          <span>{record.invoiceNo}</span>
+          {
+            record.showAlitripIcon &&
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+          }
+        </span>
+      )
     }, {
       title: '发放人',
       dataIndex: 'payUserName',

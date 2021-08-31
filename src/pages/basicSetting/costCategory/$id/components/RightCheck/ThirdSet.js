@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Checkbox } from 'antd';
+import { Divider, Checkbox, Tooltip } from 'antd';
 import style from './index.scss';
 
 const ThirdSet = ({ onChange, aliTripSetting }) => {
@@ -12,7 +12,14 @@ const ThirdSet = ({ onChange, aliTripSetting }) => {
           onChange={(e) => onChange(e, 'isEnable')}
           checked={!!(aliTripSetting.isEnable)}
         >
-          阿里商旅
+          <>
+            阿里商旅
+            <Tooltip
+              title='开通阿里商旅且完成授权，即可勾选此项。勾选后员工提交的带有该行程的申请单，审批完成后即可同步至阿里商旅进行预订'
+            >
+              <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+            </Tooltip>
+          </>
         </Checkbox>
       </div>
       <div className={style.modules}>

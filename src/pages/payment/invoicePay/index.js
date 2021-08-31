@@ -148,14 +148,15 @@ class Payment extends React.PureComponent {
       });
     }
     const { status, searchContent } = this.state;
-    this.onQuery({
+    const obj = {
       pageSize: query.pageSize,
       pageNo: 1,
       status,
       startTime,
       endTime,
       searchContent,
-    });
+    };
+    this.onQuery({ ...obj });
   }
 
   handChange = (date) => {
@@ -179,7 +180,8 @@ class Payment extends React.PureComponent {
   onQuery = (payload) => {
     if (payload.status) {
       Object.assign(payload, {
-        status: Number(payload.status) === 1 ? 2 : payload.status
+        status: Number(payload.status) === 1 ? 2 : payload.status,
+        isSign: Number(payload.status) === 1,
       });
     }
     this.props.dispatch({
@@ -352,6 +354,18 @@ class Payment extends React.PureComponent {
     });
   }
 
+  onSign = (payload) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'payment/operationSign',
+        payload,
+      }).then(() => {
+        this.onOk();
+        resolve(true);
+      });
+    });
+  }
+
   render() {
     const {
       list,
@@ -487,6 +501,7 @@ class Payment extends React.PureComponent {
             templateType={0}
             allow="modify"
             onCallback={() => this.onOk()}
+            signCallback={this.onSign}
           >
             <a>查看</a>
           </InvoiceDetail>
