@@ -334,6 +334,7 @@ class Payment extends React.PureComponent {
       type: 'payment/operationSign',
       payload,
     }).then(() => {
+      message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
       if (callback) {
         callback();
       }
@@ -360,6 +361,7 @@ class Payment extends React.PureComponent {
         type: 'payment/operationSign',
         payload,
       }).then(() => {
+        message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
         this.onOk();
         resolve(true);
       });

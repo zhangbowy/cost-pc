@@ -2,7 +2,7 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message } from 'antd';
+import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
@@ -256,11 +256,11 @@ class Right extends PureComponent {
   }
 
   onChangeThird = (e, key) => {
-    const auths = localStorage.getItem('aliTripAuthorize');
-    if (auths && auths === '0') {
-      message.error('请先开通阿里商旅并完成授权');
-      return;
-    }
+    // const auths = localStorage.getItem('aliTripAuthorize');
+    // if (auths && auths  !== '0') {
+    //   message.error('请先开通阿里商旅并完成授权');
+    //   return;
+    // }
     const { selectList } = this.props;
     const { details } = this.state;
     let expands = [...aliTrip];

@@ -124,16 +124,17 @@ class CostFolder extends Component {
           cancelText: '否',
           onOk: () => {
             console.log('OK');
-            const { folderIds } = checkLinkCost;
+            const { folders } = checkLinkCost;
             const oldIds = selectedRows.map(it => it.id);
             const newArr = [...selectedRows];
-            folderIds.forEach(it => {
+            folders.forEach(it => {
               if (!oldIds.includes(it.id)) {
-                selectedRows.push({
+                newArr.push({
                   ...it,
                 });
               }
             });
+            console.log('新的数组', newArr);
             this.setState({
               selectedRows: newArr,
             }, () => {

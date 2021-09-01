@@ -169,7 +169,6 @@ class AddCost extends Component {
                   [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
                   :
                   [...detailFolder.expandCostDetailFieldVos];
-                console.log('AddCost -> onShow -> expands', expands);
                 this.onChange(detailFolder.categoryId, 'folder', expands);
                 await this.setState({
                   visible: true,
@@ -210,7 +209,6 @@ class AddCost extends Component {
               [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
               :
               [...detailFolder.expandCostDetailFieldVos];
-              console.log('AddCost -> onShow -> expands', expands);
               this.onChange(detailFolder.categoryId, 'folder', expands);
               await this.setState({
                 visible: true,
@@ -234,7 +232,6 @@ class AddCost extends Component {
         const listArr = detail && detail.costDetailShareVOS ? [...detail.costDetailShareVOS] : [];
         const userIdArr = listArr.map(it => it.userId).filter(item => item);
         const deptFlag = listArr.filter(it => it.depList && it.depList.length);
-        console.log('AddCost -> onShow -> deptFlag', deptFlag);
         let newArray = [...listArr];
         if (userIdArr && userIdArr.length && (deptFlag.length !== listArr.length)) {
           newArray = await this.handleDept(listArr, userIdArr);
@@ -379,7 +376,6 @@ class AddCost extends Component {
       currencySymbol
     } = this.state;
     const _this = this;
-    console.log('AddCost -> handleOk -> costDetailShareVOS', costDetailShareVOS);
 
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -456,7 +452,6 @@ class AddCost extends Component {
           }
         }
         const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
-        console.log('AddCost -> handleOk -> arr', arr);
         if (!arr) {
           return;
         }
@@ -741,7 +736,6 @@ class AddCost extends Component {
       currencySymbol,
       currencyId,
     } = this.state;
-    console.log('details', details);
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
     const formItemLayout = {
@@ -764,7 +758,6 @@ class AddCost extends Component {
         sm: { span: 8 },
       },
     };
-    console.log(details.startTime);
     return (
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>

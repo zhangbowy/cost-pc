@@ -25,6 +25,7 @@ import { getArrayColor, classifyIcon } from '../../../utils/constants';
   folderSum: costGlobal.folderSum,
   userDeps: costGlobal.userDeps,
   currencyList: global.currencyList,
+  checkLinkCost: costGlobal.checkLinkCost,
 }))
 @Form.create()
 class AddFolder extends Component {
@@ -129,11 +130,56 @@ class AddFolder extends Component {
 
   //  提交
   handleOk = () => {
-    const { selectedRowKeys, selectedRows } = this.state;
-    const { currencyList } = this.props;
-    console.log(selectedRowKeys);
-    console.log(selectedRows);
+    const { selectedRows } = this.state;
+    // const { currencyList } = this.props;
+    // const newArrs = [...selectedRows];
+    const arrs = [];
+    selectedRows.forEach(it => {
+      arrs.push({
+        id: it.id,
+        applicationInvoiceId: it.applicationInvoiceId
+      });
+    });
+    this.props.dispatch({
+      type: 'costGlobal/checkLinkCost',
+      payload: {
+        list: arrs,
+      }
+    }).then(() => {
+      const { checkLinkCost } = this.props;
+      if (checkLinkCost.unassociatedCount) {
+        Modal.confirm({
+          title: `该申请单还有${checkLinkCost.unassociatedCount}条明细，是否同步导入`,
+          okText: '是',
+          cancelText: '否',
+          onOk: () => {
+            console.log('OK');
+            const { folders } = checkLinkCost;
+            const oldIds = selectedRows.map(it => it.id);
+            const newArr = [...selectedRows];
+            folders.forEach(it => {
+              if (!oldIds.includes(it.id)) {
+                newArr.push({
+                  ...it,
+                });
+              }
+            });
+            this.handleHis(newArr);
+          },
+          onCancel: () => {
+            this.handleHis(selectedRows);
+          },
+        });
+      } else {
+        this.handleHis(selectedRows);
+      }
+    });
+
+  }
+
+  handleHis = (selectedRows) => {
     const arr = [];
+    const { currencyList } = this.props;
     selectedRows.forEach(it => {
       let currency = {};
       const costDetailShareVOS = [];

@@ -7,7 +7,8 @@ const fs = require('fs');
 class AfterEmitWebpackPlugin {
   constructor({
     src = 'index.html',
-    dest = 'dist/index.html',
+    // dest = 'dist/index.html',
+    dest = 'costhtml/index.html',
   } = {}) {
     this.name = 'after-emit-webpack-plugin';
     this.src = src;

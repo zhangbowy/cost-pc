@@ -342,6 +342,7 @@ class BorrowPay extends React.PureComponent {
       type: 'borrowPay/operationSign',
       payload,
     }).then(() => {
+      message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
       if (callback) {
         callback();
       }
@@ -368,6 +369,7 @@ class BorrowPay extends React.PureComponent {
         type: 'borrowPay/operationSign',
         payload,
       }).then(() => {
+        message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
         this.onOk();
         resolve(true);
       });
