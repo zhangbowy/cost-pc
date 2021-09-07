@@ -128,7 +128,7 @@ class CostDetailTable extends PureComponent {
                       </Tooltip>
                     </span>
                     :
-                    <span>-</span>
+                    <span>{record.note || '-'}</span>
                 }
               </>
             ),
