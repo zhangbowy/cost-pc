@@ -133,12 +133,12 @@ function InvoicePrice({ children, onQuery, id, title,
     },{
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 160,
+      width: 180,
       render: (_, record) => (
         <span>
           <span>{record.invoiceNo}</span>
           {
-            record.showAlitripIcon &&
+            record.isEnterpriseAlitrip &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>
@@ -258,7 +258,7 @@ function InvoicePrice({ children, onQuery, id, title,
               dataSource={list}
               columns={columns}
               rowKey="id"
-              scroll={{y: '380px', x: '1600px'}}
+              scroll={{y: '380px', x: '1620px'}}
               loading={tableLoading}
               onChange={(page, filter) => {
                 const { current, pageSize } = page;

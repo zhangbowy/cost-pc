@@ -402,6 +402,9 @@ class PayTemp extends React.PureComponent {
     }, {
       title: '操作时间',
       dataIndex: 'createTime',
+      render: (text) => (
+        <span>{text ? moment(Number(text)).format('YYYY-MM-DD') : '-'}</span>
+      )
     }, {
       title: '操作内容',
       dataIndex: 'operationMsg',

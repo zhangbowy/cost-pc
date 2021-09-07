@@ -95,6 +95,7 @@ const salary = [{
   key: '5',
   value: '已拒绝'
 }];
+
 @connect(({ loading, summary, session, costGlobal, global }) => ({
   loading: loading.effects['summary/submitList'] ||
             loading.effects['summary/loanList'] ||
@@ -144,18 +145,21 @@ class Summary extends React.PureComponent {
     const { current } = this.state;
     const _this = this;
     const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
-    const arr = fetchs.map(it => {
-      const params = {};
-      if (it === 'invoiceList') {
-        Object.assign(params, {
-          templateType: current,
+    let arr = [];
+    if (Number(current) !== 4) {
+      arr = fetchs.map(it => {
+        const params = {};
+        if (it === 'invoiceList' && Number(current) !== 4) {
+          Object.assign(params, {
+            templateType: current,
+          });
+        }
+        return dispatch({
+          type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
+          payload: params,
         });
-      }
-      return dispatch({
-        type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
-        payload: params,
       });
-    });
+    }
     const { searchList } = this.state;
     Promise.all(arr).then(() => {
       const { costCategoryList, invoiceList, projectList, supplierList } = _this.props;
@@ -317,12 +321,15 @@ class Summary extends React.PureComponent {
   }
 
   handleClick = e => {
-    const arr = [...listSearch];
+    let arr = [...listSearch];
     if (e.key === '2') {
       arr[2].options = apply;
     } else if (e.key === '3') {
       arr[2].options = salary;
+    } else if (e.key === '4') {
+      arr = arr.filter(it => it.key !== 'statuses' && it.key !== 'invoiceTemplateIds');
     }
+    console.log(arr, '搜索的内容');
     this.setState({
       current: e.key,
       selectedRowKeys: [],
@@ -337,6 +344,7 @@ class Summary extends React.PureComponent {
   };
 
   onChangeSearch = (val) => {
+    console.log('onChangeSearch -> val', val);
     this.setState({
       searchList: val
     }, () => {

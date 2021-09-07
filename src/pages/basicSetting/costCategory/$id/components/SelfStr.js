@@ -167,7 +167,8 @@ function SelfStr({ name, icon, fieldType, cardList, changeCardList, changeDragId
     preview(getEmptyImage(), { captureDraggingState: true });
   }, []);
   // 🈲️止明细
-  const isDisabled = Number(fieldType) === 3 && (cardList.findIndex(it => Number(it.fieldType) === 3) > -1);
+  const isDisabled = (Number(fieldType) === 3 && (cardList.findIndex(it => Number(it.fieldType) === 3) > -1)) ||
+    (Number(fieldType) === 10 && (cardList.findIndex(it => Number(it.fieldType) === 10) > -1));
   return (
     <>
       <div

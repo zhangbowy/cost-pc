@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { Form, Input, Row, Col, Divider, Button,
   Icon, Select, TreeSelect, InputNumber, DatePicker, message } from 'antd';
 import moment from 'moment';
-import fileIcon from '@/utils/fileIcon.js';
 import TextArea from 'antd/lib/input/TextArea';
+import fileIcon from '@/utils/fileIcon.js';
 import UploadImg from '../../UploadImg';
 import SelectPeople from '../SelectPeople';
 import ReceiptModal from '../ReceiptModal';

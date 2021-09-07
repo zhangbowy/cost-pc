@@ -85,7 +85,7 @@ export default {
     },
     *thirdList({ payload }, { call, put }) {
       const response = yield call(post, api.thirdList, payload);
-      const newArr = response.list && response.list.map(it => { return { ...it, money: it.salaryAmount }; });
+      const newArr = response.list && response.list.map(it => { return { ...it, money: it.submitSum }; });
       yield put({
         type: 'save',
         payload: {
@@ -116,7 +116,7 @@ export default {
       yield call(post, api.salaryExport, payload);
     },
     *thirdExport({ payload }, { call }) {
-      Object.assign(payload, { exportType:'export', fileName: '薪资单列表' });
+      Object.assign(payload, { exportType:'export', fileName: '三方导入列表' });
       yield call(post, api.thirdExport, payload);
     },
   },

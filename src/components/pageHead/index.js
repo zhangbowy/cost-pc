@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-no-target-blank */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -65,10 +66,20 @@ class App extends React.PureComponent {
           }
         </div>
         {
-          isShowBtn &&
-          <Button type="primary" disabled={disabled} style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
-            { disabled ? '暂未开启' : '已开启' }
-          </Button>
+          isShowBtn ?
+            disabled ?
+              <Button type="primary" disabled={disabled} style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
+                { disabled ? '暂未开启' : '已开启' }
+              </Button>
+              :
+              <div style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
+                <div className={styles.alreadyOpen}>
+                  <i className="iconfont iconxuanzhong m-r-8" />
+                  <span>已开启</span>
+                </div>
+              </div>
+            :
+            null
         }
       </div>
     );

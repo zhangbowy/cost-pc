@@ -232,6 +232,10 @@ class CostDetailTable extends PureComponent {
                     :
                     null
                 }
+                {
+                  record.isTicketChangeOrRefund &&
+                  <span>退改签订单</span>
+                }
               </span>
             ),
             className: 'moneyCol',

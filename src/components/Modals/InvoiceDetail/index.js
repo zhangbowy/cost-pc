@@ -22,6 +22,8 @@ import ProductTable from './ProductTable';
 import { numAdd } from '../../../utils/float';
 import { handleProduction, compare, getParams } from '../../../utils/common';
 import AliLink from './AliLink';
+import aliLogo from '@/assets/img/aliTrip/alitrip.png';
+import DisabledTooltip from './DisabledTooltip';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { aliTraffic } = fields;
@@ -435,6 +437,7 @@ class InvoiceDetail extends Component {
         </span>
         <Modal
           visible={visible}
+          closable={false}
           title={(
             <div className={style.modalBtn}>
               <span>单据详情</span>
@@ -446,24 +449,30 @@ class InvoiceDetail extends Component {
                   <i className="iconfont icona-xiazai3x" onClick={() => this.handelOk()} />
                 </Tooltip>
                 {
-                  allow === 'copy' && (userInfo.userId === details.userId) &&
+                  allow === 'copy' && (userInfo.userId === details.userId) && !details.isEnterpriseAlitrip &&
                     <Tooltip title="复制">
                       <i className="iconfont icona-fuzhi3x" onClick={() => this.onChangeType('copy')} />
                     </Tooltip>
                 }
+                {
+                  details.isEnterpriseAlitrip &&
+                  <Tooltip title="阿里商旅自动导入单据，不支持复制">
+                    <i className="iconfont icona-fuzhi3x c-black-25" />
+                  </Tooltip>
+                }
+                <i className="iconfont icona-guanbi3x" onClick={() => this.onCancel()} />
               </div>
             </div>
           )}
           width="980px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
-          onCancel={() => this.onCancel()}
           footer={(
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 {
                   canRefuse &&
                   <Button className="m-r-8" onClick={() => this.onChangeSign()}>
-                    { isSign ? '移至待发放' : '移至已票签' }
+                    { isSign ? '移回待发放' : '移至已票签' }
                   </Button>
                 }
                 {
@@ -515,7 +524,13 @@ class InvoiceDetail extends Component {
             </Col>
             <Col span={8} className="m-t-16">
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单号：</span>
-              <span className="fs-14 c-black-65">{details.invoiceNo}</span>
+              <span className="fs-14 c-black-65">
+                {details.invoiceNo}
+                {
+                  details.isEnterpriseAlitrip &&
+                  <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+                }
+              </span>
             </Col>
             {
               Number(templateType) === 2 ?
@@ -617,7 +632,13 @@ class InvoiceDetail extends Component {
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
               <span className="fs-14 c-black-65">
                 {getArrayValue(details.approveStatus, approveStatus)}
-                <span className="link-c m-l-8" onClick={() => this.onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
+                {
+                  details.isEnterpriseAlitrip ?
+                    <DisabledTooltip title="阿里商旅自动导入单据，无审批环节" name="审批详情" />
+                  :
+                    <span className="link-c m-l-8" onClick={() => this.onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
+
+                }
               </span>
             </Col>
             {
@@ -822,23 +843,46 @@ class InvoiceDetail extends Component {
               </Col>
             }
             {
-              aliTrip && aliTrip.alitripCostCenterJson &&
+              aliTrip && aliTrip.alitripCostCenterId &&
               <Col span={8} className="m-t-16">
                 <div style={{display: 'flex'}}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>成本中心：</span>
                   <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                    {aliTrip.alitripCostCenterJson.label}
+                    {aliTrip.alitripCostCenterJson.label || aliTrip.alitripCostCenterJson.title}
                   </span>
                 </div>
               </Col>
             }
             {
-              aliTrip && aliTrip.alitripInvoiceTitleJson &&
+              aliTrip && aliTrip.alitripCostCenterId &&
               <Col span={8} className="m-t-16">
                 <div style={{display: 'flex'}}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发票抬头：</span>
                   <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                    {aliTrip.alitripInvoiceTitleJson.label}
+                    {aliTrip.alitripInvoiceTitleJson.label || aliTrip.alitripInvoiceTitleJson.title}
+                  </span>
+                </div>
+              </Col>
+            }
+            {
+              aliTrip && aliTrip.alitripExpensesOwner &&
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>同行人：</span>
+                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                    {aliTrip.fellowTravelers && aliTrip.fellowTravelers.length ?
+                    aliTrip.fellowTravelers.map(it => it.userName).join(',') : ''}
+                  </span>
+                </div>
+              </Col>
+            }
+            {
+              aliTrip && aliTrip.alitripExpensesOwner &&
+              <Col span={8} className="m-t-16">
+                <div style={{display: 'flex'}}>
+                  <span className={cs('fs-14', 'c-black-85', style.nameTil)}>费用归属：</span>
+                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                    {aliTrip.alitripExpensesOwner}
                   </span>
                 </div>
               </Col>
@@ -1013,7 +1057,7 @@ class InvoiceDetail extends Component {
               null
           }
           {
-            aliTrip.alitripCostCenterJson &&
+            aliTrip.alitripCostCenterId &&
             <>
               <AliLink
                 status={details.approveStatus}

@@ -37,3 +37,17 @@
 .headerTitle{
   position: relative;
 }
+.alreadyOpen{
+  width: 104px;
+  height: 34px;
+  background: rgba(0, 199, 149, 0.1);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 199, 149, 1);
+  i{
+    display: inline-block;
+    vertical-align: middle;
+  }
+}

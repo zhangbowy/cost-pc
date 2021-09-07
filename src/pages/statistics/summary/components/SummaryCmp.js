@@ -402,7 +402,7 @@ class SummaryCmp extends Component {
               dataIndex: 'reason',
               width: 150,
               render: (_, record) => (
-                <InvoiceDetail id={record.id} templateType={3}>
+                <InvoiceDetail id={record.id} templateType={0}>
                   <span>
                     <Tooltip placement="topLeft" title={record.reason || ''}>
                       <a className="eslips-2">{record.reason}</a>
@@ -413,7 +413,7 @@ class SummaryCmp extends Component {
               fixed: 'left'
             }, {
               title: '金额(元)',
-              dataIndex: 'salaryAmount',
+              dataIndex: 'submitSum',
               render: (text) => (
                 <span>{text && text / 100}</span>
               ),
@@ -429,7 +429,7 @@ class SummaryCmp extends Component {
               width: 160,
             }, {
               title: '关联申请单',
-              dataIndex: 'projectName',
+              dataIndex: 'relevanceInvoiceNo',
               width: 150,
             }, {
               title: '提交人',
@@ -482,7 +482,8 @@ class SummaryCmp extends Component {
                   (status === 3 && templateType === 3) ||
                   (status === 3 && templateType === 0) ||
                   (templateType === 1 && status === 6) ||
-                  (templateType === 2 && status === 2) ?
+                  (templateType === 2 && status === 2) ||
+                  (templateType === 4 && status === 3) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"
                       onConfirm={() => this.onDelete(record.id)}

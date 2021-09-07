@@ -11,9 +11,25 @@ const { aliTraffic } = fields;
 const AliLink = ({ status, subTrip, onGetLink }) => {
 const [visible, setVisible] = useState(false);
 const [oderType, setOrderType] = useState(1);
-const handleClick = (key) => {
-  setOrderType(key);
-  setVisible(true);
+const handleClick = async(key) => {
+  const it = subTrip[0];
+  if (subTrip && subTrip.length === 1) {
+    const orders = it.traffic === '飞机' ? 1 : 2;
+    const result = await onGetLink({
+      orderType: key !== 1 ? key : orders,
+      startCity: it.startCity,
+      endCity: it.endCity,
+      itineraryId: it.itineraryId
+    });
+    if (result) {
+      setVisible(false);
+      window.location.href = result;
+      // ddOpenLink(result);
+    }
+  } else {
+    setOrderType(key);
+    setVisible(true);
+  }
 };
 const onLink = async(it) => {
   const orders = it.traffic === '飞机' ? 1 : 2;
@@ -66,7 +82,7 @@ return (
                 />
               </div>
               <div className="m-t-16">
-                <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}</p>
+                <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}({item.way})</p>
                 <p className="c-black-65 fs-14">
                   {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
                 </p>

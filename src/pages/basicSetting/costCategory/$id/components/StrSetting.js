@@ -58,7 +58,7 @@ const selfStr = [{
   key: '10',
   fieldType: '10',
   name: '行程',
-  icon: 'iconmingxi',
+  icon: 'icona-hangcheng3x',
 }];
 
 const StrSetting = ({ fieldList,
@@ -143,7 +143,8 @@ const StrSetting = ({ fieldList,
     }
     setDragId(id);
   };
-  const selfList = templateType === 2 ? selfStr : selfStr.filter(it => (Number(it.fieldType) !== 3));
+  const selfList = templateType === 2 ? selfStr :
+  selfStr.filter(it => (Number(it.fieldType) !== 3 && Number(it.fieldType) !== 10));
   return (
     <div style={{width: '100%', height: '100%', display: 'flex'}}>
       <div className={style.left}>

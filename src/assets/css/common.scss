@@ -7,6 +7,16 @@
     font-size: 14px;
     color: rgba(0, 0, 0, 0.25);
   }
+  .isFormRequired::before{
+    display: inline-block;
+    margin-right: 4px;
+    color: #f5222d;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
+  }
+
   .icons{
     .iconmorenleibietu1{
       color: rgba(0, 199, 149, 1)!important;

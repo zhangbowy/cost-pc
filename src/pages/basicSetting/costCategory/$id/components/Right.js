@@ -2,7 +2,7 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip } from 'antd';
+import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
@@ -256,11 +256,11 @@ class Right extends PureComponent {
   }
 
   onChangeThird = (e, key) => {
-    // const auths = localStorage.getItem('aliTripAuthorize');
-    // if (auths && auths  !== '0') {
-    //   message.error('请先开通阿里商旅并完成授权');
-    //   return;
-    // }
+    const auths = localStorage.getItem('isAlitripAuth');
+    if (auths && auths  === '0') {
+      message.error('请先开通阿里商旅并完成授权');
+      return;
+    }
     const { selectList } = this.props;
     const { details } = this.state;
     let expands = [...aliTrip];
@@ -275,6 +275,15 @@ class Right extends PureComponent {
       expands = [...expands, ...aliTripStr];
     } else if (obj.alitripSetting.isEnable) {
       expands = [...expands, ...aliTripHasTrip];
+    }
+    console.log('是否是正确的', obj.alitripSetting.isEnable);
+    if (!obj.alitripSetting.isEnable) {
+      Object.assign(obj, {
+        alitripSetting: {
+          ...obj.alitripSetting,
+          hasFellowTraveler: false,
+        }
+      });
     }
     Object.assign(obj, {
       expandFieldVos: expands,
@@ -509,7 +518,9 @@ class Right extends PureComponent {
               </Form.Item>
             }
             {
-              templateType !== 2 && templateType !== 3 && isModifyInvoice &&
+              templateType !== 2 && templateType !== 3 &&
+               isModifyInvoice &&
+               Number(details.fieldType) !== 10 &&
               Number(details.fieldType) !== 9 &&
                 <Form.Item
                   label={(
@@ -546,6 +557,7 @@ class Right extends PureComponent {
             }
             {
               details.field && (details.field.indexOf('self_') > -1) && !details.parentId &&
+              Number(details.fieldType) !== 10 &&
               <>
                 <Divider type="horizontal" />
                 <Form.Item label="其他设置">

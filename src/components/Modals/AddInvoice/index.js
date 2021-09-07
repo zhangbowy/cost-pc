@@ -86,6 +86,7 @@ class AddInvoice extends Component {
       travelList: {}, // 行程的form表单以及数据
       aliTripFields: [],
       aliTripAuth: {}, // 判断是否有商旅权限
+      hisAliTrip: {}, // 历史数据
     };
     this.changeForm = null;
   }
@@ -279,7 +280,7 @@ class AddInvoice extends Component {
         const { aliCostAndI, deptTree } = this.props;
         if (aliCostAndI && aliTripAuth && aliTripAuth.length) {
           this.setState({
-            aliTripFields: defaultFunc.handleAliTrip(aliCostAndI, deptTree, aliTripAuth[0]),
+            aliTripFields: { aliCostAndI, deptTree, aliAuth: aliTripAuth[0] },
           });
         }
 
@@ -329,6 +330,7 @@ class AddInvoice extends Component {
             inDetails: djDetails,
             visible: true,
             historyParams: JsonParse(contentJson),
+            hisAliTrip: contents.trip,
             aliTripAuth: aliTripAuth && aliTripAuth.length ? aliTripAuth[0] : {},
           });
         }
@@ -667,6 +669,9 @@ class AddInvoice extends Component {
     if (this.props.onChangeVisible) {
       this.props.onChangeVisible();
     }
+    if (this.handleCancel) {
+      this.handleCancel();
+    }
     this.setState({
       visible: false,
       imgUrl: [],
@@ -692,6 +697,7 @@ class AddInvoice extends Component {
       hisCostDetailsVo: [], // 历史分摊数据
       applyDetailList: [],  // 产品明细
       expandVos: [],
+      hisAliTrip: {},
     });
   }
 
@@ -956,7 +962,7 @@ class AddInvoice extends Component {
   }
 
   // 保存草稿
-  handelOkDraft = () => {
+  handelOkDraft = async() => {
     const val = (this.changeForm && this.changeForm.onGetVal()) || {};
     console.log('AddInvoice -> handelOkDraft -> val', val);
     if (!val.reason) {
@@ -1119,6 +1125,13 @@ class AddInvoice extends Component {
         detailList: this.onCategoryStatus.onSave(),
         detailJson,
         detailType,
+      });
+    }
+    if (this.handleOpenModal) {
+      const aliTrips = await this.handleOpenModal(true);
+      console.log('AddInvoice -> handleOk -> aliTrips', aliTrips);
+      Object.assign(params, {
+        trip: aliTrips,
       });
     }
     const url = draftId ? 'costGlobal/editDraft' : 'costGlobal/addDraft';
@@ -1351,6 +1364,7 @@ class AddInvoice extends Component {
       travelList,
       aliTripFields,
       aliTripAuth,
+      hisAliTrip
     } = this.state;
 
     const modify = operateType === 'modify';
@@ -1507,8 +1521,12 @@ class AddInvoice extends Component {
                 aliTripFields={aliTripFields}
                 aliCostAndI={aliCostAndI}
                 aliTripAuth={aliTripAuth}
+                hisAliTrip={hisAliTrip || {}}
                 onGetFunc={func => {
                   this.handleOpenModal = func;
+                }}
+                onResetFun={func => {
+                  this.handleCancel = func;
                 }}
               />
             }

@@ -10,12 +10,14 @@ import QrCodeModal from '@/components/QrCodeModal';
 import treeConvert from '@/utils/treeConvert';
 // import SortModal from './components/SortModal';
 import PageHead from '@/components/pageHead';
+import aliLogo from '@/assets/img/aliTrip/alitrip.png';
 // import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
 import Tags from '../../../components/Tags';
 import Sort from '../../../components/TreeSort';
 import { invoiceType } from '../../../utils/constants';
+
 
 const namespace = 'invoice';
 const { confirm } = Modal;
@@ -63,7 +65,7 @@ class Invoice extends React.PureComponent {
       if (this.props.check && this.props.check.isCheckDel) {
         confirm({
           title: '请确认是否删除?',
-          content: '删除不能恢复',
+          content: this.props.check.msg || '删除不能恢复',
           okText: '确认',
           okType: 'danger',
           cancelText: '取消',
@@ -179,7 +181,7 @@ class Invoice extends React.PureComponent {
       lists = treeConvert({
         rootId: 0,
         pId: 'parentId',
-        otherKeys: ['status', 'note', 'type', 'sort', 'templateType', 'parentId', 'sort'],
+        otherKeys: ['status', 'note', 'type', 'sort', 'templateType', 'parentId', 'sort', 'isAlitrip'],
       },list);
     }
     this.sortData(lists);
@@ -195,6 +197,10 @@ class Invoice extends React.PureComponent {
             <Tags color={invoiceType[record.templateType].color}>
               {invoiceType[record.templateType].name}
             </Tags>
+          }
+          {
+            record.isAlitrip &&
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>
       ),

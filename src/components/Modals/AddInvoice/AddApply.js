@@ -93,47 +93,87 @@ class AddApply extends Component {
           this.changeErr(newArr);
         }
       });
+    } else {
+      this.changeErr(newArr);
+      // this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+      // this.onCancel();
     }
   }
 
   changeErr = (newArr) => {
     const { selectedRowKeys } = this.state;
-    this.props.dispatch({
-      type: 'costGlobal/checkFolderAlc',
-      payload: {
-        list: newArr.map(it => it.applicationId),
-      }
-    }).then(() => {
-      const { checkFolderList, costList } = this.props;
-      const detailFolderId = costList.map(it => it.detailFolderId);
-      const checkIds = checkFolderList.map(it => it.checkFolderList);
-      const arrs = [];
-      detailFolderId.forEach(item => {
-        if (!checkIds.includes(item)) {
-          arrs.push(item);
+    const ids = newArr.filter(it => it.isAlitrip && it.hasAlitripOrder);
+    if (ids && ids.length) {
+      this.props.dispatch({
+        type: 'costGlobal/checkFolderAlc',
+        payload: {
+          list: ids.map(it => it.applicationId),
+        }
+      }).then(() => {
+        const { checkFolderList, costList } = this.props;
+        const newCheckList = [];
+        checkFolderList.forEach(it => {
+          const costDetailShareVOS = [];
+          const obj = {
+            ...it,
+            key: it.id,
+            folderType: 'folder',
+            costSum: it.costSum/100,
+            detailFolderId: it.id,
+          };
+          if (it.costDetailShareVOS) {
+            it.costDetailShareVOS.forEach(item => {
+              costDetailShareVOS.push({
+                ...item,
+                shareAmount: item.shareAmount/100,
+              });
+            });
+          }
+          newCheckList.push({
+            ...obj,
+            costDetailShareVOS,
+            currencyId: it.currencyId || '-1',
+          });
+        });
+        const checkIds = costList.map(it => it.id || it.detailFolderId);
+        let arrs = [];
+        console.log('没有对比的数据', costList);
+        if (costList && costList.length) {
+          newCheckList.forEach(item => {
+            if (!checkIds.includes(item.id || item.detailFolderId)) {
+              arrs.push(item);
+            }
+          });
+        } else {
+          arrs = [...newCheckList];
+        }
+        console.log('对比之后的arr', arrs);
+        if (arrs.length) {
+          Modal.confirm({
+            title: '是否导入该申请单所有行程的支出明细',
+            okText: '同步导入',
+            cancelText: '自行添加',
+            onOk: () => {
+              const costs = [...costList, ...arrs];
+              this.props.onAddCost(costs);
+              this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+              this.onCancel();
+            },
+            onCancel: () => {
+              this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+              this.onCancel();
+            }
+          });
+        } else {
+          this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+          this.onCancel();
         }
       });
-      if (arrs.length) {
-        Modal.confirm({
-          title: '是否导入该申请单所有行程的费用明细',
-          okText: '同步导入',
-          cancelText: '自行添加',
-          onOk: () => {
-            const costs = [...costList, ...arrs];
-            this.props.onAddCost(costs);
-            this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
-            this.onCancel();
-          },
-          onCancel: () => {
-            this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
-            this.onCancel();
-          }
-        });
-      } else {
-        this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
-        this.onCancel();
-      }
-    });
+    } else {
+      this.props.onAddBorrow(newArr.map((it, index)=> { return {...it, sort: index}; }),selectedRowKeys);
+      this.onCancel();
+    }
+
   }
 
   onSelectAll = (selected, selectedRows, changeRows) => {

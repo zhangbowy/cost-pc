@@ -85,7 +85,7 @@ class AddTravelForm extends Component {
     // can use data-binding to get
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat({
-      key: id++,
+      key: `a0_${id++}`,
     });
     // can use data-binding to set
     // important! notify form to detect changes
@@ -112,14 +112,14 @@ class AddTravelForm extends Component {
 
   handleCity = (code) => {
     const { provinceAndCity } = this.props;
-    const city = provinceAndCity.filter(it => it.areaCode === code);
+    const city = provinceAndCity.filter(it => `${it.areaCode}` === `${code}`);
     return city[0];
   }
 
   handleSubmit = () => {
     console.log(this.props.form);
-    const { form: { validateFieldsAndScroll }, onOk } = this.props;
-    const newArrs = [];
+    const { form: { validateFieldsAndScroll }, onOk, flag, allList, list } = this.props;
+    let newArrs = [];
     validateFieldsAndScroll((err, value) => {
       if (!err) {
         console.log('value', value);
@@ -141,6 +141,12 @@ class AddTravelForm extends Component {
             way: getParams({ res: value.way[item], list: aliWay, key: 'value', resultKey: 'label' }),
           });
         });
+        if (flag && allList) {
+          const i = list[0].editIndex;
+          const obj = newArrs[0];
+          newArrs = [...allList];
+          newArrs.splice(i, 1, obj);
+        }
         onOk(newArrs);
         this.onCancel();
       }
@@ -152,10 +158,10 @@ class AddTravelForm extends Component {
   }
 
   onChangeCity = (key, value) => {
-    const { form: { getFieldValue } } = this.props;
+    const { form: { getFieldValue }, hasFellowTraveler } = this.props;
     const start = this.handleCity(value[value.length -1]).areaName;
     const end = getFieldValue(`${key.indexOf('start') > -1 ? 'endCity' : 'startCity'}[${key}]`);
-    if (end && end.length) {
+    if (end && end.length && hasFellowTraveler) {
       const ends = this.handleCity(end[end.length-1]).areaName;
       this.props.dispatch({
         type: 'costGlobal/aliTripCity',
@@ -184,24 +190,31 @@ class AddTravelForm extends Component {
   }
 
   onChange = (e, key) => {
-    const { form: { getFieldValue } } = this.props;
+    const { form: { getFieldValue }, hasFellowTraveler } = this.props;
     const startCity = getFieldValue(`startCity[${key}]`);
     const endCity = getFieldValue(`endCity[${key}]`);
     const { isShow } = this.state;
+    if (!hasFellowTraveler) {
+      return;
+    }
     if (Number(e.target.value) === 3 && !isShow.includes(key)) {
       isShow.push(key);
       this.setState({
         isShow,
       });
+    } else {
+      this.setState({
+        isShow: isShow.filter(it => it !== key),
+      });
     }
-    if (startCity && endCity) {
+    if (startCity && endCity && hasFellowTraveler) {
       const start = this.handleCity(startCity[startCity.length - 1]).areaName;
       const end = this.handleCity(endCity[endCity.length - 1]).areaName;
       this.props.dispatch({
         type: 'costGlobal/aliTripCity',
         payload: {
           type: getParams({ res: e.target.value, list: aliTraffic, key: 'value', resultKey: 'label' }),
-          keywords: JSON.stringify([start, end]),
+          keywords: `${start},${end}`,
         }
       }).then(() => {
         const { aliTripCity } = this.props;
@@ -213,7 +226,7 @@ class AddTravelForm extends Component {
             arrs.push(`[${key}]`);
           }
         } else {
-          arrs = errorArr.filter(it => it === `[${key}]`);
+          arrs = errorArr.filter(it => it !== `[${key}]`);
         }
 
         this.setState({
@@ -228,7 +241,8 @@ class AddTravelForm extends Component {
     const {
       children,
       form: { getFieldDecorator, getFieldValue },
-      provinceAndCity
+      provinceAndCity,
+      flag,
     } = this.props;
     const treeList = treeConvert({
       rootId: 0,
@@ -285,7 +299,7 @@ class AddTravelForm extends Component {
             <Form.Item label="单程往返">
               {
                 getFieldDecorator(`way[${it.key}]`, {
-                  initialValue: it.way || '0',
+                  initialValue: it.way || '1',
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <RadioGroup className={style.selfRadio}>
@@ -304,7 +318,7 @@ class AddTravelForm extends Component {
                 )
               }
             </Form.Item>
-            <Form.Item label="起止城市" className={style.selects}>
+            <Form.Item label={(<span className={style.isRequired}>起止城市</span>)} className={style.selects}>
               <div style={{ display: 'flex' }}>
                 <Form.Item>
                   {
@@ -317,7 +331,7 @@ class AddTravelForm extends Component {
                         placeholder="请选择"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         showSearch={this.filter}
-                        onChange={val => this.onChangeCity(it.key, val)}
+                        onChange={val => this.onChangeCity(`startCity[${it.key}]`, val)}
                       />
                     )
                   }
@@ -334,14 +348,14 @@ class AddTravelForm extends Component {
                         placeholder="请选择"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         showSearch={this.filter}
-                        onChange={val => this.onChangeCity(it.key, val)}
+                        onChange={val => this.onChangeCity(`endCity[${it.key}]`, val)}
                       />
                     )
                   }
                 </Form.Item>
               </div>
             </Form.Item>
-            <Form.Item label="起止日期" className={style.selects}>
+            <Form.Item label={(<span className={style.isRequired}>起止日期</span>)} className={style.selects}>
               <div style={{display: 'flex'}}>
                 <Form.Item>
                   {
@@ -387,13 +401,17 @@ class AddTravelForm extends Component {
           okButtonProps={{
             disabled: errorArr.length
           }}
+          bodyStyle={{height: '470px', overflowY: 'scroll'}}
         >
           <Form>
             {formItems}
           </Form>
-          <div style={{textAlign: 'center'}} className={style.addbtn}>
-            <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加行程</Button>
-          </div>
+          {
+            !flag &&
+            <div style={{textAlign: 'center'}} className={style.addbtn}>
+              <Button icon="plus" style={{ width: '231px' }} onClick={() => this.onAdd()}>添加行程</Button>
+            </div>
+          }
         </Modal>
       </div>
     );

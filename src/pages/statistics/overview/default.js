@@ -125,7 +125,7 @@ export default {
         <span>
           <span>{record.invoiceNo}</span>
           {
-            record.showAlitripIcon &&
+            record.isEnterpriseAlitrip &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>

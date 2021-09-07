@@ -219,10 +219,11 @@
 }
 .singleContent .singleDel{
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 5px;
+  right: 10px;
   color: rgba(255, 90, 95, 1);
   cursor: pointer;
+  font-size: 20px;
 }
 .singleBtn{
   width: 280px;
@@ -232,4 +233,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+}
+.singleBtn:hover{
+  color: #00C795;
+  border-color: #00C795;
+}
+.cityContent{
+  overflow: hidden;
+  white-space: nowrap;
+  width: 205px;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: rgba(0, 0, 0, 0.85) ;
+  font-size: 16px;
 }

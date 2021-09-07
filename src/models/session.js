@@ -88,6 +88,7 @@ export default {
       localStorage.setItem('isSetWorkbench', response.isSetWorkbench);
       localStorage.setItem('token', response.token);
       localStorage.setItem('statisticalDimension', response.statisticalDimension);
+      localStorage.setItem('isAlitripAuth', response.isAlitripAuth ? 1 : 0);
       yield put({
         type: 'save',
         payload: {

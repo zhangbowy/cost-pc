@@ -1,18 +1,18 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Icon, Popconfirm, Tree, Tooltip } from 'antd';
+import { Steps, Button, Table, Icon, Tree, Tooltip, Popover } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import Search from 'antd/lib/input/Search';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
-import qrCode from '@/assets/img/qrcode.png';
+import qrCode from '@/assets/img/aliCode.png';
 import style from './index.scss';
 
 const aliTravel = {
-  0: '飞机',
-  1: '火车',
+  0: '机票',
+  1: '火车票',
   2: '酒店',
-  3: '打的',
+  3: '用车',
 };
 const { Step } = Steps;
 const { TreeNode } = Tree;
@@ -25,14 +25,14 @@ class AllTravelData extends PureComponent {
   state = {
     current: 1,
     costCategoryId: '',
-    type: ''
+    type: '',
+    searchContent: '',
+    lists: [],
+    visible: false,
   }
 
   componentDidMount() {
-    this.props.dispatch({
-      type: 'global/costList',
-      payload: {},
-    });
+    this.onQuery({});
     this.props.dispatch({
       type: 'aliTravelData/authorize',
       payload: {},
@@ -49,18 +49,26 @@ class AllTravelData extends PureComponent {
       type: 'aliTravelData/editRef',
       payload: {
         type,
-        costCategoryId: costCategoryId[0]
+        costCategoryId: costCategoryId[0],
       }
     }).then(() => {
       this.props.dispatch({
         type: 'aliTravelData/authorize',
         payload: {},
       });
+      this.setState({
+        visible: false,
+        searchContent: '',
+      }, () => {
+        this.onQuery({});
+      });
+
     });
   }
 
   // 循环渲染树结构
   loop = data => data.map(item => {
+    const { selectedKeys } = this.state;
     if (item.children && item.children.length) {
       return (
         <TreeNode
@@ -69,7 +77,7 @@ class AllTravelData extends PureComponent {
           value={item.value}
           disabled={item.disabled}
           title={(
-            <div>
+            <div className={selectedKeys === item.value ? cs(style.costs, 'icons') : 'icons'}>
               {
                 item.type ?
                   <i className={cs(`icon${item.icon}`, 'iconfont')} />
@@ -90,7 +98,7 @@ class AllTravelData extends PureComponent {
       value={item.value}
       disabled={item.disabled}
       title={(
-        <div className="icons" style={{ width: '100%' }}>
+        <div style={{ width: '100%' }} className={selectedKeys === item.value ? cs(style.costs, 'icons') : 'icons'}>
           {
             item.type ?
               <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
@@ -103,6 +111,49 @@ class AllTravelData extends PureComponent {
     />;
   });
 
+  onSearch = (e) => {
+    this.setState({
+      searchContent: e.target.value,
+    });
+  }
+
+  onNewSearch = (e) => {
+    console.log(e);
+    this.onQuery({ costName: e });
+  }
+
+  onQuery = (payload) => {
+    this.props.dispatch({
+      type: 'global/costList',
+      payload,
+    }).then(() => {
+      let arr = [];
+      const { costCategoryList } = this.props;
+      if (payload.costName) {
+        arr = costCategoryList.map(it => {
+          return {
+            title: it.costName,
+            value: it.id,
+            icon: it.icon,
+            type: it.type
+          };
+        });
+      } else {
+        arr = treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          name: 'costName',
+          tId: 'value',
+          tName: 'title',
+          otherKeys: ['type','showField', 'icon']
+        }, costCategoryList);
+      }
+      this.setState({
+        lists: arr,
+      });
+    });
+  }
+
   onSelect = (selectedKeys, info, type) => {
     console.log('selected', selectedKeys, info);
     this.setState({
@@ -111,17 +162,16 @@ class AllTravelData extends PureComponent {
     });
   };
 
+  onCancel = () => {
+    this.setState({
+      searchContent: ''
+    });
+    this.onQuery({});
+  }
+
   render () {
-    const { current } = this.state;
-    const { list, costCategoryList, authorize } = this.props;
-    const tree = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'costName',
-      tId: 'value',
-      tName: 'title',
-      otherKeys: ['type','showField', 'icon']
-    }, costCategoryList);
+    const { current, searchContent, lists, visible } = this.state;
+    const { list, authorize } = this.props;
     const columns = [{
       title: '支出类别',
       dataIndex: 'costCategoryName',
@@ -131,33 +181,49 @@ class AllTravelData extends PureComponent {
             <span className="m-r-8">{record.costCategoryName}</span>
             {
               authorize.isAuthorize &&
-              <Popconfirm
+              <Popover
+                trigger="click"
                 overlayClassName={style.popStyle}
                 icon={false}
+                visible={visible === record.type}
                 title={(
-                  <div style={{height: '300px', width: '100%'}}>
-                    <Search style={{ marginBottom: 8 }} placeholder="请输入" onChange={this.onChange} />
+                  <div style={{height: '360px', width: '100%', position: 'relative'}}>
+                    <div style={{padding: '10px 10px 0 10px'}}>
+                      <Search style={{ marginBottom: 8 }} placeholder="请输入" onChange={this.onSearch} onSearch={e =>this.onNewSearch(e)} value={searchContent} />
+                    </div>
                     <Tree
-                      dropdownStyle={{height: '300px'}}
-                      style={{width: '100%'}}
+                      style={{width: '100%', height: '277px', overflow: 'scroll'}}
                       onSelect={(selectedKeys, info) =>this.onSelect(selectedKeys, info, record.type)}
                     >
-                      {this.loop(tree)}
+                      {this.loop(lists)}
                     </Tree>
+                    <div className={style.footers}>
+                      <div className={style.footCont}>
+                        <span>修改后，{aliTravel[record.type]}订单将默认按新类别导入</span>
+                        <div
+                          onClick={() => this.setState({visible: false})}
+                          style={{background: '#fff', color: 'rgba(0, 0, 0, 0.65)', border: '1px solid #D9D9D9', marginRight: '8px'}}
+                        >
+                          取消
+                        </div>
+                        <div onClick={this.confirm}>确定</div>
+                      </div>
+                    </div>
                   </div>
                 )}
                 onConfirm={this.confirm}
                 okText="确定"
                 cancelText="取消"
+                onCancel={() => this.onCancel()}
               >
-                <Icon type="edit" style={{ color: 'rgba(0, 199, 149, 1)' }} />
-              </Popconfirm>
+                <Icon type="edit" style={{ color: 'rgba(0, 199, 149, 1)' }} onClick={() => this.setState({ visible: record.type })} />
+              </Popover>
             }
           </span>
         );
       },
     }, {
-      title: '阿里商旅订单类型',
+      title: '阿里商旅',
       dataIndex: 'type',
       render: (_, record) => (
         <span>{aliTravel[record.type]}</span>
@@ -170,7 +236,7 @@ class AllTravelData extends PureComponent {
       <div>
         <PageHead title="阿里商旅" isShowBtn disabled={!authorize.isAuthorize} />
         <div className={cs(style.travel, 'content-dt')}>
-          <Steps current={current} onChange={this.onChange} direction="vertical">
+          <Steps current={authorize.isAuthorize ? current : 0} onChange={this.onChange} direction="vertical">
             <Step
               title={(<p className={style.first}>请确认公司已经开通【阿里商旅】，才可实现双方数据集成。如未开通可先至应用市场进行开通</p>)}
               description=""
@@ -186,7 +252,7 @@ class AllTravelData extends PureComponent {
                 <div>
                   <p className="c-black-45 fs-14">- 企业：财务对账简单，阿里商旅平台数据自动导入，保证数据真实性</p>
                   <p className="c-black-45 fs-14">- 员工：阿里商旅的行程订单自动导入账本，单据提报更便捷</p>
-                  <Tooltip placement="top" title={(<img alt="二维码" src={qrCode} className={style.qrCode} />)} color="#ffffff">
+                  <Tooltip placement="top" title={(<img alt="二维码" src={qrCode} className={style.qrCode} />)} overlayClassName={style.tooltips}>
                     <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }}>联系咨询</Button>
                   </Tooltip>
                 </div>
