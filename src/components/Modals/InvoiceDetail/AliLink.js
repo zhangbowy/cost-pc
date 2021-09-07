@@ -70,8 +70,14 @@ return (
       visible={visible}
       width="680px"
       onCancel={() => setVisible(false)}
+      footer={[
+        <Button type="default" onClick={() => setVisible(false)} key="cancel">取消</Button>
+      ]}
+      bodyStyle={{
+        height: '280px'
+      }}
     >
-      <div>
+      <div style={{display: 'flex', flexWrap: 'wrap'}}>
         {
           subTrip.map(item => (
             <div className={style.singleContent} key={item.startDate} onClick={() => onLink(item)}>

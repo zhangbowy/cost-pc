@@ -30,6 +30,7 @@ class AddTravelForm extends Component {
       list: [],
       errorArr: [],
       isShow: [],
+      treeListObj: {},
     };
     this.easyForm = null;
 
@@ -42,14 +43,26 @@ class AddTravelForm extends Component {
       type: 'costGlobal/provinceAndCity',
       payload: {}
     }).then(() => {
-      const { list } = this.props;
+      const { list, provinceAndCity } = this.props;
       const newArr = [];
       const showArr = [];
+      const objs = {'defaultTree': this.onGetCity(provinceAndCity, 0)};
       if (list && list.length) {
         list.forEach((it, index) => {
-          const startCity = this.handleCity(it.startCityCode);
+          const startCity = this.handleCity(it.startCityCode, it.traffic);
+          let sCode = [startCity.pid, startCity.areaCode];
+          if (startCity.level > 2) {
+            const pS = this.handleCity(startCity.pid, it.traffic);
+            sCode = [pS.pid, startCity.pid, startCity.areaCode];
+          }
           console.log('AddTravelForm -> onShow -> startCity', startCity);
-          const endCity = this.handleCity(it.endCityCode);
+          const endCity = this.handleCity(it.endCityCode, it.traffic);
+          let eCode = [endCity.pid, endCity.areaCode];
+          if (endCity.level > 2) {
+            const eS = this.handleCity(endCity.pid, it.traffic);
+            eCode = [eS.pid, endCity.pid, endCity.areaCode];
+          }
+
           if (it.traffic === '其他') {
             showArr.push(`${index}_aa`);
           }
@@ -58,10 +71,14 @@ class AddTravelForm extends Component {
             ...it,
             traffic: getParams({ res: it.traffic, list: aliTraffic, key: 'label', resultKey: 'value' }),
             way: getParams({ res: it.way, list: aliWay, key: 'label', resultKey: 'value' }),
-            startCity: [startCity.pid, startCity.areaCode],
-            endCity: [endCity.pid, endCity.areaCode],
+            startCity: sCode,
+            endCity: eCode,
             startDate: moment(moment(Number(it.startDate)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
             endDate: moment(moment(Number(it.endDate)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+            treeList: this.onGetCity(provinceAndCity, it.traffic)
+          });
+          Object.assign(objs, {
+            [`${index}_aa`]: this.onGetCity(provinceAndCity, it.traffic),
           });
         });
       }
@@ -69,8 +86,27 @@ class AddTravelForm extends Component {
         isShow: showArr,
         visible: true,
         list: newArr && newArr.length ? newArr : [{ key: '00_11' }],
+        treeListObj: objs,
       });
     });
+  }
+
+  onGetCity = ({ airportCityList, normalList, trainStationCityList }, type) => {
+    let list = normalList;
+    if (type === '飞机' || type === 0) {
+      list = airportCityList;
+    } else if (type === '火车' || type === 1) {
+      list = trainStationCityList;
+    }
+    const treeList = treeConvert({
+      rootId: 0,
+      pId: 'pid',
+      name: 'areaName',
+      id: 'areaCode',
+      tName: 'label',
+      tId: 'value'
+    }, list);
+    return treeList;
   }
 
   onCancel = () => {
@@ -110,9 +146,18 @@ class AddTravelForm extends Component {
     });
   };
 
-  handleCity = (code) => {
+  handleCity = (code, type) => {
+    console.log('handleCity -> type', type);
     const { provinceAndCity } = this.props;
-    const city = provinceAndCity.filter(it => `${it.areaCode}` === `${code}`);
+    let list = provinceAndCity.normalList;
+    if (type === 0 || type === '飞机') {
+      list = provinceAndCity.airportCityList;
+    }else if (type === 1 || type === '火车') {
+      list = provinceAndCity.trainStationCityList;
+    }
+    const city = list.filter(it => `${it.areaCode}` === `${code}`);
+    console.log('citys', city);
+    console.log('citysList', list);
     return city[0];
   }
 
@@ -132,9 +177,9 @@ class AddTravelForm extends Component {
             key: `${index}_aa`,
             trafficName: value.trafficName && value.trafficName[item] ? value.trafficName[item][start-1] : '',
             traffic: getParams({ res: value.traffic[item], list: aliTraffic, key: 'value', resultKey: 'label' }),
-            startCity: this.handleCity(value.startCity[item][start-1]).areaName,
+            startCity: this.handleCity(value.startCity[item][start-1], Number(value.traffic[item])).areaName,
             startCityCode: value.startCity[item][start-1],
-            endCity: this.handleCity(value.endCity[item][end-1]).areaName,
+            endCity: this.handleCity(value.endCity[item][end-1], Number(value.traffic[item])).areaName,
             endCityCode: value.endCity[item][end-1],
             startDate: moment(value.startDate[item]).format('x'),
             endDate: moment(value.endDate[item]).format('x'),
@@ -157,16 +202,17 @@ class AddTravelForm extends Component {
     return path.some(option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
   }
 
-  onChangeCity = (key, value) => {
+  onChangeCity = (key, value, newKey) => {
     const { form: { getFieldValue }, hasFellowTraveler } = this.props;
-    const start = this.handleCity(value[value.length -1]).areaName;
-    const end = getFieldValue(`${key.indexOf('start') > -1 ? 'endCity' : 'startCity'}[${key}]`);
+    const traffic = getFieldValue(`traffic[${newKey}]`);
+    const start = this.handleCity(value[value.length -1], Number(traffic)).areaName;
+    const end = getFieldValue(`${key.indexOf('start') > -1 ? 'endCity' : 'startCity'}[${newKey}]`);
     if (end && end.length && hasFellowTraveler) {
-      const ends = this.handleCity(end[end.length-1]).areaName;
+      const ends = this.handleCity(end[end.length-1], Number(traffic)).areaName;
       this.props.dispatch({
         type: 'costGlobal/aliTripCity',
         payload: {
-          type: getParams({ res: getFieldValue(`traffic[${key}]`), list: aliTraffic, key: 'value', resultKey: 'label' }),
+          type: getParams({ res: getFieldValue(`traffic[${newKey}]`), list: aliTraffic, key: 'value', resultKey: 'label' }),
           keywords: key.indexOf('start') > -1 ?
           `${start}, ${ends}` : `${ends},${start}`,
         }
@@ -176,11 +222,11 @@ class AddTravelForm extends Component {
         let arrs = [...errorArr];
         if (!aliTripCity) {
           message.error('起止城市没有该交通工具');
-          if (!errorArr.includes(key)) {
-            arrs.push(key);
+          if (!errorArr.includes(newKey)) {
+            arrs.push(newKey);
           }
         } else {
-          arrs = errorArr.filter(it => it === key);
+          arrs = errorArr.filter(it => it === newKey);
         }
         this.setState({
           errorArr: arrs,
@@ -190,13 +236,22 @@ class AddTravelForm extends Component {
   }
 
   onChange = (e, key) => {
-    const { form: { getFieldValue }, hasFellowTraveler } = this.props;
+    const { form: { getFieldValue }, hasFellowTraveler, provinceAndCity } = this.props;
     const startCity = getFieldValue(`startCity[${key}]`);
     const endCity = getFieldValue(`endCity[${key}]`);
     const { isShow } = this.state;
     if (!hasFellowTraveler) {
       return;
     }
+    const { treeListObj } = this.state;
+    Object.assign(treeListObj, {
+      [key]: this.onGetCity(provinceAndCity, Number(e.target.value)),
+    });
+    console.log('onChangeCity -> treeListObj', treeListObj);
+
+    this.setState({
+      treeListObj,
+    });
     if (Number(e.target.value) === 3 && !isShow.includes(key)) {
       isShow.push(key);
       this.setState({
@@ -208,8 +263,8 @@ class AddTravelForm extends Component {
       });
     }
     if (startCity && endCity && hasFellowTraveler) {
-      const start = this.handleCity(startCity[startCity.length - 1]).areaName;
-      const end = this.handleCity(endCity[endCity.length - 1]).areaName;
+      const start = this.handleCity(startCity[startCity.length - 1], Number(e.target.value)).areaName;
+      const end = this.handleCity(endCity[endCity.length - 1], Number(e.target.value)).areaName;
       this.props.dispatch({
         type: 'costGlobal/aliTripCity',
         payload: {
@@ -237,21 +292,12 @@ class AddTravelForm extends Component {
   }
 
   render () {
-    const { list, errorArr, isShow } = this.state;
+    const { list, errorArr, isShow, treeListObj } = this.state;
     const {
       children,
       form: { getFieldDecorator, getFieldValue },
-      provinceAndCity,
       flag,
     } = this.props;
-    const treeList = treeConvert({
-      rootId: 0,
-      pId: 'pid',
-      name: 'areaName',
-      id: 'areaCode',
-      tName: 'label',
-      tId: 'value'
-    }, provinceAndCity);
     getFieldDecorator('keys', { initialValue: list });
     const keys = getFieldValue('keys');
     const formItems = keys.map((it, index) => {
@@ -327,11 +373,11 @@ class AddTravelForm extends Component {
                       rules: [{ required: true, message: '请选择' }]
                     })(
                       <Cascader
-                        options={treeList}
+                        options={treeListObj[it.key] || treeListObj.defaultTree}
                         placeholder="请选择"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         showSearch={this.filter}
-                        onChange={val => this.onChangeCity(`startCity[${it.key}]`, val)}
+                        onChange={val => this.onChangeCity(`startCity[${it.key}]`, val, it.key)}
                       />
                     )
                   }
@@ -344,11 +390,11 @@ class AddTravelForm extends Component {
                       rules: [{ required: true, message: '请选择' }]
                     })(
                       <Cascader
-                        options={treeList}
+                        options={treeListObj[it.key] || treeListObj.defaultTree}
                         placeholder="请选择"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         showSearch={this.filter}
-                        onChange={val => this.onChangeCity(`endCity[${it.key}]`, val)}
+                        onChange={val => this.onChangeCity(`endCity[${it.key}]`, val, it.key)}
                       />
                     )
                   }

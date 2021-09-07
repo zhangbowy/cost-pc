@@ -1522,6 +1522,7 @@ class AddInvoice extends Component {
                 aliCostAndI={aliCostAndI}
                 aliTripAuth={aliTripAuth}
                 hisAliTrip={hisAliTrip || {}}
+                userInfo={userInfo}
                 onGetFunc={func => {
                   this.handleOpenModal = func;
                 }}

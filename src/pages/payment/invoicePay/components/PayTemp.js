@@ -490,6 +490,11 @@ class PayTemp extends React.PureComponent {
                 />
               </Form>
             </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <p className="c-black-85 fw-500 fs-14">
+              已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
+            </p>
             {
               Number(status) === 1 &&
               <div className="head_rf">
@@ -509,9 +514,6 @@ class PayTemp extends React.PureComponent {
               </div>
             }
           </div>
-          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
-            已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
-          </p>
           <Table
             columns={columns}
             dataSource={list}

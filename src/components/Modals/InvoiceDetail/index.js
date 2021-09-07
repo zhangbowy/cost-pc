@@ -455,7 +455,8 @@ class InvoiceDetail extends Component {
                     </Tooltip>
                 }
                 {
-                  details.isEnterpriseAlitrip &&
+                  details.isEnterpriseAlitrip && (userInfo.userId === details.userId) &&
+                  allow === 'copy' &&
                   <Tooltip title="阿里商旅自动导入单据，不支持复制">
                     <i className="iconfont icona-fuzhi3x c-black-25" />
                   </Tooltip>
@@ -869,9 +870,16 @@ class InvoiceDetail extends Component {
               <Col span={8} className="m-t-16">
                 <div style={{display: 'flex'}}>
                   <span className={cs('fs-14', 'c-black-85', style.nameTil)}>同行人：</span>
-                  <span className={cs('fs-14','c-black-65', style.rightFlex)}>
-                    {aliTrip.fellowTravelers && aliTrip.fellowTravelers.length ?
-                    aliTrip.fellowTravelers.map(it => it.userName).join(',') : ''}
+                  <span className={cs('fs-14','c-black-65', style.rightFlex, style.wraps)}>
+                    <Tooltip
+                      title={aliTrip.fellowTravelers && aliTrip.fellowTravelers.length ?
+                        aliTrip.fellowTravelers.map(it => it.userName).join(',') : '-'}
+                    >
+                      <p className={style.overFlowSl}>
+                        {aliTrip.fellowTravelers && aliTrip.fellowTravelers.length ?
+                        aliTrip.fellowTravelers.map(it => it.userName).join(',') : ''}
+                      </p>
+                    </Tooltip>
                   </span>
                 </div>
               </Col>
@@ -1057,7 +1065,7 @@ class InvoiceDetail extends Component {
               null
           }
           {
-            aliTrip.alitripCostCenterId &&
+            aliTrip.alitripCostCenterId && (userInfo.userId === details.userId) &&
             <>
               <AliLink
                 status={details.approveStatus}

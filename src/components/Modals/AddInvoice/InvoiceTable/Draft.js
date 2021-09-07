@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Divider, Button, Popconfirm, message } from 'antd';
+import { Modal, Divider, Button, Popconfirm, message, Tooltip } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
@@ -139,9 +139,14 @@ class Draft extends Component {
     }, {
       title: '事由',
       dataIndex: 'reason',
-      render: (_, record) => (
-        <span>{record.reason}</span>
-      )
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''}>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
+      width: '200px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',

@@ -414,7 +414,7 @@ class Workbench extends PureComponent {
         <span>
           <span>{record.invoiceNo}</span>
           {
-            record.showAlitripIcon &&
+            record.isAlitrip &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>

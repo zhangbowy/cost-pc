@@ -23,7 +23,7 @@ const { TreeNode } = Tree;
 }))
 class AllTravelData extends PureComponent {
   state = {
-    current: 1,
+    current: 2,
     costCategoryId: '',
     type: '',
     searchContent: '',
@@ -200,13 +200,16 @@ class AllTravelData extends PureComponent {
                     <div className={style.footers}>
                       <div className={style.footCont}>
                         <span>修改后，{aliTravel[record.type]}订单将默认按新类别导入</span>
-                        <div
-                          onClick={() => this.setState({visible: false})}
-                          style={{background: '#fff', color: 'rgba(0, 0, 0, 0.65)', border: '1px solid #D9D9D9', marginRight: '8px'}}
-                        >
-                          取消
+                        <div style={{display: 'flex'}}>
+                          <div
+                            className={style.footerBtns}
+                            onClick={() => this.setState({visible: false})}
+                            style={{background: '#fff', color: 'rgba(0, 0, 0, 0.65)', border: '1px solid #D9D9D9', marginRight: '8px'}}
+                          >
+                            取消
+                          </div>
+                          <div onClick={this.confirm} className={style.footerBtns}>确定</div>
                         </div>
-                        <div onClick={this.confirm}>确定</div>
                       </div>
                     </div>
                   </div>

@@ -1,12 +1,13 @@
 /* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
-import { Divider, Form, Row, Button, Select, Col, Tree, TreeSelect } from 'antd';
+import { Divider, Form, Row, Button, Select, Col, Tree, TreeSelect, Tooltip, Popconfirm } from 'antd';
 import cs from 'classnames';
 import moment from 'moment';
 import fields from '@/utils/fields';
 import style from '../index.scss';
 import AddTravelForm from './AddTravelForm';
 import { getParams } from '../../../../utils/common';
+import Avatar from '../../../AntdComp/Avatar';
 
 const { aliTraffic } = fields;
 const { Option } = Select;
@@ -117,6 +118,7 @@ class AddTravel extends PureComponent {
 
   // 循环渲染树结构
   loop = data => data.map(item => {
+    const { userInfo } = this.props;
     if (item.children && item.children.length) {
       return (
         <TreeNode
@@ -124,8 +126,13 @@ class AddTravel extends PureComponent {
           label={item.title}
           value={item.key}
           dataRef={item}
+          disabled={userInfo.dingUserId === item.value}
           title={(
             <div>
+              {
+                item.type &&
+                <Avatar avatar={item.avatar} name={item.title} size={24} />
+              }
               <span>{item.title}</span>
             </div>
           )}
@@ -139,8 +146,13 @@ class AddTravel extends PureComponent {
       label={item.title}
       value={item.key}
       dataRef={item}
+      disabled={userInfo.dingUserId === item.value}
       title={(
         <div className="icons">
+          {
+            item.type &&
+            <Avatar avatar={item.avatar} name={item.title} size={24} />
+          }
           <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
         </div>
       )}
@@ -153,6 +165,31 @@ class AddTravel extends PureComponent {
     });
   }
 
+  getAllChild = (nodes, parent) => {
+    let arr = [];
+    for(let i=0; i<nodes.length;i++) {
+      const item = nodes[i];
+      if (nodes[i].type === 0) {
+        const result = this.getPaths(nodes[i].children, nodes[i]);
+        if (result.length) {
+          arr = [...arr, ...result];
+        }
+      } else {
+        arr.push({
+          userName: item.title,
+          key: item.key,
+          userId: item.value,
+          oaUserId: item.oaId,
+          pId: parent.key,
+          deptId: parent.value,
+          deptName: parent.title,
+          avatar: item.avatar,
+        });
+      }
+    }
+    return arr;
+  }
+
   onSelect = (value, info) => {
     console.log('选中de', info);
     console.log('选中de', value);
@@ -160,18 +197,27 @@ class AddTravel extends PureComponent {
     const { fellowTravelers } = this.state;
     const newArr = [...fellowTravelers];
     const keys = newArr.map(it => it.key);
-    if (!keys.includes(dataRef.key)) {
-      newArr.push({
-        key: dataRef.key,
-        userId: dataRef.value, // 钉钉userId
-        'name': dataRef.title, // 名称
-        'userName':dataRef.title, // 名称  兼容userJson字段名称
-        'nickname': dataRef.title,
-        'deptId': dataRef.deptId, // 钉钉部门id
-        'deptName': dataRef.deptName, // 部门名称
-        'oaUserId': dataRef.oaId, // oa的用户id
+    if (dataRef.type === 0) {
+      const newArrs = this.getAllChild(dataRef.children, dataRef);
+      const keysArr = newArr.filter(it => it.key);
+      newArrs.forEach(it => {
+        if (!keysArr.includes(it.key)) {
+          newArr.push({ ...it });
+        }
       });
+    } else if (!keys.includes(dataRef.key)) {
+        newArr.push({
+          key: dataRef.key,
+          userId: dataRef.value, // 钉钉userId
+          'name': dataRef.title, // 名称
+          'userName':dataRef.title, // 名称  兼容userJson字段名称
+          'nickname': dataRef.title,
+          'deptId': dataRef.deptId, // 钉钉部门id
+          'deptName': dataRef.deptName, // 部门名称
+          'oaUserId': dataRef.oaId, // oa的用户id
+        });
     }
+
     this.setState({
       fellowTravelers: newArr,
     });
@@ -180,7 +226,7 @@ class AddTravel extends PureComponent {
   render () {
     const { aliTripFields, aliTripAuth, form: { getFieldDecorator }, hisAliTrip } = this.props;
     const { aliCostAndI, deptTree } = aliTripFields;
-    console.log('阿里商旅', aliTripAuth);
+    console.log('阿里商旅', deptTree);
     const { subTrip } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -249,7 +295,15 @@ class AddTravel extends PureComponent {
                             {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
                           </p>
                         </div>
-                        <i className={cs(style.singleDel, 'iconfont', 'icona-shanchu3x')} onClick={e => this.onDel(e, index)} />
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <Popconfirm title="确认删除该行程吗？" onConfirm={e => this.onDel(e, index)}>
+                            <i className={cs(style.singleDel, 'iconfont', 'icona-shanchu3x')} />
+                          </Popconfirm>
+                        </span>
                       </div>
                     </AddTravelForm>
                   ))
@@ -318,7 +372,7 @@ class AddTravel extends PureComponent {
             {
               aliTripAuth.alitripSetting.isEnable &&
               <>
-                <Col span={12}>
+                <Col span={12} className={style.treeSelects}>
                   <Form.Item label="同行人" {...formItemLayout}>
                     {
                       getFieldDecorator('fellowTravelers', {
@@ -338,6 +392,7 @@ class AddTravel extends PureComponent {
                           showSearch
                           onChange={this.onChangeNode}
                           onSelect={this.onSelect}
+                          treeNodeLabelProp="label"
                         >
                           { this.loop(deptTree) }
                         </TreeSelect>
@@ -346,10 +401,26 @@ class AddTravel extends PureComponent {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="费用归属" {...formItemLayout}>
+                  <Form.Item
+                    label={(
+                      <span>
+                        费用归属
+                        <Tooltip title={(
+                          <>
+                            <p>按分摊计入：商旅订单有除申请人之外的其他同行人，费用归属按照对应承担金额分别统计;</p>
+                            <p>均计入申请人：无论是否有同行人(分摊)，该申请单的行程费用均计入申请人及其部门</p>
+                          </>
+                          )}
+                        >
+                          <i className="iconfont iconshuomingwenzi m-l-4" style={{ verticalAlign: 'middle' }} />
+                        </Tooltip>
+                      </span>
+                    )}
+                    {...formItemLayout}
+                  >
                     {
                       getFieldDecorator('alitripExpensesOwner', {
-                        initialValue: hisAliTrip.alitripExpensesOwner || undefined,
+                        initialValue: hisAliTrip.alitripExpensesOwner || '按分摊计入',
                         rules: [
                           {
                             required: true,

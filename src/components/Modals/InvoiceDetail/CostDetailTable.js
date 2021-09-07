@@ -234,7 +234,7 @@ class CostDetailTable extends PureComponent {
                 }
                 {
                   record.isTicketChangeOrRefund &&
-                  <span>退改签订单</span>
+                  <span className={style.signOrder}>退/改签</span>
                 }
               </span>
             ),
