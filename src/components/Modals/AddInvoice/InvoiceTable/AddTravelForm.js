@@ -204,10 +204,11 @@ class AddTravelForm extends Component {
 
   onChangeCity = (key, value, newKey) => {
     const { form: { getFieldValue }, hasFellowTraveler } = this.props;
+    if (!value || !value.length) return;
     const traffic = getFieldValue(`traffic[${newKey}]`);
     const start = this.handleCity(value[value.length -1], Number(traffic)).areaName;
     const end = getFieldValue(`${key.indexOf('start') > -1 ? 'endCity' : 'startCity'}[${newKey}]`);
-    if (end && end.length && hasFellowTraveler) {
+    if (end && end.length && hasFellowTraveler && value) {
       const ends = this.handleCity(end[end.length-1], Number(traffic)).areaName;
       this.props.dispatch({
         type: 'costGlobal/aliTripCity',
@@ -226,7 +227,7 @@ class AddTravelForm extends Component {
             arrs.push(newKey);
           }
         } else {
-          arrs = errorArr.filter(it => it === newKey);
+          arrs = arrs.filter(it => it !== newKey);
         }
         this.setState({
           errorArr: arrs,
@@ -263,8 +264,18 @@ class AddTravelForm extends Component {
       });
     }
     if (startCity && endCity && hasFellowTraveler) {
-      const start = this.handleCity(startCity[startCity.length - 1], Number(e.target.value)).areaName;
-      const end = this.handleCity(endCity[endCity.length - 1], Number(e.target.value)).areaName;
+      const s = this.handleCity(startCity[startCity.length - 1], Number(e.target.value));
+      if (!s || !s.areaName) {
+        this.checks(key);
+        return;
+      }
+      const start = s.areaName;
+      const es = this.handleCity(endCity[endCity.length - 1], Number(e.target.value));
+      if (!es || !es.areaName) {
+        this.checks(key);
+        return;
+      }
+      const end = es.areaName;
       this.props.dispatch({
         type: 'costGlobal/aliTripCity',
         payload: {
@@ -277,11 +288,11 @@ class AddTravelForm extends Component {
         let arrs = [...errorArr];
         if (!aliTripCity) {
           message.error('起止城市没有该交通工具');
-          if (!errorArr.includes(`[${key}]`)) {
-            arrs.push(`[${key}]`);
+          if (!errorArr.includes(`${key}`)) {
+            arrs.push(`${key}`);
           }
         } else {
-          arrs = errorArr.filter(it => it !== `[${key}]`);
+          arrs = arrs.filter(it => it !== `${key}`);
         }
 
         this.setState({
@@ -289,6 +300,19 @@ class AddTravelForm extends Component {
         });
       });
     }
+  }
+
+  checks = (key) => {
+    const { errorArr } = this.state;
+    let arrs = [...errorArr];
+    if (!errorArr.includes(`${key}`)) {
+      arrs.push(`${key}`);
+    } else {
+      arrs = arrs.filter(it => it !== `${key}`);
+    }
+    this.setState({
+      errorArr: arrs,
+    });
   }
 
   render () {
@@ -370,13 +394,15 @@ class AddTravelForm extends Component {
                   {
                     getFieldDecorator(`startCity[${it.key}]`, {
                       initialValue: it.startCity,
-                      rules: [{ required: true, message: '请选择' }]
+                      rules: [{ required: true, message: '请选择城市' }]
                     })(
                       <Cascader
                         options={treeListObj[it.key] || treeListObj.defaultTree}
                         placeholder="请选择"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         showSearch={this.filter}
+                        allowClear
+                        changeOnSelect
                         onChange={val => this.onChangeCity(`startCity[${it.key}]`, val, it.key)}
                       />
                     )
@@ -387,13 +413,15 @@ class AddTravelForm extends Component {
                   {
                     getFieldDecorator(`endCity[${it.key}]`, {
                       initialValue: it.endCity,
-                      rules: [{ required: true, message: '请选择' }]
+                      rules: [{ required: true, message: '请选择城市' }]
                     })(
                       <Cascader
                         options={treeListObj[it.key] || treeListObj.defaultTree}
                         placeholder="请选择"
+                        allowClear
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         showSearch={this.filter}
+                        changeOnSelect
                         onChange={val => this.onChangeCity(`endCity[${it.key}]`, val, it.key)}
                       />
                     )

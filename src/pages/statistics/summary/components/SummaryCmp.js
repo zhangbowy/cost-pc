@@ -83,7 +83,8 @@ class SummaryCmp extends Component {
     const { templateType, query, searchContent } = this.props;
     this.props.onDelInvoice({
       id,
-      templateType
+      templateType: Number(templateType) === 4 ? 0 : templateType,
+      isAlitrip: Number(templateType) === 4,
     }, () => {
       message.success('删除成功');
       this.props.onQuery({

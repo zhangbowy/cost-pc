@@ -358,7 +358,8 @@ class Summary extends React.PureComponent {
   onRecord = (payload, callback) => {
     const { current } = this.state;
     Object.assign(payload, {
-      templateType: current,
+      templateType:  Number(current) === 4 ? 0 : current,
+      isAlitrip: Number(current) === 4,
     });
     this.props.dispatch({
       type: 'costGlobal/recordList',

@@ -75,7 +75,7 @@ class AllTravelData extends PureComponent {
           key={item.value}
           label={item.title}
           value={item.value}
-          disabled={item.disabled}
+          disabled={!item.type}
           title={(
             <div className={selectedKeys === item.value ? cs(style.costs, 'icons') : 'icons'}>
               {
@@ -96,7 +96,7 @@ class AllTravelData extends PureComponent {
       key={item.value}
       label={item.title}
       value={item.value}
-      disabled={item.disabled}
+      disabled={!item.type}
       title={(
         <div style={{ width: '100%' }} className={selectedKeys === item.value ? cs(style.costs, 'icons') : 'icons'}>
           {

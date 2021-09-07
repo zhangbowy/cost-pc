@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react';
 import { Table, Tooltip, Popover, Tag } from 'antd';
 import moment from 'moment';
+import cs from 'classnames';
 import style from './index.scss';
 import { handleProduction, compare } from '../../../utils/common';
 
@@ -319,9 +320,16 @@ class CostDetailTable extends PureComponent {
       title: '支出类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
-        <span className={style.icons}>
+        <span className={cs('eslips-2', style.icons)}>
           <i className={`iconfont icon${record.icon}`} style={{ fontSize: '24px', verticalAlign: 'middle' }} />
-          <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
+          {
+            record.categoryName.length > 5 ?
+              <Tooltip title={record.categoryName || ''}>
+                <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
+              </Tooltip>
+              :
+              <span>{record.categoryName}</span>
+          }
         </span>
       ),
       width: 150,
