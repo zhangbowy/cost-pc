@@ -1096,7 +1096,7 @@ class InvoiceDetail extends Component {
             </>
           }
           {
-            aliTrip.subTrip &&
+            aliTrip.subTrip && aliTrip.subTrip.length &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
@@ -1113,7 +1113,7 @@ class InvoiceDetail extends Component {
                         />
                       </div>
                       <div className="m-t-16">
-                        <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}</p>
+                        <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}({item.way})</p>
                         <p className="c-black-65 fs-14">
                           {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
                         </p>

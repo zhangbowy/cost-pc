@@ -54,12 +54,14 @@ const selfStr = [{
   fieldType: '3',
   name: '明细',
   icon: 'iconmingxi',
-},  {
-  key: '10',
-  fieldType: '10',
-  name: '行程',
-  icon: 'icona-hangcheng3x',
-}];
+}
+// {
+//   key: '10',
+//   fieldType: '10',
+//   name: '行程',
+//   icon: 'icona-hangcheng3x',
+// }
+];
 
 const StrSetting = ({ fieldList,
   selectList, onChangeData, selectId, childRef,
