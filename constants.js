@@ -3,8 +3,8 @@
  */
 
 // 基于根目录的项目路径
-// const APP_BASE = process.env.APP_BASE || 'dist';
-const APP_BASE = process.env.APP_BASE || 'costhtml';
+const APP_BASE = process.env.APP_BASE || 'dist';
+// const APP_BASE = process.env.APP_BASE || 'costhtml';
 // 环境变量
 const SPD_ENV = process.env.SPD_ENV || 'dev';
 
