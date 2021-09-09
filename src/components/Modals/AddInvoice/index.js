@@ -50,7 +50,10 @@ const { confirm } = Modal;
   officeList: costGlobal.officeList,
   aliCostAndI: costGlobal.aliCostAndI,
   deptTree: costGlobal.deptTree,
-  loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] || false,
+  loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] ||
+  loading.effects['global/invoiceEdit'] || loading.effects['global/addApply'] ||
+  loading.effects['global/addSalary'] ||
+  loading.effects['global/addPay'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
 }))
 @Form.create()
@@ -173,14 +176,7 @@ class AddInvoice extends Component {
       });
     }
     if (Number(templateType) === 2) {
-      arr.push({
-        url: 'costGlobal/aliTripCostAndI',
-        payload: {},
-      });
-      arr.push({
-        url: 'costGlobal/deptTree',
-        payload: {},
-      });
+      arr.push();
     }
     const newArr = arr.map(it => {
       return dispatch({
@@ -203,6 +199,14 @@ class AddInvoice extends Component {
     });
   }
 
+  fetchs = (actions, key) => {
+    return new Promise(resolve => {
+      this.props.dispatch(actions).then(() => {
+        resolve(this.props[key]);
+      });
+    });
+  }
+
   onShowHandle = async() => {
     let detail = this.state.details;
     const {
@@ -221,7 +225,7 @@ class AddInvoice extends Component {
       message.error('该单据模板不可用，草稿无效请删除');
       return;
     }
-    this.fetchList(() => {
+    this.fetchList(async() => {
       const create = this.state.depList;
       if (create && create.length > 0) {
         this.props.form.setFieldsValue({
@@ -239,10 +243,32 @@ class AddInvoice extends Component {
       } else {
         message.error('部门无法同步，请联系管理员检查应用可见范围设置');
       }
-      this.props.dispatch({
-        type: 'global/users',
+      let aliCostAndI = {costArr: [], invoiceArr: []};
+      let deptTree = {};
+      const { djDetail, dispatch } = this.props;
+      console.log('AddInvoice -> onShowHandle -> djDetail', djDetail);
+      const arrUrl = [{
+        url: 'global/users',
         payload: {}
-      }).then(async() => {
+      }];
+      const selfTravels = djDetail.selfField.filter(it => Number(it.fieldType) === 10);
+      if (selfTravels && selfTravels.length && selfTravels[0].alitripSetting) {
+        aliCostAndI = await this.fetchs({
+          type: 'costGlobal/aliTripCostAndI',
+          payload: {},
+        }, 'aliCostAndI');
+        deptTree = await this.fetchs({
+          type: 'costGlobal/deptTree',
+          payload: {},
+        }, 'deptTree');
+      }
+      arrUrl.map(it => {
+        return dispatch({
+          type: it.url,
+          payload: {},
+        });
+      });
+      Promise.all(arrUrl).then(async() => {
         const dep = _this.props.deptInfo;
         if (dep && dep.length > 0) {
           detail = {
@@ -277,7 +303,8 @@ class AddInvoice extends Component {
         }
         const aliTripArr = [...djDetails.selfField, ...djDetails.expandField];
         const aliTripAuth = aliTripArr.filter(it => it.fieldType === 10);
-        const { aliCostAndI, deptTree } = this.props;
+        // const { aliCostAndI, deptTree } = this.props;
+        console.log('AddInvoice -> onShowHandle -> aliCostAndI', aliCostAndI);
         if (aliCostAndI && aliTripAuth && aliTripAuth.length) {
           this.setState({
             aliTripFields: { aliCostAndI, deptTree, aliAuth: aliTripAuth[0] },

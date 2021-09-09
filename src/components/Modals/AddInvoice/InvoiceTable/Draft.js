@@ -135,7 +135,8 @@ class Draft extends Component {
       dataIndex: 'index',
       render: (_, record, index) => (
         <span>{index+1}</span>
-      )
+      ),
+      width: '40px'
     }, {
       title: '事由',
       dataIndex: 'reason',
@@ -146,7 +147,7 @@ class Draft extends Component {
           </Tooltip>
         </span>
       ),
-      width: '200px'
+      width: '100px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
@@ -156,13 +157,14 @@ class Draft extends Component {
         </span>
       ),
       className: 'moneyCol',
-      width: '250px'
+      width: '100px'
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
       render: (_, record) => (
         <span>{record.invoiceTemplateName}</span>
-      )
+      ),
+      width: '120px'
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
@@ -170,7 +172,8 @@ class Draft extends Component {
         <span>
           <span>{record.createTime ? moment(Number(record.createTime)).format('YYYY-MM-DD') : '-'}</span>
         </span>
-      )
+      ),
+      width: '100px'
     }, {
       title: '操作',
       dataIndex: 'opea',
@@ -206,6 +209,7 @@ class Draft extends Component {
         </span>
       ),
       className: 'fixCenter',
+      width: '80px'
     }];
     return (
       <div>

@@ -54,18 +54,26 @@ class AddTravel extends PureComponent {
       return new Promise (resolve => {
         validateFieldsAndScroll((err, val) => {
           if (!err) {
-            const alitripCostCenterJson = costArr.filter(it => it.value == val.alitripCostCenterId);
-            const alitripInvoiceTitleJson = invoiceArr.filter(it => it.value == val.alitripInvoiceTitleId);
-            const params = {
-              alitripCostCenterId: val.alitripCostCenterId,
-              alitripInvoiceTitleId: val.alitripInvoiceTitleId,
-              alitripExpensesOwner: val.alitripExpensesOwner,
-              subTrip,
-              alitripCostCenterJson: JSON.stringify(alitripCostCenterJson[0]),
-              alitripInvoiceTitleJson: JSON.stringify(alitripInvoiceTitleJson[0]),
-              fellowTravelers: newFellow
-            };
-
+            const params = { subTrip, fellowTravelers: newFellow };
+            if (val.alitripCostCenterId) {
+              const alitripCostCenterJson = costArr.filter(it => it.value == val.alitripCostCenterId);
+              Object.assign(params, {
+                alitripCostCenterId: val.alitripCostCenterId,
+                alitripCostCenterJson: JSON.stringify(alitripCostCenterJson[0]),
+              });
+            }
+            if (val.alitripInvoiceTitleId) {
+              const alitripInvoiceTitleJson = invoiceArr.filter(it => it.value == val.alitripInvoiceTitleId);
+              Object.assign(params, {
+                alitripInvoiceTitleId: val.alitripInvoiceTitleId,
+                alitripInvoiceTitleJson: JSON.stringify(alitripInvoiceTitleJson[0]),
+              });
+            }
+            if (val.alitripExpensesOwner) {
+              Object.assign(params, {
+                alitripExpensesOwner: val.alitripExpensesOwner,
+              });
+            }
             resolve(params);
           }
         });
@@ -130,8 +138,10 @@ class AddTravel extends PureComponent {
           title={(
             <div>
               {
-                item.type &&
-                <Avatar avatar={item.avatar} name={item.title} size={24} />
+                item.type ?
+                  <Avatar avatar={item.avatar} name={item.title} size={24} />
+                  :
+                  null
               }
               <span>{item.title}</span>
             </div>
@@ -150,7 +160,7 @@ class AddTravel extends PureComponent {
       title={(
         <div className="icons">
           {
-            item.type &&
+            item.type !== 0 &&
             <Avatar avatar={item.avatar} name={item.title} size={24} />
           }
           <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
@@ -280,6 +290,7 @@ class AddTravel extends PureComponent {
                     <AddTravelForm
                       onOk={this.onGetTrip}
                       list={subTrip}
+                      key={item.key}
                       hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
                     >
                       <div className={style.singleContent} key={item.startDate}>
@@ -382,7 +393,6 @@ class AddTravel extends PureComponent {
                         }) : undefined,
                       })(
                         <TreeSelect
-                          treeDefaultExpandAll
                           treeNodeFilterProp="label"
                           placeholder='请选择'
                           style={{width: '100%'}}

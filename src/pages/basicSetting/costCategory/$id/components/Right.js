@@ -11,7 +11,7 @@ import ThirdSet from './RightCheck/ThirdSet';
 import { aliTrip, aliTripStr, aliTripHasTrip } from './ItemTypes';
 
 let id = 1000;
-const disabledDefault = ['costCategory'];
+const disabledDefault = ['costCategory', 3, 10];
 @Form.create()
 class Right extends PureComponent {
   constructor(props) {
@@ -422,8 +422,8 @@ class Right extends PureComponent {
                         placeholder="请输入"
                         disabled={
                           details.disabled ||
-                          (details.field.indexOf('self_') === -1 &&
-                          details.field.indexOf('expand_') === -1 &&
+                          ((details.field.indexOf('self_') === -1 &&
+                          details.field.indexOf('expand_') === -1) ||
                           dragDisabled.includes(details.field))
                           || disabledDefault.includes(Number(details.fieldType))
                         }
