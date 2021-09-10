@@ -122,7 +122,7 @@ class CostDetailTable extends PureComponent {
             render: (_, record) => (
               <>
                 {
-                  record.note && record.note.length > 10 ?
+                  record.note && record.note.length > 2 ?
                     <span>
                       <Tooltip placement="topLeft" title={record.note || ''}>
                         <span className="eslips-2">{record.note}</span>
@@ -283,7 +283,7 @@ class CostDetailTable extends PureComponent {
               return (
                 <span>
                   {
-                    texts && texts.length > 10 ?
+                    texts && texts.length > 2 ?
                       <span>
                         <Tooltip placement="topLeft" title={texts || ''}>
                           <span className="eslips-2">{texts}</span>
@@ -323,7 +323,7 @@ class CostDetailTable extends PureComponent {
         <span className={cs('eslips-2', style.icons)}>
           <i className={`iconfont icon${record.icon}`} style={{ fontSize: '24px', verticalAlign: 'middle' }} />
           {
-            record.categoryName.length > 5 ?
+            record.categoryName.length > 3 ?
               <Tooltip title={record.categoryName || ''}>
                 <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
               </Tooltip>
