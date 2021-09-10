@@ -14,6 +14,7 @@ import { JsonParse } from '../../../utils/common';
 import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
+import TableImg from '../../../components/LittleCmp/TableImg';
 
 const { confirm } = Modal;
 const { APP_API } = constants;
@@ -558,23 +559,16 @@ class Payment extends React.PureComponent {
         title: '付款凭证',
         dataIndex: 'payVoucher',
         width: 100,
-        render: (_, record) => {
-          return (
-            <div>
-              {
-                record.payVoucher ?
-                  <img
-                    src={record.payVoucher}
-                    alt="付款凭证"
-                    onClick={() => this.previewImage(record.payVoucher, 0)}
-                    className="tableImage"
-                  />
-                  :
-                  '-'
-              }
-            </div>
-          );
-        }
+        render: (_, record) => (
+          <>
+            {
+              record.payVoucher ?
+                <TableImg imgUrl={record.payVoucher} />
+                :
+                '-'
+            }
+          </>
+        )
       });
     }
     return (
