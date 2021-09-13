@@ -113,14 +113,27 @@ class ApproveIndex extends Component {
     }, {
       title: '角色简介',
       dataIndex: 'note',
-      width: 560,
       render: (text) => (
         <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
+          <Tooltip placement="topLeft" title={text || '-'}>
+            <span className="eslips-2">{text || '-'}</span>
           </Tooltip>
         </span>
       ),
+    }, {
+      title: '人员',
+      dataIndex: 'userJson',
+      render: (_, record) => {
+        const users = record.userJson ? JSON.parse(record.userJson) : [];
+        const userStr = users && users.length > 4 ? users.filter((it, index) => index < 4) : users;
+        return (
+          <span>
+            <Tooltip placement="topLeft" title={users.map(it => it.userName).join(',') || ''}>
+              <span className="eslips-2">{userStr.map(it => it.userName).join(',') || '-'}</span>
+            </Tooltip>
+          </span>
+        );
+      }
     }, {
       title: '操作',
       dataIndex: 'ope',

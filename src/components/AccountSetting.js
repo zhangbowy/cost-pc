@@ -7,8 +7,8 @@
 
 import React, { Component } from 'react';
 import { Modal, Form, Select, Input, Button, Cascader, message } from 'antd';
-import { formItemLayout, bankList } from '@/utils/constants';
 import { connect } from 'dva';
+import { formItemLayout, bankList } from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
 import UploadImg from '@/components/UploadImg';
 import { compare } from '../utils/common';

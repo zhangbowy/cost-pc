@@ -176,8 +176,23 @@ export default {
         ),
       },
       {
-        title: '核销中金额',
+        title: '提交人',
+        dataIndex: 'createName',
+        render: (text) => (
+          <span>{text || '-'}</span>
+        )
+      },
+      {
+        title: '提交人部门',
+        dataIndex: 'deptName',
+        render: (text) => (
+          <span>{text || '-'}</span>
+        )
+      },
+      {
+        title: '核销中金额(元)',
         dataIndex: 'freezeSum',
+        className: 'moneyCol',
         render: (text) => (
           <span>{text ? text/100 : 0}</span>
         )

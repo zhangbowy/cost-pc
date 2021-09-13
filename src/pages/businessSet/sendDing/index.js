@@ -32,6 +32,7 @@ class SendDing extends Component {
     const { list } = this.props;
     const result = await ddDing({
       users: list.users || [],
+      text: '请及时审批鑫支出单据'
     });
     if(result.isOk) {
       this.props.dispatch({

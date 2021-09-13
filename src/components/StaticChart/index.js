@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Button, Form, Radio, DatePicker, Icon, Tooltip, Dropdown, Menu, Switch } from 'antd';
-import getDateUtil from '@/utils/tool';
 import moment from 'moment';
+import getDateUtil from '@/utils/tool';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
 import Invoice from '../../pages/statistics/overview/components/Invoice';

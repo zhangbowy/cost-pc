@@ -377,7 +377,7 @@ class Workbench extends PureComponent {
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
-      width: 150,
+      width: 120,
       render: (_, record) => (
         <span>
           <InvoiceDetail
@@ -405,11 +405,11 @@ class Workbench extends PureComponent {
         <span>{text && text / 100}</span>
       ),
       className: 'moneyCol',
-      width: 140,
+      width: 100,
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 160,
+      width: 140,
       render: (_, record) => (
         <span>
           <span>{record.invoiceNo}</span>
@@ -422,14 +422,14 @@ class Workbench extends PureComponent {
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
-      width: 160,
+      width: 140,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
       render: (_, record) => (
         <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}</span>
       ),
-      width: 150,
+      width: 140,
     }, {
       title: '单据状态',
       dataIndex: 'statusStr',
@@ -466,7 +466,7 @@ class Workbench extends PureComponent {
           </InvoiceDetail>
         </span>
       ),
-      width: 120,
+      width: 80,
       fixed: 'right',
       className: 'fixCenter'
     }];
@@ -590,7 +590,7 @@ class Workbench extends PureComponent {
                     columns={columns}
                     dataSource={list}
                     rowKey="invoiceId"
-                    scroll={{ x: 1500 }}
+                    scroll={{ x: 1000 }}
                     loading={loading}
                     pagination={{
                       current: query.pageNo,

@@ -561,6 +561,9 @@ export const approveUser = [{
 }, {
   key: 'selfSelect',
   value: '提交人自选'
+}, {
+  key: 'selfSelects',
+  value: '费用承担人'
 }];
 
 export const approveLeader = [{
