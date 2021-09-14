@@ -187,12 +187,9 @@ function Controller(props) {
         <Button className="m-t-13 m-b-17" onClick={clearCompany}>同步钉钉通讯录</Button>
         <p className="fs-14 c-black-45 p-b-15">上次时间：{synCompanyTime ? moment(Number(synCompanyTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
         <Divider type="horizontal" />
-        <Lines name="修改发放人">
-          <Tooltip title="发放人员离职时可修改已提交单据的发放人">
-            <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-          </Tooltip>
-        </Lines>
+        <Lines name="离职交接" />
         <Button className="m-t-13 m-b-17" onClick={changePeople}>修改发放人</Button>
+        <p>发放人员离职时可修改已提交单据的发放人</p>
       </div>
       <Modal
         title="修改发放人"

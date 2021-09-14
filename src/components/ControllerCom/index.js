@@ -7,6 +7,11 @@ import Lines from '@/components/StyleCom/Lines';
 import Avatar from '@/components/AntdComp/Avatar';
 import style from './index.scss';
 
+
+const prodObj = {
+  0: '发放',
+  1: '借款',
+};
 function ControllerCom(props) {
   const { Option } = Select;
   const { dispatch, userInfo, synCompanyTime,queryUsers } = props;
@@ -15,6 +20,7 @@ function ControllerCom(props) {
   const [ rawUser, setRawUser ] = useState();
   const [ isOpen, setIsOpen ] = useState(false);
   const [ userIdExpired, setUserIdExpired ] = useState();
+  const [type, setType] = useState(0);
 
   useEffect(() => {
     dispatch({
@@ -48,7 +54,8 @@ function ControllerCom(props) {
     });
   };
 
-  const changePeople = () => {
+  const changePeople = (val) => {
+    setType(val);
     setVisible(true);
   };
 
@@ -129,16 +136,6 @@ function ControllerCom(props) {
     setIsOpen(false);
   };
 
-  // const synCompany = () => {
-  //   Modal.confirm({
-  //     title: '人员同步',
-  //     content: '清空数据后不可撤销',
-  //     onOk(){
-  //       clearCompany();
-  //     }
-  //   });
-  // };
-
   return (
     <div>
       <Divider type="horizontal" />
@@ -151,21 +148,24 @@ function ControllerCom(props) {
         <Button className="m-t-13 m-b-17" onClick={clearCompany}>同步钉钉通讯录</Button>
         <p className="fs-14 c-black-45 p-b-15">上次时间：{synCompanyTime ? moment(Number(synCompanyTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
         <Divider type="horizontal" />
-        <Lines name="修改发放人">
-          <Tooltip title="发放人员离职时可修改已提交单据的发放人">
-            <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-          </Tooltip>
-        </Lines>
-        <Button className="m-t-13 m-b-17" onClick={changePeople}>修改发放人</Button>
+        <Lines name="修改发放人" />
+        <div className={style.btnS}>
+          <Button className="m-t-13" onClick={() => changePeople(0)}>修改发放人</Button>
+          <p className="fs-14 m-t-8 c-black-45">发放人员离职时可修改已提交单据的发放人</p>
+        </div>
+        <div className="m-t-24">
+          <Button onClick={() => changePeople(1)}>借款移交</Button>
+          <p className="fs-14 m-t-8 c-black-45">将离职人员的待还借款转移给其他人</p>
+        </div>
       </div>
       <Modal
-        title="修改发放人"
+        title={type ? '借款移交' : '修改发放人'}
         visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <div className={style.formItem}>
-          <label>原发放人：</label>
+          <label>原{prodObj[type]}人：</label>
           <Select
             showSearch
             style={{ width: 200 }}
@@ -179,7 +179,7 @@ function ControllerCom(props) {
           </Select>
         </div>
         <div className={style.formItem}>
-          <label>交接发放人：</label>
+          <label>交接{prodObj[type]}人：</label>
           <div style={{display:'inline-block'}} onClick={selectPeople} >
             <Select
               style={{ width: 200 }}

@@ -135,7 +135,7 @@ class PeopleSetting extends Component {
           <p className="p-b-24 fs-14 c-black-65">你可以在这里配置可用鑫支出的人员</p>
         </div> */}
         <PageHead title="人员配置" note="你可以在这里配置可用鑫支出的人员"  />
-        <div className="content-dt" style={{height: '500px'}}>
+        <div className="content-dt">
           <div className={style.cnt_foot}>
             <div className={style.header}>
               <div className={style.line} />
