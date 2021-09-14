@@ -284,9 +284,9 @@ class InvoiceDetail extends Component {
     });
   }
 
-  previewImage = (arr, index) => {
+  previewImage = (arr, index, flag) => {
     ddPreviewImage({
-      urlArray: arr.map(it => it.imgUrl),
+      urlArray: !flag ? arr.map(it => it.imgUrl) : arr,
       index,
     });
   }
@@ -976,8 +976,8 @@ class InvoiceDetail extends Component {
                     <span className={cs(style.imgUrl, style.wraps)}>
                       {
                         details.payVoucher && details.payVoucher.length ? details.payVoucher.map((it, index) => (
-                          <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.payVoucher, index)}>
-                            <img alt="图片" src={it.imgUrl} className={style.images} />
+                          <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.payVoucher, index, true)}>
+                            <img alt="图片" src={it} className={style.images} />
                           </div>
                         ))
                         :

@@ -157,7 +157,7 @@ class PayModal extends React.PureComponent {
         } else {
           params = {
             ...params,
-            payVoucherList: imgUrl.length ? imgUrl [0].imgUrl : '',
+            payVoucherList: imgUrl.length ? imgUrl.map(it => it.imgUrl) : [],
           };
         }
         dispatch({
