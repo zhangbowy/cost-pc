@@ -356,7 +356,6 @@ class PayModal extends React.PureComponent {
                   onChange={(val) => this.onChangeImg(val)}
                   imgUrl={imgUrl}
                   userInfo={userInfo}
-                  maxLen={1}
                 />
               </Form.Item>
             }

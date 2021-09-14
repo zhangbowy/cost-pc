@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Upload, Icon, message } from 'antd';
-import constants from '@/utils/constants';
 import cs from 'classnames';
+import constants from '@/utils/constants';
 import style from './index.scss';
 import { ddPreviewImage } from '../../utils/ddApi';
 
