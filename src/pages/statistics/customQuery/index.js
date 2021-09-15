@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Divider, Tree } from 'antd';
+import { Divider, Tree, Icon } from 'antd';
 import cs from 'classnames';
 import style from './index.scss';
 
-
+const { TreeNode } = Tree;
 @connect(({ customQuery, loading }) => ({
   loading: loading.effects['customQuery/list'] || false,
   list: customQuery.list,
@@ -27,10 +27,22 @@ class customQuery extends Component {
 
   onQuery = (payload) => {
     this.props.dispatch({
-      type: 'branchOffice/list',
+      type: 'customQuery/list',
       payload,
     });
   }
+
+  renderTreeNodes = data =>
+  data.map(item => {
+    if (item.children) {
+      return (
+        <TreeNode title={item.title} key={item.key} dataRef={item}>
+          {this.renderTreeNodes(item.children)}
+        </TreeNode>
+      );
+    }
+    return <TreeNode key={item.key} {...item} />;
+  });
 
 
   render () {
@@ -45,12 +57,18 @@ class customQuery extends Component {
     return (
       <div>
         <div style={{background: '#fff', padding: '24px 0'}}>
-          <p className="m-l-24 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>台账汇总</p>
+          <p className="m-l-24 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>自定义查询</p>
           <p className="m-l-24 c-black-65">支持类别、部门、时间等多维度组合查询</p>
         </div>
         <div className={cs('content-dt', style.contents)}>
           <div className={style.cntLeft}>
-            <p>支出类别</p>
+            <div className={style.leftHead}>
+              <p className="fw-500 c-black-85 fs-16 m-r-8">支出类别</p>
+              <span className="sub-color">
+                <Icon type="sync" />
+                <span className="m-l-4">重置</span>
+              </span>
+            </div>
             <div>
               <Tree
                 checkable
