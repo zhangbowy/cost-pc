@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Divider, Tree, Icon } from 'antd';
+import { Divider, Tree, Icon, Table } from 'antd';
 import cs from 'classnames';
 import style from './index.scss';
 
@@ -53,7 +53,22 @@ class customQuery extends Component {
       // query,
       // total,
     } = this.props;
-
+    const columns = [{
+      title: '承担部门',
+      dataIndex: ''
+    }, {
+      title: '金额',
+      dataIndex: ''
+    }, {
+      title: '环比',
+      dataIndex: ''
+    }, {
+      title: '同比',
+      dataIndex: ''
+    }, {
+      title: '操作',
+      dataIndex: ''
+    }];
     return (
       <div>
         <div style={{background: '#fff', padding: '24px 0'}}>
@@ -85,7 +100,14 @@ class customQuery extends Component {
             </div>
           </div>
           <Divider type="vertical" style={{height: '100%'}} />
-          <div className={style.cntRight} />
+          <div className={style.cntRight}>
+            <Table
+              columns={columns}
+              dataSource={list}
+              pagination={false}
+
+            />
+          </div>
         </div>
       </div>
     );
