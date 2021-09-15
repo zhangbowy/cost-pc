@@ -161,8 +161,8 @@ class TempTable extends PureComponent {
 
   render () {
     const { list, columns, tableProps,
-      pagination, hisRecord, currentType, loading, isNoRole, expandIds } = this.props;
-    const { selectedRowKeys, sumAmount } = this.state;
+      pagination, currentType, loading, isNoRole, expandIds } = this.props;
+    const { selectedRowKeys } = this.state;
     const rowSelection = {
       type: 'checkbox',
       selectedRowKeys,
@@ -199,24 +199,12 @@ class TempTable extends PureComponent {
             </div>
           </div>
           {
-            currentType === 0 &&
-            <div className={style.message}>
-              <span className="fs-14 c-black-65">
-                { selectedRowKeys.length ? `已选${selectedRowKeys.length}` : `共${hisRecord.total}` }条记录，合计
-              </span>
-              <span className="fs-16 c-black-85 fw-500">
-                ¥{ selectedRowKeys.length ? sumAmount/100 : hisRecord.sum/100}
-              </span>
-            </div>
-          }
-          {
-            currentType === 0 || (currentType === 4) ?
+            (currentType === 4) ?
               <Table
                 dataSource={list}
                 columns={columns}
                 loading={loading}
                 {...tableProps}
-                rowSelection={currentType === 0 ? rowSelection : null}
                 onChange={this.handleTableChange}
                 // rowKey="id"
                 pagination={{

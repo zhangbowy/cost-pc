@@ -161,6 +161,16 @@ const menuData = [
       myIcon: '',
       path: 'summary',
     }, {
+      id: 'statistics_costDetail',
+      name: ' 支出分析表',
+      myIcon: '',
+      path: 'costDetail',
+    }, {
+      id: 'statistics_customQuery',
+      name: '自定义查询',
+      myIcon: '',
+      path: 'customQuery',
+    }, {
       id: 'statistics_overview',
       name: ' 支出分析表',
       myIcon: '',

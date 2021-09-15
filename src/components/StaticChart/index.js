@@ -199,63 +199,6 @@ class StaticChart extends Component {
     });
   }
 
-  // treeNodeRender = (treeNode) => {
-  //   if(!treeNode || !treeNode.length){
-  //     return;
-  //   }
-  //     return treeNode.map((v) => {
-  //       return (
-  //         <TreeNode
-  //           value={v.value}
-  //           title={(
-  //             <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.title}</span>
-  //           )}
-  //           key={v.value}
-  //           searchs={v.title}
-  //           disabled
-  //         >
-  //           {v.children && this.treeNodeChildRender(v.children, v.title)}
-  //         </TreeNode>
-  //       );
-  //     });
-  //   }
-
-  //   treeNodeChildRender = (list, titles) => {
-  //     return list.map(it => (
-  //       <TreeNode
-  //         key={it.value}
-  //         value={it.value}
-  //         name={it.title}
-  //         searchs={titles}
-  //         title={(
-  //           <div>
-  //             <div className={style.treeOption}>
-  //               {
-  //                 it.type === 0 &&
-  //                 <i className="iconfont iconyinhangka" />
-  //               }
-  //               {
-  //                 it.type === 1 &&
-  //                 <i className="iconfont iconzhifubao" />
-  //               }
-  //               {
-  //                 it.type === 2 &&
-  //                 <i className="iconfont iconxianjin" />
-  //               }
-  //               {it.title}
-  //             </div>
-  //             <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
-  //               {it.type === 0 && '银行卡'}
-  //               {it.type === 1 && '支付宝'}
-  //               {it.type === 2 && '现金'}
-  //               {it.account}
-  //             </p>
-  //           </div>
-  //         )}
-  //       />
-  //     ));
-  //   }
-
   export = (e) => {
     const obj = {};
     const { startTime, endTime, dateType, levelSearch } = this.state;

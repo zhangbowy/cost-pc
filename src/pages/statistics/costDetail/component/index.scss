@@ -1,0 +1,9 @@
+.price{
+  display: flex;
+  width: 100%;
+  margin-left: 10px;
+  line-height: 22px;
+  .money{
+    color: rgba(255, 90, 95, 1);
+  }
+}

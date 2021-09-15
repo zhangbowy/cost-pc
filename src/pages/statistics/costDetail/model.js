@@ -4,7 +4,7 @@ import api from './services';
 
 const { PAGE_SIZE } = constants;
 export default {
-  namespace: 'statistics',
+  namespace: 'costDetail',
   state: {
     list: [],
     query: {
@@ -13,6 +13,13 @@ export default {
     },
     total: 0,
     exportData: null,
+    hisRecord: {},
+    recordPage: {
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+      total: 0,
+    },
+    recordList: [],
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -21,12 +28,12 @@ export default {
         type: 'save',
         payload: {
           list: response.list || [],
-          // list: [{ id: 1 }, { id: 2 }],
-          query: {
+          queryPage: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+          sum: response.page ? response.page.totalSum : 0
         },
       });
     },

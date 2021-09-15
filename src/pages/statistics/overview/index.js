@@ -16,10 +16,6 @@ import { defaultMonth } from './components/Search/time';
 
 
 const menu = [{
-  key: '0',
-  name: '支出明细',
-  url: 'statistics_costDetail',
-}, {
   key: '1',
   name: '部门支出',
   url: 'statistics_department',
@@ -90,9 +86,9 @@ class EchartsTest extends Component {
     super(props);
     this.childRef = null;
     this.state={
-      current: '0',
-      columns: defaultData[0].columns,
-      searchList: defaultData[0].searchList,
+      current: '1',
+      columns: defaultData[1].columns,
+      searchList: defaultData[1].searchList,
       list: [],
       menus: menu,
       queryPage: {
@@ -128,7 +124,7 @@ class EchartsTest extends Component {
       if (linkType || linkType === 0) {
         this.onInits(linkType);
       } else {
-        this.onInits('0');
+        this.onInits('1');
       }
     });
   }
@@ -595,7 +591,6 @@ class EchartsTest extends Component {
     return (
       <div style={{ minWidth: '1000px' }}>
         <div style={{background: '#fff', paddingTop: '16px'}}>
-          <p className="m-l-32 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>支出分析表</p>
           <Menu
             onClick={this.handleClick}
             mode="horizontal"
