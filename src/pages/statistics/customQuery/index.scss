@@ -1,17 +1,23 @@
 .contents{
   display: flex;
   padding: 0;
+  height: calc(100vh - 220px);
 }
 .cntLeft{
   width: 240px;
+  height: 100%;
+  overflow: scroll;
+  :global{
+    .ant-tree li .ant-tree-node-content-wrapper{
+      vertical-align: middle;
+    }
+  }
 }
 .cntRight{
   flex: 1;
+  padding: 24px 32px;
 }
 .leftHead{
   display: flex;
   margin: 24px;
-}
-.cntRight{
-  margin: 24px 32px;
 }

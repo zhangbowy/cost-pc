@@ -1,20 +1,23 @@
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Divider, Tree, Icon, Table, Form, Select } from 'antd';
 import cs from 'classnames';
 import { dateToTime } from '@/utils/util';
+import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import TimeComp from '../../workbench/components/TimeComp';
 
 const { TreeNode } = Tree;
 const { Option } = Select;
-@connect(({ customQuery, loading }) => ({
+@connect(({ customQuery, loading, global }) => ({
   loading: loading.effects['customQuery/list'] || false,
   list: customQuery.list,
   query: customQuery.query,
   total: customQuery.total,
   detailList: customQuery.detailList,
   isNoRole: customQuery.isNoRole,
+  costCategoryList: global.costCategoryList,
 }))
 class customQuery extends Component {
   constructor(props){
@@ -29,12 +32,17 @@ class customQuery extends Component {
 
   componentDidMount(){
     const { submitTime } = this.state;
+    this.props.dispatch({
+      type: 'global/costList',
+      payload: {},
+    });
     this.onQuery({
       ...submitTime,
     });
   }
 
   onQuery = (payload) => {
+    if (payload.type) delete payload.type;
     this.props.dispatch({
       type: 'customQuery/list',
       payload,
@@ -53,31 +61,52 @@ class customQuery extends Component {
     return <TreeNode key={item.key} {...item} />;
   });
 
+  onChangeState = (key, val) => {
+    this.setState({
+      [key]: val,
+    }, () => {
+      if (key === 'submitTime') {
+        if (val.type) { delete val.type; }
+        this.onQuery({
+          ...val,
+        });
+      }
+    });
+  }
+
 
   render () {
     const {
       // loading,
       list,
+      costCategoryList,
       // detailList,
       // query,
       // total,
     } = this.props;
+    const lists = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tName: 'title',
+      tId: 'value'
+    }, costCategoryList);
     const { submitTime } = this.state;
     const columns = [{
       title: '承担部门',
-      dataIndex: ''
+      dataIndex: 'deptName'
     }, {
       title: '金额',
-      dataIndex: ''
+      dataIndex: 'submitSum'
     }, {
       title: '环比',
-      dataIndex: ''
+      dataIndex: 'annulus'
     }, {
       title: '同比',
-      dataIndex: ''
+      dataIndex: 'yearOnYear'
     }, {
       title: '操作',
-      dataIndex: ''
+      dataIndex: 'operate'
     }];
     return (
       <div>
@@ -97,15 +126,8 @@ class customQuery extends Component {
             <div>
               <Tree
                 checkable
-                onExpand={this.onExpand}
-                expandedKeys={this.state.expandedKeys}
-                autoExpandParent={this.state.autoExpandParent}
-                onCheck={this.onCheck}
-                checkedKeys={this.state.checkedKeys}
-                onSelect={this.onSelect}
-                selectedKeys={this.state.selectedKeys}
               >
-                {this.renderTreeNodes(list)}
+                {this.renderTreeNodes(lists)}
               </Tree>
             </div>
           </div>
@@ -113,12 +135,12 @@ class customQuery extends Component {
           <div className={style.cntRight}>
             <Form layout="inline" className="m-b-16">
               <Form.Item label="承担部门" className="m-r-24">
-                <Select style={{ width: '160px' }}>
+                <Select style={{ width: '160px' }} placeholder="请选择">
                   <Option value={1}>承担着</Option>
                 </Select>
               </Form.Item>
               <Form.Item label="时间筛选">
-                <TimeComp submitTime={submitTime} />
+                <TimeComp submitTime={submitTime} onChangeData={this.onChangeState} />
               </Form.Item>
             </Form>
             <Table
