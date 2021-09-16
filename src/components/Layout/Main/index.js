@@ -8,6 +8,7 @@ import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Header from '@/components/Layout/Header';
 import Sider from '@/components/Layout/Sider';
 import styles from './index.scss';
+import logo from '../../../assets/img/aliTrip/aliLogo.png';
 
 class App extends React.PureComponent {
   static propTypes = {
@@ -43,6 +44,9 @@ class App extends React.PureComponent {
             <Layout.Content className="app-content">
               {children}
             </Layout.Content>
+            <div style={{ position: 'fixed', bottom: '100px', right: '20px', zIndex: '100' }}>
+              <img src={logo} alt="logo" />
+            </div>
           </Layout>
         </Layout>
       </ConfigProvider>

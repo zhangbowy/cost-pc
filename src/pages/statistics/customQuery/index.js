@@ -79,7 +79,7 @@ class customQuery extends Component {
           <div className={style.cntLeft}>
             <div className={style.leftHead}>
               <p className="fw-500 c-black-85 fs-16 m-r-8">支出类别</p>
-              <span className="sub-color">
+              <span className="sub-color cur-p">
                 <Icon type="sync" />
                 <span className="m-l-4">重置</span>
               </span>
