@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Divider, Tree, Icon, Table } from 'antd';
+import { Divider, Tree, Icon, Table, Form, Select } from 'antd';
 import cs from 'classnames';
+import { dateToTime } from '@/utils/util';
 import style from './index.scss';
+import TimeComp from '../../workbench/components/TimeComp';
 
 const { TreeNode } = Tree;
+const { Option } = Select;
 @connect(({ customQuery, loading }) => ({
   loading: loading.effects['customQuery/list'] || false,
   list: customQuery.list,
@@ -16,12 +19,18 @@ const { TreeNode } = Tree;
 class customQuery extends Component {
   constructor(props){
     super(props);
-    this.state = {};
+    this.state = {
+      submitTime: {
+        ...dateToTime('0_m'),
+        type: '0_m'
+      },
+    };
   }
 
   componentDidMount(){
+    const { submitTime } = this.state;
     this.onQuery({
-      dateType: 0,
+      ...submitTime,
     });
   }
 
@@ -53,6 +62,7 @@ class customQuery extends Component {
       // query,
       // total,
     } = this.props;
+    const { submitTime } = this.state;
     const columns = [{
       title: '承担部门',
       dataIndex: ''
@@ -101,6 +111,16 @@ class customQuery extends Component {
           </div>
           <Divider type="vertical" style={{height: '100%'}} />
           <div className={style.cntRight}>
+            <Form layout="inline" className="m-b-16">
+              <Form.Item label="承担部门" className="m-r-24">
+                <Select style={{ width: '160px' }}>
+                  <Option value={1}>承担着</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="时间筛选">
+                <TimeComp submitTime={submitTime} />
+              </Form.Item>
+            </Form>
             <Table
               columns={columns}
               dataSource={list}
