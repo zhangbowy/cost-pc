@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 // import constants from '@/utils/constants';
 import api from './services';
 
@@ -7,7 +7,8 @@ export default {
   namespace: 'customQuery',
   state: {
     list: [],
-    chartList: [],
+    detailList: [],
+    deptList: [],
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -16,6 +17,24 @@ export default {
         type: 'save',
         payload: {
           list: response || [],
+        },
+      });
+    },
+    *deptList({ payload }, { call, put }) {
+      const response = yield call(get, api.deptList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          deptList: response || [],
+        },
+      });
+    },
+    *detailList({ payload }, { call, put }) {
+      const response = yield call(post, api.detailList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          detailList: response || [],
         },
       });
     },

@@ -359,7 +359,7 @@ class Workbench extends PureComponent {
     if(status) {
       localStorage.setItem('linkStatus', status);
     }
-    this.props.history.push('/statistics/overview');
+    this.props.history.push('/statistics/costDetail');
   }
 
   render() {

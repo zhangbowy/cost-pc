@@ -440,7 +440,6 @@ class FormStyle extends Component {
                     dropdownStyle={{height: '300px'}}
                     showSearch
                     treeNodeFilterProp='title'
-                    treeDefaultExpandAll
                     labelInValue
                     onChange={val => this.onChangeTree(val, index)}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -549,7 +548,6 @@ class FormStyle extends Component {
               dropdownStyle={{height: '300px'}}
               showSearch
               treeNodeFilterProp='title'
-              treeDefaultExpandAll
               labelInValue
               onChange={val => this.onChangeTree(val, index)}
               getPopupContainer={triggerNode => triggerNode.parentNode}

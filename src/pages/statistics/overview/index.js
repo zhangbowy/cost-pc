@@ -140,11 +140,14 @@ class EchartsTest extends Component {
     // const times = localStorage.getItem('submitTime') &&
     // localStorage.getItem('submitTime') !== 'undefined' ?
     // JSON.parse(localStorage.getItem('submitTime')) : null;
-
+    const defaults = localStorage.getItem('defaultLocal') ?
+    JSON.parse(localStorage.getItem('defaultLocal')) : null;
+    localStorage.removeItem('defaultLocal');
+    console.log('返回的历史数据', defaults);
     let arr = [...searchList];
-    if (linkStatus !== 'undefined' && linkStatus) {
+    // if (linkStatus !== 'undefined' && linkStatus) {
       arr = searchList.map(it => {
-        if (it.key === 'statusList') {
+        if (it.key === 'statusList' && linkStatus) {
           return {
             ...it,
             value: {
@@ -153,9 +156,16 @@ class EchartsTest extends Component {
             valueStr: objStatus[linkStatus] && objStatus[linkStatus].name,
           };
         }
+        if (defaults && (it.key === defaults.idKey)) {
+          return {
+            ...it,
+            value: defaults.value,
+            valueStr: defaults.valueStr,
+          };
+        }
         return { ...it };
       });
-    }
+    // }
     const _this = this;
     if (Number(params) !== 0) {
       // const lists = e.key === '3' || e.key === '5' ? chartList : pieChartVos;
@@ -289,6 +299,7 @@ class EchartsTest extends Component {
   }
 
   search = (searchList, callback) => {
+    console.log('EchartsTest -> search -> searchList', searchList);
     const { dispatch } = this.props;
     const _this = this;
     const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];

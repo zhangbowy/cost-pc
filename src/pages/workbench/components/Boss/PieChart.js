@@ -14,7 +14,7 @@ const tabList = [{
   key: 'appProjectStatisticReturnVo',
   value: '项目支出'
 }];
-function PieChart({ data, total, current, title }) {
+function PieChart({ data, total, current, title, onLink }) {
   const option = {
     title: {
       zlevel: 0,
@@ -59,7 +59,6 @@ function PieChart({ data, total, current, title }) {
       backgroundColor:'#fff',
       padding: 0,
       formatter: (params) => {
-        console.log(params);
         return `<div class=${style.tooltip}>
             <div class=${style.tooltipTit}>${params.seriesName}</div>
             <div style='line-height: 20px;'>
@@ -148,6 +147,15 @@ function PieChart({ data, total, current, title }) {
       }
     ]
   };
+  const clickEchartsPie = (e) => {
+    console.log('点击了扇形图啊', e);
+    const index = e.dataIndex;
+    onLink(data[index]);
+    console.log('点击了扇形图啊', data);
+  };
+  const onclick = {
+    'click': clickEchartsPie.bind(this)
+  };
   return (
     <div className={style.chart}>
       {
@@ -158,6 +166,7 @@ function PieChart({ data, total, current, title }) {
             notMerge
             lazyUpdate
             option={option}
+            onEvents={onclick}
           />
           :
           <div className={style.noData}>

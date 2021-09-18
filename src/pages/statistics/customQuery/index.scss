@@ -19,5 +19,22 @@
 }
 .leftHead{
   display: flex;
-  margin: 24px;
+  margin: 24px 24px 8px 24px;
+}
+.toolTips{
+  background: #fff;
+  width: 600px;
+  :global{
+    .ant-tooltip-arrow{
+      color: #fff;
+    }
+    .ant-popover-inner-content{
+      background: #fff;
+      padding: 12px;
+    }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+      height: 36px;
+      padding: 5px;
+    }
+  }
 }

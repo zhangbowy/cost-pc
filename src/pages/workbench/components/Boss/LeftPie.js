@@ -10,16 +10,19 @@ const btn = [{
   data: 'appDeptStatisticReturnVo',
   value: '部门',
   linkKey: '1',
+  idKey: 'deptVos',
 }, {
   key: '1',
   data: 'appCategoryStatisticReturnVo',
   value: '类别',
   linkKey: '2',
+  idKey: 'categoryIds',
 }, {
   key: '2',
   data: 'appProjectStatisticReturnVo',
   value: '项目',
   linkKey: '3',
+  idKey: 'projectIds',
 }];
 class LeftPie extends PureComponent {
 
@@ -44,8 +47,21 @@ class LeftPie extends PureComponent {
     });
   }
 
-  onLink = () => {
+  onLink = (obj) => {
+    console.log(obj);
+
     const { current } = this.state;
+    if (obj) {
+      const params = {
+        valueStr: obj.dimensionName,
+        idKey: btn[current].idKey,
+        value: { [btn[current].idKey]: Number(current) === 0 ?
+          [{ deptId: obj.dimensionId, deptName: obj.dimensionName, name: obj.dimensionName }] : [obj.dimensionId] }
+      };
+      localStorage.removeItem('defaultLocal');
+      localStorage.setItem('defaultLocal', JSON.stringify(params));
+    }
+
     localStorage.removeItem('linkType');
     localStorage.setItem('linkType', btn[current].linkKey);
     this.props.history.push('/statistics/overview');
@@ -73,6 +89,7 @@ class LeftPie extends PureComponent {
             total={data[btn[current].data] && data[btn[current].data].totalSum ? data[btn[current].data].totalSum : 0}
             current={current}
             title={btn[current].value}
+            onLink={this.onLink}
           />
         </Spin>
         {

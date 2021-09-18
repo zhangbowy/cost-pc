@@ -177,7 +177,7 @@ class App extends React.PureComponent {
               <span>联系我们</span>
             </div>
           </InitModal>
-          <p className="f-c-85 fs-12">遇到问题？想开通更多功能请联系我们</p>
+          <p className="f-c-85 fs-12 m-b-16">遇到问题？想开通更多功能请联系我们</p>
           <Services costConfigCheckVo={costConfigCheckVo} status={status} visible={Number(status) === 2}>
             <Button type="primary" className={styles.footBtn}>版本升级</Button>
           </Services>

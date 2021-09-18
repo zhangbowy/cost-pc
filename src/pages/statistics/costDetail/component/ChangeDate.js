@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Modal, Form, DatePicker } from 'antd';
+import moment from 'moment';
 import { formItemLayout } from '../../../../utils/constants';
 import style from './index.scss';
 
+const { MonthPicker } = DatePicker;
 @Form.create()
 class ChangeDate extends Component {
   state={
@@ -22,9 +24,27 @@ class ChangeDate extends Component {
     });
   }
 
+  onConfirm = () => {
+    const { form: { validateFields }, onOK, id } = this.props;
+    validateFields((err, val) => {
+      if (!err) {
+        console.log(val);
+        new Promise(resolve => {
+          onOK({
+            id,
+            month: moment(val.month).format('x'),
+          }, resolve);
+        }).then(() => {
+          this.onClose();
+        });
+      }
+    });
+
+  }
+
   render() {
     const { visible } = this.state;
-    const { children, form: { getFieldDecorator } } = this.props;
+    const { children, form: { getFieldDecorator }, month, money } = this.props;
 
     return (
       <span>
@@ -37,14 +57,15 @@ class ChangeDate extends Component {
           bodyStyle={{
             height: '212px'
           }}
+          onOk={this.onConfirm}
         >
           <Form style={{width: '100%'}}>
             <Form.Item {...formItemLayout}>
               <div className={style.price}>
                 <p className="c-black-85">该明细金额：</p>
-                <span className={style.money}>$1233</span>
+                <span className={style.money}>{money ? money/100 : '-'}</span>
                 <p className="c-black-85">，目前所属期为：</p>
-                <span className={style.money}>$1233</span>
+                <span className={style.money}>{month ? moment(month).format('YYYY-MM') : '-'}</span>
               </div>
             </Form.Item>
             <Form.Item label="修改所属月份" {...formItemLayout}>
@@ -52,7 +73,7 @@ class ChangeDate extends Component {
                 getFieldDecorator('month', {
                   rules: [{ required: true, message: '请选择日期' }]
                 })(
-                  <DatePicker placeholder="请选择" />
+                  <MonthPicker placeholder="请选择" />
                 )
               }
             </Form.Item>

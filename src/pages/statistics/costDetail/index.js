@@ -5,10 +5,12 @@ import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
 // import Search from 'antd/lib/input/Search';
+import update from 'immutability-helper';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { rowSelect } from '@/utils/common';
 // import { JsonParse } from '@/utils/common';
 import constants, { getArrayValue, approveStatus } from '@/utils/constants';
+import treeConvert from '@/utils/treeConvert';
 // import DropBtn from '@/components/DropBtn';
 import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import TableTemplate from '@/components/Modals/TableTemplate';
@@ -19,8 +21,16 @@ import { statusList, invoiceStatus, getArrayColor } from '../../../utils/constan
 import ChangeDate from './component/ChangeDate';
 
 const { APP_API } = constants;
+const objStatus = {
+  2: {
+    name: '待发放',
+  },
+  3: {
+    name: '已发放'
+  }
+};
 @Form.create()
-@connect(({ loading, costDetail }) => ({
+@connect(({ loading, costDetail, costGlobal, global }) => ({
   loading: loading.effects['costDetail/list'] || false,
   list: costDetail.list,
   query: costDetail.query,
@@ -28,6 +38,10 @@ const { APP_API } = constants;
   sum: costDetail.sum,
   recordPage: costDetail.recordPage,
   recordList: costDetail.recordList,
+  costCategoryList: global.costCategoryList,
+  invoiceList: global.invoiceList,
+  projectList: costGlobal.projectList,
+  supplierList: global.supplierList,
 }))
 class Statistics extends React.PureComponent {
   constructor(props) {
@@ -59,6 +73,12 @@ class Statistics extends React.PureComponent {
         key: ['userVOS', 'deptVOS'],
         id: 'user',
         out: 1,
+      }, {
+        type: 'rangeTime',
+        label: '发生日期',
+        placeholder: '请选择',
+        key: ['happenStartTime', 'happenEndTime'],
+        id: 'happenStartTime',
       }, {
         type: 'rangeTime',
         label: '提交时间',
@@ -125,12 +145,7 @@ class Statistics extends React.PureComponent {
   }
 
   componentDidMount(){
-    const {
-      query,
-    } = this.props;
-    this.onQuery({
-      ...query,
-    });
+    this.onInit();
   }
 
   onQuery = (payload) => {
@@ -148,46 +163,122 @@ class Statistics extends React.PureComponent {
     });
   }
 
-
-
-  onDelete = (id) => {
-      const {
-          selectedRows,
-          selectedRowKeys,
-      } = rowSelect.onDelete(this.state, id);
-      let amount = 0;
-      selectedRows.forEach(item => {
-        amount+=item.submitSum;
+  onInit = () => {
+    const { searchList } = this.state;
+    const linkStatus = localStorage.getItem('linkStatus');
+    localStorage.removeItem('linkStatus');
+    // const times = localStorage.getItem('submitTime') &&
+    // localStorage.getItem('submitTime') !== 'undefined' ?
+    // JSON.parse(localStorage.getItem('submitTime')) : null;
+    const defaults = localStorage.getItem('defaultLocal') ?
+    JSON.parse(localStorage.getItem('defaultLocal')) : null;
+    localStorage.removeItem('defaultLocal');
+    console.log('返回的历史数据', defaults);
+    let arr = [...searchList];
+    if (linkStatus !== 'undefined' && linkStatus) {
+      arr = searchList.map(it => {
+        if (it.key === 'statusList' && linkStatus) {
+          return {
+            ...it,
+            value: {
+              statusList: [linkStatus],
+            },
+            valueStr: objStatus[linkStatus] && objStatus[linkStatus].name,
+          };
+        }
+        return { ...it };
       });
-      this.setState({
-          selectedRows,
-          selectedRowKeys,
-          sumAmount: amount,
-      });
-  };
-
-  onSearch = (val) => {
-    const { query } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
     }
-    this.setState({
-      searchContent: val,
-    });
-    const { leSearch } = this.state;
-    this.onQuery({
-      ...query,
-      pageNo: 1,
-      content: val,
-      startTime,
-      endTime,
-      ...leSearch,
+    this.search(arr, () => {
+      const values = {};
+      Object.assign(values, {
+        pageNo: 1,
+        pageSize: 10,
+      });
+      arr.forEach(it => {
+        if (it.value) {
+          Object.assign(values, {
+            ...it.value,
+          });
+        }
+      });
+      this.onQuery({
+        ...values,
+      });
     });
   }
+
+  search = (searchList, callback) => {
+    console.log('EchartsTest -> search -> searchList', searchList);
+    const { dispatch } = this.props;
+    const _this = this;
+    const fetchs = ['projectList', 'supplierList', 'costList'];
+    const arr = fetchs.map(it => {
+      return dispatch({
+        type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
+        payload: {},
+      });
+    });
+    Promise.all(arr).then(() => {
+      const { costCategoryList, projectList, supplierList } = _this.props;
+      const treeList = [costCategoryList, projectList];
+      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds'];
+      const obj = {};
+      const newTree = treeList.map((it, i) => {
+        return treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          name: i === 0 ? 'costName' : 'name',
+          tName: 'title',
+          tId: 'value'
+        }, it);
+      });
+      newTree.push(supplierList);
+      newTree.forEach((it, index) => {
+        Object.assign(obj, {
+          [keys[index]]: it,
+        });
+      });
+      const newSearch = [];
+      searchList.forEach(it => {
+        if (keys.includes(it.key)) {
+          newSearch.push({
+            ...it,
+            options: obj[it.key],
+            fileName: {
+              key: 'id',
+              name: 'name'
+            }
+          });
+        } else {
+          newSearch.push({ ...it });
+        }
+      });
+      this.setState({
+        searchList: newSearch,
+      }, () => {
+        if (callback) {
+          callback();
+        }
+      });
+    });
+  }
+
+  onDelete = (id) => {
+    const {
+        selectedRows,
+        selectedRowKeys,
+    } = rowSelect.onDelete(this.state, id);
+    let amount = 0;
+    selectedRows.forEach(item => {
+      amount+=item.submitSum;
+    });
+    this.setState({
+        selectedRows,
+        selectedRowKeys,
+        sumAmount: amount,
+    });
+  };
 
   print = () => {
     const { selectedRows } = this.state;
@@ -272,6 +363,47 @@ class Statistics extends React.PureComponent {
     });
   }
 
+  onChangeSearch = async(val) => {
+    let arr = [...val];
+    const { searchList } = this.state;
+    const index = val.findIndex(it => it.linkKey === 'projectIds');
+    const arrTime = val.findIndex(it => it.key === 'timeC');
+    if (index > -1) {
+      const keys = searchList[index].key;
+      const oldValue = searchList[index].value || {};
+      const newValue = val[index].value || {};
+      if (newValue[keys] !== oldValue[keys]) {
+        const pIndex = val.findIndex(it => it.key === 'projectIds');
+        const { lists, projectList } = await this.onProject({ ...newValue });
+        const values = projectList.filter(it => it.type === 1);
+        arr = update(arr, {
+          $splice: [[pIndex, 1, {
+            ...val[pIndex],
+            options: lists || [],
+            value: newValue[keys] !== 0 ? { [val[pIndex].key]: values.map(it => it.id) } : null,
+            valueStr: null,
+          }]]
+        });
+      }
+    }
+    if (arrTime && arrTime.length) {
+      const { dateType } = arrTime[0].value;
+      if (dateType === -1) {
+        this.setState({
+          dateType: -1,
+        });
+      }
+    }
+    this.setState({
+      searchList: arr
+    }, () => {
+      this.onQuery({
+        pageNo: 1,
+        pageSize: 10,
+      });
+    });
+  }
+
   handleTableChange = (pagination, filters, sorter) => {
     const params = {
       ...filters,
@@ -302,6 +434,30 @@ class Statistics extends React.PureComponent {
     this.onQuery(params);
   }
 
+  onRecord = (payload, callback) => {
+    this.props.dispatch({
+      type: 'costDetail/recordList',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  onOk = (payload, callback) => {
+    this.props.dispatch({
+      type: 'costDetail/edit',
+      payload,
+    }).then(() => {
+      const { query } = this.props;
+      this.onQuery({
+        ...query,
+      });
+      callback();
+    });
+  }
+
   render() {
     const {
       selectedRowKeys,
@@ -317,7 +473,22 @@ class Statistics extends React.PureComponent {
       recordPage,
       recordList,
     } = this.props;
-    const recordColumns = [];
+    const recordColumns = [{
+      title: '姓名',
+      dataIndex: 'createName',
+    }, {
+      title: '操作时间',
+      dataIndex: 'createTime',
+      record: (text) => (
+        <span>{text ? moment(text).format('YYYY-MM-DD') : '-'}</span>
+      )
+    }, {
+      title: '操作内容',
+      dataIndex: 'operationMsg',
+    }, {
+      title: '详情',
+      dataIndex: 'operationDetail',
+    }];
     const columns = [{
       title: '支出类别',
       dataIndex: 'categoryName',
@@ -358,6 +529,13 @@ class Statistics extends React.PureComponent {
       title: '承担部门',
       dataIndex: 'deptName',
       width: 150,
+    }, {
+      title: '发生日期',
+      dataIndex: 'costTime',
+      render: (text) => (
+        <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
+      ),
+      width: 120,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
@@ -461,7 +639,12 @@ class Statistics extends React.PureComponent {
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          <ChangeDate>
+          <ChangeDate
+            month={record.happenTime}
+            money={record.submitSum}
+            onOK={this.onOk}
+            id={record.id}
+          >
             <a>修改所属期</a>
           </ChangeDate>
           <Divider type="vertical" />
@@ -540,7 +723,7 @@ class Statistics extends React.PureComponent {
             rowSelection={rowSelection}
             onChange={this.handleTableChange}
             rowKey="id"
-            scroll={{ x: 3100 }}
+            scroll={{ x: 3220 }}
             pagination={{
               ...query,
               total,

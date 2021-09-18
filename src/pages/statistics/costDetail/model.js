@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -37,8 +37,22 @@ export default {
         },
       });
     },
-    *send({ payload }, { call }) {
-      yield call(post, api.send, payload);
+    *recordList({ payload }, { call, put }) {
+      const response = yield call(get, api.recordList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          recordList: response.recordList || [],
+          recordPage: {
+            pageSize: payload.pageSize,
+            pageNo: payload.pageNo,
+            total: response.page ? response.page.total : 0,
+          }
+        },
+      });
+    },
+    *edit({ payload }, { call }) {
+      yield call(post, api.edit, payload);
     },
     *export({ payload }, { call }) {
       Object.assign(payload, { exportType:'export', fileName: '支出明细' });
