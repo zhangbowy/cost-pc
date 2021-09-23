@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import moment from 'moment';
-import fields from '@/utils/fields';
 import { Form, DatePicker, Select } from 'antd';
+import fields from '@/utils/fields';
 import { dateToTime } from '../../../utils/util';
 
 const { RangePicker } = DatePicker;

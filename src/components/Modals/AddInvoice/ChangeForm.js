@@ -295,6 +295,7 @@ class ChangeForm extends Component {
       details,
       users,
       showField,
+      newshowField,
     } = this.props;
     let params = {};
     form.validateFieldsAndScroll((err, val) => {
@@ -354,7 +355,8 @@ class ChangeForm extends Component {
           imgUrl,
           fileUrl,
           expandSubmitFieldVos,
-          selfSubmitFieldVos
+          selfSubmitFieldVos,
+          showField: JSON.stringify(newshowField),
         };
         if (val.month) {
           Object.assign(params, {
