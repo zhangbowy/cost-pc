@@ -375,7 +375,7 @@ class EchartsTest extends Component {
         list,
         queryPage,
         total,
-        expandIds: list.map(it => it.id),
+        expandIds: Number(current) === 1 ? list.map(it => it.id) : [],
       });
     });
   }

@@ -310,7 +310,7 @@ class StaticChart extends Component {
             (
               <span className="icons">
                 <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-                {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+                <span>{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
               </span>
             )}
           </span>

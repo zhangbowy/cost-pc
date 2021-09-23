@@ -19,8 +19,8 @@ const commons = [{
       { record.annulusSymbolType !== null &&
       (
         <span className="icons">
-          <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-          {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+          <i className={`iconfont vt-m ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+          <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
         </span>
       )}
     </span>
@@ -35,7 +35,7 @@ const commons = [{
       (
         <span className="icons">
           <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-          {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+          <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
         </span>
       )}
     </span>
@@ -57,6 +57,7 @@ const childColumnns = [{
   isNoRole: customQuery.isNoRole,
   costCategoryList: global.costCategoryList,
   deptList: customQuery.deptList,
+  childLoading: loading.effects['customQuery/detailList'] || false
 }))
 class customQuery extends Component {
   constructor(props){
@@ -197,8 +198,12 @@ class customQuery extends Component {
 
   onReset = () => {
     const { submitTime } = this.state;
-    this.onQuery({
-      ...submitTime,
+    this.setState({
+      categoryIds: [],
+    }, () => {
+      this.onQuery({
+        ...submitTime,
+      });
     });
   }
 
@@ -208,8 +213,10 @@ class customQuery extends Component {
       list,
       costCategoryList,
       detailList,
+      loading,
       // query,
       // total,
+      childLoading,
       deptList,
     } = this.props;
     const lists = treeConvert({
@@ -219,7 +226,7 @@ class customQuery extends Component {
       tName: 'title',
       tId: 'value'
     }, costCategoryList);
-    const { submitTime } = this.state;
+    const { submitTime, categoryIds } = this.state;
     const columns = [{
       title: '承担部门',
       dataIndex: 'deptName'
@@ -247,6 +254,7 @@ class customQuery extends Component {
                 columns={childColumnns}
                 dataSource={detailList}
                 scroll={{y: 245}}
+                loading={childLoading}
               />
             </div>
           )}
@@ -279,6 +287,7 @@ class customQuery extends Component {
                 checkable
                 switcherIcon={<Icon type="down" />}
                 onCheck={this.onCheck}
+                checkedKeys={categoryIds}
               >
                 {this.renderTreeNodes(lists)}
               </Tree>
@@ -312,6 +321,7 @@ class customQuery extends Component {
               columns={columns}
               dataSource={list}
               pagination={false}
+              loading={loading}
               rowKey="id"
               defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
             />

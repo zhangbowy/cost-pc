@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Form, Input, Select, Radio, Divider, Row, Col, Button, message, Checkbox, Tooltip } from 'antd';
-import { approveUser, approveCreate, approveSet, approveLeader } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
+import { approveUser, approveCreate, approveSet, approveLeader } from '@/utils/constants';
 import { choosePeople } from '@/utils/ddApi';
 import { timeStampToHex } from '@/utils/common';
 

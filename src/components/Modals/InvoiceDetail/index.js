@@ -580,7 +580,12 @@ class InvoiceDetail extends Component {
               !Number(templateType) &&
               <Col span={8} className="m-t-16">
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>提交人：</span>
-                <span className="fs-14 c-black-65">{details.createName}</span>
+                <span className="fs-14 c-black-65">
+                  {
+                    details.userId !== details.createId && Number(templateType) === 1 ?
+                    `${details.createName}移交给${details.userName}` : details.createName
+                  }
+                </span>
               </Col>
             }
             {

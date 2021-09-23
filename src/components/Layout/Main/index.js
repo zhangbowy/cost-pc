@@ -44,7 +44,7 @@ class App extends React.PureComponent {
             <Layout.Content className="app-content">
               {children}
             </Layout.Content>
-            <div style={{ position: 'fixed', bottom: '23px', right: '23px', zIndex: '100' }}>
+            <div style={{ position: 'fixed', bottom: '56px', right: '23px', zIndex: '100' }}>
               <img src={logo} alt="logo" style={{ width: '84px' }} />
             </div>
           </Layout>

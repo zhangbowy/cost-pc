@@ -102,7 +102,7 @@ function ControllerCom(props) {
     return queryUsers.map( item => {
       return (
         <Option value={item.id} key={item.id} >
-          <Avatar avatar={item.avatar} name={item.name}  />{` ${item.name}`}
+          <Avatar avatar={item.avatar} name={item.name} size="16" />{` ${item.name}`}
         </Option>
       );
     });
@@ -115,7 +115,7 @@ function ControllerCom(props) {
     return users.map( item => {
       return (
         <Option value={item.emplId} key={item.emplId} >
-          <Avatar avatar={item.avatar} name={item.name}  />{` ${item.name}`}
+          <Avatar avatar={item.avatar} name={item.name} size="16" />{` ${item.name}`}
         </Option>
       );
     });
@@ -163,15 +163,20 @@ function ControllerCom(props) {
         visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}
+        width="580px"
+        bodyStyle={{
+          height: '196px',
+          textAlign: 'center',
+          marginTop: '8px'
+        }}
       >
         <div className={style.formItem}>
           <label>原{prodObj[type]}人：</label>
           <Select
             showSearch
-            style={{ width: 200 }}
+            style={{ width: 300 }}
             placeholder="请选择"
             optionFilterProp="children"
-            size='large'
             value={userIdExpired}
             onChange={onChange}
           >
@@ -182,10 +187,9 @@ function ControllerCom(props) {
           <label>交接{prodObj[type]}人：</label>
           <div style={{display:'inline-block'}} onClick={selectPeople} >
             <Select
-              style={{ width: 200 }}
+              style={{ width: 300 }}
               placeholder="请选择"
               optionFilterProp="children"
-              size='large'
               value={rawUser}
               open={isOpen}
             >

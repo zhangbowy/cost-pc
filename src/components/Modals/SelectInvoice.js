@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import treeConvert from '@/utils/treeConvert';
 import cs from 'classnames';
 import { Modal, Tooltip } from 'antd';
 import { debounce } from 'lodash-decorators';
+import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import AddInvoice from './AddInvoice';
 import Tags from '../Tags';
@@ -87,11 +87,12 @@ class SelectInvoice extends Component {
         return obj;
       });
       const others = users.filter(it => (it.type === 1 && it.parentId === 0));
+      const sortUsers = users.sort();
       let lists = treeConvert({
         pId: 'parentId',
         rootId: 0,
         otherKeys: ['note', 'type', 'parentId', 'createTime', 'templateType', 'disabled']
-      }, users.filter(it => !(it.type === 1 && it.parentId === 0))).filter(({children = [], type}) => {
+      }, sortUsers.filter(it => !(it.type === 1 && it.parentId === 0))).filter(({children = [], type}) => {
         if(type === 1) return true;
         return children.length > 0 ? children.map(it => it.type === 1).length : false;
       });

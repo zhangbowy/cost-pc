@@ -163,13 +163,6 @@ class TempTable extends PureComponent {
     const { list, columns, tableProps,
       pagination, currentType, loading, isNoRole, expandIds } = this.props;
     const { selectedRowKeys } = this.state;
-    const rowSelection = {
-      type: 'checkbox',
-      selectedRowKeys,
-      onSelect: this.onSelect,
-      onSelectAll: this.onSelectAll,
-      columnWidth: '24px'
-    };
     return (
       <>
         <div className="content-dt" style={{ height: 'auto' }}>
@@ -221,9 +214,7 @@ class TempTable extends PureComponent {
                 columns={columns}
                 loading={loading}
                 {...tableProps}
-                rowSelection={currentType === 0 ? rowSelection : null}
                 onChange={this.handleTableChange}
-                defaultExpandAllRows
                 // expandRowByClick
                 expandedRowKeys={expandIds}
                 onExpand={(b, r) => {

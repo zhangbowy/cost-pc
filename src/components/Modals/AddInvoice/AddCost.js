@@ -794,9 +794,10 @@ class AddCost extends Component {
                           placeholder="请选择"
                           onChange={this.onChange}
                           style={{width: '100%'}}
-                          treeDefaultExpandAll
                           dropdownStyle={{height: '300px'}}
                           disabled={modify && details.categoryId}
+                          showSearch
+                          treeNodeFilterProp="label"
                         >
                           {this.loop(list)}
                         </TreeSelect>

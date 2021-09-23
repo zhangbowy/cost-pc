@@ -23,28 +23,28 @@ function Chart({ children, data, type, getTime, chartName, changeMoney }) {
     if (dateType === 0) {
       if (types) {
         if ((month - 1) === 0) {
-          arr = [`${year}年${month}月`, `${year -1}年12月`, '环比增长'];
+          arr = [`${year -1}年12月`, `${year}年${month}月`, '环比增长'];
         } else {
-          arr = [`${year}年${month}月`, `${year}年${month-1}月`, '环比增长'];
+          arr = [`${year}年${month-1}月`, `${year}年${month}月`, '环比增长'];
         }
       } else {
-        arr = [`${year}年${month}月`, `${year-1}年${month}月`, '同比增长'];
+        arr = [`${year-1}年${month}月`, `${year}年${month}月`, '同比增长'];
       }
     } else if (dateType === 1) {
       if (types) {
         if ((quarter-1) === 0) {
-          arr = [`${year}年第${quarter}季度`, `${year -1}年第四季度`, '环比增长'];
+          arr = [`${year -1}年第四季度`, `${year}年第${quarter}季度`, '环比增长'];
         } else {
-          arr = [`${year}年第${quarter}季度`, `${year}年第${quarter-1}季度`, '环比增长'];
+          arr = [`${year}年第${quarter-1}季度`, `${year}年第${quarter}季度`, '环比增长'];
         }
       } else {
-        arr = [`${year}年第${quarter}季度`, `${year-1}年第${quarter}季度`, '同比增长'];
+        arr = [`${year-1}年第${quarter}季度`, `${year}年第${quarter}季度`, '同比增长'];
       }
     } else if (dateType === 2) {
       if (types) {
-        arr = [`${year}年`, `${year -1}年`, '环比增长'];
+        arr = [`${year -1}年`, `${year}年`, '环比增长'];
       } else {
-        arr = [`${year}年`, `${year -1}年`, '环比增长'];
+        arr = [`${year -1}年`, `${year}年`, '环比增长'];
       }
     }
     return arr;

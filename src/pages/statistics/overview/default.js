@@ -8,18 +8,6 @@ import { defaultMonth } from './components/Search/time';
 
 const times = defaultMonth();
 const initMonth = { ...times };
-const statusTime = localStorage.getItem('statisticalDimension') === 'undefined' ? 0 : localStorage.getItem('statisticalDimension');
-const staticsObj = {
-  0: {
-    name: '提交时间',
-  },
-  1: {
-    name: '审核通过时间'
-  },
-  2: {
-    name: '发生日期'
-  }
-};
 const { projectType } = fields;
 console.log('项目角色', projectType);
 export default {
@@ -32,14 +20,6 @@ export default {
       render: (_, record) => (
         <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.deptName}</span>
       )
-    }, {
-      title: '报销人数',
-      dataIndex: 'submitUserCountAll',
-      width: 70,
-    }, {
-      title: '明细数',
-      dataIndex: 'categoryCountAll',
-      width: 70,
     }, {
       title: (
         <span>
@@ -56,8 +36,8 @@ export default {
           { record.annulusSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+              <i className={`iconfont vt-m ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
             </span>
           )}
         </span>
@@ -80,12 +60,20 @@ export default {
           { record.yearOnYearSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+              <i className={`iconfont vt-m ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
             </span>
           )}
         </span>
       ),
+    }, {
+      title: '报销人数',
+      dataIndex: 'submitUserCountAll',
+      width: 70,
+    }, {
+      title: '明细数',
+      dataIndex: 'categoryCountAll',
+      width: 70,
     }],
     chartName: 'deptName',
     type: 'deptId',
@@ -95,7 +83,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: staticsObj[statusTime].name,
+      label: '时间筛选',
       key: ['startTime', 'endTime'],
       id: 'timeC',
       out: 1,
@@ -138,14 +126,6 @@ export default {
         <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.categoryName}</span>
       )
     }, {
-      title: '报销人数',
-      dataIndex: 'submitUserCountAll',
-      width: 70,
-    }, {
-      title: '明细数',
-      dataIndex: 'categoryCountAll',
-      width: 70,
-    }, {
       title: (
         <span>
           <span className="m-r-8">环比增长</span>
@@ -161,8 +141,8 @@ export default {
           { record.annulusSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+              <i className={`iconfont vt-m ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
             </span>
           )}
         </span>
@@ -185,12 +165,20 @@ export default {
           { record.yearOnYearSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+              <i className={`iconfont vt-m ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
             </span>
           )}
         </span>
       ),
+    }, {
+      title: '报销人数',
+      dataIndex: 'submitUserCountAll',
+      width: 70,
+    }, {
+      title: '明细数',
+      dataIndex: 'categoryCountAll',
+      width: 70,
     }],
     chartName: 'categoryName',
     type: 'categoryId',
@@ -200,7 +188,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: staticsObj[statusTime].name,
+      label: '时间筛选',
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -259,7 +247,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: staticsObj[statusTime].name,
+      label: '时间筛选',
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -387,7 +375,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: staticsObj[statusTime].name,
+      label: '时间筛选',
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',
@@ -445,7 +433,7 @@ export default {
     },
     searchList: [{
       type: 'timeC',
-      label: staticsObj[statusTime].name,
+      label: '时间筛选',
       placeholder: '单号、事由、收款人',
       key: ['startTime', 'endTime'],
       id: 'timeC',

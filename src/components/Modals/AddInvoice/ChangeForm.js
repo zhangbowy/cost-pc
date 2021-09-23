@@ -295,8 +295,10 @@ class ChangeForm extends Component {
       details,
       users,
       showField,
+      newshowField,
     } = this.props;
     let params = {};
+    console.log('newshowField', newshowField);
     form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -354,7 +356,8 @@ class ChangeForm extends Component {
           imgUrl,
           fileUrl,
           expandSubmitFieldVos,
-          selfSubmitFieldVos
+          selfSubmitFieldVos,
+          showField: JSON.stringify(newshowField),
         };
         if (val.month) {
           Object.assign(params, {

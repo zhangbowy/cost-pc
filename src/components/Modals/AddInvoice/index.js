@@ -887,6 +887,7 @@ class AddInvoice extends Component {
       details,
       total,
       showField,
+      // newshowField,
       borrowArr,
       applyArr
     } = this.state;
@@ -897,6 +898,7 @@ class AddInvoice extends Component {
       userId: details.userId || '',
       submitSum: ((total * 1000)/10).toFixed(0),
       salaryAmount: ((total * 1000)/10).toFixed(0),
+      showField: JSON.stringify(showField)
     };
     if (this.changeForm &&
       this.changeForm.onSaveForm &&

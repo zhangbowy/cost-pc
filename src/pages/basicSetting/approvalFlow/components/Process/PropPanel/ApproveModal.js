@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col, message, Tooltip } from 'antd';
-import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { connect } from 'dva';
+import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { getArrayValue, approveCreateObj } from '../../../../../../utils/constants';
 import { choosePeople } from '../../../../../../utils/ddApi';
 
@@ -159,6 +159,9 @@ class ApproveModal extends Component {
     let radioList = approveUser;
     if (nodeType !== 'approver') {
       radioList = approveUser.filter(it => it.key !== 'leader');
+    }
+    if (Number(templateType) !== 0 || Number(templateType) !== 3) {
+      radioList = radioList.filter(it => it.key !== 'bearUser');
     }
     const newArr = [...approveCreate];
     const approveArr = Number(templateType) ? newArr.filter(it => it.key==='make_user') : approveCreate;

@@ -562,7 +562,7 @@ export const approveUser = [{
   key: 'selfSelect',
   value: '提交人自选'
 }, {
-  key: 'selfSelects',
+  key: 'bearUser',
   value: '费用承担人'
 }];
 

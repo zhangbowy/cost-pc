@@ -10,6 +10,18 @@ const dateTypes = {
   1: '按季统计',
   2: '按年统计',
 };
+const statusTime = localStorage.getItem('statisticalDimension') === 'undefined' ? 0 : localStorage.getItem('statisticalDimension');
+const staticsObj = {
+  0: {
+    name: '提交时间',
+  },
+  1: {
+    name: '审核通过时间'
+  },
+  2: {
+    name: '发生日期'
+  }
+};
 class SearchBanner extends PureComponent {
 
   onDel = i => {
@@ -97,7 +109,7 @@ class SearchBanner extends PureComponent {
                                   {it.value && dateTypes[it.value.dateType]}
                                 </span>
                               }
-                              {it.label}：{it.valueStr}
+                              {staticsObj[statusTime].name}：{it.valueStr}
                             </span>
                         }
                         {
