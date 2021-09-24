@@ -130,10 +130,6 @@ class PeopleSetting extends Component {
     const { value, users, visible } = this.state;
     return (
       <div>
-        {/* <div className="p-l-32" style={{backgroundColor: '#fff', minWidth: '1102px'}}>
-          <p className="p-t-24 m-b-8 fs-20 c-black-85 fw-600">名额配置</p>
-          <p className="p-b-24 fs-14 c-black-65">你可以在这里配置可用鑫支出的人员</p>
-        </div> */}
         <PageHead title="人员配置" note="你可以在这里配置可用鑫支出的人员"  />
         <div className="content-dt">
           <div className={style.cnt_foot}>

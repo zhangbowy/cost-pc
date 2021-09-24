@@ -17,14 +17,22 @@ class App extends React.PureComponent {
 
   state = {
     collapsed: false, // 侧边导航栏折叠标识
+    visible: false
   };
 
   onCollapse = (collapsed) => {
     this.setState({ collapsed });
   };
 
+  onLink = () => {
+    const { visible } = this.state;
+    this.setState({
+      visible: !visible,
+    });
+  }
+
   render() {
-    const { collapsed } = this.state;
+    const { collapsed, visible } = this.state;
     const { children } = this.props;
 
     return (
@@ -44,8 +52,18 @@ class App extends React.PureComponent {
             <Layout.Content className="app-content">
               {children}
             </Layout.Content>
-            <div style={{ position: 'fixed', bottom: '56px', right: '23px', zIndex: '100' }}>
+            <div
+              style={{ position: 'fixed', bottom: '56px', right: '23px', zIndex: '100' }}
+              onClick={() => this.onLink()}
+            >
               <img src={logo} alt="logo" style={{ width: '84px' }} />
+              <iframe
+                title="外部链接"
+                scrolling="yes"
+                frameBorder="0"
+                className={visible ? styles.dyxd : styles.disabled}
+                src="https://cschat.antcloud.com.cn/index.htm?tntInstId=UMNPKHCN&scene=SCE00001384&source=dingadmin#/"
+              />
             </div>
           </Layout>
         </Layout>

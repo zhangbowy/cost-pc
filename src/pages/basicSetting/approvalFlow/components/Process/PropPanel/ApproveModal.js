@@ -160,7 +160,7 @@ class ApproveModal extends Component {
     if (nodeType !== 'approver') {
       radioList = approveUser.filter(it => it.key !== 'leader');
     }
-    if (Number(templateType) !== 0 || Number(templateType) !== 3) {
+    if (Number(templateType) !== 0 && Number(templateType) !== 3) {
       radioList = radioList.filter(it => it.key !== 'bearUser');
     }
     const newArr = [...approveCreate];

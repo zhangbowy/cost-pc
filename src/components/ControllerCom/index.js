@@ -33,6 +33,7 @@ function ControllerCom(props) {
       type: 'peopleSet/queryUsers',
       payload: {
         companyId: userInfo.companyId,
+        type: 0,
       }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,8 +56,16 @@ function ControllerCom(props) {
   };
 
   const changePeople = (val) => {
-    setType(val);
-    setVisible(true);
+    dispatch({
+      type: 'peopleSet/queryUsers',
+      payload: {
+        companyId: userInfo.companyId,
+        type: val,
+      }
+    }).then(() => {
+      setType(val);
+      setVisible(true);
+    });
   };
 
   const handleCancel = () => {
@@ -68,17 +77,18 @@ function ControllerCom(props) {
 
   const handleOk = () => {
     if(!userIdExpired){
-      message.error('请选择原发放人');
+      message.error(`请选择原${prodObj[type]}人`);
       return;
     }
     if(!users.length){
-      message.error('请选择交接发放人');
+      message.error(`请选择交接${prodObj[type]}人`);
       return;
     }
     dispatch({
       type: 'peopleSet/modifyGrant',
       payload: {
         userIdExpired,
+        types: Number(type),
         userVO:{
           userId: users[0].emplId,
           name: users[0].name
@@ -102,7 +112,7 @@ function ControllerCom(props) {
     return queryUsers.map( item => {
       return (
         <Option value={item.id} key={item.id} >
-          <Avatar avatar={item.avatar} name={item.name} size="16" />{` ${item.name}`}
+          <Avatar avatar={item.avatar} name={item.name} size={24} />{` ${item.name}`}
         </Option>
       );
     });
@@ -115,7 +125,7 @@ function ControllerCom(props) {
     return users.map( item => {
       return (
         <Option value={item.emplId} key={item.emplId} >
-          <Avatar avatar={item.avatar} name={item.name} size="16" />{` ${item.name}`}
+          <Avatar avatar={item.avatar} name={item.name} size={24} />{` ${item.name}`}
         </Option>
       );
     });

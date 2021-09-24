@@ -10,4 +10,5 @@ export default {
   delCompany: `${APP_API}/cost/manage/synCompany`,
   queryUsers: `${APP_API}/cost/manage/queryUsers`,
   modifyGrant: `${APP_API}/cost/manage/modifyGrant`,
+  modifyLoan: `${APP_API}/cost/manage/modifyLoanUser`,
 };

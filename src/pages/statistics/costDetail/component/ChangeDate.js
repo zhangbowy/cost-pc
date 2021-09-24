@@ -63,7 +63,7 @@ class ChangeDate extends Component {
             <Form.Item {...formItemLayout}>
               <div className={style.price}>
                 <p className="c-black-85">该明细金额：</p>
-                <span className={style.money}>{money ? money/100 : '-'}</span>
+                <span className={style.money}>¥{money ? money/100 : '-'}</span>
                 <p className="c-black-85">，目前所属期为：</p>
                 <span className={style.money}>{month ? moment(month).format('YYYY-MM') : '-'}</span>
               </div>

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { post, get } from '@/utils/request';
 import api from './services';
 
@@ -71,7 +72,12 @@ export default {
       });
     },
     *modifyGrant({ payload, callback }, { call, put }) {
-      const response = yield call(post, api.modifyGrant, payload,{withCode: true});
+      let url = api.modifyGrant;
+      if (payload.types) {
+        url = api.modifyLoan;
+        delete payload.types;
+      }
+      const response = yield call(post, url, payload,{withCode: true});
       if (callback) {
         callback(response);
       }

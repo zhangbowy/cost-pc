@@ -57,7 +57,7 @@ class SendDing extends Component {
           <div className={style.cnt_foot}>
             <div className={style.header}>
               <div className={style.line} />
-              <span className="fs-14 c-black-85 fw-400">发送ding消息给当前处在审批中的单据，接收人包括单据提交人、当前节点审批人</span>
+              <span className="fs-14 c-black-85 fw-400">发送ding消息给当前处在审批中的单据，接收人包括当前节点审批人</span>
             </div>
           </div>
           <Button type="default" onClick={() => this.onDing()}>一键发Ding</Button>
