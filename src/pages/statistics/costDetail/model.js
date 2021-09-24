@@ -42,7 +42,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          recordList: response.recordList || [],
+          recordList: response.list || [],
           recordPage: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
