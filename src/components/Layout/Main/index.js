@@ -53,7 +53,7 @@ class App extends React.PureComponent {
               {children}
             </Layout.Content>
             <div
-              style={{ position: 'fixed', bottom: '56px', right: '23px', zIndex: '100' }}
+              style={{ position: 'fixed', bottom: '74px', right: '23px', zIndex: '100' }}
               onClick={() => this.onLink()}
             >
               <img src={logo} alt="logo" style={{ width: '84px' }} />

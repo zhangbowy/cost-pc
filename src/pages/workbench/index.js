@@ -403,7 +403,7 @@ class Workbench extends PureComponent {
         <span>{text && text / 100}</span>
       ),
       className: 'moneyCol',
-      width: 100,
+      width: 80,
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -464,7 +464,7 @@ class Workbench extends PureComponent {
           </InvoiceDetail>
         </span>
       ),
-      width: 80,
+      width: 100,
       fixed: 'right',
       className: 'fixCenter'
     }];

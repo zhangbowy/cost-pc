@@ -10,7 +10,7 @@ import QrCodeModal from '@/components/QrCodeModal';
 import treeConvert from '@/utils/treeConvert';
 // import SortModal from './components/SortModal';
 import PageHead from '@/components/pageHead';
-import aliLogo from '@/assets/img/aliTrip/alitrip.png';
+import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 // import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';

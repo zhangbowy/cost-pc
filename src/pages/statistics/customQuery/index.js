@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Divider, Tree, Icon, Table, Form, Popover, TreeSelect } from 'antd';
+import { Divider, Tree, Icon, Table, Form, Popover, TreeSelect, Tooltip } from 'antd';
 import cs from 'classnames';
 import { dateToTime } from '@/utils/util';
 import treeConvert from '@/utils/treeConvert';
@@ -43,7 +43,14 @@ const commons = [{
 }];
 const childColumnns = [{
   title: '支出类别',
-  dataIndex: 'costCategoryName'
+  dataIndex: 'costCategoryName',
+  ellipsis: true,
+  textWrap: 'word-break',
+  render: (text) => (
+    <Tooltip title={text || ''} placement="topLeft">
+      {text}
+    </Tooltip>
+  )
 }, {
   title: '金额',
   dataIndex: 'submitSum',
@@ -104,6 +111,37 @@ class customQuery extends Component {
       type: 'customQuery/list',
       payload,
     });
+  }
+
+  customExpandIcon = (props) => {
+    if(props.record.children.length > 0){
+      if (props.expanded) {
+          return (
+            <a
+              style={{ marginRight:8 }}
+              className="c-black-65"
+              onClick={e => {
+                        props.onExpand(props.record, e);
+                      }}
+            >
+              <i className="table-minus" />
+            </a>
+        );
+
+      }
+          return (
+            <a
+              style={{ marginRight:8 }}
+              onClick={e => {
+                props.onExpand(props.record, e);
+              }}
+              className="c-black-65"
+            >
+              <i className="table-plus" />
+            </a>
+          );
+    }
+      return <span />;
   }
 
   renderTreeNodes = data =>
@@ -327,6 +365,7 @@ class customQuery extends Component {
               dataSource={list}
               pagination={false}
               loading={loading}
+              expandIcon={(props) => this.customExpandIcon(props)}
               rowKey="id"
               defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
             />

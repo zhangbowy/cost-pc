@@ -36,7 +36,7 @@ const RightChart = ({ data, loading, submitReportDetail, reportChange, submitTim
             {
               list.map(it => (
                 <div key={it.key} className="m-r-24">
-                  <span className="c-black-65 fs-12">{it.name}</span>
+                  <span className="c-black-65 fs-14">{it.name}</span>
                   {
                     data[it.type] !== null &&
                     <i className={`iconfont ${data[it.type] === 1 ? 'iconxiajiang' : 'iconshangsheng'}`} />
