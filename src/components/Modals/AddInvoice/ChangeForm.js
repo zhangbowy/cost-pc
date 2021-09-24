@@ -298,6 +298,10 @@ class ChangeForm extends Component {
       newshowField,
     } = this.props;
     let params = {};
+    if (showField.fileUrl && showField.fileUrl.isWrite && !fileUrl.length) {
+      message.error('附件不能为空');
+      return null;
+    }
     form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -943,7 +947,12 @@ class ChangeForm extends Component {
                     {
                       itw.field === 'fileUrl' && showField.fileUrl.status ?
                         <Col span={12}>
-                          <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
+                          <Form.Item
+                            label={(
+                              <span className={showField.fileUrl.isWrite ? style.isRequired : ''}>{labelInfo.fileUrl}</span>
+                            )}
+                            {...formItemLayout}
+                          >
                             <Button
                               onClick={() => uploadFiles()}
                               disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
