@@ -76,6 +76,9 @@ class TimeComp extends PureComponent {
                 style={{ width: '160px' }}
                 onChange={this.onChange}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
+                dropdownMenuStyle={{
+                  maxHeight: '300px'
+                }}
               >
                 {
                   dateType.map(it => (
