@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
-import { Menu, Badge } from 'antd';
+import { Menu, Divider } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import update from 'immutability-helper';
@@ -10,8 +10,6 @@ import defaultData from './default';
 import Chart from '../../../components/StaticChart/component/Chart';
 import InvoicePrice from './components/Invoice';
 import SearchBanner from './components/Search/Searchs';
-import InvoiceDetail from '../../../components/Modals/InvoiceDetail';
-import { getArrayValue, invoiceStatus, getArrayColor } from '../../../utils/constants';
 import { defaultMonth } from './components/Search/time';
 
 
@@ -181,7 +179,6 @@ class EchartsTest extends Component {
       });
     // }
     const _this = this;
-    if (Number(params) !== 0) {
       // const lists = e.key === '3' || e.key === '5' ? chartList : pieChartVos;
       cols = update(cols, {
         $splice: [[1, 0, {
@@ -225,66 +222,41 @@ class EchartsTest extends Component {
           $splice: [[cols.length , 0,{
             title: '操作',
             dataIndex: 'ope',
-            width: 150,
+            width: 180,
             render: (_, record) => (
-              <Chart
-                data={record}
-                onChart={this.onChart}
-                chartName={chartName}
-                type={query}
-                changeMoney={100}
-                getTime={this.onGetTime}
-              >
-                <a>查看趋势图</a>
-              </Chart>
+              <span style={{ display: 'flex' }}>
+                <Chart
+                  data={record}
+                  onChart={this.onChart}
+                  chartName={chartName}
+                  type={query}
+                  changeMoney={100}
+                  getTime={this.onGetTime}
+                >
+                  <a>查看趋势图</a>
+                </Chart>
+                <Divider type="vertical" />
+                <InvoicePrice
+                  title={`${record[chartName]}支出统计`}
+                  detailList={detailList}
+                  onQuery={val => _this.inVoiceQuery(val)}
+                  query={listQuery}
+                  total={listTotal}
+                  id={record[type] || record.userId || '-1'}
+                  projectType={record.projectType}
+                  pageDetail={_this.pageDetail}
+                  chartList={pieChartVos}
+                  onChart={val => this.onChart(val, Number(type))}
+                  currentType={Number(params)}
+                  loading={chartLoading}
+                >
+                  <a>查看分布</a>
+                </InvoicePrice>
+              </span>
             ),
             fixed: 'right'
           }]]});
       }
-    } else {
-      cols = update(cols, {
-        $splice: [[cols.length, 0 ,{
-          title: '单据状态',
-          dataIndex: 'status',
-          render: (_, record) => {
-            const { status } = record;
-            return (
-              <span>
-                <Badge
-                  color={
-                    getArrayColor(`${status}`, invoiceStatus) === '-' ?
-                    'rgba(255, 148, 62, 1)' : getArrayColor(`${status}`, invoiceStatus)
-                  }
-                  text={record.statusStr || getArrayValue(record.status, invoiceStatus)}
-                />
-              </span>
-            );
-          },
-          width: 110,
-          fixed: 'right',
-          filters: [
-            { text: '已发放', value: '3' },
-            { text: '待发放', value: '2' }
-          ],
-        }], [cols.length+1, 0, {
-          title: '操作',
-          dataIndex: 'ope',
-          render: (_, record) => (
-            <span>
-              <InvoiceDetail
-                id={record.invoiceSubmitId}
-                templateType={record.templateType}
-              >
-                <a>查看</a>
-              </InvoiceDetail>
-            </span>
-          ),
-          width: 80,
-          fixed: 'right',
-          className: 'fixCenter'
-        }]]
-      });
-    }
       this.setState({
         columns: cols,
         current: params,

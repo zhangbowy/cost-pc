@@ -507,15 +507,22 @@ class Statistics extends React.PureComponent {
     }, {
       title: '操作时间',
       dataIndex: 'createTime',
-      record: (text) => (
-        <span>{text ? moment(text).format('YYYY-MM-DD') : '-'}</span>
-      )
+      render: (text) => (
+        <span>{ text ? moment(text).format('YYYY-MM-DD') : '-' }</span>
+      ),
     }, {
       title: '操作内容',
       dataIndex: 'operationMsg',
     }, {
       title: '详情',
       dataIndex: 'operationDetail',
+      ellipsis: true,
+      textWrap: 'word-break',
+      render: (text) => (
+        <Tooltip title={text || ''} placement="topLeft">
+          {text}
+        </Tooltip>
+      )
     }];
     const columns = [{
       title: '支出类别',
