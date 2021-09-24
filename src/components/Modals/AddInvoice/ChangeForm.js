@@ -956,8 +956,10 @@ class ChangeForm extends Component {
                                 }]
                               })(
                                 <Button
-                                  onClick={() => uploadFiles(() => {
-                                    this.props.form.setFieldsValue({ fileUrl });
+                                  onClick={() => uploadFiles((val) => {
+                                    if (val && val.length) {
+                                      this.props.form.setFieldsValue({ fileUrl: val });
+                                    }
                                   })}
                                   disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
                                     || (modify && !showField.fileUrl.isModify)}

@@ -1286,7 +1286,7 @@ class AddInvoice extends Component {
         _this.setState({
           fileUrl: file,
         }, () => {
-          if (callback) callback();
+          if (callback) callback(file);
         });
       });
     });
