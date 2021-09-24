@@ -351,9 +351,7 @@ class Workbench extends PureComponent {
 
   onLink = (type, status) => {
     const { submitTime } = this.state;
-    localStorage.removeItem('linkType');
     localStorage.removeItem('linkStatus');
-    localStorage.setItem('linkType', type);
     localStorage.removeItem('submitTime');
     localStorage.setItem('submitTime', JSON.stringify(submitTime));
     if(status) {
@@ -526,6 +524,7 @@ class Workbench extends PureComponent {
                     data={submitReport || {}}
                     loading={chartLoading}
                     flagMenu={flagMenu}
+                    submitTime={submitTime}
                   />
                 </div>
               }

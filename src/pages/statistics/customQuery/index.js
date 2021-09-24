@@ -45,8 +45,13 @@ const childColumnns = [{
   title: '支出类别',
   dataIndex: 'costCategoryName'
 }, {
-  title: '金额(元)',
-  dataIndex: 'submitSumAll'
+  title: '金额',
+  dataIndex: 'submitSum',
+  render: (_, record) => (
+    <span>
+      {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
+    </span>
+  )
 }, ...commons];
 @connect(({ customQuery, loading, global }) => ({
   loading: loading.effects['customQuery/list'] || false,

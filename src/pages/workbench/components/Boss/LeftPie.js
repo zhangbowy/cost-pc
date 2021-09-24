@@ -49,7 +49,7 @@ class LeftPie extends PureComponent {
 
   onLink = (obj) => {
     console.log(obj);
-
+    const { submitTime } = this.props;
     const { current } = this.state;
     if (obj) {
       const params = {
@@ -61,7 +61,8 @@ class LeftPie extends PureComponent {
       localStorage.removeItem('defaultLocal');
       localStorage.setItem('defaultLocal', JSON.stringify(params));
     }
-
+    localStorage.removeItem('submitTime');
+    localStorage.setItem('submitTime', JSON.stringify(submitTime));
     localStorage.removeItem('linkType');
     localStorage.setItem('linkType', btn[current].linkKey);
     this.props.history.push('/statistics/overview');

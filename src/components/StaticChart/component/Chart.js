@@ -4,7 +4,6 @@ import moment from 'moment';
 import Line from './Line';
 
 function Chart({ children, data, type, getTime, chartName, changeMoney }) {
-  console.log('Chart -> data', data);
   const [visible, setVisible] = useState(false);
   const [newArr, setNewArr] = useState([]);
   const [saveArr, setSaveArr] = useState([]);

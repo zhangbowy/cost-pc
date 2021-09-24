@@ -122,7 +122,7 @@ class EchartsTest extends Component {
       });
       const linkType = localStorage.getItem('linkType');
       localStorage.removeItem('linkType');
-      if (linkType || linkType === 0) {
+      if (linkType) {
         this.onInits(linkType);
       } else {
         this.onInits('1');
@@ -170,7 +170,7 @@ class EchartsTest extends Component {
           return {
             ...it,
             value: {
-              dateType: Number(times.dateType),
+              dateType: -1,
               startTime: Number(times.startTime),
               endTime: Number(times.endTime),
             },
