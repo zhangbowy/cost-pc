@@ -29,6 +29,20 @@ const objStatus = {
     name: '已发放'
   }
 };
+const staticsObj = {
+  0: {
+    name: '提交时间',
+    key: 'startTime',
+  },
+  1: {
+    name: '审核通过时间',
+    key: 'approveStartTime',
+  },
+  2: {
+    name: '发生日期',
+    key: 'happenStartTime'
+  }
+};
 @Form.create()
 @connect(({ loading, costDetail, costGlobal, global, session }) => ({
   loading: loading.effects['costDetail/list'] || false,
@@ -168,9 +182,11 @@ class Statistics extends React.PureComponent {
     const { searchList } = this.state;
     const linkStatus = localStorage.getItem('linkStatus');
     localStorage.removeItem('linkStatus');
-    // const times = localStorage.getItem('submitTime') &&
-    // localStorage.getItem('submitTime') !== 'undefined' ?
-    // JSON.parse(localStorage.getItem('submitTime')) : null;
+    const statusTime = localStorage.getItem('statisticalDimension') === 'undefined' ? 0 : localStorage.getItem('statisticalDimension');
+    const times = localStorage.getItem('submitTime') &&
+    localStorage.getItem('submitTime') !== 'undefined' ?
+    JSON.parse(localStorage.getItem('submitTime')) : null;
+
     const defaults = localStorage.getItem('defaultLocal') ?
     JSON.parse(localStorage.getItem('defaultLocal')) : null;
     localStorage.removeItem('defaultLocal');
@@ -185,6 +201,16 @@ class Statistics extends React.PureComponent {
               statusList: [linkStatus],
             },
             valueStr: objStatus[linkStatus] && objStatus[linkStatus].name,
+          };
+        }
+        if (times && it.id === staticsObj[statusTime].key) {
+          return {
+            ...it,
+            value: {
+              [it.key[0]]: Number(times.startTime),
+              [it.key[1]]: Number(times.endTime),
+            },
+            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
           };
         }
         return { ...it };

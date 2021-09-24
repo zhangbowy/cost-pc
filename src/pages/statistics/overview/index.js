@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Menu, Badge } from 'antd';
 import { connect } from 'dva';
+import moment from 'moment';
 import update from 'immutability-helper';
 import treeConvert from '@/utils/treeConvert';
 import TempTable from './components/TempTable';
@@ -137,9 +138,11 @@ class EchartsTest extends Component {
     let cols = [...columns];
     const linkStatus = localStorage.getItem('linkStatus');
     localStorage.removeItem('linkStatus');
-    // const times = localStorage.getItem('submitTime') &&
-    // localStorage.getItem('submitTime') !== 'undefined' ?
-    // JSON.parse(localStorage.getItem('submitTime')) : null;
+
+    const times = localStorage.getItem('submitTime') &&
+    localStorage.getItem('submitTime') !== 'undefined' ?
+    JSON.parse(localStorage.getItem('submitTime')) : null;
+    localStorage.removeItem('submitTime');
     const defaults = localStorage.getItem('defaultLocal') ?
     JSON.parse(localStorage.getItem('defaultLocal')) : null;
     localStorage.removeItem('defaultLocal');
@@ -161,6 +164,17 @@ class EchartsTest extends Component {
             ...it,
             value: defaults.value,
             valueStr: defaults.valueStr,
+          };
+        }
+        if (times && it.id === 'timeC') {
+          return {
+            ...it,
+            value: {
+              dateType: Number(times.dateType),
+              startTime: Number(times.startTime),
+              endTime: Number(times.endTime),
+            },
+            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
           };
         }
         return { ...it };
