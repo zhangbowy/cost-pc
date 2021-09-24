@@ -30,7 +30,7 @@ const objStatus = {
   }
 };
 @Form.create()
-@connect(({ loading, costDetail, costGlobal, global }) => ({
+@connect(({ loading, costDetail, costGlobal, global, session }) => ({
   loading: loading.effects['costDetail/list'] || false,
   list: costDetail.list,
   query: costDetail.query,
@@ -42,6 +42,7 @@ const objStatus = {
   invoiceList: global.invoiceList,
   projectList: costGlobal.projectList,
   supplierList: global.supplierList,
+  userInfo: session.userInfo
 }))
 class Statistics extends React.PureComponent {
   constructor(props) {
@@ -472,6 +473,7 @@ class Statistics extends React.PureComponent {
       sum,
       recordPage,
       recordList,
+      userInfo
     } = this.props;
     const recordColumns = [{
       title: '姓名',
@@ -639,15 +641,20 @@ class Statistics extends React.PureComponent {
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          <ChangeDate
-            month={record.happenTime}
-            money={record.submitSum}
-            onOK={this.onOk}
-            id={record.id}
-          >
-            <a>修改所属期</a>
-          </ChangeDate>
-          <Divider type="vertical" />
+          {
+            userInfo.adminType === 1 &&
+            <>
+              <ChangeDate
+                month={record.happenTime}
+                money={record.submitSum}
+                onOK={this.onOk}
+                id={record.id}
+              >
+                <a>修改所属期</a>
+              </ChangeDate>
+              <Divider type="vertical" />
+            </>
+          }
           <InvoiceDetail
             id={record.invoiceSubmitId}
             templateType={record.templateType}
