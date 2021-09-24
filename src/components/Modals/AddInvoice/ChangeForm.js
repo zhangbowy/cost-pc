@@ -944,14 +944,31 @@ class ChangeForm extends Component {
                     {
                       itw.field === 'fileUrl' && showField.fileUrl.status ?
                         <Col span={12}>
-                          <Form.Item label={labelInfo.fileUrl} {...formItemLayout}>
-                            <Button
-                              onClick={() => uploadFiles()}
-                              disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
-                                || (modify && !showField.fileUrl.isModify)}
-                            >
-                              <Icon type="upload" /> 上传文件
-                            </Button>
+                          <Form.Item
+                            label={labelInfo.fileUrl}
+                            {...formItemLayout}
+                          >
+                            {
+                              getFieldDecorator('fileUrl', {
+                                initialValue: fileUrl && fileUrl.length ? fileUrl : null,
+                                rules: [{
+                                  required: !!(showField.fileUrl.isWrite),
+                                  message: '请选择附件'
+                                }]
+                              })(
+                                <Button
+                                  onClick={() => uploadFiles((val) => {
+                                    if (val && val.length) {
+                                      this.props.form.setFieldsValue({ fileUrl: val });
+                                    }
+                                  })}
+                                  disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
+                                    || (modify && !showField.fileUrl.isModify)}
+                                >
+                                  <Icon type="upload" /> 上传文件
+                                </Button>
+                              )
+                            }
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (

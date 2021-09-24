@@ -284,9 +284,9 @@ class InvoiceDetail extends Component {
     });
   }
 
-  previewImage = (arr, index) => {
+  previewImage = (arr, index, flag) => {
     ddPreviewImage({
-      urlArray: arr.map(it => it.imgUrl),
+      urlArray: !flag ? arr.map(it => it.imgUrl) : arr,
       index,
     });
   }
@@ -974,6 +974,27 @@ class InvoiceDetail extends Component {
                   </Col>
                 );
               })
+            }
+            {
+              details.payVoucher && details.payVoucher.length ?
+                <Col span={8} className="m-t-16">
+                  <div style={{display: 'flex'}}>
+                    <span className={cs('fs-14', 'c-black-85', style.nameTil)}>付款凭证：</span>
+                    <span className={cs(style.imgUrl, style.wraps)}>
+                      {
+                        details.payVoucher && details.payVoucher.length ? details.payVoucher.map((it, index) => (
+                          <div className="m-r-8 m-b-8" onClick={() => this.previewImage(details.payVoucher, index, true)}>
+                            <img alt="图片" src={it} className={style.images} />
+                          </div>
+                        ))
+                        :
+                        '-'
+                      }
+                    </span>
+                  </div>
+                </Col>
+                :
+                null
             }
           </Row>
           <Divider type="horizontal" className="m-t-16" />

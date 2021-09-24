@@ -579,7 +579,7 @@ class BorrowPay extends React.PureComponent {
         render: (_, record) => (
           <>
             {
-              record.payVoucher ?
+              record.payVoucher && record.payVoucher.length ?
                 <TableImg imgUrl={record.payVoucher} />
                 :
                 '-'

@@ -298,6 +298,7 @@ class Right extends PureComponent {
   render() {
     const { details, list } = this.state;
     const { type, templateType, isModifyInvoice, operateType } = this.props;
+    console.log('Right -> render -> isModifyInvoice', isModifyInvoice);
 
     const {
       form: { getFieldDecorator, getFieldValue },

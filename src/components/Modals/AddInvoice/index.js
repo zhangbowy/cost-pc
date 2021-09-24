@@ -1275,7 +1275,7 @@ class AddInvoice extends Component {
   }
 
   // 上传附件
-  onUploadFiles = () => {
+  onUploadFiles = (callback) => {
     const _this = this;
     this.props.dispatch({
       type: 'global/grantUpload',
@@ -1287,6 +1287,8 @@ class AddInvoice extends Component {
         file = [...file, ...arr];
         _this.setState({
           fileUrl: file,
+        }, () => {
+          if (callback) callback(file);
         });
       });
     });

@@ -157,7 +157,7 @@ class PayModal extends React.PureComponent {
         } else {
           params = {
             ...params,
-            payVoucher: imgUrl.length ? imgUrl [0].imgUrl : '',
+            payVoucherList: imgUrl.length ? imgUrl.map(it => it.imgUrl) : [],
           };
         }
         dispatch({
@@ -356,7 +356,6 @@ class PayModal extends React.PureComponent {
                   onChange={(val) => this.onChangeImg(val)}
                   imgUrl={imgUrl}
                   userInfo={userInfo}
-                  maxLen={1}
                 />
               </Form.Item>
             }
