@@ -11,12 +11,12 @@ import { Modal, Button, Form, Input, Cascader, Radio, Switch, Table, message, Da
 import { connect } from 'dva';
 import RadioGroup from 'antd/lib/radio/group';
 import moment from 'moment';
+import update from 'immutability-helper';
 import { formItemLayout, isAllUse } from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
 import SelectPeople from '@/components/Modals/SelectPeople';
 import { findIndexArray } from '@/utils/util';
 import AccountSetting from '@/components/AccountSetting';
-import update from 'immutability-helper';
 import UserSelector from '../pages/basicSetting/invoice/components/UserSelector';
 
 const labelItem = {
