@@ -158,7 +158,7 @@ function ControllerCom(props) {
         <Button className="m-t-13 m-b-17" onClick={clearCompany}>同步钉钉通讯录</Button>
         <p className="fs-14 c-black-45 p-b-15">上次时间：{synCompanyTime ? moment(Number(synCompanyTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
         <Divider type="horizontal" />
-        <Lines name="修改发放人" />
+        <Lines name="离职交接" />
         <div className={style.btnS}>
           <Button className="m-t-13" onClick={() => changePeople(0)}>修改发放人</Button>
           <p className="fs-14 m-t-8 c-black-45">发放人员离职时可修改已提交单据的发放人</p>

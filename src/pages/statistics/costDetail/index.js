@@ -732,21 +732,24 @@ class Statistics extends React.PureComponent {
               </Dropdown>
               <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
             </div>
-            <div className="head_rf">
-              <TableTemplate
-                page={recordPage}
-                onQuery={this.onRecord}
-                columns={recordColumns}
-                list={recordList}
-                placeholder="输入详情内容搜索"
-                sWidth='800px'
-              >
-                <div className="head_rf" style={{ cursor: 'pointer' }}>
-                  <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                  <span className="fs-14 c-black-65">操作记录</span>
-                </div>
-              </TableTemplate>
-            </div>
+            {
+              userInfo.adminType === 1 &&
+              <div className="head_rf">
+                <TableTemplate
+                  page={recordPage}
+                  onQuery={this.onRecord}
+                  columns={recordColumns}
+                  list={recordList}
+                  placeholder="输入详情内容搜索"
+                  sWidth='800px'
+                >
+                  <div className="head_rf" style={{ cursor: 'pointer' }}>
+                    <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+                    <span className="fs-14 c-black-65">操作记录</span>
+                  </div>
+                </TableTemplate>
+              </div>
+            }
           </div>
           <div className={style.message}>
             <span className="fs-14 c-black-65">

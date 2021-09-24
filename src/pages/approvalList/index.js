@@ -207,7 +207,6 @@ class Summary extends React.PureComponent {
     return (
       <div style={{ minWidth: '1000px' }}>
         <div style={{background: '#fff', paddingTop: '16px'}}>
-          <p className="m-l-32 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>审批</p>
           <Menu
             onClick={this.handleClick}
             mode="horizontal"

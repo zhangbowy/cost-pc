@@ -73,7 +73,7 @@ class ChangeDate extends Component {
                 getFieldDecorator('month', {
                   rules: [{ required: true, message: '请选择日期' }]
                 })(
-                  <MonthPicker placeholder="请选择" />
+                  <MonthPicker placeholder="请选择" style={{ width: '240px' }} />
                 )
               }
             </Form.Item>

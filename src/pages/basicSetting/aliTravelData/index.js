@@ -6,6 +6,7 @@ import Search from 'antd/lib/input/Search';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
 import qrCode from '@/assets/img/aliCode.png';
+import Lines from '@/components/StyleCom/Lines';
 import style from './index.scss';
 
 const aliTravel = {
@@ -239,22 +240,25 @@ class AllTravelData extends PureComponent {
       <div>
         <PageHead title="阿里商旅" isShowBtn disabled={!authorize.isAuthorize} />
         <div className={cs(style.travel, 'content-dt')}>
+          <div className="m-b-24">
+            <Lines name="开通流程" />
+          </div>
           <Steps current={authorize.isAuthorize ? current : 0} onChange={this.onChange} direction="vertical">
             <Step
-              title={(<p className={style.first}>请确认公司已经开通【阿里商旅】，才可实现双方数据集成。如未开通可先至应用市场进行开通</p>)}
+              title={(<p className="fs-14 fw-400">请确认公司已经开通【阿里商旅】，才可实现双方数据集成。如未开通可先至应用市场进行开通</p>)}
               description=""
             />
             <Step
               title={(
-                <p className="fs-16" style={{ fontWeight: '400' }}>
+                <p className="fs-14" style={{ fontWeight: '400' }}>
                   若已经成功开通阿里商旅，则需要进行应用授权，阿里商旅暂时无法支持线上授权，线下授权需盖有企业公章的授权说明书
                   <a href="https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost/22/file/%E5%95%86%E6%97%85ISV%E6%95%B0%E6%8D%AE%E6%8F%90%E4%BE%9B%E5%92%8C%E8%8E%B7%E5%8F%96%E6%8E%88%E6%9D%83%E4%B9%A6V1.0.docx">阿里商旅授权说明书</a>
                 </p>
               )}
               description={(
                 <div>
-                  <p className="c-black-45 fs-14">- 企业：财务对账简单，阿里商旅平台数据自动导入，保证数据真实性</p>
-                  <p className="c-black-45 fs-14">- 员工：阿里商旅的行程订单自动导入账本，单据提报更便捷</p>
+                  <p className="c-black-45 fs-12">- 企业：财务对账简单，阿里商旅平台数据自动导入，保证数据真实性</p>
+                  <p className="c-black-45 fs-12">- 员工：阿里商旅的行程订单自动导入账本，单据提报更便捷</p>
                   <Tooltip placement="top" title={(<img alt="二维码" src={qrCode} className={style.qrCode} />)} overlayClassName={style.tooltips}>
                     <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }}>联系咨询</Button>
                   </Tooltip>
@@ -262,7 +266,7 @@ class AllTravelData extends PureComponent {
               )}
             />
             <Step
-              title={(<p>阿里商旅的订单完成后，支出数据会自动导入鑫支出，费用类型默认按以下规则进行匹配导入</p>)}
+              title={(<p className="fs-14 fw-400">阿里商旅的订单完成后，支出数据会自动导入鑫支出，费用类型默认按以下规则进行匹配导入</p>)}
               description={(
                 <div className="m-t-16">
                   <Table
