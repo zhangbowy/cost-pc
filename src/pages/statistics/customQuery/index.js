@@ -81,6 +81,7 @@ class customQuery extends Component {
       },
       categoryIds: [],
       deptIds: [],
+      expandIds: [],
     };
   }
 
@@ -110,6 +111,11 @@ class customQuery extends Component {
     this.props.dispatch({
       type: 'customQuery/list',
       payload,
+    }).then(() => {
+      const { list } = this.props;
+      this.setState({
+        expandIds: list.length === 1 ? list.map(it => it.id) : []
+      });
     });
   }
 
@@ -269,7 +275,7 @@ class customQuery extends Component {
       tName: 'title',
       tId: 'value'
     }, costCategoryList);
-    const { submitTime, categoryIds } = this.state;
+    const { submitTime, categoryIds, expandIds } = this.state;
     const columns = [{
       title: '承担部门',
       dataIndex: 'deptName'
@@ -368,6 +374,12 @@ class customQuery extends Component {
               expandIcon={(props) => this.customExpandIcon(props)}
               rowKey="id"
               defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
+              expandedRowKeys={expandIds}
+              onExpand={(b, r) => {
+                this.setState({
+                  expandIds: b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id)
+                });
+              }}
             />
           </div>
         </div>
