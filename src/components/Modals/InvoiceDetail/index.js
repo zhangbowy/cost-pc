@@ -706,7 +706,9 @@ class InvoiceDetail extends Component {
                 null
             }
             <Col span={8} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人' : '报销人'}：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+                {Number(templateType) ? Number(templateType) === 1 ? '借款人' : '提交人' : '报销人'}：
+              </span>
               <span className="fs-14 c-black-65">
                 {
                   details.userId !== details.createId && Number(templateType) === 1 ?
@@ -715,7 +717,9 @@ class InvoiceDetail extends Component {
               </span>
             </Col>
             <Col span={8} className="m-t-16">
-              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{Number(templateType) ? '提交人部门' : '报销人部门'}：</span>
+              <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+                {Number(templateType) ? Number(templateType) === 1 ? '借款人部门' : '提交人部门' : '报销人部门'}：
+              </span>
               <span className="fs-14 c-black-65">{details.deptName}</span>
             </Col>
             {
