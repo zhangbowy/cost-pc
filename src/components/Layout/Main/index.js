@@ -31,6 +31,17 @@ class App extends React.PureComponent {
     });
   }
 
+  stopPro = (e) => {
+    e.stopPropagation();
+    return false;
+  }
+
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  }
+
   render() {
     const { collapsed, visible } = this.state;
     const { children } = this.props;
@@ -57,6 +68,8 @@ class App extends React.PureComponent {
               onClick={() => this.onLink()}
             >
               <img src={logo} alt="logo" style={{ width: '84px' }} />
+            </div>
+            <div className={!visible ? styles.alertBg : styles.alertShow} onTouchStart={e => this.stopPro(e)} onClick={() => this.onClose()}>
               <iframe
                 title="外部链接"
                 scrolling="yes"

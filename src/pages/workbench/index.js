@@ -376,6 +376,8 @@ class Workbench extends PureComponent {
       title: '事由',
       dataIndex: 'reason',
       width: 120,
+      ellipsis: true,
+      textWrap: 'word-break',
       render: (_, record) => (
         <span>
           <InvoiceDetail

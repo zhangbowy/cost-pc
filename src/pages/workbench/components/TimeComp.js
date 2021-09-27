@@ -13,26 +13,17 @@ class TimeComp extends PureComponent {
 
   }
 
-  state = {
-    isShow: false,
-  }
+  state = {}
 
   onChange = value => {
     const { submitTime } = this.props;
     console.log('TimeComp -> submitTime', submitTime);
     if (value === '-1') {
-      this.setState({
-        isShow: true,
-      }, () => {
-        this.props.onChangeData('submitTime', {
-          ...submitTime,
-          dateType: -1
-        });
+      this.props.onChangeData('submitTime', {
+        ...submitTime,
+        dateType: -1
       });
     } else {
-      this.setState({
-        isShow: false,
-      });
       this.props.onChangeData('submitTime', {
         ...submitTime,
         ...dateToTime(value),
@@ -43,6 +34,7 @@ class TimeComp extends PureComponent {
 
   onChangeDate = (date, dateString) => {
     const { submitTime } = this.props;
+    this.props.form.setFieldsValue({ time: '-1' });
     this.props.onChangeData('submitTime', {
       ...submitTime,
       type: '-1',
@@ -58,9 +50,6 @@ class TimeComp extends PureComponent {
 
   render() {
     const { dateType } = fields;
-    const {
-      isShow,
-    } = this.state;
     const {
       form: { getFieldDecorator },
       submitTime
@@ -89,20 +78,17 @@ class TimeComp extends PureComponent {
             )
           }
         </Form.Item>
-        {
-          isShow &&
-          <Form.Item>
-            <RangePicker
-              style={{ width: '240px' }}
-              className="m-l-8"
-              onChange={this.onChangeDate}
-              allowClear={false}
-              value={submitTime.startTime ?
-                [moment(moment(Number(submitTime.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-                moment(moment(Number(submitTime.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined}
-            />
-          </Form.Item>
-        }
+        <Form.Item>
+          <RangePicker
+            style={{ width: '240px' }}
+            className="m-l-8"
+            onChange={this.onChangeDate}
+            allowClear={false}
+            value={submitTime.startTime ?
+              [moment(moment(Number(submitTime.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+              moment(moment(Number(submitTime.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined}
+          />
+        </Form.Item>
       </Form>
     );
   }
