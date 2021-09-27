@@ -55,12 +55,13 @@ class ChangeDate extends Component {
           onCancel={this.onClose}
           width="480px"
           bodyStyle={{
-            height: '212px'
+            height: '212px',
+            padding: '40px 4px 0 48px'
           }}
           onOk={this.onConfirm}
         >
           <Form style={{width: '100%'}}>
-            <Form.Item {...formItemLayout}>
+            <Form.Item>
               <div className={style.price}>
                 <p className="c-black-85">该明细金额：</p>
                 <span className={style.money}>¥{money ? money/100 : '-'}</span>

@@ -190,11 +190,11 @@ class Invoice extends React.PureComponent {
       dataIndex: 'name',
       render: (_, record) => (
         <span>
-          <span style={{ marginRight: '8px' }}>{record.name}</span>
-          { (record.status === 0) && <Tag color="red">已停用</Tag> }
+          <span>{record.name}</span>
+          { (record.status === 0) && <Tag color="red" className="m-l-8">已停用</Tag> }
           {
             (record.type === 0 || (record.parentId === 0)) &&
-            <Tags color={invoiceType[record.templateType].color}>
+            <Tags color={invoiceType[record.templateType].color} className="m-l-8">
               {invoiceType[record.templateType].name}
             </Tags>
           }

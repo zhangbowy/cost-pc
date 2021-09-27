@@ -6,7 +6,6 @@
 .cntLeft{
   width: 240px;
   height: 100%;
-  overflow: scroll;
   :global{
     .ant-tree li .ant-tree-node-content-wrapper{
       vertical-align: middle;
@@ -35,6 +34,16 @@
     .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
       height: 36px;
       padding: 5px;
+    }
+  }
+}
+.treeSelects{
+  margin: 0px 24px;
+  overflow: scroll;
+  height: inherit;
+  :global{
+    .ant-tree li{
+      padding: 0!important;
     }
   }
 }

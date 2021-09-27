@@ -331,7 +331,7 @@ class customQuery extends Component {
                 <span className="m-l-4">重置</span>
               </span>
             </div>
-            <div style={{ margin: '0 24px' }}>
+            <div className={style.treeSelects}>
               <Tree
                 checkable
                 switcherIcon={<Icon type="down" />}

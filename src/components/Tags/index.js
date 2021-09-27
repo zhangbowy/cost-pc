@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cs from 'classnames';
 import style from './index.scss';
 
 function Tags(props) {
   return (
     <div
-      className={style.container}
+      className={cs(style.container, props.className)}
       style={{
         backgroundColor: props.color || 'rgba(0, 199, 149, 0.08)',
         border: '1px solid',
