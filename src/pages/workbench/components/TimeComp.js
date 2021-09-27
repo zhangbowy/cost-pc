@@ -62,7 +62,7 @@ class TimeComp extends PureComponent {
               initialValue: '0_m'
             })(
               <Select
-                style={{ width: '160px' }}
+                style={{ width: '96px' }}
                 onChange={this.onChange}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
                 dropdownMenuStyle={{
