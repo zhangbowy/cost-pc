@@ -154,12 +154,24 @@ class customQuery extends Component {
   data.map(item => {
     if (item.children) {
       return (
-        <TreeNode title={item.title} key={item.value} dataRef={item}>
+        <TreeNode
+          title={(
+            <span>{item.title.length > 10 ? `${item.title.substring(0,10)}...` : item.title}</span>
+          )}
+          key={item.value}
+          dataRef={item}
+        >
           {this.renderTreeNodes(item.children)}
         </TreeNode>
       );
     }
-    return <TreeNode key={item.value} {...item} />;
+    return <TreeNode
+      key={item.value}
+      {...item}
+      title={(
+        <span>{item.title.length > 10 ? `${item.title.substring(0,10)}...` : item.title}</span>
+      )}
+    />;
   });
 
   onChangeState = (key, val) => {

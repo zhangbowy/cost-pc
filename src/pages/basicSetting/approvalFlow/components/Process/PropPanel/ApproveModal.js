@@ -221,7 +221,7 @@ class ApproveModal extends Component {
           }
           {
             (type === 'assignMember' || nodeType !== 'approver') &&
-            <div>
+            <div className="m-t-10">
               <Button type="primary" onClick={() => this.addPeople()}>添加成员</Button>
               <span className="m-l-16 fs-14 c-black-45">不能超过20人</span>
               <p style={{marginBottom: 0, marginTop: '8px', lineHeight: 1}}>
@@ -239,12 +239,12 @@ class ApproveModal extends Component {
               initialValue: (approveNode && approveNode.allowSelfChoose) || false,
               valuePropName: 'checked'
             })(
-              <Checkbox>允许提交人自选</Checkbox>
+              <Checkbox className="m-t-10">允许提交人自选</Checkbox>
             )
           }
           {
             type === 'leader' &&
-            <div>
+            <div className="m-t-10">
               <span className="fs-14 c-black-45">按&nbsp;</span>
               {
                 getFieldDecorator('methods', {
@@ -280,7 +280,7 @@ class ApproveModal extends Component {
           }
           {
             type === 'approverRole' &&
-            <div>
+            <div className="m-t-10">
               {
                 getFieldDecorator('value', {
                   initialValue: approveNode.ruleValue,
@@ -327,7 +327,7 @@ class ApproveModal extends Component {
                     <RadioGroup>
                       {
                         approveSet.map(item => (
-                          <Radio key={item.key} value={item.key}>{item.value}</Radio>
+                          <Radio key={item.key} value={item.key} className="m-t-10">{item.value}</Radio>
                         ))
                       }
                     </RadioGroup>

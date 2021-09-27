@@ -17,7 +17,7 @@ const tempObj = {
   3: '提交'
 };
 function Right({ templateType, templatePdfVo, corpName,
-  isRelationLoan, invoiceName, categoryStatus }) {
+  isRelationLoan, invoiceName, categoryStatus, notes, supplier }) {
   const list = templatePdfVo.templatePdfExpandVos || [];
   const one = list.filter(it => it.fieldType === 1) || [];
   const two = list.filter(it => it.fieldType !== 1 && Number(it.fieldType) !== 3);
@@ -52,13 +52,15 @@ function Right({ templateType, templatePdfVo, corpName,
                   人
                 </div>
               </div>
-              <div className={cs(style['cont-cell'], style['cont-line-r'])}>
-                <div className={style['cont-cell-label']}>
-                  { templateType === 0 && '承担者' }
-                  { templateType === 1 && '借款部门' }
-                  { (templateType === 2 || templateType === 3) && '申请部门' }
+              {
+                templateType === 2 &&
+                <div className={cs(style['cont-cell'], style['cont-line-r'])}>
+                  <div className={style['cont-cell-label']}>
+                    { templateType === 1 && '借款部门' }
+                    { (templateType === 2 || templateType === 3) && '申请部门' }
+                  </div>
                 </div>
-              </div>
+              }
               <div className={style['cont-cell']}>
                 <div className={style['cont-cell-label']}>
                   { templateType === 0 && '提交' }
@@ -72,13 +74,13 @@ function Right({ templateType, templatePdfVo, corpName,
               templateType !== 2 ?
                 <div className={style['cont-info-line']}>
                   <div className={style['cont-cell']}>
-                    <div className={style['cont-cell-label']}>收款账户</div>
+                    <div className={style['cont-cell-label']}>{supplier && supplier.length ? '供应商账户' : '收款账户'}</div>
                   </div>
                 </div>
                 :
                 <div className={style['cont-info-line']}>
                   <div className={style['cont-cell']}>
-                    <div className={style['cont-cell-label']}>申请金额(大写)</div>
+                    <div className={style['cont-cell-label']}>申请金额(元)</div>
                   </div>
                 </div>
             }
@@ -95,6 +97,14 @@ function Right({ templateType, templatePdfVo, corpName,
           <div className={cs(style['cont-info-line'], style['cont-line-l'])}>
             <div className={cs(style['cont-cell'], style['cont-line-r'])}>
               <div className={cs(style['cont-cell-label'])}>借款金额(大写)</div>
+            </div>
+          </div>
+        }
+        {
+          notes && notes.length > 0 &&
+          <div className={cs(style['cont-info-line'], style['cont-line-l'])}>
+            <div className={cs(style['cont-cell'], style['cont-line-r'])}>
+              <div className={cs(style['cont-cell-label'])}>单据备注</div>
             </div>
           </div>
         }
@@ -136,13 +146,14 @@ function Right({ templateType, templatePdfVo, corpName,
             } */}
             <table>
               <tr>
+                <th>承担人/部门</th>
                 <th>支出类别</th>
                 <th>备注</th>
                 <th>发生日期</th>
                 <th>金额</th>
               </tr>
               <tr>
-                <td colSpan="4" />
+                <td colSpan="5" />
               </tr>
             </table>
             <table style={{ borderTop: 'none' }}>
