@@ -14,3 +14,16 @@
     overflow-y: scroll;
   }
 }
+.changeStyle{
+  :global{
+    .ant-radio-group{
+      line-height: inherit;
+    }
+    .ant-form-item-control-wrapper{
+      margin-top: 7px;
+    }
+    .ant-form-item-control{
+      line-height: 28px;
+    }
+  }
+}

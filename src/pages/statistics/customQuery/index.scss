@@ -15,6 +15,18 @@
 .cntRight{
   flex: 1;
   padding: 24px 32px;
+  :global(.ant-select-selection--multiple) {
+    max-height: 32px;
+    overflow: hidden;
+  }
+  :global{
+    .ant-form-item-control{
+      line-height: 32px;
+    }
+    .ant-form-item-label{
+      line-height: 32px;
+    }
+  }
 }
 .leftHead{
   display: flex;

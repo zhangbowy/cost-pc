@@ -130,10 +130,10 @@ function Right({ templateType, templatePdfVo, corpName,
             templateType === 3 ||
           (templateType === 2 && !!Number(categoryStatus))) &&
           <div className={style.contents}>
-            {
+            {/* {
               !Number(templatePdfVo.paperType) &&
               <div className={style.title}>支出明细</div>
-            }
+            } */}
             <table>
               <tr>
                 <th>支出类别</th>
@@ -164,10 +164,10 @@ function Right({ templateType, templatePdfVo, corpName,
         {
           lists && lists.length > 0 &&
           <div className={style.contents}>
-            {
+            {/* {
               !Number(templatePdfVo.paperType) &&
               <div className={style.title}>明细</div>
-            }
+            } */}
             <table>
               <tr>
                 {
@@ -185,10 +185,10 @@ function Right({ templateType, templatePdfVo, corpName,
         {
           !templateType && templatePdfVo.isAssessRecord &&
           <div className={style.contents}>
-            {
+            {/* {
               !Number(templatePdfVo.paperType) &&
               <div className={style.title}>核销记录</div>
-            }
+            } */}
             <table>
               <tr>
                 <th>借款单号</th>
@@ -207,10 +207,10 @@ function Right({ templateType, templatePdfVo, corpName,
         {
           templateType !== 2 && templatePdfVo.isApplicationRecord &&
           <div className={style.contents}>
-            {
+            {/* {
               !Number(templatePdfVo.paperType) &&
               <div className={style.title}>申请单</div>
-            }
+            } */}
             <table>
               <tr>
                 <th>申请单号</th>
@@ -224,19 +224,30 @@ function Right({ templateType, templatePdfVo, corpName,
           </div>
         }
         <div className={style.contents}>
-          {
+          {/* {
             !Number(templatePdfVo.paperType) &&
             <div className={style.title}>审批流程</div>
+          } */}
+          {
+            Number(templatePdfVo.paperType) ?
+              <table>
+                <tr>
+                  <td colSpan="2">审批人</td>
+                </tr>
+                <tr>
+                  <td className={style['cont-line-r']}>复核</td>
+                  <td>出纳</td>
+                </tr>
+              </table>
+              :
+              <table style={{border: 'none'}}>
+                <tr style={{border: 'none'}}>
+                  <td style={{border: 'none'}}>审批人：</td>
+                  <td style={{border: 'none'}}>出纳：</td>
+                </tr>
+              </table>
           }
-          <table>
-            <tr>
-              <td colSpan="2">审批人</td>
-            </tr>
-            <tr>
-              <td className={style['cont-line-r']}>复核</td>
-              <td>出纳</td>
-            </tr>
-          </table>
+
         </div>
       </div>
     </div>

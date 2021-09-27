@@ -4,12 +4,16 @@ import {
   ConfigProvider,
   Layout,
 } from 'antd';
+import { connect } from 'dva';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Header from '@/components/Layout/Header';
 import Sider from '@/components/Layout/Sider';
 import styles from './index.scss';
 import logo from '../../../assets/img/dyxd.png';
 
+@connect(({ session }) => ({
+  userInfo: session.userInfo,
+}))
 class App extends React.PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired,
@@ -44,7 +48,7 @@ class App extends React.PureComponent {
 
   render() {
     const { collapsed, visible } = this.state;
-    const { children } = this.props;
+    const { children, userInfo } = this.props;
 
     return (
       <ConfigProvider locale={zhCN}>
@@ -63,21 +67,26 @@ class App extends React.PureComponent {
             <Layout.Content className="app-content">
               {children}
             </Layout.Content>
-            <div
-              style={{ position: 'fixed', bottom: '74px', right: '23px', zIndex: '100' }}
-              onClick={() => this.onLink()}
-            >
-              <img src={logo} alt="logo" style={{ width: '84px' }} />
-            </div>
-            <div className={!visible ? styles.alertBg : styles.alertShow} onTouchStart={e => this.stopPro(e)} onClick={() => this.onClose()}>
-              <iframe
-                title="外部链接"
-                scrolling="yes"
-                frameBorder="0"
-                className={visible ? styles.dyxd : styles.disabled}
-                src="https://cschat.antcloud.com.cn/index.htm?tntInstId=UMNPKHCN&scene=SCE00001384&source=dingadmin#/"
-              />
-            </div>
+            {
+              userInfo.xding &&
+              <>
+                <div
+                  style={{ position: 'fixed', bottom: '74px', right: '23px', zIndex: '100' }}
+                  onClick={() => this.onLink()}
+                >
+                  <img src={logo} alt="logo" style={{ width: '84px' }} />
+                </div>
+                <div className={!visible ? styles.alertBg : styles.alertShow} onTouchStart={e => this.stopPro(e)} onClick={() => this.onClose()}>
+                  <iframe
+                    title="外部链接"
+                    scrolling="yes"
+                    frameBorder="0"
+                    className={visible ? styles.dyxd : styles.disabled}
+                    src={userInfo.xding}
+                  />
+                </div>
+              </>
+            }
           </Layout>
         </Layout>
       </ConfigProvider>

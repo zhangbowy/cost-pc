@@ -15,12 +15,12 @@ const APP_API = {
   // dev: 'http://10.255.0.169:8080', // debug
   // dev: 'http://172.17.9.211',
   // dev: 'https://cost.forwe.store',
-  dev: 'http://cost_pc.forwe.work',
+  dev: 'http://cost-pc.forwe.work',
   // dev: '/api',
   // dev: 'http://127.0.0.1:8083/api', // debug
   // dev: 'https://pretest.forwe.store',
   // test: 'http://172.17.9.211',
-  test: 'http://cost_pc.forwe.work',
+  test: 'http://cost-pc.forwe.work',
   // test: 'https://pretest.forwe.store',
   // pre: 'https://framework-api-sandbox.jimistore.com',
   pre: 'https://pretest.forwe.store',

@@ -349,7 +349,7 @@ class customQuery extends Component {
                 <TreeSelect
                   treeNodeFilterProp="label"
                   placeholder='请选择'
-                  style={{width: '160px'}}
+                  style={{width: '240px'}}
                   dropdownStyle={{height: '300px'}}
                   treeCheckable
                   getPopupContainer={triggerNode => triggerNode.parentNode}

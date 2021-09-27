@@ -153,7 +153,7 @@ class App extends React.PureComponent {
           style={{ marginRight: 12 }}
         >
           <XfwProducts current="鑫支出">
-            <a className="m-r-32">鑫蜂维其他产品</a>
+            <a className="m-r-32">其他产品</a>
           </XfwProducts>
           <a href="https://www.yuque.com/yifei-zszlu/ref3g8/pn19b4" target="_blank" rel="noreferrer" className="m-r-32">帮助中心</a>
           <Dropdown

@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
 import { getArrayValue, approveCreateObj } from '../../../../../../utils/constants';
 import { choosePeople } from '../../../../../../utils/ddApi';
+import style from './index.scss';
 
 const RadioGroup = Radio.Group;
 const { Option } =  Select;
@@ -177,7 +178,7 @@ class ApproveModal extends Component {
             )
           }
         </Form.Item>
-        <Form.Item label="设置人员" {...formItemLayouts}>
+        <Form.Item label="设置人员" {...formItemLayouts} className={style.changeStyle}>
           {
             nodeType === 'approver' &&
               getFieldDecorator('type', {

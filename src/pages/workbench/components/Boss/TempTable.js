@@ -111,7 +111,7 @@ class TempTable extends Component {
                 columns={columns}
                 dataSource={loanList}
                 rowKey="id"
-                scroll={{ x: '1300px' }}
+                scroll={{ x: '1400px' }}
                 pagination={{
                   hideOnSinglePage: true,
                   current: page.pageNo,
