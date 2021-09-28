@@ -499,7 +499,7 @@ class Workbench extends PureComponent {
               {
                 isBoss &&
                 <div className={style.ad} style={{ margin: '24px 0 16px 24px', alignItems: 'center' }}>
-                  <p className="c-black-85 fs-18 fw-500">阿米巴支出简报</p>
+                  <p className="c-black-85 fs-18 fw-500 m-r-16">阿米巴支出简报</p>
                   <TimeComp onChangeData={this.onChangeState} submitTime={submitTime} />
                 </div>
               }

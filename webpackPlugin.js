@@ -4,11 +4,13 @@
  */
 const fs = require('fs');
 
+const destSrc = process.env.SPD_ENV !== 'test' ? 'costhtml/index.html' : 'dist/index.html';
+
 class AfterEmitWebpackPlugin {
   constructor({
     src = 'index.html',
-    dest = 'dist/index.html',
-    // dest = 'costhtml/index.html',
+    // dest = 'dist/index.html',
+    dest = destSrc,
   } = {}) {
     this.name = 'after-emit-webpack-plugin';
     this.src = src;

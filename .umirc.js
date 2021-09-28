@@ -5,16 +5,28 @@ const AfterEmitWebpackPlugin = require('./webpackPlugin');
 const constants = require('./constants');
 
 // const isInProd = process.env.SPD_ENV === 'production'; // 生产环境标识
-const isInProd = process.env.SPD_ENV === 'prod' || process.env.SPD_ENV === 'test'; // 生产环境标识
+const isInProd = process.env.SPD_ENV === 'prod' || process.env.SPD_ENV === 'test' || process.env.SPD_ENV === 'pre'; // 生产环境标识
 let publicPath = `/${pkg.version}/`;
-// if (isInProd) {
-//   if (constants.APP_BASE) {
-//     // 非根目录部署
-//     publicPath = `/${constants.APP_BASE}/${pkg.version}/`;
-//   } else {
-//     publicPath = `/${pkg.version}/`;
-//   }
-// }
+if (isInProd && process.env.SPD_ENV !== 'test') {
+  if (constants.APP_BASE) {
+    // 非根目录部署
+    publicPath = `/${constants.APP_BASE}/${pkg.version}/`;
+  } else {
+    publicPath = `/${pkg.version}/`;
+  }
+}
+
+let outputPath = './dist';
+if (isInProd) {
+  if (process.env.SPD_ENV !== 'test') {
+    outputPath = `./costhtml/${pkg.version}`;
+  } else {
+    outputPath = `./dist/${pkg.version}`;
+  }
+} else if (process.env.SPD_ENV !== 'test') {
+  outputPath = './costhtml';
+}
+
 
 // ref: https://umijs.org/config/
 export default {
@@ -49,7 +61,8 @@ export default {
   history: 'hash',
   hash: true,
   publicPath,
-  outputPath: isInProd ? `./dist/${pkg.version}` : './dist',
+  // outputPath: isInProd ? `./dist/${pkg.version}` : './dist',
+  outputPath,
   // outputPath: isInProd ? `./costhtml/${pkg.version}` : './costhtml',
   context: {
     name: pkg.description,
