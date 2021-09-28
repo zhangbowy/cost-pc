@@ -449,13 +449,13 @@ class InvoiceDetail extends Component {
                   <i className="iconfont icona-xiazai3x" onClick={() => this.handelOk()} />
                 </Tooltip>
                 {
-                  allow === 'copy' && (userInfo.userId === details.userId) && !details.isEnterpriseAlitrip &&
+                  allow === 'copy' && (userInfo.userId === details.createId) && !details.isEnterpriseAlitrip &&
                     <Tooltip title="复制">
                       <i className="iconfont icona-fuzhi3x" onClick={() => this.onChangeType('copy')} />
                     </Tooltip>
                 }
                 {
-                  details.isEnterpriseAlitrip && (userInfo.userId === details.userId) &&
+                  details.isEnterpriseAlitrip && (userInfo.userId === details.createId) &&
                   allow === 'copy' &&
                   <Tooltip title="阿里商旅自动导入单据，不支持复制">
                     <i className="iconfont icona-fuzhi3x c-black-25" />
