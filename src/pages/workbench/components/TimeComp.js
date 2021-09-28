@@ -55,7 +55,7 @@ class TimeComp extends PureComponent {
       submitTime
     } = this.props;
     return (
-      <Form layout="inline" className="m-l-16">
+      <Form layout="inline">
         <Form.Item style={{ marginRight: 0 }}>
           {
             getFieldDecorator('time', {

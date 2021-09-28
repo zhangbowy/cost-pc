@@ -153,8 +153,14 @@ function PieChart({ data, total, current, title, onLink }) {
     onLink(data[index]);
     console.log('点击了扇形图啊', data);
   };
+  const clickEchartsLegend = (params) => {
+    const { name } = params;
+    onLink(data.filter(it => it.dimensionName === name)[0]);
+    console.log('点击了扇形图啊', data);
+  };
   const onclick = {
-    'click': clickEchartsPie.bind(this)
+    'click': clickEchartsPie.bind(this),
+    'legendselectchanged': clickEchartsLegend.bind(this)
   };
   return (
     <div className={style.chart}>

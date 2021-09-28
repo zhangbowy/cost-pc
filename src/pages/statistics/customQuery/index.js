@@ -52,7 +52,7 @@ const childColumnns = [{
     </Tooltip>
   )
 }, {
-  title: '金额',
+  title: '金额（元）',
   dataIndex: 'submitSum',
   render: (_, record) => (
     <span>
@@ -292,7 +292,7 @@ class customQuery extends Component {
       title: '承担部门',
       dataIndex: 'deptName'
     }, {
-      title: '金额',
+      title: '金额（元）',
       dataIndex: 'submitSum',
       render: (_, record) => (
         <span>

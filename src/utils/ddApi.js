@@ -19,13 +19,6 @@ import openLink from 'dingtalk-jsapi/api/biz/util/openLink';
 import setTitle from 'dingtalk-jsapi/api/biz/navigation/setTitle';
 import scan from 'dingtalk-jsapi/api/biz/util/scan';
 import {
-  isInDingTalk,
-  isLoc,
-  isPreview,
-  // previewCorpId,
-  getAllParams
-} from '@/utils/util';
-import {
   message
 } from 'antd';
 import openSlidePanel$ from 'dingtalk-jsapi/api/biz/util/openSlidePanel';
@@ -33,6 +26,13 @@ import previewImage$ from 'dingtalk-jsapi/api/biz/util/previewImage';
 import preview$ from 'dingtalk-jsapi/api/biz/cspace/preview';
 import uploadAttachment$ from 'dingtalk-jsapi/api/biz/util/uploadAttachment';
 import downloadFile$ from 'dingtalk-jsapi/api/biz/util/downloadFile';
+import {
+  isInDingTalk,
+  isLoc,
+  isPreview,
+  // previewCorpId,
+  getAllParams
+} from '@/utils/util';
 
 const defaultUser = {
   preview: [{

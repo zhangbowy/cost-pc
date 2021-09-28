@@ -187,35 +187,36 @@ class Statistics extends React.PureComponent {
     localStorage.getItem('submitTime') !== 'undefined' ?
     JSON.parse(localStorage.getItem('submitTime')) : null;
 
-    const defaults = localStorage.getItem('defaultLocal') ?
-    JSON.parse(localStorage.getItem('defaultLocal')) : null;
-    localStorage.removeItem('defaultLocal');
-    console.log('返回的历史数据', defaults);
+    // const defaults = localStorage.getItem('defaultLocal') ?
+    // JSON.parse(localStorage.getItem('defaultLocal')) : null;
+    // localStorage.removeItem('defaultLocal');
+    console.log('返回的历史数据时间', staticsObj[statusTime].key);
+    console.log('返回的历史数据时间', searchList);
+    console.log('返回的历史数据时间', times);
     let arr = [...searchList];
-    if (linkStatus !== 'undefined' && linkStatus) {
-      arr = searchList.map(it => {
-        if (it.key === 'statusList' && linkStatus) {
-          return {
-            ...it,
-            value: {
-              statusList: [linkStatus],
-            },
-            valueStr: objStatus[linkStatus] && objStatus[linkStatus].name,
-          };
-        }
-        if (times && it.id === staticsObj[statusTime].key) {
-          return {
-            ...it,
-            value: {
-              [it.key[0]]: Number(times.startTime),
-              [it.key[1]]: Number(times.endTime),
-            },
-            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
-          };
-        }
-        return { ...it };
-      });
-    }
+    arr = searchList.map(it => {
+      if (it.key === 'statusList' && linkStatus) {
+        return {
+          ...it,
+          value: {
+            statusList: [linkStatus],
+          },
+          valueStr: objStatus[linkStatus] && objStatus[linkStatus].name,
+        };
+      }
+      if (times && (it.id === staticsObj[statusTime].key)) {
+        console.log('走了吗', it.key);
+        return {
+          ...it,
+          value: {
+            [it.key[0]]: Number(times.startTime),
+            [it.key[1]]: Number(times.endTime),
+          },
+          valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
+        };
+      }
+      return { ...it };
+    });
     this.search(arr, () => {
       const values = {};
       Object.assign(values, {
