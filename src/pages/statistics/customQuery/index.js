@@ -308,6 +308,7 @@ class customQuery extends Component {
         <Popover
           placement="bottomRight"
           title={null}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
           content={(
             <div>
               <Table

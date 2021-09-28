@@ -186,7 +186,7 @@ class Statistics extends React.PureComponent {
     const times = localStorage.getItem('submitTime') &&
     localStorage.getItem('submitTime') !== 'undefined' ?
     JSON.parse(localStorage.getItem('submitTime')) : null;
-
+    localStorage.removeItem('submitTime');
     // const defaults = localStorage.getItem('defaultLocal') ?
     // JSON.parse(localStorage.getItem('defaultLocal')) : null;
     // localStorage.removeItem('defaultLocal');
