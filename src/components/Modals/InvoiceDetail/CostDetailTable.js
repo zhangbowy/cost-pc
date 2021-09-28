@@ -16,7 +16,7 @@ class CostDetailTable extends PureComponent {
     const dataSource = [];
     const obj = {};
     list.forEach(item => {
-      const showField = JSON.parse(item.showField);
+      const showField = item.showField ? JSON.parse(item.showField) : [];
       let objss = {...item};
       let arr = [...showField];
       if (item.selfCostDetailFieldVos && item.selfCostDetailFieldVos.length) {
