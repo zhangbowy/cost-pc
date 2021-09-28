@@ -18,8 +18,8 @@ const commons = [{
       { record.annulusSymbolType === null && '-' }
       { record.annulusSymbolType !== null &&
       (
-        <span className="icons">
-          <i className={`iconfont vt-m ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+        <span className="icons" style={{display: 'flex', alignItems: 'center'}}>
+          <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
           <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
         </span>
       )}
@@ -33,8 +33,8 @@ const commons = [{
       { record.yearOnYearSymbolType === null && '-' }
       { record.yearOnYearSymbolType !== null &&
       (
-        <span className="icons">
-          <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+        <span className="icons" style={{display: 'flex', alignItems: 'center'}}>
+          <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
           <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
         </span>
       )}

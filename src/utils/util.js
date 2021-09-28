@@ -42,6 +42,27 @@ export const findIndexArray = (data, id, indexArray) => {
   return false;
 };
 
+export const  familyTree  = (arr1, id) => {
+  const temp = [];
+  const forFn = (arr, ids) => {
+    for (let i = 0; i < arr.length; i++) {
+      const item = arr[i];
+      if (item.parentId === ids) {
+        temp.push(item.value);
+        if (item.children) {
+          forFn(item.children, item.value);
+        }
+        // forFn(arr1, item.parentId);
+        // break;
+      } else if (item.children) {
+        forFn(item.children, item.value);
+      }
+    }
+  };
+  forFn(arr1, id);
+  return temp;
+};
+
 export const eventChange = ((() =>{
   let obj = {};
   let keyArr = [];

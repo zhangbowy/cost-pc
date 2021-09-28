@@ -262,6 +262,7 @@ class EchartsTest extends Component {
         current: params,
       }, () => {
       this.search(arr, () => {
+        const newArr = this.state.searchList;
         const values = {};
         if (Number(params) === 0 || Number(params) === 4) {
           Object.assign(values, {
@@ -269,7 +270,7 @@ class EchartsTest extends Component {
             pageSize: 10,
           });
         }
-        arr.forEach(it => {
+        newArr.forEach(it => {
           if (it.value) {
             Object.assign(values, {
               ...it.value,
@@ -306,7 +307,8 @@ class EchartsTest extends Component {
           pId: 'parentId',
           name: i === 0 ? 'costName' : 'name',
           tName: 'title',
-          tId: 'value'
+          tId: 'value',
+          otherKeys: ['parentId']
         }, it);
       });
       newTree.push(supplierList);
@@ -340,6 +342,21 @@ class EchartsTest extends Component {
     });
   }
 
+  checkCategory = (arr) => {
+    const { costCategoryList } = this.props;
+    const newArr = [];
+    arr.forEach(item => {
+      const obj = costCategoryList.filter(it => it.id === item);
+      if (obj && obj.length && obj[0].parentId) {
+        newArr.push(obj[0].parentId);
+      }
+      if (!obj[0].type) {
+        newArr.push(obj[0].id);
+      }
+    });
+    return Array.from(new Set(newArr)) || [];
+  }
+
   onQuery = (payload, callback) => {
     const { current, searchList } = this.state;
     searchList.forEach(it => {
@@ -349,6 +366,11 @@ class EchartsTest extends Component {
         });
       }
     });
+    if (payload.categoryIds && payload.categoryIds.length) {
+      Object.assign(payload, {
+        groupIds: this.checkCategory(payload.categoryIds),
+      });
+    }
     this.props.dispatch({
       type: `overview/${defaultData[current].query}`,
       payload,
@@ -543,6 +565,11 @@ class EchartsTest extends Component {
         });
       }
     });
+    if (obj.categoryIds && obj.categoryIds.length) {
+      Object.assign(obj, {
+        groupIds: this.checkCategory(obj.categoryIds),
+      });
+    }
     return obj;
   }
 

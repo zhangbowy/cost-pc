@@ -36,7 +36,7 @@ export default {
           { record.annulusSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont vt-m ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
               <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
             </span>
           )}
@@ -60,7 +60,7 @@ export default {
           { record.yearOnYearSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont vt-m ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
               <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
             </span>
           )}
@@ -141,7 +141,7 @@ export default {
           { record.annulusSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont vt-m ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
               <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
             </span>
           )}
@@ -165,7 +165,7 @@ export default {
           { record.yearOnYearSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont vt-m ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
               <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
             </span>
           )}
@@ -333,13 +333,13 @@ export default {
           { record.annulusSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
+              <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
             </span>
           )}
         </span>
       ),
-      width: 100,
+      width: 80,
     }, {
       title: (
         <span className="icons">
@@ -350,15 +350,15 @@ export default {
         </span>
       ),
       dataIndex: 'yearOnYear',
-      width: 100,
+      width: 80,
       render: (_, record) => (
         <span>
           { record.yearOnYearSymbolType === null && '-' }
           { record.yearOnYearSymbolType !== null &&
           (
             <span className="icons">
-              <i className={`iconfont ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              {record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}
+              <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+              <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
             </span>
           )}
         </span>
