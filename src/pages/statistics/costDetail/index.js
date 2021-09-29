@@ -368,7 +368,7 @@ class Statistics extends React.PureComponent {
       };
     } else if (Number(key) === 1) {
       params = {
-        ...params,
+        ids: selectedRowKeys,
       };
     } else if (Number(key) === 3) {
       params = {
