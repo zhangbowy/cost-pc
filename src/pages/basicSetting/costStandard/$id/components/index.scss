@@ -1,0 +1,58 @@
+.form{
+  margin-top: 24px;
+  :global{
+    .ant-form-item-label{
+      width: 110px;
+    }
+  }
+}
+.people{
+  height: 24px;
+  display: flex;
+  align-items: center;
+  img{
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
+  .names{
+    color: rgba(0, 199, 149, 1);
+  }
+}
+.money{
+  display: flex;
+  height: 32px;
+  align-items: center;
+  :global{
+    .ant-form-item{
+      // margin-bottom: 0px;
+      margin: 0 8px;
+    }
+  }
+}
+.adds{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+.add{
+  text-align: center;
+  width: 231px;
+  height: 32px;
+  background: #FFFFFF;
+  border: 1px dashed #D9D9D9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.input{
+  width: 400px;
+}
+.tips{
+  display: flex;
+  height: 32px;
+  align-items: center;
+}

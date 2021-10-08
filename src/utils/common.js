@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-bitwise */
 /* eslint-disable no-param-reassign */
 import moment from 'moment';
@@ -522,3 +524,15 @@ export function getBracketStr(text) {
   }
   return result;
 }
+
+//  对象转换成数组
+export const objToArr = (obj={}) => {
+  const arr = [];
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      console.log(key);
+      arr.push(obj[key]);
+    }
+  }
+  return arr;
+};
