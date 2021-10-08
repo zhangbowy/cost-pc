@@ -60,6 +60,7 @@ class AddCost extends Component {
       currencyName: '',
       exchangeRate: '1',
       currencySymbol: '¥',
+      treeExpandedKeys: [],
     };
   }
 
@@ -310,6 +311,7 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       details: {},
+      treeExpandedKeys: [],
     });
   }
 
@@ -526,16 +528,16 @@ class AddCost extends Component {
           key={item.value}
           label={item.title}
           value={item.value}
-          disabled={item.disabled}
+          selectable={!item.disabled}
           title={(
-            <div>
+            <div onClick={() => this.onTreeExpand(item.value)}>
               {
                 item.type ?
                   <i className={cs(`icon${item.icon}`, 'iconfont')} />
                   :
                   null
               }
-              <span>{item.title}</span>
+              <span className={`${item.type ? 'c-black-85' : 'c-black-45'}`}>{item.title}</span>
             </div>
           )}
         >
@@ -547,16 +549,16 @@ class AddCost extends Component {
       key={item.value}
       label={item.title}
       value={item.value}
-      disabled={item.disabled}
+      selectable={!item.disabled}
       title={(
-        <div className="icons">
+        <div className="icons" onClick={() => this.onTreeExpand(item.value)}>
           {
             item.type ?
               <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
               :
               null
           }
-          <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
+          <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
         </div>
       )}
     />;
@@ -706,6 +708,22 @@ class AddCost extends Component {
     });
   }
 
+  onTreeExpand = (key) => {
+    console.log(key);
+    const { treeExpandedKeys } = this.state;
+    let newArr = [...treeExpandedKeys];
+    if (Array.isArray(key)) {
+      newArr = key;
+    } else if (newArr.includes(key)) {
+      newArr = newArr.filter(it => it !== key);
+    } else {
+      newArr = [...newArr, key];
+    }
+    this.setState({
+      treeExpandedKeys: newArr,
+    });
+  }
+
   render() {
     const {
       children,
@@ -735,6 +753,7 @@ class AddCost extends Component {
       exchangeRate,
       currencySymbol,
       currencyId,
+      treeExpandedKeys,
     } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
@@ -798,6 +817,8 @@ class AddCost extends Component {
                           disabled={modify && details.categoryId}
                           showSearch
                           treeNodeFilterProp="label"
+                          treeExpandedKeys={treeExpandedKeys}
+                          onTreeExpand={this.onTreeExpand}
                         >
                           {this.loop(list)}
                         </TreeSelect>
