@@ -5,10 +5,21 @@ import fields from '../../../../../utils/fields';
 import { objToArr } from '../../../../../utils/common';
 import style from './index.scss';
 
-const  { highType } = fields;
+const  { highType, chargeType } = fields;
 const highTypeList = objToArr(highType);
 @Form.create()
 class BasicInfo extends Component {
+
+  getItems = () => {
+    const { form: { validateFieldsAndScroll } } = this.props;
+    validateFieldsAndScroll((err,val) => {
+      if (!err) {
+        console.log('基础信息', val);
+      }
+    });
+  }
+
+
   render() {
     // const { form: { getFieldDecorate } } = this.props;
     const formItemLayout = {
@@ -21,12 +32,12 @@ class BasicInfo extends Component {
         sm: { span: 16 },
       }
     };
-    const { form: { getFieldDecorator } } = this.props;
+    const { form: { getFieldDecorator }, type } = this.props;
     return (
       <Form className={style.form}>
         <Form.Item label="标准名称：" {...formItemLayout}>
           {
-            getFieldDecorator('name', {
+            getFieldDecorator('standardName', {
               rules: [{ required: true, message: '请输入' }]
             })(
               <Input placeholder="请输入" className={style.input} />
@@ -35,17 +46,17 @@ class BasicInfo extends Component {
         </Form.Item>
         <Form.Item label="适用支出类别：" {...formItemLayout}>
           {
-            getFieldDecorator('name', {
+            getFieldDecorator('categoryIds', {
               rules: [{ required: true, message: '请输入' }]
             })(
               <Input placeholder="请输入" className={style.input} />
             )
           }
-          <p className="c-black-45">设置xx标准后，员工提单时需额外填写[消费城市、xx]，用于费标判断</p>
+          <p className="c-black-45">设置{chargeType[type].name}标准后，员工提单时需额外填写[消费城市、xx]，用于费标判断</p>
         </Form.Item>
         <Form.Item label="超标限制：" {...formItemLayout}>
           {
-            getFieldDecorator('link', {
+            getFieldDecorator('exceedStandardType', {
               rules: [{ required: true, message: '请选择' }]
             })(
               <RadioGroup>
@@ -60,15 +71,15 @@ class BasicInfo extends Component {
           <div className={style.tips}>
             <p>默认提示文案：</p>
             {
-              getFieldDecorator('link')(
-                <Input style={{width: '301px'}} />
+              getFieldDecorator('exceedStandardNote')(
+                <Input style={{width: '301px'}} placeholder={`请填写${chargeType[type].name}费超标理由`} />
               )
             }
           </div>
         </Form.Item>
         <Form.Item label="是否启用：" {...formItemLayout}>
           {
-            getFieldDecorator('link', {
+            getFieldDecorator('status', {
               rules: [{ required: true, message: '请选择' }]
             })(
               <Switch />
