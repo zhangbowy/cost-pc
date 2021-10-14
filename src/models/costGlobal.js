@@ -419,6 +419,15 @@ export default {
     *shareLoan({ payload }, { call }) {
       yield call(post, api.shareLoan, payload);
     },
+    *cityList({ payload }, { call, put }) {
+      const response = yield call(get, api.cityList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          cityList: response || {},
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {

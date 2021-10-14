@@ -138,4 +138,5 @@ export default {
    checkLinkCost: `${APP_API}/cost/cost/folder/countUnassociated`,
    checkFolderList: `${APP_API}/cost/invoice/application/folder`, // 申请单关联
    shareLoan: `${APP_API}/cost/invoice/loan/shareLoan`,
+   cityList: `${APP_API}/cost/aw/getCity`, // 城市列表
 };
