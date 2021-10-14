@@ -112,6 +112,16 @@
       height: 32px;
     }
   }
+  .isRequired::before{
+    display: inline-block;
+    margin-right: 4px;
+    color: #f5222d;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
+  }
+
   .deleteColor{
     color: rgba(251, 96, 45, 1);
     cursor: pointer;
@@ -238,10 +248,10 @@
   .m-l-8{margin-left:8px !important;}
   .m-l-4{margin-left:4px !important;}
   .m-l-10{margin-left:10px !important;}
+  .m-l-12{margin-left:12px !important;}
   .m-l-32{margin-left:32px !important;}
   .m-r-8{margin-right:8px !important;}
   .m-r-72{margin-right:72px !important;}
-  .m-l-10{margin-left:10px !important;}
   .m-l-16{margin-left:16px !important;}
   .m-l-20{margin-left:20px !important;}
   .m-l-24{margin-left:24px !important;}

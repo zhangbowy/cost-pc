@@ -416,6 +416,9 @@ export default {
         },
       });
     },
+    *shareLoan({ payload }, { call }) {
+      yield call(post, api.shareLoan, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

@@ -6,7 +6,7 @@ const { PAGE_SIZE } = constants;
 export default {
   namespace: 'chargeStandard',
   state: {
-    list: {},
+    list: [],
     query: {
       pageNo: 1,
       pageSize: PAGE_SIZE,

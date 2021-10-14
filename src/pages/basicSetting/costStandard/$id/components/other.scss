@@ -1,0 +1,199 @@
+.form{
+  margin-top: 24px;
+  :global{
+    .ant-form-item-label{
+      width: 110px;
+    }
+  }
+}
+.forms{
+  :global{
+    .ant-form-item-label{
+      width: 126px;
+    }
+    .ant-form-item{
+      // margin-bottom: 0px;
+      margin: 0;
+    }
+  }
+}
+.people{
+  height: 24px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  img{
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
+  .names{
+    color: rgba(0, 199, 149, 1);
+  }
+}
+.money{
+  display: flex;
+  height: 32px;
+  align-items: center;
+  :global{
+    .ant-form-item{
+      // margin-bottom: 0px;
+      margin: 0 8px;
+    }
+  }
+}
+.adds{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+.add{
+  text-align: center;
+  width: 231px;
+  height: 32px;
+  background: #FFFFFF;
+  border: 1px dashed #D9D9D9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.input{
+  width: 400px;
+}
+.tips{
+  display: flex;
+  height: 32px;
+  align-items: center;
+}
+
+.addCity{
+  margin-top: 32px;
+  .add{
+    width: 80px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px dashed rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+  }
+  .cities{
+    display: flex;
+    margin-top: 16px;
+    :global{
+      .ant-popover-message{
+        height: 319px;
+        overflow-y: scroll;
+        padding: 10px;
+        border-bottom: 1px solid rgba(233, 233, 233, 1);
+      }
+      .ant-popover-message-title{
+        padding-left: 0;
+      }
+      .ant-tree-treenode-switcher-close{
+        display: flex;
+      }
+      .ant-tree li .ant-tree-node-content-wrapper{
+        flex: 1;
+      }
+      .ant-popover-inner-content{
+        padding: 0;
+      }
+      .ant-popover-buttons{
+        padding: 8px;
+      }
+      .ant-tree-node-selected{
+        position: relative;
+      }
+      .ant-tree-node-selected::after{
+        content: '\e6d6';
+        font-family: "iconfont";
+        position: absolute;
+        right: 8px;
+        top: 2px;
+        color: #00c795;
+        font-size: 20px;
+      }
+      .ant-popover-title{
+        padding: 0;
+        height: 360px;
+        overflow: scroll;
+      }
+
+      // .ant-tree li{
+      //   display: flex;
+      // }
+      // .ant-tree li .ant-tree-node-content-wrapper{
+      //   flex: 1;
+      // }
+    }
+  }
+
+  .city{
+    width: 80px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.02);
+    color: rgba(0, 0, 0, 0.65);
+    border-radius: 4px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover{
+      background: rgba(0, 199, 149, 0.08);
+      color: rgba(0, 199, 149, 1);
+    }
+  }
+}
+
+.popStyle{
+  width: 510px;
+  padding: 0;
+  :global{
+    .ant-popover-inner-content{
+      padding: 0px;
+    }
+  }
+}
+
+.formTable{
+  position: relative;
+  .switch{
+    position: absolute;
+    right: 0;
+    top: -43px;
+    color: #191F25;
+    line-height: 32px;
+    display: inline-block;
+  }
+  :global{
+    .ant-form-item{
+      margin-bottom: 0;
+    }
+  }
+}
+.costRule{
+  width: 800px;
+  height: 64px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 2px;
+  color: #191F25;
+  display: flex;
+  align-items: center;
+  :global{
+    .ant-form-item{
+      margin-bottom: 0;
+    }
+  }
+}
+.production{
+  width: 750px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 16px;
+  margin-top: 4px;
+}

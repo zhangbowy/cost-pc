@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Table, Form, InputNumber, Popconfirm, Select } from 'antd';
+import { Table, Form, InputNumber, Popconfirm, Select, Switch } from 'antd';
 import add from '@/assets/img/addP.png';
-import style from './index.scss';
+import style from './other.scss';
 import { ddComplexPicker } from '../../../../../utils/ddApi';
 import EditCity from './EditCity';
 import fields from '../../../../../utils/fields';
@@ -16,9 +16,30 @@ class SetStandard extends PureComponent {
   constructor(props) {
     super(props);
     this.state={
-      list: [{ key: '11111', userVos: [], depts: [] }]
+      list: [{ key: '11111', userVos: [], depts: [] }],
+      isOpenCityLevel: false,
+      initDetail: {},
     };
   }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {details} = nextProps;
+    // 当传入的type发生变化的时候，更新state
+    if (details.costStandardDetailListVos && details !== prevState.initDetail) {
+      const newArr = details.costStandardDetailListVos.map(it => {
+        return {
+          ...it,
+          key: ++id,
+        };
+      });
+      return {
+        list: newArr,
+        initDetail: details
+      };
+    }
+    // 否则，对于state不进行任何操作
+    return null;
+}
 
   onAdd = () => {
     const { list } = this.state;
@@ -33,7 +54,67 @@ class SetStandard extends PureComponent {
     });
   }
 
-  selectPeople = (item) => {
+  onChange = (e) => {
+    console.log('e', e);
+    const { list } = this.state;
+    const newArr = [...list];
+    let newAdd = [];
+    if (e) {
+      newArr.forEach(item => {
+        const arr = [{
+          ...item,
+          cityLevel: 1,
+          rowSpan: 4,
+          costStandardKey: item.key
+        }, {
+          ...item,
+          key: ++id,
+          cityLevel: 2,
+          rowSpan: 0,
+          costStandardKey: item.key
+        }, {
+          ...item,
+          key: ++id,
+          cityLevel: 3,
+          rowSpan: 0,
+          costStandardKey: item.key
+        }, {
+          ...item,
+          key: ++id,
+          cityLevel: 4,
+          rowSpan: 0,
+          costStandardKey: item.key
+        }];
+        newAdd = [...newAdd, ...arr];
+      });
+    } else {
+      const ids = newArr.map(it => it.costStandardKey);
+      const newId = Array.from(new Set(ids));
+      if (newId && newId.length) {
+        newArr.forEach(item => {
+          if (newId.includes(item.key)) {
+            newAdd.push({
+              ...item,
+              rowSpan: null,
+            });
+          }
+        });
+      } else {
+        newAdd = [...newArr];
+      }
+    }
+    this.setState({
+      isOpenCityLevel: e,
+      list: newAdd
+    });
+  }
+
+  onDel = (item, e) => {
+    e.stopPropagation();
+  }
+
+  selectPeople = (item, e) => {
+    e.stopPropagation();
     const { userVos = [], deptVos = [], key } = item;
     const { list } = this.state;
     const newArr = [...list];
@@ -89,11 +170,79 @@ class SetStandard extends PureComponent {
     });
   }
 
-  render() {
+  checkPeople = () => {
     const { list } = this.state;
-    const { form: { getFieldDecorator }, type } = this.props;
+    let flag = false;
+    list.forEach(item => {
+      if ((item.userVos && !item.userVos.length) &&
+      (item.deptVos && !item.deptVos.length)) {
+        flag = true;
+      }
+    });
+    return flag;
+  }
+
+  getItems = () => {
+    const { form: { validateFieldsAndScroll } } = this.props;
+    let value = null;
+    const { list } = this.state;
+    const { type } = this.props;
+    validateFieldsAndScroll((err,val) => {
+      if (!err) {
+        console.log('标准设置', val);
+        console.log('标准设置', list);
+        if (this.checkPeople()) {
+          return null;
+        }
+        const newArr = [];
+        list.forEach(item => {
+          const obj = {
+            userVos: item.userVos,
+            deptVos: item.deptVos,
+            amountUnitType: val.amountUnitType && val.amountUnitType[item.key] ?
+            val.amountUnitType[item.key] : chargeType[type].amountUnitType,
+          };
+          if (type !== 0 && type !== 1) {
+            Object.assign(obj, {
+              amount: ((val.amount[item.key] * 1000)/10).toFixed(0)
+            });
+          }
+          if (val.trainLevels) {
+            Object.assign(obj, {
+              trainLevels: val.trainLevels[item.key]
+            });
+          }
+          if (val.flightLevels) {
+            Object.assign(obj, {
+              flightLevels: val.flightLevels[item.key]
+            });
+          }
+          newArr.push(obj);
+        });
+        value = {
+          costStandardDetailListVos: newArr,
+          isOpenCityLevel: !!(val.isOpenCityLevel),
+        };
+      }
+    });
+    return value;
+  }
+
+  renderContent = (value) => {
+    const obj = {
+      children: value,
+      props: {
+        rowSpan: 4,
+      },
+    };
+    return obj;
+  };
+
+  render() {
+    const { list, isOpenCityLevel } = this.state;
+    const { form: { getFieldDecorator }, type, details } = this.props;
     const columns = [{
-      title: '适用人员',
+      title: (<span className="isRequired">适用人员</span>),
       dataIndex: 'people',
       key: 'people',
       render: (_, record) => {
@@ -101,21 +250,26 @@ class SetStandard extends PureComponent {
         `${record.userVos[0].userName}${record.userVos.length > 1 ? `等${record.userVos.length}人` : ''}` : '';
         const depts = record.deptVos && record.deptVos.length ?
         `${record.deptVos[0].name}${record.deptVos.length > 1 ? `等${record.deptVos.length}部门` : ''}` : '';
-        return (
-          <div className={style.people} onClick={() => this.selectPeople(record)}>
-            <img src={add} alt="部门/人"  />
-            {
-              users || depts ?
-                <div>
-                  <span>已选{users}、{depts}</span>
-                  <i className="iconfont icondelete_fill c-black-65 m-l-8" />
-                </div>
-                :
-                <span className={style.names}>选择适用人员/部门</span>
-            }
+        return {
+          children: (
+            <div className={style.people} onClick={(e) => this.selectPeople(record, e)}>
+              <img src={add} alt="部门/人"  />
+              {
+                users || depts ?
+                  <div>
+                    <span>已选{users}{users && depts && '、'}{depts}</span>
+                    <i className="iconfont icondelete_fill c-black-65 m-l-8" onClick={(e) => this.onDel(record, e)} />
+                  </div>
+                  :
+                  <span className={style.names}>选择适用人员/部门</span>
+              }
 
-          </div>
-        );
+            </div>
+          ),
+          props: {
+            rowSpan: record.rowSpan === 0 || record.rowSpan ? record.rowSpan : 1,
+          }
+        };
       },
       width: 200
     }, {
@@ -135,7 +289,7 @@ class SetStandard extends PureComponent {
     }];
     if (chargeType[type].options) {
       columns.splice(1, 0, {
-        title: '金额标准',
+        title: (<span className="isRequired">金额标准</span>),
         dataIndex: 'money',
         key: 'money',
         render: (_, record) => {
@@ -144,8 +298,11 @@ class SetStandard extends PureComponent {
               <span>不超过</span>
               <Form.Item>
                 {
-                  getFieldDecorator(`amount[${record.key}]`)(
-                    <InputNumber style={{width: '88px'}} />
+                  getFieldDecorator(`amount[${record.key}]`, {
+                    initialValue: record.amount ? record.amount/100 : '',
+                    rules: [{ required: true, message: '请输入' }]
+                  })(
+                    <InputNumber style={{width: '88px'}} placeholder="请输入" />
                   )
                 }
               </Form.Item>
@@ -154,7 +311,9 @@ class SetStandard extends PureComponent {
                 Array.isArray(chargeType[type].options) &&
                 <Form.Item>
                   {
-                    getFieldDecorator(`amountUnitType[${record.key}]`)(
+                    getFieldDecorator(`amountUnitType[${record.key}]`, {
+                      initialValue: record.amountUnitType || '',
+                    })(
                       <Select>
                         {
                           chargeType[type].options.map(item => (
@@ -171,7 +330,7 @@ class SetStandard extends PureComponent {
         },
         width: 200
       });
-      if (type === 2) {
+      if (isOpenCityLevel) {
         columns.splice(1, 0, {
           title: (
             <span>
@@ -181,14 +340,14 @@ class SetStandard extends PureComponent {
               </EditCity>
             </span>
           ),
-          dataIndex: 'city',
-          key: 'city',
+          dataIndex: 'cityLevel',
+          key: 'cityLevel',
           width: 200
         });
       }
     } else {
       columns.splice(1, 0, {
-        title: `${!type ? '火车席位' : '航班舱型'}`,
+        title: (<span className="isRequired">{`${!type ? '火车席位' : '航班舱型'}`}</span>),
         dataIndex: 'level',
         key: 'level',
         render: (_, record) => {
@@ -196,10 +355,14 @@ class SetStandard extends PureComponent {
           return (
             <Form.Item>
               {
-                getFieldDecorator(`trainLevels[${record.key}]`)(
+                getFieldDecorator(!type ? `trainLevels[${record.key}]` : `flightLevels[${record.key}]`, {
+                  initialValue: record.trainLevels || record.flightLevels,
+                  rules: [{ required: true, message: '请选择' }]
+                })(
                   <Select
                     mode="multiple"
                     style={{ width: '100%', maxWidth: '240px' }}
+                    placeholder="请选择"
                   >
                     {
                       optionsList.map(item => (
@@ -218,6 +381,17 @@ class SetStandard extends PureComponent {
     return (
       <div className="m-t-24">
         <Form className={style.formTable}>
+          <div className={style.switch}>
+            <span className="m-r-12">按城市等级划分</span>
+            {
+              getFieldDecorator('isOpenCityLevel', {
+                initialValue: details.isOpenCityLevel || false,
+                valuePropName: 'checked',
+              })(
+                <Switch onChange={(e) => this.onChange(e)} />
+              )
+            }
+          </div>
           <Table
             columns={columns}
             pagination={false}

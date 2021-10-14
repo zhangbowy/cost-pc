@@ -65,7 +65,7 @@ export default {
       fields: ['火车席位'],
     },
     2: {
-      name: '酒店',
+      name: '住宿',
       key: '2',
       fields: ['发生日期（时间段）', '消费城市'],
       options: '晚',

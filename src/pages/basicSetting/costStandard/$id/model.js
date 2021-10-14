@@ -1,14 +1,23 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 // import constants from '@/utils/constants';
 import api from './services';
 
 // const { PAGE_SIZE } = constants;
 export default {
-  namespace: 'chargeStandard',
+  namespace: 'addStandard',
   state: {
     detail: {},
   },
   effects: {
+    *detail({ payload }, { call, put }) {
+      const response = yield call(get, api.detail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          detail: response || {},
+        },
+      });
+    },
     *add({ payload }, { call }) {
       yield call(post, api.add, payload);
     },

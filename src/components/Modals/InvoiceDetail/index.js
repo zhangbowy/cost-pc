@@ -24,6 +24,7 @@ import { handleProduction, compare, getParams } from '../../../utils/common';
 import AliLink from './AliLink';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
 import DisabledTooltip from './DisabledTooltip';
+import ShareLoan from './ShareLoan';
 // import { DownloadFile } from '../../../utils/ddApi';
 
 const { aliTraffic } = fields;
@@ -470,6 +471,9 @@ class InvoiceDetail extends Component {
           footer={(
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
+                <ShareLoan>
+                  <Button type="primary" className="m-r-8">共享</Button>
+                </ShareLoan>
                 {
                   canRefuse &&
                   <Button className="m-r-8" onClick={() => this.onChangeSign()}>
@@ -1207,6 +1211,15 @@ class InvoiceDetail extends Component {
                 previewImage={this.previewImage}
                 previewFiles={this.previewFiles}
               />
+            </>
+          }
+          {
+            details.shareOperationRecords &&
+            <>
+              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                <div className={style.line} />
+                <span>共享记录</span>
+              </div>
             </>
           }
         </Modal>

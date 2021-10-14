@@ -1,6 +1,8 @@
 // 费用标准
 import React, { PureComponent } from 'react';
 import { Table, Divider } from 'antd';
+import moment from 'moment';
+import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import DropBtnList from '../../../components/DropBtnList';
 import fields from '../../../utils/fields';
@@ -9,8 +11,19 @@ import { objToArr } from '../../../utils/common';
 const { chargeType } = fields;
 
 const lists = objToArr(chargeType);
-
+@connect(({ chargeStandard, loading }) => ({
+  list: chargeStandard.list,
+  query: chargeStandard.query,
+  loading: loading.effects['chargeStandard/list'] || false,
+}))
 class chargeStandard extends PureComponent {
+
+  componentDidMount(){
+    this.onQuery({
+      pageNo: 1,
+      pageSize: 100,
+    });
+  }
 
   onHandle = (key, id) => {
     if (!id) {
@@ -20,33 +33,56 @@ class chargeStandard extends PureComponent {
     }
   }
 
+  onQuery = payload => {
+    this.props.dispatch({
+      type: 'chargeStandard/list',
+      payload,
+    });
+  }
+
+  onDelete = (id) => {
+    this.props.dispatch({
+      type: 'chargeStandard/del',
+      payload: {id}
+    }).then(() => {
+      this.onQuery({});
+    });
+  }
+
   render() {
+    const { loading, list } = this.props;
     const columns = [{
       title: '费用标准',
-      dataIndex: 'name'
+      dataIndex: 'standardName'
     }, {
       title: '标准类型',
-      dataIndex: 'name1'
+      dataIndex: 'standardType',
+      render: (text) => (
+        <span>{chargeType[text].name}</span>
+      )
     }, {
       title: '适用支出类别（费用）',
-      dataIndex: 'name2'
-    }, {
-      title: '标准内容',
-      dataIndex: 'name3'
+      dataIndex: 'categoryNameList'
     }, {
       title: '修改时间',
-      dataIndex: 'name4'
+      dataIndex: 'updateTime',
+      render: (text) => (
+        <span>{text ? moment(text).format('YYYY-MM-DD') : '-'}</span>
+      )
     }, {
       title: '状态',
-      dataIndex: 'name5'
+      dataIndex: 'status',
+      render: (text) => (
+        <span>{ text ? '启用' : '禁用' }</span>
+      )
     }, {
       title: '操作',
       dataIndex: 'operation',
-      render: () => (
+      render: (_, record) => (
         <span>
-          <a>删除</a>
+          <a className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</a>
           <Divider type="vertical" />
-          <a>编辑</a>
+          <a onClick={() => this.onHandle(record.standardType, record.id)}>编辑</a>
         </span>
       )
     }];
@@ -70,6 +106,8 @@ class chargeStandard extends PureComponent {
             pagination={false}
             columns={columns}
             className="m-t-16"
+            loading={loading}
+            dataSource={list}
           />
         </div>
       </div>
