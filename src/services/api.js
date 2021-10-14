@@ -137,4 +137,5 @@ export default {
    deptTree: `${APP_API}/cost/dept/listWithUser`, // 部门树
    checkLinkCost: `${APP_API}/cost/cost/folder/countUnassociated`,
    checkFolderList: `${APP_API}/cost/invoice/application/folder`, // 申请单关联
+   cityList: `${APP_API}/cost/aw/getCity`, // 城市列表
 };
