@@ -8,7 +8,7 @@ import fields from '../../../../../utils/fields';
 import { objToArr } from '../../../../../utils/common';
 
 let id = 1000;
-const { chargeType, flightLevels, trainLevels } = fields;
+const { chargeType, flightLevels, trainLevels, cityLevel } = fields;
 const { Option } = Select;
 @Form.create()
 class SetStandard extends PureComponent {
@@ -42,13 +42,38 @@ class SetStandard extends PureComponent {
 }
 
   onAdd = () => {
-    const { list } = this.state;
-    const newArr = [...list];
-    newArr.push({
-      key: ++id,
-      userVos: [],
-      depts: []
-    });
+    const { list, isOpenCityLevel } = this.state;
+    let newArr = [...list];
+    if (isOpenCityLevel) {
+      const costStandardKey = ++id;
+      newArr = [...list, {
+        key: costStandardKey,
+        cityLevel: 1,
+        rowSpan: 4,
+        costStandardKey,
+      }, {
+        key: ++id,
+        cityLevel: 2,
+        rowSpan: 0,
+        costStandardKey,
+      }, {
+        key: ++id,
+        cityLevel: 3,
+        rowSpan: 0,
+        costStandardKey,
+      }, {
+        key: ++id,
+        cityLevel: '-1',
+        rowSpan: 0,
+        costStandardKey,
+      }];
+    } else {
+      newArr.push({
+        key: ++id,
+        userVos: [],
+        depts: []
+      });
+    }
     this.setState({
       list: newArr,
     });
@@ -81,7 +106,7 @@ class SetStandard extends PureComponent {
         }, {
           ...item,
           key: ++id,
-          cityLevel: 4,
+          cityLevel: '-1',
           rowSpan: 0,
           costStandardKey: item.key
         }];
@@ -164,9 +189,10 @@ class SetStandard extends PureComponent {
   }
 
   onDelete = ({ key }) => {
-    const { list } = this.state;
+    const { list, isOpenCityLevel } = this.state;
     this.setState({
-      list: list.filter(it => it.key !== key)
+      list: !isOpenCityLevel ? list.filter(it => it.key !== key) :
+        list.filter(it => it.costStandardKey !== key),
     });
   }
 
@@ -185,7 +211,7 @@ class SetStandard extends PureComponent {
   getItems = () => {
     const { form: { validateFieldsAndScroll } } = this.props;
     let value = null;
-    const { list } = this.state;
+    const { list, isOpenCityLevel } = this.state;
     const { type } = this.props;
     validateFieldsAndScroll((err,val) => {
       if (!err) {
@@ -195,30 +221,51 @@ class SetStandard extends PureComponent {
           return null;
         }
         const newArr = [];
-        list.forEach(item => {
-          const obj = {
-            userVos: item.userVos,
-            deptVos: item.deptVos,
-            amountUnitType: val.amountUnitType && val.amountUnitType[item.key] ?
-            val.amountUnitType[item.key] : chargeType[type].amountUnitType,
-          };
-          if (type !== 0 && type !== 1) {
-            Object.assign(obj, {
-              amount: ((val.amount[item.key] * 1000)/10).toFixed(0)
-            });
-          }
-          if (val.trainLevels) {
-            Object.assign(obj, {
-              trainLevels: val.trainLevels[item.key]
-            });
-          }
-          if (val.flightLevels) {
-            Object.assign(obj, {
-              flightLevels: val.flightLevels[item.key]
-            });
-          }
-          newArr.push(obj);
-        });
+        if (!isOpenCityLevel) {
+          list.forEach(item => {
+            const obj = {
+              userVos: item.userVos,
+              deptVos: item.deptVos,
+              amountUnitType: val.amountUnitType && val.amountUnitType[item.key] ?
+              val.amountUnitType[item.key] : chargeType[type].amountUnitType,
+            };
+            if (type !== 0 && type !== 1) {
+              Object.assign(obj, {
+                amount: ((val.amount[item.key] * 1000)/10).toFixed(0)
+              });
+            }
+            if (val.trainLevels) {
+              Object.assign(obj, {
+                trainLevels: val.trainLevels[item.key]
+              });
+            }
+            if (val.flightLevels) {
+              Object.assign(obj, {
+                flightLevels: val.flightLevels[item.key]
+              });
+            }
+            newArr.push(obj);
+          });
+        } else {
+          // const newList = list.map(it => it.costStandardKey);
+          // const keys = Array.from(new Set(newList));
+          const initArr = [];
+          list.forEach(item => {
+            const obj = {
+              cityLevel: item.cityLevel,
+              costStandardKey: item.costStandardKey,
+              amount: ((val.amount[item.key] * 1000)/10).toFixed(0),
+              amountUnitType: chargeType[type].amountUnitType,
+            };
+            if (item.costStandardKey === item.key) {
+              Object.assign(obj, {
+                userVos: item.userVos,
+                deptVos: item.deptVos,
+              });
+            }
+            initArr.push(obj);
+          });
+        }
         value = {
           costStandardDetailListVos: newArr,
           isOpenCityLevel: !!(val.isOpenCityLevel),
@@ -263,7 +310,6 @@ class SetStandard extends PureComponent {
                   :
                   <span className={style.names}>选择适用人员/部门</span>
               }
-
             </div>
           ),
           props: {
@@ -276,14 +322,21 @@ class SetStandard extends PureComponent {
       title: '操作',
       dataIndex: '',
       key: 'operate',
-      render: (_, record) => (
-        <Popconfirm
-          title="请确认是否删除？"
-          onConfirm={() => this.onDelete(record)}
-        >
-          <span className="deleteColor">删除</span>
-        </Popconfirm>
-      ),
+      render: (_, record) => {
+        return {
+          children: (
+            <Popconfirm
+              title="请确认是否删除？"
+              onConfirm={() => this.onDelete(record)}
+            >
+              <span className="deleteColor">删除</span>
+            </Popconfirm>
+          ),
+          props: {
+            rowSpan: record.rowSpan === 0 || record.rowSpan ? record.rowSpan : 1,
+          }
+        };
+      },
       width: '80px',
       fixed: 'right'
     }];
@@ -312,9 +365,9 @@ class SetStandard extends PureComponent {
                 <Form.Item>
                   {
                     getFieldDecorator(`amountUnitType[${record.key}]`, {
-                      initialValue: record.amountUnitType || '',
+                      initialValue: record.amountUnitType ? `${record.amountUnitType}` : '0',
                     })(
-                      <Select>
+                      <Select style={{width: '88px'}}>
                         {
                           chargeType[type].options.map(item => (
                             <Option key={item.key}>{item.name}</Option>
@@ -342,7 +395,10 @@ class SetStandard extends PureComponent {
           ),
           dataIndex: 'cityLevel',
           key: 'cityLevel',
-          width: 200
+          width: 200,
+          render: (_, record) => (
+            <span>{cityLevel[record.cityLevel].name}</span>
+          )
         });
       }
     } else {
@@ -381,17 +437,20 @@ class SetStandard extends PureComponent {
     return (
       <div className="m-t-24">
         <Form className={style.formTable}>
-          <div className={style.switch}>
-            <span className="m-r-12">按城市等级划分</span>
-            {
-              getFieldDecorator('isOpenCityLevel', {
-                initialValue: details.isOpenCityLevel || false,
-                valuePropName: 'checked',
-              })(
-                <Switch onChange={(e) => this.onChange(e)} />
-              )
-            }
-          </div>
+          {
+            type === 2 &&
+            <div className={style.switch}>
+              <span className="m-r-12">按城市等级划分</span>
+              {
+                getFieldDecorator('isOpenCityLevel', {
+                  initialValue: details.isOpenCityLevel || false,
+                  valuePropName: 'checked',
+                })(
+                  <Switch onChange={(e) => this.onChange(e)} />
+                )
+              }
+            </div>
+          }
           <Table
             columns={columns}
             pagination={false}

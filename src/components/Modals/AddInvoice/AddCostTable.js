@@ -148,6 +148,7 @@ class AddCostTable extends Component {
           userName: val.users.length ? val.users[0].userName : '',
           userId,
           loanUserId: val.users.length ? val.users[0].userId : '',
+          dingUserId: val.users.length ? val.users[0].userId : '',
           deptId: ''
         });
         if (deptInfo && deptInfo.length === 1) {
@@ -323,6 +324,7 @@ class AddCostTable extends Component {
               invoiceBaseId: invoiceId,
               depList: item.depList,
               loanUserId: item.loanUserId,
+              dingUserId: item.loanUserId,
             });
           });
         } else {

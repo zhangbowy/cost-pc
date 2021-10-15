@@ -50,6 +50,7 @@ const { confirm } = Modal;
   officeList: costGlobal.officeList,
   aliCostAndI: costGlobal.aliCostAndI,
   deptTree: costGlobal.deptTree,
+  checkStandard: costGlobal.checkStandard,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] ||
   loading.effects['global/invoiceEdit'] || loading.effects['global/addApply'] ||
   loading.effects['global/addSalary'] ||
@@ -729,7 +730,7 @@ class AddInvoice extends Component {
   }
 
   //  添加费用成功
-  onAddCost = (val, index, flag) => {
+  onAddCost = async(val, index, flag) => {
     let  share = this.state.costDetailsVo;
     const detail = this.state.details;
     if (!flag) {
@@ -762,8 +763,13 @@ class AddInvoice extends Component {
         costSum: ((it.costSum*1000) /10).toFixed(0),
       });
     });
-    const { loanUserId } = this.state;
-    console.log('AddInvoice -> onAddCost -> loanUserId', loanUserId);
+    // const { loanUserId } = this.state;
+    const { djDetail } = this.props;
+    console.log('AddInvoice -> onAddCost -> loanUserId', share);
+    console.log('AddInvoice -> onAddCost -> loanUserId', val);
+    if (share && share.length && djDetail.templateType === 0) {
+      share = await this.checkStandard(share);
+    }
     this.setState({
       costDetailsVo: share,
       total: mo.toFixed(2),
@@ -773,8 +779,9 @@ class AddInvoice extends Component {
         categorySumEntities,
       }
     }, () => {
+      // const { costDetailsVo } = this.state;
       const { borrowArr, total } = this.state;
-      const { djDetail, form: { getFieldValue } } = this.props;
+      const { form: { getFieldValue } } = this.props;
       this.onAddBorrow(borrowArr);
       if (Number(total) === 0 && (djDetail.categoryStatus && djDetail.templateType === 2)) {
         this.setState({
@@ -785,6 +792,32 @@ class AddInvoice extends Component {
       } else {
         this.getNode();
       }
+    });
+  }
+
+  checkStandard = (costDetailsVo) => {
+    const { id } = this.props;
+    const { users, details } = this.state;
+    return new Promise((resolve) => {
+      this.props.dispatch({
+        type: 'costGlobal/checkStandard',
+        payload: {
+          costDetailsVo: defaultFunc.handleCost(costDetailsVo, id),
+          userId: details.userId,
+          dingUserId: users && users.length ? users[0].userId : '',
+          deptId: details.deptId,
+        }
+      }).then(() => {
+        const { checkStandard } = this.props;
+        const newArr = [];
+        costDetailsVo.forEach(item => {
+          if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
+            newArr.push({ ...item, costStandardNote: checkStandard.second[item.key].join(';') });
+          }
+        });
+        resolve(newArr);
+        console.log('AddInvoice -> checkStandard -> checkStandard', checkStandard);
+      });
     });
   }
 
@@ -910,44 +943,7 @@ class AddInvoice extends Component {
     } else {
       return;
     }
-    const arr = [];
-    costDetailsVo.forEach((item, index) => {
-      arr.push({
-        id: item.id || '',
-        'categoryId': item.categoryId,
-        'icon': item.icon,
-        'categoryName': item.categoryName,
-        'costSum': (((item.costSum) * 1000)/10).toFixed(0),
-        'note': item.note,
-        'costDate':item.costDate,
-        'startTime':item.startTime || '',
-        'endTime':item.endTime || '',
-        'imgUrl':item.imgUrl,
-        'invoiceBaseId':id,
-        costDetailShareVOS: [],
-        currencyId: item.currencyId,
-        currencyName: item.currencyName,
-        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
-        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
-        detailFolderId: item.detailFolderId || '',
-        attribute: item.attribute,
-      });
-      if (item.costDetailShareVOS) {
-        item.costDetailShareVOS.forEach(it => {
-          arr[index].costDetailShareVOS.push({
-            id: it.id || '',
-            'shareAmount': (it.shareAmount * 1000)/10,
-            'shareScale': (it.shareScale * 1000)/10,
-            'deptId': it.deptId,
-            'userId': it.userId,
-            'userJson':it.users,
-            deptName: it.deptName,
-            userName: it.userName,
-            projectId: it.projectId,
-          });
-        });
-      }
-    });
+    const arr = defaultFunc.handleCost(costDetailsVo, id);
     params = {
       ...params,
       nodeConfigInfo: nodes,
@@ -1068,42 +1064,7 @@ class AddInvoice extends Component {
       expandSubmitFieldVos,
       selfSubmitFieldVos
     };
-    const arr = [];
-    costDetailsVo.forEach((item, index) => {
-      arr.push({
-        'categoryId': item.categoryId,
-        'categoryName': item.categoryName,
-        'costSum': (((item.costSum) * 1000)/10).toFixed(0),
-        'note': item.note,
-        'costDate':item.costDate,
-        'startTime':item.startTime || '',
-        'endTime':item.endTime || '',
-        'imgUrl':item.imgUrl,
-        'invoiceBaseId':id,
-        costDetailShareVOS: [],
-        currencyId: item.currencyId && item.currencyId !== '-1' ? item.currencyId : '',
-        currencyName: item.currencyName || '',
-        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
-        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
-        detailFolderId: item.detailFolderId || '',
-        icon: item.icon,
-        attribute: item.attribute,
-      });
-      if (item.costDetailShareVOS) {
-        item.costDetailShareVOS.forEach(it => {
-          arr[index].costDetailShareVOS.push({
-            'shareAmount': (it.shareAmount * 1000)/10,
-            'shareScale': (it.shareScale * 1000)/10,
-            'deptId': it.deptId,
-            'userId': it.userId,
-            'userJson':it.users,
-            deptName: it.deptName,
-            userName: it.userName,
-            projectId: it.projectId,
-          });
-        });
-      }
-    });
+    const arr = defaultFunc.handleCost(costDetailsVo, id);
     params = {
       ...params,
       costDetailsVo: arr,

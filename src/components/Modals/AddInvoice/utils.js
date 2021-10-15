@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Tooltip } from 'antd';
 import { changeDefaultStr } from '../../../utils/constants';
+import { getTimeIdNo } from '../../../utils/common';
 
 export default {
   range: (start, end) => {
@@ -146,5 +147,48 @@ export default {
       }];
     }
     return fields;
+  },
+  handleCost: (costDetailsVo, id) => {
+    const arr = [];
+    costDetailsVo.forEach((item, index) => {
+      arr.push({
+        id: item.id || '',
+        key: item.key || getTimeIdNo(),
+        'categoryId': item.categoryId,
+        'icon': item.icon,
+        'categoryName': item.categoryName,
+        'costSum': (((item.costSum) * 1000)/10).toFixed(0),
+        'note': item.note,
+        'costDate':item.costDate,
+        'startTime':item.startTime || '',
+        'endTime':item.endTime || '',
+        'imgUrl':item.imgUrl,
+        'invoiceBaseId':id,
+        costDetailShareVOS: [],
+        currencyId: item.currencyId,
+        currencyName: item.currencyName,
+        expandCostDetailFieldVos: item.expandCostDetailFieldVos,
+        selfCostDetailFieldVos: item.selfCostDetailFieldVos,
+        detailFolderId: item.detailFolderId || '',
+        attribute: item.attribute,
+      });
+      if (item.costDetailShareVOS) {
+        item.costDetailShareVOS.forEach(it => {
+          arr[index].costDetailShareVOS.push({
+            id: it.id || '',
+            'shareAmount': (it.shareAmount * 1000)/10,
+            'shareScale': (it.shareScale * 1000)/10,
+            'deptId': it.deptId,
+            'userId': it.userId,
+            dingUserId: it.users && it.users.length ? it.users[0].userId : '',
+            'userJson':it.users,
+            deptName: it.deptName,
+            userName: it.userName,
+            projectId: it.projectId,
+          });
+        });
+      }
+    });
+    return arr;
   }
 };

@@ -246,12 +246,14 @@
   }
 }
 .popStyle{
-  width: 360px;
-  height: 360px;
+  width: 400px;
+  height: 376px;
   background: #FFFFFF;
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   padding: 0;
+  position: absolute;
+  z-index: 1;
   :global{
     .ant-popover-message{
       height: 319px;
@@ -262,35 +264,41 @@
     .ant-popover-message-title{
       padding-left: 0;
     }
-    .ant-tree-treenode-switcher-close{
-      display: flex;
-    }
-    .ant-tree li .ant-tree-node-content-wrapper{
-      flex: 1;
-    }
+    // .ant-tree-treenode-switcher-close{
+    //   display: flex;
+    // }
+    // .ant-tree li .ant-tree-node-content-wrapper{
+    //   flex: 1;
+    // }
     .ant-popover-inner-content{
       padding: 0;
     }
     .ant-popover-buttons{
       padding: 8px;
     }
-    .ant-tree-node-selected{
-      position: relative;
-    }
-    .ant-tree-node-selected::after{
-      content: '\e6d6';
-      font-family: "iconfont";
-      position: absolute;
-      right: 8px;
-      top: 2px;
-      color: #00c795;
-      font-size: 20px;
-    }
+    // .ant-tree-node-selected{
+    //   position: relative;
+    // }
+    // .ant-tree-node-selected::after{
+    //   content: '\e6d6';
+    //   font-family: "iconfont";
+    //   position: absolute;
+    //   right: 8px;
+    //   top: 2px;
+    //   color: #00c795;
+    //   font-size: 20px;
+    // }
     .ant-popover-title{
       padding: 0;
       height: 360px;
       overflow: scroll;
     }
+    .ant-select-dropdown{
+      box-shadow: none;
+    }
+    // .ant-select-dropdown-hidden{
+    //   display: block!important;
+    // }
 
     // .ant-tree li{
     //   display: flex;
@@ -311,10 +319,9 @@
   }
   .footCont{
     display: flex;
-    margin-right: 16px;
-    margin-top: 8px;
-    margin-left: 16px;
+    margin-left: 276px;
     justify-content: space-between;
+    margin-top: 304px;
     span{
       font-size: 12px;
       font-weight: 400;

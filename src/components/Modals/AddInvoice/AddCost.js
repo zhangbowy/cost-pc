@@ -11,7 +11,7 @@ import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare, setTime, handleProduction, guid } from '../../../utils/common';
+import { compare, setTime, handleProduction, guid, getTimeIdNo } from '../../../utils/common';
 // import TreeCatogory from './TreeCatogory';
 
 const uniqueId = guid();
@@ -463,12 +463,14 @@ class AddCost extends Component {
           currencyId,
           currencyName,
           exchangeRate,
-          currencySymbol
+          currencySymbol,
+          key: detail.key ? detail.key : getTimeIdNo(),
         };
         if (costType) {
           const newArr = [];
           arr.forEach(it => {
             newArr.push({
+              dingUserId: it.users && it.users.length ? it.users[0].userId : '',
               costDetailId: val.categoryId,
               totalAmount: (((val.costSum) * 1000)/10).toFixed(0),
               'shareAmount': (it.shareAmount * 1000)/10,
@@ -569,10 +571,12 @@ class AddCost extends Component {
     const showFields = {};
     let costDate = 0;
     let project = {};
+    const { templateType } = this.props;
     this.props.dispatch({
       type: 'global/lbDetail',
       payload: {
         id: val,
+        isDisplay: templateType === 0,
       }
     }).then(() => {
       const { lbDetail } = this.props;

@@ -33,32 +33,50 @@ class editChargeStandard extends PureComponent {
 
   componentDidMount() {
     const { id } = this.splitParams();
-    this.props.dispatch({
-      type: 'addStandard/detail',
-      payload: {
-        id,
-      }
-    }).then(() => {
-      const { detail } = this.props;
-      console.log('detail', detail);
-      this.setState({
-        details: detail,
-      });
-      this.props.dispatch({
-        type: 'global/costList',
-        payload: {},
-      }).then(() => {
-        const { costCategoryList } = this.props;
+    this.fetch(() => {
+      if (id) {
+        const { detail } = this.props;
+        console.log('detail', detail);
         this.setState({
-          costList: treeConvert({
-            rootId: 0,
-            pId: 'parentId',
-            name: 'costName',
-            tName: 'title',
-            tId: 'value'
-          }, costCategoryList)
+          details: detail,
         });
+      }
+      const { costCategoryList } = this.props;
+      this.setState({
+        costList: treeConvert({
+          rootId: 0,
+          pId: 'parentId',
+          name: 'costName',
+          tName: 'title',
+          tId: 'value'
+        }, costCategoryList)
       });
+    });
+  }
+
+  fetch = (callback) => {
+    const arr = [{
+      url: 'global/costList',
+      payload: {},
+    }];
+    const { dispatch } = this.props;
+    const { id } = this.splitParams();
+    if (id) {
+      arr.push({
+        url: 'addStandard/detail',
+        payload: {
+          id
+        },
+      });
+    }
+    const fetchs = arr.map(it => {
+      return dispatch({
+        type: it.url,
+        payload: it.payload,
+      });
+    });
+    Promise.all(fetchs).then(() => {
+      if (callback) callback();
     });
   }
 

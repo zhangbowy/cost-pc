@@ -52,6 +52,8 @@ export default {
     deptTree: [], // 部门树
     checkLinkCost: [], // 关联的申请单
     checkFolderList: [], // 关联申请单之后判断账本
+    levelCityList: [], // 等级城市列表,
+    checkStandard: {}, // 校验的结果
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -419,12 +421,36 @@ export default {
     *shareLoan({ payload }, { call }) {
       yield call(post, api.shareLoan, payload);
     },
+    *editCityLevel({ payload }, { call }) {
+      yield call(post, api.editCityLevel, payload);
+    },
+    *delCityLevel({ payload }, { call }) {
+      yield call(post, api.delCityLevel, payload);
+    },
     *cityList({ payload }, { call, put }) {
       const response = yield call(get, api.cityList, payload);
       yield put({
         type: 'save',
         payload: {
           cityList: response || {},
+        },
+      });
+    },
+    *levelCityList({ payload }, { call, put }) {
+      const response = yield call(get, api.levelCityList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          levelCityList: response || [],
+        },
+      });
+    },
+    *checkStandard({ payload }, { call, put }) {
+      const response = yield call(post, api.checkStandard, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          checkStandard: response || {},
         },
       });
     },

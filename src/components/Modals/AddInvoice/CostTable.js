@@ -10,7 +10,7 @@ import { numMulti } from '../../../utils/float';
 class CostTable extends Component {
   constructor(props) {
     super(props);
-    this.state = {  };
+    this.state = { };
   }
 
   previewImage = (arr, index) => {
@@ -53,6 +53,8 @@ class CostTable extends Component {
         ...obj,
       });
     });
+    // const expandedRowKeys = newList.map(it => it.key);
+
     const columns = [{
       title: '支出类别',
       dataIndex: 'categoryName',
@@ -146,7 +148,8 @@ class CostTable extends Component {
             modify={modify}
             id={record.detailFolderId}
             onAddCost={this.addCost}
-            expandField={record.selfCostDetailFieldVos ? [...record.expandCostDetailFieldVos, ...record.selfCostDetailFieldVos] : [...record.expandCostDetailFieldVos]}
+            expandField={record.selfCostDetailFieldVos ?
+            [...record.expandCostDetailFieldVos, ...record.selfCostDetailFieldVos] : [...record.expandCostDetailFieldVos]}
             costTitle="edit"
             templateType={templateType}
             // onCancel={(val) => this.onBack(val, index)}
@@ -197,6 +200,14 @@ class CostTable extends Component {
           scroll={{x: newList.length > 6 ? '1400px' : '1200px'}}
           rowKey="key"
           pagination={false}
+          expandedRowRender={record => <p style={{ margin: 0 }}>{record.costStandardNote}</p>}
+          expandable={{
+            expandedRowRender: record => <p style={{ margin: 0 }}>{record.costStandardNote}</p>,// 展开行渲染内容
+            // rowExpandable: record => !!record.costStandardNote,// 全部开启展开属性
+            // expandIconColumnIndex:-1,// 隐藏默认的加号
+            // expandIconAsCell:false
+          }}
+          // expandedRowKeys={expandedRowKeys}
         />
       </div>
     );

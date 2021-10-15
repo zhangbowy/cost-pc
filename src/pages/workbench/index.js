@@ -25,7 +25,6 @@ import Boss from './components/Boss';
 import { dateToTime } from '../../utils/util';
 import TimeComp from './components/TimeComp';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
-import ShareLoan from '../../components/Modals/InvoiceDetail/ShareLoan';
 
 @Form.create()
 @connect(({ loading, workbench, session, global, costGlobal }) => ({
@@ -474,7 +473,6 @@ class Workbench extends PureComponent {
 
     return (
       <div>
-        <ShareLoan />
         {
           userInfo.isSupperAdmin && (localStorage.getItem('initShow') !== 'true') ?
             <StepShow {...this.props} userInfo={userInfo} />

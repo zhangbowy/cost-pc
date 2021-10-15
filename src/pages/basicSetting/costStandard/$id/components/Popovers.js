@@ -62,7 +62,8 @@ class Popovers extends PureComponent {
       handleCity,
       handleTab,
       handleAdd,
-      handleRef
+      handleRef,
+      cityLevel
     } = this.props;
 
     return (
@@ -168,9 +169,9 @@ class Popovers extends PureComponent {
                                 </div>
                               </div>
                             );
-                          } 
+                          }
                             return null;
-                          
+
                         })}
                   </div>
                   <div className={style.popoverFooter}>
@@ -189,14 +190,14 @@ class Popovers extends PureComponent {
             <span className="fs-14 c-black-45">添加</span>
           </div>
         </Popover>
-        {selectCitysList.map((item, index) => (
+        {selectCitysList.map((item) => (
           <div className={style.city}>
             <span className="fs-14" key={item.areaCode}>
               {item.areaName}
             </span>
             <i
               className="iconfont iconclose"
-              onClick={() => handleCloseOut(index)}
+              onClick={() => handleCloseOut({...item, cityLevel})}
             />
           </div>
         ))}

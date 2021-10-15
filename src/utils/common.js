@@ -490,6 +490,24 @@ export const intToChinese = ( str ) => {
 
 };
 
+export const getTimeIdNo = () => {
+  let qutient = 10000;
+  const chars = '0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz';
+  const charArr = chars.split( '' );
+  const radix = chars.length;
+  const res = [];
+  const time = timeStampToHex();
+  do {
+    const mod = qutient % radix;
+    qutient = ( qutient - mod ) / radix;
+    res.push( charArr[mod] );
+  } while ( qutient );
+  return `${res.join('')}${time+1}`;
+
+  // const time = timeStampToHex();
+  // return `${nodeType}_${time+1}`;
+
+};
 
 export const getParams = ({ list, key, resultKey, res }) => {
   let str = '';

@@ -165,5 +165,23 @@ export default {
       name: '头等舱',
       key: '2'
     },
+  },
+  cityLevel: {
+    1: {
+      name: '一级城市',
+      key: 1,
+    },
+    2: {
+      name: '二级城市',
+      key: 2
+    },
+    3: {
+      name: '三级城市',
+      key: 3
+    },
+    '-1': {
+      name: '其他城市',
+      key: -1
+    },
   }
 };

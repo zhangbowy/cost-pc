@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
-import { Modal, Row, Col, message, Button, Divider, Tooltip } from 'antd';
+import { Modal, Row, Col, message, Button, Divider, Tooltip, Timeline } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -429,7 +429,8 @@ class InvoiceDetail extends Component {
       canRefuse,
       templateType,
       allow,
-      userInfo
+      userInfo,
+      id
     } = this.props;
     return (
       <span>
@@ -471,9 +472,12 @@ class InvoiceDetail extends Component {
           footer={(
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
-                <ShareLoan>
-                  <Button type="primary" className="m-r-8">共享</Button>
-                </ShareLoan>
+                {
+                  details.status === 3 && Number(templateType) === 1 &&
+                  <ShareLoan invoiceId={id}>
+                    <Button type="primary" className="m-r-8">共享</Button>
+                  </ShareLoan>
+                }
                 {
                   canRefuse &&
                   <Button className="m-r-8" onClick={() => this.onChangeSign()}>
@@ -1214,12 +1218,21 @@ class InvoiceDetail extends Component {
             </>
           }
           {
-            details.shareOperationRecords &&
+            details.shareOperationRecords && !!(details.shareOperationRecords.length) &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
                 <span>共享记录</span>
               </div>
+              <Timeline>
+                {
+                  details.shareOperationRecords.map(it => (
+                    <Timeline.Item key={it.createTime} color="#00C795">
+                      {it.description}
+                    </Timeline.Item>
+                  ))
+                }
+              </Timeline>
             </>
           }
         </Modal>
