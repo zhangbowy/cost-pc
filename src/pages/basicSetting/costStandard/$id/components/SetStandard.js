@@ -247,9 +247,10 @@ class SetStandard extends PureComponent {
             newArr.push(obj);
           });
         } else {
-          // const newList = list.map(it => it.costStandardKey);
-          // const keys = Array.from(new Set(newList));
+          const newList = list.map(it => it.costStandardKey);
+          const keys = Array.from(new Set(newList));
           const initArr = [];
+          const usersObj = {};
           list.forEach(item => {
             const obj = {
               cityLevel: item.cityLevel,
@@ -258,12 +259,27 @@ class SetStandard extends PureComponent {
               amountUnitType: chargeType[type].amountUnitType,
             };
             if (item.costStandardKey === item.key) {
-              Object.assign(obj, {
-                userVos: item.userVos,
-                deptVos: item.deptVos,
+              Object.assign(usersObj, {
+                [item.key]: {
+                  userVos: item.userVos,
+                  deptVos: item.deptVos,
+                }
               });
             }
             initArr.push(obj);
+          });
+          keys.forEach(it => {
+            const arr = initArr.filter(item => item.costStandardKey === it);
+            newArr.push({
+              ...usersObj[it.key],
+              costStandardCityLevelVos: arr.map(item => {
+                return{
+                  cityLevel: item.cityLevel,
+                  amount: item.amount,
+                  amountUnitType: item.amountUnitType,
+                };
+              })
+            });
           });
         }
         value = {
