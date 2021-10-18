@@ -60,7 +60,7 @@ class AddCost extends Component {
       currencyName: '',
       exchangeRate: '1',
       currencySymbol: '¥',
-      treeExpandedKeys: [],
+      // treeExpandedKeys: [],
     };
   }
 
@@ -311,7 +311,7 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       details: {},
-      treeExpandedKeys: [],
+      // treeExpandedKeys: [],
     });
   }
 
@@ -530,7 +530,7 @@ class AddCost extends Component {
           value={item.value}
           selectable={!item.disabled}
           title={(
-            <div onClick={() => this.onTreeExpand(item.value)}>
+            <div>
               {
                 item.type ?
                   <i className={cs(`icon${item.icon}`, 'iconfont')} />
@@ -551,7 +551,7 @@ class AddCost extends Component {
       value={item.value}
       selectable={!item.disabled}
       title={(
-        <div className="icons" onClick={() => this.onTreeExpand(item.value)}>
+        <div className="icons">
           {
             item.type ?
               <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
@@ -708,21 +708,21 @@ class AddCost extends Component {
     });
   }
 
-  onTreeExpand = (key) => {
-    console.log(key);
-    const { treeExpandedKeys } = this.state;
-    let newArr = [...treeExpandedKeys];
-    if (Array.isArray(key)) {
-      newArr = key;
-    } else if (newArr.includes(key)) {
-      newArr = newArr.filter(it => it !== key);
-    } else {
-      newArr = [...newArr, key];
-    }
-    this.setState({
-      treeExpandedKeys: newArr,
-    });
-  }
+  // onTreeExpand = (key) => {
+  //   console.log(key);
+  //   const { treeExpandedKeys } = this.state;
+  //   let newArr = [...treeExpandedKeys];
+  //   if (Array.isArray(key)) {
+  //     newArr = key;
+  //   } else if (newArr.includes(key)) {
+  //     newArr = newArr.filter(it => it !== key);
+  //   } else {
+  //     newArr = [...newArr, key];
+  //   }
+  //   this.setState({
+  //     treeExpandedKeys: newArr,
+  //   });
+  // }
 
   render() {
     const {
@@ -753,7 +753,7 @@ class AddCost extends Component {
       exchangeRate,
       currencySymbol,
       currencyId,
-      treeExpandedKeys,
+      // treeExpandedKeys,
     } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
@@ -817,8 +817,9 @@ class AddCost extends Component {
                           disabled={modify && details.categoryId}
                           showSearch
                           treeNodeFilterProp="label"
-                          treeExpandedKeys={treeExpandedKeys}
-                          onTreeExpand={this.onTreeExpand}
+                          // treeExpandedKeys={treeExpandedKeys}
+                          // onTreeExpand={this.onTreeExpand}
+                          treeDefaultExpandAll
                         >
                           {this.loop(list)}
                         </TreeSelect>
