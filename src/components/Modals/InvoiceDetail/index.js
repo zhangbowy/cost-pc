@@ -473,7 +473,7 @@ class InvoiceDetail extends Component {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 {
-                  details.status === 3 && Number(templateType) === 1 &&
+                  details.status === 3 && Number(templateType) === 1 && (userInfo.userId === details.createId) &&
                   <ShareLoan invoiceId={id} onCanel={() => this.onCancel()}>
                     <Button type="primary" className="m-r-8">共享</Button>
                   </ShareLoan>
