@@ -26,15 +26,39 @@ class SetStandard extends PureComponent {
     const {details} = nextProps;
     // 当传入的type发生变化的时候，更新state
     if (details.costStandardDetailListVos && details !== prevState.initDetail) {
-      const newArr = details.costStandardDetailListVos.map(it => {
+      let newArr = details.costStandardDetailListVos.map(it => {
         return {
           ...it,
           key: ++id,
         };
       });
+
+      if (details.isOpenCityLevel) {
+        const arrs = [];
+        details.costStandardDetailListVos.forEach(it => {
+          const costStandardKey = `${++id  }a`;
+          it.costStandardCityLevelVos.forEach(item => {
+            const obj = {
+              ...item,
+              costStandardKey,
+              key: item.cityLevel === 1 ? costStandardKey : ++id,
+              rowSpan: item.cityLevel === 1 ? 4 : 0
+            };
+            if (item.cityLevel === 1) {
+              Object.assign(obj, {
+                userVos: it.userVos,
+                deptVos: it.deptVos
+              });
+            }
+            arrs.push(obj);
+          });
+        });
+        newArr = [...arrs];
+      }
       return {
         list: newArr,
-        initDetail: details
+        initDetail: details,
+        isOpenCityLevel: details.isOpenCityLevel
       };
     }
     // 否则，对于state不进行任何操作
@@ -271,7 +295,7 @@ class SetStandard extends PureComponent {
           keys.forEach(it => {
             const arr = initArr.filter(item => item.costStandardKey === it);
             newArr.push({
-              ...usersObj[it.key],
+              ...usersObj[it],
               costStandardCityLevelVos: arr.map(item => {
                 return{
                   cityLevel: item.cityLevel,
@@ -419,15 +443,15 @@ class SetStandard extends PureComponent {
       }
     } else {
       columns.splice(1, 0, {
-        title: (<span className="isRequired">{`${!type ? '火车席位' : '航班舱型'}`}</span>),
+        title: (<span className="isRequired">{`${type ? '火车席位' : '航班舱型'}`}</span>),
         dataIndex: 'level',
         key: 'level',
         render: (_, record) => {
-          const optionsList = !type ? objToArr(trainLevels) : objToArr(flightLevels);
+          const optionsList = type ? objToArr(trainLevels) : objToArr(flightLevels);
           return (
             <Form.Item>
               {
-                getFieldDecorator(!type ? `trainLevels[${record.key}]` : `flightLevels[${record.key}]`, {
+                getFieldDecorator(type ? `trainLevels[${record.key}]` : `flightLevels[${record.key}]`, {
                   initialValue: record.trainLevels || record.flightLevels,
                   rules: [{ required: true, message: '请选择' }]
                 })(

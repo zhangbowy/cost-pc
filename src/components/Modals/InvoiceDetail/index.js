@@ -474,7 +474,7 @@ class InvoiceDetail extends Component {
               <div>
                 {
                   details.status === 3 && Number(templateType) === 1 &&
-                  <ShareLoan invoiceId={id}>
+                  <ShareLoan invoiceId={id} onCanel={() => this.onCancel()}>
                     <Button type="primary" className="m-r-8">共享</Button>
                   </ShareLoan>
                 }
@@ -1228,7 +1228,10 @@ class InvoiceDetail extends Component {
                 {
                   details.shareOperationRecords.map(it => (
                     <Timeline.Item key={it.createTime} color="#00C795">
-                      {it.description}
+                      <div className={style.recordProd}>
+                        <p className="fs-14 c-black-65">{it.description}</p>
+                        <p className="fs-13 c-black-45 m-l-16">{it.createTime ? moment(it.createTime).format('YYYY-MM-DD') : '-'}</p>
+                      </div>
                     </Timeline.Item>
                   ))
                 }

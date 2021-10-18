@@ -200,13 +200,14 @@ class CostTable extends Component {
           scroll={{x: newList.length > 6 ? '1400px' : '1200px'}}
           rowKey="key"
           pagination={false}
-          expandedRowRender={record => <p style={{ margin: 0 }}>{record.costStandardNote}</p>}
-          expandable={{
-            expandedRowRender: record => <p style={{ margin: 0 }}>{record.costStandardNote}</p>,// 展开行渲染内容
-            // rowExpandable: record => !!record.costStandardNote,// 全部开启展开属性
-            // expandIconColumnIndex:-1,// 隐藏默认的加号
-            // expandIconAsCell:false
+          rowClassName={record => record.costStandardNote ? style.noBoard : style.haveBoard}
+          expandedRowRender={record => {
+            if (!record.costStandardNote) return null;
+            return <p style={{ margin: 0 }}>{record.costStandardNote}</p>;
           }}
+          expandIconAsCell={false}
+          expandIconColumnIndex={-1}
+          expandedRowKeys={newList.map(it => it.costStandardNote && it.key)}
           // expandedRowKeys={expandedRowKeys}
         />
       </div>

@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button, Cascader } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import moment from 'moment';
@@ -11,19 +11,24 @@ import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare, setTime, handleProduction, guid, getTimeIdNo } from '../../../utils/common';
+import { compare, setTime, handleProduction, guid, getTimeIdNo, objToArr } from '../../../utils/common';
+import fields from '../../../utils/fields';
 // import TreeCatogory from './TreeCatogory';
 
 const uniqueId = guid();
 const { Option } = Select;
 const { TreeNode } = Tree;
 const { RangePicker } = DatePicker;
+const { trainLevels, flightLevels } = fields;
+const trainList = objToArr(trainLevels);
+const flightList = objToArr(flightLevels);
 const labelInfo = {
   costName: '支出类别',
   costSum: '金额(元)',
   costNote: '备注',
   imgUrl: '图片',
   happenTime: '发生日期',
+  flightLevel: '航班仓型'
 };
 @Form.create()
 @connect(({ global, costGlobal, session }) => ({
@@ -39,6 +44,7 @@ const labelInfo = {
   userInfo: session.userInfo,
   userDeps: costGlobal.userDeps,
   exportList: costGlobal.exportList,
+  provinceAndCity: costGlobal.provinceAndCity,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -60,6 +66,7 @@ class AddCost extends Component {
       currencyName: '',
       exchangeRate: '1',
       currencySymbol: '¥',
+      treeList: [],
     };
   }
 
@@ -77,6 +84,9 @@ class AddCost extends Component {
     }, {
       url: 'global/usableProject',
       params: { type: 1 }
+    }, {
+      url: 'costGlobal/provinceAndCity',
+      params: {  }
     }];
     const arr = arrs.map(it => {
       return dispatch({
@@ -85,10 +95,18 @@ class AddCost extends Component {
       });
     });
     Promise.all(arr).then(() => {
-      const { deptInfo } = this.props;
+      const { deptInfo, provinceAndCity } = this.props;
       console.log('AddCost -> fetchInit -> deptInfo', deptInfo);
       this.setState({
         initDep: deptInfo,
+        treeList: treeConvert({
+          rootId: 0,
+          pId: 'pid',
+          name: 'areaName',
+          id: 'areaCode',
+          tName: 'label',
+          tId: 'value'
+        }, provinceAndCity.normalList),
       }, () => {
         callback();
       });
@@ -96,13 +114,14 @@ class AddCost extends Component {
   }
 
   onShow = async() => {
-    const { costType, id, isDelete4Category } = this.props;
+    const { costType, isDelete4Category } = this.props;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
       return;
     }
     this.fetchInit(async() => {
       const { initDep } = this.state;
+      const { id, } = this.props;
     if (costType) {
       await this.props.dispatch({
         type: 'global/costList',
@@ -396,6 +415,22 @@ class AddCost extends Component {
           detailFolderId: costTitle === 'edit' ? id : '',
           attribute: lbDetail.attribute,
         };
+        if (val.flightLevel) {
+          Object.assign(detail, {
+            flightLevel: val.flightLevel
+          });
+        }
+        if (val.trainLevel) {
+          Object.assign(detail, {
+            trainLevel: val.trainLevel
+          });
+        }
+        if (val.belongCity) {
+          const len = val.belongCity.length;
+          Object.assign(detail, {
+            belongCity: val.belongCity.length ? val.belongCity[len-1] : '',
+          });
+        }
         const expandCostDetailFieldVos = [];
         const selfCostDetailFieldVos = []; // 私有字段
         if (expandField && expandField.length > 0) {
@@ -720,7 +755,7 @@ class AddCost extends Component {
       currencyShow,
       againCost,
       modify,
-      templateType
+      templateType,
     } = this.props;
 
     const list = this.onSelectTree();
@@ -739,6 +774,7 @@ class AddCost extends Component {
       exchangeRate,
       currencySymbol,
       currencyId,
+      treeList,
     } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
@@ -995,6 +1031,53 @@ class AddCost extends Component {
                                       {item.note}
                                     </p>
                                   ))
+                                }
+                              </Form.Item>
+                            </Col>
+                          :
+                          null
+                        }
+                        {
+                          (it.field === 'flightLevel' || it.field === 'trainLevel') && showField[it.field].status ?
+                            <Col span={12}>
+                              <Form.Item label={showField[it.field].name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator(it.field, {
+                                    initialValue: details[it.field] || '',
+                                    rules: [{ required: !!(showField[it.field].isWrite), message: '请选择' }]
+                                  })(
+                                    <Select>
+                                      {
+                                        it.field === 'flightLevel' ?
+                                          flightList.map(item => ( <Option key={item.key}>{item.name}</Option> ))
+                                          :
+                                          trainList.map(item => ( <Option key={item.key}>{item.name}</Option> ))
+                                      }
+                                    </Select>
+                                  )
+                                }
+                              </Form.Item>
+                            </Col>
+                          :
+                          null
+                        }
+                        {
+                          (it.field === 'belongCity') && showField[it.field].status ?
+                            <Col span={12}>
+                              <Form.Item label={showField[it.field].name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator(it.field, {
+                                    initialValue: details[it.field] || '',
+                                    rules: [{ required: !!(showField[it.field].isWrite), message: '请选择' }]
+                                  })(
+                                    <Cascader
+                                      options={treeList}
+                                      placeholder="请选择"
+                                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                                      showSearch={this.filter}
+                                      allowClear
+                                    />
+                                  )
                                 }
                               </Form.Item>
                             </Col>

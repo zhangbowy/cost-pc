@@ -814,7 +814,7 @@ class AddInvoice extends Component {
           if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
             newArr.push({ ...item, costStandardNote: checkStandard.second[item.key].join(';') });
           } else {
-            newArr.push({ ...item });
+            newArr.push({ ...item, costStandardNote: '' });
           }
         });
         resolve(newArr);

@@ -74,7 +74,7 @@ class BasicInfo extends Component {
         <Form.Item label="适用支出类别：" {...formItemLayout}>
           {
             getFieldDecorator('categoryIds', {
-              initialValue: details.categoryIds ? details.categoryIds.map(it => `${it}`) : [],
+              initialValue: details.categoryIds || [],
               rules: [{ required: true, message: '请输入' }]
             })(
               <TreeSelect

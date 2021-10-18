@@ -154,6 +154,9 @@ class ShareLoan extends PureComponent {
         list,
       },
     }).then(() => {
+      if (this.props.onCanel) {
+        this.props.onCanel();
+      }
       this.setState({
         visible: false,
       });
