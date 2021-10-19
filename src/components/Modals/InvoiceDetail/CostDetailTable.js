@@ -19,6 +19,28 @@ class CostDetailTable extends PureComponent {
       const showField = item.showField ? JSON.parse(item.showField) : [];
       let objss = {...item};
       let arr = [...showField];
+      if(item.trainLevel) {
+        Object.assign(arr, {
+          dateType: 1,
+          field: 'trainLevel',
+          fieldType: 5,
+          isWrite: true,
+          name: '火车席别',
+          sort: 3,
+          status: 1,
+        });
+      }
+      if(item.flightLevel) {
+        Object.assign(arr, {
+          dateType: 1,
+          field: 'flightLevel',
+          fieldType: 5,
+          isWrite: true,
+          name: '航班舱位',
+          sort: 3,
+          status: 1,
+        });
+      }
       if (item.selfCostDetailFieldVos && item.selfCostDetailFieldVos.length) {
         arr = [...arr, ...item.selfCostDetailFieldVos];
         item.selfCostDetailFieldVos.forEach(it => {
