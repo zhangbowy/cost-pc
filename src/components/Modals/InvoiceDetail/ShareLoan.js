@@ -36,6 +36,8 @@ class ShareLoan extends PureComponent {
     this.setState({
       visible: false,
       popVisible: false,
+      selectRows: [],
+      selectKey: []
     });
   }
 
@@ -103,14 +105,15 @@ class ShareLoan extends PureComponent {
     selectRows.forEach(it => {
       if (selectKey.includes(it.key) || selectKey.includes(it.value)) {
         const obj = {
-          key: it.key,
+          key: it.type ? it.key : (it.value || it.deptId),
           deptId: it.deptId || it.value,
-          deptName: it.deptName || it.title
+          deptName: it.deptName || it.title,
+          type: it.type,
         };
         if (it.type) {
           Object.assign(obj, {
-            userId: it.value,
-            userName: it.title,
+            userId: it.value || it.userId,
+            userName: it.title || it.userName,
             avatar: it.avatar
           });
         }
@@ -164,9 +167,23 @@ class ShareLoan extends PureComponent {
     });
   }
 
+  handelPop = () => {
+    const { list } = this.state;
+    this.setState({
+      popVisible: true,
+      selectKey: list.map(it => {
+        if (it.type) {
+          return it.key;
+        }
+        return it.deptId;
+      }),
+      selectRows: list,
+    });
+  }
+
   render() {
     const { children, deptTree } = this.props;
-    const { visible, list, popVisible } = this.state;
+    const { visible, list, popVisible, selectKey } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -185,55 +202,7 @@ class ShareLoan extends PureComponent {
           <p className="fs-14 c-black-65">共享是将该借款单共享给其他人，共享后其他人也可核销该借款或手动还款。适用于部门备用金申请等情况</p>
           <div className={style.shareAdd}>
             <div className={style.addBtn}>
-              {/* <Popover
-                trigger="click"
-                overlayClassName={style.popStyle}
-                icon={false}
-                placement="bottomLeft"
-                content={(
-                  <div style={{height: '360px', width: '100%', position: 'relative'}}>
-                    <div className="m-l-12 m-r-12">
-                      <TreeSelect
-                        autoClearSearchValue
-                        treeNodeFilterProp="label"
-                        placeholder='请选择'
-                        open
-                        style={{width: '100%'}}
-                        dropdownStyle={{height: '250px'}}
-                        treeCheckable
-                        getPopupContainer={triggerNode => triggerNode.parentNode}
-                        showSearch
-                        onChange={this.onChangeNode}
-                        onSelect={this.onSelect}
-                        treeNodeLabelProp="label"
-                        treeDefaultExpandedKeys={deptTree.length ?  [deptTree[0].key] : []}
-                        showCheckedStrategy={SHOW_PARENT}
-                      >
-                        { this.loop(deptTree) }
-                      </TreeSelect>
-                    </div>
-                    <div className={style.footers}>
-                      <div className={style.footCont}>
-                        <div style={{display: 'flex'}}>
-                          <div
-                            className={style.footerBtns}
-                            onClick={() => this.setState({popVisible: false})}
-                            style={{background: '#fff', color: 'rgba(0, 0, 0, 0.65)', border: '1px solid #D9D9D9', marginRight: '8px'}}
-                          >
-                            取消
-                          </div>
-                          <div onClick={this.confirm} className={style.footerBtns}>确定</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                title={null}
-                visible={popVisible}
-              >
-                <img src={addAvatars} alt="添加" onClick={() => this.setState({ popVisible: true })} />
-              </Popover> */}
-              <img src={addAvatars} alt="添加" onClick={() => this.setState({ popVisible: true })} />
+              <img src={addAvatars} alt="添加" onClick={() => this.handelPop()} />
               <div className={style.popStyle} style={{ display: popVisible ? 'block' : 'none' }}>
                 <div className="m-l-12 m-r-12 m-t-8">
                   <TreeSelect
@@ -241,6 +210,7 @@ class ShareLoan extends PureComponent {
                     treeNodeFilterProp="label"
                     placeholder='请选择'
                     open
+                    value={selectKey}
                     style={{width: '100%'}}
                     dropdownStyle={{height: '296px'}}
                     treeCheckable
@@ -249,7 +219,7 @@ class ShareLoan extends PureComponent {
                     onChange={this.onChangeNode}
                     onSelect={this.onSelect}
                     treeNodeLabelProp="label"
-                    treeDefaultExpandedKeys={deptTree.length ?  [deptTree[0].key] : []}
+                    treeDefaultExpandedKeys={deptTree.length ?  [deptTree[0].value] : []}
                     showCheckedStrategy={SHOW_PARENT}
                   >
                     { this.loop(deptTree) }
@@ -258,7 +228,7 @@ class ShareLoan extends PureComponent {
                     <div style={{display: 'flex'}}>
                       <div
                         className={style.footerBtns}
-                        onClick={() => this.setState({popVisible: false})}
+                        onClick={() => this.setState({popVisible: false, selectKey: [], selectRows: []})}
                         style={{background: '#fff', color: 'rgba(0, 0, 0, 0.65)', border: '1px solid #D9D9D9', marginRight: '8px'}}
                       >
                         取消
