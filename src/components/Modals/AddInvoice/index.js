@@ -25,6 +25,7 @@ import defaultFunc from './utils';
 import CategoryTable from './InvoiceTable/CategoryTable';
 import ChangeForm from './ChangeForm';
 import AddTravel from './InvoiceTable/AddTravel';
+import StandardModal from './StandardModal';
 
 
 const { confirm } = Modal;
@@ -51,6 +52,7 @@ const { confirm } = Modal;
   aliCostAndI: costGlobal.aliCostAndI,
   deptTree: costGlobal.deptTree,
   checkStandard: costGlobal.checkStandard,
+  checkStandMsg: costGlobal.checkStandMsg,
   loading: loading.effects['global/addInvoice'] || loading.effects['global/addLoan'] ||
   loading.effects['global/invoiceEdit'] || loading.effects['global/addApply'] ||
   loading.effects['global/addSalary'] ||
@@ -91,6 +93,8 @@ class AddInvoice extends Component {
       aliTripFields: [],
       aliTripAuth: {}, // 判断是否有商旅权限
       hisAliTrip: {}, // 历史数据
+      exceedVisible: false,
+      submitParams: {},
     };
     this.changeForm = null;
   }
@@ -768,7 +772,11 @@ class AddInvoice extends Component {
     console.log('AddInvoice -> onAddCost -> loanUserId', share);
     console.log('AddInvoice -> onAddCost -> loanUserId', val);
     if (share && share.length && djDetail.templateType === 0) {
-      share = await this.checkStandard(share);
+      const standardArr = await this.checkStandard(share);
+      console.log('AddInvoice -> onAddCost -> standardArr', standardArr);
+      if (standardArr.length > 0) {
+        share = standardArr;
+      }
     }
     this.setState({
       costDetailsVo: share,
@@ -808,15 +816,19 @@ class AddInvoice extends Component {
           deptId: details.deptId,
         }
       }).then(() => {
-        const { checkStandard } = this.props;
+        const { checkStandard, checkStandMsg } = this.props;
         const newArr = [];
-        costDetailsVo.forEach(item => {
-          if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
-            newArr.push({ ...item, costStandardNote: checkStandard.second[item.key].join(';') });
-          } else {
-            newArr.push({ ...item, costStandardNote: '' });
-          }
-        });
+        if (checkStandard && checkStandard.second) {
+          costDetailsVo.forEach(item => {
+            if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
+              newArr.push({ ...item, exceedMessage: checkStandard.second[item.key].join(';') });
+            } else {
+              newArr.push({ ...item, exceedMessage: '' });
+            }
+          });
+        } else if (checkStandMsg) {
+          message.error(checkStandMsg);
+        }
         resolve(newArr);
         console.log('AddInvoice -> checkStandard -> checkStandard', checkStandard);
       });
@@ -1196,6 +1208,37 @@ class AddInvoice extends Component {
     }
   }
 
+  checkExceed = (params) => {
+    const { checkStandard: { first } } = this.props;
+    const { applyArr } = this.state;
+    if (first === 0 || (first === 10 && applyArr.length)) {
+      this.setState({
+        exceedVisible: true,
+        submitParams: params,
+      });
+    } else if ((first === 1 && !applyArr.length)
+    || (first === 10 && !applyArr.length)) {
+      message.error('请先关联申请单');
+    } else if (first === 2) {
+      message.error('不允许报销');
+    }
+  }
+
+  handleExceed = (val) => {
+    const { submitParams } = this.state;
+    this.onSubmit({...submitParams, ...val});
+    this.setState({
+      submitParams: {},
+      exceedVisible: false,
+    });
+  }
+
+  exceedCancel = () => {
+    this.setState({
+      exceedVisible: false,
+    });
+  }
+
   chargeHandle = (params) => {
     const { borrowArr } = this.state;
     const { templateType, waitLists, operateType } = this.props;
@@ -1207,12 +1250,15 @@ class AddInvoice extends Component {
         okText: '确定提交',
         cancelText: '继续核销',
         onOk: () => {
-          this.onSubmit(params);
+          this.checkExceed(params);
+          // this.onSubmit(params);
         },
         onCancel: () => {
           console.log('Cancel');
         },
       });
+    } else if (!Number(templateType)) {
+      this.checkExceed(params);
     } else {
       this.onSubmit(params);
     }
@@ -1358,7 +1404,8 @@ class AddInvoice extends Component {
       travelList,
       aliTripFields,
       aliTripAuth,
-      hisAliTrip
+      hisAliTrip,
+      exceedVisible
     } = this.state;
 
     const modify = operateType === 'modify';
@@ -1636,6 +1683,7 @@ class AddInvoice extends Component {
               </div>
             }
           </div>
+          <StandardModal visible={exceedVisible} callback={this.handleExceed} onCancel={this.exceedCancel} />
         </Modal>
       </span>
     );

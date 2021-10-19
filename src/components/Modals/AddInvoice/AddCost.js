@@ -11,10 +11,12 @@ import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare, setTime, handleProduction, guid, getTimeIdNo, objToArr } from '../../../utils/common';
+import { compare, handleProduction, guid, objToArr } from '../../../utils/common';
 import fields from '../../../utils/fields';
+import defaultFunc from './utils';
 // import TreeCatogory from './TreeCatogory';
 
+const { addCostValue } = defaultFunc;
 const uniqueId = guid();
 const { Option } = Select;
 const { TreeNode } = Tree;
@@ -121,7 +123,7 @@ class AddCost extends Component {
     }
     this.fetchInit(async() => {
       const { initDep } = this.state;
-      const { id, } = this.props;
+      const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
         type: 'global/costList',
@@ -170,6 +172,12 @@ class AddCost extends Component {
                   }
                   arr.push(obj);
                 });
+                if (detailFolder.belongCity) {
+                  const valCity = normalList.filter(it => it.areaCode === detailFolder.belongCity)[0];
+                  Object.assign(detailFolder, {
+                    belongCity: [valCity.pid, valCity.areaCode]
+                  });
+                }
                 this.setState({
                   details: {
                     ...detailFolder,
@@ -209,6 +217,12 @@ class AddCost extends Component {
                 amounts = detailFolder.currencySum/100;
               } else if (!currency.id && arr.length ) {
                 amounts = detailFolder.costSum/100;
+              }
+              if (detailFolder.belongCity) {
+                const valCity = normalList.filter(it => it.areaCode === detailFolder.belongCity)[0];
+                Object.assign(detailFolder, {
+                  belongCity: [valCity.pid, valCity.areaCode]
+                });
               }
               this.setState({
                 details: {
@@ -256,6 +270,12 @@ class AddCost extends Component {
           newArray = await this.handleDept(listArr, userIdArr);
         }
         if (index === 0 || index) {
+          if (detail.belongCity) {
+            const valCity = normalList.filter(it => it.areaCode === detail.belongCity)[0];
+            Object.assign(detail, {
+              belongCity: [valCity.pid, valCity.areaCode]
+            });
+          }
           this.setState({
             details: detail,
             costDetailShareVOS: newArray,
@@ -398,112 +418,32 @@ class AddCost extends Component {
 
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
+        console.log('AddCost -> handleOk -> val', val);
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
           message.error('分摊明细金额合计不等于支出金额，请修改');
           return;
         }
-        let detail = {
+        const detail = addCostValue({
           costDate,
-          note: val.note || '',
-          costSum: val.costSum,
-          categoryId: val.categoryId,
+          val,
           imgUrl,
-          shareTotal: shareAmount,
-          categoryName: details.categoryName,
-          icon: lbDetail.icon,
-          detailFolderId: costTitle === 'edit' ? id : '',
-          attribute: lbDetail.attribute,
-        };
-        if (val.flightLevel) {
-          Object.assign(detail, {
-            flightLevel: val.flightLevel
-          });
-        }
-        if (val.trainLevel) {
-          Object.assign(detail, {
-            trainLevel: val.trainLevel
-          });
-        }
-        if (val.belongCity) {
-          const len = val.belongCity.length;
-          Object.assign(detail, {
-            belongCity: val.belongCity.length ? val.belongCity[len-1] : '',
-          });
-        }
-        const expandCostDetailFieldVos = [];
-        const selfCostDetailFieldVos = []; // 私有字段
-        if (expandField && expandField.length > 0) {
-          expandField.forEach(it => {
-            let obj = {
-              ...it,
-            };
-            if (Number(it.fieldType) !== 9) {
-              obj = {
-                ...obj,
-                msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
-              };
-            }
-            if (Number(it.fieldType) === 8) {
-              obj = {
-                ...obj,
-                msg: val[it.field] ? val[it.field].toString() : '',
-              };
-            }
-            if (Number(it.fieldType) === 9) {
-              obj = {
-                ...obj,
-                msg: it.note,
-              };
-            }
-            if (Number(it.fieldType) === 5 && val[it.field]) {
-              Object.assign(obj, {
-                startTime: Number(it.dateType) === 2 ?
-                moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
-                endTime: Number(it.dateType) === 2 ?
-                setTime({ time: val[it.field][1], type: 'x' }) : '',
-              });
-            }
-            if (it.status && it.field.indexOf('expand_') > -1) {
-              expandCostDetailFieldVos.push(obj);
-            } else if (it.status) {
-              selfCostDetailFieldVos.push(obj);
-            }
-          });
-        }
-        if (costDate === 1) {
-          detail = {
-            ...detail,
-            startTime: val.time ? moment(val.time).format('x') : ''
-          };
-        }
-        if (costDate === 2) {
-          if (val.time && val.time.length > 0) {
-            detail = {
-              ...detail,
-              startTime: moment(val.time[0]).format('x'),
-              endTime: moment(val.time[1]).format('x')
-            };
-          }
-        }
-        const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
-        if (!arr) {
-          return;
-        }
-        detail = {
-          ...detail,
-          expandCostDetailFieldVos,
-          selfCostDetailFieldVos,
-          costDetailShareVOS: arr,
+          shareAmount,
+          details,
+          lbDetail,
+          costTitle,
+          id,
+          expandField,
           currencyId,
           currencyName,
           exchangeRate,
           currencySymbol,
-          key: detail.key ? detail.key : getTimeIdNo(),
-        };
-        if (costType) {
+          costType,
+          _this
+        });
+        if (costType){
           const newArr = [];
-          arr.forEach(it => {
+          detail.costDetailShareVOS.forEach(it => {
             newArr.push({
               dingUserId: it.users && it.users.length ? it.users[0].userId : '',
               costDetailId: val.categoryId,
@@ -718,6 +658,10 @@ class AddCost extends Component {
     } else {
       callback();
     }
+  }
+
+  filter = (inputValue, path) => {
+    return path.some(option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
   }
 
   onChangeCurr = (option) => {

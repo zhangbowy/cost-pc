@@ -9,11 +9,11 @@
  * @author Tan Wei <tanwei@jimistore.com>
  */
 import { fetch } from 'dva';
-import header from '@/utils/header';
-import constants from '@/utils/constants';
 import { includes } from 'lodash';
 import { parse } from 'qs';
 import moment from 'moment';
+import header from '@/utils/header';
+import constants from '@/utils/constants';
 import ddConfig from '@/utils/dd.config';
 // import Session from '@/utils/session';
 

@@ -89,6 +89,9 @@
     padding: 0px 16px!important;
     height: 54px;
   }
+  tr.ant-table-expanded-row, tr.ant-table-expanded-row:hover{
+    background: #fff!important;
+  }
   .ant-table-tbody > tr:hover td{
     background: #fafafa!important;
   }

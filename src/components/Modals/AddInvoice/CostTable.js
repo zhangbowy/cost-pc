@@ -199,15 +199,21 @@ class CostTable extends Component {
           columns={columns}
           scroll={{x: newList.length > 6 ? '1400px' : '1200px'}}
           rowKey="key"
+          className={style.costTable}
           pagination={false}
-          rowClassName={record => record.costStandardNote ? style.noBoard : style.haveBoard}
+          rowClassName={record => record.exceedMessage ? style.noBoard : style.haveBoard}
           expandedRowRender={record => {
-            if (!record.costStandardNote) return null;
-            return <p style={{ margin: 0 }}>{record.costStandardNote}</p>;
+            if (!record.exceedMessage) return null;
+            return (
+              <p style={{ margin: 0 }} className={style.exceedMess}>
+                <i className="iconfont iconshuomingwenzi m-r-12" style={{ color: '#FAAD14' }} />
+                {record.exceedMessage}
+              </p>
+            );
           }}
           expandIconAsCell={false}
           expandIconColumnIndex={-1}
-          expandedRowKeys={newList.map(it => it.costStandardNote && it.key)}
+          expandedRowKeys={newList.map(it => it.exceedMessage && it.key)}
           // expandedRowKeys={expandedRowKeys}
         />
       </div>

@@ -35,6 +35,7 @@ class ShareLoan extends PureComponent {
   onCancel = () => {
     this.setState({
       visible: false,
+      popVisible: false,
     });
   }
 

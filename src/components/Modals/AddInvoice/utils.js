@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Tooltip } from 'antd';
 import { changeDefaultStr } from '../../../utils/constants';
-import { getTimeIdNo } from '../../../utils/common';
+import { getTimeIdNo, setTime } from '../../../utils/common';
 
 export default {
   range: (start, end) => {
@@ -151,7 +151,7 @@ export default {
   handleCost: (costDetailsVo, id) => {
     const arr = [];
     costDetailsVo.forEach((item, index) => {
-      arr.push({
+      const obj = {
         id: item.id || '',
         key: item.key || getTimeIdNo(),
         'categoryId': item.categoryId,
@@ -171,7 +171,24 @@ export default {
         selfCostDetailFieldVos: item.selfCostDetailFieldVos,
         detailFolderId: item.detailFolderId || '',
         attribute: item.attribute,
-      });
+        exceedMessage: item.exceedMessage || '',
+      };
+      if (item.flightLevel) {
+        Object.assign(obj, {
+          flightLevel: item.flightLevel
+        });
+      }
+      if (item.trainLevel) {
+        Object.assign(obj, {
+          trainLevel: item.trainLevel
+        });
+      }
+      if (item.belongCity) {
+        Object.assign(obj, {
+          belongCity: item.belongCity,
+        });
+      }
+      arr.push(obj);
       if (item.costDetailShareVOS) {
         item.costDetailShareVOS.forEach(it => {
           arr[index].costDetailShareVOS.push({
@@ -190,5 +207,138 @@ export default {
       }
     });
     return arr;
-  }
+  },
+  addCostValue: ({
+    costDate,
+    val,
+    imgUrl,
+    shareAmount,
+    details,
+    lbDetail,
+    costTitle,
+    id,
+    expandField,
+    currencyId,
+    currencyName,
+    exchangeRate,
+    currencySymbol,
+    _this
+  }) => {
+    let detail = {
+      costDate,
+      note: val.note || '',
+      costSum: val.costSum,
+      categoryId: val.categoryId,
+      imgUrl,
+      shareTotal: shareAmount,
+      categoryName: details.categoryName,
+      icon: lbDetail.icon,
+      detailFolderId: costTitle === 'edit' ? id : '',
+      attribute: lbDetail.attribute,
+    };
+    if (val.flightLevel) {
+      detail = {
+        ...detail,
+        flightLevel: val.flightLevel
+      };
+    }
+    if (val.trainLevel) {
+      Object.assign(detail, {
+        trainLevel: val.trainLevel
+      });
+    }
+    if (val.belongCity) {
+      const len = val.belongCity.length;
+      Object.assign(detail, {
+        belongCity: val.belongCity.length ? val.belongCity[len-1] : '',
+      });
+    }
+    const expandCostDetailFieldVos = [];
+    const selfCostDetailFieldVos = []; // 私有字段
+    if (expandField && expandField.length > 0) {
+      expandField.forEach(it => {
+        let obj = {
+          ...it,
+        };
+        if (Number(it.fieldType) !== 9) {
+          obj = {
+            ...obj,
+            msg: Number(it.fieldType) === 5 && val[it.field] ? JSON.stringify(val[it.field]) : val[it.field],
+          };
+        }
+        if (Number(it.fieldType) === 8) {
+          obj = {
+            ...obj,
+            msg: val[it.field] ? val[it.field].toString() : '',
+          };
+        }
+        if (Number(it.fieldType) === 9) {
+          obj = {
+            ...obj,
+            msg: it.note,
+          };
+        }
+        if (Number(it.fieldType) === 5 && val[it.field]) {
+          Object.assign(obj, {
+            startTime: Number(it.dateType) === 2 ?
+            moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
+            endTime: Number(it.dateType) === 2 ?
+            setTime({ time: val[it.field][1], type: 'x' }) : '',
+          });
+        }
+        if (it.status && it.field.indexOf('expand_') > -1) {
+          expandCostDetailFieldVos.push(obj);
+        } else if (it.status) {
+          selfCostDetailFieldVos.push(obj);
+        }
+      });
+    }
+    if (costDate === 1) {
+      detail = {
+        ...detail,
+        startTime: val.time ? moment(val.time).format('x') : ''
+      };
+    }
+    if (costDate === 2) {
+      if (val.time && val.time.length > 0) {
+        detail = {
+          ...detail,
+          startTime: moment(val.time[0]).format('x'),
+          endTime: moment(val.time[1]).format('x')
+        };
+      }
+    }
+    const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
+    if (!arr) {
+      return;
+    }
+    detail = {
+      ...detail,
+      expandCostDetailFieldVos,
+      selfCostDetailFieldVos,
+      costDetailShareVOS: arr,
+      currencyId,
+      currencyName,
+      exchangeRate,
+      currencySymbol,
+      key: detail.key ? detail.key : getTimeIdNo(),
+    };
+    console.log('detail', detail);
+    return detail;
+  },
+  // checkInvoice: ({ first, third }) => {
+  //   let flag = 0;
+  //   switch(first) {
+  //     case -1:
+  //       flag = true;
+  //     break;
+  //     case 0:
+  //       flag = false;
+  //     break;
+  //     case 1:
+  //       flag = false;
+  //     default:
+  //       break;
+  //   }
+  // }
 };

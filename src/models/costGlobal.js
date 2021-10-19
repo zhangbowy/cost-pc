@@ -54,6 +54,7 @@ export default {
     checkFolderList: [], // 关联申请单之后判断账本
     levelCityList: [], // 等级城市列表,
     checkStandard: {}, // 校验的结果
+    checkStandMsg: '',
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -446,11 +447,12 @@ export default {
       });
     },
     *checkStandard({ payload }, { call, put }) {
-      const response = yield call(post, api.checkStandard, payload);
+      const response = yield call(post, api.checkStandard, payload, { withCode: true });
       yield put({
         type: 'save',
         payload: {
-          checkStandard: response || {},
+          checkStandard: response.result || {},
+          checkStandMsg: !response.success ? response.message : '',
         },
       });
     },

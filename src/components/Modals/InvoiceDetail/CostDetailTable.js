@@ -346,6 +346,20 @@ class CostDetailTable extends PureComponent {
           pagination={false}
           columns={columns}
           rowKey="id"
+          className={style.costTable}
+          rowClassName={record => record.exceedMessage ? style.noBoard : style.haveBoard}
+          expandedRowRender={record => {
+            if (!record.exceedMessage) return null;
+            return (
+              <p style={{ margin: 0 }} className={style.exceedMess}>
+                <i className="iconfont iconshuomingwenzi m-r-12" style={{ color: '#FAAD14' }} />
+                {record.exceedMessage}
+              </p>
+            );
+          }}
+          expandIconAsCell={false}
+          expandIconColumnIndex={-1}
+          expandedRowKeys={allData.dataSource.map(it => it.exceedMessage && it.key)}
         />
       </div>
     );
