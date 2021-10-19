@@ -4,8 +4,8 @@
 import React from 'react';
 import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 import RadioGroup from 'antd/lib/radio/group';
+import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
 import AddFlow from '../../approvalFlow/components/AddFlow';
@@ -139,16 +139,10 @@ class Basic extends React.PureComponent {
           });
         }
         if (!values.isAllUse) {
-          if (users && users.length > 0) {
-            Object.assign(val, {
-              userJson: users,
-            });
-          }
-          if (deptJson && deptJson.length > 0) {
-            Object.assign(val, {
-              deptJson
-            });
-          }
+          Object.assign(val, {
+            userJson: users || [],
+            deptJson: deptJson || []
+          });
         }
         if (templateType === 2) {
           Object.assign(values, {
@@ -229,6 +223,7 @@ class Basic extends React.PureComponent {
   }
 
   selectPle = (res) => {
+    console.log('Basic -> selectPle -> res', res);
     this.setState({
       users: res.users || [],
       deptJson: res.depts || [],
