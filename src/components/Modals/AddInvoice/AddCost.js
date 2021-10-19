@@ -312,6 +312,7 @@ class AddCost extends Component {
           console.log('AddCost -> onShow -> userDeps', userDeps);
           const obj = {
             ...it,
+            key: it.id,
           };
           if (it.userId) {
             Object.assign(obj, {

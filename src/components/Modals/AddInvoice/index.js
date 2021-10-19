@@ -1221,6 +1221,8 @@ class AddInvoice extends Component {
       message.error('请先关联申请单');
     } else if (first === 2) {
       message.error('不允许报销');
+    } else {
+      this.onSubmit(params);
     }
   }
 
