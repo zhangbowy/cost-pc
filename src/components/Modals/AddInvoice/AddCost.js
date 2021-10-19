@@ -69,6 +69,7 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       treeList: [],
+      // treeExpandedKeys: [],
     };
   }
 
@@ -350,6 +351,7 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       details: {},
+      // treeExpandedKeys: [],
     });
   }
 
@@ -504,7 +506,7 @@ class AddCost extends Component {
           key={item.value}
           label={item.title}
           value={item.value}
-          disabled={item.disabled}
+          selectable={!item.disabled}
           title={(
             <div>
               {
@@ -513,7 +515,7 @@ class AddCost extends Component {
                   :
                   null
               }
-              <span>{item.title}</span>
+              <span className={`${item.type ? 'c-black-85' : 'c-black-45'}`}>{item.title}</span>
             </div>
           )}
         >
@@ -525,7 +527,7 @@ class AddCost extends Component {
       key={item.value}
       label={item.title}
       value={item.value}
-      disabled={item.disabled}
+      selectable={!item.disabled}
       title={(
         <div className="icons">
           {
@@ -534,7 +536,7 @@ class AddCost extends Component {
               :
               null
           }
-          <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
+          <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
         </div>
       )}
     />;
@@ -690,6 +692,22 @@ class AddCost extends Component {
     });
   }
 
+  // onTreeExpand = (key) => {
+  //   console.log(key);
+  //   const { treeExpandedKeys } = this.state;
+  //   let newArr = [...treeExpandedKeys];
+  //   if (Array.isArray(key)) {
+  //     newArr = key;
+  //   } else if (newArr.includes(key)) {
+  //     newArr = newArr.filter(it => it !== key);
+  //   } else {
+  //     newArr = [...newArr, key];
+  //   }
+  //   this.setState({
+  //     treeExpandedKeys: newArr,
+  //   });
+  // }
+
   render() {
     const {
       children,
@@ -783,6 +801,9 @@ class AddCost extends Component {
                           disabled={modify && details.categoryId}
                           showSearch
                           treeNodeFilterProp="label"
+                          // treeExpandedKeys={treeExpandedKeys}
+                          // onTreeExpand={this.onTreeExpand}
+                          treeDefaultExpandAll
                         >
                           {this.loop(list)}
                         </TreeSelect>

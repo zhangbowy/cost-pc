@@ -139,16 +139,10 @@ class Basic extends React.PureComponent {
           });
         }
         if (!values.isAllUse) {
-          if (users && users.length > 0) {
-            Object.assign(val, {
-              userJson: users,
-            });
-          }
-          if (deptJson && deptJson.length > 0) {
-            Object.assign(val, {
-              deptJson
-            });
-          }
+          Object.assign(val, {
+            userJson: users || [],
+            deptJson: deptJson || []
+          });
         }
         if (templateType === 2) {
           Object.assign(values, {
@@ -229,6 +223,7 @@ class Basic extends React.PureComponent {
   }
 
   selectPle = (res) => {
+    console.log('Basic -> selectPle -> res', res);
     this.setState({
       users: res.users || [],
       deptJson: res.depts || [],

@@ -130,7 +130,9 @@ class SystemControl extends Component {
               this.setState({
                 [key]: key === 'isOpenProject' ? e : e.target.value,
               });
-              if(key === 'statisticalDimension') {
+              console.log('走到这里了吗', e.target.value);
+              console.log('走到这里了吗', key);
+              if(key === 'statisticsDimension') {
                 localStorage.removeItem('statisticalDimension');
                 localStorage.setItem('statisticalDimension', e.target.value);
               }

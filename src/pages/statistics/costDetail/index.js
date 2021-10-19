@@ -355,31 +355,24 @@ class Statistics extends React.PureComponent {
     });
   };
 
-  export = (key) => {
+  onExport = (key) => {
     const { selectedRowKeys } = this.state;
     if (selectedRowKeys.length === 0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
     }
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent, leSearch } = this.state;
     let params = {};
-    if (key === '1') {
+    if (Number(key) === 2) {
+      params = {
+        ...this.onGetSearch(),
+      };
+    } else if (Number(key) === 1) {
       params = {
         ids: selectedRowKeys,
       };
-    }else if (key === '2') {
+    } else if (Number(key) === 3) {
       params = {
-        searchContent,
-        ...leSearch,
-        startTime,
-        endTime,
+        isAll: true,
       };
     }
     // const _this = this;
@@ -389,6 +382,19 @@ class Statistics extends React.PureComponent {
         ...params,
       }
     });
+  }
+
+  onGetSearch = () => {
+    const obj = {};
+    const { searchList } = this.state;
+    searchList.forEach(it => {
+      if (it.value) {
+        Object.assign(obj, {
+          ...it.value,
+        });
+      }
+    });
+    return obj;
   }
 
   onChangeSearch = async(val) => {
