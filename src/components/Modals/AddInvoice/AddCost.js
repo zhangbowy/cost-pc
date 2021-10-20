@@ -427,6 +427,10 @@ class AddCost extends Component {
           message.error('分摊明细金额合计不等于支出金额，请修改');
           return;
         }
+        const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
+        if (!arr) {
+          return;
+        }
         const detail = addCostValue({
           costDate,
           val,
@@ -442,7 +446,7 @@ class AddCost extends Component {
           exchangeRate,
           currencySymbol,
           costType,
-          _this
+          arr
         });
         if (costType){
           const newArr = [];

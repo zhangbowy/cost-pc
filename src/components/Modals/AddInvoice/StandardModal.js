@@ -17,10 +17,11 @@ class StandardModal extends PureComponent {
 
   onCancel = () => {
     this.props.form.resetFields();
+    this.props.onCancel();
   }
 
   render() {
-    const { visible, form: { getFieldDecorator } } = this.props;
+    const { visible, form: { getFieldDecorator }, note } = this.props;
     return (
       <Modal
         visible={visible}
@@ -29,16 +30,20 @@ class StandardModal extends PureComponent {
         onCancel={() => this.onCancel()}
         width="580px"
         bodyStyle={{
-          height: '212px'
+          height: '212px',
+          paddingTop: '40px'
         }}
       >
         <Form>
           <Form.Item label="超标理由" {...formItemLayout}>
             {
               getFieldDecorator('exceedReason', {
-                rules: [{ required: true, message: '请输入' }]
+                rules: [
+                  { required: true, message: '请输入' },
+                  { max: 128, message: '最多128个文案' },
+                ]
               })(
-                <TextArea />
+                <TextArea placeholder={note || '请输入超标理由'} rows={4} />
               )
             }
           </Form.Item>

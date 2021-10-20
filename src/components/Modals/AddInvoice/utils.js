@@ -227,7 +227,7 @@ export default {
     currencyName,
     exchangeRate,
     currencySymbol,
-    _this
+    arr
   }) => {
     let detail = {
       costDate,
@@ -318,10 +318,7 @@ export default {
         };
       }
     }
-    const arr = _this.onGetForm ? _this.onGetForm('submit', val.categoryId) : [];
-    if (!arr) {
-      return;
-    }
+
     detail = {
       ...detail,
       expandCostDetailFieldVos,
