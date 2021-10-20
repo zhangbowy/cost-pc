@@ -464,7 +464,7 @@ class CostDetailTable extends PureComponent {
           }}
           expandIconAsCell={false}
           expandIconColumnIndex={-1}
-          expandedRowKeys={allData.dataSource ? allData.dataSource.map(it => it.exceedMessage && it.key) : []}
+          expandedRowKeys={allData.dataSource ? allData.dataSource.map(it => it.exceedMessage && it.id) : []}
         />
       </div>
     );
