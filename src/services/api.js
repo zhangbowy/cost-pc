@@ -144,4 +144,5 @@ export default {
    editCityLevel: `${APP_API}/cost/aw/cityLevel`,
    levelCityList: `${APP_API}/cost/aw/cityList`,
    checkStandard: `${APP_API}/cost/invoice/submit/standard`,
+   cityInfo: `${APP_API}/cost/aw/cityInfo`,
 };

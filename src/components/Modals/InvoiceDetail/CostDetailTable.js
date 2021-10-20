@@ -5,11 +5,13 @@ import moment from 'moment';
 import cs from 'classnames';
 import style from './index.scss';
 import { handleProduction, compare } from '../../../utils/common';
+import fields from '../../../utils/fields';
 
+const { trainLevels, flightLevels } = fields;
 class CostDetailTable extends PureComponent {
 
   onHandle = (list) => {
-    const { previewImage } = this.props;
+    const { previewImage, cityInfo } = this.props;
     console.log('CostDetailTable -> onHandle -> list', list);
     let newArr = [];
     const columns = [];
@@ -19,8 +21,8 @@ class CostDetailTable extends PureComponent {
       const showField = item.showField ? JSON.parse(item.showField) : [];
       let objss = {...item};
       let arr = [...showField];
-      if(item.trainLevel) {
-        Object.assign(arr, {
+      if(item.trainLevel || (item.trainLevel === 0)) {
+        arr = [...arr, {
           dateType: 1,
           field: 'trainLevel',
           fieldType: 5,
@@ -28,10 +30,10 @@ class CostDetailTable extends PureComponent {
           name: '火车席别',
           sort: 3,
           status: 1,
-        });
+        }];
       }
-      if(item.flightLevel) {
-        Object.assign(arr, {
+      if(item.flightLevel || (item.flightLevel === 0)) {
+        arr = [...arr, {
           dateType: 1,
           field: 'flightLevel',
           fieldType: 5,
@@ -39,7 +41,29 @@ class CostDetailTable extends PureComponent {
           name: '航班舱位',
           sort: 3,
           status: 1,
-        });
+        }];
+      }
+      if (item.belongCity) {
+        arr = [...arr, {
+          dateType: 1,
+          field: 'belongCity',
+          fieldType: 5,
+          isWrite: true,
+          name: '消费城市',
+          sort: 3,
+          status: 1,
+        }];
+      }
+      if (item.userCount) {
+        arr = [...arr, {
+          dateType: 1,
+          field: 'userCount',
+          fieldType: 5,
+          isWrite: true,
+          name: '招待人数',
+          sort: 3,
+          status: 1,
+        }];
       }
       if (item.selfCostDetailFieldVos && item.selfCostDetailFieldVos.length) {
         arr = [...arr, ...item.selfCostDetailFieldVos];
@@ -74,7 +98,12 @@ class CostDetailTable extends PureComponent {
       return item;
     }, []);
     const handleArr = handleProduction(newArr.sort(compare('sort')));
-    console.log('CostDetailTable -> onHandle -> handleArr', handleArr);
+    // const cityArr = list.map(it => it.belongCity).filter(item => item);
+    // let cityInfo = {};
+    // if (Array.from(new Set(cityArr)).length > 0) {
+    //   cityInfo = await this.props.cityInfo(Array.from(new Set(cityArr)));
+    // }
+    console.log('CostDetailTable -> onHandle -> cityInfo', cityInfo);
 
     handleArr.filter(it => it.fieldType !== 9).forEach(item => {
       let objs = {};
@@ -264,8 +293,64 @@ class CostDetailTable extends PureComponent {
             className: 'moneyCol',
             width: 250
           };
-        }
-        else {
+        } else if(item.field === 'trainLevel' || item.field === 'flightLevel') {
+          objs = {
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+              </>
+            ),
+            dataIndex: item.field,
+            render: (_, record) => {
+              return (
+                <span>
+                  { item.field === 'trainLevel' ? trainLevels[record[item.field]].name : flightLevels[record[item.field]].name }
+                </span>
+              );
+            },
+            width: 150,
+          };
+        } else if(item.field === 'belongCity') {
+          objs = {
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+              </>
+            ),
+            dataIndex: item.field,
+            render: (_, record) => {
+              return (
+                <span>
+                  { cityInfo[record[item.field]] || '-' }
+                </span>
+              );
+            },
+            width: 150,
+          };
+        } else if(item.field === 'userCount') {
+          objs = {
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+              </>
+            ),
+            dataIndex: item.field,
+            render: (_, record) => {
+              return (
+                <span>
+                  { record[item.field] || '-' }
+                </span>
+              );
+            },
+            width: 150,
+          };
+        } else {
           objs = {
             title: (
               <>
@@ -323,11 +408,8 @@ class CostDetailTable extends PureComponent {
         columns.push(objs);
       }
     });
-    console.log('CostDetailTable -> onHandle -> columns', columns);
-    console.log('CostDetailTable -> onHandle -> dataSource', dataSource);
 
     const allWidth = columns.reduce((prev, next) => prev + next.width, 0);
-    console.log('CostDetailTable -> onHandle -> allWidth', allWidth);
     return {
       columns,
       allWidth,
@@ -338,6 +420,7 @@ class CostDetailTable extends PureComponent {
   render () {
     const { list } = this.props;
     const allData = this.onHandle(list);
+    console.log('CostDetailTable -> render -> allData', allData);
     let columns = [{
       title: '支出类别',
       dataIndex: 'categoryName',
@@ -381,7 +464,7 @@ class CostDetailTable extends PureComponent {
           }}
           expandIconAsCell={false}
           expandIconColumnIndex={-1}
-          expandedRowKeys={allData.dataSource.map(it => it.exceedMessage && it.key)}
+          expandedRowKeys={allData.dataSource ? allData.dataSource.map(it => it.exceedMessage && it.key) : []}
         />
       </div>
     );

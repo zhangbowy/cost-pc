@@ -158,8 +158,39 @@ class SetStandard extends PureComponent {
     });
   }
 
-  onDel = (item, e) => {
-    e.stopPropagation();
+  onDel = (item) => {
+    // e.stopPropagation();
+    const { list } = this.state;
+    const newArr = [...list];
+    const index = list.findIndex(it => it.key === item.key);
+    newArr.splice(index, 1, {
+      ...list[index],
+      userVos: [],
+      deptVos: [],
+    });
+    this.setState({
+      list: newArr,
+    });
+  }
+
+  checkMoney = (rule, value, callback) => {
+    if (value) {
+      if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
+        callback('请输入正确的金额');
+      }
+      if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
+        callback('金额小数不能超过2位');
+      }
+      if (value > 100000000 || value === 100000000) {
+        callback('金额需小于1个亿');
+      }
+      if (value < 0) {
+        callback('金额不能小于零');
+      }
+      callback();
+    } else {
+      callback();
+    }
   }
 
   selectPeople = (item, e) => {
@@ -345,7 +376,18 @@ class SetStandard extends PureComponent {
                 users || depts ?
                   <div>
                     <span>已选{users}{users && depts && '、'}{depts}</span>
-                    <i className="iconfont icondelete_fill c-black-65 m-l-8" onClick={(e) => this.onDel(record, e)} />
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Popconfirm
+                        onConfirm={(e) => this.onDel(record, e)}
+                        title="确定删除该适用人员分组？"
+                      >
+                        <i className="iconfont icondelete_fill c-black-65 m-l-8" />
+                      </Popconfirm>
+                    </span>
                   </div>
                   :
                   <span className={style.names}>选择适用人员/部门</span>
@@ -393,7 +435,10 @@ class SetStandard extends PureComponent {
                 {
                   getFieldDecorator(`amount[${record.key}]`, {
                     initialValue: record.amount ? record.amount/100 : '',
-                    rules: [{ required: true, message: '请输入' }]
+                    rules: [{
+                      required: true, message: '请输入',
+                      validator: this.checkMoney
+                    }]
                   })(
                     <InputNumber style={{width: '88px'}} placeholder="请输入" />
                   )
@@ -448,11 +493,12 @@ class SetStandard extends PureComponent {
         key: 'level',
         render: (_, record) => {
           const optionsList = type ? objToArr(trainLevels) : objToArr(flightLevels);
+          const val = type ? `${record.trainLevels}` : `${record.flightLevels}`;
           return (
             <Form.Item>
               {
                 getFieldDecorator(type ? `trainLevels[${record.key}]` : `flightLevels[${record.key}]`, {
-                  initialValue: record.trainLevels || record.flightLevels,
+                  initialValue:  val || '' ,
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <Select

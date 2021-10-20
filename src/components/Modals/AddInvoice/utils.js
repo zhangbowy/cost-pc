@@ -173,12 +173,12 @@ export default {
         attribute: item.attribute,
         exceedMessage: item.exceedMessage || '',
       };
-      if (item.flightLevel) {
+      if (item.flightLevel || (item.flightLevel === 0)) {
         Object.assign(obj, {
           flightLevel: item.flightLevel
         });
       }
-      if (item.trainLevel) {
+      if (item.trainLevel || (item.trainLevel === 0)) {
         Object.assign(obj, {
           trainLevel: item.trainLevel
         });
@@ -186,6 +186,11 @@ export default {
       if (item.belongCity) {
         Object.assign(obj, {
           belongCity: item.belongCity,
+        });
+      }
+      if (item.userCount) {
+        Object.assign(obj, {
+          userCount: item.userCount,
         });
       }
       arr.push(obj);
@@ -251,6 +256,11 @@ export default {
       const len = val.belongCity.length;
       Object.assign(detail, {
         belongCity: val.belongCity.length ? val.belongCity[len-1] : '',
+      });
+    }
+    if (val.userCount) {
+      Object.assign(detail, {
+        userCount: val.userCount,
       });
     }
     const expandCostDetailFieldVos = [];

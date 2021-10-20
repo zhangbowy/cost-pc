@@ -1028,6 +1028,23 @@ class AddCost extends Component {
                           null
                         }
                         {
+                          (it.field === 'userCount') && showField[it.field].status ?
+                            <Col span={12}>
+                              <Form.Item label={showField[it.field].name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator(it.field, {
+                                    initialValue: details[it.field] || '',
+                                    rules: [{ required: !!(showField[it.field].isWrite), message: '请选择' }]
+                                  })(
+                                    <InputNumber placeholder="请输入" />
+                                  )
+                                }
+                              </Form.Item>
+                            </Col>
+                          :
+                          null
+                        }
+                        {
                           (it.field === 'belongCity') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>

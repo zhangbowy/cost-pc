@@ -997,7 +997,7 @@ class AddInvoice extends Component {
         trip: aliTrips,
       });
     }
-    this.chargeHandle(params);
+    this.chargeHandle({...params, exceedReason: ''});
   }
 
   // 保存草稿

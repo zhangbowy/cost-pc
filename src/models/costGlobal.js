@@ -456,6 +456,15 @@ export default {
         },
       });
     },
+    *cityInfo({ payload }, { call, put }) {
+      const response = yield call(get, api.cityInfo, payload, { withCode: true });
+      yield put({
+        type: 'save',
+        payload: {
+          cityInfo: response || [],
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {

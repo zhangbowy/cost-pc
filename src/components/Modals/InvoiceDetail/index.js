@@ -39,7 +39,8 @@ const { APP_API } = constants;
   recordDetailLoan: costGlobal.recordDetailLoan,
   checkTemp: costGlobal.checkTemp,
   userInfo: session.userInfo,
-  aliTripLink: costGlobal.aliTripLink
+  aliTripLink: costGlobal.aliTripLink,
+  cityInfo: costGlobal.cityInfo,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -63,6 +64,7 @@ class InvoiceDetail extends Component {
       selfSubmitFieldVos: [],
       aliTrip: {},
       isSign: false,
+      cityInfo: {},
     };
   }
 
@@ -84,7 +86,7 @@ class InvoiceDetail extends Component {
     this.props.dispatch({
       type: url,
       payload: params
-    }).then(() => {
+    }).then(async() => {
       const { invoiceDetail, loanDetail, applyDetail, salaryDetail } = this.props;
       let details = invoiceDetail;
       let productSum = 0;
@@ -178,6 +180,14 @@ class InvoiceDetail extends Component {
           showObj[it.field] = {...it};
         });
       }
+      let cityInfo = {};
+      const { costDetailsVo } = details;
+      if (costDetailsVo && costDetailsVo.length > 0) {
+        const cityArr = costDetailsVo.map(it => it.belongCity).filter(item => item);
+        if (Array.from(new Set(cityArr)).length > 0) {
+          cityInfo = await this.cityInfo(Array.from(new Set(cityArr)));
+        }
+      }
       this.setState({
         details,
         isModify: details.isModify,
@@ -187,6 +197,7 @@ class InvoiceDetail extends Component {
         expandSubmitFieldVos,
         selfSubmitFieldVos,
         isSign: details.isSign,
+        cityInfo
       });
       this.props.dispatch({
         type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
@@ -198,7 +209,6 @@ class InvoiceDetail extends Component {
         console.log(this.props.recordDetailLoan);
         const { recordDetailLoan, recordDetailInvoice } = this.props;
         const recordList = Number(templateType) ? recordDetailLoan : recordDetailInvoice;
-        console.log('InvoiceDetail -> onShow -> recordDetailLoan', recordDetailLoan);
         this.setState({
           visible: true,
           recordList,
@@ -304,7 +314,31 @@ class InvoiceDetail extends Component {
         this.preview(options, 'global/grantDownload');
       }
     });
+  }
 
+  cityInfo = (codes) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/cityInfo',
+        payload: {
+          codes,
+        }
+      }).then(() => {
+        const { cityInfo } = this.props;
+        console.log('InvoiceDetail -> cityInfo -> cityInfo', cityInfo);
+        const arr = {};
+        if (cityInfo.success) {
+          cityInfo.result.forEach(it => {
+            Object.assign(arr, {
+              [it.areaCode]: it.areaName
+            });
+          });
+        } else {
+          message.error(cityInfo.message);
+        }
+        resolve(arr);
+      });
+    });
   }
 
   preview = (options, url, flag) => {
@@ -618,6 +652,7 @@ class InvoiceDetail extends Component {
               <CostDetailTable
                 list={category}
                 previewImage={this.previewImage}
+                cityInfo={this.state.cityInfo}
               />
             </>
           }

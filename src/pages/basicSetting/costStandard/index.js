@@ -1,6 +1,6 @@
 // 费用标准
 import React, { PureComponent } from 'react';
-import { Table, Divider } from 'antd';
+import { Table, Divider, Popconfirm } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
@@ -80,7 +80,12 @@ class chargeStandard extends PureComponent {
       dataIndex: 'operation',
       render: (_, record) => (
         <span>
-          <a className="deleteColor" onClick={() => this.onDelete(record.id)}>删除</a>
+          <Popconfirm
+            title="请确认是否删除？"
+            onConfirm={() => this.onDelete(record.id)}
+          >
+            <span className="deleteColor">删除</span>
+          </Popconfirm>
           <Divider type="vertical" />
           <a onClick={() => this.onHandle(record.standardType, record.id)}>编辑</a>
         </span>
@@ -88,7 +93,7 @@ class chargeStandard extends PureComponent {
     }];
     return (
       <div className="mainContainer">
-        <PageHead title="费用标准" />
+        <PageHead title="费用标准" note="费用标准均只针对报销单" />
         <div className="content-dt">
           <DropBtnList
             btnProps={{

@@ -10,6 +10,7 @@ class StandardModal extends PureComponent {
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         this.props.callback(val);
+        this.props.form.resetFields();
       }
     });
   }

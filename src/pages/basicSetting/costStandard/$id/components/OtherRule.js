@@ -20,6 +20,24 @@ class OtherRule extends PureComponent {
     return value;
   }
 
+  checkMoney = (rule, value, callback) => {
+    console.log('走了没呀');
+    if (value) {
+      if(!/^[1-9]\d*|0$/.test(value)) {
+        callback('请输入正确的数字');
+      }
+      if (value > 200) {
+        callback('金额需小于200');
+      }
+      if (value < 100) {
+        callback('金额不能小于100');
+      }
+      callback();
+    } else {
+      callback();
+    }
+  }
+
   render() {
       const { form: { getFieldDecorator }, details } = this.props;
       return (
@@ -40,13 +58,16 @@ class OtherRule extends PureComponent {
           </p>
           <div className={style.costRule}>
             <p className="m-l-24">费用标准 = A *</p>
-            {
-              getFieldDecorator('riseProportion', {
-                initialValue: details.riseProportion,
-              })(
-                <InputNumber placeholder="请输入" className="m-l-8 m-r-8" />
-              )
-            }
+            <Form.Item>
+              {
+                getFieldDecorator('riseProportion', {
+                  initialValue: details.riseProportion,
+                  rules: [{ validator: this.checkMoney }]
+                })(
+                  <InputNumber placeholder="请输入" className="m-l-8 m-r-8" />
+                )
+              }
+            </Form.Item>
             <p>%</p>
             <span className="c-black-45">（差标就高，可上浮一定比例，请输入100～200之前的整数）</span>
           </div>
