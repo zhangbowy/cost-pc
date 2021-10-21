@@ -54,6 +54,15 @@ class EditCity extends PureComponent {
 
   };
 
+  getCitys= () => {
+    this.props.dispatch({
+      type: 'costGlobal/levelCityList',
+      payload: {},
+    }).then(() => {
+
+    });
+  }
+
   getCityList = cityName => {
     this.props
       .dispatch({
@@ -123,7 +132,7 @@ class EditCity extends PureComponent {
       }
     }).then(() => {
       message.success('删除成功');
-      this.getCityList();
+      this.getCitys();
     });
   };
 
@@ -150,6 +159,7 @@ class EditCity extends PureComponent {
         }
       }).then(() => {
         message.success('修改成功');
+        this.getCitys();
         this.setState({
           selectCitysList: [...selectCitys],
           popoverVisible: false,

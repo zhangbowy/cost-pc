@@ -426,7 +426,7 @@ export default {
       yield call(post, api.editCityLevel, payload);
     },
     *delCityLevel({ payload }, { call }) {
-      yield call(post, api.delCityLevel, payload);
+      yield call(get, api.delCityLevel, payload);
     },
     *cityList({ payload }, { call, put }) {
       const response = yield call(get, api.cityList, payload);

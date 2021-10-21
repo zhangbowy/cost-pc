@@ -52,7 +52,7 @@ class ShareLoan extends PureComponent {
           type: item.userId ? 1 : 0,
           deptId: item.deptId,
           deptName: item.deptName,
-          key: item.userName ? `${item.deptId}${item.userId}` : item.deptId,
+          key: item.userName ? `${item.deptId}${item.userId}` : `${item.deptId}`,
         };
         if (item.userId) {
           Object.assign(obj, {
@@ -67,6 +67,8 @@ class ShareLoan extends PureComponent {
     this.setState({
       visible: true,
       list: newArr,
+      selectRows: newArr,
+      selectKey: newArr.length > 0 ? newArr.map(it => it.key) : [],
     });
   }
 
@@ -225,7 +227,9 @@ class ShareLoan extends PureComponent {
           <p className="fs-14 c-black-65">共享是将该借款单共享给其他人，共享后其他人也可核销该借款或手动还款。适用于部门备用金申请等情况</p>
           <div className={style.shareAdd}>
             <div className={style.addBtn}>
-              <img src={addAvatars} alt="添加" onClick={() => this.handelPop()} />
+              <div className={style.addBtns}>
+                <img src={addAvatars} alt="添加" onClick={() => this.handelPop()} />
+              </div>
               <div className={style.popStyle} style={{ display: popVisible ? 'block' : 'none' }}>
                 <div className="m-l-12 m-r-12 m-t-8">
                   <TreeSelect
