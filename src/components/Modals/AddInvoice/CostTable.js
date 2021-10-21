@@ -206,7 +206,7 @@ class CostTable extends Component {
             if (!record.exceedMessage) return null;
             return (
               <p style={{ margin: 0 }} className={style.exceedMess}>
-                <i className="iconfont iconshuomingwenzi m-r-12" style={{ color: '#FAAD14' }} />
+                <i className="iconfont iconinfo-cirlce m-r-12 fs-20" style={{ color: '#FAAD14' }} />
                 {record.exceedMessage}
               </p>
             );
