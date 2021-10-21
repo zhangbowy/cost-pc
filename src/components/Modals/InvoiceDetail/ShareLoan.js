@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
 import { Modal, TreeSelect, Tree } from 'antd';
 import { connect } from 'dva';
@@ -37,13 +38,35 @@ class ShareLoan extends PureComponent {
       visible: false,
       popVisible: false,
       selectRows: [],
-      selectKey: []
+      selectKey: [],
+      list: []
     });
   }
 
   onShow = () => {
+    const { list } = this.props;
+    const newArr = [];
+    if (list.length > 0) {
+      list.forEach(item => {
+        const obj = {
+          type: item.userId ? 1 : 0,
+          deptId: item.deptId,
+          deptName: item.deptName,
+          key: item.userName ? `${item.deptId}${item.userId}` : item.deptId,
+        };
+        if (item.userId) {
+          Object.assign(obj, {
+            userId: item.userId,
+            userName: item.userName,
+            avatar: item.avatar,
+          });
+        }
+        newArr.push(obj);
+      });
+    }
     this.setState({
       visible: true,
+      list: newArr,
     });
   }
 
@@ -142,9 +165,9 @@ class ShareLoan extends PureComponent {
     e.stopPropagation();
     const { selectKey, selectRows, list } = this.state;
     this.setState({
-      selectKey: selectKey.filter(it => it.key !== key),
-      selectRows: selectRows.filter(it => it.key !== key),
-      list: list.filter(it => it.key !== key),
+      selectKey: selectKey.filter(it => it.key != key),
+      selectRows: selectRows.filter(it => it.key != key),
+      list: list.filter(it => it.key != key),
     });
   }
 
@@ -239,8 +262,6 @@ class ShareLoan extends PureComponent {
                 </div>
               </div>
             </div>
-
-
             {
               list.map(it => (
                 <div className={style.peoples} key={it.key}>

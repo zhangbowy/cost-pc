@@ -474,7 +474,10 @@ class SetStandard extends PureComponent {
             <span>
               城市
               <EditCity>
-                <a>编辑</a>
+                <span className="sub-color" style={{ marginLeft: '10px' }}>
+                  <i className="iconfont icontianxie fs-13" />
+                  <span style={{fontWeight: '400', marginLeft: '5px', cursor: 'pointer'}}>编辑</span>
+                </span>
               </EditCity>
             </span>
           ),

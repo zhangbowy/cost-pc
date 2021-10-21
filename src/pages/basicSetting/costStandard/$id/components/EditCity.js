@@ -253,7 +253,7 @@ class EditCity extends PureComponent {
                   awAreaVos={awAreaVos}
                   searchValue={searchValue}
                   searchCityList={searchCityList}
-                  selectCitysList={it.awAreas}
+                  selectCitysList={it.cities}
                   handleCancel={this.handleCancel}
                   handleOk={this.handleOk}
                   handleClose={this.handleClose}

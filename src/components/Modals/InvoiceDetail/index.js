@@ -506,7 +506,11 @@ class InvoiceDetail extends Component {
               <div>
                 {
                   details.status === 3 && Number(templateType) === 1 && (userInfo.userId === details.createId) &&
-                  <ShareLoan invoiceId={id} onCanel={() => this.onCancel()}>
+                  <ShareLoan
+                    invoiceId={id}
+                    onCanel={() => this.onCancel()}
+                    list={details.invoiceLoanShare && details.invoiceLoanShare.list ? details.invoiceLoanShare.list : []}
+                  >
                     <Button type="primary" className="m-r-8">共享</Button>
                   </ShareLoan>
                 }

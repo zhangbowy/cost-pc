@@ -438,7 +438,7 @@ class CostDetailTable extends PureComponent {
         </span>
       ),
       width: 150,
-      fixed: 'left'
+      // fixed: 'left'
     }];
     if (allData.columns && allData.columns.length > 0) {
       columns = [...columns, ...allData.columns];

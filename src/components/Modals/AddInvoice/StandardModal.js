@@ -16,7 +16,7 @@ class StandardModal extends PureComponent {
   }
 
   onCancel = () => {
-    this.props.form.resetFields();
+    // this.props.form.resetFields();
     this.props.onCancel();
   }
 

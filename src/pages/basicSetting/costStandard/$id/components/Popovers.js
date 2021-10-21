@@ -190,7 +190,7 @@ class Popovers extends PureComponent {
             <span className="fs-14 c-black-45">添加</span>
           </div>
         </Popover>
-        {selectCitysList.map((item) => (
+        { selectCitysList && selectCitysList.map((item) => (
           <div className={style.city}>
             <span className="fs-14" key={item.areaCode}>
               {item.areaName}
