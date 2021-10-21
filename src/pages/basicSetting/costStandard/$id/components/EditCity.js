@@ -211,6 +211,22 @@ class EditCity extends PureComponent {
     }
   };
 
+  onCancel = () => {
+    this.setState({
+      visible: false,
+      popoverVisible: false,
+      searchValue: '', // 输入框搜索值
+      searchCityList: [], // 符合搜索条件的城市列
+      activeKey: 0, // tab
+      selectCitysList: [], // 确定已选择的城市(展示)
+      selectCitys: [], // 选择城市
+      selectCitysCode: [], // 选择城市code
+      hotCities: [], // 热门城市
+      awAreaVos: [], // 城市列
+      level: '',
+    });
+  }
+
   render() {
     const { children, levelCityList } = this.props;
     const {
@@ -238,6 +254,7 @@ class EditCity extends PureComponent {
             overflowY: 'scroll'
           }}
           width="780px"
+          onCancel={this.onCancel}
         >
           {
             levelCityList.length && levelCityList.map(it => (
