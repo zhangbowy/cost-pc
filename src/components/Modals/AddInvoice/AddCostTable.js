@@ -236,18 +236,20 @@ class AddCostTable extends Component {
     const { modify } = this.props;
     if (modify) return;
     const detail = [...costDetailShareVOS];
-    // console.log('onDelete -> costDetailShareVOS', costDetailShareVOS);
+    console.log('onDelete -> costDetailShareVOS', costDetailShareVOS);
     // const count = detail.findIndex(it => it.key === key);
     // console.log('onDelete -> count', count);
     // if (count > -1) {
     //   detail.splice(count, 1);
     // }
     const newArr = detail.filter(it => !key.includes(it.key));
+    console.log('onDelete -> newArr', newArr);
     let shareMount = 0;
     const amm = this.props.form.getFieldValue('shareAmount');
+    console.log('onDelete -> amm', amm);
     // eslint-disable-next-line no-restricted-syntax
     for(const keys in amm) {
-      if (keys !== key) {
+      if (!key.includes(keys)) {
         shareMount+=amm[keys];
       }
     }
@@ -256,6 +258,8 @@ class AddCostTable extends Component {
     this.setState({
       costDetailShareVOS: newArr || [],
       shareAmount: shareMount.toFixed(2),
+      selectedRowKeys: [],
+      selectedRows: [],
     });
   }
 

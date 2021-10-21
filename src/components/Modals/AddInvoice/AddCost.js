@@ -1013,7 +1013,7 @@ class AddCost extends Component {
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
                                   getFieldDecorator(it.field, {
-                                    initialValue: details[it.field] || '',
+                                    initialValue: details[it.field] || (details[it.field] === 0) ? `${details[it.field]}` : '',
                                     rules: [{ required: !!(showField[it.field].isWrite), message: '请选择' }]
                                   })(
                                     <Select>
@@ -1038,7 +1038,7 @@ class AddCost extends Component {
                                 {
                                   getFieldDecorator(it.field, {
                                     initialValue: details[it.field] || '',
-                                    rules: [{ required: !!(showField[it.field].isWrite), message: '请选择' }]
+                                    rules: [{ required: !!(showField[it.field].isWrite), message: '请输入' }]
                                   })(
                                     <InputNumber placeholder="请输入" />
                                   )
