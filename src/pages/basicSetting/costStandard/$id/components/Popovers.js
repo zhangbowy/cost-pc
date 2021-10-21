@@ -107,7 +107,7 @@ class Popovers extends PureComponent {
                             : null
                         }`}
                         key={item.areaCode}
-                        onClick={() => handleCity(item)}
+                        onClick={() => handleCity(item, 'search')}
                       >
                         {item.areaName}
                       </div>

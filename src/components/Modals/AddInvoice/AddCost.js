@@ -11,7 +11,7 @@ import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
-import { compare, handleProduction, guid, objToArr } from '../../../utils/common';
+import { compare, handleProduction, guid, objToArr, getTimeIdNo } from '../../../utils/common';
 import fields from '../../../utils/fields';
 import defaultFunc from './utils';
 // import TreeCatogory from './TreeCatogory';
@@ -308,12 +308,12 @@ class AddCost extends Component {
           userIds: [...new Set(userIds)],
         }
       }).then(async() => {
-        lists.forEach((it) => {
+        lists.forEach((it, index) => {
           const { userDeps } = this.props;
           console.log('AddCost -> onShow -> userDeps', userDeps);
           const obj = {
             ...it,
-            key: it.id,
+            key: it.id || it.key || `${getTimeIdNo()+index}`,
           };
           if (it.userId) {
             Object.assign(obj, {

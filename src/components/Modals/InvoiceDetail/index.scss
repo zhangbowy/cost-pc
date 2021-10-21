@@ -209,6 +209,7 @@
   display: flex;
   margin-top: 24px;
   flex-wrap: wrap;
+  margin-bottom: 24px;
   .addBtns{
     width: 58px;
     height: 66px;
@@ -240,9 +241,9 @@
     :global{
       .iconfont{
         position: absolute;
-        top: -13px;
-        right: 1px;
-        font-size: 24px;
+        top: -11px;
+        right: 2px;
+        font-size: 20px;
       }
     }
   }
@@ -327,7 +328,7 @@
     display: flex;
     margin-left: 276px;
     justify-content: space-between;
-    margin-top: 304px;
+    margin-top: 296px;
     span{
       font-size: 12px;
       font-weight: 400;
@@ -362,6 +363,9 @@
     .ant-table-expanded-row.ant-table-expanded-row-level-1{
       height: 44px!important;
       vertical-align: top;
+    }
+    .ant-table-expanded-row.ant-table-expanded-row-level-1 td{
+      padding: 0px!important;
     }
   }
   .exceedMess{

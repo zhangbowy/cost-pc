@@ -59,6 +59,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: rgba(0, 0, 0, 0.65);
+  &:hover{
+    border: 1px dashed #00c795;
+    color: #00c795!important;
+  }
 }
 .input{
   width: 400px;
@@ -197,3 +202,25 @@
   margin-bottom: 16px;
   margin-top: 4px;
 }
+
+// .noBorder{
+//   :global{
+//     tbody{
+//       .ant-table-fixed-columns-in-body.ant-table-row-cell-break-word{
+//         border-left: 1px solid #e8e8e8;
+//       }
+//       .ant-table-row-cell-break-word{
+//         border-right: 1px solid #e8e8e8;
+//       }
+//     }
+//   }
+// }
+tbody{
+  .leftBorder{
+    border-left: 1px solid #e8e8e8;
+  }
+  .rightBorder{
+    border-right: 1px solid #e8e8e8;
+  }
+}
+

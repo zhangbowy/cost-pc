@@ -215,6 +215,7 @@ class ShareLoan extends PureComponent {
         <Modal
           visible={visible}
           title="添加共享人"
+          centered
           onCancel={() => this.onCancel()}
           width="580px"
           bodyStyle={{

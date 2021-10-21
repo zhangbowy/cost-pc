@@ -93,7 +93,7 @@ class EditCity extends PureComponent {
   };
 
   // 点击选择城市
-  handleCity = item => {
+  handleCity = (item, flag) => {
     // console.log("🚀 ~ file: EditCity.js ~ line 130 ~ EditCity ~ item", item);
     const { selectCitysCode, selectCitys } = this.state;
     if (selectCitysCode.indexOf(item.areaCode) !== -1) {
@@ -101,6 +101,11 @@ class EditCity extends PureComponent {
     }
     const citys = [...selectCitys];
     citys.push(item);
+    if (flag) {
+      this.setState({
+        searchValue: ''
+      });
+    }
     this.setState({ selectCitys: citys });
     this.getCityCode(citys);
 

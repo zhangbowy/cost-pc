@@ -363,6 +363,7 @@ class SetStandard extends PureComponent {
       title: (<span className="isRequired">适用人员</span>),
       dataIndex: 'people',
       key: 'people',
+      className: isOpenCityLevel ? style.rightBorder : style.noBorder,
       render: (_, record) => {
         const users = record.userVos && record.userVos.length ?
         `${record.userVos[0].userName}${record.userVos.length > 1 ? `等${record.userVos.length}人` : ''}` : '';
@@ -427,6 +428,7 @@ class SetStandard extends PureComponent {
         title: (<span className="isRequired">金额标准</span>),
         dataIndex: 'money',
         key: 'money',
+        className: isOpenCityLevel ? style.rightBorder : style.noBorder,
         render: (_, record) => {
           return (
             <div className={style.money}>
@@ -496,12 +498,12 @@ class SetStandard extends PureComponent {
         key: 'level',
         render: (_, record) => {
           const optionsList = type ? objToArr(trainLevels) : objToArr(flightLevels);
-          const val = type ? `${record.trainLevels}` : `${record.flightLevels}`;
+          const val = type ? record.trainLevels : record.flightLevels;
           return (
             <Form.Item>
               {
                 getFieldDecorator(type ? `trainLevels[${record.key}]` : `flightLevels[${record.key}]`, {
-                  initialValue:  val || '' ,
+                  initialValue:  val && val.length ? val.map(it => `${it}`) : [],
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <Select
@@ -545,12 +547,13 @@ class SetStandard extends PureComponent {
             pagination={false}
             dataSource={list}
             rowKey='key'
+            rowClassName={() => isOpenCityLevel ? style.noBorder : style.haveBorder}
           />
         </Form>
         <div className={style.adds}>
           <div className={style.add} onClick={() => this.onAdd()}>
-            <span className="fs-14 c-black-65">+</span>
-            <span className="fs-14 c-black-65 m-l-8">继续添加</span>
+            <span className="fs-14">+</span>
+            <span className="fs-14 m-l-8">继续添加</span>
           </div>
         </div>
       </div>

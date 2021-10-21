@@ -698,7 +698,7 @@ class InvoiceDetail extends Component {
           {
             details.shareOperationRecords && !!(details.shareOperationRecords.length) &&
             <>
-              <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+              <div className={cs(style.header, 'm-b-24', 'm-t-16')}>
                 <div className={style.line} />
                 <span>共享记录</span>
               </div>
