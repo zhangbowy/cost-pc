@@ -245,6 +245,9 @@ class SetStandard extends PureComponent {
 
   onDelete = ({ key }) => {
     const { list, isOpenCityLevel } = this.state;
+    if (list && list.length === 1) {
+      return;
+    }
     this.setState({
       list: !isOpenCityLevel ? list.filter(it => it.key !== key) :
         list.filter(it => it.costStandardKey !== key),
@@ -408,12 +411,19 @@ class SetStandard extends PureComponent {
       render: (_, record) => {
         return {
           children: (
-            <Popconfirm
-              title="请确认是否删除？"
-              onConfirm={() => this.onDelete(record)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
+            <>
+              {
+                list && list.length > 1 ?
+                  <Popconfirm
+                    title="请确认是否删除？"
+                    onConfirm={() => this.onDelete(record)}
+                  >
+                    <span className="deleteColor">删除</span>
+                  </Popconfirm>
+                  :
+                  <span className="disabledColor">删除</span>
+              }
+            </>
           ),
           props: {
             rowSpan: record.rowSpan === 0 || record.rowSpan ? record.rowSpan : 1,

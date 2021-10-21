@@ -65,7 +65,10 @@ class BasicInfo extends Component {
           {
             getFieldDecorator('standardName', {
               initialValue: details.standardName || '',
-              rules: [{ required: true, message: '请输入' }]
+              rules: [
+                { required: true, message: '请输入' },
+                { max: 20, message: '最多输入20个字' }
+              ]
             })(
               <Input placeholder="请输入" className={style.input} />
             )
@@ -114,6 +117,7 @@ class BasicInfo extends Component {
               {
                 getFieldDecorator('exceedStandardNote', {
                   initialValue: details.exceedStandardNote,
+                  rules:[{ max: 20, message: '最多输入20个字' }]
                 })(
                   <Input style={{width: '301px'}} placeholder={`请填写${chargeType[type].name}费超标理由`} />
                 )
