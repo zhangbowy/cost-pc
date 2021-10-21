@@ -9,9 +9,23 @@ class OtherRule extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
-      isShow: !!(props.isRiseAmount),
+      isShow: false,
+      initDetail: {},
     };
   }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {details} = nextProps;
+    // 当传入的type发生变化的时候，更新state
+    if (details !== prevState.initDetail) {
+      return {
+        isShow: details.isRiseAmount,
+        initDetail: details,
+      };
+    }
+    // 否则，对于state不进行任何操作
+    return null;
+}
 
   getItems = () => {
     const { form: { validateFieldsAndScroll } } = this.props;
