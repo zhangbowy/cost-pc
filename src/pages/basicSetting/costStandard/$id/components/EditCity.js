@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal, message } from 'antd';
+import { Modal, message, Button } from 'antd';
 // import Search from 'antd/lib/input/Search';
 import { connect } from 'dva';
 import Lines from '@/components/StyleCom/Lines';
@@ -166,9 +166,11 @@ class EditCity extends PureComponent {
         message.success('修改成功');
         this.getCitys();
         this.setState({
-          selectCitysList: [...selectCitys],
+          // selectCitysList: [...selectCitys],
           popoverVisible: false,
           selectCitys: [],
+          selectCitysCode: [],
+          selectCitysList: [],
         });
       });
     }
@@ -270,6 +272,9 @@ class EditCity extends PureComponent {
           }}
           width="780px"
           onCancel={this.onCancel}
+          footer={[
+            <Button type="default" onClick={this.onCancel}>取消</Button>
+          ]}
         >
           {
             levelCityList.length && levelCityList.map(it => (

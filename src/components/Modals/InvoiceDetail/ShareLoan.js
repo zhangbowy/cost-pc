@@ -235,9 +235,9 @@ class ShareLoan extends PureComponent {
                 <div className="m-l-12 m-r-12 m-t-8">
                   <TreeSelect
                     autoClearSearchValue
+                    open
                     treeNodeFilterProp="label"
                     placeholder='请选择'
-                    open
                     value={selectKey}
                     style={{width: '100%'}}
                     dropdownStyle={{height: '296px'}}
