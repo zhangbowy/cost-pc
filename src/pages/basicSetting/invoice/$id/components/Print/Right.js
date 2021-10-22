@@ -63,7 +63,7 @@ function Right({ templateType, templatePdfVo, corpName,
                 </div>
               }
               {
-                (templateType === 2) &&
+                (templateType === 2 || (!Number(templatePdfVo.paperType) && templateType === 1)) &&
                 <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                   <div className={style['cont-cell-label']}>
                     { templateType === 1 && '借款部门' }
