@@ -98,7 +98,7 @@ class BasicInfo extends Component {
         <Form.Item label="超标限制：" {...formItemLayout}>
           {
             getFieldDecorator('exceedStandardType', {
-              initialValue: details.exceedStandardType || '0',
+              initialValue: details.exceedStandardType ? `${details.exceedStandardType}` : '0',
               rules: [{ required: true, message: '请选择' }]
             })(
               <RadioGroup onChange={(e) => this.onChange(e)}>
