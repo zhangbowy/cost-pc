@@ -63,7 +63,7 @@ function Right({ templateType, templatePdfVo, corpName,
                 </div>
               }
               {
-                templateType === 2 &&
+                (templateType === 2) &&
                 <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                   <div className={style['cont-cell-label']}>
                     { templateType === 1 && '借款部门' }
@@ -81,18 +81,28 @@ function Right({ templateType, templatePdfVo, corpName,
               </div>
             </div>
             {
-              templateType !== 2 ?
-                <div className={style['cont-info-line']}>
-                  <div className={style['cont-cell']}>
-                    <div className={style['cont-cell-label']}>{supplier && supplier.length ? '供应商账户' : '收款账户'}</div>
-                  </div>
+              templateType !== 2 &&
+              <div className={style['cont-info-line']}>
+                <div className={style['cont-cell']}>
+                  <div className={style['cont-cell-label']}>{supplier && supplier.length ? '供应商账户' : '收款账户'}</div>
                 </div>
-                :
-                <div className={style['cont-info-line']}>
-                  <div className={style['cont-cell']}>
-                    <div className={style['cont-cell-label']}>申请金额(元)</div>
-                  </div>
+              </div>
+            }
+            {
+              templateType === 2 && supplier && supplier.length > 0 &&
+              <div className={style['cont-info-line']}>
+                <div className={style['cont-cell']}>
+                  <div className={style['cont-cell-label']}>供应商账户</div>
                 </div>
+              </div>
+            }
+            {
+              templateType === 2 &&
+              <div className={style['cont-info-line']}>
+                <div className={style['cont-cell']}>
+                  <div className={style['cont-cell-label']}>申请金额(元)</div>
+                </div>
+              </div>
             }
           </div>
           {
