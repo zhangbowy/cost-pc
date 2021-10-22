@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Radio, Select, message } from 'antd';
+import { connect } from 'dva';
 import { formItemLayout } from '@/utils/constants';
 import { choosePeople } from '@/utils/ddApi';
-import { connect } from 'dva';
 
 const labelIn = {
   assignMember: '指定发放人',
