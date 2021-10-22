@@ -963,7 +963,7 @@ class AddInvoice extends Component {
         applicationIds: applyArr.map(it => it.id) || [],
       });
     }
-    if (showField.receiptId && !showField.receiptId.status) {
+    if ((showField.receiptId && !showField.receiptId.status) || !showField.receiptId) {
       Object.assign(params, {
         receiptId: '',
         receiptName: '',
