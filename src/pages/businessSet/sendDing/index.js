@@ -63,7 +63,7 @@ class SendDing extends Component {
           <Button type="default" onClick={() => this.onDing()}>一键发Ding</Button>
           {
             list.alertDate &&
-            <p className="m-t-8 c-black-45 fs-12">上次时间：{list.alertDate ? moment(list.alertDate).format('YYYY-MM-DD hh:mm:ss') : ''}</p>
+            <p className="m-t-8 c-black-45 fs-12">上次时间：{list.alertDate ? moment(list.alertDate).format('YYYY-MM-DD HH:mm:ss') : ''}</p>
           }
         </div>
       </div>

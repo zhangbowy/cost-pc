@@ -69,7 +69,7 @@ function Controller(props) {
           <span className="fs-14 c-black-45 fw-400">（清空数据后不可撤销，请谨慎操作）</span>
         </Lines>
         <Button className="m-t-13 m-b-17" onClick={clearsModal}>一键清空</Button>
-        <p className="fs-14 c-black-45 p-b-15">上次时间：{removeDataTime ? moment(Number(removeDataTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
+        <p className="fs-14 c-black-45 p-b-15">上次时间：{removeDataTime ? moment(Number(removeDataTime)).format('YYYY-MM-DD HH:mm:ss') : '无'}</p>
       </div>
     </div>
   );

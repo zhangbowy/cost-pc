@@ -4,8 +4,8 @@ import { Table, Divider, message, Menu, Form, DatePicker, Button } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
-import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
+import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
 import style from './index.scss';
@@ -331,7 +331,7 @@ class Payments extends React.PureComponent {
       title: '提交时间',
       dataIndex: 'createTime',
       render: (text) => (
-        <span>{ text && moment(text).format('YYYY-MM-DD hh:mm:ss') }</span>
+        <span>{ text && moment(text).format('YYYY-MM-DD HH:mm:ss') }</span>
       ),
       width: 150,
     }, {

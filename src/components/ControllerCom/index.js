@@ -39,9 +39,9 @@ function ControllerCom(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function onChange(value) {
+  const onChange = (value) => {
     setUserIdExpired(value);
-  }
+  };
 
   const clearCompany = () => {
     // delCompany
@@ -156,7 +156,10 @@ function ControllerCom(props) {
           </Tooltip>
         </Lines>
         <Button className="m-t-13 m-b-17" onClick={clearCompany}>同步钉钉通讯录</Button>
-        <p className="fs-14 c-black-45 p-b-15">上次时间：{synCompanyTime ? moment(Number(synCompanyTime)).format('YYYY-MM-DD hh:mm:ss') : '无'}</p>
+        <p className="fs-14 c-black-45 p-b-15">
+          上次时间：{synCompanyTime ?
+          moment(Number(synCompanyTime)).format('YYYY-MM-DD HH:mm:ss') : '无'}
+        </p>
         <Divider type="horizontal" />
         <Lines name="离职交接" />
         <div className={style.btnS}>
