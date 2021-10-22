@@ -57,7 +57,9 @@ class editChargeStandard extends PureComponent {
   fetch = (callback) => {
     const arr = [{
       url: 'global/costList',
-      payload: {},
+      payload: {
+        attribute: 0,
+      },
     }];
     const { dispatch } = this.props;
     const { id } = this.splitParams();
