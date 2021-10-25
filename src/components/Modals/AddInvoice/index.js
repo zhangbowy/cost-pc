@@ -810,7 +810,7 @@ class AddInvoice extends Component {
       this.props.dispatch({
         type: 'costGlobal/checkStandard',
         payload: {
-          costDetailsVo: defaultFunc.handleCost(costDetailsVo, id),
+          costDetailsVo: flag ? costDetailsVo : defaultFunc.handleCost(costDetailsVo, id),
           userId: details.userId,
           dingUserId: users && users.length ? users[0].userId : '',
           deptId: details.deptId,
