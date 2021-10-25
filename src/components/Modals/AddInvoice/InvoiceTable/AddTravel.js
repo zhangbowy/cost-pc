@@ -180,7 +180,7 @@ class AddTravel extends PureComponent {
     for(let i=0; i<nodes.length;i++) {
       const item = nodes[i];
       if (nodes[i].type === 0) {
-        const result = this.getPaths(nodes[i].children, nodes[i]);
+        const result = this.getAllChild(nodes[i].children, nodes[i]);
         if (result.length) {
           arr = [...arr, ...result];
         }

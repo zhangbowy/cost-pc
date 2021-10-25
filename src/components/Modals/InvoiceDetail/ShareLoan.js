@@ -22,7 +22,8 @@ class ShareLoan extends PureComponent {
       list: [],
       popVisible: false,
       selectRows: [],
-      selectKey: []
+      selectKey: [],
+      inputValue: '',
     };
   }
 
@@ -39,7 +40,8 @@ class ShareLoan extends PureComponent {
       popVisible: false,
       selectRows: [],
       selectKey: [],
-      list: []
+      list: [],
+      inputValue: ''
     });
   }
 
@@ -68,6 +70,7 @@ class ShareLoan extends PureComponent {
       visible: true,
       list: newArr,
       selectRows: newArr,
+      inputValue: '',
       selectKey: newArr.length > 0 ? newArr.map(it => it.key) : [],
     });
   }
@@ -207,6 +210,7 @@ class ShareLoan extends PureComponent {
       }
       this.setState({
         visible: false,
+        inputValue: '',
       });
     });
   }
@@ -215,6 +219,7 @@ class ShareLoan extends PureComponent {
     const { list } = this.state;
     this.setState({
       popVisible: true,
+      inputValue: '',
       selectKey: list.map(it => {
         if (it.type) {
           return it.key;
@@ -267,6 +272,8 @@ class ShareLoan extends PureComponent {
                     treeNodeLabelProp="label"
                     treeDefaultExpandedKeys={deptTree.length ?  [deptTree[0].value] : []}
                     showCheckedStrategy={SHOW_PARENT}
+                    inputValue={this.state.inputValue}
+                    onSearch={(inputValue) => this.setState({ inputValue })}
                   >
                     { this.loop(deptTree) }
                   </TreeSelect>
