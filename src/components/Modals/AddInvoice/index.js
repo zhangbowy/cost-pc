@@ -772,7 +772,7 @@ class AddInvoice extends Component {
     console.log('AddInvoice -> onAddCost -> loanUserId', share);
     console.log('AddInvoice -> onAddCost -> loanUserId', val);
     if (share && share.length && djDetail.templateType === 0) {
-      const standardArr = await this.checkStandard(share);
+      const { standardArr } = await this.checkStandard(share);
       console.log('AddInvoice -> onAddCost -> standardArr', standardArr);
       if (standardArr.length > 0) {
         share = standardArr;
@@ -785,7 +785,7 @@ class AddInvoice extends Component {
         ...detail,
         loanEntities,
         categorySumEntities,
-      }
+      },
     }, () => {
       // const { costDetailsVo } = this.state;
       const { borrowArr, total } = this.state;
@@ -803,7 +803,7 @@ class AddInvoice extends Component {
     });
   }
 
-  checkStandard = (costDetailsVo) => {
+  checkStandard = (costDetailsVo, flag) => {
     const { id } = this.props;
     const { users, details } = this.state;
     return new Promise((resolve) => {
@@ -817,20 +817,34 @@ class AddInvoice extends Component {
         }
       }).then(() => {
         const { checkStandard, checkStandMsg } = this.props;
-        const newArr = [];
-        if (checkStandard && checkStandard.second) {
-          costDetailsVo.forEach(item => {
-            if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
-              newArr.push({ ...item, exceedMessage: checkStandard.second[item.key].join(';') });
-            } else {
-              newArr.push({ ...item, exceedMessage: '' });
-            }
-          });
-        } else if (checkStandMsg) {
-          message.error(checkStandMsg);
+        let newArr = [];
+        let error = '';
+        if (!flag) {
+          if (checkStandard && checkStandard.second) {
+            costDetailsVo.forEach(item => {
+              if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
+                newArr.push({ ...item, exceedMessage: checkStandard.second[item.key].join(';') });
+              } else {
+                newArr.push({ ...item, exceedMessage: '' });
+              }
+            });
+          } else if (checkStandMsg) {
+            newArr = costDetailsVo;
+            error = true;
+            message.error(checkStandMsg);
+          }
         }
-        resolve(newArr);
-        console.log('AddInvoice -> checkStandard -> checkStandard', checkStandard);
+        if (flag) {
+          resolve({
+            checkStandMsg,
+            checkStandard,
+          });
+        } else {
+          resolve({
+            standardArr: newArr,
+            error,
+          });
+        }
       });
     });
   }
@@ -1208,22 +1222,28 @@ class AddInvoice extends Component {
     }
   }
 
-  checkExceed = (params) => {
-    const { checkStandard: { first } } = this.props;
-    const { applyArr } = this.state;
-    if (first === 0 || (first === 10 && applyArr.length)) {
-      this.setState({
-        exceedVisible: true,
-        submitParams: params,
-      });
-    } else if ((first === 1 && !applyArr.length)
-    || (first === 10 && !applyArr.length)) {
-      message.error('请先关联申请单');
-    } else if (first === 2) {
-      message.error('不允许报销');
+  checkExceed = async(params) => {
+    const { checkStandard, checkStandMsg } = await this.checkStandard(params.costDetailsVo, true);
+    if (checkStandard && (checkStandard.first || checkStandard.first === 0)) {
+      const { applyArr } = this.state;
+      const { first, caNames, caName4Application } = checkStandard;
+      if (first === 0 || (first === 10 && applyArr.length)) {
+        this.setState({
+          exceedVisible: true,
+          submitParams: params,
+        });
+      } else if ((first === 1 && !applyArr.length)
+      || (first === 10 && !applyArr.length)) {
+        message.error(`${caName4Application.join('、')}超标需关联申请单`);
+      } else if (first === 2) {
+        message.error(`${caNames.join('、')}超标，无法提交报销`);
+      } else {
+        this.onSubmit(params);
+      }
     } else {
-      this.onSubmit(params);
+      message.error(checkStandMsg);
     }
+
   }
 
   handleExceed = (val) => {
@@ -1379,6 +1399,7 @@ class AddInvoice extends Component {
       usableProject,
       officeList, // 所在公司列表,
       aliCostAndI,
+      checkStandard,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1685,7 +1706,12 @@ class AddInvoice extends Component {
               </div>
             }
           </div>
-          <StandardModal visible={exceedVisible} callback={this.handleExceed} onCancel={this.exceedCancel} />
+          <StandardModal
+            visible={exceedVisible}
+            callback={this.handleExceed}
+            onCancel={this.exceedCancel}
+            note={checkStandard && checkStandard.third ? checkStandard.third : ''}
+          />
         </Modal>
       </span>
     );

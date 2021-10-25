@@ -545,6 +545,8 @@ export function getBracketStr(text) {
 
 //  对象转换成数组
 export const objToArr = (obj={}) => {
+  console.log('objToArr -> obj', obj);
+
   const arr = [];
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {

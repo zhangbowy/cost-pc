@@ -54,24 +54,7 @@ export default {
   }],
   // 费用标准
   chargeType: {
-    0: {
-      name: '飞机',
-      key: '0',
-      fields: ['航班舱型'],
-    },
-    1: {
-      name: '火车',
-      key: '1',
-      fields: ['火车席位'],
-    },
-    2: {
-      name: '住宿',
-      key: '2',
-      fields: ['发生日期（时间段）', '消费城市'],
-      options: '晚',
-      amountUnitType: 2
-    },
-    3: {
+    '3': {
       name: '打车',
       key: '3',
       fields: ['发生日期（单日）'],
@@ -84,14 +67,31 @@ export default {
       }],
       amountUnitType: 0
     },
-    4: {
+    '2': {
+      name: '住宿',
+      key: '2',
+      fields: ['发生日期（时间段）', '消费城市'],
+      options: '晚',
+      amountUnitType: 2
+    },
+    '1': {
+      name: '火车',
+      key: '1',
+      fields: ['火车席位'],
+    },
+    '0': {
+      name: '飞机',
+      key: '0',
+      fields: ['航班舱型'],
+    },
+    '4': {
       name: '补贴',
       key: '4',
       fields: ['发生日期(时间段)'],
       options: '天',
       amountUnitType: 3
     },
-    5: {
+    '5': {
       name: '招待',
       key: '5',
       fields: ['招待人数'],

@@ -78,7 +78,7 @@ class BasicInfo extends Component {
           {
             getFieldDecorator('categoryIds', {
               initialValue: details.categoryIds || [],
-              rules: [{ required: true, message: '请输入' }]
+              rules: [{ required: true, message: '请选择' }]
             })(
               <TreeSelect
                 treeData={costList}

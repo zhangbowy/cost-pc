@@ -149,6 +149,7 @@ export default {
     return fields;
   },
   handleCost: (costDetailsVo, id) => {
+  console.log('costDetailsVo', costDetailsVo);
     const arr = [];
     costDetailsVo.forEach((item, index) => {
       const obj = {

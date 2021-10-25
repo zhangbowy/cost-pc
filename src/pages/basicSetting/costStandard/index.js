@@ -9,6 +9,7 @@ import fields from '../../../utils/fields';
 import { objToArr } from '../../../utils/common';
 
 const { chargeType } = fields;
+console.log('chargeType', chargeType);
 
 const lists = objToArr(chargeType);
 @connect(({ chargeStandard, loading }) => ({

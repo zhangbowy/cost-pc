@@ -270,6 +270,7 @@ class AddCost extends Component {
         if (userIdArr && userIdArr.length && (deptFlag.length !== listArr.length)) {
           newArray = await this.handleDept(listArr, userIdArr);
         }
+        console.log('AddCost -> onShow -> newArray', newArray);
         if (index === 0 || index) {
           if (detail.belongCity) {
             const valCity = normalList.filter(it => it.areaCode === detail.belongCity)[0];
@@ -279,6 +280,10 @@ class AddCost extends Component {
           }
           this.setState({
             details: detail,
+            currencyId: detail.currencyId || '-1',
+            currencyName: detail.currencyName || '',
+            exchangeRate: detail.exchangeRate || '1',
+            currencySymbol: detail.currencySymbol || '¥',
             costDetailShareVOS: newArray,
             expandField,
             imgUrl: detail.imgUrl || [],

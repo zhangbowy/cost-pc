@@ -37,21 +37,21 @@ class AddCostTable extends Component {
     props.onGetForm(this.onGetForm);
   }
 
-  componentDidUpdate(prevProps){
-    if ((prevProps.costDetailShareVOS !== this.props.costDetailShareVOS)
-      || (prevProps.costSum !== this.props.costSum)
-      || (prevProps.currencyId !== this.props.currencyId)
-      || (prevProps.exchangeRate !== this.props.exchangeRate)) {
-      console.log('AddCostTable -> componentDidUpdate -> this.props.costDetailShareVOS', this.props.costDetailShareVOS);
+  static getDerivedStateFromProps(prevProps, state) {
+    if ((prevProps.costDetailShareVOS !== state.costDetailShareVOS)
+      || (prevProps.costSum !== state.costSum)
+      || (prevProps.currencyId !== state.currencyId)
+      || (prevProps.exchangeRate !== state.exchangeRate)) {
+      console.log('AddCostTable -> componentDidUpdate -> this.props.costDetailShareVOS', prevProps.costDetailShareVOS);
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({
-        costDetailShareVOS: this.props.costDetailShareVOS || [],
-        shareAmount: this.props.shareAmount || 0,
-        costSum: this.props.costSum,
-        currencyId: this.props.currencyId || '-1',
-        exchangeRate: this.props.exchangeRate || 1,
-        currencySymbol: this.props.currencySymbol || '',
-      });
+      return{
+        costDetailShareVOS: prevProps.costDetailShareVOS || [],
+        shareAmount: prevProps.shareAmount || 0,
+        costSum: prevProps.costSum,
+        currencyId: prevProps.currencyId || '-1',
+        exchangeRate: prevProps.exchangeRate || 1,
+        currencySymbol: prevProps.currencySymbol || '',
+      };
     }
   }
 
