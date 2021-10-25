@@ -304,9 +304,13 @@ class CostDetailTable extends PureComponent {
             ),
             dataIndex: item.field,
             render: (_, record) => {
+              const msg = (record[item.field] || record[item.field] === 0) &&
+              trainLevels[record[item.field]] ? trainLevels[record[item.field]].name : '-';
+              const fmsg = (record[item.field] || record[item.field] === 0) &&
+              flightLevels[record[item.field]] ? flightLevels[record[item.field]].name : '-';
               return (
                 <span>
-                  { item.field === 'trainLevel' ? trainLevels[record[item.field]].name : flightLevels[record[item.field]].name }
+                  { item.field === 'trainLevel' ? msg : fmsg }
                 </span>
               );
             },
@@ -325,7 +329,7 @@ class CostDetailTable extends PureComponent {
             render: (_, record) => {
               return (
                 <span>
-                  { cityInfo[record[item.field]] || '-' }
+                  { (record[item.field] && cityInfo[record[item.field]]) || '-' }
                 </span>
               );
             },

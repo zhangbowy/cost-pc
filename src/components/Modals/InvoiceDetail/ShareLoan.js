@@ -117,15 +117,45 @@ class ShareLoan extends PureComponent {
     />;
   });
 
-  onChangeNode = (value) => {
-  console.log('ShareLoan -> onChangeNode -> value', value);
+  onChangeNode = (value, label, extra) => {
+    console.log('ShareLoan -> onChangeNode -> value', extra.triggerNode.props);
+    console.log('ShareLoan -> onChangeNode -> value', label);
+    const { dataRef } = extra.triggerNode.props;
+    const { selectRows } = this.state;
+    const arr = [...selectRows];
+    const obj = {};
+    const len = label.length;
+    if (dataRef.deptName === label[len-1]) {
+      Object.assign(obj, {
+        key: `${dataRef.deptId}`,
+        deptName: dataRef.deptName,
+        deptId: `${dataRef.deptId}`,
+        type: 0,
+      });
+    } else {
+      Object.assign(obj, {
+        key: dataRef.type ? dataRef.key : dataRef.value,
+        deptName: dataRef.deptName || dataRef.title,
+        deptId: dataRef.deptId || dataRef.value,
+        type: dataRef.type,
+        userName: dataRef.type ? dataRef.title : '',
+        userId: dataRef.type ? dataRef.value : '',
+        avatar: dataRef.avatar,
+      });
+    }
+    if (arr.findIndex(it => it.key === obj.key) === -1) {
+      arr.push(obj);
+    }
     this.setState({
       selectKey: value,
+      selectRows: arr,
     });
   }
 
   confirm = () => {
     const { selectKey, selectRows } = this.state;
+    console.log('ShareLoan -> confirm -> selectRows', selectRows);
+    console.log('ShareLoan -> confirm -> selectKey', selectKey);
     const newArr = [];
     selectRows.forEach(it => {
       if (selectKey.includes(it.key) || selectKey.includes(it.value)) {
@@ -149,17 +179,6 @@ class ShareLoan extends PureComponent {
     this.setState({
       list: newArr,
       popVisible: false,
-    });
-  }
-
-  onSelect = (value, info) => {
-    console.log('选中de', info);
-    console.log('选中de', value);
-    const { props: { dataRef } } = info;
-    const { selectRows } = this.state;
-    console.log('ShareLoan -> onSelect -> selectRows', selectRows);
-    this.setState({
-      selectRows: [...selectRows, dataRef],
     });
   }
 
@@ -245,7 +264,6 @@ class ShareLoan extends PureComponent {
                     getPopupContainer={triggerNode => triggerNode.parentNode}
                     showSearch
                     onChange={this.onChangeNode}
-                    onSelect={this.onSelect}
                     treeNodeLabelProp="label"
                     treeDefaultExpandedKeys={deptTree.length ?  [deptTree[0].value] : []}
                     showCheckedStrategy={SHOW_PARENT}
