@@ -707,8 +707,10 @@ class InvoiceDetail extends Component {
                   details.shareOperationRecords.map(it => (
                     <Timeline.Item key={it.createTime} color="#00C795">
                       <div className={style.recordProd}>
-                        <p className="fs-14 c-black-65">{it.description}</p>
-                        <p className="fs-13 c-black-45 m-l-16">{it.createTime ? moment(it.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'}</p>
+                        <p className="fs-14 c-black-65" style={{maxWidth: '760px'}}>{it.description}</p>
+                        <p className="fs-13 c-black-45 m-l-16">
+                          {it.createTime ? moment(it.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
+                        </p>
                       </div>
                     </Timeline.Item>
                   ))

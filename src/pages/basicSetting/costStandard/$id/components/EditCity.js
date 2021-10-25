@@ -273,7 +273,7 @@ class EditCity extends PureComponent {
           width="780px"
           onCancel={this.onCancel}
           footer={[
-            <Button type="default" onClick={this.onCancel}>取消</Button>
+            <Button type="default" onClick={this.onCancel}>关闭</Button>
           ]}
         >
           {
