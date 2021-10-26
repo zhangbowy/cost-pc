@@ -73,6 +73,10 @@ class InvoiceDetail extends Component {
   }
 
   onShow = () => {
+    this.onInit(true);
+  }
+
+  onInit = (flag) => {
     const { id, templateType } = this.props;
     console.log('InvoiceDetail -> onShow -> templateType', templateType);
     let url = 'global/invoiceDetail';
@@ -202,7 +206,6 @@ class InvoiceDetail extends Component {
         selfSubmitFieldVos,
         isSign: details.isSign,
         cityInfo,
-        list: details.invoiceLoanShare && details.invoiceLoanShare.list ? details.invoiceLoanShare.list : [],
       });
       this.props.dispatch({
         type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
@@ -215,9 +218,14 @@ class InvoiceDetail extends Component {
         const { recordDetailLoan, recordDetailInvoice } = this.props;
         const recordList = Number(templateType) ? recordDetailLoan : recordDetailInvoice;
         this.setState({
-          visible: true,
           recordList,
         });
+        if (flag) {
+          this.setState({
+            visible: true,
+            list: details.invoiceLoanShare && details.invoiceLoanShare.list ? details.invoiceLoanShare.list : [],
+          });
+        }
       });
     });
   }
@@ -500,6 +508,7 @@ class InvoiceDetail extends Component {
         this.setState({
           list: [...users, ...depts]
         });
+        this.onInit();
       });
     });
   }
@@ -517,6 +526,7 @@ class InvoiceDetail extends Component {
         list: arr,
       },
     }).then(() => {
+      this.onInit();
       this.setState({
         list: arr,
       });
