@@ -98,7 +98,7 @@ class ShareLoan extends PureComponent {
     const { userInfo } = this.props;
     ddComplexPicker({
       users: userList.map(it => it.userId) || [],
-      departments: deptList.map(it => it.deptId) || [],
+      departments: deptList && deptList.length ? deptList.map(it => `${it.deptId}`) : [],
       disabledUsers: [userInfo.dingUserId]
     }, async(res) => {
       console.log(res);

@@ -196,6 +196,7 @@ class SetStandard extends PureComponent {
   selectPeople = (item, e) => {
     e.stopPropagation();
     const { userVos = [], deptVos = [], key } = item;
+    console.log('selectPeople -> deptVos', deptVos);
     const { list } = this.state;
     const newArr = [...list];
     const index = list.findIndex(it => it.key === key);
@@ -203,7 +204,7 @@ class SetStandard extends PureComponent {
     ddComplexPicker({
       multiple: true,
       users: userVos.map(it => it.userId),
-      departments: deptVos.map(it => it.deptId),
+      departments: deptVos && deptVos.length ? deptVos.map(it => `${it.deptId}`) : [],
     }, (res) => {
       const arr = [];
       const dep = [];
