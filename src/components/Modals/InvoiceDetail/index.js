@@ -222,6 +222,20 @@ class InvoiceDetail extends Component {
     });
   }
 
+  looUser = (dingUserIds) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/lookDept',
+        payload: {
+          dingUserIds
+        }
+      }).then(() => {
+        const { deptAndUser } = this.props;
+        resolve(deptAndUser);
+      });
+    });
+  }
+
   onCancel = () => {
     this.setState({
       visible: false,
@@ -488,6 +502,26 @@ class InvoiceDetail extends Component {
         });
       });
     });
+  }
+
+  onDel = (index,e) => {
+    e.stopPropagation();
+    const { list } = this.state;
+    const arr = [...list];
+    const { id } = this.props;
+    arr.splice(index,1);
+    this.props.dispatch({
+      type: 'costGlobal/shareLoan',
+      payload: {
+        invoiceId: id,
+        list: arr,
+      },
+    }).then(() => {
+      this.setState({
+        list: arr,
+      });
+    });
+
   }
 
   render() {

@@ -823,7 +823,7 @@ class AddInvoice extends Component {
           if (checkStandard && checkStandard.second) {
             costDetailsVo.forEach(item => {
               if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
-                newArr.push({ ...item, exceedMessage: checkStandard.second[item.key].join(';') });
+                newArr.push({ ...item, exceedMessage: checkStandard.second[item.key].join('；') });
               } else {
                 newArr.push({ ...item, exceedMessage: '' });
               }
