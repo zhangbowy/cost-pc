@@ -4,6 +4,10 @@
     .ant-form-item-label {
       width: 110px;
     }
+    .ant-form-item{
+      margin-bottom: 20px!important;
+      // margin: 0;
+    }
   }
 }
 .people {
@@ -56,6 +60,12 @@
   display: flex;
   height: 32px;
   align-items: center;
+  :global{
+    .ant-form-item{
+      margin-bottom: 0px!important;
+      // margin: 0;
+    }
+  }
 }
 
 .addCity {

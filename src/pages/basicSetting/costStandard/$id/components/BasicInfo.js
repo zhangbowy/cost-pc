@@ -107,7 +107,9 @@ class BasicInfo extends Component {
               />
             )
           }
-          <p className="c-black-45">设置{chargeType[type].name}标准后，员工提单时需额外填写[{chargeType[type].fields}]，用于费标判断</p>
+          <p className="c-black-45 li-1 m-t-8">
+            设置{chargeType[type].name}标准后，员工提单时需额外填写[{chargeType[type].fields}]，用于费标判断
+          </p>
         </Form.Item>
         <Form.Item label="超标限制：" {...formItemLayout}>
           {
@@ -128,14 +130,16 @@ class BasicInfo extends Component {
             isShow &&
             <div className={style.tips}>
               <p>默认提示文案：</p>
-              {
-                getFieldDecorator('exceedStandardNote', {
-                  initialValue: details.exceedStandardNote,
-                  rules:[{ max: 20, message: '最多输入20个字' }]
-                })(
-                  <Input style={{width: '301px'}} placeholder={`请填写${chargeType[type].name}费超标理由`} />
-                )
-              }
+              <Form.Item>
+                {
+                  getFieldDecorator('exceedStandardNote', {
+                    initialValue: details.exceedStandardNote,
+                    rules:[{ max: 20, message: '最多输入20个字' }]
+                  })(
+                    <Input style={{width: '301px'}} placeholder={`请填写${chargeType[type].name}费超标理由`} />
+                  )
+                }
+              </Form.Item>
             </div>
           }
         </Form.Item>
