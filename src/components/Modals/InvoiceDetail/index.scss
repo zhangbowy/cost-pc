@@ -208,7 +208,7 @@
 .shareAdd{
   display: flex;
   padding-top: 20px;
-  height: 153px;
+  height: 193px;
   overflow-y: scroll;
   flex-wrap: wrap;
   // margin-bottom: 24px;
@@ -264,10 +264,10 @@
   }
 }
 .popNew{
-  width: 400px;
-  height: 240px;
+  width: 480px;
+  height: 280px;
   background: #FFFFFF;
-  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 12px 32px 0px rgba(38, 38, 38, 0.16);
   border-radius: 4px;
   .title{
     padding-top: 17px;

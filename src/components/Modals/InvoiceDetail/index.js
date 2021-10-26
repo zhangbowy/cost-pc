@@ -1,18 +1,20 @@
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
-import { Modal, message, Button, Divider, Tooltip, Timeline } from 'antd';
+import { Modal, message, Button, Divider, Tooltip, Timeline, Popover } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import fields from '@/utils/fields';
+import addAvatars from '@/assets/img/addAvatar.png';
+import dept from '@/assets/img/dept.png';
 import style from './index.scss';
 import constants from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
 import Borrow from './Borrow';
 import Apply from './Apply';
-import { ddOpenLink } from '../../../utils/ddApi';
+import { ddOpenLink, ddComplexPicker } from '../../../utils/ddApi';
 import AddInvoice from '../AddInvoice';
 import RecordHistory from './RecordHistory';
 import CostDetailTable from './CostDetailTable';
@@ -20,7 +22,7 @@ import ProductTable from './ProductTable';
 import { numAdd } from '../../../utils/float';
 import { handleProduction, compare, getParams } from '../../../utils/common';
 import AliLink from './AliLink';
-import ShareLoan from './ShareLoan';
+import Avatar from '../../AntdComp/Avatar';
 import MainText from './MainText';
 import BasicText from './BasicText';
 // import { DownloadFile } from '../../../utils/ddApi';
@@ -41,6 +43,7 @@ const { APP_API } = constants;
   userInfo: session.userInfo,
   aliTripLink: costGlobal.aliTripLink,
   cityInfo: costGlobal.cityInfo,
+  deptAndUser: costGlobal.deptAndUser,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -65,6 +68,7 @@ class InvoiceDetail extends Component {
       aliTrip: {},
       isSign: false,
       cityInfo: {},
+      list: [],
     };
   }
 
@@ -197,7 +201,8 @@ class InvoiceDetail extends Component {
         expandSubmitFieldVos,
         selfSubmitFieldVos,
         isSign: details.isSign,
-        cityInfo
+        cityInfo,
+        list: details.invoiceLoanShare && details.invoiceLoanShare.list ? details.invoiceLoanShare.list : [],
       });
       this.props.dispatch({
         type: !Number(templateType) ? 'costGlobal/recordDetailInvoice' : 'costGlobal/recordDetailLoan',
@@ -434,6 +439,57 @@ class InvoiceDetail extends Component {
     }
   }
 
+  handelPop = () => {
+    const { list } = this.state;
+    const { id } = this.props;
+    const userList = list.filter(it => it.userId);
+    const deptList = list.filter(it => !it.userId);
+    const { userInfo } = this.props;
+    ddComplexPicker({
+      users: userList.map(it => it.userId) || [],
+      departments: deptList && deptList.length ? deptList.map(it => `${it.deptId}`) : [],
+      disabledUsers: [userInfo.dingUserId]
+    }, async(res) => {
+      console.log(res);
+      const users = [];
+      const depts = [];
+      if (res.users && res.users.length) {
+        const listUser = await this.looUser(res.users.map(it => it.emplId));
+        res.users.forEach(it => {
+          users.push({
+            avatar: it.avatar,
+            userName: it.name,
+            userId: it.emplId,
+            deptId: listUser[it.emplId][0].deptId,
+            deptName: listUser[it.emplId][0].name,
+          });
+        });
+      }
+      if (res.departments) {
+        res.departments.forEach(it => {
+          depts.push({
+            deptName: it.name,
+            deptId: it.id,
+          });
+        });
+      }
+      this.props.dispatch({
+        type: 'costGlobal/shareLoan',
+        payload: {
+          invoiceId: id,
+          list: [...users, ...depts],
+        },
+      }).then(() => {
+        if (this.props.onCanel) {
+          this.props.onCanel();
+        }
+        this.setState({
+          list: [...users, ...depts]
+        });
+      });
+    });
+  }
+
   render() {
     const {
       visible,
@@ -454,7 +510,8 @@ class InvoiceDetail extends Component {
       expandSubmitFieldVos,
       selfSubmitFieldVos,
       aliTrip,
-      isSign
+      isSign,
+      list,
     } = this.state;
     const {
       children,
@@ -462,7 +519,6 @@ class InvoiceDetail extends Component {
       templateType,
       allow,
       userInfo,
-      id
     } = this.props;
     return (
       <span>
@@ -506,13 +562,41 @@ class InvoiceDetail extends Component {
               <div>
                 {
                   details.status === 3 && Number(templateType) === 1 && (userInfo.userId === details.createId) &&
-                  <ShareLoan
-                    invoiceId={id}
-                    onCanel={() => this.onCancel()}
-                    list={details.invoiceLoanShare && details.invoiceLoanShare.list ? details.invoiceLoanShare.list : []}
+                  <Popover
+                    trigger="click"
+                    onOk={this.onOk}
+                    overlayClassName={style.oldPop}
+                    placement="topLeft"
+                    content={(
+                      <div className={style.popNew}>
+                        <p className={style.title}>添加共享人</p>
+                        <p className="fs-14 c-black-65 m-r-16">共享是将该借款单共享给其他人，共享后其他人也可核销该借款或手动还款。适用于部门备用金申请等情况</p>
+                        <div className={style.shareAdd}>
+                          <div className={style.addBtn}>
+                            <div className={style.addBtns}>
+                              <img src={addAvatars} alt="添加" onClick={() => this.handelPop()} />
+                            </div>
+                          </div>
+                          {
+                            list.map((it, index) => (
+                              <div className={style.peoples} key={it.userId || it.deptId}>
+                                {
+                                  it.userName ?
+                                    <Avatar name={it.userName} size={40} avatar={it.avatar} />
+                                    :
+                                    <img src={dept} alt="部门" style={{ width: '40px', height: '40px' }} />
+                                }
+                                <span className={style.names}>{it.userName || it.deptName}</span>
+                                <i className="iconfont icondelete_fill" onClick={e => this.onDel(index, e)} />
+                              </div>
+                            ))
+                          }
+                        </div>
+                      </div>
+                    )}
                   >
                     <Button type="primary" className="m-r-8">共享</Button>
-                  </ShareLoan>
+                  </Popover>
                 }
                 {
                   canRefuse &&
