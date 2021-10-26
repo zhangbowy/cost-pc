@@ -55,6 +55,7 @@ export default {
     levelCityList: [], // 等级城市列表,
     checkStandard: {}, // 校验的结果
     checkStandMsg: '',
+    deptAndUser: {}, // 关联dingUserId
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -462,6 +463,15 @@ export default {
         type: 'save',
         payload: {
           cityInfo: response || [],
+        },
+      });
+    },
+    *lookDept({ payload }, { call, put }) {
+      const response = yield call(get, api.lookDept, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          deptAndUser: response || {},
         },
       });
     },

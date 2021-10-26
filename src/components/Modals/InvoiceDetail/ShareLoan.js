@@ -1,17 +1,19 @@
 /* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
-import { Modal, TreeSelect, Tree } from 'antd';
+import { Modal, Tree } from 'antd';
 import { connect } from 'dva';
 import addAvatars from '@/assets/img/addAvatar.png';
 import dept from '@/assets/img/dept.png';
 import style from './index.scss';
 import Avatar from '../../AntdComp/Avatar';
+import { ddComplexPicker } from '../../../utils/ddApi';
 
 const { TreeNode } = Tree;
-const { SHOW_PARENT } = TreeSelect;
+// const { SHOW_PARENT } = TreeSelect;
 @connect(({ costGlobal, session }) => ({
   deptTree: costGlobal.deptTree,
-  userInfo: session.userInfo
+  userInfo: session.userInfo,
+  deptAndUser: costGlobal.deptAndUser,
 }))
 class ShareLoan extends PureComponent {
 
@@ -20,10 +22,10 @@ class ShareLoan extends PureComponent {
     this.state = {
       visible: false,
       list: [],
-      popVisible: false,
+      // popVisible: false,
+      // inputValue: '',
       selectRows: [],
       selectKey: [],
-      inputValue: '',
     };
   }
 
@@ -37,11 +39,11 @@ class ShareLoan extends PureComponent {
   onCancel = () => {
     this.setState({
       visible: false,
-      popVisible: false,
+      // popVisible: false,
+      // inputValue: '',
       selectRows: [],
       selectKey: [],
       list: [],
-      inputValue: ''
     });
   }
 
@@ -67,10 +69,10 @@ class ShareLoan extends PureComponent {
       });
     }
     this.setState({
+      // inputValue: '',
       visible: true,
       list: newArr,
       selectRows: newArr,
-      inputValue: '',
       selectKey: newArr.length > 0 ? newArr.map(it => it.key) : [],
     });
   }
@@ -181,28 +183,43 @@ class ShareLoan extends PureComponent {
     console.log('走了没', newArr);
     this.setState({
       list: newArr,
-      popVisible: false,
+      // popVisible: false,
     });
   }
 
-  onDel = (key, e) => {
+  onDel = (i, e) => {
     e.stopPropagation();
-    const { selectKey, selectRows, list } = this.state;
+    const { list } = this.state;
+    const newArr = [...list];
+    newArr.splice(i,1);
     this.setState({
-      selectKey: selectKey.filter(it => it.key != key),
-      selectRows: selectRows.filter(it => it.key != key),
-      list: list.filter(it => it.key != key),
+      // selectKey: selectKey.filter(it => it.key != key),
+      // selectRows: selectRows.filter(it => it.key != key),
+      list: newArr,
     });
   }
 
-  onOk = () => {
+  onOk = async() => {
     const { invoiceId } = this.props;
     const { list } = this.state;
+    const dingUserId = list.filter(it => it.userId);
+    const newList = [];
+    if (dingUserId && dingUserId.length) {
+      const userList = await this.looUser(dingUserId.map(it => it.userId));
+      dingUserId.forEach(it => {
+        newList.push({
+          ...it,
+          deptId: userList[it.userId][0].deptId,
+          deptName: userList[it.userId][0].name,
+        });
+      });
+    }
+    const deptList = list.filter(it => !it.userId) || [];
     this.props.dispatch({
       type: 'costGlobal/shareLoan',
       payload: {
         invoiceId,
-        list,
+        list: [...newList, ...deptList],
       },
     }).then(() => {
       if (this.props.onCanel) {
@@ -210,29 +227,77 @@ class ShareLoan extends PureComponent {
       }
       this.setState({
         visible: false,
-        inputValue: '',
+        // inputValue: '',
+      });
+    });
+  }
+
+  looUser = (dingUserIds) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/lookDept',
+        payload: {
+          dingUserIds
+        }
+      }).then(() => {
+        const { deptAndUser } = this.props;
+        resolve(deptAndUser);
       });
     });
   }
 
   handelPop = () => {
+    // const { list } = this.state;
+    // this.setState({
+    //   popVisible: true,
+    //   inputValue: '',
+    //   selectKey: list.map(it => {
+    //     if (it.type) {
+    //       return it.key;
+    //     }
+    //     return it.deptId;
+    //   }),
+    //   selectRows: list,
+    // });
     const { list } = this.state;
-    this.setState({
-      popVisible: true,
-      inputValue: '',
-      selectKey: list.map(it => {
-        if (it.type) {
-          return it.key;
-        }
-        return it.deptId;
-      }),
-      selectRows: list,
+    console.log('ShareLoan -> handelPop -> list', list);
+    const userList = list.filter(it => it.userId);
+    const deptList = list.filter(it => !it.userId);
+    const { userInfo } = this.props;
+    ddComplexPicker({
+      users: userList.map(it => it.userId) || [],
+      departments: deptList.map(it => it.deptId) || [],
+      disabledUsers: [userInfo.dingUserId]
+    }, (res) => {
+      console.log(res);
+      const users = [];
+      const depts = [];
+      if (res.users) {
+        res.users.forEach(it => {
+          users.push({
+            avatar: it.avatar,
+            userName: it.name,
+            userId: it.emplId,
+          });
+        });
+      }
+      if (res.departments) {
+        res.departments.forEach(it => {
+          depts.push({
+            deptName: it.name,
+            deptId: it.id,
+          });
+        });
+      }
+      this.setState({
+        list: [...users, ...depts]
+      });
     });
   }
 
   render() {
-    const { children, deptTree } = this.props;
-    const { visible, list, popVisible, selectKey } = this.state;
+    const { children } = this.props;
+    const { visible, list } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -255,7 +320,7 @@ class ShareLoan extends PureComponent {
               <div className={style.addBtns}>
                 <img src={addAvatars} alt="添加" onClick={() => this.handelPop()} />
               </div>
-              <div className={style.popStyle} style={{ display: popVisible ? 'block' : 'none' }}>
+              {/* <div className={style.popStyle} style={{ display: popVisible ? 'block' : 'none' }}>
                 <div className="m-l-12 m-r-12 m-t-8">
                   <TreeSelect
                     autoClearSearchValue
@@ -290,11 +355,11 @@ class ShareLoan extends PureComponent {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             {
-              list.map(it => (
-                <div className={style.peoples} key={it.key}>
+              list.map((it, index) => (
+                <div className={style.peoples} key={it.userId || it.deptId}>
                   {
                     it.userName ?
                       <Avatar name={it.userName} size={40} avatar={it.avatar} />
@@ -302,7 +367,7 @@ class ShareLoan extends PureComponent {
                       <img src={dept} alt="部门" style={{ width: '40px', height: '40px' }} />
                   }
                   <span className={style.names}>{it.userName || it.deptName}</span>
-                  <i className="iconfont icondelete_fill" onClick={e => this.onDel(it.key, e)} />
+                  <i className="iconfont icondelete_fill" onClick={e => this.onDel(index, e)} />
                 </div>
               ))
             }

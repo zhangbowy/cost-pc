@@ -145,4 +145,5 @@ export default {
    levelCityList: `${APP_API}/cost/aw/cityList`,
    checkStandard: `${APP_API}/cost/invoice/submit/standard`,
    cityInfo: `${APP_API}/cost/aw/cityInfo`,
+   lookDept: `${APP_API}/cost/user/userInfo4DingUserIds`
 };
