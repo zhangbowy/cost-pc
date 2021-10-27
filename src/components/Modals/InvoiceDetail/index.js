@@ -605,7 +605,8 @@ class InvoiceDetail extends Component {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 {
-                  details.status === 3 && Number(templateType) === 1 && (userInfo.userId === details.createId) &&
+                  details.status === 3 && Number(templateType) === 1
+                  && (userInfo.userId === details.createId || userInfo.userId === details.userId) &&
                   <Popover
                     trigger="click"
                     onOk={this.onOk}
@@ -614,7 +615,9 @@ class InvoiceDetail extends Component {
                     content={(
                       <div className={style.popNew}>
                         <p className={style.title}>添加共享人</p>
-                        <p className="fs-14 c-black-65 m-r-16">共享是将该借款单共享给其他人，共享后其他人也可核销该借款或手动还款。适用于部门备用金申请等情况</p>
+                        <p className="fs-14 c-black-65 m-r-16">
+                          共享是将该借款单共享给其他人，共享后其他人也可核销该借款或手动还款。适用于部门备用金申请等情况
+                        </p>
                         <div className={style.shareAdd}>
                           <div className={style.addBtn}>
                             <div className={style.addBtns}>

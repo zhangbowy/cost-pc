@@ -24,7 +24,7 @@ class BasicInfo extends Component {
     // 当传入的type发生变化的时候，更新state
     if (details !== prevState.initDetail) {
       return {
-        isShow: details.exceedStandardType === 0,
+        isShow: !(details.exceedStandardType),
         initDetail: details,
       };
     }
