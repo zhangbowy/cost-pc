@@ -358,7 +358,7 @@ class customQuery extends Component {
           <Divider type="vertical" style={{height: '100%', margin: '0'}} />
           <div className={style.cntRight}>
             <Form layout="inline" className="m-b-16">
-              <Form.Item label="承担部门" className="m-r-24">
+              <Form.Item label="部门/人" className="m-r-24">
                 <TreeSelect
                   treeNodeFilterProp="label"
                   placeholder='请选择'
@@ -379,21 +379,24 @@ class customQuery extends Component {
                 <TimeComp submitTime={submitTime} onChangeData={this.onChangeState} />
               </Form.Item>
             </Form>
-            <Table
-              columns={columns}
-              dataSource={list}
-              pagination={false}
-              loading={loading}
-              expandIcon={(props) => this.customExpandIcon(props)}
-              rowKey="id"
-              defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
-              expandedRowKeys={expandIds}
-              onExpand={(b, r) => {
-                this.setState({
-                  expandIds: b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id)
-                });
-              }}
-            />
+            <div style={{overflowY: 'scroll'}}>
+              <Table
+                columns={columns}
+                dataSource={list}
+                pagination={false}
+                loading={loading}
+                expandIcon={(props) => this.customExpandIcon(props)}
+                rowKey="id"
+                defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
+                expandedRowKeys={expandIds}
+                scroll={{ Y: 'calc(100vh-300px)' }}
+                onExpand={(b, r) => {
+                  this.setState({
+                    expandIds: b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id)
+                  });
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
