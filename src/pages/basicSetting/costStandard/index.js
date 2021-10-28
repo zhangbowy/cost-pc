@@ -1,6 +1,6 @@
 // 费用标准
 import React, { PureComponent } from 'react';
-import { Table, Divider, Popconfirm } from 'antd';
+import { Table, Divider, Popconfirm, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
@@ -54,28 +54,45 @@ class chargeStandard extends PureComponent {
     const { loading, list } = this.props;
     const columns = [{
       title: '费用标准',
-      dataIndex: 'standardName'
+      dataIndex: 'standardName',
+      width: 200,
     }, {
       title: '标准类型',
       dataIndex: 'standardType',
       render: (text) => (
         <span>{chargeType[text].name}</span>
-      )
+      ),
+      width: 100,
     }, {
       title: '适用支出类别（费用）',
-      dataIndex: 'categoryNameList'
+      dataIndex: 'categoryNameList',
+      width: 200,
+      ellipsis: true,
+      textWrap: 'word-break',
+      render: (_, record) => {
+        const lis = record.categoryNameList.join('、');
+        return (
+          <span>
+            <Tooltip title={lis} placement="topRight">
+              <span>{lis}</span>
+            </Tooltip>
+          </span>
+        );
+      }
     }, {
       title: '修改时间',
       dataIndex: 'updateTime',
       render: (text) => (
         <span>{text ? moment(text).format('YYYY-MM-DD') : '-'}</span>
-      )
+      ),
+      width: 200,
     }, {
       title: '状态',
       dataIndex: 'status',
       render: (text) => (
         <span>{ text ? '启用' : '禁用' }</span>
-      )
+      ),
+      width: 100,
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -90,7 +107,8 @@ class chargeStandard extends PureComponent {
           <Divider type="vertical" />
           <a onClick={() => this.onHandle(record.standardType, record.id)}>编辑</a>
         </span>
-      )
+      ),
+      width: 100
     }];
     return (
       <div className="mainContainer">

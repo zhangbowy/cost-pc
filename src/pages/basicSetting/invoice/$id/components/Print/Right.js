@@ -56,7 +56,6 @@ function Right({ templateType, templatePdfVo, corpName,
                 !!(Number(templatePdfVo.paperType)) && templateType !== 2 &&
                 <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                   <div className={style['cont-cell-label']}>
-                    { templateType === 0 && '承担者' }
                     { templateType === 1 && '借款部门' }
                     { (templateType === 2 || templateType === 3) && '申请部门' }
                   </div>
@@ -167,7 +166,7 @@ function Right({ templateType, templatePdfVo, corpName,
             <table>
               <tr>
                 {
-                  templatePdfVo.paperType === 0 &&
+                  Number(templateType) === 0 &&
                   <th>承担人/部门</th>
                 }
                 <th>支出类别</th>
