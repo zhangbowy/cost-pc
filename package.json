@@ -19,6 +19,7 @@
     "url": "git+http://gitlab.forwe.store/great/xfw-cost/cost-pc.git"
   },
   "dependencies": {
+    "@antv/g2": "^4.1.32",
     "@types/classnames": "^2.2.10",
     "@types/echarts": "^4.9.6",
     "@types/moment": "^2.13.0",

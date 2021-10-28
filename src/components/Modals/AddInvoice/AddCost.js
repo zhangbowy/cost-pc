@@ -563,7 +563,7 @@ class AddCost extends Component {
       type: 'global/lbDetail',
       payload: {
         id: val,
-        isDisplay: templateType === 0,
+        isDisplay: !templateType,
       }
     }).then(() => {
       const { lbDetail } = this.props;

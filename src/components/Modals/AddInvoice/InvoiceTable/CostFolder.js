@@ -347,7 +347,7 @@ class CostFolder extends Component {
                         已选{selectedRowKeys.length}笔 合计¥
                         <span className="fs-20 fw-500">{money}</span>
                       </span>
-                      <Button type="primary" onClick={() => this.slInvoice()}>生成单据</Button>
+                      <Button type="primary" onClick={() => this.slInvoice()}>发起报销</Button>
                     </div>
                   </div>
                 :
