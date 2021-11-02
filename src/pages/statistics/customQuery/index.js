@@ -7,6 +7,7 @@ import { dateToTime } from '@/utils/util';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import TimeComp from '../../workbench/components/TimeComp';
+import autoHeight from '../../../components/AutoHeight';
 
 const { TreeNode } = Tree;
 const { SHOW_PARENT } = TreeSelect;
@@ -60,6 +61,7 @@ const childColumnns = [{
     </span>
   )
 }, ...commons];
+@autoHeight()
 @connect(({ customQuery, loading, global }) => ({
   loading: loading.effects['customQuery/list'] || false,
   list: customQuery.list,
@@ -279,7 +281,10 @@ class customQuery extends Component {
       // total,
       childLoading,
       deptList,
+      height,
     } = this.props;
+    console.log('render -> height', height);
+
     const lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -330,7 +335,7 @@ class customQuery extends Component {
       )
     }];
     return (
-      <div>
+      <div className="ant-table-wrapper">
         <div style={{background: '#fff', padding: '24px 0'}}>
           <p className="m-l-24 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>自定义查询</p>
           <p className="m-l-24 c-black-65">支持类别、部门、时间等多维度组合查询</p>
@@ -389,7 +394,7 @@ class customQuery extends Component {
                 rowKey="id"
                 defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
                 expandedRowKeys={expandIds}
-                scroll={{ Y: 'calc(100vh-300px)' }}
+                scroll={{ Y: height }}
                 onExpand={(b, r) => {
                   this.setState({
                     expandIds: b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id)
