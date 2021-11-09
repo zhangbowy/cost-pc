@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import ProjectSupplier from '@/components/ProjectSupplier/index';
 import { connect } from 'dva';
+import ProjectSupplier from '@/components/ProjectSupplier/index';
 
 @connect(({ global }) => ({
   list: global._supplierList

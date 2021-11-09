@@ -120,7 +120,7 @@ class BatchImport extends React.PureComponent {
 
                 <Upload
                   accept=".xlsx"
-                  action={`${APP_API}/cost/${type}/import/projectExcel?token=${localStorage.getItem('token')}`}
+                  action={`${APP_API}/cost/project/${type}/projectExcel?token=${localStorage.getItem('token')}`}
                   onChange={this.uploadChange}
                   beforeUpload={this.beforeUpload}
                   showUploadList

@@ -5,10 +5,10 @@
 /* eslint-disable func-names */
 import axios from 'axios';
 import { stringify } from 'qs';
-import dd from '@/utils/dd.config';
-import Cookie from '@/utils/cookie.js';
 import jsMd5 from 'md5';
 import { constants } from 'crypto';
+import dd from '@/utils/dd.config';
+import Cookie from '@/utils/cookie.js';
 // 加密函数，直接修改对象，无返回
 function encipher (data = {}, nature = '', target = 'sign') {
   const secret = 'sq2019';

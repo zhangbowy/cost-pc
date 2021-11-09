@@ -1,8 +1,8 @@
 import React from 'react';
 import { Modal, Button, message } from 'antd';
-import constants, { defaultTitle, costClassify, classifyShare } from '@/utils/constants';
 import cs from 'classnames';
 import { connect } from 'dva';
+import constants, { defaultTitle, costClassify, classifyShare } from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
 import { JsonParse } from '@/utils/common';
 import styles from './classify.scss';
