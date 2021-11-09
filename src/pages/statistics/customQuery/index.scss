@@ -53,7 +53,7 @@
 .treeSelects{
   padding: 0px 24px;
   overflow: scroll;
-  height: inherit;
+  height: calc(100vh - 320px);
   :global{
     .ant-tree li{
       padding: 0!important;

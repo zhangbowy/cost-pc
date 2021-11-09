@@ -21,6 +21,7 @@ const fileIcon = {
   ppt: _ppt,
   pptx: _ppt,
   jpg: _img,
+  JPG: _img,
   jpeg: _img,
   png: _img,
   gif: _img,

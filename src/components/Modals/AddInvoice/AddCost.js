@@ -2,18 +2,20 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button, Cascader } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button, Cascader, Icon } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import moment from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
 import treeConvert from '@/utils/treeConvert';
+import fileIcon from '@/utils/fileIcon.js';
 import style from './index.scss';
 import UploadImg from '../../UploadImg';
 import AddCostTable from './AddCostTable';
 import { compare, handleProduction, guid, objToArr, getTimeIdNo } from '../../../utils/common';
 import fields from '../../../utils/fields';
 import defaultFunc from './utils';
+import { fileUpload } from '../../../utils/ddApi';
 // import TreeCatogory from './TreeCatogory';
 
 const { addCostValue } = defaultFunc;
@@ -41,6 +43,7 @@ const labelInfo = {
   lbDetail: global.lbDetail,
   currencyList: global.currencyList,
   currencyShow: global.currencyShow,
+  uploadSpace: global.uploadSpace,
   costCategoryList: global.costCategoryList,
   detailFolder: costGlobal.detailFolder,
   userInfo: session.userInfo,
@@ -69,6 +72,7 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       treeList: [],
+      fileUrl: []
       // treeExpandedKeys: [],
     };
   }
@@ -192,6 +196,7 @@ class AddCost extends Component {
                   exchangeRate: currency.exchangeRate || 1,
                   currencySymbol: currency.currencySymbol || '¥',
                   imgUrl: detailFolder.imgUrl,
+                  fileUrl: detailFolder.fileUrl || [],
                 });
                 const expands = detailFolder.selfCostDetailFieldVos ?
                   [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
@@ -238,6 +243,7 @@ class AddCost extends Component {
                 exchangeRate: currency.exchangeRate || 1,
                 currencySymbol: currency.currencySymbol || '¥',
                 imgUrl: detailFolder.imgUrl,
+                fileUrl: detailFolder.fileUrl || [],
               });
               const expands = detailFolder.selfCostDetailFieldVos ?
               [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
@@ -302,6 +308,11 @@ class AddCost extends Component {
       });
     }
     });
+  }
+
+  //  预览附件
+  previewFiless = () => {
+    message.error('钉钉暂时不支持未提交单据附件的预览，请提交后预览/下载');
   }
 
   handleDept = (lists, userIds) => {
@@ -420,7 +431,8 @@ class AddCost extends Component {
       currencyId,
       currencyName,
       exchangeRate,
-      currencySymbol
+      currencySymbol,
+      fileUrl
     } = this.state;
     const _this = this;
 
@@ -440,6 +452,7 @@ class AddCost extends Component {
           costDate,
           val,
           imgUrl,
+          fileUrl,
           shareAmount,
           details,
           lbDetail,
@@ -701,21 +714,24 @@ class AddCost extends Component {
     });
   }
 
-  // onTreeExpand = (key) => {
-  //   console.log(key);
-  //   const { treeExpandedKeys } = this.state;
-  //   let newArr = [...treeExpandedKeys];
-  //   if (Array.isArray(key)) {
-  //     newArr = key;
-  //   } else if (newArr.includes(key)) {
-  //     newArr = newArr.filter(it => it !== key);
-  //   } else {
-  //     newArr = [...newArr, key];
-  //   }
-  //   this.setState({
-  //     treeExpandedKeys: newArr,
-  //   });
-  // }
+  // 上传附件
+  uploadFiles = (callback) => {
+    const _this = this;
+    this.props.dispatch({
+      type: 'global/grantUpload',
+      payload: {},
+    }).then(() => {
+      const { uploadSpace } = this.props;
+      fileUpload({spaceId: uploadSpace, max: 9}, (arr) => {
+        let file = _this.state.fileUrl;
+        file = [...file, ...arr];
+        _this.setState({
+          fileUrl: file,
+        });
+        if (callback) callback();
+      });
+    });
+  }
 
   render() {
     const {
@@ -747,6 +763,7 @@ class AddCost extends Component {
       currencySymbol,
       currencyId,
       treeList,
+      fileUrl
     } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
@@ -952,6 +969,66 @@ class AddCost extends Component {
                     }
                     return (
                       <>
+                        {
+                          it.fieldType === 7 &&
+                          <Col span={12}>
+                            <Form.Item
+                              label={it.name}
+                              {...formItemLayout}
+                            >
+                              {
+                                getFieldDecorator('fileUrl', {
+                                  initialValue: fileUrl && fileUrl.length ? fileUrl : null,
+                                  rules: [{
+                                    required: !!(showField.fileUrl.isWrite),
+                                    message: '请选择附件'
+                                  }]
+                                })(
+                                  <Button
+                                    onClick={() => this.uploadFiles((val) => {
+                                      if (val && val.length) {
+                                        this.props.form.setFieldsValue({ fileUrl: val });
+                                      }
+                                    })}
+                                    disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
+                                      || (modify && !showField.fileUrl.isModify)}
+                                  >
+                                    <Icon type="upload" /> 上传文件
+                                  </Button>
+                                )
+                              }
+                              {
+                                it.itemExplain && !!(it.itemExplain.length) &&
+                                it.itemExplain.map(item => (
+                                  <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                    {item.note}
+                                  </p>
+                                ))
+                              }
+                              <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
+                                支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+                              </p>
+                              {
+                                fileUrl.map((item, index) => (
+                                  <div key={item.fileId} className={style.fileList} onClick={() => this.previewFiless(item)}>
+                                    <div className={style.fileIcon}>
+                                      <img
+                                        className='attachment-icon'
+                                        src={fileIcon[item.fileType]}
+                                        alt='attachment-icon'
+                                      />
+                                      <span className="eslips-1">{item.fileName}</span>
+                                    </div>
+                                    <i
+                                      className="iconfont icondelete_fill"
+                                      onClick={(e) => this.onDelFile(index, e, modify && !showField.fileUrl.isModify)}
+                                    />
+                                  </div>
+                                ))
+                              }
+                            </Form.Item>
+                          </Col>
+                        }
                         {
                           it.field === 'amount' && !!(showField.amount.status) &&
                           <Col span={12}>

@@ -1,0 +1,19 @@
+.btnStyle{
+  :global{
+    .ant-radio-button-wrapper{
+      margin-left: 8px;
+      border-radius: 2px;
+      background: #F8F8F8;
+      border: none;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 13px;
+    }
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
+      background: #00C795;
+      color: #fff;
+    }
+    .ant-radio-button-wrapper:not(:first-child)::before{
+      width: 0;
+    }
+  }
+}

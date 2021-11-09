@@ -391,10 +391,10 @@ class customQuery extends Component {
                 pagination={false}
                 loading={loading}
                 expandIcon={(props) => this.customExpandIcon(props)}
-                rowKey="id"
+                rowKey={record => record.sid || record.id}
                 defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
                 expandedRowKeys={expandIds}
-                scroll={{ Y: height }}
+                scroll={{ y: 'calc(100vh - 400px)' }}
                 onExpand={(b, r) => {
                   this.setState({
                     expandIds: b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id)

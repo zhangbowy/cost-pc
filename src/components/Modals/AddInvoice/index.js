@@ -167,9 +167,7 @@ class AddInvoice extends Component {
       }
     }, {
       url: 'global/usableProject',
-      payload: {
-        type: 1,
-      }
+      payload: {}
     }];
     if (!Number(templateType)) {
       arr.push({

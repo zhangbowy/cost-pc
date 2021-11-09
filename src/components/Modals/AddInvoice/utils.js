@@ -218,6 +218,7 @@ export default {
     costDate,
     val,
     imgUrl,
+    fileUrl,
     shareAmount,
     details,
     lbDetail,
@@ -232,6 +233,7 @@ export default {
   }) => {
     let detail = {
       costDate,
+      fileUrl,
       note: val.note || '',
       costSum: val.costSum,
       categoryId: val.categoryId,

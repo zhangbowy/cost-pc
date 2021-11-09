@@ -11,6 +11,7 @@ import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import Search from 'antd/lib/input/Search';
+import cs from 'classnames';
 import { getArrayValue, invoiceStatus } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import HeadRight from '@/pages/workbench/components/HeadRight';
@@ -23,8 +24,9 @@ import LeftPie from './components/Boss/LeftPie';
 import RightChart from './components/Boss/RightChart';
 import Boss from './components/Boss';
 import { dateToTime } from '../../utils/util';
-import TimeComp from './components/TimeComp';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
+import CenterReport from './components/Boss/CenterReport';
+import BottomChart from './components/Boss/BottomChart';
 
 @Form.create()
 @connect(({ loading, workbench, session, global, costGlobal }) => ({
@@ -482,7 +484,7 @@ class Workbench extends PureComponent {
                 visible={!bossVisible}
                 changeBoss={this.onSetUser}
               />
-              <div className={style.app_header}>
+              <div className={isBoss ? cs(style.app_header, style.appBoss_header) : style.app_header}>
                 <Header
                   personal={personal || {}}
                   onOk={() => this.onPersonal()}
@@ -498,29 +500,23 @@ class Workbench extends PureComponent {
               }
               {
                 isBoss &&
-                <div className={style.ad} style={{ margin: '24px 0 16px 24px', alignItems: 'center' }}>
-                  <p className="c-black-85 fs-18 fw-500 m-r-16">阿米巴支出简报</p>
-                  <TimeComp onChangeData={this.onChangeState} submitTime={submitTime} />
-                </div>
+                <CenterReport
+                  data={submitReport || {}}
+                  submitReport={submitReport}
+                  submitReportDetail={submitReportDetail}
+                  reportPage={reportPage}
+                  reportChange={this.reportChange}
+                  submitTime={submitTime}
+                  onChangeData={this.onChangeState}
+                  reportTotal={reportTotal}
+                  loanSumVo={loanSumVo}
+                  onLink={this.onLink}
+                  loading={chartLoading}
+                />
               }
               {
                 isBoss &&
                 <div className={style.ad} style={{ marginTop: 0 }}>
-                  <div className={style.rightCharts}>
-                    <RightChart
-                      data={submitReport || {}}
-                      submitReport={submitReport}
-                      submitReportDetail={submitReportDetail}
-                      reportPage={reportPage}
-                      reportChange={this.reportChange}
-                      submitTime={submitTime}
-                      onChangeData={this.onChangeState}
-                      reportTotal={reportTotal}
-                      loanSumVo={loanSumVo}
-                      onLink={this.onLink}
-                      loading={chartLoading}
-                    />
-                  </div>
                   <LeftPie
                     {...this.props}
                     data={submitReport || {}}
@@ -528,96 +524,115 @@ class Workbench extends PureComponent {
                     flagMenu={flagMenu}
                     submitTime={submitTime}
                   />
+                  <RightChart
+                    data={submitReport || {}}
+                    submitReport={submitReport}
+                    submitReportDetail={submitReportDetail}
+                    reportPage={reportPage}
+                    reportChange={this.reportChange}
+                    submitTime={submitTime}
+                    onChangeData={this.onChangeState}
+                    reportTotal={reportTotal}
+                    loanSumVo={loanSumVo}
+                    onLink={this.onLink}
+                    loading={chartLoading}
+                  />
                 </div>
               }
               {
                 isBoss &&
-                <p className="fw-500 fs-18 c-black-85 m-l-24 m-b-12">我发起的单据</p>
+                <BottomChart
+                  submitTime={submitTime}
+                  onChangeData={this.onChangeState}
+                />
               }
-              <div
-                className="content-dt"
-                style={{
-                  padding: '0 0 32px 0',
-                  height: 'auto',
-                  margin: isBoss ? '0 24px 24px 24px' : '24px'
-                }}
-              >
-                <div style={{ margin: '0 32px' }}>
-                  {
-                    !isBoss &&
-                    <p className="fw-500 fs-14 c-black-85 m-t-16">我发起的单据</p>
-                  }
-                  <div className={style.searchs} style={{ marginTop: isBoss ? '24px' : '16px' }}>
-                    <Form layout="inline" style={{display: 'flex'}}>
-                      <Form.Item label="单据状态" style={{marginRight: '24px'}}>
-                        <Select style={{width: '160px'}} value={isComplete} onChange={(val) => this.onComplete(val, 'isComplete')}>
-                          <Select.Option value={false}>未完成</Select.Option>
-                          <Select.Option value>已完成</Select.Option>
-                          <Select.Option value="all">全部</Select.Option>
-                        </Select>
-                      </Form.Item>
-                      <Form.Item label="单据类型" style={{marginRight: '24px'}}>
-                        <Select
-                          value={invoiceTemplateIds}
-                          style={{width: '160px'}}
-                          dropdownMatchSelectWidth={false}
-                          onChange={(val) => this.onComplete(val, 'invoiceTemplateIds')}
-                          dropdownMenuStyle={{
-                            width: '186px'
-                          }}
-                        >
-                          <Select.Option value="all">全部</Select.Option>
-                          {
-                            invoiceList.map(it => (
-                              <Select.Option value={it.id} key={it.id}>{it.name}</Select.Option>
-                            ))
-                          }
-                        </Select>
-                      </Form.Item>
-                      <div className={style.onreset} onClick={() => this.onreset()}>
-                        <Icon type="sync" />
-                        <span className="m-l-4">重置</span>
-                      </div>
-                    </Form>
-                    <Search
-                      placeholder="单号、事由、收款人"
-                      style={{ width: '272px' }}
-                      onSearch={(e) => this.onSearch(e)}
-                      onInput={e => this.setState({ reason: e.target.value })}
-                      value={reason}
+              {
+                !isBoss &&
+                <div
+                  className="content-dt"
+                  style={{
+                    padding: '0 0 32px 0',
+                    height: 'auto',
+                    margin: isBoss ? '0 24px 24px 24px' : '24px'
+                  }}
+                >
+                  <div style={{ margin: '0 32px' }}>
+                    {
+                      !isBoss &&
+                      <p className="fw-500 fs-14 c-black-85 m-t-16">我发起的单据</p>
+                    }
+                    <div className={style.searchs} style={{ marginTop: isBoss ? '24px' : '16px' }}>
+                      <Form layout="inline" style={{display: 'flex'}}>
+                        <Form.Item label="单据状态" style={{marginRight: '24px'}}>
+                          <Select style={{width: '160px'}} value={isComplete} onChange={(val) => this.onComplete(val, 'isComplete')}>
+                            <Select.Option value={false}>未完成</Select.Option>
+                            <Select.Option value>已完成</Select.Option>
+                            <Select.Option value="all">全部</Select.Option>
+                          </Select>
+                        </Form.Item>
+                        <Form.Item label="单据类型" style={{marginRight: '24px'}}>
+                          <Select
+                            value={invoiceTemplateIds}
+                            style={{width: '160px'}}
+                            dropdownMatchSelectWidth={false}
+                            onChange={(val) => this.onComplete(val, 'invoiceTemplateIds')}
+                            dropdownMenuStyle={{
+                              width: '186px'
+                            }}
+                          >
+                            <Select.Option value="all">全部</Select.Option>
+                            {
+                              invoiceList.map(it => (
+                                <Select.Option value={it.id} key={it.id}>{it.name}</Select.Option>
+                              ))
+                            }
+                          </Select>
+                        </Form.Item>
+                        <div className={style.onreset} onClick={() => this.onreset()}>
+                          <Icon type="sync" />
+                          <span className="m-l-4">重置</span>
+                        </div>
+                      </Form>
+                      <Search
+                        placeholder="单号、事由、收款人"
+                        style={{ width: '272px' }}
+                        onSearch={(e) => this.onSearch(e)}
+                        onInput={e => this.setState({ reason: e.target.value })}
+                        value={reason}
+                      />
+                    </div>
+                    <Table
+                      columns={columns}
+                      dataSource={list}
+                      rowKey="invoiceId"
+                      scroll={{ x: 1000 }}
+                      loading={loading}
+                      pagination={{
+                        current: query.pageNo,
+                        onChange: (pageNumber) => {
+                          this.onQuery({
+                            pageNo: pageNumber,
+                            pageSize: query.pageSize,
+                            reason,
+                          });
+                        },
+                        total,
+                        size: 'small',
+                        showTotal: () => (`共${total}条数据`),
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        onShowSizeChange: (cur, size) => {
+                          this.onQuery({
+                            reason,
+                            pageNo: cur,
+                            pageSize: size
+                          });
+                        }
+                      }}
                     />
                   </div>
-                  <Table
-                    columns={columns}
-                    dataSource={list}
-                    rowKey="invoiceId"
-                    scroll={{ x: 1000 }}
-                    loading={loading}
-                    pagination={{
-                      current: query.pageNo,
-                      onChange: (pageNumber) => {
-                        this.onQuery({
-                          pageNo: pageNumber,
-                          pageSize: query.pageSize,
-                          reason,
-                        });
-                      },
-                      total,
-                      size: 'small',
-                      showTotal: () => (`共${total}条数据`),
-                      showSizeChanger: true,
-                      showQuickJumper: true,
-                      onShowSizeChange: (cur, size) => {
-                        this.onQuery({
-                          reason,
-                          pageNo: cur,
-                          pageSize: size
-                        });
-                      }
-                    }}
-                  />
                 </div>
-              </div>
+              }
             </>
         }
       </div>
