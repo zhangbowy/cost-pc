@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import { Modal, Table, Tooltip } from 'antd';
-import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import Search from 'antd/lib/input/Search';
+import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus } from '@/utils/constants';
 
 function Invoice({ children, lists, onQuery, id, query, total, projectType }) {

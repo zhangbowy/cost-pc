@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import React from 'react';
 import { Modal, Form, Input, Select, Button, message, Switch, Checkbox, Cascader } from 'antd';
-import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
+import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
 import UploadImg from '@/components/UploadImg';
 import treeConvert from '@/utils/treeConvert';
 

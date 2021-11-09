@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
+import { message } from 'antd';
 import { post } from '@/utils/request';
 import constants from '@/utils/constants';
-import { message } from 'antd';
 import api from './services';
 
 const { PAGE_SIZE } = constants;

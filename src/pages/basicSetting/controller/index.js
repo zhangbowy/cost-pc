@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 
 import React, { useEffect, useState } from 'react';
 import { Tooltip, Button, message, Modal, Divider,Select } from 'antd';

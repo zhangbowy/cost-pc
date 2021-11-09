@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Select, Button, message } from 'antd';
 import cs from 'classnames';
+import { connect } from 'dva';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { repeatMethod } from '@/utils/constants';
-import { connect } from 'dva';
 // import ApproveProcess from './components/approveNode/ApproveProcess';
 import style from './index.scss';
 import Process from './components/Process';

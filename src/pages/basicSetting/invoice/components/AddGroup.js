@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Form, Input, Button, message, Radio } from 'antd';
-import { formItemLayout, defaultTitle, invoiceStatus } from '@/utils/constants';
 import { connect } from 'dva';
+import { formItemLayout, defaultTitle, invoiceStatus } from '@/utils/constants';
 
 const labelItem = {
   costName: '名称',

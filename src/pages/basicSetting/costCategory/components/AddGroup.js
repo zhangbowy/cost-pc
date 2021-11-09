@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Form, Input, Button, message, Radio, Cascader, Select } from 'antd';
-import { formItemLayout, defaultTitle } from '@/utils/constants';
 import { connect } from 'dva';
+import { formItemLayout, defaultTitle } from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
 import { findIndexArray } from '@/utils/common';
 import fields from '@/utils/fields';
