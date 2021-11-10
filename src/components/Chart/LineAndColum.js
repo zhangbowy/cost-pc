@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chart, Tooltip, Legend, Point, Line, Interval, Interaction } from 'bizcharts';
+import { Chart, Tooltip, Legend, Point, Line, Interval, Interaction, Axis } from 'bizcharts';
 // import { defaultColor } from '../../utils/constants';
 
 const LineAndColumn = () => {
@@ -70,6 +70,7 @@ const LineAndColumn = () => {
       autoFit
       height={430}
       data={data}
+      theme={{ maxColumnWidth: 32 }}
       onGetG2Instance={(chart) => {
         chartIns = chart;
       }}
@@ -117,16 +118,31 @@ const LineAndColumn = () => {
       <Tooltip shared />
       <Interval position="time*waiting" color={colors[0]} />
       <Interaction type="active-region" />
+      <Axis
+        name="people"
+        grid={{
+          align: 'center', // 网格顶点从两个刻度中间开始
+          line: { // 当line为null时则不展示网格线
+            type: 'line', // 网格线类型 line circle polygon
+            style: {
+                stroke: '#d9d9d9', // 网格线的颜色
+                lineWidth: 1, // 网格线的宽度复制代码
+                lineDash: [1, 1] // 网格线的虚线配置，第一个参数描述虚线的实部占多少像素，第二个参数描述虚线的虚部占多少像素
+            }
+          }, // 网格线的样式配置，原有属性为 line
+          alignTick: false, // 是否同刻度线对齐，如果值为 false，则会显示在两个刻度中间。 alignTick设为false，且数据类型为 category 时，tickLine 的样式变为 category 数据专有样式
+        }}
+      />
       <Line
         position="time*people"
         color={colors[1]}
-        size={3}
-        shape="smooth"
+        size={2}
+        shape="line"
       />
       <Point
         position="time*people"
         color={colors[1]}
-        size={3}
+        size={2}
         shape="circle"
       />
     </Chart>
