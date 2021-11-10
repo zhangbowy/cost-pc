@@ -307,3 +307,36 @@
   }
 }
 
+.titles{
+  display: flex;
+  height: 22px;
+  align-items: center;
+  .notes{
+    display: flex;
+    flex-direction: column;
+    span{
+      display: inline-block;
+      max-width: 252px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.treeNodes{
+  display: flex;
+  height: 38px;
+  align-items: center;
+  .notes{
+    display: flex;
+    flex-direction: column;
+    span{
+      display: inline-block;
+      max-width: 252px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}

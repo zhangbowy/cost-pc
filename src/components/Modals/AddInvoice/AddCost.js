@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button, Cascader } from 'antd';
+import { Modal, Form, Input, Row, Col, Divider, InputNumber, Select, DatePicker, message, TreeSelect, Tree, Button, Cascader, Tooltip } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import moment from 'moment';
@@ -369,7 +369,7 @@ class AddCost extends Component {
       name: 'costName',
       tId: 'value',
       tName: 'title',
-      otherKeys: ['type','showField', 'icon']
+      otherKeys: ['type','showField', 'icon', 'note']
     }, newList);
     function addParams(lists){
       lists.forEach(it => {
@@ -517,14 +517,27 @@ class AddCost extends Component {
           value={item.value}
           selectable={!item.disabled}
           title={(
-            <div>
+            <div className={cs('icons', item.type ? style.treeNodes : style.titles)}>
               {
                 item.type ?
-                  <i className={cs(`icon${item.icon}`, 'iconfont')} />
+                  <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-28')} />
                   :
                   null
               }
-              <span className={`${item.type ? 'c-black-85' : 'c-black-45'}`}>{item.title}</span>
+              <div className={style.notes}>
+                <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
+                {
+                  item.note && item.type ?
+                    item.note.length > 15 ?
+                      <Tooltip title={item.note || '-'} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                        <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                      </Tooltip>
+                      :
+                      <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                      :
+                      null
+                }
+              </div>
             </div>
           )}
         >
@@ -538,14 +551,27 @@ class AddCost extends Component {
       value={item.value}
       selectable={!item.disabled}
       title={(
-        <div className="icons">
+        <div className={cs('icons', item.type ? style.treeNodes : style.titles)}>
           {
             item.type ?
-              <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
+              <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-28')} style={{verticalAlign: 'middle'}} />
               :
               null
           }
-          <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
+          <div className={style.notes}>
+            <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
+            {
+              item.note && item.type ?
+                item.note.length > 15 ?
+                  <Tooltip title={item.note || '-'} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                  </Tooltip>
+                  :
+                  <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                  :
+                  null
+            }
+          </div>
         </div>
       )}
     />;
@@ -806,7 +832,7 @@ class AddCost extends Component {
                           placeholder="请选择"
                           onChange={this.onChange}
                           style={{width: '100%'}}
-                          dropdownStyle={{height: '300px'}}
+                          dropdownStyle={{height: '450px'}}
                           disabled={modify && details.categoryId}
                           showSearch
                           treeNodeFilterProp="label"
