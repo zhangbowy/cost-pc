@@ -116,7 +116,11 @@ const LineAndColumn = () => {
         }}
       />
       <Tooltip shared />
-      <Interval position="time*waiting" color={colors[0]} />
+      <Interval
+        position="time*waiting"
+        color={colors[0]}
+
+      />
       <Interaction type="active-region" />
       <Axis
         name="people"
