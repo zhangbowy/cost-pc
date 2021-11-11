@@ -77,10 +77,9 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                 ))
               }
             </div>
-            <div style={{width: '100%'}}>
+            <div style={{width: '100%', margin: '0 -24px'}}>
               <TinyAreaChart
-                options={{ height: 52,  line: { color: '#1ACEB3', size: 2 }, }}
-                areaStyle={{ color: '#1ACEB3' }}
+                options={{ }}
               />
             </div>
           </div>
@@ -89,7 +88,7 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
               const Items = (
                 <>
                   <img src={it.img} alt="展示图片" />
-                  <p className="c-black-85 fw-500 fs-24 m-l-24">¥5,000.9</p>
+                  <p className="c-black-85 fw-500 fs-24 m-l-24">¥{data[it.key] ? data[it.key]/100 : 0}</p>
                   <p className="c-black-65 m-l-24">{it.name}</p>
                 </>
               );

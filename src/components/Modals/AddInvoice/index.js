@@ -167,7 +167,9 @@ class AddInvoice extends Component {
       }
     }, {
       url: 'global/usableProject',
-      payload: {}
+      payload: {
+        project: 1,
+      }
     }];
     if (!Number(templateType)) {
       arr.push({
@@ -819,13 +821,7 @@ class AddInvoice extends Component {
         let error = '';
         if (!flag) {
           if (checkStandard && checkStandard.second) {
-            costDetailsVo.forEach(item => {
-              if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
-                newArr.push({ ...item, exceedMessage: checkStandard.second[item.key].join('；') });
-              } else {
-                newArr.push({ ...item, exceedMessage: '' });
-              }
-            });
+            newArr = defaultFunc.handleExceed(costDetailsVo,checkStandard);
           } else if (checkStandMsg) {
             newArr = costDetailsVo;
             error = true;

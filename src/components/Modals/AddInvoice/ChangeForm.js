@@ -5,6 +5,7 @@ import { Form, Input, Row, Col, Divider, Button,
 import moment from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
 import fileIcon from '@/utils/fileIcon.js';
+import treeConvert from '@/utils/treeConvert';
 import UploadImg from '../../UploadImg';
 import SelectPeople from '../SelectPeople';
 import ReceiptModal from '../ReceiptModal';
@@ -460,7 +461,16 @@ class ChangeForm extends Component {
       depList,
       officeList,
     } = this.props;
-
+    const projectList = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'name',
+      id: 'id',
+      tName: 'label',
+      tId: 'value',
+      otherKeys: ['type']
+    }, usableProject.sort());
+    console.log(projectList);
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
     const formItemLayout = {
@@ -1129,6 +1139,8 @@ class ChangeForm extends Component {
                                   optionLabelProp="label"
                                   getPopupContainer={triggerNode => triggerNode.parentNode}
                                   disabled={modify && !showField.receiptId.isModify}
+                                  showSearch
+                                  optionFilterProp="label"
                                 >
                                   {
                                     accountList.map(it => (

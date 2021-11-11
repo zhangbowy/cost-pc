@@ -1,4 +1,4 @@
-import { get } from '@/utils/request';
+import { get, post } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -35,6 +35,8 @@ export default {
     deptTree: [],
     reportTotal: 0,
     loanSumVo: {},
+    barCharts: [], // 柱状图
+    lineCharts: [], // 折线图
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -126,6 +128,16 @@ export default {
         payload: {
           pieList: response.pieChartVos || [],
           totalSum: response.totalSum || 0,
+        },
+      });
+    },
+    *chartTrend({ payload }, { call, put }) {
+      const response = yield call(post, api.trend, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          barCharts: response.barCharts || [],
+          lineCharts: response.lineCharts || [],
         },
       });
     },

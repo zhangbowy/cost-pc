@@ -51,6 +51,8 @@ import BottomChart from './components/Boss/BottomChart';
   reportTotal: workbench.reportTotal,
   loanSumVo: workbench.loanSumVo,
   roleStatics: costGlobal.roleStatics,
+  lineCharts: workbench.lineCharts,
+  barCharts: workbench.barCharts,
   chartLoading: loading.effects['workbench/submitReport'] || false,
 }))
 class Workbench extends PureComponent {
@@ -102,6 +104,13 @@ class Workbench extends PureComponent {
     }, {
       url: 'workbench/deptTree',
       params: {}
+    }, {
+      url: 'workbench/chartTrend',
+      params: {
+        startTime: 1609430400000,
+        endTime: 1640966399999,
+        dateType: 2
+      }
     }];
     const fetchs = fetchList.map(it => it.url);
     const arr = fetchs.map((it, index) => {
@@ -507,7 +516,7 @@ class Workbench extends PureComponent {
                   reportPage={reportPage}
                   reportChange={this.reportChange}
                   submitTime={submitTime}
-                  onChangeData={this.onChangeState}
+                  onChangeState={this.onChangeState}
                   reportTotal={reportTotal}
                   loanSumVo={loanSumVo}
                   onLink={this.onLink}

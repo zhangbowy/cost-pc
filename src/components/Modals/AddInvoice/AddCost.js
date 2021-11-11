@@ -470,6 +470,7 @@ class AddCost extends Component {
           const newArr = [];
           detail.costDetailShareVOS.forEach(it => {
             newArr.push({
+              key: it.key || getTimeIdNo,
               dingUserId: it.users && it.users.length ? it.users[0].userId : '',
               costDetailId: val.categoryId,
               totalAmount: (((val.costSum) * 1000)/10).toFixed(0),

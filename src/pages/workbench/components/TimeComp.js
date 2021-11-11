@@ -88,7 +88,7 @@ class TimeComp extends PureComponent {
                 getFieldDecorator('time', {
                   initialValue: '0_m'
                 })(
-                  <Radio.Group className={style.btnStyle}>
+                  <Radio.Group className={style.btnStyle} onChange={e => this.onChange(e.target.value)}>
                     {
                       dateTypeThree.map(it => (
                         <Radio.Button

@@ -119,7 +119,6 @@ const LineAndColumn = () => {
       <Interval
         position="time*waiting"
         color={colors[0]}
-
       />
       <Interaction type="active-region" />
       <Axis
@@ -129,9 +128,32 @@ const LineAndColumn = () => {
           line: { // 当line为null时则不展示网格线
             type: 'line', // 网格线类型 line circle polygon
             style: {
-                stroke: '#d9d9d9', // 网格线的颜色
+                stroke: '#E8E8E8', // 网格线的颜色
                 lineWidth: 1, // 网格线的宽度复制代码
                 lineDash: [1, 1] // 网格线的虚线配置，第一个参数描述虚线的实部占多少像素，第二个参数描述虚线的虚部占多少像素
+            }
+          }, // 网格线的样式配置，原有属性为 line
+          alignTick: false, // 是否同刻度线对齐，如果值为 false，则会显示在两个刻度中间。 alignTick设为false，且数据类型为 category 时，tickLine 的样式变为 category 数据专有样式
+        }}
+      />
+      <Axis
+        name="time"
+        line={{
+          stroke: '#dddddd',
+          fill: '#ffffff',
+          lineWidth: 1
+        }}
+      />
+      <Axis
+        name="waiting"
+        grid={{
+          align: 'top', // 网格顶点从两个刻度中间开始
+          line: { // 当line为null时则不展示网格线
+            type: 'line', // 网格线类型 line circle polygon
+            style: {
+                stroke: '#E8E8E8', // 网格线的颜色
+                lineWidth: 1, // 网格线的宽度复制代码
+                lineDash: [2, 2] // 网格线的虚线配置，第一个参数描述虚线的实部占多少像素，第二个参数描述虚线的虚部占多少像素
             }
           }, // 网格线的样式配置，原有属性为 line
           alignTick: false, // 是否同刻度线对齐，如果值为 false，则会显示在两个刻度中间。 alignTick设为false，且数据类型为 category 时，tickLine 的样式变为 category 数据专有样式
