@@ -338,5 +338,12 @@
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+    :global{
+      .ant-tooltip-inner{
+        max-width: 240px;
+        word-break: break-all;
+        white-space: normal;
+      }
+    }
   }
 }
