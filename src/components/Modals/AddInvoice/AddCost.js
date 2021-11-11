@@ -836,6 +836,7 @@ class AddCost extends Component {
                           disabled={modify && details.categoryId}
                           showSearch
                           treeNodeFilterProp="label"
+                          treeNodeLabelProp="label"
                           // treeExpandedKeys={treeExpandedKeys}
                           // onTreeExpand={this.onTreeExpand}
                           treeDefaultExpandAll
