@@ -525,15 +525,20 @@ class AddCost extends Component {
                   null
               }
               <div className={style.notes}>
-                <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
+                <span
+                  className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`}
+                  style={{verticalAlign: 'middle', lineHeight: 1}}
+                >
+                  {item.title}
+                </span>
                 {
                   item.note && item.type ?
                     item.note.length > 15 ?
                       <Tooltip title={item.note || '-'} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                        <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                        <span className="c-black-45 fs-12 m-l-8" style={{lineHeight: 1, marginTop: '7px'}}>{item.note}</span>
                       </Tooltip>
                       :
-                      <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                      <span className="c-black-45 fs-12 m-l-8" style={{lineHeight: 1, marginTop: '7px'}}>{item.note}</span>
                       :
                       null
                 }
@@ -559,15 +564,20 @@ class AddCost extends Component {
               null
           }
           <div className={style.notes}>
-            <span className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`} style={{verticalAlign: 'middle'}}>{item.title}</span>
+            <span
+              className={`m-l-8 ${item.type ? 'c-black-85' : 'c-black-45'}`}
+              style={{verticalAlign: 'middle', lineHeight: 1}}
+            >
+              {item.title}
+            </span>
             {
               item.note && item.type ?
                 item.note.length > 15 ?
                   <Tooltip title={item.note || '-'} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                    <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                    <span className="c-black-45 fs-12 m-l-8" style={{lineHeight: 1, marginTop: '7px'}}>{item.note}</span>
                   </Tooltip>
                   :
-                  <span className="c-black-45 fs-12 m-l-8">{item.note}</span>
+                  <span className="c-black-45 fs-12 m-l-8" style={{lineHeight: 1, marginTop: '7px'}}>{item.note}</span>
                   :
                   null
             }
