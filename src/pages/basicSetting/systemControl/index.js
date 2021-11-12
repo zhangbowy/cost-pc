@@ -21,6 +21,17 @@ const viewSum = [{
   value: 2,
   pro: '5月数据包含：支出明细发生日期在本月范围内，且已审核通过'
 }];
+const moneySum = [{
+  title: '标记已付',
+  name: '标记已付',
+  value: 0,
+  pro: '线下其他渠道支付后，在鑫支出仅做标记使用'
+}, {
+  title: '线上支付',
+  name: '线上支付',
+  value: 1,
+  pro: '线上打开支付宝，验密后直接付款'
+}];
 @connect(({ systemControl, loading }) => ({
   isModifyInvoice: systemControl.isModifyInvoice,
   isModifyReload: systemControl.isModifyReload,
@@ -223,6 +234,19 @@ class SystemControl extends Component {
           <Radio.Group className="m-t-16" value={statisticsDimension} onChange={e => this.onChanges(e, 'statisticsDimension')}>
             {
               viewSum.map(it => (
+                <Radio value={it.value} style={{ display: 'block' }} key={it.value}>
+                  <span className="fs-14 c-black-85">{it.title}</span>
+                  <p className="fs-14 c-black-45" style={{marginLeft: '23px'}}>{it.pro}</p>
+                </Radio>
+              ))
+            }
+          </Radio.Group>
+        </div>
+        <div className={style.content}>
+          <p className="fs-16 c-black-85 fw-500">默认支付方式</p>
+          <Radio.Group className="m-t-16" value={statisticsDimension} onChange={e => this.onChanges(e, 'statisticsDimension')}>
+            {
+              moneySum.map(it => (
                 <Radio value={it.value} style={{ display: 'block' }} key={it.value}>
                   <span className="fs-14 c-black-85">{it.title}</span>
                   <p className="fs-14 c-black-45" style={{marginLeft: '23px'}}>{it.pro}</p>

@@ -710,7 +710,7 @@ class InvoiceDetail extends Component {
             showFields={showFields}
             details={details}
             previewImage={this.previewImage}
-            previewFiles={this.previewFile}
+            previewFiles={this.previewFiles}
           />
           {
             aliTrip.alitripCostCenterId && (userInfo.userId === details.userId) &&

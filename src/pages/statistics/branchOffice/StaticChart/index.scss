@@ -1,0 +1,12 @@
+.menuBtn{
+  width: 186px;
+  :global(.pd-20-9) {
+    width: 186px;
+  }
+  :global(.ant-dropdown-menu) {
+    width: 186px;
+  }
+  :global(.ant-dropdown-menu-item:hover) {
+    background: #fafafa;
+  }
+}

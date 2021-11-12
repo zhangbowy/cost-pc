@@ -1,0 +1,49 @@
+.centerReport{
+  height: 324px;
+  margin: 16px 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  .title{
+    margin:0 24px;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    margin-bottom: 24px;
+    height: 52px;
+  }
+  .content{
+    height: 220px;
+    margin:0 24px;
+    display: flex;
+    .left{
+      padding: 24px;
+      width:29.1%;
+      height: 220px;
+      flex: 1;
+      background: rgba(245, 247, 250, 0.5);
+      border-radius: 12px;
+      .portion{
+        display: flex;
+        height: 22px;
+        align-items: center;
+        margin-bottom: 16px;
+        p{
+          margin-right: 32px;
+        }
+      }
+    }
+    .list{
+      width: 16.3%;
+      max-width: 191px;
+      height: 220px;
+      background: #F1F7FF;
+      border-radius: 12px;
+      margin-left: 16px;
+      img{
+        width: 96px;
+        margin-top: 24px;
+        margin-bottom: 16px;
+      }
+    }
+  }
+}

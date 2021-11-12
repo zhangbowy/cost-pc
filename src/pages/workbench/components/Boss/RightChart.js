@@ -1,87 +1,122 @@
 /* eslint-disable react/no-did-update-set-state */
-import React from 'react';
+import React, { useState } from 'react';
 // import PropTypes from 'prop-types';
-import { Divider, Spin } from 'antd';
-import warn from '../../../../assets/img/warn.png';
-import styles from './index.scss';
-import TempTable from './TempTable';
+import { Spin } from 'antd';
+import style from './leftPie.scss';
 
 const list = [{
-  name: '同比',
-  icon: 'iconshangsheng',
-  key: 'yearOnYear',
-  type: 'yearOnYearSymbolType'
+  name: '部门预警',
+  key: 0,
+  item: 'costWarningForDeptVos',
+  arr:  ['deptName', 'exceedAmount', 'annulus'],
 }, {
-  name: '环比',
-  icon: 'iconxiajiang',
-  key: 'annulus',
-  type: 'annulusSymbolType'
+  name: '标准预警',
+  key: 1,
+  item: 'costWarningForStandardVos',
+  arr:  ['standardName', 'exceedAmount', 'annulus'],
 }];
-const RightChart = ({ data, loading, submitReportDetail, reportChange, submitTime, reportPage, reportTotal, loanSumVo, onLink }) => {
+const lists = [{
+  name: '数量',
+  key: 0,
+}, {
+  name: '金额',
+  key: 1,
+}];
+const head = {
+  0: [{
+    title: '部门名称',
+    key: 0,
+  }, {
+    title: '超标金额（元）',
+    key: 1,
+  }, {
+    title: '环比',
+    key: 2,
+  }],
+  11: [{
+    title: '费用标准',
+    key: 0,
+  }, {
+    title: '超标金额（元）',
+    key: 1,
+  }, {
+    title: '环比',
+    key: 2,
+  }],
+  10: [{
+    title: '费用标准',
+    key: 0,
+  }, {
+    title: '超标次数（次）',
+    key: 1,
+  }, {
+    title: '环比',
+    key: 2,
+  }],
+};
+const RightChart = ({ loading, submitReport }) => {
+  const [type, setType] = useState(0);
+  const [count, setCount] = useState(0);
   return (
     <Spin spinning={loading}>
-      <div className={styles.lefts}>
-        <div className={styles.head}>
-          <div className={styles.headL}>
-            <i className="iconfont iconzongzhichu fs-24" style={{ color: '#00C795' }} />
-          </div>
-          <div>
-            <p className="fs-16 c-black-85 fw-500" style={{ marginBottom: '2px' }}>企业总支出</p>
-            <p className="fs-12 c-black-45">总支出包含审批通过，已确定会支出的数据</p>
-          </div>
-        </div>
-        <div style={{ cursor: 'pointer' }} onClick={() => onLink(0)}>
-          <p className="fs-36 fw-500 c-black-85 li-36 numF">¥ {data.totalCostSum ? data.totalCostSum/100 : 0}</p>
-          <div className={styles.pro}>
+      <div className={style.right}>
+        <div className={style.title}>
+          <div className={style.tLeft}>
             {
               list.map(it => (
-                <div key={it.key} className="m-r-24">
-                  <span className="c-black-65 fs-14">{it.name}</span>
+                <span
+                  onClick={() => { setType(it.key); setCount(0); }}
+                  key={it.key}
+                  className={it.key === type ? style.active : ''}
+                >
+                  {it.name}
+                </span>
+              ))
+            }
+          </div>
+          {
+            !!type &&
+            <div className={style.tRight}>
+              {
+                lists.map(it => (
+                  <span
+                    onClick={() => setCount(it.key)}
+                    key={it.key}
+                    className={it.key === count ? style.active : ''}
+                  >
+                    {it.name}
+                  </span>
+                ))
+              }
+            </div>
+          }
+        </div>
+        <div className={style.list}>
+          <div className={style.hl}>
+            {
+              head[type ? `${type}${count}` : type].map(it => (
+                <span key={it.key}>{it.title}</span>
+              ))
+            }
+            {
+              submitReport[list[type].item] && submitReport[list[type].item].map(it => (
+                <div>
                   {
-                    data[it.type] !== null &&
-                    <i className={`iconfont ${data[it.type] === 1 ? 'iconxiajiang' : 'iconshangsheng'}`} />
+                    list[type].arr.map(item => (
+                      <span key={item} >
+                        {it[item] || '-'}
+                      </span>
+                    ))
                   }
-                  <span className="c-black-85 fs-12">{data[it.key] || 0}{data[it.type] !== null && '%'}</span>
                 </div>
               ))
             }
-
           </div>
         </div>
-        <Divider type="horizontal" style={{margin: '20px 0 0 0'}} />
-        <div className={styles.centers}>
-          <div className={styles.cPrice} onClick={() => onLink(0, 2)}>
-            <p className="fs-20 fw-500 c-black-85 numF">¥{data.needPayCostSum ? data.needPayCostSum/100 : 0}</p>
-            <p className="fs-14 c-black-45">待付金额</p>
-          </div>
-          <Divider type="vertical" style={{ margin: 0, height: '48px' }} />
-          <div className={styles.cPrice} onClick={() => onLink(0, 3)}>
-            <p className="fs-20 fw-500 c-black-85 numF">¥{data.paidCostSum ? data.paidCostSum/100 : 0}</p>
-            <p className="fs-14 c-black-45">已付金额</p>
-          </div>
+        <div className={style.contPro}>
+          <i className="iconfont iconshuomingwenzi" />
+          <span>有效控制超标费用，一年至少可节省10%的无效支出！</span>
         </div>
-        <TempTable
-          loanList={submitReportDetail}
-          reportChange={reportChange}
-          reportType={3}
-          submitTime={submitTime}
-          page={reportPage}
-          total={reportTotal}
-          loanSumVo={loanSumVo}
-        >
-          <div className={styles.footer}>
-            <div className={styles.footL}>
-              <div className={styles.footLI}>
-                <img alt="警告" src={warn} />
-              </div>
-              <span>借款待还金额</span>
-            </div>
-            <div>
-              <span className="fs-14 numF" style={{ color: '#FF2F00' }}>¥ {data.repaymentSum ? data.repaymentSum/100 : 0}</span>
-              <i className="iconfont iconenter c-black-45" />
-            </div>
-          </div>
-        </TempTable>
       </div>
     </Spin>
   );

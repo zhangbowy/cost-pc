@@ -173,6 +173,7 @@ export default {
         detailFolderId: item.detailFolderId || '',
         attribute: item.attribute,
         exceedMessage: item.exceedMessage || '',
+        exceedContents: item.exceedContents || []
       };
       if (item.flightLevel || (item.flightLevel === 0)) {
         Object.assign(obj, {
@@ -199,6 +200,7 @@ export default {
         item.costDetailShareVOS.forEach(it => {
           arr[index].costDetailShareVOS.push({
             id: it.id || '',
+            key: it.key || getTimeIdNo(),
             'shareAmount': (it.shareAmount * 1000)/10,
             'shareScale': (it.shareScale * 1000)/10,
             'deptId': it.deptId,
@@ -208,6 +210,7 @@ export default {
             deptName: it.deptName,
             userName: it.userName,
             projectId: it.projectId,
+            exceedContents: it.exceedContents || [],
           });
         });
       }
@@ -218,6 +221,7 @@ export default {
     costDate,
     val,
     imgUrl,
+    fileUrl,
     shareAmount,
     details,
     lbDetail,
@@ -232,6 +236,7 @@ export default {
   }) => {
     let detail = {
       costDate,
+      fileUrl,
       note: val.note || '',
       costSum: val.costSum,
       categoryId: val.categoryId,
@@ -334,6 +339,34 @@ export default {
     console.log('detail', detail);
     return detail;
   },
+  handleExceed: (costDetailsVo, checkStandard) => {
+    const newArr = [];
+    costDetailsVo.forEach(item => {
+      let obj = { ...item };
+      if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
+        obj = { ...obj, exceedMessage: checkStandard.second[item.key].join('；') };
+      } else {
+        obj = { ...obj, exceedMessage: '' };
+      }
+      if (checkStandard.exceedContents && checkStandard.exceedContents[item.key]) {
+        obj = {...obj, exceedContents: checkStandard.exceedContents[item.key].exceedContents};
+        const shares = checkStandard.exceedContents[item.key].shares || {};
+        const arr = [];
+        if (item.costDetailShareVOS) {
+          item.costDetailShareVOS.forEach(it => {
+            if (shares[it.key]) {
+              arr.push({ ...it, exceedContents: shares[it.key] });
+            } else {
+              arr.push({ ...it, exceedContents: [] });
+            }
+          });
+          obj = {...obj, costDetailShareVOS: arr};
+        }
+      }
+      newArr.push(obj);
+    });
+    return newArr;
+  }
   // checkInvoice: ({ first, third }) => {
   //   let flag = 0;
   //   switch(first) {

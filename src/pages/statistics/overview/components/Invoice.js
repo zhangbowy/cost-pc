@@ -226,7 +226,7 @@ function InvoicePrice({ children, onQuery, id, title,
                 getPopupContainer={triggerNode => triggerNode.parentNode}
               >
                 {
-                  exportKey[currentType].map(it => (
+                  exportKey[currentType] && exportKey[currentType].map(it => (
                     <Option key={it.key}>{it.value}</Option>
                   ))
                 }

@@ -2,12 +2,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'umi/link';
+import cs from 'classnames';
 import { connect } from 'dva';
 import { Dropdown, Avatar, Icon, Menu ,
   Breadcrumb,
 } from 'antd';
 import withRouter from 'umi/withRouter';
-import boss from '@/assets/img/bossC.png';
 import acc from '@/assets/img/account.png';
 
 import styles from './index.scss';
@@ -108,34 +108,6 @@ class App extends React.PureComponent {
           </span>
           {/* <Link to="/basicSetting/receiptAccount">个人收款账户</Link> */}
         </Menu.Item>
-        <Menu.Item
-          key="workbench"
-        >
-          <span
-            className={styles.headMenu}
-            onClick={() => this.changeLink('/workbench')}
-          >
-            <img src={boss} alt="老板" />
-            <span className="fs-14 c-black-65">{ isBoss ? '切换员工工作台' : '切换老板工作台' }</span>
-          </span>
-          {/* <Link
-            to={{
-              pathname: '/workbench',
-              state: { id: userInfo.workbenchIsBoss ? 2 : 1 }
-            }}
-            replace
-          >
-            { userInfo.workbenchIsBoss ? '切换员工工作台' : '切换老板工作台' }
-          </Link> */}
-        </Menu.Item>
-        {/* <Menu.Divider />
-        {
-          sysList.map((el) => (
-            <Menu.Item key={el.sysId}>
-              <a href={el.url}>{el.name}</a>
-            </Menu.Item>
-          ))
-        } */}
       </Menu>
     );
     return (
@@ -148,6 +120,13 @@ class App extends React.PureComponent {
           />
           { breadcrumbList }
         </div> */}
+        <span
+          className={cs('app-left', styles.headLeft)}
+          onClick={() => this.changeLink('/workbench')}
+        >
+          <i className="iconfont iconqiehuan1" />
+          <span className="fs-14 c-black-65">{ isBoss ? '切换为员工' : '切换为老板' }</span>
+        </span>
         <div
           className="app-right"
           style={{ marginRight: 12 }}

@@ -18,4 +18,5 @@ export default {
   brokenLine: `${APP_API}/cost/user/workbench/category/broken`,
   chartPie: `${APP_API}/cost/user/workbench/get/chart`,
   deptTree: `${APP_API}/cost/dept/list`,
+  trend: `${APP_API}/cost/statistics/v3/amoeba/trend`,
 };

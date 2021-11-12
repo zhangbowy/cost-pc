@@ -2,9 +2,25 @@
   flex: 1;
   min-width: 464px;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 8px;
   position: relative;
-
+  margin-right: 16px;
+  .title{
+    height: 24px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.65);
+    line-height: 24px;
+    display: flex;
+    p{
+      margin-left: 24px;
+      cursor: pointer;
+    }
+    .active{
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
   p{
     margin-bottom: 0;
   }
@@ -38,11 +54,10 @@
 }
 .leftTop{
   height: 56px;
-  border-bottom: 1px solid #E8E8E8;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px 0 16px;
+  padding: 0 24px 0 0;
 }
 .leftMenu{
   font-size: 16px;
@@ -64,9 +79,9 @@
 }
 .chart{
   .noData{
-    width: 236px;
-    height: 236px;
-    border: 26px solid rgba(0, 0, 0, 0.05);
+    width: 200px;
+    height: 200px;
+    border: 20px solid rgba(0, 0, 0, 0.05);
     position: relative;
     display: flex;
     align-items: center;
@@ -77,8 +92,8 @@
     margin-left: -118px;
     border-radius: 50%;
     .noDataChild{
-      width: 210px;
-      height: 210px;
+      width: 190px;
+      height: 190px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -148,5 +163,135 @@
     span{
       color: rgba(0, 199, 149, 1)!important;
     }
+  }
+}
+.right{
+  width: 420px;
+  height: 396px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  .title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-top: 24px;
+    .tLeft{
+      height: 32px;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.65);
+      line-height: 24px;
+      span{
+        margin-left: 24px;
+        display: inline-block;
+      }
+      .active{
+        font-weight: 600;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+    .tRight{
+      margin-right: 24px;
+      span{
+        width: 46px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        display: inline-block;
+        border: 1px solid #E9E9E9;
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.65);
+        border-radius: 0px 3px 3px 0px;
+      }
+      span:first-child{
+        border-right: none;
+        border-radius: 3px 0px 0px 3px;
+      }
+      .active{
+        border-color: #00C795;
+        color: #fff;
+        background-color: #00C795;
+      }
+    }
+  }
+  .contPro{
+    width: 372px;
+    height: 24px;
+    background: #FFFBE6;
+    border-radius: 12px;
+    padding: 0 4px;
+    margin-left: 24px;
+    i{
+      margin-left: 12px;
+      color: #FAAD14;
+      margin-right: 2px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    span{
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.45);
+      line-height: 16px;
+    }
+  }
+  .list{
+    margin: 0 24px;
+    height: 280px;
+    .hl{
+      height: 32px;
+      line-height: 32px;
+      display: flex;
+      align-items: center;
+      background: #FAFAFA;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      span{
+        padding: 0 13px;
+        display: inline-block;
+      }
+      span:first-child{
+        width: 138px;
+      }
+      span:nth-child(2){
+        width: 138px;
+      }
+      span:nth-child(3){
+        flex: 1;
+      }
+    }
+  }
+}
+.bottomChart{
+  margin: 16px;
+  background: #fff;
+  border-radius: 8px;
+  height: 520px;
+  .header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    .title{
+      height: 24px;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.65);
+      line-height: 24px;
+      span{
+        margin-left: 24px;
+        display: inline-block;
+      }
+      .active{
+        font-weight: 600;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+  }
+  .lineChart{
+    margin: 24px;
   }
 }

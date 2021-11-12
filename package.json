@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@ant-design/charts": "^1.2.14",
+    "@antv/data-set": "^0.11.8",
     "@types/classnames": "^2.2.10",
     "@types/echarts": "^4.9.6",
     "@types/moment": "^2.13.0",
@@ -27,6 +28,7 @@
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
     "antd": "^3.26.19",
+    "bizcharts": "^4.1.14",
     "classnames": "^2.2.6",
     "dingtalk-jsapi": "^2.10.3",
     "dva": "^2.6.0-beta.6",

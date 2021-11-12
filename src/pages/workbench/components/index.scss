@@ -65,6 +65,7 @@
 .bossHeader {
   height: 128px;
   position: relative;
+  border-radius: 8px;
   .headTag{
     height: 24px;
   }
@@ -82,6 +83,10 @@
   }
   .wave-container{
     height: 128px;
+    border-radius: 8px;
+    svg{
+      border-radius: 8px;
+    }
   }
 }
 

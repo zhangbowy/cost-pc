@@ -1,7 +1,7 @@
 /* eslint-disable react/no-did-update-set-state */
 /* eslint-disable no-param-reassign */
 import React, { PureComponent } from 'react';
-import { Radio, Spin } from 'antd';
+import { Spin } from 'antd';
 import style from './leftPie.scss';
 import PieChart from './PieChart';
 
@@ -43,7 +43,7 @@ class LeftPie extends PureComponent {
   onChange = (e) => {
     console.log(e);
     this.setState({
-      current: e.target.value,
+      current: e,
     });
   }
 
@@ -69,20 +69,24 @@ class LeftPie extends PureComponent {
   }
 
   render () {
-    const { loading, flagMenu } = this.props;
+    const { loading } = this.props;
     const {  current, data } = this.state;
-
     return (
       <div className={style.left}>
         <div className={style.leftTop}>
-          <p className="fs-16 c-black-85 fw-500">支出分析</p>
-          <Radio.Group value={current} onChange={e => this.onChange(e)}>
+          <div className={style.title}>
             {
               btn.map(it => (
-                <Radio.Button key={it.key} value={it.key}>按{it.value}</Radio.Button>
+                <p
+                  className={current === it.key ? style.active : ''}
+                  key={it.key}
+                  onClick={() => this.onChange(it.key)}
+                >
+                  {it.value}支出
+                </p>
               ))
             }
-          </Radio.Group>
+          </div>
         </div>
         <Spin spinning={loading}>
           <PieChart
@@ -93,12 +97,6 @@ class LeftPie extends PureComponent {
             onLink={this.onLink}
           />
         </Spin>
-        {
-          flagMenu &&
-          <div className={style.link} onClick={() => this.onLink()}>
-            <span className="fs-12">查看{btn[current].value}分析</span>
-          </div>
-        }
       </div>
     );
   }
