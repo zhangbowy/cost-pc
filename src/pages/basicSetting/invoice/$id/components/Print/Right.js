@@ -166,7 +166,8 @@ function Right({ templateType, templatePdfVo, corpName,
             <table>
               <tr>
                 {
-                  Number(templateType) === 0 &&
+                  Number(templateType) === 0 ||
+                  (Number(templateType) === 3 && !Number(templatePdfVo.paperType)) &&
                   <th>承担人/部门</th>
                 }
                 <th>支出类别</th>
@@ -175,7 +176,10 @@ function Right({ templateType, templatePdfVo, corpName,
                 <th>金额</th>
               </tr>
               <tr>
-                <td colSpan={templatePdfVo.paperType === 0 ? '5' : '4'} />
+                <td
+                  colSpan={Number(templateType) === 0 ||
+                  (Number(templateType) === 3 && !Number(templatePdfVo.paperType)) ? '5' : '4'}
+                />
               </tr>
             </table>
             <table style={{ borderTop: 'none' }}>

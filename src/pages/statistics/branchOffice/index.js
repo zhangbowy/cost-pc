@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import getDateUtil from '@/utils/tool';
-import StaticChart from '../../../components/StaticChart';
+import StaticChart from './StaticChart';
 
 
 const getMaxDay = (year,month) => {

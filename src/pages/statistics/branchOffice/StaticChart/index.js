@@ -5,7 +5,7 @@ import moment from 'moment';
 import getDateUtil from '@/utils/tool';
 import YearPicker from '@/components/YearPicker';
 import QuarterPicker from '@/components/QuarterPicker';
-import Invoice from '../../pages/statistics/overview/components/Invoice';
+import Invoice from './component/Invoice';
 import Chart from './component/Chart';
 import LevelSearch from './component/LevelSearch';
 import style from './index.scss';
@@ -13,12 +13,13 @@ import NoRole from './component/NoRole';
 import noData from '@/assets/img/noData.png';
 
 
+
 const getMaxDay = (year,month) => {
   const temp = new Date(year,month,'0');
   return temp.getDate();
 };
 const time =  getDateUtil(new Date().getTime()).split('-');
-const startDate = `${time[0]}-${time[1]}-01 00:00:00`;
+const startDate = `${time[0]}-${time[1]}-01 00:00:01`;
 const endDate = `${time[0]}-${time[1]}-${getMaxDay(time[0],time[1])} 23:59:59`;
 const { MonthPicker } = DatePicker;
 @Form.create()
@@ -58,7 +59,7 @@ class StaticChart extends Component {
 
   getQuarter = (date,isValue) => {
     if(isValue){
-      const start = `${date.split('~')[0]  }-01 00:00:00`;
+      const start = `${date.split('~')[0]  }-01 00:00:01`;
       const end =  date.split('~')[1] + ((date.split('~')[1].split('-')[1]==='06'||date.split('~')[1].split('-')[1]==='09')?'-30 23:59:59':'-31 23:59:59');
       const startTime = new Date(start).getTime();
       const endTime = new Date(end).getTime();
@@ -83,7 +84,7 @@ class StaticChart extends Component {
   }
 
   yearChange = (str) => {
-    const start = `${str}-01-01 00:00:00`;
+    const start = `${str}-01-01 00:00:01`;
     const end = `${str}-12-31 23:59:59`;
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
@@ -96,7 +97,7 @@ class StaticChart extends Component {
   }
 
   monthChage = (str) =>{
-    const start = `${str}-01 00:00:00`;
+    const start = `${str}-01 00:00:01`;
     const end = `${str}-${ getMaxDay(str.split('-')[0],str.split('-')[1]) } 23:59:59`;
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
@@ -197,6 +198,63 @@ class StaticChart extends Component {
       changeMoney: money,
     });
   }
+
+  // treeNodeRender = (treeNode) => {
+  //   if(!treeNode || !treeNode.length){
+  //     return;
+  //   }
+  //     return treeNode.map((v) => {
+  //       return (
+  //         <TreeNode
+  //           value={v.value}
+  //           title={(
+  //             <span className="c-black-85" style={{color: 'rgba(0,0,0,0.85)!important'}}>{v.title}</span>
+  //           )}
+  //           key={v.value}
+  //           searchs={v.title}
+  //           disabled
+  //         >
+  //           {v.children && this.treeNodeChildRender(v.children, v.title)}
+  //         </TreeNode>
+  //       );
+  //     });
+  //   }
+
+  //   treeNodeChildRender = (list, titles) => {
+  //     return list.map(it => (
+  //       <TreeNode
+  //         key={it.value}
+  //         value={it.value}
+  //         name={it.title}
+  //         searchs={titles}
+  //         title={(
+  //           <div>
+  //             <div className={style.treeOption}>
+  //               {
+  //                 it.type === 0 &&
+  //                 <i className="iconfont iconyinhangka" />
+  //               }
+  //               {
+  //                 it.type === 1 &&
+  //                 <i className="iconfont iconzhifubao" />
+  //               }
+  //               {
+  //                 it.type === 2 &&
+  //                 <i className="iconfont iconxianjin" />
+  //               }
+  //               {it.title}
+  //             </div>
+  //             <p className="c-black-36 m-l-20 fs-12" style={{marginBottom: 0}}>
+  //               {it.type === 0 && '银行卡'}
+  //               {it.type === 1 && '支付宝'}
+  //               {it.type === 2 && '现金'}
+  //               {it.account}
+  //             </p>
+  //           </div>
+  //         )}
+  //       />
+  //     ));
+  //   }
 
   export = (e) => {
     const obj = {};
@@ -309,7 +367,7 @@ class StaticChart extends Component {
             (
               <span className="icons">
                 <i className={`iconfont ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-                <span>{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
+                {record.annulus}{record.annulusSymbolType === null ? '' : '%'}
               </span>
             )}
           </span>
