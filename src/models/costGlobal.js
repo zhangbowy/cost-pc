@@ -56,6 +56,7 @@ export default {
     checkStandard: {}, // 校验的结果
     checkStandMsg: '',
     deptAndUser: {}, // 关联dingUserId
+    roleUserList: [], // 角色列表
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -472,6 +473,15 @@ export default {
         type: 'save',
         payload: {
           deptAndUser: response || {},
+        },
+      });
+    },
+    *roleUserList({ payload }, { call, put }) {
+      const response = yield call(get, api.roleUserList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          roleUserList: response.list || [],
         },
       });
     },

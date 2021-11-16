@@ -119,7 +119,7 @@ export const aliTripStr = [{
   'isWrite': true,
   'name': '费用归属',
   'note': '',
-  'options': ['按分摊计入', '均计入申请人'],
+  'options': ['按分摊计入', '均计入申请人', '归属人'],
   'sort': 5,
   'status': 1,
 }];

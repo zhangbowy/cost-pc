@@ -9,7 +9,8 @@ export default {
     isModifyInvoice: false,
     isModifyReload: false,
     statisticsDimension: 0,
-    isOpenProject: false
+    isOpenProject: false,
+    details: {},
   },
   effects: {
     *query({ payload }, { call, put }) {
@@ -21,7 +22,8 @@ export default {
           isModifyInvoice: response.isModifyInvoice,
           isModifyReload: response.isModifyReload,
           isOpenProject: response.isOpenProject,
-          statisticsDimension: response.statisticsDimension
+          statisticsDimension: response.statisticsDimension,
+          details: response || {},
         },
       });
     },

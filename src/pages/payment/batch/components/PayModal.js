@@ -263,6 +263,7 @@ class PayModal extends React.PureComponent {
                   })(
                     <Select
                       notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
+                      showSearch
                     >
                       {
                         getAliAccounts.map(item => (

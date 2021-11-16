@@ -48,6 +48,7 @@ export default {
   invoiceList: `${APP_API}/cost/invoice/template/list`,
   print: `${APP_API}/cost/export/pdfDetail`,
   approverRoleList: `${APP_API}/cost/approve/role/list`, // 审批角色
+  roleUserList: `${APP_API}/cost/role/list`, // 普通角色
   approvePersonList: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`, // 获取所有的审批模版
   applyList: `${APP_API}/cost/invoice/application/associate`, // 查询可关联的申请单
   addApply:  `${APP_API}/cost/invoice/application/add`, // 新增申请单（单据）

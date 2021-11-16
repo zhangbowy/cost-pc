@@ -366,7 +366,17 @@ export default {
       newArr.push(obj);
     });
     return newArr;
-  }
+  },
+  // handleChildren(tree, arr){
+  //   for(i=0; i<tree.length; i++) {
+  //     let obj = tree[i];
+  //     if (obj.type) {
+  //       arr.push(obj);
+  //     } else {
+
+  //     }
+  //   }
+  // },
   // checkInvoice: ({ first, third }) => {
   //   let flag = 0;
   //   switch(first) {

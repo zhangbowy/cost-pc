@@ -1,0 +1,61 @@
+.selP{
+  img{
+    width: 24px;
+    margin-right: 8px;
+  }
+}
+.tableForm{
+  display: flex;
+  height: 32px;
+  align-items: center;
+  :global{
+    .ant-form-item{
+      margin-bottom: 0;
+    }
+
+  }
+}
+.tableList{
+  border: 1px solid #e8e8e8;
+  :global{
+    .ant-table-tbody > tr > td{
+      border-right: 1px solid #e8e8e8;
+    }
+    .ant-table-tbody{
+      border: 1px solid #e8e8e8;
+    }
+  }
+}
+.popovers{
+  :global{
+    .ant-popover-inner-content{
+      width: 280px;
+      height: 316px;
+    }
+    .ant-checkbox-wrapper{
+      margin-left: 0;
+      margin-bottom: 20px;
+    }
+  }
+  .checkGroup{
+    height: 268px;
+    overflow-y: scroll;
+    :global{
+      .ant-checkbox-group{
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+  .btns{
+    width: 50px;
+    height: 24px;
+    background: #00C795;
+    color: #fff;
+    line-height: 24px;
+    text-align: center;
+    margin-left: 198px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+}

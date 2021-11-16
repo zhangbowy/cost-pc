@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import cs from 'classnames';
-import { Switch, Modal, Checkbox, Button, Radio } from 'antd';
+import { Switch, Modal, Checkbox, Button, Radio, Tooltip, Divider } from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import style from './index.scss';
+import Lines from '../../../components/StyleCom/Lines';
+import DataPush from './component/DataPush';
 
 const viewSum = [{
   title: '以提交时间为准',
@@ -25,18 +27,22 @@ const moneySum = [{
   title: '标记已付',
   name: '标记已付',
   value: 0,
-  pro: '线下其他渠道支付后，在鑫支出仅做标记使用'
+  pro: '线下其他渠道支付后，在鑫支出仅做标记使用',
+  icon: 'icona-zhifubaozhifu3x'
 }, {
   title: '线上支付',
   name: '线上支付',
   value: 1,
-  pro: '线上打开支付宝，验密后直接付款'
+  pro: '线上打开支付宝，验密后直接付款',
+  icon: 'icona-zhifu3x'
 }];
-@connect(({ systemControl, loading }) => ({
+@connect(({ systemControl, loading, costGlobal }) => ({
   isModifyInvoice: systemControl.isModifyInvoice,
   isModifyReload: systemControl.isModifyReload,
   isOpenProject: systemControl.isOpenProject,
   statisticsDimension: systemControl.statisticsDimension,
+  roleUserList: costGlobal.roleUserList,
+  details: systemControl.details,
   loading: loading.effects['systemControl/query'] || false,
 }))
 class SystemControl extends Component {
@@ -50,9 +56,60 @@ class SystemControl extends Component {
       statisticsDimension: 0,
       isOpenProject: false,
     };
+    this.check = [{
+      key: 'switchCheck',
+      production: (
+        <p className={style.production}>
+          <span>开启后，在单据发放环节，发放人可对单据的部分信息进行修改后发放，无需重新打回。比如事由、金额等。<br />如需支持更多信息的修改，请至</span>
+          <span className="sub-color">
+            <a onClick={() => this.onLink(0)}>单据模版设置</a>/<a onClick={() => this.onLink(1)}>支出类别设置</a>
+          </span>
+          <span>，编辑页面操作</span>
+        </p>
+      ),
+      name: '允许发放环节改单',
+      onCall: e => this.onChange(e)
+    }, {
+      key: 'isOpenProject',
+      production: (
+        <p className={style.production}>
+          <p>与设置-角色管理-操作权限设置配合使用。</p>
+          <p>
+            1.操作权限设置开启后，默认可见项目管理页面所有项目2.项目责任制开启后，项目负责人增加一层限制，仅可见作为项目负责人的项目列表
+          </p>
+        </p>
+      ),
+      name: '项目责任制',
+      onCall: e => this.onChanges(e, 'isOpenProject')
+    }, {
+      key: 'isOpenProje',
+      production: (
+        <p className={style.production}>
+          单据审批通过后，给发放人发送钉钉待办消息提醒
+        </p>
+      ),
+      name: '发放待办推送',
+      onCall: e => this.onChanges(e, 'isOpenProject')
+    }, {
+      key: 'isOpenPro',
+      production: (
+        <p className={style.production}>
+          逾期未还的借款，系统每周一发送催还提醒
+        </p>
+      ),
+      name: '借款到期提醒',
+      onCall: e => this.onChanges(e, 'isOpenProject')
+    }];
   }
 
   componentDidMount() {
+    this.props.dispatch({
+      type: 'costGlobal/roleUserList',
+      payload: {
+        pageNo: 1,
+        pageSize: 100
+      },
+    });
     this.props.dispatch({
       type: 'systemControl/query',
       payload: {},
@@ -169,7 +226,18 @@ class SystemControl extends Component {
         }
       });
     }
+  }
 
+  handleTables = (params) => {
+    console.log('SystemControl -> handleTables -> params', params);
+    const { details, dispatch } = this.props;
+    dispatch({
+      type: 'systemControl/change',
+      payload: {
+        ...details,
+        ...params,
+      }
+    });
   }
 
   onLink = (type) => {
@@ -183,77 +251,86 @@ class SystemControl extends Component {
   render () {
     const {
       visible,
-      switchCheck,
       changeReload,
-      isOpenProject,
       statisticsDimension,
+      switchCheck,
+      isOpenProject,
     } = this.state;
-    // const { loading } = this.props;
+    const checkObj = {
+      switchCheck,
+      isOpenProject,
+    };
+    const { roleUserList, details } = this.props;
     return (
       <div>
         <PageHead title="控制开关" />
-        <div className={style.content}>
-          <Switch className={style.switch} onChange={e => this.onChange(e)} checked={switchCheck} />
-          <p className="fs-16 c-black-85 fw-500">允许发放环节改单</p>
-          <p className={style.production}>
-            <span>开启后，在单据发放环节，发放人可对单据的部分信息进行修改后发放，无需重新打回。比如事由、金额等。<br />如需支持更多信息的修改，请至</span>
-            <span className="sub-color">
-              <a onClick={() => this.onLink(0)}>单据模版设置</a>/<a onClick={() => this.onLink(1)}>支出类别设置</a>
+        <div className="content-dt">
+          <Lines name="控制开关" />
+          <div className="m-t-24">
+            {
+              this.check.map(it => (
+                <div className={style.content} key={it.key}>
+                  <p>
+                    <span>{it.name}</span>
+                    <i className="iconfont iconshuomingwenzi" />
+                    <span>：</span>
+                  </p>
+                  <Switch className={style.switch} onChange={it.onCall} checked={checkObj[it.key]} />
+                </div>
+              ))
+            }
+          </div>
+          <Divider type="horizontal" style={{ margin: '32px 0 24px 0' }} />
+          <Lines name="个性化设置" />
+          <div className="m-t-24">
+            <div className={style.content}>
+              <p>
+                <span>统计维度设置：</span>
+              </p>
+              <Radio.Group value={statisticsDimension} onChange={e => this.onChanges(e, 'statisticsDimension')}>
+                {
+                  viewSum.map(it => (
+                    <Radio value={it.value} key={it.value}>
+                      <span className="fs-14 c-black-85">{it.title}</span>
+                      <Tooltip title={it.pro}>
+                        <i className="iconfont iconshuomingwenzi" />
+                      </Tooltip>
+                    </Radio>
+                  ))
+                }
+              </Radio.Group>
+            </div>
+            <div className={style.content}>
+              <p className="m-t-8">
+                <span>默认支付方式：</span>
+              </p>
+              {
+                moneySum.map(it => (
+                  <div
+                    className={details.paymentMethod === it.value ? cs(style.payList, style.active) : style.payList}
+                    key={it.value}
+                    onClick={() => this.handleTables({ paymentMethod: it.value })}
+                  >
+                    <div className={style.payImg} style={{ background: it.value ? '#FFF6EC' : '#ECF7FF' }}>
+                      <i className={`iconfont ${it.icon}`} style={{ color: it.value ? '#FFA01A' : '#0084FF' }}/>
+                    </div>
+                    <div className={style.rightP}>
+                      <p className="c-black-85">{it.title}</p>
+                      <p className={style.pros}>{it.pro}</p>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <Divider type="horizontal" />
+          <Lines name="数据推送">
+            <span className={style.datas}>
+              <i className="iconfont iconshuomingwenzi" />
+              <span>推送数据为当前人员/角色的最大数据权限范围</span>
             </span>
-            <span>，编辑页面操作</span>
-          </p>
-          <div className={style.label}>
-            <div className={style.lables}>
-              <span className={switchCheck ? cs(style.circle, style.active) : style.circle} />
-              <span>{ switchCheck ? '已开启' : '已关闭' }</span>
-            </div>
-            <div className={style.lables}>
-              <span className={changeReload ? cs(style.circle, style.active) : style.circle} />
-              <span>{ changeReload ? '已开启留痕' : '已关闭留痕' }</span>
-            </div>
-          </div>
-        </div>
-        <div className={style.content}>
-          <Switch className={style.switch} onChange={e => this.onChanges(e, 'isOpenProject')} checked={isOpenProject} />
-          <p className="fs-16 c-black-85 fw-500">项目责任制</p>
-          <p className={style.production}>
-            <p>与设置-角色管理-操作权限设置配合使用。</p>
-            <p>
-              1.操作权限设置开启后，默认可见项目管理页面所有项目2.项目责任制开启后，项目负责人增加一层限制，仅可见作为项目负责人的项目列表
-            </p>
-          </p>
-          <div className={style.label}>
-            <div className={style.lables}>
-              <span className={isOpenProject ? cs(style.circle, style.active) : style.circle} />
-              <span>{ isOpenProject ? '已开启' : '已关闭' }</span>
-            </div>
-          </div>
-        </div>
-        <div className={style.content}>
-          <p className="fs-16 c-black-85 fw-500">统计维度设置</p>
-          <Radio.Group className="m-t-16" value={statisticsDimension} onChange={e => this.onChanges(e, 'statisticsDimension')}>
-            {
-              viewSum.map(it => (
-                <Radio value={it.value} style={{ display: 'block' }} key={it.value}>
-                  <span className="fs-14 c-black-85">{it.title}</span>
-                  <p className="fs-14 c-black-45" style={{marginLeft: '23px'}}>{it.pro}</p>
-                </Radio>
-              ))
-            }
-          </Radio.Group>
-        </div>
-        <div className={style.content}>
-          <p className="fs-16 c-black-85 fw-500">默认支付方式</p>
-          <Radio.Group className="m-t-16" value={statisticsDimension} onChange={e => this.onChanges(e, 'statisticsDimension')}>
-            {
-              moneySum.map(it => (
-                <Radio value={it.value} style={{ display: 'block' }} key={it.value}>
-                  <span className="fs-14 c-black-85">{it.title}</span>
-                  <p className="fs-14 c-black-45" style={{marginLeft: '23px'}}>{it.pro}</p>
-                </Radio>
-              ))
-            }
-          </Radio.Group>
+          </Lines>
+          <DataPush roleUserList={roleUserList} details={details} onChange={this.handleTables} />
         </div>
         <Modal
           visible={visible}

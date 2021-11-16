@@ -51,6 +51,7 @@ const ThirdSet = ({ onChange, aliTripSetting }) => {
             <p className="fs-14 c-black-85 m-b-8">费用归属</p>
             <p className="c-black-45 fs-13">1、 按分摊计入</p>
             <p className="c-black-45 fs-13">2、均计入申请人</p>
+            <p className="c-black-45 fs-13">3、归属人</p>
           </div>
         </>
       }
