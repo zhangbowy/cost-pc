@@ -33,7 +33,7 @@ import {
   getArrayColor
 } from '../../../utils/constants';
 import ChangeDate from './component/ChangeDate';
-import ImportModal from './component/ImportModal';
+import ImportModal from '@/components/ImportModal';
 
 const { APP_API } = constants;
 const objStatus = {
@@ -187,7 +187,7 @@ class Statistics extends React.PureComponent {
           out: 1
         }
       ],
-      isModalVisible: true,
+      isModalVisible: false,
       importStatus: false, // 是否进入导入状态
       importLoading: false, // 导入状态：进行中
       importResult: {}, // 导入结果percent
