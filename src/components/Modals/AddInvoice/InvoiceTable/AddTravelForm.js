@@ -6,6 +6,7 @@ import treeConvert from '@/utils/treeConvert';
 import fields from '@/utils/fields';
 import style from './index.scss';
 import { getParams } from '../../../../utils/common';
+import SearchCity from '../../../SearchCity';
 
 const { aliTraffic, aliWay } = fields;
 let id = 1000;
@@ -390,24 +391,11 @@ class AddTravelForm extends Component {
             </Form.Item>
             <Form.Item label={(<span className={style.isRequired}>起止城市</span>)} className={style.selects}>
               <div style={{ display: 'flex' }}>
-                <Form.Item>
-                  {
-                    getFieldDecorator(`startCity[${it.key}]`, {
-                      initialValue: it.startCity,
-                      rules: [{ required: true, message: '请选择城市' }]
-                    })(
-                      <Cascader
-                        options={treeListObj[it.key] || treeListObj.defaultTree}
-                        placeholder="请选择"
-                        getPopupContainer={triggerNode => triggerNode.parentNode}
-                        showSearch={this.filter}
-                        allowClear
-                        changeOnSelect
-                        onChange={val => this.onChangeCity(`startCity[${it.key}]`, val, it.key)}
-                      />
-                    )
-                  }
-                </Form.Item>
+                <SearchCity>
+                  <Form.Item>
+                    <Input />
+                  </Form.Item>
+                </SearchCity>
                 <span style={{ margin: '0 6px' }}>-</span>
                 <Form.Item>
                   {
