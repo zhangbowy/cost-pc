@@ -52,6 +52,7 @@ class SearchCity extends PureComponent {
       selectCitys: [],
       selectCitysCode: [],
       activeKey: 0,
+      searchCityList: [],
     };
   }
 
@@ -70,18 +71,46 @@ class SearchCity extends PureComponent {
 
   handleChange = e => {
     this.setState({
-      searchValue: e,
+      searchValue: e.target.value,
     });
-    this.getCityList(e);
+    this.getCityList(e.target.value);
   }
+
+  // 获取选择城市code
+  getCityCode = selectCitys => {
+    const citysCode = selectCitys.reduce((acc, cur) => {
+      acc.push(cur.areaCode);
+      return acc;
+    }, []);
+    this.setState({ selectCitysCode: citysCode });
+  };
+
+   // 选择城市确定
+   handleOk = () => {
+    const { selectCitys } = this.state;
+    const arr = selectCitys.map(it => { return { areaCode: it.areaCode,areaName: it.areaName }; });
+    console.log('SearchCity -> handleOk -> arr', arr);
+    this.setState({
+      // selectCitysList: [...selectCitys],
+      popoverVisible: false,
+      selectCitys: [],
+      selectCitysCode: [],
+    });
+    if (arr.length) {
+      this.props.onOk(arr[0]);
+    } else {
+      this.props.onOk({});
+    }
+
+  };
 
   handleCity = (item, flag) => {
     // console.log("🚀 ~ file: EditCity.js ~ line 130 ~ EditCity ~ item", item);
-    const { selectCitysCode, selectCitys } = this.state;
+    const { selectCitysCode } = this.state;
     if (selectCitysCode.indexOf(item.areaCode) !== -1) {
       return;
     }
-    const citys = [...selectCitys];
+    const citys = [];
     citys.push(item);
     if (flag) {
       this.setState({
@@ -130,11 +159,9 @@ class SearchCity extends PureComponent {
   }
 
   handleClose = () => {
-
-  }
-
-  handleRef = () => {
-
+    this.setState({
+      selectCitys: [],
+    });
   }
 
   handleCancel = () => {
@@ -148,11 +175,13 @@ class SearchCity extends PureComponent {
       type: 'costGlobal/cityList',
       payload: {},
     }).then(() => {
-      const { cityList: { hotCities, awAreaVos } } = this.props;
+      const { cityList: { hotCities, awAreaVos }, value } = this.props;
       this.setState({
         hotCities,
         awAreaVos,
         popoverVisible: true,
+        selectCitys: value && value.areaCode ? [value] : [],
+        selectCitysCode: value && value.areaCode ? [value.areaCode] : [],
       });
     });
   }
