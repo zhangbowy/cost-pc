@@ -55,7 +55,10 @@ class TimeComp extends PureComponent {
       form: { getFieldDecorator },
       submitTime,
       formType,
+      noSelf,
+      dateTypeList
     } = this.props;
+    const lists = dateTypeList || dateTypeThree;
     return (
       <Form layout="inline">
         {
@@ -90,7 +93,7 @@ class TimeComp extends PureComponent {
                 })(
                   <Radio.Group className={style.btnStyle} onChange={e => this.onChange(e.target.value)}>
                     {
-                      dateTypeThree.map(it => (
+                      lists.map(it => (
                         <Radio.Button
                           key={it.key}
                           value={it.key}
@@ -104,17 +107,20 @@ class TimeComp extends PureComponent {
               }
             </Form.Item>
         }
-        <Form.Item>
-          <RangePicker
-            style={{ width: '240px' }}
-            className="m-l-8"
-            onChange={this.onChangeDate}
-            allowClear={false}
-            value={submitTime.startTime ?
-              [moment(moment(Number(submitTime.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-              moment(moment(Number(submitTime.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined}
-          />
-        </Form.Item>
+        {
+          !noSelf &&
+          <Form.Item>
+            <RangePicker
+              style={{ width: '240px' }}
+              className="m-l-8"
+              onChange={this.onChangeDate}
+              allowClear={false}
+              value={submitTime.startTime ?
+                [moment(moment(Number(submitTime.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                moment(moment(Number(submitTime.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined}
+            />
+          </Form.Item>
+        }
       </Form>
     );
   }

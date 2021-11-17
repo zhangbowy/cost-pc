@@ -149,7 +149,7 @@ class customQuery extends Component {
             </a>
           );
     }
-      return <span />;
+      return <span className="m-l-24" />;
   }
 
   renderTreeNodes = data =>
@@ -295,7 +295,7 @@ class customQuery extends Component {
     const { submitTime, categoryIds, expandIds } = this.state;
     const columns = [{
       title: '承担部门',
-      dataIndex: 'deptName'
+      dataIndex: 'deptName',
     }, {
       title: '金额（元）',
       dataIndex: 'submitSum',

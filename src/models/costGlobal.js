@@ -485,6 +485,15 @@ export default {
         },
       });
     },
+    *onlyDeptList({ payload }, { call, put }){
+      const response = yield call(get, api.onlyDeptList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          onlyDeptList: response || [],
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {

@@ -176,6 +176,7 @@ class SystemControl extends Component {
 
   onChanges = (e, key) => {
     const { switchCheck, changeReload, isOpenProject, statisticsDimension } = this.state;
+    const { details } = this.props;
     const params = {
       isModifyReload: changeReload,
       isModifyInvoice: switchCheck,
@@ -192,6 +193,7 @@ class SystemControl extends Component {
             this.props.dispatch({
               type: 'systemControl/change',
               payload: {
+                ...details,
                 ...params,
               }
             }).then(() => {
@@ -214,6 +216,7 @@ class SystemControl extends Component {
       this.props.dispatch({
         type: 'systemControl/change',
         payload: {
+          ...details,
           ...params,
         }
       }).then(() => {

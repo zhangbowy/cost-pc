@@ -40,6 +40,7 @@ import BottomChart from './components/Boss/BottomChart';
   loanSum: workbench.loanSum,
   personal: workbench.personal,
   invoiceList: global.invoiceList,
+  costCategoryList: global.costCategoryList,
   submitReport: workbench.submitReport,
   submitReportDetail: workbench.submitReportDetail,
   reportPage: workbench.reportPage,
@@ -53,6 +54,7 @@ import BottomChart from './components/Boss/BottomChart';
   roleStatics: costGlobal.roleStatics,
   lineCharts: workbench.lineCharts,
   barCharts: workbench.barCharts,
+  onlyDeptList: costGlobal.onlyDeptList,
   chartLoading: loading.effects['workbench/submitReport'] || false,
 }))
 class Workbench extends PureComponent {
@@ -79,6 +81,10 @@ class Workbench extends PureComponent {
         ...dateToTime('0_m'),
         type: '0_m'
       },
+      costTime: {
+        ...dateToTime('0_m'),
+        type: '0_m'
+      },
       submitReport: {},
       flagMenu: false,
     };
@@ -99,10 +105,16 @@ class Workbench extends PureComponent {
       url: 'workbench/costList',
       params: {}
     }, {
+      url: 'global/costList',
+      params: {}
+    }, {
       url: 'global/invoiceList',
       params: {}
     }, {
       url: 'workbench/deptTree',
+      params: {}
+    }, {
+      url: 'costGlobal/onlyDeptList',
       params: {}
     }, {
       url: 'workbench/chartTrend',
@@ -378,10 +390,15 @@ class Workbench extends PureComponent {
         submitReportDetail, reportPage,
         reportTotal,
         loanSumVo,
-        chartLoading
+        chartLoading,
+        lineCharts,
+        barCharts,
+        costCategoryList,
+        onlyDeptList
    } = this.props;
     const { personal, isComplete,
       invoiceTemplateIds, reason,
+      costTime,
       isBoss, bossVisible, submitTime, submitReport, flagMenu } = this.state;
     const columns = [{
       title: '事由',
@@ -551,8 +568,12 @@ class Workbench extends PureComponent {
               {
                 isBoss &&
                 <BottomChart
-                  submitTime={submitTime}
-                  onChangeData={this.onChangeState}
+                  submitTime={costTime}
+                  onChangeState={this.onChangeState}
+                  lineCharts={lineCharts}
+                  barCharts={barCharts}
+                  costCategoryList={costCategoryList}
+                  onlyDeptList={onlyDeptList}
                 />
               }
               {

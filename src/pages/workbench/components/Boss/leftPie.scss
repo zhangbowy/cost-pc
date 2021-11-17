@@ -175,7 +175,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-    padding-top: 24px;
+    padding-top: 20px;
     .tLeft{
       height: 32px;
       font-size: 14px;
@@ -257,6 +257,55 @@
       }
       span:nth-child(2){
         width: 138px;
+        text-align: right;
+      }
+      span:nth-child(3){
+        flex: 1;
+      }
+    }
+    .ctl{
+      height: 22px;
+      line-height: 22px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.65);
+      margin-top: 18px;
+      .num{
+        width: 20px!important;
+        height: 20px;
+        background: #F0F2F5;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-right: 12px;
+        padding: 0;
+      }
+      .num.actives{
+        background: #00C795;
+        color: #fff;
+      }
+      .tds{
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      span{
+        padding: 0 13px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      span:first-child{
+        width: 138px;
+        overflow: hidden;
+      }
+      span:nth-child(2){
+        width: 138px;
+        text-align: right;
       }
       span:nth-child(3){
         flex: 1;
@@ -290,8 +339,19 @@
         color: rgba(0, 0, 0, 0.85);
       }
     }
+    :global(.ant-select-selection--multiple) {
+      max-height: 32px;
+      overflow: hidden;
+    }
+  }
+  .formTypes{
+    margin: 0 24px 0 8px;
+    display: flex;
+    height: 32px;
+    align-items: center;
   }
   .lineChart{
     margin: 24px;
+    height: 412px;
   }
 }

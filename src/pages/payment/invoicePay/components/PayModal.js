@@ -298,10 +298,10 @@ class PayModal extends React.PureComponent {
                     initialValue: defAcc || '',
                     rules: [{ required: true, message: '请选择付款账户' }]
                   })(
-                    <Select placeholder="请选择">
+                    <Select placeholder="请选择" showSearch optionFilterProp="label">
                       {
                         payAccount.map(item => (
-                          <Option key={item.id}>{item.name}</Option>
+                          <Option key={item.id} label={item.name}>{item.name}</Option>
                         ))
                       }
                     </Select>
@@ -323,10 +323,11 @@ class PayModal extends React.PureComponent {
                       notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
                       placeholder="请选择"
                       showSearch
+                      optionFilterProp="label"
                     >
                       {
                         getAliAccounts.map(item => (
-                          <Option key={item.payId}>
+                          <Option key={item.payId} label={item.account}>
                             {item.account}
                             (<span>{getArrayValue(item.status, signStatus)}</span>)
                           </Option>

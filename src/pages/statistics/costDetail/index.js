@@ -285,7 +285,7 @@ class Statistics extends React.PureComponent {
     console.log('EchartsTest -> search -> searchList', searchList);
     const { dispatch } = this.props;
     const _this = this;
-    const fetchs = ['projectList', 'supplierList', 'costList'];
+    const fetchs = ['projectList', 'supplierList', 'invoiceList', 'costList'];
     const arr = fetchs.map(it => {
       return dispatch({
         type: it === 'projectList' ? `costGlobal/${it}` : `global/${it}`,
@@ -293,8 +293,8 @@ class Statistics extends React.PureComponent {
       });
     });
     Promise.all(arr).then(() => {
-      const { costCategoryList, projectList, supplierList } = _this.props;
-      const treeList = [costCategoryList, projectList];
+      const { costCategoryList, projectList, invoiceList, supplierList } = _this.props;
+      const treeList = [costCategoryList, projectList, invoiceList];
       const keys = [
         'categoryIds',
         'projectIds',

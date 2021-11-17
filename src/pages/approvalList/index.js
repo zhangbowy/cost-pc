@@ -1,64 +1,166 @@
 
 
 import React from 'react';
-import { Menu, Tooltip, DatePicker, Table } from 'antd';
+import { Menu, Tooltip, Table } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import cs from 'classnames';
-import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import { getArrayValue, invoiceStatus } from '../../utils/constants';
 import { ddOpenSlidePanel } from '../../utils/ddApi';
+import SearchBanner from '../statistics/overview/components/Search/Searchs';
 
-const { RangePicker } = DatePicker;
-@connect(({ loading, approvalList }) => ({
+@connect(({ loading, approvalList, global }) => ({
   loading: loading.effects['approvalList/list'] || false,
   list: approvalList.list,
   query: approvalList.query,
   total: approvalList.total,
+  invoiceList: global.invoiceList,
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       current: '0',
-      searchContent: '',
-      time: [],
       totals: 0,
+      searchList: [{
+          type: 'deptAndUser',
+          label: '提交部门/人',
+          placeholder: '请选择',
+          key: ['createUserVOS', 'createDeptVOS'],
+          id: 'createUserVOS',
+          out: 1
+        },
+        {
+          type: 'rangeTime',
+          label: '提交时间',
+          placeholder: '请选择',
+          key: ['startTime', 'endTime'],
+          id: 'startTime',
+          out: 1
+        },
+        {
+          type: 'tree',
+          label: '单据类型',
+          placeholder: '请选择',
+          key: 'invoiceTemplateIds',
+          id: 'invoiceTemplateIds',
+          out: 1
+        },
+        {
+          type: 'search',
+          label: '外部选择',
+          placeholder: '单号、事由、收款人',
+          key: 'searchContent',
+          id: 'searchContent',
+          out: 1
+        }],
     };
   }
 
   componentDidMount(){
-    const {
-      query,
-    } = this.props;
-    this.onQuery({...query});
+    const { searchList } = this.state;
+    this.search(searchList, () => {
+      const {
+        query,
+      } = this.props;
+      this.onQuery({...query});
+    });
+
   }
 
-  onSearch = e => {
-    const { query } = this.props;
-    this.setState({
-      searchContent: e,
-    }, () => {
-      this.onQuery({
-        pageNo:1,
-        pageSize: query.pageSize,
+  search = (searchList, callback) => {
+    console.log('EchartsTest -> search -> searchList', searchList);
+    const { dispatch } = this.props;
+    const _this = this;
+    const fetchs = ['invoiceList'];
+    const arr = fetchs.map(it => {
+      return dispatch({
+        type: it === 'projectList' ? `costGlobal/${it}` : `global/${it}`,
+        payload: {}
       });
     });
-  }
+    Promise.all(arr).then(() => {
+      const { invoiceList } = _this.props;
+      const treeList = [invoiceList];
+      const keys = [
+        'invoiceTemplateIds',
+      ];
+      const obj = {};
+      const newTree = treeList.map((it) => {
+        return treeConvert(
+          {
+            rootId: 0,
+            pId: 'parentId',
+            name: 'name',
+            tName: 'title',
+            tId: 'value'
+          },
+          it
+        );
+      });
+      newTree.forEach((it, index) => {
+        Object.assign(obj, {
+          [keys[index]]: it
+        });
+      });
+      const newSearch = [];
+      searchList.forEach(it => {
+        if (keys.includes(it.key)) {
+          newSearch.push({
+            ...it,
+            options: obj[it.key],
+            fileName: {
+              key: 'id',
+              name: 'name'
+            }
+          });
+        } else {
+          newSearch.push({ ...it });
+        }
+      });
+      this.setState(
+        {
+          searchList: newSearch
+        },
+        () => {
+          if (callback) {
+            callback();
+          }
+        }
+      );
+    });
+  };
+
+  onChangeSearch = async val => {
+  console.log('Summary -> val', val);
+    this.setState(
+      {
+        searchList: val
+      },
+      () => {
+        this.onQuery({
+          pageNo: 1,
+          pageSize: 10
+        });
+      }
+    );
+  };
 
   onQuery = (payload) => {
-    const { time, searchContent, current } = this.state;
-    if (time && time.length > 1) {
-      Object.assign(payload, {
-        startTime: moment(time[0]).format('x'),
-        endTime: moment(time[1]).format('x')
-      });
-    }
+    const { current } = this.state;
+    const { searchList } = this.state;
+    searchList.forEach(it => {
+      if (it.value) {
+        Object.assign(payload, {
+          ...it.value
+        });
+      }
+    });
     Object.assign(payload, {
       type: 0,
-      searchContent,
       detailType: current
     });
     this.props.dispatch({
@@ -79,18 +181,6 @@ class Summary extends React.PureComponent {
     this.onQuery({
       pageNo: current,
       pageSize,
-    });
-  }
-
-  onChangeTime = (val) => {
-    const { query } = this.props;
-    this.setState({
-      time: val,
-    }, () => {
-      this.onQuery({
-        pageNo: 1,
-        pageSize: query.pageSize,
-      });
     });
   }
 
@@ -123,7 +213,7 @@ class Summary extends React.PureComponent {
 
   render() {
     const { loading, query, total, list } = this.props;
-    const { current, totals } = this.state;
+    const { current, totals, searchList } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -221,29 +311,9 @@ class Summary extends React.PureComponent {
             <Menu.Item key={2}>抄送我的</Menu.Item>
           </Menu>
         </div>
+        <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{padding: 0, height: 'auto'}}>
           <div className={style.payContent}>
-            <div className="cnt-header" style={{display: 'flex'}}>
-              <div className="head_lf">
-                <div className={style.search}>
-                  <span className={style.label}>提交时间：</span>
-                  <RangePicker
-                    placeholder="请选择"
-                    style={{ width: '220px' }}
-                    onChange={val => this.onChangeTime(val)}
-                    showTime={{
-                      hideDisabledOptions: true,
-                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                    }}
-                  />
-                </div>
-                <Search
-                  placeholder="请输入单号、事由、收款人"
-                  style={{ width: '292px', marginLeft: '16px' }}
-                  onSearch={(e) => this.onSearch(e)}
-                />
-              </div>
-            </div>
             <Table
               columns={columns}
               loading={loading}

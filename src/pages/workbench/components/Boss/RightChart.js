@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 // import PropTypes from 'prop-types';
 import { Spin } from 'antd';
+import cs from 'classnames';
 import style from './leftPie.scss';
 
 const list = [{
@@ -98,20 +99,24 @@ const RightChart = ({ loading, submitReport }) => {
                 <span key={it.key}>{it.title}</span>
               ))
             }
-            {
-              submitReport[list[type].item] && submitReport[list[type].item].map(it => (
-                <div>
-                  {
-                    list[type].arr.map(item => (
-                      <span key={item} >
-                        {it[item] || '-'}
-                      </span>
-                    ))
-                  }
-                </div>
-              ))
-            }
           </div>
+          {
+            submitReport[list[type].item] && submitReport[list[type].item].map((it, index) => (
+              <div className={style.ctl}>
+                {
+                  list[type].arr.map((item, i) => (
+                    <span key={item} className={style.tds}>
+                      {
+                        i === 0 &&
+                        <span className={index < 3 ? cs(style.num, style.actives) : style.num}>{(index+1)}</span>
+                      }
+                      {it[item] || '-'}
+                    </span>
+                  ))
+                }
+              </div>
+            ))
+          }
         </div>
         <div className={style.contPro}>
           <i className="iconfont iconshuomingwenzi" />
