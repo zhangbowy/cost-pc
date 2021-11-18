@@ -20,7 +20,7 @@ import RecordHistory from './RecordHistory';
 import CostDetailTable from './CostDetailTable';
 import ProductTable from './ProductTable';
 import { numAdd } from '../../../utils/float';
-import { handleProduction, compare, getParams } from '../../../utils/common';
+import { handleProduction, compare, getParams, dateToStr, timeDateStr } from '../../../utils/common';
 import AliLink from './AliLink';
 import Avatar from '../../AntdComp/Avatar';
 import MainText from './MainText';
@@ -762,8 +762,8 @@ class InvoiceDetail extends Component {
                       </div>
                       <div className="m-t-16">
                         <p className="c-black-85 fs-16 fw-500 m-b-6">{item.startCity} - {item.endCity}({item.way})</p>
-                        <p className="c-black-65 fs-14">
-                          {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
+                        <p className="c-black-65 fs-12">
+                          {dateToStr(item.startDate, 'YYYY.MM.DD')} {timeDateStr(item.startDate)} - {dateToStr(item.endDate, 'YYYY.MM.DD')} {timeDateStr(item.endDate)}
                         </p>
                       </div>
                     </div>

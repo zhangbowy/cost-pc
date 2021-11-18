@@ -2,11 +2,10 @@
 import React, { PureComponent } from 'react';
 import { Divider, Form, Row, Button, Select, Col, Tree, TreeSelect, Tooltip, Popconfirm } from 'antd';
 import cs from 'classnames';
-import moment from 'moment';
 import fields from '@/utils/fields';
 import style from '../index.scss';
 import AddTravelForm from './AddTravelForm';
-import { getParams } from '../../../../utils/common';
+import { getParams, timeDateStr, dateToStr } from '../../../../utils/common';
 import Avatar from '../../../AntdComp/Avatar';
 
 const { aliTraffic } = fields;
@@ -302,8 +301,8 @@ class AddTravel extends PureComponent {
                         </div>
                         <div className="m-t-16">
                           <p className={style.cityContent}>{item.startCity} - {item.endCity}({item.way})</p>
-                          <p className="c-black-65 fs-14">
-                            {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
+                          <p className="c-black-65 fs-12">
+                            {dateToStr(item.startDate, 'YYYY.MM.DD')} {timeDateStr(item.startDate)} - {dateToStr(item.endDate, 'YYYY.MM.DD')} {timeDateStr(item.endDate)}
                           </p>
                         </div>
                         <span
