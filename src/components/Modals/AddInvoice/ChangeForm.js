@@ -480,7 +480,7 @@ class ChangeForm extends Component {
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 15 },
+        sm: { span: 16 },
       },
     };
     const formItemLayouts = {

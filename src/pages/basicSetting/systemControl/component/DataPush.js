@@ -21,49 +21,80 @@ class DataPush extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
-      details: {
-        weekMessage: [{
-          'id': 0,
-          'type': 0,
-          companyId: '470547661288640512',
+      list: [{
+        id: 'weekMessage',
+        name: '1. 周报数据推送',
+        list: [{
+          id: 'weekMessage',
+          key: 'userPush',
+          rowSpan: 2,
           userPush: 0,
           rolePush: 0,
           pushDate: 9,
-          users: [{
-            avatar: 'https://static.dingtalk.com/media/lADPD2eDQaJ77dDNA_XNA_U_1013_1013.jpg',
-            id: '0107443251773952',
-            name: '幺幺'
-          }],
-          roles: [{
-            id: '470613719782166528',
-            name: '超级管理员'
-          }],
-        }],
-        monthMessage: [{
-          'id': 1,
-          'type': 1,
-          companyId: '470547661288640512',
-          userPush: 0,
-          rolePush: 0,
-          pushDate: 9,
-          users: [{
-            avatar: 'https://static.dingtalk.com/media/lADPD2eDQaJ77dDNA_XNA_U_1013_1013.jpg',
-            id: '0107443251773952',
-            name: '幺幺'
-          }],
-          roles: [{
-            id: '470613719782166528',
-            name: '超级管理员'
-          }],
+        }, {
+          key: 'rolePush',
+          rowSpan: 0,
         }]
-      }
+      }, {
+        id: 'monthMessage',
+        name: '2. 月报数据推送',
+        list: [{
+          id: 'monthMessage',
+          key: 'userPush',
+          rowSpan: 2,
+          userPush: 0,
+          rolePush: 0,
+          pushDate: 9,
+        }, {
+          key: 'rolePush',
+          rowSpan: 0,
+        }]
+      }]
     };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.details !== state.list) {
+      const { details: { monthMessage, weekMessage } } = props;
+      const newArr = [{
+        id: 'weekMessage',
+        name: '1. 周报数据推送',
+        list: [{
+          ...weekMessage,
+          id: 'weekMessage',
+          key: 'userPush',
+          rowSpan: 2,
+        }, {
+          ...weekMessage,
+          key: 'rolePush',
+          rowSpan: 0,
+        }]
+      }, {
+        id: 'monthMessage',
+        name: '2. 月报数据推送',
+        list: [{
+          ...monthMessage,
+          id: 'monthMessage',
+          key: 'userPush',
+          rowSpan: 2,
+
+        }, {
+          ...monthMessage,
+          key: 'rolePush',
+          rowSpan: 0,
+        }]
+      }];
+      return {
+        list: newArr
+      };
+    }
+    return null;
   }
 
   handlePeople = (e, record) => {
     e.stopPropagation();
     const _this = this;
-    const { details } = this.state;
+    const { details } = this.props;
     choosePeople(
       record.userPush ? record.userPush.map(it => it.userId) : [],
      (res) => {
@@ -80,10 +111,10 @@ class DataPush extends PureComponent {
           });
           _this.props.onChange({
             ...details,
-            [record.id]: [{
-              ...details[record.id][0],
+            [record.id]: {
+              ...details[record.id],
               users: arr,
-            }]
+            }
           });
           console.log('添加的人员', arr);
         }
@@ -98,49 +129,40 @@ class DataPush extends PureComponent {
 
   }
 
+  onChange = (e, record, str) => {
+    const { details } = this.props;
+    this.props.onChange({
+      ...details,
+      [record.id]: {
+        ...details[record.id],
+        [str]: e,
+      }
+    });
+  }
+
   render() {
     const { form: { getFieldDecorator }, roleUserList } = this.props;
-    const list = [{
-      id: 'weekMessage',
-      name: '1. 周报数据推送',
-      list: [{
-        id: 'weekMessage',
-        key: 'userPush',
-        rowSpan: 2,
-        userPush: 0,
-        rolePush: 0,
-        pushDate: 9,
-      }, {
-        key: 'rolePush',
-        rowSpan: 0,
-      }]
-    }, {
-      id: 'monthMessage',
-      name: '2. 月报数据推送',
-      list: [{
-        id: 'monthMessage',
-        key: 'userPush',
-        rowSpan: 2,
-        userPush: 0,
-        rolePush: 0,
-        pushDate: 9,
-      }, {
-        key: 'rolePush',
-        rowSpan: 0,
-      }]
-    }];
+    const { list } = this.state;
     const colums = [{
       dataIndex: 'people',
       title: '推送人员/角色',
       render: (_, record) => {
+        console.log('roles', record.roles);
         if (record.key === 'userPush') {
+          const useStr = record.users && record.users.length ? record.users.map(it => it.name).join('、') : '';
           return (
             <div className={style.selP} onClick={e => this.handlePeople(e, record)}>
               <img src={add} alt="选择人员" />
-              <span style={{color: '#00C795'}}>选择人员</span>
+              {
+                useStr ?
+                  <span style={{color: 'rgba(0,0,0,0.65)'}}>{useStr}</span>
+                  :
+                  <span style={{color: '#00C795'}}>选择人员</span>
+              }
             </div>
           );
         }
+        const roleStr = record.roles && record.roles.length ? record.roles.map(it => it.name).join('、') : '';
         return (
           <Popover
             overlayClassName={style.popovers}
@@ -162,7 +184,7 @@ class DataPush extends PureComponent {
                     }
                   </Form.Item>
                 </div>
-                <div className={style.btns} onClick={() => this.handleRole()}>
+                <div className={style.btns} onClick={() => this.handleRole(record)}>
                   确定
                 </div>
               </div>
@@ -172,7 +194,12 @@ class DataPush extends PureComponent {
           >
             <div className={style.selP}>
               <img src={add} alt="选择人员" />
-              <span style={{color: '#00C795'}}>选择角色</span>
+              {
+                roleStr ?
+                  <span style={{color: 'rgba(0,0,0,0.65)'}}>{roleStr}</span>
+                  :
+                  <span style={{color: '#00C795'}}>选择角色</span>
+              }
             </div>
           </Popover>
         );
@@ -189,8 +216,11 @@ class DataPush extends PureComponent {
           children: (
             <Form.Item style={{marginBottom: 0}}>
               {
-                getFieldDecorator(`userPush[${record.userPush}]`)(
-                  <Switch />
+                getFieldDecorator(`isPush[${record.id}]`, {
+                  initialValue: record.isPush,
+                  valuePropName: 'checked'
+                })(
+                  <Switch onChange={e => this.onChange(Number(e), record, 'isPush')} />
                 )
               }
             </Form.Item>
@@ -214,7 +244,11 @@ class DataPush extends PureComponent {
                   getFieldDecorator(`pushDate[${record.id}]`, {
                     initialValue: record.pushDate ? `${record.pushDate}` : '8'
                   })(
-                    <Select style={{ width: '80px' }} className="m-l-8 m-r-8">
+                    <Select
+                      style={{ width: '80px' }}
+                      className="m-l-8 m-r-8"
+                      onChange={val => this.onChange(val, record, 'pushDate')}
+                    >
                       {
                         time.map(it => (
                           <Select.Option key={it.key}>{it.name}</Select.Option>

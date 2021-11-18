@@ -347,3 +347,12 @@
     }
   }
 }
+.travelForm{
+  :global{
+    .ant-radio-group{
+      .ant-radio-wrapper:nth-last-child(1){
+        margin-right: 0px;
+      }
+    }
+  }
+}

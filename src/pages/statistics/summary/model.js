@@ -17,6 +17,12 @@ export default {
     sum: 0,
     salaryList: [],
     thirdList: [],
+    historyList: [], // 单据删除操作日志
+    historyPage: {
+      pageNo: 1,
+      pageSize: 10,
+      total: 0,
+    },
   },
   effects: {
     *submitList({ payload }, { call, put }) {
@@ -96,6 +102,20 @@ export default {
           },
           total: response.page ? response.page.total : 0,
           sum: response.sum || 0
+        },
+      });
+    },
+    *historyList({ payload }, { call, put }) {
+      const response = yield call(post, api.historyList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          recordList: response.list || [],
+          recordPage: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize,
+            total: (response.page && response.page.total) || 0
+          }
         },
       });
     },

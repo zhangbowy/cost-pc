@@ -1,5 +1,6 @@
 import React from 'react';
 import { TreeSelect } from 'antd';
+import moment from 'moment';
 import treeConvert from '@/utils/treeConvert';
 import style from './leftPie.scss';
 import LineAndColumn from '../../../../components/Chart/LineAndColum.js';
@@ -8,7 +9,7 @@ import fields from '../../../../utils/fields';
 
 const {monthAndYear} = fields;
 const { SHOW_CHILD } = TreeSelect;
-const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptList }) => {
+const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptList, lineCharts, barCharts }) => {
   const costList = treeConvert(
     {
       rootId: 0,
@@ -21,18 +22,48 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptLis
   );
   const changeData = (data) => {
     const item = [];
-    data.forEach(list => {
-      const newData = {};
-      newData.key= list.deptId;
-      newData.value = list.deptId;
-      newData.title = list.deptName;
-      newData.children = list.children  ? changeData(list.children) : [];    // 如果还有子集，就再次调用自己
-      item.push(newData);
-    });
+    if (data) {
+      data.forEach(list => {
+        const newData = {};
+        newData.key= list.deptId;
+        newData.value = list.deptId;
+        newData.title = list.deptName;
+        newData.children = list.children  ? changeData(list.children) : [];    // 如果还有子集，就再次调用自己
+        item.push(newData);
+      });
+    }
     return item;
   };
   const onChangeTree = (val) => {
     console.log(val);
+  };
+  const handleArr = (arr) => {
+    const x = arr.map(it => it.time) || [];
+    const value = arr.map(it => it.value/100) || [];
+    const xs = Array.from(new Set(x)).sort(function(m, n){
+      if (moment(m).format('x') < moment(n).format('x')) return -1;
+      if (moment(m).format('x') > moment(n).format('x')) return 1;
+      return 0;
+    });
+    const newList = [];
+    xs.forEach(it => {
+      const newArr = arr.filter(item => item.time === it);
+      let obj = {};
+      newArr.forEach(item => {
+        obj = {
+          ...obj,
+          [item.name]: item.value/100,
+        };
+      });
+      newList.push(obj);
+    });
+    const keys = newList.length ? Object.keys(newList[0]) : [];
+    return {
+      keys,
+      dataList: newList,
+      xList: xs,
+      value,
+    };
   };
   return (
     <div className={style.bottomChart}>
@@ -81,7 +112,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptLis
         </div>
       </div>
       <div className={style.lineChart}>
-        <LineAndColumn options={{ height: 468 }} />
+        <LineAndColumn options={{ height: 468 }} lineCharts={handleArr(lineCharts)} barCharts={handleArr(barCharts)} />
       </div>
     </div>
   );

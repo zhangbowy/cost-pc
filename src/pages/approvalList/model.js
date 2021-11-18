@@ -1,4 +1,4 @@
-import { get } from '@/utils/request';
+import { post } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -15,7 +15,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const response = yield call(get, api.list, payload);
+      const response = yield call(post, api.list, payload);
       yield put({
         type: 'save',
         payload: {

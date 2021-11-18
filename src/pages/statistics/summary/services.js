@@ -13,4 +13,5 @@ export default {
   salaryExport: `${APP_API}/cost/export/detail/salary`,
   thirdList: `${APP_API}/cost/statistics/detail/third`,
   thirdExport: `${APP_API}/cost/export/detail/third`,
+  historyList: `${APP_API}/cost/excel/list`,
 };

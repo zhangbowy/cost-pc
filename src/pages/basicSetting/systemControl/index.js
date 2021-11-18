@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import cs from 'classnames';
-import { Switch, Modal, Checkbox, Button, Radio, Tooltip, Divider } from 'antd';
+import { Switch, Modal, Checkbox, Button, Radio, Tooltip, Divider, message } from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import style from './index.scss';
@@ -240,6 +240,12 @@ class SystemControl extends Component {
         ...details,
         ...params,
       }
+    }).then(() => {
+      message.success('修改成功');
+      this.props.dispatch({
+        type: 'systemControl/query',
+        payload: {},
+      });
     });
   }
 
