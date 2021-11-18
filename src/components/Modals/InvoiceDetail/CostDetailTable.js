@@ -223,6 +223,46 @@ class CostDetailTable extends PureComponent {
             textWrap: 'word-break',
             width: 150
           };
+        } else if (item.field === 'fileUrl') {
+          objs = {
+            title: (
+              <>
+                <span>
+                  {item.name}
+                </span>
+                {
+                  item.itemExplain && !!(item.itemExplain.length) &&
+                  <Tooltip
+                    title={(
+                      <>
+                        {
+                          item.itemExplain.map(its => (
+                            <p className="m-b-8">{its.msg}</p>
+                          ))
+                        }
+                      </>
+                    )}
+                  >
+                    <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                  </Tooltip>
+                }
+              </>
+            ),
+            dataIndex: 'fileUrl',
+            render: (_, record) => {
+              return (
+                <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
+                  {record.imgUrl && record.imgUrl.map((it, index) => (
+                    <div className="m-r-8" onClick={() => previewImage(record.imgUrl, index)}>
+                      <img alt="图片" src={it.imgUrl} className={style.images} />
+                    </div>
+                  ))}
+                </span>
+              );
+            },
+            textWrap: 'word-break',
+            width: 150
+          };
         } else if (item.field === 'amount'){
           objs = {
             title: (
