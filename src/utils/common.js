@@ -556,3 +556,12 @@ export const objToArr = (obj={}) => {
   }
   return arr;
 };
+
+// 判断返回上午还是下午
+export const timeDateStr = (date) => {
+  return moment(moment(Number(date))).hours() > 11 ? '下午' : '上午';
+};
+
+export const dateToStr = (date, formate) => {
+  return moment(moment(Number(date))).format(formate);
+};

@@ -866,7 +866,7 @@ class AddCost extends Component {
           )}
         >
           <div className={style.addCosts}>
-            <Form>
+            <Form className="formItem">
               <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Col span={12}>
                   <Form.Item label={labelInfo.costName} {...formItemLayout}>
