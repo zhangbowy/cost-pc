@@ -161,6 +161,7 @@ class SearchCity extends PureComponent {
   handleClose = () => {
     this.setState({
       selectCitys: [],
+      selectCitysCode: [],
     });
   }
 
@@ -218,7 +219,7 @@ class SearchCity extends PureComponent {
           icon={false}
           visible={popoverVisible}
           title={null}
-          placement="topLeft"
+          placement="bottomLeft"
           content={
             <div className={style.popoverCity}>
               <div className={style.search}>

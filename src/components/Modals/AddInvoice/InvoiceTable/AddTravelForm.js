@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Modal, Form, Button, DatePicker, Radio, message, Input, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import treeConvert from '@/utils/treeConvert';
 import fields from '@/utils/fields';
 import style from './index.scss';
 import { getParams, getTimeIdNo } from '../../../../utils/common';
@@ -47,79 +46,50 @@ class AddTravelForm extends Component {
 
   onShow = (e) => {
     e.stopPropagation();
-
-    this.props.dispatch({
-      type: 'costGlobal/provinceAndCity',
-      payload: {}
-    }).then(() => {
-      const { list, provinceAndCity } = this.props;
-      const newArr = [];
-      const showArr = [];
-      const startCity = {};
-      const endCity = {};
-      const objs = {'defaultTree': this.onGetCity(provinceAndCity, 0)};
-      if (list && list.length) {
-        list.forEach((it, index) => {
-          const key = getTimeIdNo();
-          Object.assign(startCity, {
-            [`startCity[${key}]`]: {
-              areaCode: it.startCityCode,
-              areaName: it.startCity,
-            }
-          });
-          Object.assign(endCity, {
-            [`endCity[${key}]`]: {
-              areaCode: it.endCityCode,
-              areaName: it.endCity,
-            }
-          });
-          if (it.traffic === '其他') {
-            showArr.push(`${key}`);
+    const { list } = this.props;
+    const newArr = [];
+    const showArr = [];
+    const startCity = {};
+    const endCity = {};
+    if (list && list.length) {
+      list.forEach((it) => {
+        const key = getTimeIdNo();
+        Object.assign(startCity, {
+          [`startCity[${key}]`]: {
+            areaCode: it.startCityCode,
+            areaName: it.startCity,
           }
-          newArr.push({
-            ...it,
-            key,
-            traffic: getParams({ res: it.traffic, list: aliTraffic, key: 'label', resultKey: 'value' }),
-            way: getParams({ res: it.way, list: aliWay, key: 'label', resultKey: 'value' }),
-            startCity: it.startCity,
-            endCity: it.endCity,
-            startDate: moment(moment(Number(it.startDate)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-            startMoment: moment(moment(Number(it.startDate))).hours() > 11 ? '12:00:00' : '00:00:00',
-            endMoment: moment(moment(Number(it.endDate))).hours() > 11 ? '12:00:00' : '00:00:00',
-            endDate: moment(moment(Number(it.endDate)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-            treeList: this.onGetCity(provinceAndCity, it.traffic)
-          });
-          Object.assign(objs, {
-            [`${index}_aa`]: this.onGetCity(provinceAndCity, it.traffic),
-          });
         });
-      }
-      this.setState({
-        isShow: showArr,
-        visible: true,
-        list: newArr && newArr.length ? newArr : [{ key: '00_11' }],
-        startCity,
-        endCity
+        Object.assign(endCity, {
+          [`endCity[${key}]`]: {
+            areaCode: it.endCityCode,
+            areaName: it.endCity,
+          }
+        });
+        if (it.traffic === '其他') {
+          showArr.push(`${key}`);
+        }
+        newArr.push({
+          ...it,
+          key,
+          traffic: getParams({ res: it.traffic, list: aliTraffic, key: 'label', resultKey: 'value' }),
+          way: getParams({ res: it.way, list: aliWay, key: 'label', resultKey: 'value' }),
+          startCity: it.startCity,
+          endCity: it.endCity,
+          startDate: moment(moment(Number(it.startDate)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+          startMoment: moment(moment(Number(it.startDate))).hours() > 11 ? '12:00:00' : '00:00:00',
+          endMoment: moment(moment(Number(it.endDate))).hours() > 11 ? '12:00:00' : '00:00:00',
+          endDate: moment(moment(Number(it.endDate)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+        });
       });
-    });
-  }
-
-  onGetCity = ({ airportCityList, normalList, trainStationCityList }, type) => {
-    let list = normalList;
-    if (type === '飞机' || type === 0) {
-      list = airportCityList;
-    } else if (type === '火车' || type === 1) {
-      list = trainStationCityList;
     }
-    const treeList = treeConvert({
-      rootId: 0,
-      pId: 'pid',
-      name: 'areaName',
-      id: 'areaCode',
-      tName: 'label',
-      tId: 'value'
-    }, list);
-    return treeList;
+    this.setState({
+      isShow: showArr,
+      visible: true,
+      list: newArr && newArr.length ? newArr : [{ key: '00_11' }],
+      startCity,
+      endCity
+    });
   }
 
   onCancel = () => {
@@ -471,7 +441,7 @@ class AddTravelForm extends Component {
                         required: true, message: '请选择时间'
                       }]
                     })(
-                      <Select style={{width: '135px'}}>
+                      <Select style={{width: '135px'}} placeholder="请选择">
                         {
                           moments.map(items => (
                             <Select.Option key={items.key}>{items.name}</Select.Option>
@@ -505,7 +475,7 @@ class AddTravelForm extends Component {
                         required: true, message: '请选择时间'
                       }]
                     })(
-                      <Select>
+                      <Select placeholder="请选择">
                         {
                           moments.map(items => (
                             <Select.Option key={items.key}>{items.name}</Select.Option>
@@ -536,7 +506,7 @@ class AddTravelForm extends Component {
           }}
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
         >
-          <Form>
+          <Form className="formItem">
             {formItems}
           </Form>
           {

@@ -249,7 +249,7 @@ class AddTravel extends PureComponent {
       },
     };
     return (
-      <div>
+      <div className="formItem">
         <Divider type="horizontal" />
         <div style={{paddingTop: '24px'}}>
           <div className={style.header}>
