@@ -29,8 +29,8 @@ class AddTravel extends PureComponent {
     subTrip: this.props.hisAliTrip.subTrip || [],
     fellowTravelers: this.props.hisAliTrip.fellowTravelers || [],
     selectKeys: [],
-    alitripExpensesOwner: '',
-    expenseOwner: {},
+    alitripExpensesOwner: this.props.hisAliTrip.alitripExpensesOwner || '',
+    expenseOwner: this.props.hisAliTrip.expenseOwner || {},
   }
 
   componentDidMount(){
@@ -80,7 +80,7 @@ class AddTravel extends PureComponent {
                 alitripExpensesOwner: val.alitripExpensesOwner,
               });
             }
-            if (expenseOwner) {
+            if (val.alitripExpensesOwner === '归属人') {
               Object.assign(params, {
                 expenseOwner,
               });
@@ -194,6 +194,16 @@ class AddTravel extends PureComponent {
 
   onChangeEx = (value, label, extra) => {
     console.log('确定的值', extra);
+    const {triggerNode: {props}} = extra;
+    const values = props.dataRef;
+    this.setState({
+      expenseOwner: {
+        deptId: values.deptId,
+        deptName: values.deptName,
+        userId: values.value,
+        userName: values.title
+      }
+    });
   }
 
   onChange = e => {
@@ -470,6 +480,8 @@ class AddTravel extends PureComponent {
                       <Form.Item>
                         {
                           getFieldDecorator('expenseOwner', {
+                            initialValue: hisAliTrip.expenseOwner ?
+                            `${hisAliTrip.expenseOwner.deptId}${hisAliTrip.expenseOwner.userId}` : undefined,
                             rules: [{ required: true, message: '请选择归属人' }]
                           })(
                             <TreeSelect
@@ -480,7 +492,6 @@ class AddTravel extends PureComponent {
                               getPopupContainer={triggerNode => triggerNode.parentNode}
                               showSearch
                               treeNodeLabelProp="label"
-                              labelInValue
                               onChange={this.onChangeEx}
                             >
                               { this.loop(deptTree) }
