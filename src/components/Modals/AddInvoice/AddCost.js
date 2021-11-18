@@ -287,6 +287,7 @@ class AddCost extends Component {
           }
           this.setState({
             details: detail,
+            fileUrl: detail.fileUrl || [],
             currencyId: detail.currencyId || '-1',
             currencyName: detail.currencyName || '',
             exchangeRate: detail.exchangeRate || '1',
@@ -449,11 +450,15 @@ class AddCost extends Component {
         if (!arr) {
           return;
         }
+        let fileUrls  = [];
+        if (val.fileUrl) {
+          fileUrls = fileUrl;
+        }
         const detail = addCostValue({
           costDate,
           val,
           imgUrl,
-          fileUrl,
+          fileUrl: fileUrls,
           shareAmount,
           details,
           lbDetail,
@@ -744,6 +749,19 @@ class AddCost extends Component {
         currencySymbol: '¥'
       });
     }
+  }
+
+  onDelFile = (index, e, flag) => {
+    e.stopPropagation();
+    if (flag) {
+      message.error('不允许删除');
+      return;
+    }
+    const files = this.state.fileUrl;
+    files.splice(index, 1);
+    this.setState({
+      fileUrl: files
+    });
   }
 
   onChangeState = (type, val) => {

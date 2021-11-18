@@ -788,6 +788,7 @@ class InvoiceDetail extends Component {
                 list={category}
                 previewImage={this.previewImage}
                 cityInfo={this.state.cityInfo}
+                previewFiles={this.previewFiles}
               />
             </>
           }

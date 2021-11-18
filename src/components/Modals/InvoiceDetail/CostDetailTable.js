@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-expressions */
 import React, { PureComponent } from 'react';
 import { Table, Tooltip, Popover, Tag } from 'antd';
@@ -6,12 +7,13 @@ import cs from 'classnames';
 import style from './index.scss';
 import { handleProduction, compare } from '../../../utils/common';
 import fields from '../../../utils/fields';
+import fileIcon from '../../../utils/fileIcon';
 
 const { trainLevels, flightLevels } = fields;
 class CostDetailTable extends PureComponent {
 
   onHandle = (list) => {
-    const { previewImage, cityInfo } = this.props;
+    const { previewImage, cityInfo, previewFiles } = this.props;
     console.log('CostDetailTable -> onHandle -> list', list);
     let newArr = [];
     const columns = [];
@@ -250,13 +252,53 @@ class CostDetailTable extends PureComponent {
             ),
             dataIndex: 'fileUrl',
             render: (_, record) => {
+              const { fileUrl } = record;
               return (
-                <span className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
-                  {record.imgUrl && record.imgUrl.map((it, index) => (
-                    <div className="m-r-8" onClick={() => previewImage(record.imgUrl, index)}>
-                      <img alt="图片" src={it.imgUrl} className={style.images} />
-                    </div>
-                  ))}
+                <span>
+                  {
+                    fileUrl && fileUrl.length ?
+                    fileUrl.length === 1 ?
+                      <div className={style.files} onClick={() => previewFiles(it)}>
+                        <img
+                          className='attachment-icon'
+                          src={fileIcon[fileUrl[0].fileType]}
+                          alt='attachment-icon'
+                        />
+                        <div className={style.filename}>
+                          <span className={style.filename__base}>
+                            {fileUrl[0].fileName.substring(0, fileUrl[0].fileName.length-(fileUrl[0].fileType.length + 1))}
+                          </span>
+                          <span className={style.filename__extension}>.{fileUrl[0].fileType}</span>
+                        </div>
+                      </div>
+                      :
+                      <Popover
+                        overlayClassName={style.popFile}
+                        content={(
+                          <div>
+                            {
+                              fileUrl.map(items => (
+                                <div className={style.files} key={items.fileId} onClick={() => previewFiles(items)}>
+                                  <img
+                                    className='attachment-icon'
+                                    src={fileIcon[items.fileType]}
+                                    alt='attachment-icon'
+                                  />
+                                  <div className={style.filename}>
+                                    <span className={style.filename__base}>{items.fileName.substring(0, items.fileName.length-(items.fileType.length + 1))}</span>
+                                    <span className={style.filename__extension}>.{items.fileType}</span>
+                                  </div>
+                                </div>
+                              ))
+                            }
+                          </div>
+                        )}
+                      >
+                        <span style={{color: 'rgba(52, 64, 162, 0.8)'}}>共{fileUrl.length}个附件</span>
+                      </Popover>
+                      :
+                      <span>-</span>
+                  }
                 </span>
               );
             },
