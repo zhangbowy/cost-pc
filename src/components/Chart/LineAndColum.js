@@ -174,7 +174,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
   return (
     <ReactEcharts
       option={options}
-      style={{height: '412px', width: '100%'}}
+      style={{height: '420px', width: '100%'}}
       notMerge
       lazyUpdate
     />
