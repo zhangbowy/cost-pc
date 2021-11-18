@@ -744,7 +744,7 @@ class InvoiceDetail extends Component {
             </>
           }
           {
-            aliTrip.subTrip && aliTrip.subTrip.length &&
+            aliTrip.subTrip && aliTrip.subTrip.length > 0 &&
             <>
               <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
                 <div className={style.line} />
