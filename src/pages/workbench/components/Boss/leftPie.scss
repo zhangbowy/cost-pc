@@ -177,7 +177,7 @@
     margin-bottom: 20px;
     padding-top: 20px;
     .tLeft{
-      height: 32px;
+      height: 28px;
       font-size: 14px;
       font-weight: 400;
       color: rgba(0, 0, 0, 0.65);
@@ -196,8 +196,8 @@
       margin-right: 24px;
       span{
         width: 46px;
-        height: 28px;
-        line-height: 28px;
+        height: 26px;
+        line-height: 24px;
         text-align: center;
         display: inline-block;
         border: 1px solid #E9E9E9;
@@ -264,7 +264,7 @@
       }
     }
     .ctl{
-      height: 22px;
+      height: 20px;
       line-height: 22px;
       display: flex;
       align-items: center;
@@ -353,5 +353,19 @@
   .lineChart{
     margin: 24px;
     height: 420px;
+  }
+}
+.noData{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 32px;
+  img{
+    width: 180px;
+  }
+  span{
+    color: rgba(0,0,0,0.25);
+    font-size: 14px;
   }
 }

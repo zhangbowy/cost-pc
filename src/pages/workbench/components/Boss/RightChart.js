@@ -1,8 +1,10 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/no-did-update-set-state */
 import React, { useState } from 'react';
 // import PropTypes from 'prop-types';
 import { Spin } from 'antd';
 import cs from 'classnames';
+import noData from '@/assets/img/noData.png';
 import style from './leftPie.scss';
 
 const list = [{
@@ -14,7 +16,7 @@ const list = [{
   name: '标准预警',
   key: 1,
   item: 'costWarningForStandardVos',
-  arr:  ['standardName', 'exceedAmount', 'annulus'],
+  arr:  ['standardName', 'exceedContent', 'annulus'],
 }];
 const lists = [{
   name: '数量',
@@ -100,23 +102,65 @@ const RightChart = ({ loading, submitReport }) => {
               ))
             }
           </div>
-          {
-            submitReport[list[type].item] && submitReport[list[type].item].map((it, index) => (
-              <div className={style.ctl}>
-                {
-                  list[type].arr.map((item, i) => (
-                    <span key={item} className={style.tds}>
-                      {
-                        i === 0 &&
-                        <span className={index < 3 ? cs(style.num, style.actives) : style.num}>{(index+1)}</span>
-                      }
-                      {it[item] || '-'}
-                    </span>
-                  ))
+          <div style={{ height: '230px' }}>
+            {
+              submitReport[list[type].item] && submitReport[list[type].item]
+              .filter(it => {
+                if (type === 0) {
+                  return true;
                 }
+                return count ? [2,3,4,5].includes(it.standardType) : [0,1].includes(it.standardType);
+              }).length > 0 ?
+              submitReport[list[type].item] && submitReport[list[type].item]
+              .filter(it => {
+                if (type === 0) {
+                  return true;
+                }
+                return count ? [2,3,4,5].includes(it.standardType) : [0,1].includes(it.standardType);
+              })
+              .map((it, index) => (
+                <div className={style.ctl}>
+                  {
+                    list[type].arr.map((item, i) => {
+                      let str = it[item] || '-';
+                      if (i === 1) {
+                        if (type === 0 || (type === 1 && [2,3,4,5].includes(it.standardType))) {
+                          str = it[item]/100;
+                        } else {
+                          str = it[item] || 0;
+                        }
+                      }
+                      if (i === 2) {
+                        str = (
+                          <>
+                            {
+                              it.annulusSymbolType !== null &&
+                              <i className={`iconfont ${it.annulusSymbolType === 1 ? 'iconxiajiang' : 'iconshangsheng'}`} />
+                            }
+                            <span className="c-black-85 fw-500">{it.annulus || 0}{it.annulus !== null && '%'}</span>
+                          </>
+                        );
+                      }
+                      return (
+                        <span key={item} className={style.tds}>
+                          {
+                            i === 0 &&
+                            <span className={index < 3 ? cs(style.num, style.actives) : style.num}>{(index+1)}</span>
+                          }
+                          {str}
+                        </span>
+                      );
+                    })
+                  }
+                </div>
+              ))
+              :
+              <div className={style.noData}>
+                <img src={noData} alt="暂无数据" />
+                <span>暂无数据</span>
               </div>
-            ))
-          }
+            }
+          </div>
         </div>
         <div className={style.contPro}>
           <i className="iconfont iconshuomingwenzi" />

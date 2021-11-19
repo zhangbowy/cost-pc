@@ -59,3 +59,19 @@
     border-radius: 2px;
   }
 }
+.popTitle{
+  display: flex;
+}
+.popImg{
+  img{
+    width: 360px;
+  }
+  :global{
+    .ant-popover-inner-content{
+      padding: 0px;
+    }
+    .ant-popover-arrow{
+      display: none;
+    }
+  }
+}

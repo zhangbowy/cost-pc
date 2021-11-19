@@ -9,7 +9,9 @@ import fields from '../../../../utils/fields';
 
 const {monthAndYear} = fields;
 const { SHOW_CHILD } = TreeSelect;
-const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptList, lineCharts, barCharts }) => {
+const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
+  lineParams,
+  onlyDeptList, lineCharts, barCharts }) => {
   const costList = treeConvert(
     {
       rootId: 0,
@@ -34,8 +36,11 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptLis
     }
     return item;
   };
-  const onChangeTree = (val) => {
-    console.log(val);
+  const onChangeTree = (val, key) => {
+    onChangeState('lineParams', {
+      ...lineParams,
+      [key]: val,
+    });
   };
   const handleArr = (arr) => {
     const x = arr.map(it => it.time) || [];
@@ -91,8 +96,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptLis
             dropdownStyle={{height: '300px'}}
             showSearch
             treeNodeFilterProp='title'
-            labelInValue
-            onChange={val => onChangeTree(val)}
+            onChange={val => onChangeTree(val, 'categoryIds')}
             getPopupContainer={triggerNode => triggerNode.parentNode}
           />
           <TreeSelect
@@ -105,8 +109,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptLis
             dropdownStyle={{height: '300px'}}
             showSearch
             treeNodeFilterProp='title'
-            labelInValue
-            onChange={val => onChangeTree(val)}
+            onChange={val => onChangeTree(val, 'deptIds')}
             getPopupContainer={triggerNode => triggerNode.parentNode}
           />
         </div>

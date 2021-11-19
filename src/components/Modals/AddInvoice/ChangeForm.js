@@ -438,6 +438,26 @@ class ChangeForm extends Component {
     this.props.form.resetFields();
   }
 
+
+renderTreeNodes = data =>
+  data.map(item => {
+    if (item.children) {
+      // 这一句是关键代码，设置父级都为禁用模式，有条件的让后台返回
+      return (
+        <TreeNode
+          key={item.key}
+          title={item.label}
+          value={item.value}
+          disabled={!item.type}
+        >
+          {this.renderTreeNodes(item.children)}
+        </TreeNode>
+      );
+    }
+    return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
+  });
+
+
   render () {
     const {
       showField,
@@ -1022,24 +1042,18 @@ class ChangeForm extends Component {
                                 initialValue: details.projectId || undefined,
                                 rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
                               })(
-                                <Select
+                                <TreeSelect
+                                  style={{width: '100%'}}
+                                  className="m-l-8"
                                   placeholder={showField.project && showField.project.note ?
-                                  showField.project.note : `请选择${labelInfo.project}`}
-                                  onChange={(val) => this.onChangePro(val, 'project')}
-                                  dropdownClassName="selectClass"
-                                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  disabled={modify && !showField.project.isModify}
+                                  showField.project.note : '请选择'}
+                                  dropdownStyle={{height: '300px'}}
                                   showSearch
-                                  optionFilterProp="name"
-                                  filterOption={(input, option) =>
-                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                  treeNodeFilterProp='title'
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
                                 >
-                                  {
-                                    usableProject.map(it => (
-                                      <Option key={it.id}>{it.name}</Option>
-                                    ))
-                                  }
-                                </Select>
+                                  {this.renderTreeNodes(projectList)}
+                                </TreeSelect>
                               )
                             }
                             {

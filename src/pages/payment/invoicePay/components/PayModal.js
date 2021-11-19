@@ -14,12 +14,13 @@ const accountType = [{
   value: '线上支付'
 }];
 @Form.create()
-@connect(({ global, session, loading }) => ({
+@connect(({ global, session, loading, costGlobal }) => ({
   payAccount: global.payAccount,
   userInfo: session.userInfo,
   getAliAccounts: global.getAliAccounts,
   batchDetails: global.batchDetails,
   alipayUrl: global.alipayUrl,
+  paymentMethod: costGlobal.paymentMethod,
   loading: loading.effects['global/addBatch'] || loading.effects['global/send'] || false,
 }))
 class PayModal extends React.PureComponent {
@@ -41,6 +42,10 @@ class PayModal extends React.PureComponent {
     const { userInfo, selectKey } = this.props;
     this.props.dispatch({
       type: 'global/getAliAccounts',
+      payload: {}
+    });
+    this.props.dispatch({
+      type: 'costGlobal/paymentMethod',
       payload: {}
     });
     this.props.dispatch({
@@ -236,6 +241,7 @@ class PayModal extends React.PureComponent {
       getAliAccounts,
       loading,
       userInfo,
+      paymentMethod,
     } = this.props;
     const { visible, defAcc, count, amount, flag, status, prod, imgUrl } = this.state;
     const formItemLayout = {
@@ -272,7 +278,7 @@ class PayModal extends React.PureComponent {
             <Form.Item label="付款方式" {...formItemLayout}>
               {
                 getFieldDecorator('accountType', {
-                  initialValue: '1',
+                  initialValue: !flag && paymentMethod ? '2' : '1',
                 })(
                   <Radio.Group onChange={e => this.onChange(e)}>
                     {

@@ -3,6 +3,7 @@ import React from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { defaultColor } from '@/utils/constants';
 import style from './leftPie.scss';
+import NoData from '../../../../components/NoData';
 
 const tabList = [{
   key: 'appDeptStatisticReturnVo',
@@ -175,12 +176,7 @@ function PieChart({ data, total, current, title, onLink }) {
             onEvents={onclick}
           />
           :
-          <div className={style.noData}>
-            <div className={style.noDataChild}>
-              <p className="fs-14 c-black-45">暂无{tabList[current].value}</p>
-              <p className="fs-24 c-black-85">¥0.00</p>
-            </div>
-          </div>
+          <NoData />
       }
     </div>
   );

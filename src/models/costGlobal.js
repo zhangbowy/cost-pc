@@ -57,6 +57,7 @@ export default {
     checkStandMsg: '',
     deptAndUser: {}, // 关联dingUserId
     roleUserList: [], // 角色列表
+    paymentMethod: 0, // 控制开关
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -491,6 +492,15 @@ export default {
         type: 'save',
         payload: {
           onlyDeptList: response || [],
+        },
+      });
+    },
+    *paymentMethod({ payload }, { call, put }){
+      const response = yield call(get, api.paymentMethod, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          paymentMethod: response || 0,
         },
       });
     },

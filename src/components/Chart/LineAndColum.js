@@ -3,6 +3,7 @@ import React from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { defaultColor } from '../../utils/constants';
 import styles from './index.scss';
+import NoData from '../NoData';
 // import { defaultColor } from '../../utils/constants';
 
 const LineAndColumn = ({ lineCharts, barCharts }) => {
@@ -11,12 +12,17 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
   const xAxisData = barCharts.xList || [];
   const splitNumber=5;
 
-  const min=Math.min.call(null,...value1, ...value);
+  const min1=Math.min.call(null, ...value);
+  console.log('LineAndColumn -> min1', min1);
+  const min2=Math.min.call(null, ...value1);
+  console.log('LineAndColumn -> min2', min2);
 
   // 取splitNumber的倍数
-  let max= Math.ceil(Math.max.call(null,...value1, ...value));
+  const max1= Math.ceil((Math.max.call(null,...value)/9.5)*10);
+  console.log('LineAndColumn -> max1', max1);
+  const max2= Math.ceil((Math.max.call(null,...value1)/9.5)*10);
+  console.log('LineAndColumn -> max2', max2);
 
-  max = parseInt(max/splitNumber) * splitNumber + (max%splitNumber === 0 ? 0 : splitNumber );
   const barOption = [];
   barCharts.keys.forEach((el) => {
     barOption.push({
@@ -37,7 +43,10 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       data: lineCharts.dataList.map(it => it[el]),
     });
   });
-  const interval = parseInt(max / splitNumber);
+  const interval1 = Math.ceil((max1-min1) / splitNumber);
+  console.log('LineAndColumn -> interval1', interval1);
+  const interval2 = Math.ceil((max2-min2) / splitNumber);
+  console.log('LineAndColumn -> interval2', interval2);
   const options = {
     tooltip: {
       trigger: 'axis',
@@ -61,7 +70,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       }
     },
     legend: {
-      data: [...lineCharts.keys, ...barCharts.keys],
+      data: [...barCharts.keys, ...lineCharts.keys],
       textStyle: {
         color: 'rgba(0,0,0,0.65)'
       },
@@ -86,13 +95,14 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         show: false
       },
       axisLine:{
+        show: true,
+        onZero: false,
         lineStyle:{
             color:'#E9E9E9'     // X轴的颜色
         },
       },
       axisLabel:{
         color:'rgba(0,0,0,0.65)',
-        interval:0,
       },
     }],
     yAxis: [
@@ -112,12 +122,11 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
           margin: 2,
-          splitLine: {
-            lineStyle:{
-              color:'#E9E9E9'     // X轴的颜色
-            },
-          }
         },
+        splitNumber,
+        max: max1,
+        min: min1,
+        interval: interval1,
         splitLine: {
           show: true,
           lineStyle:{
@@ -139,9 +148,9 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
           fontSize: 12,
         },
         splitNumber,
-        max,
-        min,
-        interval,
+        max: max2,
+        min: min2,
+        interval: interval2,
         splitLine: {
           show: true,
           lineStyle:{
@@ -151,6 +160,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
           }
         },
         axisLine:{
+          onZero: false,
           lineStyle:{
               color:'#fff'     // X轴的颜色
           },
@@ -158,11 +168,6 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
           margin: 2,
-          splitLine: {
-            lineStyle:{
-              color:'#E9E9E9'     // X轴的颜色
-            },
-          }
         }
       }
     ],
@@ -172,12 +177,19 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     ]
   };
   return (
-    <ReactEcharts
-      option={options}
-      style={{height: '420px', width: '100%'}}
-      notMerge
-      lazyUpdate
-    />
+    <>
+      {
+        barOption.length > 0 || lineOptions.length > 0 ?
+          <ReactEcharts
+            option={options}
+            style={{height: '420px', width: '100%'}}
+            notMerge
+            lazyUpdate
+          />
+          :
+          <NoData />
+      }
+    </>
   );
 };
 

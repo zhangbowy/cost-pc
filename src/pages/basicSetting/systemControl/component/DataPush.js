@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import { Table, Switch, Select, Form, Popover, Checkbox } from 'antd';
 import CheckboxGroup from 'antd/lib/checkbox/Group';
 import add from '@/assets/img/addP.png';
+import week from '@/assets/img/week1.png';
+import month from '@/assets/img/month1.png';
 import style from './index.scss';
 import { choosePeople } from '../../../../utils/ddApi';
 
@@ -24,6 +26,7 @@ class DataPush extends PureComponent {
       list: [{
         id: 'weekMessage',
         name: '1. 周报数据推送',
+        img: week,
         list: [{
           id: 'weekMessage',
           key: 'userPush',
@@ -38,6 +41,7 @@ class DataPush extends PureComponent {
       }, {
         id: 'monthMessage',
         name: '2. 月报数据推送',
+        img: month,
         list: [{
           id: 'monthMessage',
           key: 'userPush',
@@ -59,6 +63,7 @@ class DataPush extends PureComponent {
       const newArr = [{
         id: 'weekMessage',
         name: '1. 周报数据推送',
+        img: week,
         list: [{
           ...weekMessage,
           id: 'weekMessage',
@@ -72,6 +77,7 @@ class DataPush extends PureComponent {
       }, {
         id: 'monthMessage',
         name: '2. 月报数据推送',
+        img: month,
         list: [{
           ...monthMessage,
           id: 'monthMessage',
@@ -96,7 +102,7 @@ class DataPush extends PureComponent {
     const _this = this;
     const { details } = this.props;
     choosePeople(
-      record.userPush ? record.userPush.map(it => it.userId) : [],
+      record.users ? record.users.map(it => it.userId) : [],
      (res) => {
       const arr = [];
       if (res) {
@@ -172,7 +178,9 @@ class DataPush extends PureComponent {
                 <div className={style.checkGroup}>
                   <Form.Item>
                     {
-                      getFieldDecorator(`rolePush[${record.id}]`)(
+                      getFieldDecorator(`rolePush[${record.id}]`, {
+                        initialValue: record.roles ? record.roles.map(it => it.id) : [],
+                      })(
                         <CheckboxGroup>
                           {
                             roleUserList.map(it => (
@@ -270,7 +278,20 @@ class DataPush extends PureComponent {
         {
           list.map(it => (
             <div key={it.key} className="m-b-28">
-              <p className="c-black-85 fs-14 m-b-12">{it.name}</p>
+              <div className={style.popTitle}>
+                <p className="c-black-85 fs-14 m-b-12">{it.name}</p>
+                <Popover
+                  overlayClassName={style.popImg}
+                  content={(
+                    <div className={style.popStyle}>
+                      <img src={it.img} alt="数据" style={{width: '360px'}} />
+                    </div>
+                  )}
+                  placement="rightTop"
+                >
+                  <i className="iconfont iconshuomingwenzi c-black-45 m-l-8 fs-14" />
+                </Popover>
+              </div>
               <Table
                 columns={colums}
                 pagination={false}
