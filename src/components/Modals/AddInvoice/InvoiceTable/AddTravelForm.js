@@ -52,8 +52,8 @@ class AddTravelForm extends Component {
     const startCity = {};
     const endCity = {};
     if (list && list.length) {
-      list.forEach((it) => {
-        const key = getTimeIdNo();
+      list.forEach((it, index) => {
+        const key = `${getTimeIdNo()}${index}`;
         Object.assign(startCity, {
           [`startCity[${key}]`]: {
             areaCode: it.startCityCode,
