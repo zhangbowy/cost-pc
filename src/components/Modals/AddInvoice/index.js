@@ -730,6 +730,11 @@ class AddInvoice extends Component {
       applyDetailList: [],  // 产品明细
       expandVos: [],
       hisAliTrip: {},
+      travelList: {}, // 行程的form表单以及数据
+      aliTripFields: [],
+      aliTripAuth: {}, // 判断是否有商旅权限
+      exceedVisible: false,
+      submitParams: {},
     });
   }
 

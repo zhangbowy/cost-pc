@@ -166,8 +166,8 @@ class AddTravelForm extends Component {
             startCityCode: startCity[`startCity[${item}]`].areaCode,
             endCity: endCity[`endCity[${item}]`].areaName,
             endCityCode: endCity[`endCity[${item}]`].areaCode,
-            startDate: startD,
-            endDate: endD,
+            startDate: Number(startD),
+            endDate: Number(endD),
             way: getParams({ res: value.way[item], list: aliWay, key: 'value', resultKey: 'label' }),
           });
         });
