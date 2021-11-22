@@ -11,10 +11,15 @@
     padding-top: 20px;
     margin-bottom: 24px;
     height: 52px;
+    :global{
+      .ant-form-inline .ant-form-item{
+        margin-right: 0px;
+      }
+    }
   }
   .content{
     height: 220px;
-    margin:0 24px;
+    margin:0 16px 0 24px;
     display: flex;
     .left{
       padding: 24px;
@@ -23,6 +28,7 @@
       flex: 1;
       background: rgba(245, 247, 250, 0.5);
       border-radius: 12px;
+      margin-right: 4px;
       .portion{
         display: flex;
         height: 22px;
