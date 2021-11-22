@@ -167,12 +167,15 @@ class CategoryAdd extends PureComponent {
                 relations.push('isWriteByRelationApply');
               }
               const ids = costCategoryList.map(it => it.id);
+              console.log('CategoryAdd -> componentDidMount -> costCategoryList', costCategoryList);
               const newArrs = [];
               costCategory.forEach(it => {
                 if (ids.includes(it)){
                   newArrs.push(it);
                 }
               });
+              console.log('CategoryAdd -> componentDidMount -> newArrs', newArrs);
+
               Object.assign(datas, {
                 ...detail,
                 costCategory: newArrs.length ? newArrs : null,
