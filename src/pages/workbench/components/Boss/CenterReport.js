@@ -1,12 +1,16 @@
 /*
 *  支出简报
 */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Spin } from 'antd';
 import one from '../../../../assets/img/first/0.png';
+import one1 from '../../../../assets/img/first/00.png';
 import two from '../../../../assets/img/first/1.png';
+import two1 from '../../../../assets/img/first/11.png';
 import three from '../../../../assets/img/first/2.png';
+import three1 from '../../../../assets/img/first/22.png';
 import four from '../../../../assets/img/first/3.png';
+import four1 from '../../../../assets/img/first/33.png';
 import style from './centerReport.scss';
 import TinyAreaChart from '../../../../components/Chart/TinyAreaChart';
 import TempTable from './TempTable';
@@ -26,24 +30,28 @@ const listP = [{
 const list = [{
   key: 'needPayCostSum',
   img: one,
+  bg: one1,
   name: '待付金额',
   color: '#FEF5F0',
   status: 2,
 }, {
   key: 'paidCostSum',
   img: two,
+  bg: two1,
   name: '已付金额',
   color: '#E8FAF7',
   status: 3,
 }, {
   key: 2,
   img: three,
+  bg: three1,
   name: '审核中金额',
   color: '#FFF9F9',
   status: 1,
 }, {
   key: 'repaymentSum',
   img: four,
+  bg: four1,
   name: '借款待还金额',
   color: '#F1F7FF'
 }];
@@ -86,11 +94,12 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
           {
             list.map(it => {
               const Items = (
-                <>
+                <Fragment key={it.key}>
                   <img src={it.img} alt="展示图片" />
-                  <p className="c-black-85 fw-500 fs-24 m-l-24">¥{data[it.key] ? data[it.key]/100 : 0}</p>
+                  <img src={it.bg} alt="展示图片" className={style.absoluteImg} />
+                  <p className="c-black-85 fw-500 fs-20 m-l-24">¥{data[it.key] ? data[it.key]/100 : 0}</p>
                   <p className="c-black-65 m-l-24">{it.name}</p>
-                </>
+                </Fragment>
               );
               if (it.key === 'repaymentSum') {
                 return (

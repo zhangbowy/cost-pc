@@ -528,7 +528,7 @@ class Workbench extends PureComponent {
     }];
 
     return (
-      <div>
+      <div style={{minWidth: '1090px'}}>
         {
           userInfo.isSupperAdmin && (localStorage.getItem('initShow') !== 'true') ?
             <StepShow {...this.props} userInfo={userInfo} />
