@@ -258,7 +258,7 @@ class CostDetailTable extends PureComponent {
                   {
                     fileUrl && fileUrl.length ?
                     fileUrl.length === 1 ?
-                      <div className={style.files} onClick={() => previewFiles(it)}>
+                      <div className={style.files} onClick={() => previewFiles(fileUrl[0])}>
                         <img
                           className='attachment-icon'
                           src={fileIcon[fileUrl[0].fileType]}

@@ -33,7 +33,7 @@ const head = {
     title: '超标金额（元）',
     key: 1,
   }, {
-    title: '环比',
+    title: '环比（%）',
     key: 2,
   }],
   11: [{
@@ -43,7 +43,7 @@ const head = {
     title: '超标金额（元）',
     key: 1,
   }, {
-    title: '环比',
+    title: '环比（%）',
     key: 2,
   }],
   10: [{
@@ -53,7 +53,7 @@ const head = {
     title: '超标次数（次）',
     key: 1,
   }, {
-    title: '环比',
+    title: '环比（%）',
     key: 2,
   }],
 };
@@ -137,7 +137,7 @@ const RightChart = ({ loading, submitReport }) => {
                               it.annulusSymbolType !== null &&
                               <i className={`iconfont ${it.annulusSymbolType === 1 ? 'iconxiajiang' : 'iconshangsheng'}`} />
                             }
-                            <span className="c-black-85 fw-500">{it.annulus || 0}{it.annulus !== null && '%'}</span>
+                            <span className="c-black-85 fw-500">{it.annulus || 0}{it.annulus !== null && ''}</span>
                           </>
                         );
                       }

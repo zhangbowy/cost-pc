@@ -201,8 +201,8 @@
   flex-wrap: nowrap;
   display: -webkit-box;
   text-overflow: ellipsis;
-  height: 45px;
-  -webkit-line-clamp: 2;
+  height: 22px;
+  // -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 .shareAdd{

@@ -47,60 +47,63 @@ class PayModal extends React.PureComponent {
     this.props.dispatch({
       type: 'costGlobal/paymentMethod',
       payload: {}
-    });
-    this.props.dispatch({
-      type: 'global/payAccount',
-      payload: {
-        companyId: userInfo.companyId,
-        pageNo: 1,
-        pageSize: 100,
-      }
     }).then(() => {
-      const { payAccount } = this.props;
-      const accountList = payAccount.filter(it => (Number(it.status) === 1));
-      const defaultAccount = accountList.filter(it => it.isDefault);
-      let acc = '';
-      let cout = 1;
-      let flags = false;
-      let amount = 0;
-      let prod = '已选单据有非支付宝收款账户，不支持线上支付';
-      if (defaultAccount && defaultAccount.length > 0) {
-        acc = defaultAccount[0].id;
-      }
-      if (selectKey) {
-        if(selectKey.length === 0) {
-          message.error('请至少选择一个发起支付');
-          return;
+      this.props.dispatch({
+        type: 'global/payAccount',
+        payload: {
+          companyId: userInfo.companyId,
+          pageNo: 1,
+          pageSize: 100,
         }
-        cout = selectKey.length;
-        selectKey.forEach(item => {
-          if (item.submitSum) amount+=item.submitSum;
-          if (item.accountType !== 1) {
+      }).then(() => {
+        const { payAccount, paymentMethod } = this.props;
+        const accountList = payAccount.filter(it => (Number(it.status) === 1));
+        const defaultAccount = accountList.filter(it => it.isDefault);
+        let acc = '';
+        let cout = 1;
+        let flags = false;
+        let amount = 0;
+        let prod = '已选单据有非支付宝收款账户，不支持线上支付';
+        if (defaultAccount && defaultAccount.length > 0) {
+          acc = defaultAccount[0].id;
+        }
+        if (selectKey) {
+          if(selectKey.length === 0) {
+            message.error('请至少选择一个发起支付');
+            return;
+          }
+          cout = selectKey.length;
+          selectKey.forEach(item => {
+            if (item.submitSum) amount+=item.submitSum;
+            if (item.accountType !== 1) {
+              flags = true;
+            }
+          });
+          // eslint-disable-next-line eqeqeq
+          if (Number(amount) < 100) {
             flags = true;
+            prod='已选单据付款金额小于1元，请线下支付并标记';
+          }
+        }
+
+        this.setState({
+          visible: true,
+          defAcc: acc,
+          count: cout,
+          amount,
+          flag: flags,
+          prod,
+          status: !flags && paymentMethod ? '2' : '1',
+        }, () => {
+          if (acc) {
+            this.props.form.setFieldsValue({
+              account: acc,
+            });
           }
         });
-        // eslint-disable-next-line eqeqeq
-        if (Number(amount) < 100) {
-          flags = true;
-          prod='已选单据付款金额小于1元，请线下支付并标记';
-        }
-      }
-
-      this.setState({
-        visible: true,
-        defAcc: acc,
-        count: cout,
-        amount,
-        flag: flags,
-        prod,
-      }, () => {
-        if (acc) {
-          this.props.form.setFieldsValue({
-            account: acc,
-          });
-        }
       });
     });
+
   }
 
   onCancel = () => {
