@@ -235,7 +235,7 @@ class AddTravel extends PureComponent {
   render () {
     const { aliTripFields, aliTripAuth, form: { getFieldDecorator }, hisAliTrip } = this.props;
     const { aliCostAndI, deptTree } = aliTripFields;
-    console.log('阿里商旅', deptTree);
+    console.log('阿里商旅', aliTripAuth);
     const { subTrip } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -261,7 +261,7 @@ class AddTravel extends PureComponent {
             <div style={{textAlign: 'center'}} className={style.addbtn}>
               <AddTravelForm
                 onOk={this.onGetTrip}
-                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
               >
                 <Button
                   icon="plus"
@@ -277,7 +277,7 @@ class AddTravel extends PureComponent {
               <AddTravelForm
                 onOk={this.onGetTrip}
                 list={subTrip}
-                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
               >
                 <div className={style.singleBtn}>
                   <span>+ 添加行程</span>
@@ -290,7 +290,7 @@ class AddTravel extends PureComponent {
                       onOk={this.onGetTrip}
                       list={subTrip}
                       key={item.key}
-                      hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                      hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
                     >
                       <div className={style.singleContent} key={item.startDate}>
                         <div className={style.iconImg}>
@@ -322,7 +322,7 @@ class AddTravel extends PureComponent {
             </div>
         }
         {
-          aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler &&
+          aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable &&
           <Row>
             {/* <EasyForm
               isModal={false}
@@ -380,7 +380,7 @@ class AddTravel extends PureComponent {
               </Form.Item>
             </Col>
             {
-              aliTripAuth.alitripSetting.isEnable &&
+              aliTripAuth.alitripSetting.hasFellowTraveler &&
               <>
                 <Col span={12} className={style.treeSelects}>
                   <Form.Item label="同行人" {...formItemLayout}>
