@@ -369,6 +369,7 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       details: {},
+      fileUrl: [],
       // treeExpandedKeys: [],
     });
   }
