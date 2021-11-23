@@ -265,10 +265,10 @@ class DataPush extends PureComponent {
             <Form.Item style={{marginBottom: 0}}>
               {
                 getFieldDecorator(`isPush[${record.id}]`, {
-                  initialValue: record.isPush,
+                  initialValue: !record.isPush,
                   valuePropName: 'checked'
                 })(
-                  <Switch onChange={e => this.onChange(Number(e), record, 'isPush')} />
+                  <Switch onChange={e => this.onChange(Number(!e), record, 'isPush')} />
                 )
               }
             </Form.Item>
