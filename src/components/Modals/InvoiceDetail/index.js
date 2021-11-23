@@ -584,14 +584,16 @@ class InvoiceDetail extends Component {
                 </Tooltip>
                 {
                   allow === 'copy' && (userInfo.userId === details.createId) && !details.isEnterpriseAlitrip &&
+                  !details.isHistoryImport &&
                     <Tooltip title="复制">
                       <i className="iconfont icona-fuzhi3x" onClick={() => this.onChangeType('copy')} />
                     </Tooltip>
                 }
                 {
-                  details.isEnterpriseAlitrip && (userInfo.userId === details.createId) &&
+                  (details.isEnterpriseAlitrip || details.isHistoryImport) &&
+                  (userInfo.userId === details.createId) &&
                   allow === 'copy' &&
-                  <Tooltip title="阿里商旅自动导入单据，不支持复制">
+                  <Tooltip title={`${details.isHistoryImport ? '历史数据' : '阿里商旅自动'}导入单据，不支持复制`}>
                     <i className="iconfont icona-fuzhi3x c-black-25" />
                   </Tooltip>
                 }

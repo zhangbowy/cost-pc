@@ -28,13 +28,13 @@ const moneySum = [{
   name: '标记已付',
   value: 0,
   pro: '线下其他渠道支付后，在鑫支出仅做标记使用',
-  icon: 'icona-zhifubaozhifu3x'
+  icon: 'icona-zhifu3x'
 }, {
   title: '线上支付',
   name: '线上支付',
   value: 1,
   pro: '线上打开支付宝，验密后直接付款',
-  icon: 'icona-zhifu3x'
+  icon: 'icona-zhifubaozhifu3x'
 }];
 @connect(({ systemControl, loading, costGlobal }) => ({
   isModifyInvoice: systemControl.isModifyInvoice,
@@ -325,8 +325,8 @@ class SystemControl extends Component {
                     key={it.value}
                     onClick={() => this.handleTables({ paymentMethod: it.value })}
                   >
-                    <div className={style.payImg} style={{ background: it.value ? '#FFF6EC' : '#ECF7FF' }}>
-                      <i className={`iconfont ${it.icon}`} style={{ color: it.value ? '#FFA01A' : '#0084FF' }}/>
+                    <div className={style.payImg} style={{ background: !it.value ? '#FFF6EC' : '#ECF7FF' }}>
+                      <i className={`iconfont ${it.icon}`} style={{ color: !it.value ? '#FFA01A' : '#0084FF' }}/>
                     </div>
                     <div className={style.rightP}>
                       <p className="c-black-85">{it.title}</p>
