@@ -276,7 +276,7 @@ class SystemControl extends Component {
     return (
       <div>
         <PageHead title="全局配置" />
-        <div className="content-dt">
+        <div className="content-dt" style={{height: 'calc(100vh - 208px)'}}>
           <Lines name="全局配置" />
           <div className="m-t-24">
             {

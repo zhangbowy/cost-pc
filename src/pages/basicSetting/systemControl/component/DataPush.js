@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Table, Switch, Select, Form, Popover, Checkbox } from 'antd';
+import { Table, Switch, Select, Form, Popover, Checkbox, message } from 'antd';
 import CheckboxGroup from 'antd/lib/checkbox/Group';
 import add from '@/assets/img/addP.png';
 import week from '@/assets/img/week1.png';
@@ -36,6 +36,7 @@ class DataPush extends PureComponent {
           pushDate: 9,
         }, {
           key: 'rolePush',
+          id: 'weekMessage',
           rowSpan: 0,
         }]
       }, {
@@ -51,9 +52,12 @@ class DataPush extends PureComponent {
           pushDate: 9,
         }, {
           key: 'rolePush',
+          id: 'monthMessage',
           rowSpan: 0,
         }]
-      }]
+      }],
+      roles: {},
+      roleVisible: false,
     };
   }
 
@@ -72,6 +76,7 @@ class DataPush extends PureComponent {
         }, {
           ...weekMessage,
           key: 'rolePush',
+          id: 'weekMessage',
           rowSpan: 0,
         }]
       }, {
@@ -87,11 +92,16 @@ class DataPush extends PureComponent {
         }, {
           ...monthMessage,
           key: 'rolePush',
+          id: 'monthMessage',
           rowSpan: 0,
         }]
       }];
       return {
-        list: newArr
+        list: newArr,
+        roles: {
+          monthMessage: (monthMessage && monthMessage.roles) || [],
+          weekMessage: (weekMessage && weekMessage.roles) || [],
+        }
       };
     }
     return null;
@@ -131,8 +141,32 @@ class DataPush extends PureComponent {
     });
   }
 
-  handleRole = () => {
+  handleRole = (record) => {
+    const { roles } = this.state;
+    console.log('DataPush -> handleRole -> roles', roles);
+    if (roles[record.id] && roles[record.id].length) {
+      this.onChange(roles[record.id], record, 'roles');
+    } else {
+      message.error('不能为空');
+    }
+  }
 
+  onChangeCheck = (e, record) => {
+    const { roleUserList } = this.props;
+    const { roles } = this.state;
+    const newArr = roleUserList.filter(it => e.includes(it.id));
+    console.log('DataPush -> onChangeCheck -> newArr', newArr);
+    this.setState({
+      roles: {
+        ...roles,
+        [record.id]: newArr.map(it => {
+          return {
+            id: it.id,
+            name: it.roleName,
+          };
+        }),
+      }
+    });
   }
 
   onChange = (e, record, str) => {
@@ -148,7 +182,7 @@ class DataPush extends PureComponent {
 
   render() {
     const { form: { getFieldDecorator }, roleUserList } = this.props;
-    const { list } = this.state;
+    const { list, roleVisible } = this.state;
     const colums = [{
       dataIndex: 'people',
       title: '推送人员/角色',
@@ -173,6 +207,7 @@ class DataPush extends PureComponent {
           <Popover
             overlayClassName={style.popovers}
             title={null}
+            visible={roleVisible === record.id}
             content={(
               <div className={style.check}>
                 <div className={style.checkGroup}>
@@ -181,7 +216,7 @@ class DataPush extends PureComponent {
                       getFieldDecorator(`rolePush[${record.id}]`, {
                         initialValue: record.roles ? record.roles.map(it => it.id) : [],
                       })(
-                        <CheckboxGroup>
+                        <CheckboxGroup onChange={e => this.onChangeCheck(e, record)}>
                           {
                             roleUserList.map(it => (
                               <Checkbox value={it.id} key={it.id}>{it.roleName}</Checkbox>
@@ -192,15 +227,20 @@ class DataPush extends PureComponent {
                     }
                   </Form.Item>
                 </div>
-                <div className={style.btns} onClick={() => this.handleRole(record)}>
-                  确定
+                <div className={style.btnName}>
+                  <div className={style.btn} onClick={() => this.setState({ roleVisible: null, })}>
+                    取消
+                  </div>
+                  <div className={style.btns} onClick={() => this.handleRole(record)}>
+                    确定
+                  </div>
                 </div>
               </div>
             )}
             placement="topLeft"
             trigger="click"
           >
-            <div className={style.selP}>
+            <div className={style.selP} onClick={() => this.setState({ roleVisible: record.id })}>
               <img src={add} alt="选择人员" />
               {
                 roleStr ?
@@ -297,6 +337,7 @@ class DataPush extends PureComponent {
                 pagination={false}
                 dataSource={it.list}
                 className={style.tableList}
+                rowKey="key"
               />
             </div>
           ))
