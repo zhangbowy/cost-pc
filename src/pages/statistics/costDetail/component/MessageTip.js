@@ -1,7 +1,7 @@
 import React from 'react';
 import style from './index.scss';
 
-const MessageTip = ({ successNum, errorNum, total, onLink }) => {
+const MessageTip = ({ successNum, errorNum, total, onLink, aLink }) => {
   return (
     <div className={style.message}>
       <i className="iconfont icona-shibai3x errorColor m-r-8" />
@@ -12,7 +12,11 @@ const MessageTip = ({ successNum, errorNum, total, onLink }) => {
         </span>
         条。
       </span>
-      <span className={style.link} onClick={onLink}>下载失败数据</span>
+      {
+        aLink?(<a
+          href={aLink}
+        >下载失败数据</a>):<span className={style.link} onClick={onLink}>下载失败数据</span>
+      }
     </div>
   );
 };

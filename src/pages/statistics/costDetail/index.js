@@ -591,17 +591,12 @@ class Statistics extends React.PureComponent {
             importLoading: false
           });
         }
-        // this.setState({
-        //   uploadRes,
-        //   resultModalVisible: true,
-        //   fileList: []
-        // });
       });
   };
 
   handleCancel = () => {
     const { importResult, popoverVisible } = this.state;
-    if (importResult.failNum) {
+    if (importResult.errorCount) {
       this.setState({ popoverVisible: true });
     } else if (!popoverVisible) {
       this.setState({
@@ -909,7 +904,10 @@ class Statistics extends React.PureComponent {
         <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ height: 'auto', padding: '24px' }}>
           <div className="cnt-header">
-            <div className="head_lf" style={{ display: 'flex', marginBottom: '16px' }}>
+            <div
+              className="head_lf"
+              style={{ display: 'flex', marginBottom: '16px' }}
+            >
               <Dropdown
                 overlay={
                   <Menu onClick={e => this.onExport(e.key)}>
@@ -967,7 +965,16 @@ class Statistics extends React.PureComponent {
               </div>
             )}
           </div>
-          <MessageTip total={6} successNum={5} errorNum={1} />
+          {importResult.errorCount ? (
+            <MessageTip
+              total={importResult.count + importResult.errorCount}
+              successNum={importResult.count}
+              errorNum={importResult.errorCount}
+              aLink={`${APP_API}/cost/excel/importErrorExcel?token=${localStorage.getItem(
+                'token'
+              )}&&id=${importResult.id}`}
+            />
+          ) : null} 
           <div className={style.messageTop}>
             <span className="fs-14 c-black-65">
               {selectedRowKeys.length

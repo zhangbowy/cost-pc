@@ -48,10 +48,6 @@ class ImportData extends Component {
       })
       .then(() => {
         const { historyImportStatus } = this.props;
-        // console.log(
-        //   '🚀 ~ file: index.js ~ line 509 ~ Statistics ~ historyImportStatus',
-        //   historyImportStatus
-        // );
         if (historyImportStatus) {
           this.setState({
             importResult: historyImportStatus,
@@ -69,7 +65,7 @@ class ImportData extends Component {
 
   handleCancel = () => {
     const { importResult, popoverVisible } = this.state;
-    if (importResult.failNum) {
+    if (importResult.errorCount) {
       this.setState({ popoverVisible: true });
     } else if (!popoverVisible) {
       this.setState({
