@@ -72,7 +72,8 @@ const staticsObj = {
   projectList: costGlobal.projectList,
   supplierList: global.supplierList,
   userInfo: session.userInfo,
-  uploadRes: global.uploadRes
+  uploadRes: global.uploadRes,
+  historyImportStatus: costGlobal.historyImportStatus,
 }))
 class Statistics extends React.PureComponent {
   constructor(props) {
@@ -573,18 +574,18 @@ class Statistics extends React.PureComponent {
     formData.append('file', file);
     this.props
       .dispatch({
-        type: 'global/uploadProjectFile',
+        type: 'costGlobal/historyImport',
         payload: formData
       })
       .then(() => {
-        const { uploadRes } = this.props;
+        const { historyImportStatus } = this.props;
         console.log(
           '🚀 ~ file: index.js ~ line 509 ~ Statistics ~ uploadRes',
-          uploadRes
+          historyImportStatus
         );
-        if (uploadRes) {
+        if (historyImportStatus) {
           this.setState({
-            importResult: uploadRes,
+            importResult: historyImportStatus,
             percent: 100,
             importLoading: false
           });
@@ -621,7 +622,7 @@ class Statistics extends React.PureComponent {
       name: 'file',
       multiple: false,
       showUploadList: false,
-      action: `global/uploadProjectFile?token=${sessionStorage.getItem(
+      action: `costGlobal/historyImport?token=${sessionStorage.getItem(
         'token'
       )}`,
       beforeUpload(file) {

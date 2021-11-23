@@ -38,6 +38,7 @@ export default {
     },
     officeTree: [],
     uploadStatus: {}, // 上传文件之后返回的参数
+    historyImportStatus:{}, // 历史数据导入
     exportList: [],
     exportPage: {
       pageNo: 1,
@@ -319,6 +320,16 @@ export default {
         type: 'save',
         payload: {
           uploadStatus: response || {},
+        },
+      });
+    },
+    // EXCEL历史数据导入
+    *historyImport({ payload }, { call, put }) {
+      const response = yield call(post, api.historyImport, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          historyImportStatus: response || {},
         },
       });
     },

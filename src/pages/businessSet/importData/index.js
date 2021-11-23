@@ -11,8 +11,9 @@ import ImportModal from '@/components/ImportModal';
 
 const { APP_API } = constants;
 
-@connect(({ global }) => ({
-  uploadRes: global.uploadRes
+@connect(({ global, costGlobal }) => ({
+  uploadRes: global.uploadRes,
+  historyImportStatus: costGlobal.historyImportStatus
 }))
 class ImportData extends Component {
   // static propTypes = {};
@@ -30,16 +31,7 @@ class ImportData extends Component {
     };
   }
 
-  componentDidMount() {
-    // this.onQuery({});
-  }
-
-  // onQuery = payload => {
-  //   this.props.dispatch({
-  //     type: 'sendDing/list',
-  //     payload
-  //   });
-  // };
+  componentDidMount() {}
 
   // 手动导入
   handleImport = () => {
@@ -51,18 +43,18 @@ class ImportData extends Component {
     formData.append('file', file);
     this.props
       .dispatch({
-        type: 'global/uploadProjectFile',
+        type: 'costGlobal/historyImport',
         payload: formData
       })
       .then(() => {
-        const { uploadRes } = this.props;
+        const { historyImportStatus } = this.props;
         // console.log(
-        //   '🚀 ~ file: index.js ~ line 509 ~ Statistics ~ uploadRes',
-        //   uploadRes
+        //   '🚀 ~ file: index.js ~ line 509 ~ Statistics ~ historyImportStatus',
+        //   historyImportStatus
         // );
-        if (uploadRes) {
+        if (historyImportStatus) {
           this.setState({
-            importResult: uploadRes,
+            importResult: historyImportStatus,
             percent: 100,
             importLoading: false
           });
@@ -72,11 +64,6 @@ class ImportData extends Component {
             importLoading: false
           });
         }
-        // this.setState({
-        //   uploadRes,
-        //   resultModalVisible: true,
-        //   fileList: []
-        // });
       });
   };
 
@@ -99,7 +86,7 @@ class ImportData extends Component {
       name: 'file',
       multiple: false,
       showUploadList: false,
-      action: `global/uploadProjectFile?token=${sessionStorage.getItem(
+      action: `costGlobal/historyImport?token=${sessionStorage.getItem(
         'token'
       )}`,
       beforeUpload(file) {
@@ -154,7 +141,7 @@ class ImportData extends Component {
           <p className={style.desc}>
             根据当前的支出类别列表，生成对应的批量导入模版
             <a
-              href={`${APP_API}/cost/export/project/template?token=${localStorage.getItem(
+              href={`${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
                 'token'
               )}`}
               className={style.modal_download}
@@ -177,10 +164,12 @@ class ImportData extends Component {
           </p>
           <p className={style.text}>
             2.导入成功后的支出明细，如需查看或批量删除，请前往：
-            <span onClick={() => {
-              // this.props.history.push('');
+            <span
+              onClick={() => {
+                // this.props.history.push('');
               }}
-            >台账汇总-三方导入
+            >
+              台账汇总-三方导入
             </span>
           </p>
         </div>

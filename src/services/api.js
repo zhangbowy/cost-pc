@@ -147,5 +147,6 @@ export default {
    levelCityList: `${APP_API}/cost/aw/cityList`,
    checkStandard: `${APP_API}/cost/invoice/submit/standard`,
    cityInfo: `${APP_API}/cost/aw/cityInfo`,
-   lookDept: `${APP_API}/cost/user/userInfo4DingUserIds`
+   lookDept: `${APP_API}/cost/user/userInfo4DingUserIds`,
+   historyImport: `${APP_API}/cost/excel/importExcel`,
 };

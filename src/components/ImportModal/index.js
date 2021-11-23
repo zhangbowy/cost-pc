@@ -27,7 +27,7 @@ export default function ImportModal({
   handleCancelPop
 }) {
   const ele = importResult => {
-    if (!importResult.failNum) {
+    if (!importResult.errorCount) {
       return (
         <>
           <div className={style.img_end}>
@@ -39,7 +39,7 @@ export default function ImportModal({
         </>
       );
     }
-    if (!importResult.successNum) {
+    if (!importResult.count) {
       return (
         <>
           <div className={style.img_end}>
@@ -103,18 +103,18 @@ export default function ImportModal({
               {ele(importResult)}
 
               <div className={style.result_text}>
-                共上传数据 {importResult.successNum + importResult.failNum}{' '}
+                共上传数据 {importResult.count + importResult.errorCount}{' '}
                 条，成功导入
-                <span> {importResult.successNum} </span>条，失败
-                <span> {importResult.failNum} </span>条
+                <span> {importResult.count} </span>条，失败
+                <span> {importResult.errorCount} </span>条
               </div>
-              {importResult.failNum ? (
+              {importResult.errorCount ? (
                 <div>
                   <Button className={style.reset_btn} type="primary">
                     <a
-                      href={`${APP_API}/cost/export/project/template?token=${localStorage.getItem(
+                      href={`${APP_API}/cost/excel/importErrorExcel?token=${localStorage.getItem(
                         'token'
-                      )}&&failFileId=${importResult.failFileId}`}
+                      )}&&id=${importResult.id}`}
                     >
                       下载失败数据
                     </a>
@@ -148,7 +148,7 @@ export default function ImportModal({
           <div className={style.modal_top}>
             根据客户列表的表单内容生成对应的批量导入模版
             <a
-              href={`${APP_API}/cost/export/project/template?token=${localStorage.getItem(
+              href={`${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
                 'token'
               )}`}
               className={style.modal_download}

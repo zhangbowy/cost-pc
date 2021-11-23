@@ -19,7 +19,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList, onlyDeptLis
     },
     costCategoryList
   );
-  const changeData = (data) => {
+  const changeData = (data=[]) => {
     const item = [];
     data.forEach(list => {
       const newData = {};
