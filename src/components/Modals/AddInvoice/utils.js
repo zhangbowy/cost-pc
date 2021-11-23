@@ -25,10 +25,6 @@ export default {
   },
   compareParams: (obj) => {
     const { hisCostDetailsVo, hisParams, params, costDetailsVo, templateType } = obj;
-    console.log('costDetailsVo', costDetailsVo);
-    console.log('params', params);
-    console.log('hisParams', hisParams);
-    console.log('hisCostDetailsVo', hisCostDetailsVo);
     let newParams = {
       id: params.id,
       expandSubmitFieldVos: params.expandSubmitFieldVos,
@@ -173,7 +169,8 @@ export default {
         detailFolderId: item.detailFolderId || '',
         attribute: item.attribute,
         exceedMessage: item.exceedMessage || '',
-        exceedContents: item.exceedContents || []
+        exceedContents: item.exceedContents || [],
+        fileUrl: item.fileUrl || [],
       };
       if (item.flightLevel || (item.flightLevel === 0)) {
         Object.assign(obj, {

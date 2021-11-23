@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import cs from 'classnames';
-import { Switch, Modal, Checkbox, Button, Radio, Tooltip, Divider } from 'antd';
+import { Switch, Modal, Checkbox, Button, Radio, Tooltip, Divider, message } from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import style from './index.scss';
@@ -82,23 +82,23 @@ class SystemControl extends Component {
       name: '项目责任制',
       onCall: e => this.onChanges(e, 'isOpenProject')
     }, {
-      key: 'isOpenProje',
+      key: 'isOpenAgentPush',
       production: (
         <p className={style.production}>
           单据审批通过后，给发放人发送钉钉待办消息提醒
         </p>
       ),
       name: '发放待办推送',
-      onCall: e => this.onChanges(e, 'isOpenProject')
+      onCall: e => this.handleTables({isOpenAgentPush: e})
     }, {
-      key: 'isOpenPro',
+      key: 'isOpenLoan',
       production: (
         <p className={style.production}>
           逾期未还的借款，系统每周一发送催还提醒
         </p>
       ),
       name: '借款到期提醒',
-      onCall: e => this.onChanges(e, 'isOpenProject')
+      onCall: e => this.handleTables({isOpenLoan: e})
     }];
   }
 
@@ -240,6 +240,12 @@ class SystemControl extends Component {
         ...details,
         ...params,
       }
+    }).then(() => {
+      message.success('修改成功');
+      this.props.dispatch({
+        type: 'systemControl/query',
+        payload: {},
+      });
     });
   }
 
@@ -259,23 +265,28 @@ class SystemControl extends Component {
       switchCheck,
       isOpenProject,
     } = this.state;
+
+    const { roleUserList, details } = this.props;
     const checkObj = {
       switchCheck,
       isOpenProject,
+      isOpenAgentPush: details.isOpenAgentPush,
+      isOpenLoan: details.isOpenLoan
     };
-    const { roleUserList, details } = this.props;
     return (
       <div>
-        <PageHead title="控制开关" />
-        <div className="content-dt">
-          <Lines name="控制开关" />
+        <PageHead title="全局配置" />
+        <div className="content-dt" style={{height: 'calc(100vh - 208px)'}}>
+          <Lines name="全局配置" />
           <div className="m-t-24">
             {
               this.check.map(it => (
                 <div className={style.content} key={it.key}>
                   <p>
                     <span>{it.name}</span>
-                    <i className="iconfont iconshuomingwenzi" />
+                    <Tooltip title={it.production}>
+                      <i className="iconfont iconshuomingwenzi" />
+                    </Tooltip>
                     <span>：</span>
                   </p>
                   <Switch className={style.switch} onChange={it.onCall} checked={checkObj[it.key]} />

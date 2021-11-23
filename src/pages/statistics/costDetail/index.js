@@ -34,6 +34,7 @@ import {
 } from '../../../utils/constants';
 import ChangeDate from './component/ChangeDate';
 import ImportModal from '@/components/ImportModal';
+import MessageTip from './component/MessageTip';
 
 const { APP_API } = constants;
 const objStatus = {
@@ -286,7 +287,7 @@ class Statistics extends React.PureComponent {
     console.log('EchartsTest -> search -> searchList', searchList);
     const { dispatch } = this.props;
     const _this = this;
-    const fetchs = ['projectList', 'supplierList', 'invoiceList', 'costList'];
+    const fetchs = ['projectList','invoiceList', 'supplierList', 'costList'];
     const arr = fetchs.map(it => {
       return dispatch({
         type: it === 'projectList' ? `costGlobal/${it}` : `global/${it}`,
@@ -294,14 +295,9 @@ class Statistics extends React.PureComponent {
       });
     });
     Promise.all(arr).then(() => {
-      const { costCategoryList, projectList, invoiceList, supplierList } = _this.props;
+      const { costCategoryList, projectList, supplierList, invoiceList } = _this.props;
       const treeList = [costCategoryList, projectList, invoiceList];
-      const keys = [
-        'categoryIds',
-        'projectIds',
-        'invoiceTemplateIds',
-        'supplierIds'
-      ];
+      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds'];
       const obj = {};
       const newTree = treeList.map((it, i) => {
         return treeConvert(
@@ -913,7 +909,7 @@ class Statistics extends React.PureComponent {
         <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ height: 'auto', padding: '24px' }}>
           <div className="cnt-header">
-            <div className="head_lf" style={{ display: 'flex' }}>
+            <div className="head_lf" style={{ display: 'flex', marginBottom: '16px' }}>
               <Dropdown
                 overlay={
                   <Menu onClick={e => this.onExport(e.key)}>
@@ -971,7 +967,8 @@ class Statistics extends React.PureComponent {
               </div>
             )}
           </div>
-          <div className={style.message}>
+          <MessageTip total={6} successNum={5} errorNum={1} />
+          <div className={style.messageTop}>
             <span className="fs-14 c-black-65">
               {selectedRowKeys.length
                 ? `已选${selectedRowKeys.length}`

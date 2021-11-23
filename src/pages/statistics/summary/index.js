@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { Menu, message, Tooltip } from 'antd';
+import { Menu, message, Tooltip, Popconfirm } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import DropBtn from '@/components/DropBtn';
@@ -108,6 +108,8 @@ const salary = [{
   query: summary.query,
   total: summary.total,
   sum: summary.sum,
+  historyList: summary.historyList,
+  historyPage: summary.historyPage,
   userInfo: session.userInfo,
   recordList: costGlobal.recordList,
   recordPage: costGlobal.recordPage,
@@ -371,6 +373,17 @@ class Summary extends React.PureComponent {
     });
   }
 
+  onHistory = (payload, callback) => {
+    this.props.dispatch({
+      type: 'summary/historyList',
+      payload,
+    }).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
   onDelete = (payload, callback) => {
     this.props.dispatch({
       type: 'costGlobal/delInvoice',
@@ -382,9 +395,13 @@ class Summary extends React.PureComponent {
     });
   }
 
+  onDelHistory = () => {
+
+  }
+
   render() {
     const { loading, query, total,
-       sum, userInfo, recordList, recordPage } = this.props;
+       sum, userInfo, recordList, recordPage, historyPage, historyList } = this.props;
     const { current, selectedRowKeys, list,
       searchContent, sumAmount,
       selectedRows, searchList } = this.state;
@@ -412,6 +429,32 @@ class Summary extends React.PureComponent {
       title: '详情',
       dataIndex: 'operationMsg',
       width: 160,
+    }];
+    const column = [{
+      title: '导入批次',
+      dataIndex: 'id',
+      width: 80,
+    }, {
+      title: '操作人',
+      dataIndex: 'name',
+      width: 100,
+    }, {
+      title: '操作时间',
+      dataIndex: 'createDate',
+      width: 100,
+    }, {
+      title: '操作内容',
+      dataIndex: 'content',
+      width: 160,
+    },  {
+      title: '操作内容',
+      dataIndex: 'operationType',
+      width: 80,
+      render: (_, record) => (
+        <Popconfirm title="确认删除吗？" onConfirm={() => this.onDelHistory(record.id)}>
+          <span className="sub-color">删除</span>
+        </Popconfirm>
+      )
     }];
     return (
       <div style={{ minWidth: '1000px' }}>
@@ -451,6 +494,28 @@ class Summary extends React.PureComponent {
                 </DropBtn>
               </div>
               <div className="head_rg">
+                {
+                  Number(current) === 4 &&
+                    <div className="m-r-24">
+                      <TableTemplate
+                        page={historyPage}
+                        onQuery={this.onHistory}
+                        columns={column}
+                        list={historyList}
+                        placeholder="输入详情内容搜索"
+                        sWidth='800px'
+                      >
+                        <div
+                          style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}
+                        >
+                          <div className={style.activebg}>
+                            <i className="iconfont iconcaozuojilu m-r-8 c-black-65" />
+                          </div>
+                          <span className="fs-14 c-black-65">导入历史</span>
+                        </div>
+                      </TableTemplate>
+                    </div>
+                }
                 <TableTemplate
                   page={recordPage}
                   onQuery={this.onRecord}
@@ -463,9 +528,9 @@ class Summary extends React.PureComponent {
                     style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}
                   >
                     <div className={style.activebg}>
-                      <i className="iconfont iconcaozuojilu sub-color m-r-8" />
+                      <i className="iconfont iconcaozuojilu m-r-8 c-black-65" />
                     </div>
-                    <span className="fs-14 sub-color">操作日志</span>
+                    <span className="fs-14 c-black-65">操作日志</span>
                   </div>
                 </TableTemplate>
               </div>

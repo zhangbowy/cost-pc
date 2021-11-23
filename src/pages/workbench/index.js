@@ -82,11 +82,12 @@ class Workbench extends PureComponent {
         type: '0_m'
       },
       costTime: {
-        ...dateToTime('0_m'),
-        type: '0_m'
+        ...dateToTime('6_cm'),
+        type: '6_cm'
       },
       submitReport: {},
       flagMenu: false,
+      lineParams: {},
     };
   }
 
@@ -369,6 +370,31 @@ class Workbench extends PureComponent {
           ...val,
         });
       }
+      if (key === 'costTime') {
+        const { lineParams } = this.state;
+        if (val.type) { delete val.type; }
+        this.onQueryLine({
+          ...val,
+          ...lineParams,
+        });
+      }
+      if (key === 'lineParams') {
+        const { costTime } = this.state;
+        console.log('onChangeState -> costTime', costTime);
+        const vals = {...costTime};
+        if (vals.type) { delete vals.type; }
+        this.onQueryLine({
+          ...val,
+          ...vals,
+        });
+      }
+    });
+  }
+
+  onQueryLine = payload => {
+    this.props.dispatch({
+      type: 'workbench/chartTrend',
+      payload,
     });
   }
 
@@ -399,7 +425,9 @@ class Workbench extends PureComponent {
     const { personal, isComplete,
       invoiceTemplateIds, reason,
       costTime,
-      isBoss, bossVisible, submitTime, submitReport, flagMenu } = this.state;
+      isBoss, bossVisible, submitTime, submitReport,
+      lineParams,
+      flagMenu } = this.state;
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
@@ -500,7 +528,7 @@ class Workbench extends PureComponent {
     }];
 
     return (
-      <div>
+      <div style={{minWidth: '1090px'}}>
         {
           userInfo.isSupperAdmin && (localStorage.getItem('initShow') !== 'true') ?
             <StepShow {...this.props} userInfo={userInfo} />
@@ -568,6 +596,7 @@ class Workbench extends PureComponent {
               {
                 isBoss &&
                 <BottomChart
+                  lineParams={lineParams}
                   submitTime={costTime}
                   onChangeState={this.onChangeState}
                   lineCharts={lineCharts}

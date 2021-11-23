@@ -1,12 +1,11 @@
 /* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
-import { Divider, Form, Row, Button, Select, Col, Tree, TreeSelect, Tooltip, Popconfirm } from 'antd';
+import { Divider, Form, Row, Button, Select, Col, Tree, TreeSelect, Tooltip, Popconfirm, Radio } from 'antd';
 import cs from 'classnames';
-import moment from 'moment';
 import fields from '@/utils/fields';
 import style from '../index.scss';
 import AddTravelForm from './AddTravelForm';
-import { getParams } from '../../../../utils/common';
+import { getParams, timeDateStr, dateToStr } from '../../../../utils/common';
 import Avatar from '../../../AntdComp/Avatar';
 
 const { aliTraffic } = fields;
@@ -18,6 +17,9 @@ const cost = [{
 }, {
   label: '均计入申请人',
   value: '均计入申请人',
+}, {
+  label: '归属人',
+  value: '归属人',
 }];
 @Form.create()
 class AddTravel extends PureComponent {
@@ -26,6 +28,8 @@ class AddTravel extends PureComponent {
     subTrip: this.props.hisAliTrip.subTrip || [],
     fellowTravelers: this.props.hisAliTrip.fellowTravelers || [],
     selectKeys: [],
+    alitripExpensesOwner: this.props.hisAliTrip.alitripExpensesOwner || '',
+    expenseOwner: this.props.hisAliTrip.expenseOwner || {},
   }
 
   componentDidMount(){
@@ -43,7 +47,7 @@ class AddTravel extends PureComponent {
     const { aliCostAndI: { costArr, invoiceArr } } = this.props;
     const { subTrip } = this.state;
     const { form: { validateFieldsAndScroll } } = this.props;
-    const { selectKeys, fellowTravelers } = this.state;
+    const { selectKeys, fellowTravelers, expenseOwner } = this.state;
     const newFellow = [];
     fellowTravelers.forEach(it => {
       if (selectKeys.includes(it.key)) {
@@ -54,6 +58,7 @@ class AddTravel extends PureComponent {
       return new Promise (resolve => {
         validateFieldsAndScroll((err, val) => {
           if (!err) {
+            console.log('归属人', val.expenseOwner);
             const params = { subTrip, fellowTravelers: newFellow };
             if (val.alitripCostCenterId) {
               const alitripCostCenterJson = costArr.filter(it => it.value == val.alitripCostCenterId);
@@ -72,6 +77,11 @@ class AddTravel extends PureComponent {
             if (val.alitripExpensesOwner) {
               Object.assign(params, {
                 alitripExpensesOwner: val.alitripExpensesOwner,
+              });
+            }
+            if (val.alitripExpensesOwner === '归属人') {
+              Object.assign(params, {
+                expenseOwner,
               });
             }
             resolve(params);
@@ -175,6 +185,33 @@ class AddTravel extends PureComponent {
     });
   }
 
+  onChangeNode = (value) => {
+    this.setState({
+      selectKeys: value,
+    });
+  }
+
+  onChangeEx = (value, label, extra) => {
+    console.log('确定的值', extra);
+    const {triggerNode: {props}} = extra;
+    const values = props.dataRef;
+    this.setState({
+      expenseOwner: {
+        deptId: values.deptId,
+        deptName: values.deptName,
+        userId: values.value,
+        userName: values.title
+      }
+    });
+  }
+
+  onChange = e => {
+    console.log('选择的费用归属', e);
+    this.setState({
+      alitripExpensesOwner: e.target.value,
+    });
+  }
+
   getAllChild = (nodes, parent) => {
     let arr = [];
     for(let i=0; i<nodes.length;i++) {
@@ -201,8 +238,6 @@ class AddTravel extends PureComponent {
   }
 
   onSelect = (value, info) => {
-    console.log('选中de', info);
-    console.log('选中de', value);
     const { dataRef } = info.props;
     const { fellowTravelers } = this.state;
     const newArr = [...fellowTravelers];
@@ -236,7 +271,7 @@ class AddTravel extends PureComponent {
   render () {
     const { aliTripFields, aliTripAuth, form: { getFieldDecorator }, hisAliTrip } = this.props;
     const { aliCostAndI, deptTree } = aliTripFields;
-    console.log('阿里商旅', deptTree);
+    console.log('阿里商旅', aliTripAuth);
     const { subTrip } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -245,11 +280,12 @@ class AddTravel extends PureComponent {
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 15 },
+        sm: { span: 16 },
       },
     };
+    const { alitripExpensesOwner } = this.state;
     return (
-      <div>
+      <div className="formItem">
         <Divider type="horizontal" />
         <div style={{paddingTop: '24px'}}>
           <div className={style.header}>
@@ -262,7 +298,7 @@ class AddTravel extends PureComponent {
             <div style={{textAlign: 'center'}} className={style.addbtn}>
               <AddTravelForm
                 onOk={this.onGetTrip}
-                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
               >
                 <Button
                   icon="plus"
@@ -278,7 +314,7 @@ class AddTravel extends PureComponent {
               <AddTravelForm
                 onOk={this.onGetTrip}
                 list={subTrip}
-                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
               >
                 <div className={style.singleBtn}>
                   <span>+ 添加行程</span>
@@ -291,7 +327,7 @@ class AddTravel extends PureComponent {
                       onOk={this.onGetTrip}
                       list={subTrip}
                       key={item.key}
-                      hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler}
+                      hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
                     >
                       <div className={style.singleContent} key={item.startDate}>
                         <div className={style.iconImg}>
@@ -302,8 +338,8 @@ class AddTravel extends PureComponent {
                         </div>
                         <div className="m-t-16">
                           <p className={style.cityContent}>{item.startCity} - {item.endCity}({item.way})</p>
-                          <p className="c-black-65 fs-14">
-                            {moment(Number(item.startDate)).format('YYYY-MM-DD')} - {moment(Number(item.endDate)).format('YYYY-MM-DD')}
+                          <p className="c-black-65 fs-12">
+                            {dateToStr(item.startDate, 'YYYY.MM.DD')} {timeDateStr(item.startDate)} - {dateToStr(item.endDate, 'YYYY.MM.DD')} {timeDateStr(item.endDate)}
                           </p>
                         </div>
                         <span
@@ -323,15 +359,8 @@ class AddTravel extends PureComponent {
             </div>
         }
         {
-          aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.hasFellowTraveler &&
+          aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable &&
           <Row>
-            {/* <EasyForm
-              isModal={false}
-              fields={aliTripFields}
-              ref={ref => { this.easyForm = ref; }}
-              mode="plain"
-              separate
-            /> */}
             <Col span={12}>
               <Form.Item label="成本中心" {...formItemLayout}>
                 {
@@ -381,7 +410,7 @@ class AddTravel extends PureComponent {
               </Form.Item>
             </Col>
             {
-              aliTripAuth.alitripSetting.isEnable &&
+              aliTripAuth.alitripSetting.hasFellowTraveler &&
               <>
                 <Col span={12} className={style.treeSelects}>
                   <Form.Item label="同行人" {...formItemLayout}>
@@ -410,7 +439,7 @@ class AddTravel extends PureComponent {
                     }
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col span={12} className={style.travelForm}>
                   <Form.Item
                     label={(
                       <span>
@@ -422,7 +451,7 @@ class AddTravel extends PureComponent {
                           </>
                           )}
                         >
-                          <i className="iconfont iconshuomingwenzi m-l-4" style={{ verticalAlign: 'middle' }} />
+                          <i className="iconfont iconshuomingwenzi m-l-4 c-black-36" style={{ verticalAlign: 'middle' }} />
                         </Tooltip>
                       </span>
                     )}
@@ -431,21 +460,44 @@ class AddTravel extends PureComponent {
                     {
                       getFieldDecorator('alitripExpensesOwner', {
                         initialValue: hisAliTrip.alitripExpensesOwner || '按分摊计入',
-                        rules: [
-                          {
+                        rules: [{
                             required: true,
                             message: '请输入费用归属'
-                          }
-                        ],
+                        }],
                       })(
-                        <Select style={{width: '100%'}} placeholder="请选择">
+                        <Radio.Group onChange={e => this.onChange(e)}>
                           {
                             cost.map(it => (
-                              <Option key={it.value}>{it.label}</Option>
+                              <Radio key={it.value} value={it.value}>{it.label}</Radio>
                             ))
                           }
-                        </Select>
+                        </Radio.Group>
                       )
+                    }
+                    {
+                      alitripExpensesOwner === '归属人' &&
+                      <Form.Item>
+                        {
+                          getFieldDecorator('expenseOwner', {
+                            initialValue: hisAliTrip.expenseOwner ?
+                            `${hisAliTrip.expenseOwner.deptId}${hisAliTrip.expenseOwner.userId}` : undefined,
+                            rules: [{ required: true, message: '请选择归属人' }]
+                          })(
+                            <TreeSelect
+                              treeNodeFilterProp="label"
+                              placeholder='请选择费用归属人'
+                              style={{width: '100%'}}
+                              dropdownStyle={{height: '300px'}}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              showSearch
+                              treeNodeLabelProp="label"
+                              onChange={this.onChangeEx}
+                            >
+                              { this.loop(deptTree) }
+                            </TreeSelect>
+                          )
+                        }
+                      </Form.Item>
                     }
                   </Form.Item>
                 </Col>

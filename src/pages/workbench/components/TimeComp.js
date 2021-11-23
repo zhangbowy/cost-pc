@@ -89,7 +89,7 @@ class TimeComp extends PureComponent {
             <Form.Item style={{ marginRight: 0 }}>
               {
                 getFieldDecorator('time', {
-                  initialValue: '0_m'
+                  initialValue: lists.length ? lists[0].key : '0_m'
                 })(
                   <Radio.Group className={style.btnStyle} onChange={e => this.onChange(e.target.value)}>
                     {

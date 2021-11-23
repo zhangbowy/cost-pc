@@ -61,8 +61,13 @@
     margin-bottom: 0px;
   }
 }
+.selectW{
+  :global(.ant-form-item){
+    margin-bottom: 0px;
+  }
+}
 .radios{
-  width: 79px;
+  width: 75px;
   height: 32px;
   background: rgba(0, 0, 0, 0.02);
   border-radius: 4px;
@@ -105,4 +110,14 @@
   font-family: SimSun, sans-serif;
   line-height: 1;
   content: '*';
+}
+.inputs{
+  :global{
+    .ant-input[disabled]{
+      color: rgba(0, 0, 0, 0.65);
+      background-color: #fff;
+      cursor: pointer;
+      opacity: 1;
+    }
+  }
 }

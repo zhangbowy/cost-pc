@@ -5,6 +5,7 @@ import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
 import ConfirmPay from '../../invoicePay/components/ConfirmPay';
 import UploadImg from '../../../../components/UploadImg';
+import costGlobal from '../../../../models/costGlobal';
 
 const { Option } = Select;
 const accountType = [{
@@ -21,6 +22,7 @@ const accountType = [{
   getAliAccounts: global.getAliAccounts,
   batchDetails: global.batchDetails,
   alipayUrl: global.alipayUrl,
+  paymentMethod: costGlobal.paymentMethod,
   loading: loading.effects['global/addBatch'] || loading.effects['global/send'] || false,
 }))
 class PayModal extends React.PureComponent {
@@ -44,6 +46,7 @@ class PayModal extends React.PureComponent {
       type: 'global/getAliAccounts',
       payload: {}
     });
+
     let count = 1;
     let amount = 0;
     console.log('selectKey======',selectKey);

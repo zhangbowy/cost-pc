@@ -401,6 +401,17 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
         </Col>
       }
       {
+        aliTrip && aliTrip.expenseOwner && aliTrip.expenseOwner.userName &&
+        <Col span={8} className="m-t-16">
+          <div style={{display: 'flex'}}>
+            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>归属人：</span>
+            <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+              {aliTrip.expenseOwner.userName}
+            </span>
+          </div>
+        </Col>
+      }
+      {
         expandSubmitFieldVos &&
         (expandSubmitFieldVos.length > 0) &&
         expandSubmitFieldVos.filter(

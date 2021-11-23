@@ -149,4 +149,5 @@ export default {
    cityInfo: `${APP_API}/cost/aw/cityInfo`,
    lookDept: `${APP_API}/cost/user/userInfo4DingUserIds`,
    historyImport: `${APP_API}/cost/excel/importExcel`,
+   paymentMethod: `${APP_API}/cost/setting/detail`,
 };

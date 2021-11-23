@@ -101,9 +101,9 @@ class AccountSetting extends Component {
       if(!err) {
         const awAreas = [];
         if (values.awAreas) {
-          values.awAreas.map(it => {
+          values.awAreas.forEach(it => {
             const items = areaCode.filter(item => item.areaCode === it)[0];
-            return { ...items };
+            awAreas.push(items);
           });
         }
         if (imgUrl && imgUrl.length) {
@@ -119,6 +119,7 @@ class AccountSetting extends Component {
           ...values,
           awAreas,
         });
+        console.log('开户省市区', awAreas);
         callback(val, this.checkResult);
       }
     });
