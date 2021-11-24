@@ -148,20 +148,18 @@ class Summary extends React.PureComponent {
     const _this = this;
     const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
     let arr = [];
-    if (Number(current) !== 4) {
-      arr = fetchs.map(it => {
-        const params = {};
-        if (it === 'invoiceList' && Number(current) !== 4) {
-          Object.assign(params, {
-            templateType: current,
-          });
-        }
-        return dispatch({
-          type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
-          payload: params,
+    arr = fetchs.map(it => {
+      const params = {};
+      if (it === 'invoiceList') {
+        Object.assign(params, {
+          templateType: current,
         });
+      }
+      return dispatch({
+        type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
+        payload: params,
       });
-    }
+    });
     const { searchList } = this.state;
     Promise.all(arr).then(() => {
       const { costCategoryList, invoiceList, projectList, supplierList } = _this.props;
@@ -328,7 +326,7 @@ class Summary extends React.PureComponent {
     } else if (e.key === '3') {
       arr[2].options = salary;
     } else if (e.key === '4') {
-      arr = arr.filter(it => it.key !== 'statuses' && it.key !== 'invoiceTemplateIds');
+      arr = arr.filter(it => it.key !== 'statuses');
     }
     console.log(arr, '搜索的内容');
     this.setState({

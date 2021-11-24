@@ -117,7 +117,9 @@ class SearchCity extends PureComponent {
         searchValue: ''
       });
     }
-    this.setState({ selectCitys: citys });
+    this.setState({ selectCitys: citys }, () => {
+      this.handleOk();
+    });
     this.getCityCode(citys);
 
     this.goToEnd();
@@ -321,9 +323,9 @@ class SearchCity extends PureComponent {
                   </div>
                   <div className={style.popoverFooter}>
                     <Button onClick={() => this.handleCancel()}>取消</Button>
-                    <Button className={style.btn2} onClick={() => this.handleOk()}>
+                    {/* <Button className={style.btn2} onClick={() => this.handleOk()}>
                       确定
-                    </Button>
+                    </Button> */}
                   </div>
                 </>
               )}

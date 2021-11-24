@@ -135,7 +135,7 @@ class AddTravel extends PureComponent {
   }
 
   // 循环渲染树结构
-  loop = data => data.map(item => {
+  loop = (data, flag) => data.map(item => {
     const { userInfo } = this.props;
     if (item.children && item.children.length) {
       return (
@@ -144,7 +144,7 @@ class AddTravel extends PureComponent {
           label={item.title}
           value={item.key}
           dataRef={item}
-          disabled={userInfo.dingUserId === item.value}
+          disabled={!flag ? userInfo.dingUserId === item.value : !item.deptId}
           title={(
             <div>
               {
@@ -157,7 +157,7 @@ class AddTravel extends PureComponent {
             </div>
           )}
         >
-          {this.loop(item.children)}
+          {this.loop(item.children, flag)}
         </TreeNode>
       );
     }
@@ -492,8 +492,9 @@ class AddTravel extends PureComponent {
                               showSearch
                               treeNodeLabelProp="label"
                               onChange={this.onChangeEx}
+                              dropdownClassName={style.peoples}
                             >
-                              { this.loop(deptTree) }
+                              { this.loop(deptTree, 'users') }
                             </TreeSelect>
                           )
                         }
