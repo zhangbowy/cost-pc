@@ -107,11 +107,12 @@ export default {
     },
     *historyList({ payload }, { call, put }) {
       const response = yield call(post, api.historyList, payload);
+      console.log('*historyList -> response', response);
       yield put({
         type: 'save',
         payload: {
-          recordList: response.list || [],
-          recordPage: {
+          historyList: response.list || [],
+          historyPage: {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize,
             total: (response.page && response.page.total) || 0

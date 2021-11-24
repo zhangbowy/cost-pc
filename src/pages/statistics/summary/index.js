@@ -273,7 +273,6 @@ class Summary extends React.PureComponent {
 
   onQuery = (payload, callback) => {
     const { current, searchList } = this.state;
-    console.log('AuthIndex -> onQuery -> current', current);
     let url = 'summary/submitList';
     if (Number(current) === 1) {
       url = 'summary/loanList';
@@ -374,10 +373,12 @@ class Summary extends React.PureComponent {
   }
 
   onHistory = (payload, callback) => {
+    console.log('走了嘛onHistory', payload);
     this.props.dispatch({
       type: 'summary/historyList',
       payload,
     }).then(() => {
+      console.log('historyPage', this.props.historyPage);
       if (callback) {
         callback();
       }
@@ -401,7 +402,8 @@ class Summary extends React.PureComponent {
 
   render() {
     const { loading, query, total,
-       sum, userInfo, recordList, recordPage, historyPage, historyList } = this.props;
+       sum, userInfo, recordList, recordPage,
+       historyPage, historyList } = this.props;
     const { current, selectedRowKeys, list,
       searchContent, sumAmount,
       selectedRows, searchList } = this.state;

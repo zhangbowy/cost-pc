@@ -60,6 +60,7 @@ class TableTemplate extends Component {
       placeholder,
       sWidth,
     } = this.props;
+    console.log('TableTemplate -> render -> list', list);
 
     const {
       visible,

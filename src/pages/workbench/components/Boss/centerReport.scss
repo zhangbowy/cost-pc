@@ -54,16 +54,17 @@
         margin-bottom: 16px;
       }
       .absoluteImg{
-        min-width: 80px;
+        // min-width: 80px;
         position: absolute;
         right: 0;
-        max-width: 100px;
+        width: 160px;
+        margin-top: 0px;
       }
     }
   }
 }
 @media screen and (max-width: 1280px) {  /*当屏幕尺寸小于600px时，应用下面的CSS样式*/
   .absoluteImg {
-    width: 80px!important;
+    width: 160px!important;
   }
 }

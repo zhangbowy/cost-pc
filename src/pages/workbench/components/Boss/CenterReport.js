@@ -32,28 +32,28 @@ const list = [{
   img: one,
   bg: one1,
   name: '待付金额',
-  color: '#FEF5F0',
+  color: '#FFFBF9',
   status: 2,
 }, {
   key: 'paidCostSum',
   img: two,
   bg: two1,
   name: '已付金额',
-  color: '#E8FAF7',
+  color: '#FFFAFA',
   status: 3,
 }, {
   key: 2,
   img: three,
   bg: three1,
   name: '审核中金额',
-  color: '#FFF9F9',
+  color: '#FFFAFA',
   status: 1,
 }, {
   key: 'repaymentSum',
   img: four,
   bg: four1,
   name: '借款待还金额',
-  color: '#F1F7FF'
+  color: '#F6FBFF'
 }];
 const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChangeState, submitTime, reportPage, reportTotal, loanSumVo, onLink }) => {
   return (

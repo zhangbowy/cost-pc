@@ -476,7 +476,6 @@ class SummaryCmp extends Component {
           dataIndex: 'operate',
           render: (_, record) => {
             const { status, approveStatus } = record;
-            console.log(status);
             return (
               <>
                 {

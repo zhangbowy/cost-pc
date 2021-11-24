@@ -604,6 +604,11 @@ class Statistics extends React.PureComponent {
         importStatus: false,
         importResult: {},
         file: {}
+      }, () => {
+        const { query } = this.props;
+        this.onQuery({
+          ...query
+        });
       });
     }
   };
@@ -903,10 +908,10 @@ class Statistics extends React.PureComponent {
       <div style={{ padding: 0 }}>
         <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ height: 'auto', padding: '24px' }}>
-          <div className="cnt-header">
+          <div className="cnt-header" style={{marginBottom: importResult.errorCount ? '16px' : '0px'}}>
             <div
               className="head_lf"
-              style={{ display: 'flex', marginBottom: '16px' }}
+              style={{ display: 'flex' }}
             >
               <Dropdown
                 overlay={
@@ -974,7 +979,7 @@ class Statistics extends React.PureComponent {
                 'token'
               )}&&id=${importResult.id}`}
             />
-          ) : null} 
+          ) : null}
           <div className={style.messageTop}>
             <span className="fs-14 c-black-65">
               {selectedRowKeys.length
