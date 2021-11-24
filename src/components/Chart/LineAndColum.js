@@ -64,9 +64,13 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       formatter: (params) => {
         let lis = '';
         params.forEach(item => {
+          let strs = `<span class=${styles.tooltipBall} style='background:${item.color}' ></span>`;
+          if (item.seriesType === 'line') {
+            strs = `<span class=${styles.tooltipBill} style='background:${item.color}' ><i style='border: 1px solid ${item.color}'></i></span>`;
+          }
           lis+=`<div style='line-height: 20px;'>
-          <span class=${params.seriesType === 'line' ? styles.tooltipBill : styles.tooltipBall} style='background:${item.color}' ></span>
-          <span class=${styles.tooltipCont}>${item.seriesName}：${`${item.value || 0}元`}</span>
+          ${strs}
+          <span class=${styles.tooltipCont}>${item.seriesName}：¥${`${item.value || 0}`}</span>
         </div>`;
         });
         return `<div class=${styles.tooltip}>

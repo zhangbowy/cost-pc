@@ -163,7 +163,7 @@ const RightChart = ({ loading, submitReport }) => {
           </div>
         </div>
         <div className={style.contPro}>
-          <i className="iconfont iconshuomingwenzi" />
+          <i className="iconfont icona-jinggao3x" />
           <span>有效控制超标费用，一年至少可节省10%的无效支出！</span>
         </div>
       </div>

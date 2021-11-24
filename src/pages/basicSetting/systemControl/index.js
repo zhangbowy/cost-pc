@@ -340,7 +340,7 @@ class SystemControl extends Component {
           <Divider type="horizontal" />
           <Lines name="数据推送">
             <span className={style.datas}>
-              <i className="iconfont iconshuomingwenzi" />
+              <i className="iconfont icona-jinggao3x" />
               <span>推送数据为当前人员/角色的最大数据权限范围</span>
             </span>
           </Lines>
