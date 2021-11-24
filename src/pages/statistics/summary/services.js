@@ -14,4 +14,5 @@ export default {
   thirdList: `${APP_API}/cost/statistics/detail/third`,
   thirdExport: `${APP_API}/cost/export/detail/third`,
   historyList: `${APP_API}/cost/excel/list`,
+  del: `${APP_API}/cost/excel/deleteImportExcel`,
 };

@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -88,6 +88,9 @@ export default {
           sum: response.sum || 0
         },
       });
+    },
+    *del({ payload }, { call }) {
+      yield call(get, api.del, payload);
     },
     *thirdList({ payload }, { call, put }) {
       const response = yield call(post, api.thirdList, payload);

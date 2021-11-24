@@ -62,11 +62,10 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       backgroundColor:'#fff',
       padding: 0,
       formatter: (params) => {
-        console.log('LineAndColumn -> params', params);
         let lis = '';
         params.forEach(item => {
           lis+=`<div style='line-height: 20px;'>
-          <span class=${styles.tooltipBall} style='background:${item.color}' ></span>
+          <span class=${params.seriesType === 'line' ? styles.tooltipBill : styles.tooltipBall} style='background:${item.color}' ></span>
           <span class=${styles.tooltipCont}>${item.seriesName}：${`${item.value || 0}元`}</span>
         </div>`;
         });

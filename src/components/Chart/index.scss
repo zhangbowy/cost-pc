@@ -28,4 +28,16 @@
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
   }
+  .tooltipBill{
+    width: 12px;
+    height: 1px;
+    position: relative;
+    &::before{
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      border-radius: 50%;
+      left: 3px;
+    }
+  }
 }

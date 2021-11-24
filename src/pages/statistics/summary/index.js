@@ -396,8 +396,20 @@ class Summary extends React.PureComponent {
     });
   }
 
-  onDelHistory = () => {
-
+  onDelHistory = (id) => {
+    const { historyPage } = this.props;
+    this.props.dispatch({
+      type: 'summary/del',
+      payload: {id},
+    }).then(() => {
+      this.props.dispatch({
+        type: 'summary/historyList',
+        payload: {
+          pageNo: historyPage.pageNo,
+          pageSize: historyPage.pageSize,
+        },
+      });
+    });
   }
 
   render() {
@@ -434,26 +446,31 @@ class Summary extends React.PureComponent {
     }];
     const column = [{
       title: '导入批次',
-      dataIndex: 'id',
-      width: 80,
+      dataIndex: 'batchId',
+      width: 90,
     }, {
       title: '操作人',
-      dataIndex: 'name',
+      dataIndex: 'createName',
       width: 100,
     }, {
       title: '操作时间',
-      dataIndex: 'createDate',
+      dataIndex: 'createTime',
       width: 100,
+      render: (_, record) => (
+        <span>
+          {record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}
+        </span>
+      )
     }, {
       title: '操作内容',
       dataIndex: 'content',
       width: 160,
     },  {
-      title: '操作内容',
+      title: '操作',
       dataIndex: 'operationType',
       width: 80,
       render: (_, record) => (
-        <Popconfirm title="确认删除吗？" onConfirm={() => this.onDelHistory(record.id)}>
+        <Popconfirm title={`确认删除${record.content}吗？`} onConfirm={() => this.onDelHistory(record.id)}>
           <span className="sub-color">删除</span>
         </Popconfirm>
       )
