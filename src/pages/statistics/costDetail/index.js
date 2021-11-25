@@ -649,7 +649,7 @@ class Statistics extends React.PureComponent {
   // oldDate : 调用此函数的时间
   time = oldDate => {
     // 15分钟之后的时间戳
-    const endTimes = oldDate.getTime() + 1 * 60 * 10 * 100;
+    const endTimes = oldDate.getTime() + 15 * 60 * 10 * 100;
     const tt = setInterval(() => {
       // 当前时间
       const nowTimes = new Date().getTime();
