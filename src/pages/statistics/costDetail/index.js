@@ -632,7 +632,7 @@ class Statistics extends React.PureComponent {
     if(id){
       window.open(`${APP_API}/cost/excel/importErrorExcel?token=${localStorage.getItem(
         'token'
-      )}&&id=${id}`);
+      )}&&id=${id}`, '_self');
       this.setState({
         isModalVisible: false,
         importStatus: false,
@@ -642,7 +642,7 @@ class Statistics extends React.PureComponent {
     }
     window.open(`${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
       'token'
-    )}`);
+    )}`, '_self');
   }
 
   // 数据总数、成功数据、失败数据展示
@@ -677,8 +677,6 @@ class Statistics extends React.PureComponent {
       msgTimeOut,
     } = this.state;
     const importResult=JSON.parse(sessionStorage.getItem('importResult'));
-    console.log('🚀 ~ file: index.js ~ line 678 ~ Statistics ~ render ~ msgTimeOut', msgTimeOut);
-    console.log('🚀 ~ file: index.js ~ line 680 ~ Statistics ~ render ~ importResult', importResult);
     const {
       list,
       query,
@@ -952,9 +950,6 @@ class Statistics extends React.PureComponent {
                   导出 <Icon type="down" />
                 </Button>
               </Dropdown>
-              <Button className="m-l-8" onClick={() => this.print()}>
-                打印
-              </Button>
               <Button
                 className="m-l-8"
                 onClick={() => {
@@ -962,6 +957,9 @@ class Statistics extends React.PureComponent {
                 }}
               >
                 批量导入
+              </Button>
+              <Button className="m-l-8" onClick={() => this.print()}>
+                打印
               </Button>
             </div>
             {userInfo.adminType === 1 && (

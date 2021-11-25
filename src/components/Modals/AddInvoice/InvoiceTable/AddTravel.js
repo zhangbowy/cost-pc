@@ -27,7 +27,8 @@ class AddTravel extends PureComponent {
   state = {
     subTrip: this.props.hisAliTrip.subTrip || [],
     fellowTravelers: this.props.hisAliTrip.fellowTravelers || [],
-    selectKeys: [],
+    selectKeys: this.props.hisAliTrip.fellowTravelers ?
+      this.props.hisAliTrip.fellowTravelers.map(it => it.key || `${it.deptId}${it.userId}`) : [],
     alitripExpensesOwner: this.props.hisAliTrip.alitripExpensesOwner || '',
     expenseOwner: this.props.hisAliTrip.expenseOwner || {},
   }
@@ -58,7 +59,6 @@ class AddTravel extends PureComponent {
       return new Promise (resolve => {
         validateFieldsAndScroll((err, val) => {
           if (!err) {
-            console.log('归属人', val.expenseOwner);
             const params = { subTrip, fellowTravelers: newFellow };
             if (val.alitripCostCenterId) {
               const alitripCostCenterJson = costArr.filter(it => it.value == val.alitripCostCenterId);
@@ -128,7 +128,6 @@ class AddTravel extends PureComponent {
     const { subTrip } = this.state;
     const arr = [...subTrip];
     arr.splice(index, 1);
-    console.log('删除一下', arr);
     this.setState({
       subTrip: arr,
     });
@@ -271,7 +270,6 @@ class AddTravel extends PureComponent {
   render () {
     const { aliTripFields, aliTripAuth, form: { getFieldDecorator }, hisAliTrip } = this.props;
     const { aliCostAndI, deptTree } = aliTripFields;
-    console.log('阿里商旅', aliTripAuth);
     const { subTrip } = this.state;
     const formItemLayout = {
       labelCol: {
