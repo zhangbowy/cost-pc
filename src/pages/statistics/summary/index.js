@@ -9,7 +9,7 @@ import treeConvert from '@/utils/treeConvert';
 import SummaryCmp from './components/SummaryCmp';
 import style from './index.scss';
 import TableTemplate from '../../../components/Modals/TableTemplate';
-import { invoiceStatus } from '../../../utils/constants';
+import { invoiceStatus, borrowStatus } from '../../../utils/constants';
 import SearchBanner from '../overview/components/Search/Searchs';
 
 const listSearch = [{
@@ -32,7 +32,7 @@ const listSearch = [{
   placeholder: '请选择',
   key: 'statuses',
   id: 'statuses',
-  options: invoiceStatus,
+  options: invoiceStatus.filter(it => it.key !== '6'),
   fileName: {
     key: 'key',
     name: 'value'
@@ -321,7 +321,11 @@ class Summary extends React.PureComponent {
 
   handleClick = e => {
     let arr = [...listSearch];
-    if (e.key === '2') {
+    if (e.key === '0') {
+      arr[2].options = invoiceStatus.filter(it => it.key !== '6');
+    } else if (e.key === '1') {
+      arr[2].options = borrowStatus;
+    } else if (e.key === '2') {
       arr[2].options = apply;
     } else if (e.key === '3') {
       arr[2].options = salary;

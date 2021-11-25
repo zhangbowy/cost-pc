@@ -511,7 +511,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          paymentMethod: response || 0,
+          paymentMethod: response.paymentMethod || 0,
         },
       });
     },

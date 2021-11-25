@@ -85,7 +85,7 @@ class PayModal extends React.PureComponent {
             prod='已选单据付款金额小于1元，请线下支付并标记';
           }
         }
-
+        console.log(flags, paymentMethod);
         this.setState({
           visible: true,
           defAcc: acc,
@@ -247,6 +247,7 @@ class PayModal extends React.PureComponent {
       paymentMethod,
     } = this.props;
     const { visible, defAcc, count, amount, flag, status, prod, imgUrl } = this.state;
+    console.log('PayModal -> render -> status', status);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

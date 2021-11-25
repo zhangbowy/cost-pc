@@ -490,7 +490,6 @@ renderTreeNodes = data =>
       tId: 'value',
       otherKeys: ['type']
     }, usableProject.sort(compare('sort')));
-    console.log(projectList);
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
     const formItemLayout = {
