@@ -209,10 +209,13 @@ class SearchCity extends PureComponent {
     }
   };
 
+  handleVisibleChange = visible => {
+    this.setState({ popoverVisible: visible });
+  };
+
   render() {
     const { searchValue, activeKey, selectCitys, searchCityList, selectCitysCode,
       hotCities, awAreaVos, popoverVisible } = this.state;
-      console.log('render -> popoverVisible', popoverVisible);
     const { children } = this.props;
     return (
       <div className={style.cities}>
@@ -220,8 +223,8 @@ class SearchCity extends PureComponent {
           trigger="click"
           overlayClassName={style.popStyle}
           icon={false}
-          // visible={popoverVisible}
-          onVisibleChange={this.onShow}
+          visible={popoverVisible}
+          onVisibleChange={this.handleVisibleChange}
           title={null}
           placement="bottomLeft"
           content={
