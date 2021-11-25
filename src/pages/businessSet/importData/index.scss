@@ -4,10 +4,8 @@
 .header {
   color: rgba(0, 0, 0, 0.85);
   font-size: 16px;
-  span {
-    vertical-align: middle;
-    font-weight: 500;
-  }
+  display: flex;
+  align-items: center;
 }
 .line {
   width: 4px;
