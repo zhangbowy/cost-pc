@@ -52,7 +52,7 @@ class ImportData extends Component {
         this.time(now);
         const { historyImportStatus } = this.props;
         if (historyImportStatus) {
-          localStorage.setItem('importResult',JSON.stringify({
+          sessionStorage.setItem('importResult',JSON.stringify({
             ...historyImportStatus,
             date: moment(now).format('YYYY-MM-DD HH:mm:ss')
           }));
@@ -127,7 +127,7 @@ class ImportData extends Component {
       if (diffTime <= 0) {
         console.log('时间到了');
         this.setState({ msgTimeOut: true });
-        localStorage.removeItem('importResult');
+        sessionStorage.removeItem('importResult');
         clearInterval(tt);
       }
     }, 1000);
@@ -143,7 +143,7 @@ class ImportData extends Component {
       percent,
       msgTimeOut,
     } = this.state;
-    const importResult = JSON.parse(localStorage.getItem('importResult'));
+    const importResult = JSON.parse(sessionStorage.getItem('importResult'));
     console.log('🚀 ~ file: index.js ~ line 174 ~ ImportData ~ render ~ msgTimeOut', msgTimeOut);
     console.log('🚀 ~ file: index.js ~ line 176 ~ ImportData ~ render ~ importResult', importResult);
     return (
@@ -220,7 +220,7 @@ class ImportData extends Component {
             this.setState({ file: {} });
           }}
           handleConImport={() => {
-            localStorage.removeItem('importResult');
+            sessionStorage.removeItem('importResult');
             this.setState({
               importStatus: false,
               file: {}
