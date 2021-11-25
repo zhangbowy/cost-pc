@@ -521,7 +521,6 @@ class AddInvoice extends Component {
         }
       }).then(() => {
         const { waitAssessIds } = this.props;
-        console.log('AddInvoice -> onInitBorrow -> waitAssessIds', waitAssessIds);
         arrs.forEach(it => {
           const index = waitAssessIds.findIndex(item => item.loanId === it.loanId);
           if (index > -1) {
@@ -588,7 +587,8 @@ class AddInvoice extends Component {
       this.setState({
         hisCostDetailsVo: [...arr, ...newArr],
       });
-      this.onAddCost([...arr, ...newArr]);
+      const newArrKey = defaultFunc.onInitKey([...arr, ...newArr]);
+      this.onAddCost(newArrKey);
     });
   }
 
@@ -774,11 +774,8 @@ class AddInvoice extends Component {
     });
     // const { loanUserId } = this.state;
     const { djDetail } = this.props;
-    console.log('AddInvoice -> onAddCost -> loanUserId', share);
-    console.log('AddInvoice -> onAddCost -> loanUserId', val);
     if (share && share.length && djDetail.templateType === 0) {
       const { standardArr } = await this.checkStandard(share);
-      console.log('AddInvoice -> onAddCost -> standardArr', standardArr);
       if (standardArr.length > 0) {
         share = standardArr;
       }

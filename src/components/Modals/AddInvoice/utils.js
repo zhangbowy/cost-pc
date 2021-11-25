@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import moment from 'moment';
 import { Tooltip } from 'antd';
@@ -145,7 +146,6 @@ export default {
     return fields;
   },
   handleCost: (costDetailsVo, id) => {
-  console.log('costDetailsVo', costDetailsVo);
     const arr = [];
     costDetailsVo.forEach((item, index) => {
       const obj = {
@@ -202,7 +202,8 @@ export default {
             'shareScale': (it.shareScale * 1000)/10,
             'deptId': it.deptId,
             'userId': it.userId,
-            dingUserId: it.users && it.users.length ? it.users[0].userId : '',
+            dingUserId: it.users && it.users.length ?
+              it.users[0].userId : it.dingUserId ? it.dingUserId : '',
             'userJson':it.users || it.userJson,
             deptName: it.deptName,
             userName: it.userName,
@@ -213,6 +214,22 @@ export default {
       }
     });
     return arr;
+  },
+  onInitKey: (arr) => {
+    const newArr = [];
+    arr.forEach((item, i) => {
+      const obj = { ...item, key: (getTimeIdNo()+i) };
+      newArr.push(obj);
+      if (item.costDetailShareVOS) {
+        item.costDetailShareVOS.forEach((it, index) => {
+          newArr[index].costDetailShareVOS.push({
+            ...it,
+            key:  getTimeIdNo(),
+          });
+        });
+      }
+    });
+    return newArr;
   },
   addCostValue: ({
     costDate,
