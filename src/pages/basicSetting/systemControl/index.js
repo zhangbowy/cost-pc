@@ -5,7 +5,7 @@ import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import style from './index.scss';
 import Lines from '../../../components/StyleCom/Lines';
-import DataPush from './component/DataPush';
+// import DataPush from './component/DataPush';
 
 const viewSum = [{
   title: '以提交时间为准',
@@ -28,13 +28,13 @@ const moneySum = [{
   name: '标记已付',
   value: 0,
   pro: '线下其他渠道支付后，在鑫支出仅做标记使用',
-  icon: 'icona-zhifubaozhifu3x'
+  icon: 'icona-zhifu3x'
 }, {
   title: '线上支付',
   name: '线上支付',
   value: 1,
   pro: '线上打开支付宝，验密后直接付款',
-  icon: 'icona-zhifu3x'
+  icon: 'icona-zhifubaozhifu3x'
 }];
 @connect(({ systemControl, loading, costGlobal }) => ({
   isModifyInvoice: systemControl.isModifyInvoice,
@@ -266,7 +266,7 @@ class SystemControl extends Component {
       isOpenProject,
     } = this.state;
 
-    const { roleUserList, details } = this.props;
+    const { details } = this.props;
     const checkObj = {
       switchCheck,
       isOpenProject,
@@ -325,8 +325,8 @@ class SystemControl extends Component {
                     key={it.value}
                     onClick={() => this.handleTables({ paymentMethod: it.value })}
                   >
-                    <div className={style.payImg} style={{ background: it.value ? '#FFF6EC' : '#ECF7FF' }}>
-                      <i className={`iconfont ${it.icon}`} style={{ color: it.value ? '#FFA01A' : '#0084FF' }}/>
+                    <div className={style.payImg} style={{ background: !it.value ? '#FFF6EC' : '#ECF7FF' }}>
+                      <i className={`iconfont ${it.icon}`} style={{ color: !it.value ? '#FFA01A' : '#0084FF' }}/>
                     </div>
                     <div className={style.rightP}>
                       <p className="c-black-85">{it.title}</p>
@@ -337,14 +337,14 @@ class SystemControl extends Component {
               }
             </div>
           </div>
-          <Divider type="horizontal" />
-          <Lines name="数据推送">
+          {/* <Divider type="horizontal" /> */}
+          {/* <Lines name="数据推送">
             <span className={style.datas}>
-              <i className="iconfont iconshuomingwenzi" />
+              <i className="iconfont icona-jinggao3x" />
               <span>推送数据为当前人员/角色的最大数据权限范围</span>
             </span>
-          </Lines>
-          <DataPush roleUserList={roleUserList} details={details} onChange={this.handleTables} />
+          </Lines> */}
+          {/* <DataPush roleUserList={roleUserList} details={details} onChange={this.handleTables} /> */}
         </div>
         <Modal
           visible={visible}

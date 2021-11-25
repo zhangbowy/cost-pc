@@ -203,7 +203,7 @@ export default {
             'deptId': it.deptId,
             'userId': it.userId,
             dingUserId: it.users && it.users.length ? it.users[0].userId : '',
-            'userJson':it.users,
+            'userJson':it.users || it.userJson,
             deptName: it.deptName,
             userName: it.userName,
             projectId: it.projectId,

@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -89,6 +89,9 @@ export default {
         },
       });
     },
+    *del({ payload }, { call }) {
+      yield call(get, api.del, payload);
+    },
     *thirdList({ payload }, { call, put }) {
       const response = yield call(post, api.thirdList, payload);
       const newArr = response.list && response.list.map(it => { return { ...it, money: it.submitSum }; });
@@ -107,11 +110,12 @@ export default {
     },
     *historyList({ payload }, { call, put }) {
       const response = yield call(post, api.historyList, payload);
+      console.log('*historyList -> response', response);
       yield put({
         type: 'save',
         payload: {
-          recordList: response.list || [],
-          recordPage: {
+          historyList: response.list || [],
+          historyPage: {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize,
             total: (response.page && response.page.total) || 0

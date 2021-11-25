@@ -1145,7 +1145,7 @@ class AddInvoice extends Component {
       });
     }
     if (this.handleOpenModal) {
-      const aliTrips = await this.handleOpenModal(true);
+      const aliTrips = await this.handleOpenModal();
       console.log('AddInvoice -> handleOk -> aliTrips', aliTrips);
       Object.assign(params, {
         trip: aliTrips,

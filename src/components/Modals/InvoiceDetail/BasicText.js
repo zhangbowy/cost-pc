@@ -130,8 +130,8 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
         <span className="fs-14 c-black-65">
           {getArrayValue(details.approveStatus, approveStatus)}
           {
-            details.isEnterpriseAlitrip ?
-              <DisabledTooltip title="阿里商旅自动导入单据，无审批环节" name="审批详情" />
+            details.isEnterpriseAlitrip || details.isHistoryImport ?
+              <DisabledTooltip title={`${details.isHistoryImport ? '历史数据导入' : '阿里商旅自动导入单据'}，无审批环节`} name="审批详情" />
             :
               <span className="link-c m-l-8" onClick={() => onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
 

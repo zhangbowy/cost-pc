@@ -148,20 +148,18 @@ class Summary extends React.PureComponent {
     const _this = this;
     const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
     let arr = [];
-    if (Number(current) !== 4) {
-      arr = fetchs.map(it => {
-        const params = {};
-        if (it === 'invoiceList' && Number(current) !== 4) {
-          Object.assign(params, {
-            templateType: current,
-          });
-        }
-        return dispatch({
-          type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
-          payload: params,
+    arr = fetchs.map(it => {
+      const params = {};
+      if (it === 'invoiceList') {
+        Object.assign(params, {
+          templateType: current,
         });
+      }
+      return dispatch({
+        type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
+        payload: params,
       });
-    }
+    });
     const { searchList } = this.state;
     Promise.all(arr).then(() => {
       const { costCategoryList, invoiceList, projectList, supplierList } = _this.props;
@@ -273,7 +271,6 @@ class Summary extends React.PureComponent {
 
   onQuery = (payload, callback) => {
     const { current, searchList } = this.state;
-    console.log('AuthIndex -> onQuery -> current', current);
     let url = 'summary/submitList';
     if (Number(current) === 1) {
       url = 'summary/loanList';
@@ -329,7 +326,7 @@ class Summary extends React.PureComponent {
     } else if (e.key === '3') {
       arr[2].options = salary;
     } else if (e.key === '4') {
-      arr = arr.filter(it => it.key !== 'statuses' && it.key !== 'invoiceTemplateIds');
+      arr = arr.filter(it => it.key !== 'statuses');
     }
     console.log(arr, '搜索的内容');
     this.setState({
@@ -374,10 +371,12 @@ class Summary extends React.PureComponent {
   }
 
   onHistory = (payload, callback) => {
+    console.log('走了嘛onHistory', payload);
     this.props.dispatch({
       type: 'summary/historyList',
       payload,
     }).then(() => {
+      console.log('historyPage', this.props.historyPage);
       if (callback) {
         callback();
       }
@@ -395,13 +394,26 @@ class Summary extends React.PureComponent {
     });
   }
 
-  onDelHistory = () => {
-
+  onDelHistory = (id) => {
+    const { historyPage } = this.props;
+    this.props.dispatch({
+      type: 'summary/del',
+      payload: {id},
+    }).then(() => {
+      this.props.dispatch({
+        type: 'summary/historyList',
+        payload: {
+          pageNo: historyPage.pageNo,
+          pageSize: historyPage.pageSize,
+        },
+      });
+    });
   }
 
   render() {
     const { loading, query, total,
-       sum, userInfo, recordList, recordPage, historyPage, historyList } = this.props;
+       sum, userInfo, recordList, recordPage,
+       historyPage, historyList } = this.props;
     const { current, selectedRowKeys, list,
       searchContent, sumAmount,
       selectedRows, searchList } = this.state;
@@ -432,26 +444,31 @@ class Summary extends React.PureComponent {
     }];
     const column = [{
       title: '导入批次',
-      dataIndex: 'id',
-      width: 80,
+      dataIndex: 'batchId',
+      width: 90,
     }, {
       title: '操作人',
-      dataIndex: 'name',
+      dataIndex: 'createName',
       width: 100,
     }, {
       title: '操作时间',
-      dataIndex: 'createDate',
+      dataIndex: 'createTime',
       width: 100,
+      render: (_, record) => (
+        <span>
+          {record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}
+        </span>
+      )
     }, {
       title: '操作内容',
       dataIndex: 'content',
       width: 160,
     },  {
-      title: '操作内容',
+      title: '操作',
       dataIndex: 'operationType',
       width: 80,
       render: (_, record) => (
-        <Popconfirm title="确认删除吗？" onConfirm={() => this.onDelHistory(record.id)}>
+        <Popconfirm title={`确认删除${record.content}吗？`} onConfirm={() => this.onDelHistory(record.id)}>
           <span className="sub-color">删除</span>
         </Popconfirm>
       )

@@ -63,6 +63,7 @@ class DataPush extends PureComponent {
 
   static getDerivedStateFromProps(props, state) {
     if (props.details !== state.list) {
+      console.log('DataPush -> getDerivedStateFromProps -> details走了吗', props.details);
       const { details: { monthMessage, weekMessage } } = props;
       const newArr = [{
         id: 'weekMessage',
@@ -263,14 +264,7 @@ class DataPush extends PureComponent {
           },
           children: (
             <Form.Item style={{marginBottom: 0}}>
-              {
-                getFieldDecorator(`isPush[${record.id}]`, {
-                  initialValue: !record.isPush,
-                  valuePropName: 'checked'
-                })(
-                  <Switch onChange={e => this.onChange(Number(!e), record, 'isPush')} />
-                )
-              }
+              <Switch value={!record.isPush} onChange={e => this.onChange(Number(!e), record, 'isPush')} />
             </Form.Item>
           )
         };
@@ -288,23 +282,18 @@ class DataPush extends PureComponent {
             <div className={style.tableForm}>
               <span>每周一早上</span>
               <Form.Item>
-                {
-                  getFieldDecorator(`pushDate[${record.id}]`, {
-                    initialValue: record.pushDate ? `${record.pushDate}` : '8'
-                  })(
-                    <Select
-                      style={{ width: '80px' }}
-                      className="m-l-8 m-r-8"
-                      onChange={val => this.onChange(val, record, 'pushDate')}
-                    >
-                      {
-                        time.map(it => (
-                          <Select.Option key={it.key}>{it.name}</Select.Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
+                <Select
+                  style={{ width: '80px' }}
+                  className="m-l-8 m-r-8"
+                  onChange={val => this.onChange(val, record, 'pushDate')}
+                  value={record.pushDate ? `${record.pushDate}` : '8'}
+                >
+                  {
+                    time.map(it => (
+                      <Select.Option key={it.key}>{it.name}</Select.Option>
+                    ))
+                  }
+                </Select>
               </Form.Item>
               <span>推送</span>
             </div>

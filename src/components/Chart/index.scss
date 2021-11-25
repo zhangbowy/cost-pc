@@ -21,11 +21,30 @@
     border-radius: 50%;
     margin-right: 4px;
     vertical-align: middle;
+    margin-left: 4px;
   }
   .tooltipCont{
     font-size: 12px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
+  }
+  .tooltipBill{
+    width: 14px;
+    height: 1px;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    i{
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      border-radius: 50%;
+      left: 3px;
+      top: -4px;
+      z-index: 11;
+      background: #fff;
+    }
   }
 }

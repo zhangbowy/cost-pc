@@ -37,7 +37,7 @@ function PieChart({ data, total, current, title, onLink }) {
         },
       },
       top: 'center',
-      left: '22%',
+      left: '48%',
       textAlign: 'center',
       textStyle: {
         rich: {
@@ -56,6 +56,7 @@ function PieChart({ data, total, current, title, onLink }) {
       },
     },
     tooltip: {
+      confine: true,
       trigger: 'item',
       backgroundColor:'#fff',
       padding: 0,
@@ -70,58 +71,18 @@ function PieChart({ data, total, current, title, onLink }) {
       }
     },
     legend: {
-      left: '42%',
-      top: 'center',
-      bottom: '16',
-      orient: 'vertical',
-      icon: 'circle',
-      formatter: name => {
-        let obj = {};
-        for (let i = 0, l = data.length; i < l; i++) {
-          if (data[i].dimensionName === name) {
-            obj = data[i];
-          }
-        }
-        const arr = [
-          `{a|${ name.length > 9 ? `${name.slice(0,8)  }...` : name }}`,
-          `{b|｜${  obj.proportionStr}}`,
-          `{c|¥${obj.costSum/100}}`
-        ];
-        return arr.join('');
-      },
-      itemWidth: 6,
-      itemHeight: 6,
-      textStyle:{
-        rich:{
-          a:{
-            fontSize:12,
-            align:'left',
-            color: 'rgba(0,0,0,0.65)',
-            width: 104,
-            lineHeight: 22
-          },
-          b:{
-            fontSize:12,
-            align:'left',
-            color: 'rgba(0,0,0,0.45)',
-            width: 68,
-          },
-          c:{
-            fontSize:12,
-            align:'left',
-            color: 'rgba(0,0,0,0.65)',
-            fontFamily: 'Helvetica Neue'
-          },
-        }
-      }
+      show: false,
+    },
+    canvas:{
+      zIndex: -1
     },
     color: defaultColor,
     series: [
       {
         name: tabList[current].value,
         type: 'pie',
-        radius: ['43%', '55%'],
-        center: ['23%', '50%'],
+        radius: ['55%', '70%'],
+        center: ['50%', '50%'],
         avoidLabelOverlap: true,
         minAngle: 10,
         stillShowZeroSum: false,
@@ -167,14 +128,43 @@ function PieChart({ data, total, current, title, onLink }) {
     <div className={style.chart}>
       {
         data.length ?
-          <ReactEcharts
-            style={{height: '323px', width: '100%'}}
-            className='echarts-for-echarts'
-            notMerge
-            lazyUpdate
-            option={option}
-            onEvents={onclick}
-          />
+          <div className={style.pieCharts}>
+            <div className={style.topChart} style={{height: '323px', width: '40%', position: 'relative'}}>
+              <span className={style.production}>点击图表/数据可查看对应支出明细</span>
+              <ReactEcharts
+                style={{height: '323px', width: '100%'}}
+                className='echarts-for-echarts'
+                notMerge
+                lazyUpdate
+                option={option}
+                onEvents={onclick}
+              />
+            </div>
+            <div className={style.legend}>
+              {
+                data.map((it, index) => (
+                  <div className={style.list} key={it.dimensionId} onClick={() => clickEchartsLegend({...it, name: it.dimensionName})}>
+                    <div className={style.titles}>
+                      <i style={{background: defaultColor[index]}} />
+                      <span>{it.dimensionName}</span>
+                    </div>
+                    <div className={style.money}>
+                      <span className="c-black-65">¥ {it.costSum/100}</span>
+                      <span className={style.line}>|</span>
+                      <span className="c-black-45" style={{width: '72px', display: 'inline-block'}}>
+                        {
+                          it.annulusSymbolType !== null &&
+                          <i className={`iconfont ${it.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng'}`} />
+                        }
+                        <span className="fw-500" style={{width: '52px',display: 'inline-block'}}>{`${it.annulusSymbolType !== null ? `${it.annulus}%` : '-'}`}</span>
+                      </span>
+                    </div>
+                  </div>
+                ))
+              }
+
+            </div>
+          </div>
           :
           <NoData />
       }

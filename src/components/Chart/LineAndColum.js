@@ -13,15 +13,11 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
   const splitNumber=5;
 
   const min1=Math.min.call(null, ...value);
-  console.log('LineAndColumn -> min1', min1);
   const min2=Math.min.call(null, ...value1);
-  console.log('LineAndColumn -> min2', min2);
 
   // 取splitNumber的倍数
   const max1= Math.ceil((Math.max.call(null,...value)/9.5)*10);
-  console.log('LineAndColumn -> max1', max1);
   const max2= Math.ceil((Math.max.call(null,...value1)/9.5)*10);
-  console.log('LineAndColumn -> max2', max2);
 
   const barOption = [];
   barCharts.keys.forEach((el) => {
@@ -44,9 +40,19 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     });
   });
   const interval1 = Math.ceil((max1-min1) / splitNumber);
-  console.log('LineAndColumn -> interval1', interval1);
   const interval2 = Math.ceil((max2-min2) / splitNumber);
-  console.log('LineAndColumn -> interval2', interval2);
+  const barcharts = barCharts.keys.map(it => {
+    return {
+      name: it,
+      icon: 'circle',
+    };
+  });
+  const lineChartsKeys = lineCharts.keys.map(it => {
+    return {
+      name: it,
+      icon: 'path://M512 298.666667a213.418667 213.418667 0 0 1 209.066667 170.666666H981.333333a42.666667 42.666667 0 0 1 0 85.333334l-260.266666 0.042666a213.418667 213.418667 0 0 1-199.424 170.410667L512 725.333333a213.418667 213.418667 0 0 1-209.066667-170.624L42.666667 554.666667a42.666667 42.666667 0 0 1 0-85.333334h260.266666a213.418667 213.418667 0 0 1 199.424-170.453333L512 298.666667z m0 85.333333a128 128 0 1 0 0 256 128 128 0 0 0 0-256z'
+    };
+  });
   const options = {
     tooltip: {
       trigger: 'axis',
@@ -58,9 +64,13 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       formatter: (params) => {
         let lis = '';
         params.forEach(item => {
+          let strs = `<span class=${styles.tooltipBall} style='background:${item.color}' ></span>`;
+          if (item.seriesType === 'line') {
+            strs = `<span class=${styles.tooltipBill} style='background:${item.color}' ><i style='border: 1px solid ${item.color}'></i></span>`;
+          }
           lis+=`<div style='line-height: 20px;'>
-          <span class=${styles.tooltipBall} style='background:${item.color}' ></span>
-          <span class=${styles.tooltipCont}>${item.seriesName}：${`${item.value || 0}元`}</span>
+          ${strs}
+          <span class=${styles.tooltipCont}>${item.seriesName}：¥${`${item.value || 0}`}</span>
         </div>`;
         });
         return `<div class=${styles.tooltip}>
@@ -70,18 +80,19 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       }
     },
     legend: {
-      data: [...barCharts.keys, ...lineCharts.keys],
+      data: [...barcharts, ...lineChartsKeys],
       textStyle: {
         color: 'rgba(0,0,0,0.65)'
       },
       bottom: -1,
+      itemHeight: 8,
     },
     color: defaultColor,
     grid: {
       left: 4,
       right: 4,
       top: '10%',
-      bottom: 40,
+      bottom: '14%',
       containLabel: true
     },
     xAxis: [{
