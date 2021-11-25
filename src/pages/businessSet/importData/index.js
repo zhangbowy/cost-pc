@@ -144,8 +144,6 @@ class ImportData extends Component {
       msgTimeOut,
     } = this.state;
     const importResult = JSON.parse(sessionStorage.getItem('importResult'));
-    console.log('🚀 ~ file: index.js ~ line 174 ~ ImportData ~ render ~ msgTimeOut', msgTimeOut);
-    console.log('🚀 ~ file: index.js ~ line 176 ~ ImportData ~ render ~ importResult', importResult);
     return (
       <div className="mainContainer">
         <PageHead title="历史数据导入" />
@@ -153,7 +151,7 @@ class ImportData extends Component {
           <div className={style.cnt_foot}>
             <div className={style.header}>
               <div className={style.line} />
-              <span className="fs-14 c-black-85 fw-400">批量导入支出明细</span>
+              <span className="fs-16 c-black-85 fw-600">批量导入支出明细</span>
             </div>
           </div>
           <p className={style.desc}>
