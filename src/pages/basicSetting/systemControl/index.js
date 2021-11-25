@@ -337,7 +337,7 @@ class SystemControl extends Component {
               }
             </div>
           </div>
-          <Divider type="horizontal" />
+          {/* <Divider type="horizontal" /> */}
           {/* <Lines name="数据推送">
             <span className={style.datas}>
               <i className="iconfont icona-jinggao3x" />
