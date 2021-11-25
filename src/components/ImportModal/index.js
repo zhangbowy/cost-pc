@@ -1,14 +1,14 @@
 /* eslint-disable no-shadow */
 import React from 'react';
-import { Modal, Button, Progress, Upload, Popconfirm } from 'antd';
+import { Modal, Button, Progress, Upload } from 'antd';
 import cs from 'classnames';
 // import { debounce } from 'lodash-decorators';
 import style from './index.scss';
 import loadingFile from '@/assets/img/file@3x.png';
-import constants from '@/utils/constants';
+// import constants from '@/utils/constants';
 
 const { Dragger } = Upload;
-const { APP_API } = constants;
+// const { APP_API } = constants;
 
 export default function ImportModal({
   importStatus,
@@ -22,9 +22,11 @@ export default function ImportModal({
   handleConImport,
   handleReset,
   percent,
-  popoverVisible,
-  handleOkPop,
-  handleCancelPop
+  // popoverVisible,
+  // handleOkPop,
+  // handleCancelPop,
+  downLoad,
+  // popMsg,
 }) {
   const ele = importResult => {
     if (!importResult.errorCount) {
@@ -65,24 +67,24 @@ export default function ImportModal({
       onCancel={() => {
         handleCancel();
       }}
-      closeIcon={
-        <Popconfirm
-          visible={popoverVisible}
-          placement="rightTop"
-          title={
-            <div>
-              <p className={style.popTitle}>确定关闭吗？</p>
-              <p className={style.popContent}>
-                关闭后可在列表上方下载失败数据，本次数据仅保留15分钟。
-              </p>
-            </div>
-          }
-          onConfirm={e => handleOkPop(e)}
-          onCancel={e => handleCancelPop(e)}
-        >
-          <i className="iconfont iconclose" />
-        </Popconfirm>
-      }
+      // closeIcon={
+      //   <Popconfirm
+      //     visible={popoverVisible}
+      //     placement="rightTop"
+      //     title={
+      //       <div>
+      //         <p className={style.popTitle}>确定关闭吗？</p>
+      //         <p className={style.popContent}>
+      //           {popMsg || '关闭后可在列表上方下载失败数据，本次数据仅保留15分钟。'}
+      //         </p>
+      //       </div>
+      //     }
+      //     onConfirm={e => handleOkPop(e)}
+      //     onCancel={e => handleCancelPop(e)}
+      //   >
+      //     <i className="iconfont iconclose" />
+      //   </Popconfirm>
+      // }
       width={824}
       className={style.modal_box}
       centered
@@ -110,14 +112,19 @@ export default function ImportModal({
               </div>
               {importResult.errorCount ? (
                 <div>
-                  <Button className={style.reset_btn} type="primary">
-                    <a
+                  <Button
+                    className={style.reset_btn}
+                    type="primary"
+                    onClick={()=>downLoad(importResult.id)}
+                  >
+                    下载失败数据
+                    {/* <a
                       href={`${APP_API}/cost/excel/importErrorExcel?token=${localStorage.getItem(
                         'token'
                       )}&&id=${importResult.id}`}
                     >
                       下载失败数据
-                    </a>
+                    </a> */}
                   </Button>
                 </div>
               ) : (
@@ -147,14 +154,19 @@ export default function ImportModal({
         <>
           <div className={style.modal_top}>
             根据客户列表的表单内容生成对应的批量导入模版
-            <a
+            <span
+              className={style.modal_download}
+              onClick={downLoad}
+            >下载模版
+            </span>
+            {/* <a
               href={`${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
                 'token'
               )}`}
               className={style.modal_download}
             >
               下载模版
-            </a>
+            </a> */}
           </div>
           <div className={style.upload_box}>
             {file.uid ? (
@@ -183,7 +195,7 @@ export default function ImportModal({
               <Dragger {...props} className={style.drag_box}>
                 <p className="ant-upload-drag-icon">
                   <i
-                    className={cs('iconfont icona-tuozhuai3x', style.file_icon)}
+                    className={cs('iconfont icona-wenjian3x2', style.file_icon)}
                   />
                 </p>
                 <p className="ant-upload-hint upload_explain">
