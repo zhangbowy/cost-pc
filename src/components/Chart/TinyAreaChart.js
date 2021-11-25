@@ -41,9 +41,9 @@ const TinyAreaChart = ({ options }) => {
             x2: 0,
             y2: 1,
             colorStops: [{
-                offset: 0, color: 'rgba(0, 199, 149, 0.85)' // 0% 处的颜色
+                offset: 0, color: '#57FAD1 ' // 0% 处的颜色
             }, {
-                offset: 1, color: '#fff' // 100% 处的颜色
+                offset: 1, color: '#F9FAFC' // 100% 处的颜色
             }],
           }
         }

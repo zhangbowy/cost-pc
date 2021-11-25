@@ -152,7 +152,7 @@ class Summary extends React.PureComponent {
       const params = {};
       if (it === 'invoiceList') {
         Object.assign(params, {
-          templateType: current,
+          templateType: Number(current) === 4 ? -1 : current,
         });
       }
       return dispatch({

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import Search from 'antd/lib/input/Search';
-import { Button, Popover } from 'antd';
+import { Popover } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
 
@@ -212,6 +212,7 @@ class SearchCity extends PureComponent {
   render() {
     const { searchValue, activeKey, selectCitys, searchCityList, selectCitysCode,
       hotCities, awAreaVos, popoverVisible } = this.state;
+      console.log('render -> popoverVisible', popoverVisible);
     const { children } = this.props;
     return (
       <div className={style.cities}>
@@ -219,7 +220,8 @@ class SearchCity extends PureComponent {
           trigger="click"
           overlayClassName={style.popStyle}
           icon={false}
-          visible={popoverVisible}
+          // visible={popoverVisible}
+          onVisibleChange={this.onShow}
           title={null}
           placement="bottomLeft"
           content={
@@ -322,7 +324,7 @@ class SearchCity extends PureComponent {
                         })}
                   </div>
                   <div className={style.popoverFooter}>
-                    <Button onClick={() => this.handleCancel()}>取消</Button>
+                    {/* <Button onClick={() => this.handleCancel()}>取消</Button> */}
                     {/* <Button className={style.btn2} onClick={() => this.handleOk()}>
                       确定
                     </Button> */}

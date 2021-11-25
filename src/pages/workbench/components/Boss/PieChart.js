@@ -151,7 +151,8 @@ function PieChart({ data, total, current, title, onLink }) {
                     <div className={style.money}>
                       <span className="c-black-65">¥ {it.costSum/100}</span>
                       <span className={style.line}>|</span>
-                      <span className="c-black-45" style={{width: '72px', display: 'inline-block'}}>
+                      <span className="c-black-45" style={{width: '102px', display: 'inline-block'}}>
+                        <span>环比</span>
                         {
                           it.annulusSymbolType !== null &&
                           <i className={`iconfont ${it.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng'}`} />
