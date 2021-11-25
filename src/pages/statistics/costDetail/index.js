@@ -676,7 +676,7 @@ class Statistics extends React.PureComponent {
       percent,
       msgTimeOut,
     } = this.state;
-    const importResult=JSON.parse(localStorage.getItem('importResult'));
+    const importResult=JSON.parse(localStorage.getItem('importResult')) || {};
     const {
       list,
       query,
@@ -950,9 +950,6 @@ class Statistics extends React.PureComponent {
                   导出 <Icon type="down" />
                 </Button>
               </Dropdown>
-              <Button className="m-l-8" onClick={() => this.print()}>
-                打印
-              </Button>
               <Button
                 className="m-l-8"
                 onClick={() => {
@@ -960,6 +957,9 @@ class Statistics extends React.PureComponent {
                 }}
               >
                 批量导入
+              </Button>
+              <Button className="m-l-8" onClick={() => this.print()}>
+                打印
               </Button>
             </div>
             {userInfo.adminType === 1 && (

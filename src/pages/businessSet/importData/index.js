@@ -199,7 +199,7 @@ class ImportData extends Component {
             2.导入成功后的支出明细，如需查看或批量删除，请前往：
             <span
               onClick={() => {
-                // this.props.history.push('');
+                this.props.history.push('/statistics/costDetail');
               }}
             >
               台账汇总-三方导入
