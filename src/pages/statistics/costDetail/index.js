@@ -578,7 +578,7 @@ class Statistics extends React.PureComponent {
         this.time(now);
         const { historyImportStatus } = this.props;
         if (historyImportStatus) {
-          localStorage.setItem(
+          sessionStorage.setItem(
             'importResult',
             JSON.stringify({
               ...historyImportStatus,
@@ -658,7 +658,7 @@ class Statistics extends React.PureComponent {
       if (diffTime <= 0) {
         console.log('时间到了');
         this.setState({ msgTimeOut: true });
-        localStorage.removeItem('importResult');
+        sessionStorage.removeItem('importResult');
         clearInterval(tt);
       }
     }, 1000);
@@ -676,7 +676,7 @@ class Statistics extends React.PureComponent {
       percent,
       msgTimeOut,
     } = this.state;
-    const importResult=JSON.parse(localStorage.getItem('importResult')) || {};
+    const importResult=JSON.parse(sessionStorage.getItem('importResult'));
     const {
       list,
       query,
@@ -921,7 +921,7 @@ class Statistics extends React.PureComponent {
       <div style={{ padding: 0 }}>
         <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ height: 'auto', padding: '24px' }}>
-          <div className="cnt-header" style={{marginBottom: importResult.errorCount ? '16px' : '0px'}}>
+          <div className="cnt-header" style={{marginBottom: importResult&&importResult.errorCount ? '16px' : '0px'}}>
             <div
               className="head_lf"
               style={{ display: 'flex' }}
@@ -1035,7 +1035,7 @@ class Statistics extends React.PureComponent {
             this.setState({ file: {} });
           }}
           handleConImport={() => {
-            localStorage.removeItem('importResult');
+            sessionStorage.removeItem('importResult');
             this.setState({
               importStatus: false,
               // importResult: {},
