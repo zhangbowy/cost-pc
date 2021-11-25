@@ -226,7 +226,7 @@ class EchartsTest extends Component {
           width: query === 'dept' ? 160 : 100,
         }]]
       });
-      if (Number(params) === 1 || Number(params) === 2) {
+      if (Number(params) === 1 || Number(params) === 2 || Number(params) === 6) {
         cols = update(cols, {
           $splice: [[cols.length , 0,{
             title: '操作',

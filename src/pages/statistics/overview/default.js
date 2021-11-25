@@ -334,7 +334,7 @@ export default {
       title: '明细数',
       dataIndex: 'categoryCountAll',
       width: 100,
-    }, ...annual],
+    }],
     chartName: 'supplierName',
     type: 'supplierId',
     tableProps: {
@@ -380,20 +380,21 @@ export default {
     query: 'office',
     columns: [{
       title: '分公司',
-      dataIndex: 'supplierName',
+      dataIndex: 'officeName',
       width: 80,
       render: (_, record) => (
-        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.supplierName}</span>
+        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.officeName}</span>
       )
     }, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
-      width: 100,
+      width: 80,
     }, {
       title: '明细数',
       dataIndex: 'categoryCountAll',
-      width: 100,
-    }],
+      width: 80,
+    },
+    ...annual],
     chartName: 'officeName',
     type: 'supplierId',
     tableProps: {
