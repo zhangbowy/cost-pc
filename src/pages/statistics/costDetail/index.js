@@ -632,7 +632,7 @@ class Statistics extends React.PureComponent {
     if(id){
       window.open(`${APP_API}/cost/excel/importErrorExcel?token=${localStorage.getItem(
         'token'
-      )}&&id=${id}`);
+      )}&&id=${id}`, '_self');
       this.setState({
         isModalVisible: false,
         importStatus: false,
@@ -642,7 +642,7 @@ class Statistics extends React.PureComponent {
     }
     window.open(`${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
       'token'
-    )}`);
+    )}`, '_self');
   }
 
   // 数据总数、成功数据、失败数据展示

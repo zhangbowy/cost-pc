@@ -100,7 +100,7 @@ class ImportData extends Component {
       window.open(
         `${APP_API}/cost/excel/importErrorExcel?token=${localStorage.getItem(
           'token'
-        )}&&id=${id}`
+        )}&&id=${id}`, '_self'
       );
       this.setState({
         isModalVisible: false,
@@ -111,7 +111,7 @@ class ImportData extends Component {
     }
     window.open(
       `${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem('token')}`
-    );
+      , '_self');
   };
 
   // 数据总数、成功数据、失败数据展示
@@ -161,11 +161,9 @@ class ImportData extends Component {
             <span
               className={style.modal_download}
               onClick={() => {
-                window.open(
-                  `${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
+                window.location.href=`${APP_API}/cost/excel/uploadModel?token=${localStorage.getItem(
                     'token'
-                  )}`
-                );
+                  )}`;
               }}
             >
               下载模版

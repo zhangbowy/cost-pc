@@ -156,7 +156,7 @@ export default function ImportModal({
             根据客户列表的表单内容生成对应的批量导入模版
             <span
               className={style.modal_download}
-              onClick={downLoad}
+              onClick={() => downLoad()}
             >下载模版
             </span>
             {/* <a
