@@ -56,6 +56,7 @@ function PieChart({ data, total, current, title, onLink }) {
       },
     },
     tooltip: {
+      confine: true,
       trigger: 'item',
       backgroundColor:'#fff',
       padding: 0,
@@ -71,6 +72,9 @@ function PieChart({ data, total, current, title, onLink }) {
     },
     legend: {
       show: false,
+    },
+    canvas:{
+      zIndex: -1
     },
     color: defaultColor,
     series: [
@@ -125,14 +129,17 @@ function PieChart({ data, total, current, title, onLink }) {
       {
         data.length ?
           <div className={style.pieCharts}>
-            <ReactEcharts
-              style={{height: '323px', width: '40%'}}
-              className='echarts-for-echarts'
-              notMerge
-              lazyUpdate
-              option={option}
-              onEvents={onclick}
-            />
+            <div className={style.topChart} style={{height: '323px', width: '40%', position: 'relative'}}>
+              <span className={style.production}>点击图表/数据可查看对应支出明细</span>
+              <ReactEcharts
+                style={{height: '323px', width: '100%'}}
+                className='echarts-for-echarts'
+                notMerge
+                lazyUpdate
+                option={option}
+                onEvents={onclick}
+              />
+            </div>
             <div className={style.legend}>
               {
                 data.map((it, index) => (

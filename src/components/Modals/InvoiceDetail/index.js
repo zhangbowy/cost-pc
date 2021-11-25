@@ -343,17 +343,6 @@ class InvoiceDetail extends Component {
     });
   }
 
-  previewOldFile = (options) => {
-    this.props.dispatch({
-      type: 'global/isApproval',
-      payload: {
-        spaceId: options.spaceId
-      }
-    }).then(() => {
-      this.preview(options, 'global/grantDownload');
-    });
-  }
-
   cityInfo = (codes) => {
     return new Promise(resolve => {
       this.props.dispatch({
@@ -801,7 +790,7 @@ class InvoiceDetail extends Component {
                 list={category}
                 previewImage={this.previewImage}
                 cityInfo={this.state.cityInfo}
-                previewFiles={this.previewOldFile}
+                previewFiles={this.previewFiles}
               />
             </>
           }

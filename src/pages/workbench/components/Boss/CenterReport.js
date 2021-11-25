@@ -39,7 +39,7 @@ const list = [{
   img: two,
   bg: two1,
   name: '已付金额',
-  color: '#FFFAFA',
+  color: '#F6FDFC',
   status: 3,
 }, {
   key: 2,

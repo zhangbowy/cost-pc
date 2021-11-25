@@ -5,7 +5,7 @@ import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import style from './index.scss';
 import Lines from '../../../components/StyleCom/Lines';
-import DataPush from './component/DataPush';
+// import DataPush from './component/DataPush';
 
 const viewSum = [{
   title: '以提交时间为准',
@@ -266,7 +266,7 @@ class SystemControl extends Component {
       isOpenProject,
     } = this.state;
 
-    const { roleUserList, details } = this.props;
+    const { details } = this.props;
     const checkObj = {
       switchCheck,
       isOpenProject,
@@ -338,13 +338,13 @@ class SystemControl extends Component {
             </div>
           </div>
           <Divider type="horizontal" />
-          <Lines name="数据推送">
+          {/* <Lines name="数据推送">
             <span className={style.datas}>
               <i className="iconfont icona-jinggao3x" />
               <span>推送数据为当前人员/角色的最大数据权限范围</span>
             </span>
-          </Lines>
-          <DataPush roleUserList={roleUserList} details={details} onChange={this.handleTables} />
+          </Lines> */}
+          {/* <DataPush roleUserList={roleUserList} details={details} onChange={this.handleTables} /> */}
         </div>
         <Modal
           visible={visible}
