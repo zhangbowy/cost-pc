@@ -689,6 +689,40 @@ export const invoiceStatus = [
   value: '已还款',
   color: 'rgba(0, 199, 149, 1)',
 }];
+export const borrowStatus = [
+  //   {
+  //   key: '0',
+  //   value: '草稿'
+  // },
+  {
+    key: '1',
+    value: '审核中',
+    color: 'rgba(255, 148, 62, 1)'
+  },
+  {
+    key: '2',
+    value: '待发放',
+    color: 'rgba(3, 122, 254, 1)'
+  }, {
+    key: '3',
+    value: '待还款',
+    color: 'rgba(0, 199, 149, 1)',
+  },
+  {
+    key: '4',
+    value: '已撤销',
+    color: 'rgba(255, 90, 95, 1)'
+  },
+  {
+    key: '5',
+    value: '已拒绝',
+    color: 'rgba(255, 90, 95, 1)'
+  },
+  {
+    key: '6',
+    value: '已还款',
+    color: 'rgba(0, 199, 149, 1)',
+  }];
 
 // 审批状态
 export const approveStatus = [{
