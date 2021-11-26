@@ -79,12 +79,12 @@ class SummaryCmp extends Component {
     });
   };
 
-  onDelete = (id) => {
+  onDelete = (id, type, isAliTrip) => {
     const { templateType, query, searchContent } = this.props;
     this.props.onDelInvoice({
       id,
-      templateType: Number(templateType) === 4 ? 0 : templateType,
-      isAlitrip: Number(templateType) === 4,
+      templateType: Number(templateType) === 4 ? type : templateType,
+      isAlitrip: Number(templateType) === 4 && isAliTrip,
     }, () => {
       message.success('删除成功');
       this.props.onQuery({
@@ -487,7 +487,7 @@ class SummaryCmp extends Component {
                   (templateType === 4 && status === 3) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"
-                      onConfirm={() => this.onDelete(record.id)}
+                      onConfirm={() => this.onDelete(record.id, record.templateType, record.isEnterpriseAlitrip)}
                       placement="topRight"
                     >
                       <a>删单</a>
