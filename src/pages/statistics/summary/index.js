@@ -138,7 +138,16 @@ class Summary extends React.PureComponent {
       query,
     } = this.props;
     this.onQuery({...query}, () => {
-      this.search();
+      const his = localStorage.getItem('historyLink');
+      localStorage.removeItem('historyLink');
+      if (his) {
+        this.handleClick({ key: '4' },
+          () => {
+          this.search();
+        });
+      } else {
+        this.search();
+      }
     });
   }
 
@@ -319,7 +328,7 @@ class Summary extends React.PureComponent {
     });
   }
 
-  handleClick = e => {
+  handleClick = (e, callback) => {
     let arr = [...listSearch];
     if (e.key === '0') {
       arr[2].options = invoiceStatus.filter(it => it.key !== '6');
@@ -339,6 +348,9 @@ class Summary extends React.PureComponent {
       selectedRows: [],
       searchList: arr,
     }, () => {
+      if (callback){
+        callback();
+      }
       this.onQuery({
         pageNo: 1,
         pageSize: 10,
