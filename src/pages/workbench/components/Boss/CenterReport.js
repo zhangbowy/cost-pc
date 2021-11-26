@@ -42,7 +42,7 @@ const list = [{
   color: '#F6FDFC',
   status: 3,
 }, {
-  key: 2,
+  key: 'approvalInProgress',
   img: three,
   bg: three1,
   name: '审核中金额',
