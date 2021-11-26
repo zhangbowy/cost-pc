@@ -219,15 +219,19 @@ export default {
     const newArr = [];
     arr.forEach((item, i) => {
       const obj = { ...item, key: (getTimeIdNo()+i) };
-      newArr.push(obj);
       if (item.costDetailShareVOS) {
-        item.costDetailShareVOS.forEach((it, index) => {
-          newArr[index].costDetailShareVOS.push({
+        const newShare = [];
+        item.costDetailShareVOS.forEach((it) => {
+          newShare.push({
             ...it,
             key:  getTimeIdNo(),
           });
         });
+        Object.assign(obj, {
+          costDetailShareVOS: newShare,
+        });
       }
+      newArr.push(obj);
     });
     return newArr;
   },
