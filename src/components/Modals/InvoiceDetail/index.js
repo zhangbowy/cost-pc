@@ -78,7 +78,6 @@ class InvoiceDetail extends Component {
 
   onInit = (flag) => {
     const { id, templateType } = this.props;
-    console.log('InvoiceDetail -> onShow -> templateType', templateType);
     let url = 'global/invoiceDetail';
     let params = { id };
     if (Number(templateType) === 1) {

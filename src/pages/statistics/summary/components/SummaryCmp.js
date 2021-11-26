@@ -483,6 +483,7 @@ class SummaryCmp extends Component {
                   (status === 3 && templateType === 0) ||
                   (templateType === 1 && status === 6) ||
                   (templateType === 2 && status === 2) ||
+                  (record.templateType === 2 && status === 2) ||
                   (templateType === 4 && status === 3) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"

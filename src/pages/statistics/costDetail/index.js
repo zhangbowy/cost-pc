@@ -200,6 +200,10 @@ class Statistics extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.props.dispatch({
+      type: 'costGlobal/historyImportStatus',
+      payload: {},
+    });
     this.onInit();
   }
 
@@ -574,29 +578,32 @@ class Statistics extends React.PureComponent {
         payload: formData
       })
       .then(() => {
-        const now=new Date();
-        this.time(now);
-        const { historyImportStatus } = this.props;
-        if (historyImportStatus) {
-          sessionStorage.setItem(
-            'importResult',
-            JSON.stringify({
-              ...historyImportStatus,
-              date: moment(now).format('YYYY-MM-DD HH:mm:ss')
-            })
-          );
-          this.setState({
-            // importResult: historyImportStatus,
-            percent: 100,
-            importLoading: false,
-            msgTimeOut:false
-          });
-        } else {
-          this.setState({
-            importStatus: false,
-            importLoading: false
-          });
-        }
+        message.success('完成导入后，发送工作通知');
+        this.handleCancel();
+        // const now=new Date();
+        // this.time(now);
+        // this.setState({
+        //   importStatus: false,
+        //   importLoading: false
+        // });
+        // const { historyImportStatus } = this.props;
+        // if (historyImportStatus) {
+          // sessionStorage.setItem(
+          //   'importResult',
+          //   JSON.stringify({
+          //     ...historyImportStatus,
+          //     date: moment(now).format('YYYY-MM-DD HH:mm:ss')
+          //   })
+          // );
+          // this.setState({
+          //   // importResult: historyImportStatus,
+          //   percent: 100,
+          //   importLoading: false,
+          //   msgTimeOut:false
+          // });
+        // } else {
+
+        // }
       });
   };
 
@@ -647,22 +654,22 @@ class Statistics extends React.PureComponent {
 
   // 数据总数、成功数据、失败数据展示
   // oldDate : 调用此函数的时间
-  time = oldDate => {
-    // 15分钟之后的时间戳
-    const endTimes = oldDate.getTime() + 15 * 60 * 10 * 100;
-    const tt = setInterval(() => {
-      // 当前时间
-      const nowTimes = new Date().getTime();
-      // 时间差
-      const diffTime = endTimes - nowTimes;
-      if (diffTime <= 0) {
-        console.log('时间到了');
-        this.setState({ msgTimeOut: true });
-        sessionStorage.removeItem('importResult');
-        clearInterval(tt);
-      }
-    }, 1000);
-  };
+  // time = oldDate => {
+  //   // 15分钟之后的时间戳
+  //   const endTimes = oldDate.getTime() + 15 * 60 * 10 * 100;
+  //   const tt = setInterval(() => {
+  //     // 当前时间
+  //     const nowTimes = new Date().getTime();
+  //     // 时间差
+  //     const diffTime = endTimes - nowTimes;
+  //     if (diffTime <= 0) {
+  //       console.log('时间到了');
+  //       this.setState({ msgTimeOut: true });
+  //       sessionStorage.removeItem('importResult');
+  //       clearInterval(tt);
+  //     }
+  //   }, 1000);
+  // };
 
   render() {
     const {
@@ -674,9 +681,9 @@ class Statistics extends React.PureComponent {
       isModalVisible,
       file,
       percent,
-      msgTimeOut,
+      // msgTimeOut,
     } = this.state;
-    const importResult=JSON.parse(sessionStorage.getItem('importResult'));
+    // const importResult=JSON.parse(sessionStorage.getItem('importResult'));
     const {
       list,
       query,
@@ -685,7 +692,8 @@ class Statistics extends React.PureComponent {
       sum,
       recordPage,
       recordList,
-      userInfo
+      userInfo,
+      historyImportStatus,
     } = this.props;
     const recordColumns = [
       {
@@ -921,7 +929,7 @@ class Statistics extends React.PureComponent {
       <div style={{ padding: 0 }}>
         <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ height: 'auto', padding: '24px' }}>
-          <div className="cnt-header" style={{marginBottom: importResult&&importResult.errorCount ? '16px' : '0px'}}>
+          <div className="cnt-header" style={{marginBottom: historyImportStatus&&historyImportStatus.errorCount ? '16px' : '0px'}}>
             <div
               className="head_lf"
               style={{ display: 'flex' }}
@@ -983,13 +991,13 @@ class Statistics extends React.PureComponent {
               </div>
             )}
           </div>
-          {importResult && importResult.errorCount && !msgTimeOut ? (
+          {historyImportStatus && historyImportStatus.errorCount ? (
             <MessageTip
-              total={importResult.count + importResult.errorCount}
-              successNum={importResult.count}
-              errorNum={importResult.errorCount}
-              onLink={()=>this.handleDownLoad(importResult.id)}
-              time={importResult.date}
+              total={historyImportStatus.count + historyImportStatus.errorCount}
+              successNum={historyImportStatus.count}
+              errorNum={historyImportStatus.errorCount}
+              onLink={()=>this.handleDownLoad(historyImportStatus.id)}
+              time={historyImportStatus.date}
             />
           ) : null}
           <div className={style.messageTop}>
@@ -1027,7 +1035,7 @@ class Statistics extends React.PureComponent {
           handleCancel={this.handleCancel}
           importStatus={importStatus}
           importLoading={importLoading}
-          importResult={importResult}
+          importResult={historyImportStatus}
           file={file}
           handleImport={this.handleImport}
           props={this.Props(this)}

@@ -59,6 +59,7 @@ export default {
     deptAndUser: {}, // 关联dingUserId
     roleUserList: [], // 角色列表
     paymentMethod: 0, // 控制开关
+    // historyImportStatus: {},
   },
   effects: {
     *loanList({ payload }, { call, put }) {
@@ -325,14 +326,14 @@ export default {
       });
     },
     // EXCEL历史数据导入
-    *historyImport({ payload }, { call, put }) {
-      const response = yield call(post, api.historyImport, payload);
-      yield put({
-        type: 'save',
-        payload: {
-          historyImportStatus: response || {},
-        },
-      });
+    *historyImport({ payload }, { call }) {
+      yield call(post, api.historyImport, payload);
+      // yield put({
+      //   type: 'save',
+      //   payload: {
+      //     historyImportStatus: response || {},
+      //   },
+      // });
     },
     // 项目列表
     *projectList({ payload }, { call, put }) {
@@ -512,6 +513,15 @@ export default {
         type: 'save',
         payload: {
           paymentMethod: response.paymentMethod || 0,
+        },
+      });
+    },
+    *historyImportStatus({ payload }, { call, put }){
+      const response = yield call(get, api.historyImportResult, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          historyImportStatus: response || {},
         },
       });
     },

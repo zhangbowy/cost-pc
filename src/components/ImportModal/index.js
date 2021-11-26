@@ -11,7 +11,7 @@ const { Dragger } = Upload;
 // const { APP_API } = constants;
 
 export default function ImportModal({
-  importStatus,
+  // importStatus,
   importLoading,
   importResult = {},
   isModalVisible,
@@ -28,6 +28,7 @@ export default function ImportModal({
   downLoad,
   // popMsg,
 }) {
+  const importStatus = false;
   const ele = importResult => {
     if (!importResult.errorCount) {
       return (

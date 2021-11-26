@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
-import { Button } from 'antd';
-import moment from 'moment';
+import { Button, message } from 'antd';
+// import moment from 'moment';
 import PageHead from '@/components/pageHead';
 import style from './index.scss';
 // import { ddDing } from '../../../utils/ddApi';
@@ -32,7 +32,12 @@ class ImportData extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'costGlobal/historyImportStatus',
+      payload: {},
+    });
+  }
 
   // 手动导入
   handleImport = () => {
@@ -48,26 +53,28 @@ class ImportData extends Component {
         payload: formData
       })
       .then(() => {
-        const now=new Date();
-        this.time(now);
-        const { historyImportStatus } = this.props;
-        if (historyImportStatus) {
-          sessionStorage.setItem('importResult',JSON.stringify({
-            ...historyImportStatus,
-            date: moment(now).format('YYYY-MM-DD HH:mm:ss')
-          }));
-          this.setState({
-            // importResult: historyImportStatus,
-            percent: 100,
-            importLoading: false,
-            msgTimeOut:false
-          });
-        } else {
-          this.setState({
-            importStatus: false,
-            importLoading: false
-          });
-        }
+        message.success('完成导入后，发送工作通知');
+        this.handleCancel();
+        // const now=new Date();
+        // this.time(now);
+        // const { historyImportStatus } = this.props;
+        // if (historyImportStatus) {
+        //   sessionStorage.setItem('importResult',JSON.stringify({
+        //     ...historyImportStatus,
+        //     date: moment(now).format('YYYY-MM-DD HH:mm:ss')
+        //   }));
+        //   this.setState({
+        //     // importResult: historyImportStatus,
+        //     percent: 100,
+        //     importLoading: false,
+        //     msgTimeOut:false
+        //   });
+        // } else {
+        //   this.setState({
+        //     importStatus: false,
+        //     importLoading: false
+        //   });
+        // }
       });
   };
 
@@ -143,7 +150,8 @@ class ImportData extends Component {
       percent,
       msgTimeOut,
     } = this.state;
-    const importResult = JSON.parse(sessionStorage.getItem('importResult'));
+    const { historyImportStatus } = this.props;
+    const importResult = historyImportStatus;
     return (
       <div className="mainContainer">
         <PageHead title="历史数据导入" />
