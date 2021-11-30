@@ -2,7 +2,7 @@
 *  支出简报
 */
 import React, { Fragment } from 'react';
-import { Spin } from 'antd';
+import { Spin, Tooltip } from 'antd';
 import one from '../../../../assets/img/first/0.png';
 import one1 from '../../../../assets/img/first/00.png';
 import two from '../../../../assets/img/first/1.png';
@@ -69,7 +69,12 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
       <Spin spinning={loading}>
         <div className={style.content}>
           <div className={style.left}>
-            <p className="c-black-65 m-b-8">企业总支出</p>
+            <p className="c-black-65 m-b-8">
+              企业总支出
+              <Tooltip title="总支出包含审批通过，已确定会支出的数据">
+                <i className="iconfont iconshuomingwenzi m-l-8" />
+              </Tooltip>
+            </p>
             <p className="c-black-85 fw-500 fs-38">¥{data.totalCostSum ? data.totalCostSum/100 : 0}</p>
             <div className={style.portion}>
               {

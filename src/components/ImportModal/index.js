@@ -154,7 +154,7 @@ export default function ImportModal({
       ) : (
         <>
           <div className={style.modal_top}>
-            根据客户列表的表单内容生成对应的批量导入模版
+            根据当前的支出类别列表，生成对应的批量导入模版
             <span
               className={style.modal_download}
               onClick={() => downLoad()}
