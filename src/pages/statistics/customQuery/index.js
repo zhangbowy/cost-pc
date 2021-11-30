@@ -212,8 +212,10 @@ class customQuery extends Component {
         deptId
       });
     } else {
+      const deptIds = sid.split('_')[0];
       Object.assign(obj, {
-        queryUserId: deptId
+        queryUserId: deptId,
+        deptId: deptIds
       });
     }
     if (val) {
