@@ -139,7 +139,9 @@ class SystemControl extends Component {
     this.setState({
       visible: false,
     });
+    const { details } = this.props;
     this.onQuery({
+      ...details,
       isModifyInvoice: true,
       isModifyReload: changeReload,
     });

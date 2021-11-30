@@ -119,7 +119,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     yAxis: [
       {
         type: 'value',
-        name: '部门',
+        name: '部门金额(元)',
         axisLine:{
           lineStyle:{
               color:'#fff'     // X轴的颜色
@@ -128,7 +128,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         boundaryGap: false,
         nameTextStyle: {
           color: 'rgba(0,0,0,0.65)',
-          padding:[0,24,10,0],
+          padding:[0,8,10,0],
         },
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
@@ -149,13 +149,13 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       },
       {
         type: 'value',
-        name: '支出',
+        name: '类别金额(元)',
         axisTick: {           // 去掉坐标轴刻线
           show: false
         },
         nameTextStyle: {
           color: 'rgba(0,0,0,0.65)',
-          padding:[0,0,10,24],
+          padding:[0,0,10,8],
           fontSize: 12,
         },
         splitNumber,
