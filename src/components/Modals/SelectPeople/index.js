@@ -133,7 +133,7 @@ class UserSelector extends PureComponent {
   }
 
   render () {
-    const { users = [], depts = [], placeholder, invalid, disabled, isInput, className } = this.props;
+    const { users = [], depts = [], placeholder, invalid, disabled, isInput, className, close } = this.props;
     const usersLength = users.length;
     const deptsLength = depts.length;
     const showPlaceholder = !usersLength && !deptsLength;
@@ -169,7 +169,7 @@ class UserSelector extends PureComponent {
                   </span>
                 }
                 {
-                  (usersLength > 0 || deptsLength > 0 ) &&
+                  (usersLength > 0 || deptsLength > 0 ) && !close &&
                   <i className="iconfont icondelete_fill" onClick={e => this.onDelete(e)} style={{float: 'right'}} />
                 }
               </>

@@ -656,6 +656,7 @@ renderTreeNodes = data =>
                             flag="users"
                             isInput
                             multiple={false}
+                            close
                           />
                         </Form.Item>
                       </Col>

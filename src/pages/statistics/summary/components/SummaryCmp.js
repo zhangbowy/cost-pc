@@ -487,7 +487,7 @@ class SummaryCmp extends Component {
                   (templateType === 4 && status === 3) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"
-                      onConfirm={() => this.onDelete(record.id, record.templateType, record.isEnterpriseAlitrip)}
+                      onConfirm={() => this.onDelete(record.id, record.templateType, record.isEnterpriseAlitrip || record.isHistoryImport)}
                       placement="topRight"
                     >
                       <a>删单</a>
