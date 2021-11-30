@@ -190,7 +190,7 @@ class ImportData extends Component {
                 total={importResult.count + importResult.errorCount}
                 successNum={importResult.count}
                 errorNum={importResult.errorCount}
-                onLink={()=>this.handleDownLoad(importResult.id)}
+                onLink={()=>this.handleDownLoad(importResult.errorExcelId)}
                 time={importResult.date}
               />
             </div>
