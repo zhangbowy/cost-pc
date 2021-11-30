@@ -784,8 +784,10 @@ class AddCost extends Component {
         file = [...file, ...arr];
         _this.setState({
           fileUrl: file,
+        }, () => {
+          if (callback) callback(file);
         });
-        if (callback) callback();
+
       });
     });
   }
