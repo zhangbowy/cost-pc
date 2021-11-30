@@ -119,7 +119,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     yAxis: [
       {
         type: 'value',
-        name: '部门金额(元)',
+        name: '',
         axisLine:{
           lineStyle:{
               color:'#fff'     // X轴的颜色
@@ -133,6 +133,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
           margin: 2,
+          show: false
         },
         splitNumber,
         max: max1,
@@ -149,7 +150,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       },
       {
         type: 'value',
-        name: '类别金额(元)',
+        name: '',
         axisTick: {           // 去掉坐标轴刻线
           show: false
         },
@@ -179,6 +180,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
           margin: 2,
+          show: false
         }
       }
     ],
@@ -191,12 +193,16 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     <>
       {
         barOption.length > 0 || lineOptions.length > 0 ?
-          <ReactEcharts
-            option={options}
-            style={{height: '420px', width: '100%'}}
-            notMerge
-            lazyUpdate
-          />
+          <div style={{height: '420px', width: '100%', position: 'relative'}}>
+            <span style={{position: 'absolute', left: '0px', top: 0}} className="fs-12 c-black-65">部门金额(元)</span>
+            <span style={{position: 'absolute', right: '0px', top: 0}} className="fs-12 c-black-65">类别金额(元)</span>
+            <ReactEcharts
+              option={options}
+              style={{height: '420px', width: '100%'}}
+              notMerge
+              lazyUpdate
+            />
+          </div>
           :
           <NoData />
       }

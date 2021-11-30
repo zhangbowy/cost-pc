@@ -8,7 +8,7 @@ import TimeComp from '../TimeComp';
 import fields from '../../../../utils/fields';
 
 const {monthAndYear} = fields;
-const { SHOW_CHILD } = TreeSelect;
+const { SHOW_CHILD, SHOW_PARENT } = TreeSelect;
 const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
   lineParams,
   onlyDeptList, lineCharts, barCharts }) => {
@@ -105,7 +105,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
             treeData={changeData(onlyDeptList)}
             placeholder="部门"
             treeCheckable
-            showCheckedStrategy={SHOW_CHILD}
+            showCheckedStrategy={SHOW_PARENT}
             dropdownStyle={{height: '300px'}}
             showSearch
             treeNodeFilterProp='title'
