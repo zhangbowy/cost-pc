@@ -113,6 +113,7 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                     className={style.list}
                     loanSumVo={loanSumVo}
                     key={it.key}
+                    styles={{background: it.color, display: 'inline-block'}}
                   >
                     {Items}
                   </TempTable>
@@ -129,6 +130,7 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                     total={reportTotal}
                     className={style.list}
                     key={it.key}
+                    styles={{background: it.color}}
                   >
                     {Items}
                   </TempTable>
