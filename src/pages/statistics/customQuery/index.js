@@ -201,13 +201,24 @@ class customQuery extends Component {
     });
   }
 
-  onVisibleChange = (val, deptId) => {
+  onVisibleChange = (val, deptId, sid) => {
     console.log('显示与隐藏', val);
     const { submitTime } = this.state;
+    const obj = {
+      ...submitTime,
+    };
+    if (!sid) {
+      Object.assign(obj, {
+        deptId
+      });
+    } else {
+      Object.assign(obj, {
+        queryUserId: deptId
+      });
+    }
     if (val) {
       this.onDetailQuery({
-        ...submitTime,
-        deptId
+        ...obj,
       });
     }
   }
@@ -328,7 +339,7 @@ class customQuery extends Component {
           autoAdjustOverflow
           trigger='click'
           overlayClassName={style.toolTips}
-          onVisibleChange={(val) => this.onVisibleChange(val, record.deptId)}
+          onVisibleChange={(val) => this.onVisibleChange(val, record.deptId, record.sid)}
         >
           <a>查看类别分布</a>
         </Popover>

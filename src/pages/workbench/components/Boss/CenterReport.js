@@ -110,7 +110,23 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                     submitTime={submitTime}
                     page={reportPage}
                     total={reportTotal}
+                    className={style.list}
                     loanSumVo={loanSumVo}
+                    key={it.key}
+                  >
+                    {Items}
+                  </TempTable>
+                );
+              }
+              if (it.key === 'approvalInProgress') {
+                return (
+                  <TempTable
+                    loanList={submitReportDetail}
+                    reportChange={reportChange}
+                    reportType={2}
+                    submitTime={submitTime}
+                    page={reportPage}
+                    total={reportTotal}
                     className={style.list}
                     key={it.key}
                   >

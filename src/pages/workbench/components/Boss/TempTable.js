@@ -60,7 +60,8 @@ class TempTable extends Component {
       reportChange,
       page,
       loanSumVo,
-      className
+      className,
+      styles,
     } = this.props;
 
     const {
@@ -75,6 +76,7 @@ class TempTable extends Component {
         <span
           onClick={() => this.onShow()}
           className={className || ''}
+          style={{...styles}}
         >
           {children}
         </span>

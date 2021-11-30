@@ -75,7 +75,11 @@ export default {
       });
     },
     *submitReportDetail({ payload }, { call, put }) {
-      const response = yield call(get, api.submitReportDetail, payload);
+      let apis =  api.submitReportDetail;
+      if (payload.reportType === 2) {
+        apis = api.approvalDetail;
+      }
+      const response = yield call(get, apis, payload);
       let loanSumVo = {};
       let list = [];
       let reportTotal = 0;

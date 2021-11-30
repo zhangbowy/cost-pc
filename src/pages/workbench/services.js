@@ -19,4 +19,5 @@ export default {
   chartPie: `${APP_API}/cost/user/workbench/get/chart`,
   deptTree: `${APP_API}/cost/dept/list`,
   trend: `${APP_API}/cost/statistics/v3/amoeba/trend`,
+  approvalDetail: `${APP_API}/cost/statistics/v3/base/approve/detail`,
 };

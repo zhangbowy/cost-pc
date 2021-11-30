@@ -334,7 +334,7 @@ class Workbench extends PureComponent {
     if (deptIds) {
       Object.assign(payload, { deptIds });
     }
-    console.log('reportChange', startTime);
+    console.log('reportChange', payload);
     this.props.dispatch({
       type: 'workbench/submitReportDetail',
       payload: {

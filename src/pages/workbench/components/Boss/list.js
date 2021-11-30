@@ -91,7 +91,7 @@ export default {
     ]
   },
   2: {
-    title: '已付',
+    title: '审批中',
     columns: [
       {
         title: '事由',
@@ -130,17 +130,7 @@ export default {
       }, {
         title: '单据状态',
         dataIndex: 'statusStr',
-      }, {
-        title: '支付时间',
-        dataIndex: 'createTime',
-        render: (text) => (
-          <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
-        )
-      }, {
-        title: '发放人',
-        dataIndex: 'statusStr',
-      },
-    ]
+      }]
   },
   3: {
     title: '借款待还',
