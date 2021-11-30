@@ -12,9 +12,10 @@ import MessageTip from '../../statistics/costDetail/component/MessageTip';
 
 const { APP_API } = constants;
 
-@connect(({ global, costGlobal }) => ({
+@connect(({ global, costGlobal, loading }) => ({
   uploadRes: global.uploadRes,
-  historyImportStatus: costGlobal.historyImportStatus
+  historyImportStatus: costGlobal.historyImportStatus,
+  loadingImportant: loading.effects['costGlobal/historyImport'] || false,
 }))
 class ImportData extends Component {
   // static propTypes = {};
@@ -150,7 +151,7 @@ class ImportData extends Component {
       percent,
       msgTimeOut,
     } = this.state;
-    const { historyImportStatus } = this.props;
+    const { historyImportStatus, loadingImportant } = this.props;
     const importResult = historyImportStatus;
     return (
       <div className="mainContainer">
@@ -220,6 +221,7 @@ class ImportData extends Component {
           importResult={importResult}
           file={file}
           handleImport={this.handleImport}
+          loading={loadingImportant}
           props={this.Props(this)}
           handleReset={() => {
             this.setState({ file: {} });

@@ -75,6 +75,7 @@ const staticsObj = {
   userInfo: session.userInfo,
   uploadRes: global.uploadRes,
   historyImportStatus: costGlobal.historyImportStatus,
+  loadingImportant: loading.effects['costGlobal/historyImport'] || false,
 }))
 class Statistics extends React.PureComponent {
   constructor(props) {
@@ -694,6 +695,7 @@ class Statistics extends React.PureComponent {
       recordList,
       userInfo,
       historyImportStatus,
+      loadingImportant
     } = this.props;
     const recordColumns = [
       {
@@ -996,7 +998,7 @@ class Statistics extends React.PureComponent {
               total={historyImportStatus.count + historyImportStatus.errorCount}
               successNum={historyImportStatus.count}
               errorNum={historyImportStatus.errorCount}
-              onLink={()=>this.handleDownLoad(historyImportStatus.id)}
+              onLink={()=>this.handleDownLoad(historyImportStatus.errorExcelId)}
               time={historyImportStatus.date}
             />
           ) : null}
@@ -1038,6 +1040,7 @@ class Statistics extends React.PureComponent {
           importResult={historyImportStatus}
           file={file}
           handleImport={this.handleImport}
+          loading={loadingImportant}
           props={this.Props(this)}
           handleReset={() => {
             this.setState({ file: {} });

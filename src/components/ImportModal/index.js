@@ -22,6 +22,7 @@ export default function ImportModal({
   handleConImport,
   handleReset,
   percent,
+  loading,
   // popoverVisible,
   // handleOkPop,
   // handleCancelPop,
@@ -187,7 +188,7 @@ export default function ImportModal({
                   <Button className={style.reset_btn} onClick={handleReset}>
                     重新选择
                   </Button>
-                  <Button type="primary" onClick={handleImport}>
+                  <Button type="primary" onClick={handleImport} loading={loading}>
                     开始导入
                   </Button>
                 </div>
