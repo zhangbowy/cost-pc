@@ -423,6 +423,10 @@ class Summary extends React.PureComponent {
           pageSize: historyPage.pageSize,
         },
       });
+      this.onQuery({
+        pageNo: 1,
+        pageSize: 10,
+      });
     });
   }
 
