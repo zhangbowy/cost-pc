@@ -133,7 +133,6 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
           margin: 2,
-          show: false
         },
         splitNumber,
         max: max1,
@@ -180,7 +179,6 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         axisLabel:{
           color:'rgba(0,0,0,0.65)',
           margin: 2,
-          show: false
         }
       }
     ],

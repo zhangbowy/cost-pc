@@ -106,7 +106,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
             placeholder="部门"
             treeCheckable
             showCheckedStrategy={SHOW_PARENT}
-            dropdownStyle={{height: '300px'}}
+            dropdownStyle={{height: '300px',  maxWidth: '184px'}}
             showSearch
             treeNodeFilterProp='title'
             onChange={val => onChangeTree(val, 'deptIds')}
