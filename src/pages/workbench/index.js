@@ -120,9 +120,8 @@ class Workbench extends PureComponent {
     }, {
       url: 'workbench/chartTrend',
       params: {
-        startTime: 1609430400000,
-        endTime: 1640966399999,
-        dateType: 2
+        ...dateToTime('6_cm'),
+        dateType: 0,
       }
     }];
     const fetchs = fetchList.map(it => it.url);
