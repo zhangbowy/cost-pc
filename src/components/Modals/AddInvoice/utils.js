@@ -287,6 +287,11 @@ export default {
         userCount: val.userCount,
       });
     }
+    if (val.officeId) {
+      Object.assign(detail, {
+        officeId: val.officeId,
+      });
+    }
     const expandCostDetailFieldVos = [];
     const selfCostDetailFieldVos = []; // 私有字段
     if (expandField && expandField.length > 0) {

@@ -309,13 +309,20 @@ class AddInvoice extends Component {
         const aliTripArr = [...djDetails.selfField, ...djDetails.expandField];
         const aliTripAuth = aliTripArr.filter(it => it.fieldType === 10);
         // const { aliCostAndI, deptTree } = this.props;
-        console.log('AddInvoice -> onShowHandle -> aliCostAndI', aliCostAndI);
         if (aliCostAndI && aliTripAuth && aliTripAuth.length) {
           this.setState({
             aliTripFields: { aliCostAndI, deptTree, aliAuth: aliTripAuth[0] },
           });
         }
-
+        const { officeList } = this.props;
+        if (officeList.length > 0 && officeList.length === 1) {
+          if (detail.officeId && officeList.findIndex(it => it.id === detail.officeId) === -1) {
+            detail={
+              ...detail,
+              officeId: officeList[0].officeId,
+            };
+          }
+        }
         if (!contentJson) {
           this.setState({
             details: {
@@ -1381,6 +1388,22 @@ class AddInvoice extends Component {
     return list;
   }
 
+  onChangeOffice = (val) => {
+    const { details, costDetailsVo, applyArr, borrowArr } = this.state;
+    const arr = [];
+    if (costDetailsVo.length) arr.push('支出类别');
+    if (applyArr.length) arr.push('关联申请单');
+    if (borrowArr.length) arr.push('借款核销');
+    if(arr.length) {
+      // Modal.confirm({
+      //   title: ``,
+      // });
+    }
+    this.setState({
+      details: { ...details, officeId: val }
+    });
+  }
+
   render() {
     const {
       children,
@@ -1511,6 +1534,7 @@ class AddInvoice extends Component {
               wrappedComponentRef={form => {this.changeForm = form;}}
               expandVos={expandVos}
               officeList={officeList}
+              onChangeOffice={this.onChangeOffice}
             />
             {
               (!Number(templateType) ||
@@ -1608,6 +1632,7 @@ class AddInvoice extends Component {
                         invoiceId={id}
                         onAddBorrow={arr => this.onAddBorrow(arr)}
                         list={borrowArr}
+                        officeId={details.officeId}
                       >
                         <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
                       </AddBorrow>
@@ -1645,6 +1670,7 @@ class AddInvoice extends Component {
                           list={applyArr}
                           costList={costDetailsVo}
                           onAddCost={this.onAddCost}
+                          officeId={details.officeId}
                         >
                           <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
                         </AddApply>

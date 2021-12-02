@@ -141,9 +141,6 @@ class AddComp extends Component {
                 {
                   getFieldDecorator('parentId', {
                     initialValue: parentId,
-                    rules: [{
-                      required: true, message: '请选择上级公司'
-                    }]
                   })(
                     <Cascader
                       options={options}

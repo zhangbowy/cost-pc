@@ -33,7 +33,8 @@ const labelInfo = {
   costNote: '备注',
   imgUrl: '图片',
   happenTime: '发生日期',
-  flightLevel: '航班仓型'
+  flightLevel: '航班仓型',
+  officeId: '所在公司'
 };
 @Form.create()
 @connect(({ global, costGlobal, session }) => ({
@@ -51,6 +52,7 @@ const labelInfo = {
   userDeps: costGlobal.userDeps,
   exportList: costGlobal.exportList,
   provinceAndCity: costGlobal.provinceAndCity,
+  officeList: costGlobal.officeList,
 }))
 class AddCost extends Component {
   constructor(props) {
@@ -73,17 +75,15 @@ class AddCost extends Component {
       exchangeRate: '1',
       currencySymbol: '¥',
       treeList: [],
-      fileUrl: []
+      fileUrl: [],
+      // officeId: '',
       // treeExpandedKeys: [],
     };
   }
 
   fetchInit = (callback) => {
-    const { dispatch } = this.props;
+    const { dispatch, templateType, userInfo } = this.props;
     const arrs = [{
-      url: 'global/users',
-      params: { type: 1 }
-    }, {
       url: 'global/getCurrency',
       params: {  }
     }, {
@@ -96,6 +96,14 @@ class AddCost extends Component {
       url: 'costGlobal/provinceAndCity',
       params: {  }
     }];
+    if (templateType === undefined) {
+      arrs.push({
+        url: 'costGlobal/officeList',
+        params: {
+          userId: userInfo.userId
+        }
+      });
+    }
     const arr = arrs.map(it => {
       return dispatch({
         type: it.url,
@@ -121,6 +129,19 @@ class AddCost extends Component {
     });
   }
 
+  getDeptInfo = (payload) => {
+    const { dispatch } = this.props;
+    return new Promise(resolve => {
+      dispatch({
+        type: 'global/users',
+        payload,
+      }).then(() => {
+        const { deptInfo } = this.props;
+        resolve(deptInfo);
+      });
+    });
+  }
+
   onShow = async() => {
     const { costType, isDelete4Category } = this.props;
     if (isDelete4Category) {
@@ -128,7 +149,7 @@ class AddCost extends Component {
       return;
     }
     this.fetchInit(async() => {
-      const { initDep } = this.state;
+      let initDep = await this.getDeptInfo({ type: 1 });
       const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
@@ -143,6 +164,7 @@ class AddCost extends Component {
             }
           }).then(async() => {
             const { detailFolder, currencyList } = this.props;
+            initDep = await this.getDeptInfo({ type: 1, officeId: detailFolder.officeId });
             const userIds = detailFolder.costDetailShareVOS.map(it => it.userId).filter(item => item);
             const arr = [];
             let currency = {};
@@ -155,6 +177,7 @@ class AddCost extends Component {
                 type: 'costGlobal/userDep',
                 payload: {
                   userIds: [...new Set(userIds)],
+                  officeId: detailFolder.officeId
                 }
               }).then(async() => {
                 detailFolder.costDetailShareVOS.forEach((it) => {
@@ -344,7 +367,6 @@ class AddCost extends Component {
         });
         resolve(arr);
      });
-
   }
 
   onCancel = (flag) => {
@@ -803,6 +825,7 @@ class AddCost extends Component {
       againCost,
       modify,
       templateType,
+      officeList
     } = this.props;
 
     const list = this.onSelectTree();
@@ -1111,7 +1134,7 @@ class AddCost extends Component {
                                 )
                               }
                               {
-                                it.itemExplain && !!(it.itemExplain.length) &&
+                                it.itemExplain && it.itemExplain.length > 0 &&
                                 it.itemExplain.map(item => (
                                   <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
                                     {item.note}
@@ -1120,6 +1143,33 @@ class AddCost extends Component {
                               }
                             </Form.Item>
                           </Col>
+                        }
+                        {
+                          it.field === 'amount' && officeList && officeList.length > 0 && templateType === undefined &&
+                            <Col span={12}>
+                              <Form.Item label={labelInfo.officeId} {...formItemLayout}>
+                                {
+                                  getFieldDecorator('officeId', {
+                                    initialValue: details.officeId &&
+                                    officeList.findIndex(item => item.id === details.officeId) > -1 ?
+                                    `${details.officeId}` : officeList.length === 0 ? officeList[0].id : '',
+                                    rules: [{ required: true, message: '请选择公司' }]
+                                  })(
+                                    <Select
+                                      placeholder='请选择'
+                                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                                      disabled={modify}
+                                    >
+                                      {
+                                        officeList && officeList.map(item => (
+                                          <Option key={`${item.id}`}>{item.officeName}</Option>
+                                        ))
+                                      }
+                                    </Select>
+                                  )
+                                }
+                              </Form.Item>
+                            </Col>
                         }
                         {
                           it.field === 'costNote' && showField.costNote.status ?

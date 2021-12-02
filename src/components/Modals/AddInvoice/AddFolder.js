@@ -11,6 +11,7 @@ import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
 // import AddCost from './AddCost';
 import { getArrayColor, classifyIcon } from '../../../utils/constants';
+import { ddPreviewImage } from '../../../utils/ddApi';
 
 // const labelInfo = {
 //   costName: '支出类别',
@@ -257,6 +258,13 @@ class AddFolder extends Component {
         selectedRowKeys,
       });
   };
+
+  previewImage = (arr, index) => {
+    ddPreviewImage({
+      urlArray: arr.map(it => it.imgUrl),
+      index,
+    });
+  }
 
   onSearch = (e) => {
     this.props.dispatch({

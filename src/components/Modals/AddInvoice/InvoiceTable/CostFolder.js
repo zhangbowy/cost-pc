@@ -10,6 +10,7 @@ import { getArrayColor, classifyIcon } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
 import SelectInvoice from '../../SelectInvoice';
 import aliLogo from '../../../../assets/img/aliTrip/alitrip.png';
+import { ddPreviewImage } from '../../../../utils/ddApi';
 
 @connect(({ costGlobal, loading }) => ({
   folderList: costGlobal.folderList,
@@ -107,9 +108,12 @@ class CostFolder extends Component {
     selectedRows.forEach(it => {
       arrs.push({
         id: it.id,
-        applicationInvoiceId: it.applicationInvoiceId
+        applicationInvoiceId: it.applicationInvoiceId,
+        officeId: it.officeId,
       });
     });
+    // const officeIds = arrs.map(it => it.officeId);
+    // if (officeIds)
     this.props.dispatch({
       type: 'costGlobal/checkLinkCost',
       payload: {
@@ -123,7 +127,6 @@ class CostFolder extends Component {
           okText: '是',
           cancelText: '否',
           onOk: () => {
-            console.log('OK');
             const { folders } = checkLinkCost;
             const oldIds = selectedRows.map(it => it.id);
             const newArr = [...selectedRows];
@@ -134,7 +137,6 @@ class CostFolder extends Component {
                 });
               }
             });
-            console.log('新的数组', newArr);
             this.setState({
               selectedRows: newArr,
             }, () => {
@@ -161,6 +163,13 @@ class CostFolder extends Component {
   onChangeVisible = () => {
     this.setState({
       slVisible: false,
+    });
+  }
+
+  previewImage = (arr, index) => {
+    ddPreviewImage({
+      urlArray: arr.map(it => it.imgUrl),
+      index,
     });
   }
 

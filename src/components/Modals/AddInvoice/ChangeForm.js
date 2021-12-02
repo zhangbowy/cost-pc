@@ -722,7 +722,7 @@ renderTreeNodes = data =>
                         </Col>
                     }
                     {
-                      itw.field === 'deptId' && officeList.length > 1 && !modify &&
+                      itw.field === 'deptId' && officeList.length > 0 && !modify &&
                         <Col span={12}>
                           <Form.Item label={labelInfo.officeId} {...formItemLayout}>
                             {
@@ -736,6 +736,7 @@ renderTreeNodes = data =>
                                   placeholder='请选择'
                                   getPopupContainer={triggerNode => triggerNode.parentNode}
                                   disabled={modify}
+                                  onChange={e => this.props.onChangeOffice(e)}
                                 >
                                   {
                                     officeList && officeList.map(it => (

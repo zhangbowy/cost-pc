@@ -46,11 +46,13 @@ class AddBorrow extends Component {
   }
 
   onShow = async() => {
+    const { officeId } = this.props;
     this.props.dispatch({
       type: 'workbench/waitList',
       payload: {
         pageNo: 1,
         pageSize: 1000,
+        officeId
       }
     }).then(() => {
       console.log(this.props.waitList);

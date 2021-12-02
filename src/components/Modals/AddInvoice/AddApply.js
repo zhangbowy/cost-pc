@@ -48,11 +48,13 @@ class AddApply extends Component {
   }
 
   onShow = async() => {
+    const { officeId } = this.props;
     this.props.dispatch({
       type: 'workbench/associateLists',
       payload: {
         pageNo: 1,
         pageSize: 1000,
+        officeId
       }
     }).then(() => {
       console.log(this.props.associateLists);
