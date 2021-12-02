@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React from 'react';
 import {
   Table,
@@ -424,28 +425,31 @@ class Statistics extends React.PureComponent {
       message.error('请选择要导出的数据');
       return;
     }
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
+    const { searchList } = this.state;
+
     const { searchContent, leSearch } = this.state;
     let params = {};
-    if (key === '1') {
+    if (key == 1) {
       params = {
         ids: selectedRowKeys
       };
-    } else if (key === '2') {
+    } else if (key == 2) {
       params = {
         searchContent,
         ...leSearch,
-        startTime,
-        endTime
+      };
+      searchList.forEach(it => {
+        if (it.value) {
+          Object.assign(params, {
+            ...it.value
+          });
+        }
+      });
+    } else if (key == 3) {
+      params = {
+        isAll: true
       };
     }
-    // const _this = this;
     this.props.dispatch({
       type: 'costDetail/export',
       payload: {
@@ -938,7 +942,7 @@ class Statistics extends React.PureComponent {
             >
               <Dropdown
                 overlay={
-                  <Menu onClick={e => this.onExport(e.key)}>
+                  <Menu onClick={e => this.export(e.key)}>
                     <Menu.Item key="1">
                       <span className="pd-20-9 c-black-65">
                         导出选中（{selectedRowKeys.length}）
