@@ -40,7 +40,7 @@ class CostTable extends Component {
   }
 
   render() {
-    const { list, userInfo, invoiceId, modify, templateType } = this.props;
+    const { list, userInfo, invoiceId, modify, templateType, officeId } = this.props;
     console.log('CostTable -> render -> list', list);
     const newList = [];
     list.forEach(it => {
@@ -148,6 +148,7 @@ class CostTable extends Component {
             modify={modify}
             id={record.detailFolderId}
             onAddCost={this.addCost}
+            officeId={officeId}
             expandField={record.selfCostDetailFieldVos ?
             [...record.expandCostDetailFieldVos, ...record.selfCostDetailFieldVos] : [...record.expandCostDetailFieldVos]}
             costTitle="edit"

@@ -354,6 +354,7 @@ class AddInvoice extends Component {
                 message.error(`${msg}支出类别被删除，请重新选择`);
               }
               if (arrs.length) {
+                console.log('走了这里嘛，在账本导入这里');
                 this.setState({
                   details: {
                     ...this.state.details,
@@ -377,7 +378,8 @@ class AddInvoice extends Component {
         } else {
           const contents = JsonParse(contentJson);
           const officeLists = await this.fetchOfficeList({ userId: contents.userId });
-          if (contents.officeId && officeLists.findIndex(it => it.id === contents.officeId) === -1) {
+          console.log('AddInvoice -> onShowHandle -> officeLists', officeLists);
+          if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
             Object.assign(contents, {
               officeId: officeLists.length === 1 ? officeLists[0].id : undefined,
             });
@@ -1330,34 +1332,12 @@ class AddInvoice extends Component {
   }
 
   // 子组件改变父组件的state
-  changeSetData = (val, flag, third) => {
+  changeSetData = (val, flag) => {
     this.setState({
       ...val,
     }, () => {
       if (flag) {
         this.getNode();
-      }
-      if (third) {
-        const { users } = this.state;
-        this.props.dispatch({
-          type: 'costGlobal/officeList',
-          payload: {
-            dingUserId: users[0].userId,
-          }
-        }).then(() => {
-          const { details } = this.state;
-          const { officeList } = this.props;
-          if (officeList.findIndex(it => it.id === details.officeId) === -1){
-            confirm({
-              title: '',
-              onOk: () => {},
-              onCancel: () => {},
-            });
-            this.setState({
-              details: { ...details, officeId: '' }
-            });
-          }
-        });
       }
     });
   }
@@ -1691,6 +1671,7 @@ class AddInvoice extends Component {
                         addCost={this.onAddCost}
                         modify={modify}
                         templateType={Number(templateType)}
+                        officeId={details.officeId}
                       />
                     }
                   </div>

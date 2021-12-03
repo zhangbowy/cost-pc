@@ -145,6 +145,7 @@ class AddCost extends Component {
   onShow = async() => {
     const { costType, isDelete4Category, officeId } = this.props;
     console.log('AddCost -> onShow -> officeId', officeId);
+    // let newOfficeId = officeId;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
       return;
@@ -303,7 +304,7 @@ class AddCost extends Component {
         const deptFlag = listArr.filter(it => it.depList && it.depList.length);
         let newArray = [...listArr];
         if (userIdArr && userIdArr.length && (deptFlag.length !== listArr.length)) {
-          newArray = await this.handleDept(listArr, userIdArr);
+          newArray = await this.handleDept(listArr, userIdArr, officeId);
         }
         console.log('AddCost -> onShow -> newArray', newArray);
         if (index === 0 || index) {
@@ -349,13 +350,15 @@ class AddCost extends Component {
     message.error('钉钉暂时不支持未提交单据附件的预览，请提交后预览/下载');
   }
 
-  handleDept = (lists, userIds) => {
+  handleDept = (lists, userIds, officeId) => {
+    console.log('AddCost -> handleDept -> officeId', officeId);
     const arr = [];
      return new Promise(resolve => {
       this.props.dispatch({
         type: 'costGlobal/userDep',
         payload: {
           userIds: [...new Set(userIds)],
+          officeId: officeId || '',
         }
       }).then(async() => {
         lists.forEach((it, index) => {
@@ -881,8 +884,6 @@ class AddCost extends Component {
       fileUrl,
       officeId,
     } = this.state;
-    console.log('render -> officeId', officeId);
-
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
     const formItemLayout = {
