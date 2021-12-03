@@ -171,6 +171,7 @@ export default {
         exceedMessage: item.exceedMessage || '',
         exceedContents: item.exceedContents || [],
         fileUrl: item.fileUrl || [],
+        officeId: item.officeId || '',
       };
       if (item.flightLevel || (item.flightLevel === 0)) {
         Object.assign(obj, {
@@ -264,6 +265,7 @@ export default {
       icon: lbDetail.icon,
       detailFolderId: costTitle === 'edit' ? id : '',
       attribute: lbDetail.attribute,
+      officeId: details.officeId || '',
     };
     if (val.flightLevel) {
       detail = {

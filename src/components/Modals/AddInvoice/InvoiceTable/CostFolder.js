@@ -386,7 +386,7 @@ class CostFolder extends Component {
         dataIndex: 'officeName',
         width: 120,
         render: (text) => (
-          <span>{text || ''}</span>
+          <span>{text || '-'}</span>
         )
       });
     }
