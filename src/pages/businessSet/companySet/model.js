@@ -6,6 +6,7 @@ export default {
   namespace: 'companySet',
   state: {
     list: [],
+    look: [],
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -14,6 +15,15 @@ export default {
         type: 'save',
         payload: {
           list: response || [],
+        },
+      });
+    },
+    *look({ payload }, { call, put }) {
+      const response = yield call(get, api.look, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          look: response || [],
         },
       });
     },

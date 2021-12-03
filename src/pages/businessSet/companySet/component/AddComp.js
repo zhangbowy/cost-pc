@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { Modal, Form, Input, Cascader } from 'antd';
+import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeopleNew';
 import { formItemLayout } from '../../../../utils/constants';
@@ -9,6 +10,9 @@ import { findIndexArray } from '../../../../utils/common';
 
 const { TextArea } = Input;
 @Form.create()
+@connect(({ companySet }) => ({
+  look: companySet.look,
+}))
 class AddComp extends Component {
   static propTypes = {
 
@@ -27,21 +31,31 @@ class AddComp extends Component {
   }
 
   onShow = () => {
-    const { list, details } = this.props;
-    const newArr = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'officeName',
-      otherKeys: ['note','parentId', 'officeName']
-    }, list);
-    this.setState({
-      options: newArr,
-      details: details || {},
-      parentId: details && details.parentId ? findIndexArray(newArr, details.parentId, []) : [],
-      users: details && details.userVos ? details.userVos : [],
-      depts: details && details.deptVos ? details.deptVos : [],
-      visible: true,
+    const { details } = this.props;
+    this.props.dispatch({
+      type: 'companySet/look',
+      payload: {
+        exceptionId: details && details.id ? details.id : '',
+      },
+    }).then(() => {
+      const { look } = this.props;
+      const newArr = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'officeName',
+        otherKeys: ['note','parentId', 'officeName']
+      }, look);
+      this.setState({
+        options: newArr,
+        details: details || {},
+        parentId: details && details.parentId ? findIndexArray(newArr, details.parentId, []) : [],
+        users: details && details.userVos ? details.userVos : [],
+        depts: details && details.deptVos ? details.deptVos : [],
+        visible: true,
+      });
     });
+
+
   }
 
   onConfirm = () => {
