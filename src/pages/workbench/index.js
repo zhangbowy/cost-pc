@@ -609,16 +609,13 @@ class Workbench extends PureComponent {
                 <div
                   className="content-dt"
                   style={{
-                    padding: '0 0 32px 0',
+                    padding: '0 0 16px 0',
                     height: 'auto',
-                    margin: isBoss ? '0 24px 24px 24px' : '24px'
+                    margin: '16px'
                   }}
                 >
-                  <div style={{ margin: '0 32px' }}>
-                    {
-                      !isBoss &&
-                      <p className="fw-500 fs-14 c-black-85 m-t-16">我发起的单据</p>
-                    }
+                  <div style={{ margin: '0 16px' }}>
+                    <p className="fw-500 fs-14 c-black-85 m-t-16">我发起的单据</p>
                     <div className={style.searchs} style={{ marginTop: isBoss ? '24px' : '16px' }}>
                       <Form layout="inline" style={{display: 'flex'}}>
                         <Form.Item label="单据状态" style={{marginRight: '24px'}}>

@@ -106,7 +106,7 @@ class CompanySet extends Component {
     } = this.props;
     const newArrs = list.map(it => ({ ...it, name: it.officeName}));
     const lists = treeConvert({
-      rootId: '470547661288640512',
+      rootId: 0,
       pId: 'parentId',
       name: 'officeName',
       otherKeys: ['note', 'sort', 'id',
@@ -188,17 +188,12 @@ class CompanySet extends Component {
       render: (_, record) =>
       (
         <div>
-          {
-            record.parentId !== 0 ?
-              <Popconfirm
-                title="确认删除吗？"
-                onConfirm={() => this.onDeletes(record.id)}
-              >
-                <span className="deleteColor">删除</span>
-              </Popconfirm>
-              :
-              <span className="fs-14 c-black-45">删除</span>
-          }
+          <Popconfirm
+            title="确认删除吗？"
+            onConfirm={() => this.onDeletes(record.id)}
+          >
+            <span className="deleteColor">删除</span>
+          </Popconfirm>
           <Divider type="vertical" />
           <AddComp
             onOk={this.onOk}

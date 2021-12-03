@@ -135,50 +135,44 @@ class AddComp extends Component {
                 )
               }
             </Form.Item>
-            {
-              details.parentId !== 0 &&
-              <Form.Item label="上级公司" {...formItemLayout}>
-                {
-                  getFieldDecorator('parentId', {
-                    initialValue: parentId,
-                  })(
-                    <Cascader
-                      options={options}
-                      placeholder="请选择"
-                      changeOnSelect
-                      fieldNames={{
-                        label: 'officeName',
-                        value: 'id',
-                      }}
-                    />
-                  )
-                }
-              </Form.Item>
-            }
-            {
-              details.parentId !== 0 &&
-              <Form.Item label="关联部门/人" {...formItemLayout}>
-                {
-                  getFieldDecorator('dept', {
-                    initialValue: users.length ? users : depts,
-                    rules: [{
-                      validator: this.check,
-                    }]
-                  })(
-                    <UserSelector
-                      placeholder="请选择"
-                      users={users}
-                      depts={depts}
-                      invalid={false}
-                      disabled={false}
-                      isinput
-                      flag="useApep"
-                      onSelectPeople={this.onSelectPeople}
-                    />
-                  )
-                }
-              </Form.Item>
-            }
+            <Form.Item label="上级公司" {...formItemLayout}>
+              {
+                getFieldDecorator('parentId', {
+                  initialValue: parentId,
+                })(
+                  <Cascader
+                    options={options}
+                    placeholder="请选择"
+                    changeOnSelect
+                    fieldNames={{
+                      label: 'officeName',
+                      value: 'id',
+                    }}
+                  />
+                )
+              }
+            </Form.Item>
+            <Form.Item label={<span className="isRequired">关联部门/人</span>} {...formItemLayout}>
+              {
+                getFieldDecorator('dept', {
+                  initialValue: users.length ? users : depts,
+                  rules: [{
+                    validator: this.check,
+                  }]
+                })(
+                  <UserSelector
+                    placeholder="请选择"
+                    users={users}
+                    depts={depts}
+                    invalid={false}
+                    disabled={false}
+                    isinput
+                    flag="useApep"
+                    onSelectPeople={this.onSelectPeople}
+                  />
+                )
+              }
+            </Form.Item>
             <Form.Item label="备注" {...formItemLayout}>
               {
                 getFieldDecorator('note', {
