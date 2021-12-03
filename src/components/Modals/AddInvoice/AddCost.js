@@ -143,13 +143,13 @@ class AddCost extends Component {
   }
 
   onShow = async() => {
-    const { costType, isDelete4Category } = this.props;
+    const { costType, isDelete4Category, officeId } = this.props;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
       return;
     }
     this.fetchInit(async() => {
-      let initDep = await this.getDeptInfo({ type: 1 });
+      let initDep = await this.getDeptInfo({ type: 1, officeId: officeId || '' });
       const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
@@ -284,7 +284,8 @@ class AddCost extends Component {
         } else {
           this.setState({
             visible: true,
-            initDep
+            initDep,
+            officeId: officeId || '',
           });
         }
       });
@@ -324,7 +325,8 @@ class AddCost extends Component {
             costSum: detail.costSum,
             shareAmount: detail.shareTotal,
             visible: true,
-            initDep
+            initDep,
+            officeId: officeId || '',
           }, () => {
             const newExpands = expandField;
             this.onChange(this.props.detail.categoryId, 'folder', newExpands);
