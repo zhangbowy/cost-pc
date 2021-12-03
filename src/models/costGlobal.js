@@ -36,6 +36,11 @@ export default {
       pageSize: 10,
       total: 0,
     },
+    folderPage:  {
+      pageNo: 1,
+      pageSize: 10,
+      total: 0,
+    }, // 账本列表
     officeTree: [],
     uploadStatus: {}, // 上传文件之后返回的参数
     historyImportStatus:{}, // 历史数据导入
@@ -130,11 +135,11 @@ export default {
         type: 'save',
         payload: {
           folderList: lists || [],
-          total: response.costDetailVos.page.total || 1,
           folderSum: response || {},
-          page: {
+          folderPage: {
             pageNo: payload.pageNo,
-            pageSize: payload.pageSize
+            pageSize: payload.pageSize,
+            total: response.costDetailVos.page.total || 1,
           }
         },
       });

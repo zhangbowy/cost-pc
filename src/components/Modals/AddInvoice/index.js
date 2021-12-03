@@ -1424,17 +1424,24 @@ class AddInvoice extends Component {
 
   onChangeOffice = (val, callback) => {
     const { details, costDetailsVo, applyArr, borrowArr } = this.state;
+    const { djDetail } = this.props;
     const arr = [];
-    if (costDetailsVo.length) arr.push('支出类别');
+    let newArr = [];
+    if (costDetailsVo.length) {
+      newArr = costDetailsVo.filter(it => it.costDetailShareVOS && it.costDetailShareVOS.length === 0 && !it.detailFolderId);
+    };
+    if (newArr.length !== costDetailsVo.length) {
+      arr.push('支出明细');
+    }
     if (applyArr.length) arr.push('关联申请单');
     if (borrowArr.length) arr.push('借款核销');
-    if(arr.length) {
+    if(arr.length && (djDetail.templateType !== 2)) {
       confirm({
         title: `切换所在公司将会清空${arr.join(',')}`,
         onOk: () => {
           this.setState({
             details: { ...details, officeId: val },
-            costDetailsVo: [],
+            costDetailsVo: newArr,
             applyArr: [],
             borrowArr: []
           });
@@ -1451,6 +1458,7 @@ class AddInvoice extends Component {
   }
 
   checkOffice = (payload) => {
+    const { djDetail } = this.props;
     return new Promise(resolve => {
       this.props.dispatch({
         type: 'costGlobal/officeList',
@@ -1458,9 +1466,15 @@ class AddInvoice extends Component {
       }).then(() => {
         const { officeList } = this.props;
         const { details, costDetailsVo, applyArr, borrowArr } = this.state;
-        if (officeList.findIndex(it => it.id === details.officeId) === -1) {
+        if (officeList.findIndex(it => it.id === details.officeId) === -1 && (djDetail.templateType !== 2)) {
           const arr = [];
-          if (costDetailsVo.length) arr.push('支出类别');
+          let newArr = [];
+          if (costDetailsVo.length) {
+            newArr = costDetailsVo.filter(it => it.costDetailShareVOS && it.costDetailShareVOS.length === 0 && !it.detailFolderId);
+          };
+          if (newArr.length !== costDetailsVo.length) {
+            arr.push('支出明细');
+          }
           if (applyArr.length) arr.push('关联申请单');
           if (borrowArr.length) arr.push('借款核销');
           if(arr.length) {
@@ -1468,7 +1482,7 @@ class AddInvoice extends Component {
               title: `切换所在公司将会清空${arr.join(',')}`,
               onOk: () => {
                 this.setState({
-                  costDetailsVo: [],
+                  costDetailsVo: newArr,
                   applyArr: [],
                   borrowArr: []
                 });

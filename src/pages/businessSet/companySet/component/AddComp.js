@@ -34,7 +34,6 @@ class AddComp extends Component {
       name: 'officeName',
       otherKeys: ['note','parentId', 'officeName']
     }, list);
-    // const roots = list.filter(it => !it.parentId);
     this.setState({
       options: newArr,
       details: details || {},

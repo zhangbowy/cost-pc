@@ -55,6 +55,7 @@ class SystemControl extends Component {
       changeReload: false,
       statisticsDimension: 0,
       isOpenProject: false,
+      paymentMethod: 0,
     };
     this.check = [{
       key: 'switchCheck',
@@ -244,6 +245,9 @@ class SystemControl extends Component {
       }
     }).then(() => {
       message.success('修改成功');
+      this.setState({
+        paymentMethod: params.paymentMethod,
+      });
       this.props.dispatch({
         type: 'systemControl/query',
         payload: {},
@@ -266,6 +270,7 @@ class SystemControl extends Component {
       statisticsDimension,
       switchCheck,
       isOpenProject,
+      paymentMethod,
     } = this.state;
 
     const { details } = this.props;
@@ -323,7 +328,7 @@ class SystemControl extends Component {
               {
                 moneySum.map(it => (
                   <div
-                    className={details.paymentMethod === it.value ? cs(style.payList, style.active) : style.payList}
+                    className={paymentMethod === it.value ? cs(style.payList, style.active) : style.payList}
                     key={it.value}
                     onClick={() => this.handleTables({ paymentMethod: it.value })}
                   >

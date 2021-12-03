@@ -805,15 +805,17 @@ class AddCost extends Component {
     });
   }
 
-  onChangeOffice = val => {
+  onChangeOffice = async(val) => {
     const { costDetailShareVOS, officeId } = this.state;
+    const initDep = await this.getDeptInfo({ type: 1, officeId: val || '' });
     if (costDetailShareVOS.length) {
       Modal.confirm({
         title: '是否清空分摊信息?',
-        onOk: () => {
+        onOk: async() => {
           this.setState({
             officeId: val,
-            costDetailShareVOS: []
+            costDetailShareVOS: [],
+            initDep
           });
         },
         onCancel: () => {
@@ -825,6 +827,7 @@ class AddCost extends Component {
     } else {
       this.setState({
         officeId: val,
+        initDep,
       });
     }
   }
@@ -1189,7 +1192,7 @@ class AddCost extends Component {
                                   getFieldDecorator('officeId', {
                                     initialValue: details.officeId &&
                                     officeList.findIndex(item => item.id === details.officeId) > -1 ?
-                                    `${details.officeId}` : officeList.length === 0 ? officeList[0].id : '',
+                                    `${details.officeId}` : officeList.length === 0 ? officeList[0].id : undefined,
                                     rules: [{ required: true, message: '请选择公司' }]
                                   })(
                                     <Select

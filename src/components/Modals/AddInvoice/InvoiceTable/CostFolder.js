@@ -16,7 +16,7 @@ import { ddPreviewImage } from '../../../../utils/ddApi';
   folderList: costGlobal.folderList,
   folderSum: costGlobal.folderSum,
   total: costGlobal.total,
-  page: costGlobal.page,
+  folderPage: costGlobal.folderPage,
   checkLinkCost: costGlobal.checkLinkCost,
   officeList: costGlobal.officeList,
   userInfo: session.userInfo,
@@ -49,7 +49,7 @@ class CostFolder extends Component {
       type: 'costGlobal/listFolder',
       payload: {
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 5,
       }
     }).then(() => {
       this.setState({
@@ -63,6 +63,7 @@ class CostFolder extends Component {
       selectedRowKeys:[],
       selectedRows: [],
       visible: false,
+      officeId: '',
     });
   }
 
@@ -98,7 +99,7 @@ class CostFolder extends Component {
   };
 
   onSearch = (e) => {
-    const { page } = this.props;
+    const { folderPage } = this.props;
     const { officeId } = this.state;
     this.setState({
       searchContent: e,
@@ -106,7 +107,8 @@ class CostFolder extends Component {
     this.props.dispatch({
       type: 'costGlobal/listFolder',
       payload: {
-        ...page,
+        pageNo: folderPage.pageNo,
+        pageSize: folderPage.pageSize,
         searchContent: e,
         officeId: officeId || ''
       }
@@ -201,9 +203,10 @@ class CostFolder extends Component {
       officeId: val,
     });
     const { searchContent } = this.state;
-    const { page } = this.props;
+    const { folderPage } = this.props;
     this.onQuery({
-      ...page,
+      pageNo: folderPage.pageNo,
+      pageSize: folderPage.pageSize,
       officeId: val || '',
       searchContent,
     });
@@ -224,7 +227,7 @@ class CostFolder extends Component {
         ids,
       }
     }).then(() => {
-      const { page, officeId } = this.props;
+      const { folderPage, officeId } = this.props;
       const { searchContent } = this.state;
       if (!id) {
         this.setState({
@@ -233,7 +236,8 @@ class CostFolder extends Component {
         });
       }
       this.onQuery({
-        ...page,
+        pageNo: folderPage.pageNo,
+        pageSize: folderPage.pageSize,
         searchContent,
         officeId: officeId || ''
       });
@@ -248,8 +252,8 @@ class CostFolder extends Component {
   }
 
   render() {
-    const { folderList, total, loading, page, folderSum, officeList } = this.props;
-    const { selectedRowKeys, selectedRows, visible, money, searchContent, slVisible } = this.state;
+    const { folderList, loading, folderPage, folderSum, officeList } = this.props;
+    const { selectedRowKeys, selectedRows, visible, money, searchContent, slVisible, officeId } = this.state;
     const columns = [{
       title: '支出类别',
       dataIndex: 'categoryName',
@@ -271,7 +275,7 @@ class CostFolder extends Component {
           }
         </span>
       ),
-      width: '280px'
+      width: '180px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
@@ -305,10 +309,11 @@ class CostFolder extends Component {
         </span>
       ),
       className: 'moneyTagCol',
-      width: '250px'
+      width: '180px'
     }, {
       title: '发生日期',
       dataIndex: 'happenTime',
+      width: '150px',
       render: (_, record) => (
         <span>
           <span>{record.startTime ? moment(Number(record.startTime)).format('YYYY-MM-DD') : '-'}</span>
@@ -360,7 +365,9 @@ class CostFolder extends Component {
                 selectedRowKeys:[],
                 selectedRows: [],
               });
-              this.onQuery({ searchContent, ...page });
+              this.onQuery({ searchContent,
+              pageNo: folderPage.pageNo,
+              pageSize: folderPage.pageSize, officeId: officeId || '' });
               this.props.onPerson();
             }}
             isDelete4Category={record.isDelete4Category}
@@ -370,8 +377,19 @@ class CostFolder extends Component {
         </span>
       ),
       className: 'fixCenter',
-      fixed: 'right'
+      fixed: 'right',
+      width: 120,
     }];
+    if (officeList && officeList.length) {
+      columns.splice(2,0, {
+        title: '分公司',
+        dataIndex: 'officeName',
+        width: 120,
+        render: (text) => (
+          <span>{text || ''}</span>
+        )
+      });
+    }
     return (
       <div>
         <div onClick={() => this.onShow()}>{this.props.children}</div>
@@ -411,18 +429,21 @@ class CostFolder extends Component {
             onSelectAll={this.onSelectAll}
             onSearch={this.onSearch}
             searchPro="请输入支出类别名称搜索"
-            total={total}
+            total={folderPage.total}
             loading={loading}
             onQuery={this.onQuery}
             searchContent={searchContent}
-            scroll={{x: '1200px'}}
-            page={page}
+            scroll={{x: '1120px'}}
+            page={{
+              pageNo: folderPage.pageNo,
+              pageSize: folderPage.pageSize,
+            }}
             btn={(
               <>
                 <AddCost
                   costType={1}
                   onCallback={() => {
-                    this.onQuery({ searchContent, pageNo: 1, pageSize: 10 });
+                    this.onQuery({ searchContent, pageNo: 1, pageSize: 5, officeId: officeId || '' });
                     this.props.onPerson();
                   }}
                   againCost
@@ -430,20 +451,24 @@ class CostFolder extends Component {
                   <Button type='default' className="m-r-8">记一笔</Button>
                 </AddCost>
                 <Button type='default' onClick={() => this.onDelete()} className="m-r-8">批量删除</Button>
-                <Select
-                  placeholder="请选择公司"
-                  style={{width: '160px'}}
-                  className="m-r-8"
-                  onChange={val => this.onChangeOffice(val)}
-                  allowClear
-                >
-                  {
-                    officeList && officeList.map(it => (
-                      <Select.Option key={it.id}>{it.officeName}</Select.Option>
-                    ))
-                  }
-                  <Select.Option value={-1}>其他</Select.Option>
-                </Select>
+                {
+                  officeList && officeList.length > 0 &&
+                  <Select
+                    placeholder="请选择公司"
+                    style={{width: '160px'}}
+                    className="m-r-8"
+                    onChange={val => this.onChangeOffice(val)}
+                    allowClear
+                    value={officeId || undefined}
+                  >
+                    {
+                      officeList && officeList.map(it => (
+                        <Select.Option key={it.id}>{it.officeName}</Select.Option>
+                      ))
+                    }
+                    <Select.Option value={-1}>其他</Select.Option>
+                  </Select>
+                }
               </>
             )}
             production={(
@@ -465,7 +490,9 @@ class CostFolder extends Component {
                 selectedRows: [],
                 selectedRowKeys: [],
               });
-              this.onQuery({ searchContent, ...page });
+              this.onQuery({ searchContent,
+              pageNo: folderPage.pageNo,
+              pageSize: folderPage.pageSize, officeId: officeId || '' });
               this.props.onPerson();
             }}
           />

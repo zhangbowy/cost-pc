@@ -21,6 +21,8 @@ function InvoiceTable(props) {
     searchContent,
     scroll
   } = props;
+  console.log('InvoiceTable -> total', total);
+
   const rowSelection = {
     type: 'checkbox',
     selectedRowKeys: props.selectedRowKeys,
@@ -51,6 +53,7 @@ function InvoiceTable(props) {
             scroll={scroll || {}}
             pagination={{
               hideOnSinglePage: true,
+              pageSize: page.pageSize,
               current: page.pageNo,
               onChange: (pagenation) => {
                 onQuery({
