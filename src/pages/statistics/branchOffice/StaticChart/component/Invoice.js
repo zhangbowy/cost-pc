@@ -23,7 +23,7 @@ function Invoice({ children, lists, onQuery, id, query, total, projectType }) {
       dataIndex: 'reason',
       width: 150,
       render: (_, record) => (
-        <InvoiceDetail id={record.invoiceSubmitId} templateType={0}>
+        <InvoiceDetail id={record.invoiceSubmitId} templateType={record.templateType}>
           <span>
             <Tooltip placement="topLeft" title={record.reason || ''}>
               <a className="eslips-2">{record.reason}</a>

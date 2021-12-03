@@ -45,7 +45,7 @@ export default {
           Number(((((submitSum - submitSumYear) / submitSumYear).toFixed(2)) * 100).toFixed(0))
           : 0;
           response.unshift({
-            deptName: '合计',
+            officeName: '合计',
             id: -1,
             'submitSum': submitSum,
             'submitSumAll': submitSum,
