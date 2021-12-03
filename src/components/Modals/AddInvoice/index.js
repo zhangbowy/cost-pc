@@ -1662,6 +1662,7 @@ class AddInvoice extends Component {
                         key="handle"
                         modify={modify}
                         templateType={Number(templateType)}
+                        officeId={details.officeId}
                       >
                         <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加</Button>
                       </AddCost>

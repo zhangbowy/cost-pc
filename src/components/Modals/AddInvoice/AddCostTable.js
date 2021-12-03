@@ -133,6 +133,7 @@ class AddCostTable extends Component {
   selectPle = (val, index, key) => {
     const detail = this.state.costDetailShareVOS;
     const { officeId } = this.props;
+    console.log('AddCostTable -> selectPle -> officeId', officeId);
     if (val.users) {
       const params = val.users.length ? { userJson: JSON.stringify(val.users) } : { type: 1 };
       this.props.dispatch({

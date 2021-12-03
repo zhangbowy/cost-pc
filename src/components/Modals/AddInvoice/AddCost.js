@@ -144,6 +144,7 @@ class AddCost extends Component {
 
   onShow = async() => {
     const { costType, isDelete4Category, officeId } = this.props;
+    console.log('AddCost -> onShow -> officeId', officeId);
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
       return;
@@ -334,7 +335,8 @@ class AddCost extends Component {
         } else {
           this.setState({
             visible: true,
-            initDep
+            initDep,
+            officeId: officeId || '',
           });
         }
       });
@@ -879,6 +881,8 @@ class AddCost extends Component {
       fileUrl,
       officeId,
     } = this.state;
+    console.log('render -> officeId', officeId);
+
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
     const formItemLayout = {
