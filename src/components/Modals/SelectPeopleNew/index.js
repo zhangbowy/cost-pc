@@ -26,7 +26,7 @@ class UserSelector extends PureComponent {
       ddComplexPicker({
         multiple: true,
         users: users.map(it => it.userId),
-        departments: depts.map(it => it.deptId),
+        departments: depts.map(it => `${it.deptId}`),
       }, (res) => {
         const arr = [];
         const dep = [];

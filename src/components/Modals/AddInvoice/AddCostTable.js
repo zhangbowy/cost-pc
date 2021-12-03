@@ -132,12 +132,14 @@ class AddCostTable extends Component {
   //  选择承担人
   selectPle = (val, index, key) => {
     const detail = this.state.costDetailShareVOS;
+    const { officeId } = this.props;
     if (val.users) {
       const params = val.users.length ? { userJson: JSON.stringify(val.users) } : { type: 1 };
       this.props.dispatch({
         type: 'global/users',
         payload: {
           ...params,
+          officeId,
         }
       }).then(() => {
         const { deptInfo, userId } = this.props;
@@ -457,10 +459,12 @@ class AddCostTable extends Component {
                   style={{ width: '120px' }}
                   placeholder="请选择"
                   dropdownMatchSelectWidth={false}
+                  showSearch
+                  optionFilterProp="label"
                 >
                   {
                     record.depList && record.depList.map(it => (
-                      <Option key={`${it.deptId}`}>{it.name}</Option>
+                      <Option key={`${it.deptId}`} label={it.name}>{it.name}</Option>
                     ))
                   }
                 </Select>

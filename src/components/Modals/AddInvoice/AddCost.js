@@ -76,7 +76,7 @@ class AddCost extends Component {
       currencySymbol: '¥',
       treeList: [],
       fileUrl: [],
-      // officeId: '',
+      officeId: '',
       // treeExpandedKeys: [],
     };
   }
@@ -164,7 +164,7 @@ class AddCost extends Component {
             }
           }).then(async() => {
             const { detailFolder, currencyList } = this.props;
-            initDep = await this.getDeptInfo({ type: 1, officeId: detailFolder.officeId });
+            initDep = await this.getDeptInfo({ type: 1, officeId: detailFolder.officeId || '' });
             const userIds = detailFolder.costDetailShareVOS.map(it => it.userId).filter(item => item);
             const arr = [];
             let currency = {};
@@ -255,6 +255,7 @@ class AddCost extends Component {
                 });
               }
               this.setState({
+                initDep,
                 details: {
                   ...detailFolder,
                   costSum: currency.id ? detailFolder.currencySum/100 : Number(detailFolder.costSum)/100,
@@ -268,6 +269,7 @@ class AddCost extends Component {
                 currencySymbol: currency.currencySymbol || '¥',
                 imgUrl: detailFolder.imgUrl,
                 fileUrl: detailFolder.fileUrl || [],
+                officeId: detailFolder.officeId
               });
               const expands = detailFolder.selfCostDetailFieldVos ?
               [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
@@ -282,6 +284,7 @@ class AddCost extends Component {
         } else {
           this.setState({
             visible: true,
+            initDep
           });
         }
       });
@@ -321,6 +324,7 @@ class AddCost extends Component {
             costSum: detail.costSum,
             shareAmount: detail.shareTotal,
             visible: true,
+            initDep
           }, () => {
             const newExpands = expandField;
             this.onChange(this.props.detail.categoryId, 'folder', newExpands);
@@ -328,6 +332,7 @@ class AddCost extends Component {
         } else {
           this.setState({
             visible: true,
+            initDep
           });
         }
       });
@@ -793,6 +798,30 @@ class AddCost extends Component {
     });
   }
 
+  onChangeOffice = val => {
+    const { costDetailShareVOS, officeId } = this.state;
+    if (costDetailShareVOS.length) {
+      Modal.confirm({
+        title: '是否清空分摊信息?',
+        onOk: () => {
+          this.setState({
+            officeId: val,
+            costDetailShareVOS: []
+          });
+        },
+        onCancel: () => {
+          this.props.form.setFieldsValue({
+            officeId,
+          });
+        }
+      });
+    } else {
+      this.setState({
+        officeId: val,
+      });
+    }
+  }
+
   // 上传附件
   uploadFiles = (callback) => {
     const _this = this;
@@ -845,7 +874,8 @@ class AddCost extends Component {
       currencySymbol,
       currencyId,
       treeList,
-      fileUrl
+      fileUrl,
+      officeId,
     } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
@@ -1159,10 +1189,13 @@ class AddCost extends Component {
                                       placeholder='请选择'
                                       getPopupContainer={triggerNode => triggerNode.parentNode}
                                       disabled={modify}
+                                      onChange={e => this.onChangeOffice(e)}
+                                      showSearch
+                                      optionFilterProp="label"
                                     >
                                       {
                                         officeList && officeList.map(item => (
-                                          <Option key={`${item.id}`}>{item.officeName}</Option>
+                                          <Option key={`${item.id}`} label={item.officeName}>{item.officeName}</Option>
                                         ))
                                       }
                                     </Select>
@@ -1374,6 +1407,7 @@ class AddCost extends Component {
                     expenseId={details.categoryId}
                     upload={this.upload}
                     uniqueId={uniqueId}
+                    officeId={officeId}
                   />
                 </>
               }

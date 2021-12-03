@@ -353,7 +353,22 @@ class AddInvoice extends Component {
                 const msg = Array.from(new Set(category)).join('、');
                 message.error(`${msg}支出类别被删除，请重新选择`);
               }
-              this.onAddCost(arrs);
+              if (arrs.length) {
+                this.setState({
+                  details: {
+                    ...this.state.details,
+                    officeId: arrs.length && officeList.findIndex(it => it.id === arrs[0].officeId) > -1
+                      ? arrs[0].officeId
+                      : officeList.length === 1
+                      ? officeList[0].id
+                      : '',
+                  }
+                }, () => {
+                  this.onAddCost(arrs);
+                });
+              } else {
+                this.onAddCost(arrs);
+              }
             }
           });
           if (!this.props.costSelect) {
@@ -361,6 +376,12 @@ class AddInvoice extends Component {
           }
         } else {
           const contents = JsonParse(contentJson);
+          const officeLists = await this.fetchOfficeList({ userId: contents.userId });
+          if (contents.officeId && officeLists.findIndex(it => it.id === contents.officeId) === -1) {
+            Object.assign(contents, {
+              officeId: officeLists.length === 1 ? officeLists[0].id : undefined,
+            });
+          }
           this.onInit(contents, djDetails);
           await this.setState({
             showField: obj,
@@ -373,6 +394,18 @@ class AddInvoice extends Component {
             aliTripAuth: aliTripAuth && aliTripAuth.length ? aliTripAuth[0] : {},
           });
         }
+      });
+    });
+  }
+
+  fetchOfficeList = (payload) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/officeList',
+        payload,
+      }).then(() => {
+        const { officeList } = this.props;
+        resolve(officeList);
       });
     });
   }
@@ -487,7 +520,6 @@ class AddInvoice extends Component {
         });
       }
     });
-
     await this.setState({
       depList: detail.userId ? this.props.userDeps[detail.userId] : this.props.userDeps['-1'], // 所在部门
       details: {
@@ -1298,12 +1330,34 @@ class AddInvoice extends Component {
   }
 
   // 子组件改变父组件的state
-  changeSetData = (val, flag) => {
+  changeSetData = (val, flag, third) => {
     this.setState({
       ...val,
     }, () => {
       if (flag) {
         this.getNode();
+      }
+      if (third) {
+        const { users } = this.state;
+        this.props.dispatch({
+          type: 'costGlobal/officeList',
+          payload: {
+            dingUserId: users[0].userId,
+          }
+        }).then(() => {
+          const { details } = this.state;
+          const { officeList } = this.props;
+          if (officeList.findIndex(it => it.id === details.officeId) === -1){
+            confirm({
+              title: '',
+              onOk: () => {},
+              onCancel: () => {},
+            });
+            this.setState({
+              details: { ...details, officeId: '' }
+            });
+          }
+        });
       }
     });
   }
@@ -1388,19 +1442,69 @@ class AddInvoice extends Component {
     return list;
   }
 
-  onChangeOffice = (val) => {
+  onChangeOffice = (val, callback) => {
     const { details, costDetailsVo, applyArr, borrowArr } = this.state;
     const arr = [];
     if (costDetailsVo.length) arr.push('支出类别');
     if (applyArr.length) arr.push('关联申请单');
     if (borrowArr.length) arr.push('借款核销');
     if(arr.length) {
-      // Modal.confirm({
-      //   title: ``,
-      // });
+      confirm({
+        title: `切换所在公司将会清空${arr.join(',')}`,
+        onOk: () => {
+          this.setState({
+            details: { ...details, officeId: val },
+            costDetailsVo: [],
+            applyArr: [],
+            borrowArr: []
+          });
+        },
+        onCancel: () => {
+          if (callback) callback();
+        }
+      });
+    } else {
+      this.setState({
+        details: { ...details, officeId: val }
+      });
     }
-    this.setState({
-      details: { ...details, officeId: val }
+  }
+
+  checkOffice = (payload) => {
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: 'costGlobal/officeList',
+        payload,
+      }).then(() => {
+        const { officeList } = this.props;
+        const { details, costDetailsVo, applyArr, borrowArr } = this.state;
+        if (officeList.findIndex(it => it.id === details.officeId) === -1) {
+          const arr = [];
+          if (costDetailsVo.length) arr.push('支出类别');
+          if (applyArr.length) arr.push('关联申请单');
+          if (borrowArr.length) arr.push('借款核销');
+          if(arr.length) {
+            confirm({
+              title: `切换所在公司将会清空${arr.join(',')}`,
+              onOk: () => {
+                this.setState({
+                  costDetailsVo: [],
+                  applyArr: [],
+                  borrowArr: []
+                });
+                resolve(true);
+              },
+              onCancel: () => {
+                resolve(false);
+              }
+            });
+          } else {
+            resolve(true);
+          }
+        } else {
+          resolve(true);
+        }
+      });
     });
   }
 
@@ -1535,6 +1639,7 @@ class AddInvoice extends Component {
               expandVos={expandVos}
               officeList={officeList}
               onChangeOffice={this.onChangeOffice}
+              checkOffice={this.checkOffice}
             />
             {
               (!Number(templateType) ||
@@ -1570,6 +1675,7 @@ class AddInvoice extends Component {
                         key="export"
                         list={costDetailsVo}
                         invoiceName={inDetails.name}
+                        officeId={details.officeId}
                       >
                         <Button icon="plus" style={{ width: '231px' }} key="export">账本导入</Button>
                       </AddFolder>

@@ -68,38 +68,40 @@ class ChangeForm extends Component {
     let detail = this.props.details;
     const { onChangeData } = this.props;
     if (val.users && val.users.length > 0) {
-        const deptInfo = await this.props.selectPle(JSON.stringify(val.users));
-        onChangeData({
-          users: val.users,
-          depList: deptInfo,
+      const flags = await this.props.checkOffice({ dingUserId: val.users[0].userId });
+      if (!flags) return;
+      const deptInfo = await this.props.selectPle(JSON.stringify(val.users));
+      onChangeData({
+        users: val.users,
+        depList: deptInfo,
+      });
+      if (deptInfo.length === 1) {
+        this.props.form.setFieldsValue({
+          deptId: `${deptInfo[0].deptId}`,
         });
-        if (deptInfo.length === 1) {
-          this.props.form.setFieldsValue({
-            deptId: `${deptInfo[0].deptId}`,
-          });
-          detail = {
-            ...detail,
-            userId: this.props.userId,
-            deptId: deptInfo[0].deptId,
-          };
-        } else {
-          this.props.form.setFieldsValue({
-            deptId: '',
-          });
-          detail = {
-            ...detail,
-            userId: this.props.userId,
-          };
-        }
-        onChangeData({
-          users: val.users,
-          details: {
-            ...detail,
-            userName: val.users[0].userName,
-            loanUserId: val.users[0].userId,
-          },
+        detail = {
+          ...detail,
+          userId: this.props.userId,
+          deptId: deptInfo[0].deptId,
+        };
+      } else {
+        this.props.form.setFieldsValue({
+          deptId: '',
+        });
+        detail = {
+          ...detail,
+          userId: this.props.userId,
+        };
+      }
+      onChangeData({
+        users: val.users,
+        details: {
+          ...detail,
+          userName: val.users[0].userName,
           loanUserId: val.users[0].userId,
-        }, true);
+        },
+        loanUserId: val.users[0].userId,
+      }, true);
     }
   }
 
@@ -729,14 +731,16 @@ renderTreeNodes = data =>
                               getFieldDecorator('officeId', {
                                 initialValue: details.officeId &&
                                 officeList.findIndex(it => it.id === details.officeId) > -1 ?
-                                `${details.officeId}` : officeList[0].id,
+                                `${details.officeId}` : officeList.length === 1 ? officeList[0].id : undefined,
                                 rules: [{ required: true, message: '请选择公司' }]
                               })(
                                 <Select
                                   placeholder='请选择'
                                   getPopupContainer={triggerNode => triggerNode.parentNode}
                                   disabled={modify}
-                                  onChange={e => this.props.onChangeOffice(e)}
+                                  onChange={e => this.props.onChangeOffice(e, () => {
+                                    this.props.form.setFieldsValue({ officeId: details.officeId });
+                                  })}
                                 >
                                   {
                                     officeList && officeList.map(it => (

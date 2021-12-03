@@ -106,7 +106,7 @@ class CompanySet extends Component {
     } = this.props;
     const newArrs = list.map(it => ({ ...it, name: it.officeName}));
     const lists = treeConvert({
-      rootId: 0,
+      rootId: '470547661288640512',
       pId: 'parentId',
       name: 'officeName',
       otherKeys: ['note', 'sort', 'id',

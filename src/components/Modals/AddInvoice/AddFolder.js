@@ -54,11 +54,13 @@ class AddFolder extends Component {
   }
 
   onShow = async() => {
+    const { officeId } = this.props;
     await this.props.dispatch({
       type: 'costGlobal/listFolder',
       payload: {
         pageNo: 1,
         pageSize: 1000,
+        officeId: officeId || ''
       }
     });
     await this.props.dispatch({

@@ -34,11 +34,11 @@ class AddComp extends Component {
       name: 'officeName',
       otherKeys: ['note','parentId', 'officeName']
     }, list);
-    const roots = list.filter(it => !it.parentId);
+    // const roots = list.filter(it => !it.parentId);
     this.setState({
       options: newArr,
       details: details || {},
-      parentId: details && details.parentId ? findIndexArray(newArr, details.parentId, []) : [roots[0].id],
+      parentId: details && details.parentId ? findIndexArray(newArr, details.parentId, []) : [],
       users: details && details.userVos ? details.userVos : [],
       depts: details && details.deptVos ? details.deptVos : [],
       visible: true,
@@ -54,14 +54,14 @@ class AddComp extends Component {
         const newVal = {
           note: val.note,
           officeName: val.officeName,
-          id: details && details.id ? details.id : ''
+          id: details && details.id ? details.id : '',
+          deptVos: depts,
+          userVos: users,
         };
         if (val.parentId) {
           const len = val.parentId.length;
           Object.assign(newVal, {
             parentId: val.parentId[len-1],
-            deptVos: depts,
-            userVos: users,
           });
         }
         // if (details && (details.id === newVal.parentId)) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Tooltip, Divider, Popover, Tag, Button, Popconfirm, message } from 'antd';
+import { Modal, Tooltip, Divider, Popover, Tag, Button, Popconfirm, message, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import InvoiceTable from '.';
@@ -12,12 +12,14 @@ import SelectInvoice from '../../SelectInvoice';
 import aliLogo from '../../../../assets/img/aliTrip/alitrip.png';
 import { ddPreviewImage } from '../../../../utils/ddApi';
 
-@connect(({ costGlobal, loading }) => ({
+@connect(({ costGlobal, loading, session }) => ({
   folderList: costGlobal.folderList,
   folderSum: costGlobal.folderSum,
   total: costGlobal.total,
   page: costGlobal.page,
   checkLinkCost: costGlobal.checkLinkCost,
+  officeList: costGlobal.officeList,
+  userInfo: session.userInfo,
   loading: loading.effects['costGlobal/listFolder'] || false,
 }))
 class CostFolder extends Component {
@@ -32,9 +34,17 @@ class CostFolder extends Component {
     searchContent: '',
     money: 0,
     slVisible: false,
+    officeId: '',
   }
 
   onShow = () => {
+    const { userInfo } = this.props;
+    this.props.dispatch({
+      type: 'costGlobal/officeList',
+      payload: {
+        userId: userInfo.userId
+      }
+    });
     this.props.dispatch({
       type: 'costGlobal/listFolder',
       payload: {
@@ -89,6 +99,7 @@ class CostFolder extends Component {
 
   onSearch = (e) => {
     const { page } = this.props;
+    const { officeId } = this.state;
     this.setState({
       searchContent: e,
     });
@@ -97,6 +108,7 @@ class CostFolder extends Component {
       payload: {
         ...page,
         searchContent: e,
+        officeId: officeId || ''
       }
     });
   }
@@ -105,15 +117,26 @@ class CostFolder extends Component {
     const { selectedRows } = this.state;
     console.log('selectedRows', selectedRows);
     const arrs = [];
+    const arrOffice = [];
     selectedRows.forEach(it => {
       arrs.push({
         id: it.id,
         applicationInvoiceId: it.applicationInvoiceId,
-        officeId: it.officeId,
       });
+      arrOffice.push(it.officeId);
+      // TO DO:
+      // 判断是否是同一个公司
     });
-    // const officeIds = arrs.map(it => it.officeId);
-    // if (officeIds)
+    const flag = arrOffice.filter(it => !it);
+    if (flag && flag.length) {
+      message.error('请先编辑填写分公司信息');
+      return;
+    }
+    const arrsLen = Array.from(new Set(arrOffice));
+    if (arrsLen.length !== 1) {
+      message.error('请筛选同一分公司的明细进行报销');
+      return;
+    }
     this.props.dispatch({
       type: 'costGlobal/checkLinkCost',
       payload: {
@@ -173,6 +196,19 @@ class CostFolder extends Component {
     });
   }
 
+  onChangeOffice = val => {
+    this.setState({
+      officeId: val,
+    });
+    const { searchContent } = this.state;
+    const { page } = this.props;
+    this.onQuery({
+      ...page,
+      officeId: val || '',
+      searchContent,
+    });
+  }
+
   onDelete = (id) => {
     let ids = this.state.selectedRowKeys;
     if (id) {
@@ -188,7 +224,7 @@ class CostFolder extends Component {
         ids,
       }
     }).then(() => {
-      const { page } = this.props;
+      const { page, officeId } = this.props;
       const { searchContent } = this.state;
       if (!id) {
         this.setState({
@@ -199,6 +235,7 @@ class CostFolder extends Component {
       this.onQuery({
         ...page,
         searchContent,
+        officeId: officeId || ''
       });
     });
   }
@@ -211,7 +248,7 @@ class CostFolder extends Component {
   }
 
   render() {
-    const { folderList, total, loading, page, folderSum } = this.props;
+    const { folderList, total, loading, page, folderSum, officeList } = this.props;
     const { selectedRowKeys, selectedRows, visible, money, searchContent, slVisible } = this.state;
     const columns = [{
       title: '支出类别',
@@ -393,6 +430,20 @@ class CostFolder extends Component {
                   <Button type='default' className="m-r-8">记一笔</Button>
                 </AddCost>
                 <Button type='default' onClick={() => this.onDelete()} className="m-r-8">批量删除</Button>
+                <Select
+                  placeholder="请选择公司"
+                  style={{width: '160px'}}
+                  className="m-r-8"
+                  onChange={val => this.onChangeOffice(val)}
+                  allowClear
+                >
+                  {
+                    officeList && officeList.map(it => (
+                      <Select.Option key={it.id}>{it.officeName}</Select.Option>
+                    ))
+                  }
+                  <Select.Option value={-1}>其他</Select.Option>
+                </Select>
               </>
             )}
             production={(

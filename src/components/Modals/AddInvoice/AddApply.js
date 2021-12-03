@@ -54,7 +54,7 @@ class AddApply extends Component {
       payload: {
         pageNo: 1,
         pageSize: 1000,
-        officeId
+        officeId: officeId || ''
       }
     }).then(() => {
       console.log(this.props.associateLists);
