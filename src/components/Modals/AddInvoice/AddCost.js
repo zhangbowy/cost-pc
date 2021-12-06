@@ -301,10 +301,10 @@ class AddCost extends Component {
         const { index, detail, expandField } = this.props;
         const listArr = detail && detail.costDetailShareVOS ? [...detail.costDetailShareVOS] : [];
         const userIdArr = listArr.map(it => it.userId).filter(item => item);
-        const deptFlag = listArr.filter(it => it.depList && it.depList.length);
+        // const deptFlag = listArr.filter(it => it.depList && it.depList.length);
         let newArray = [...listArr];
-        if (userIdArr && userIdArr.length && (deptFlag.length !== listArr.length)) {
-          newArray = await this.handleDept(listArr, userIdArr, officeId);
+        if (userIdArr && userIdArr.length) {
+          newArray = await this.handleDept(listArr, userIdArr, officeId, initDep);
         } else {
           newArray = newArray.map(it => {
             return {
@@ -357,7 +357,7 @@ class AddCost extends Component {
     message.error('钉钉暂时不支持未提交单据附件的预览，请提交后预览/下载');
   }
 
-  handleDept = (lists, userIds, officeId) => {
+  handleDept = (lists, userIds, officeId, initDep) => {
     console.log('AddCost -> handleDept -> officeId', officeId);
     const arr = [];
      return new Promise(resolve => {
@@ -379,6 +379,13 @@ class AddCost extends Component {
             Object.assign(obj, {
               users: it.userJson ? it.userJson.map(its => { return { ...its, userName: its.name }; }) : [],
               depList: userDeps[`${it.userId}`],
+              deptId: userDeps[`${it.userId}`].findIndex(item => item.deptId === it.deptId) > -1
+                ? it.deptId : '',
+            });
+          } else if (initDep.findIndex(item => item.deptId === it.deptId) === -1) {
+            Object.assign(obj, {
+              deptId: '',
+              depList: initDep
             });
           }
           arr.push(obj);
