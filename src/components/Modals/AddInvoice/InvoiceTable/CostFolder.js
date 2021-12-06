@@ -201,15 +201,16 @@ class CostFolder extends Component {
   onChangeOffice = val => {
     this.setState({
       officeId: val,
+    }, () => {
+      const { searchContent } = this.state;
+      const { folderPage } = this.props;
+      this.onQuery({
+        pageNo: folderPage.pageNo,
+        pageSize: folderPage.pageSize,
+        searchContent,
+      });
     });
-    const { searchContent } = this.state;
-    const { folderPage } = this.props;
-    this.onQuery({
-      pageNo: folderPage.pageNo,
-      pageSize: folderPage.pageSize,
-      officeId: val || '',
-      searchContent,
-    });
+
   }
 
   onDelete = (id) => {
@@ -227,7 +228,7 @@ class CostFolder extends Component {
         ids,
       }
     }).then(() => {
-      const { folderPage, officeId } = this.props;
+      const { folderPage } = this.props;
       const { searchContent } = this.state;
       if (!id) {
         this.setState({
@@ -239,12 +240,15 @@ class CostFolder extends Component {
         pageNo: folderPage.pageNo,
         pageSize: folderPage.pageSize,
         searchContent,
-        officeId: officeId || ''
       });
     });
   }
 
   onQuery = (payload) => {
+    const { officeId } = this.state;
+    Object.assign(payload, {
+      officeId: officeId || '',
+    });
     this.props.dispatch({
       type: 'costGlobal/listFolder',
       payload,
@@ -367,7 +371,7 @@ class CostFolder extends Component {
               });
               this.onQuery({ searchContent,
               pageNo: folderPage.pageNo,
-              pageSize: folderPage.pageSize, officeId: officeId || '' });
+              pageSize: folderPage.pageSize });
               this.props.onPerson();
             }}
             isDelete4Category={record.isDelete4Category}
@@ -443,7 +447,7 @@ class CostFolder extends Component {
                 <AddCost
                   costType={1}
                   onCallback={() => {
-                    this.onQuery({ searchContent, pageNo: 1, pageSize: 5, officeId: officeId || '' });
+                    this.onQuery({ searchContent, pageNo: 1, pageSize: 5 });
                     this.props.onPerson();
                   }}
                   againCost
@@ -492,7 +496,7 @@ class CostFolder extends Component {
               });
               this.onQuery({ searchContent,
               pageNo: folderPage.pageNo,
-              pageSize: folderPage.pageSize, officeId: officeId || '' });
+              pageSize: folderPage.pageSize });
               this.props.onPerson();
             }}
           />
