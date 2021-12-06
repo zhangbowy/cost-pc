@@ -166,7 +166,7 @@ class AddCost extends Component {
             }
           }).then(async() => {
             const { detailFolder, currencyList } = this.props;
-            initDep = await this.getDeptInfo({ type: 1, officeId: detailFolder.officeId || '' });
+            initDep = await this.getDeptInfo({ type: 1, officeId: detailFolder.officeId || officeId || '' });
             const userIds = detailFolder.costDetailShareVOS.map(it => it.userId).filter(item => item);
             const arr = [];
             let currency = {};
@@ -179,7 +179,7 @@ class AddCost extends Component {
                 type: 'costGlobal/userDep',
                 payload: {
                   userIds: [...new Set(userIds)],
-                  officeId: detailFolder.officeId
+                  officeId: detailFolder.officeId || ''
                 }
               }).then(async() => {
                 detailFolder.costDetailShareVOS.forEach((it) => {
@@ -305,6 +305,13 @@ class AddCost extends Component {
         let newArray = [...listArr];
         if (userIdArr && userIdArr.length && (deptFlag.length !== listArr.length)) {
           newArray = await this.handleDept(listArr, userIdArr, officeId);
+        } else {
+          newArray = newArray.map(it => {
+            return {
+              ...it,
+              depList: initDep,
+            };
+          });
         }
         console.log('AddCost -> onShow -> newArray', newArray);
         if (index === 0 || index) {

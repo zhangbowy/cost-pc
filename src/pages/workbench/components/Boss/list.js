@@ -91,7 +91,7 @@ export default {
     ]
   },
   2: {
-    title: '审批中',
+    title: '审核中',
     columns: [
       {
         title: '事由',
