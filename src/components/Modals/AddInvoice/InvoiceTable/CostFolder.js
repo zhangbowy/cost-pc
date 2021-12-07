@@ -120,6 +120,7 @@ class CostFolder extends Component {
     console.log('selectedRows', selectedRows);
     const arrs = [];
     const arrOffice = [];
+    const { officeList } = this.props;
     selectedRows.forEach(it => {
       arrs.push({
         id: it.id,
@@ -130,12 +131,12 @@ class CostFolder extends Component {
       // 判断是否是同一个公司
     });
     const flag = arrOffice.filter(it => !it);
-    if (flag && flag.length) {
+    if (flag && flag.length && (officeList.length > 0)) {
       message.error('请先编辑填写分公司信息');
       return;
     }
     const arrsLen = Array.from(new Set(arrOffice));
-    if (arrsLen.length !== 1) {
+    if (arrsLen.length !== 1 && (officeList.length > 0)) {
       message.error('请筛选同一分公司的明细进行报销');
       return;
     }
