@@ -399,35 +399,6 @@ class AddFolder extends Component {
       textWrap: 'word-break',
       width: '140px'
     },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'opea',
-    //   render: (_, record) => (
-    //     <span>
-    //       <Popconfirm
-    //         title="确认删除吗？"
-    //         onConfirm={() => this.onDeletes(record.id)}
-    //       >
-    //         <span className="deleteColor">删除</span>
-    //       </Popconfirm>
-    //       <Divider type="vertical" />
-    //       <AddCost
-    //         costType={1}
-    //         id={record.id}
-    //         detail={record}
-    //         invoiceId={invoiceId}
-    //         userInfo={userInfo}
-    //         onAddCost={this.addCost}
-    //         expandField={record.expandCostDetailFieldVos}
-    //         onHandleOk={() => this.onCancel()}
-    //       >
-    //         <a>编辑</a>
-    //       </AddCost>
-    //     </span>
-    //   ),
-    //   className: 'fixCenter',
-    //   fixed: 'right'
-    // }
   ];
     const rowSelection = {
       type: 'checkbox',

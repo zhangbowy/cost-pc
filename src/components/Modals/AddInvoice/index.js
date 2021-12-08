@@ -952,6 +952,7 @@ class AddInvoice extends Component {
         projectId: details.projectId || '',
         supplierId: details.supplierId || '',
         expandVos,
+        officeId: details.officeId || ''
       };
     const { templateType } = this.props;
     if (Number(templateType) === 1) {
@@ -1444,6 +1445,8 @@ class AddInvoice extends Component {
             costDetailsVo: newArr,
             applyArr: [],
             borrowArr: []
+          }, () => {
+            this.getNode({});
           });
         },
         onCancel: () => {
@@ -1453,6 +1456,8 @@ class AddInvoice extends Component {
     } else {
       this.setState({
         details: { ...details, officeId: val }
+      }, () => {
+        this.getNode({});
       });
     }
   }

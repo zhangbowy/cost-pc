@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, TreeSelect, Button, Select } from 'antd';
+import { Modal, Form, TreeSelect, Button } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
@@ -14,7 +14,7 @@ const { SHOW_PARENT } = TreeSelect;
   loading: loading.effects['approveRole/add'] ||
            loading.effects['approveRole/edit'] || false,
   details: approveRole.details,
-  officeList: costGlobal.officeList,
+  officeTree: costGlobal.officeTree,
   userInfo: session.userInfo,
 }))
 class AddRole extends Component {
@@ -30,15 +30,14 @@ class AddRole extends Component {
     bearUser: [],
     makeDept: [],
     bearDept: [],
+    officeIds: []
   }
 
   onShow = () => {
-    const { title, detail, userInfo } = this.props;
+    const { title, detail } = this.props;
     this.props.dispatch({
-      type: 'costGlobal/officeList',
-      payload: {
-        userId: userInfo.userId
-      },
+      type: 'costGlobal/officeTree',
+      payload: {},
     });
     this.props.dispatch({
       type: 'global/costList',
@@ -65,6 +64,7 @@ class AddRole extends Component {
                 value: it.id,
               };
             }) : [],
+            officeIds: details.officeVOS ? details.officeVOS.map(it => it.id) : [],
             visible: true,
           });
         });
@@ -85,6 +85,7 @@ class AddRole extends Component {
       bearUser: [],
       makeDept: [],
       bearDept: [],
+      officeIds: []
     });
   }
 
@@ -97,7 +98,7 @@ class AddRole extends Component {
       id,
       onOk,
       detail,
-      costCategoryList
+      costCategoryList,
     } = this.props;
     const {
       userVo,
@@ -106,6 +107,7 @@ class AddRole extends Component {
       makeDept,
       bearDept,
     } = this.state;
+
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -127,6 +129,7 @@ class AddRole extends Component {
             makeDept,
             bearDept,
             approveRoleId: id,
+            officeIds: values.officeIds,
             id: detail && detail.id ? detail.id : '',
           }
         }).then(() => {
@@ -165,7 +168,7 @@ class AddRole extends Component {
       costCategoryList,
       loading,
       title,
-      officeList
+      officeTree
     } = this.props;
     const list = treeConvert({
       rootId: 0,
@@ -175,6 +178,13 @@ class AddRole extends Component {
       tId: 'value',
       otherKeys: ['type']
     }, costCategoryList);
+    const officeList = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'officeName',
+      tName: 'title',
+      tId: 'value',
+    }, officeTree);
     const {
       visible,
       category,
@@ -183,6 +193,7 @@ class AddRole extends Component {
       bearUser,
       makeDept,
       bearDept,
+      officeIds
     } = this.state;
     return (
       <span>
@@ -260,16 +271,17 @@ class AddRole extends Component {
               officeList && officeList.length > 0 &&
               <Form.Item label="所在公司" {...formItemLayout}>
                 {
-                  getFieldDecorator('officeVos', {
-                    initialValue: category,
+                  getFieldDecorator('officeIds', {
+                    initialValue: officeIds,
                   })(
-                    <Select multiple placeholder="请选择">
-                      {
-                        officeList.map(it => (
-                          <Select.Option key={it.id}>{it.officeName}</Select.Option>
-                        ))
-                      }
-                    </Select>
+                    <TreeSelect
+                      treeData={officeList}
+                      treeCheckable
+                      placeholder="请选择"
+                      style={{width: '100%'}}
+                      showCheckedStrategy={SHOW_PARENT}
+                      dropdownStyle={{height: '300px'}}
+                    />
                   )
                 }
               </Form.Item>
