@@ -30,6 +30,10 @@ const exportObj = {
   5: {
     exportUrl: api.supplierExport,
     fileName: '供应商支出'
+  },
+  6: {
+    exportUrl: api.officeExport,
+    fileName: '分公司支出'
   }
 };
 export default {
@@ -368,6 +372,87 @@ export default {
         type: 'save',
         payload: {
           list: response || [],
+        },
+      });
+    },
+    *office({ payload }, { call, put }) {
+      const responses = yield call(post, api.office, payload, { withCode: true });
+      console.log('*list -> response', responses);
+      let response = [];
+      let isNoRole = false;
+      if (responses.code === 200) {
+        response = responses.result;
+        if (response && response.length > 1) {
+          const submitSum = response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumAll;
+          }, 0) : 0;
+          const submitSumAnnulus = response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumAnnulusAll;
+          }, 0) : 0;
+          const annuls = submitSumAnnulus ?
+          Number(((((submitSum - submitSumAnnulus) / submitSumAnnulus).toFixed(2)) * 100).toFixed(0))
+          : 0;
+          const submitSumYear = response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumYearAll;
+          }, 0) : 0;
+          const yearOnYear = submitSumYear ?
+          Number(((((submitSum - submitSumYear) / submitSumYear).toFixed(2)) * 100).toFixed(0))
+          : 0;
+          response.unshift({
+            deptName: '合计',
+            id: -1,
+            'submitSum': submitSum,
+            'submitSumAll': submitSum,
+            'submitSumAnnulus': submitSumAnnulus,
+            'submitSumAnnulusAll': 0,
+            'submitSumYear': submitSumYear,
+            'submitSumYearAll': 0,
+            'submitUserCount': response && response.length ?
+            response.reduce((prev, next) => {
+              return prev + next.submitUserCountAll;
+            }, 0) : 0,
+            'submitUserCountAll': response && response.length ?
+            response.reduce((prev, next) => {
+              return prev + next.submitUserCountAll;
+            }, 0) : 0,
+            'submitCount': response && response.length ?
+            response.reduce((prev, next) => {
+              return prev + next.submitCountAll;
+            }, 0) : 0,
+            'submitCountAll': response && response.length ?
+            response.reduce((prev, next) => {
+              return prev + next.submitCountAll;
+            }, 0) : 0,
+            'categoryCount': response && response.length ?
+            response.reduce((prev, next) => {
+              return prev + next.categoryCountAll;
+            }, 0) : 0,
+            'categoryCountAll': response && response.length ?
+            response.reduce((prev, next) => {
+              return prev + next.categoryCountAll;
+            }, 0) : 0,
+            'yearOnYear': Math.abs(yearOnYear),
+            'annulus': Math.abs(annuls),
+            'yearOnYearSymbolType': submitSumYear === 0 ? null : yearOnYear > 0 ? 0 : 1,
+            'annulusSymbolType': submitSumAnnulus === 0 ? null : annuls > 0 ? 0 : 1,
+            children: [],
+            childrens: [...response],
+          });
+        }
+      } else if (responses.code === 90065) {
+        isNoRole = true;
+      } else {
+        message.error(responses.message);
+      }
+
+      yield put({
+        type: 'save',
+        payload: {
+          list: response || [],
+          isNoRole,
         },
       });
     },

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, TreeSelect, Button } from 'antd';
+import { Modal, Form, TreeSelect, Button, Select } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
@@ -9,11 +9,13 @@ import Lines from '@/components/StyleCom/Lines';
 
 const { SHOW_PARENT } = TreeSelect;
 @Form.create()
-@connect(({ global, loading, approveRole }) => ({
+@connect(({ global, loading, approveRole, costGlobal, session }) => ({
   costCategoryList: global.costCategoryList,
   loading: loading.effects['approveRole/add'] ||
            loading.effects['approveRole/edit'] || false,
   details: approveRole.details,
+  officeList: costGlobal.officeList,
+  userInfo: session.userInfo,
 }))
 class AddRole extends Component {
   static propTypes = {
@@ -31,7 +33,13 @@ class AddRole extends Component {
   }
 
   onShow = () => {
-    const { title, detail } = this.props;
+    const { title, detail, userInfo } = this.props;
+    this.props.dispatch({
+      type: 'costGlobal/officeList',
+      payload: {
+        userId: userInfo.userId
+      },
+    });
     this.props.dispatch({
       type: 'global/costList',
       payload: {},
@@ -157,6 +165,7 @@ class AddRole extends Component {
       costCategoryList,
       loading,
       title,
+      officeList
     } = this.props;
     const list = treeConvert({
       rootId: 0,
@@ -239,6 +248,7 @@ class AddRole extends Component {
                     treeData={list}
                     labelInValue
                     treeCheckable
+                    placeholder="请选择"
                     style={{width: '100%'}}
                     showCheckedStrategy={SHOW_PARENT}
                     dropdownStyle={{height: '300px'}}
@@ -246,6 +256,24 @@ class AddRole extends Component {
                 )
               }
             </Form.Item>
+            {
+              officeList && officeList.length > 0 &&
+              <Form.Item label="所在公司" {...formItemLayout}>
+                {
+                  getFieldDecorator('officeVos', {
+                    initialValue: category,
+                  })(
+                    <Select multiple placeholder="请选择">
+                      {
+                        officeList.map(it => (
+                          <Select.Option key={it.id}>{it.officeName}</Select.Option>
+                        ))
+                      }
+                    </Select>
+                  )
+                }
+              </Form.Item>
+            }
           </Form>
         </Modal>
       </span>

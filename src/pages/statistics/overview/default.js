@@ -10,6 +10,53 @@ const times = defaultMonth();
 const initMonth = { ...times };
 const { projectType } = fields;
 console.log('项目角色', projectType);
+const annual = [{
+  title: (
+    <span>
+      <span className="m-r-8">环比增长</span>
+      <Tooltip title="环比上月/上季度/上年度的增长率">
+        <i className="iconfont iconIcon-yuangongshouce fs-16" />
+      </Tooltip>
+    </span>
+  ),
+  dataIndex: 'annulus',
+  render: (_, record) => (
+    <span>
+      { record.annulusSymbolType === null && '-' }
+      { record.annulusSymbolType !== null &&
+      (
+        <span className="icons">
+          <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+          <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
+        </span>
+      )}
+    </span>
+  ),
+  width: 80,
+}, {
+  title: (
+    <span className="icons">
+      <span className="m-r-8">同比增长</span>
+      <Tooltip title="同比去年同月/同季度/上年度的增长率">
+        <i className="iconfont iconIcon-yuangongshouce fs-16" />
+      </Tooltip>
+    </span>
+  ),
+  dataIndex: 'yearOnYear',
+  width: 80,
+  render: (_, record) => (
+    <span>
+      { record.yearOnYearSymbolType === null && '-' }
+      { record.yearOnYearSymbolType !== null &&
+      (
+        <span className="icons">
+          <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
+          <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
+        </span>
+      )}
+    </span>
+  ),
+}];
 export default {
   1: {
     query: 'dept',
@@ -20,53 +67,7 @@ export default {
       render: (_, record) => (
         <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.deptName}</span>
       )
-    }, {
-      title: (
-        <span>
-          <span className="m-r-8">环比增长</span>
-          <Tooltip title="环比上月/上季度/上年度的增长率">
-            <i className="iconfont iconIcon-yuangongshouce fs-16" />
-          </Tooltip>
-        </span>
-      ),
-      dataIndex: 'annulus',
-      render: (_, record) => (
-        <span>
-          { record.annulusSymbolType === null && '-' }
-          { record.annulusSymbolType !== null &&
-          (
-            <span className="icons">
-              <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
-            </span>
-          )}
-        </span>
-      ),
-      width: 80,
-    }, {
-      title: (
-        <span className="icons">
-          <span className="m-r-8">同比增长</span>
-          <Tooltip title="同比去年同月/同季度/上年度的增长率">
-            <i className="iconfont iconIcon-yuangongshouce fs-16" />
-          </Tooltip>
-        </span>
-      ),
-      dataIndex: 'yearOnYear',
-      width: 80,
-      render: (_, record) => (
-        <span>
-          { record.yearOnYearSymbolType === null && '-' }
-          { record.yearOnYearSymbolType !== null &&
-          (
-            <span className="icons">
-              <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
-            </span>
-          )}
-        </span>
-      ),
-    }, {
+    }, ...annual, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
       width: 70,
@@ -125,53 +126,7 @@ export default {
       render: (_, record) => (
         <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.categoryName}</span>
       )
-    }, {
-      title: (
-        <span>
-          <span className="m-r-8">环比增长</span>
-          <Tooltip title="环比上月/上季度/上年度的增长率">
-            <i className="iconfont iconIcon-yuangongshouce fs-16" />
-          </Tooltip>
-        </span>
-      ),
-      dataIndex: 'annulus',
-      render: (_, record) => (
-        <span>
-          { record.annulusSymbolType === null && '-' }
-          { record.annulusSymbolType !== null &&
-          (
-            <span className="icons">
-              <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
-            </span>
-          )}
-        </span>
-      ),
-      width: 80,
-    }, {
-      title: (
-        <span className="icons">
-          <span className="m-r-8">同比增长</span>
-          <Tooltip title="同比去年同月/同季度/上年度的增长率">
-            <i className="iconfont iconIcon-yuangongshouce fs-16" />
-          </Tooltip>
-        </span>
-      ),
-      dataIndex: 'yearOnYear',
-      width: 80,
-      render: (_, record) => (
-        <span>
-          { record.yearOnYearSymbolType === null && '-' }
-          { record.yearOnYearSymbolType !== null &&
-          (
-            <span className="icons">
-              <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
-            </span>
-          )}
-        </span>
-      ),
-    }, {
+    }, ...annual, {
       title: '报销人数',
       dataIndex: 'submitUserCountAll',
       width: 70,
@@ -317,53 +272,7 @@ export default {
       render: (_, record) => (
         <span style={{fontWeight: record.userId === -1 ? 'bolder' : 'normal'}}>{record.userName}</span>
       )
-    }, {
-      title: (
-        <span>
-          <span className="m-r-8">环比增长</span>
-          <Tooltip title="环比上月/上季度/上年度的增长率">
-            <i className="iconfont iconIcon-yuangongshouce fs-16" />
-          </Tooltip>
-        </span>
-      ),
-      dataIndex: 'annulus',
-      render: (_, record) => (
-        <span>
-          { record.annulusSymbolType === null && '-' }
-          { record.annulusSymbolType !== null &&
-          (
-            <span className="icons">
-              <i className={`iconfont vt-m m-t-2 ${ record.annulusSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              <span className="vt-m li-1">{record.annulus}{record.annulusSymbolType === null ? '' : '%'}</span>
-            </span>
-          )}
-        </span>
-      ),
-      width: 80,
-    }, {
-      title: (
-        <span className="icons">
-          <span className="m-r-8">同比增长</span>
-          <Tooltip title="同比去年同月/同季度/上年度的增长率">
-            <i className="iconfont iconIcon-yuangongshouce fs-16" />
-          </Tooltip>
-        </span>
-      ),
-      dataIndex: 'yearOnYear',
-      width: 80,
-      render: (_, record) => (
-        <span>
-          { record.yearOnYearSymbolType === null && '-' }
-          { record.yearOnYearSymbolType !== null &&
-          (
-            <span className="icons">
-              <i className={`iconfont vt-m m-t-2 ${ record.yearOnYearSymbolType ? 'iconxiajiang' : 'iconshangsheng' }`} />
-              <span className="vt-m li-1">{record.yearOnYear}{record.yearOnYearSymbolType === null ? '' : '%'}</span>
-            </span>
-          )}
-        </span>
-      ),
-    }, {
+    }, ...annual, {
       title: '明细数',
       dataIndex: 'categoryCountAll',
       width: 100,
@@ -457,6 +366,66 @@ export default {
       placeholder: '请选择',
       key: 'supplierIds',
       id: 'supplierIds',
+      out: 1,
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '支出类别',
+      placeholder: '请选择',
+      key: 'categoryIds',
+      id: 'categoryIds',
+      out: 1,
+    }]
+  },
+  6: {
+    query: 'office',
+    columns: [{
+      title: '分公司',
+      dataIndex: 'officeName',
+      width: 80,
+      render: (_, record) => (
+        <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.officeName}</span>
+      )
+    }, {
+      title: '报销人数',
+      dataIndex: 'submitUserCountAll',
+      width: 80,
+    }, {
+      title: '明细数',
+      dataIndex: 'categoryCountAll',
+      width: 80,
+    },
+    ...annual],
+    chartName: 'officeName',
+    type: 'supplierId',
+    tableProps: {
+      rowKey: 'id'
+    },
+    searchList: [{
+      type: 'timeC',
+      label: '时间筛选',
+      placeholder: '单号、事由、收款人',
+      key: ['startTime', 'endTime'],
+      id: 'timeC',
+      out: 1,
+      value: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      initialValue: {
+        dateType: 0,
+        startTime: initMonth.startTime,
+        endTime: initMonth.endTime,
+      },
+      initialValueStr: initMonth.valueStr,
+      isFixed: true,
+      valueStr: initMonth.valueStr,
+    }, { // 搜索部分数据
+      type: 'tree',
+      label: '分公司',
+      placeholder: '请选择',
+      key: 'officeIds',
+      id: 'officeIds',
       out: 1,
     }, { // 搜索部分数据
       type: 'tree',

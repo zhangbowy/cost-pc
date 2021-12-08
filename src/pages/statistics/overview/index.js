@@ -34,6 +34,10 @@ const menu = [{
   key: '5',
   name: '供应商支出',
   url: 'statistics_supplier',
+}, {
+  key: '6',
+  name: '分公司支出',
+  url: 'statistics_office',
 }];
 const objStatus = {
   2: {
@@ -114,6 +118,11 @@ class EchartsTest extends Component {
         if (arrs.includes(it.url)){
           newArr.push(it);
         }
+      });
+      newArr.push({
+        key: '6',
+        name: '分公司支出',
+        url: 'statistics_office',
       });
       this.setState({
         menus: newArr,
@@ -217,7 +226,7 @@ class EchartsTest extends Component {
           width: query === 'dept' ? 160 : 100,
         }]]
       });
-      if (Number(params) === 1 || Number(params) === 2) {
+      if (Number(params) === 1 || Number(params) === 2 || Number(params) === 6) {
         cols = update(cols, {
           $splice: [[cols.length , 0,{
             title: '操作',
