@@ -396,7 +396,7 @@ export default {
     },
     ...annual],
     chartName: 'officeName',
-    type: 'supplierId',
+    type: 'officeId',
     tableProps: {
       rowKey: 'id'
     },

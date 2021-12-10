@@ -151,4 +151,5 @@ export default {
    historyImport: `${APP_API}/cost/excel/importExcel`,
    paymentMethod: `${APP_API}/cost/setting/detail`,
    historyImportResult: `${APP_API}/cost/excel/historyImportResult`,
+   officeListAndRole: `${APP_API}/cost/branch/office/list`,
 };

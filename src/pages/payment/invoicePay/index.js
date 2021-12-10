@@ -15,11 +15,12 @@ import { getArrayValue, accountType, filterAccount } from '../../../utils/consta
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
 import TableImg from '../../../components/LittleCmp/TableImg';
+import treeConvert from '../../../utils/treeConvert';
 
 const { confirm } = Modal;
 const { APP_API } = constants;
 @Form.create()
-@connect(({ loading, payment, global }) => ({
+@connect(({ loading, payment, global, costGlobal }) => ({
   loading: loading.effects['payment/list'] || false,
   list: payment.list,
   query: payment.query,
@@ -29,6 +30,7 @@ const { APP_API } = constants;
   recordList: payment.recordList,
   recordPage: payment.recordPage,
   recordTotal: payment.recordTotal,
+  officeListAndRole: costGlobal.officeListAndRole,
 }))
 class Payment extends React.PureComponent {
   constructor(props) {
@@ -42,17 +44,12 @@ class Payment extends React.PureComponent {
       selectedRows: [],
       visibleConfirm: false,
       visible: false,
+      officeList: [],
     };
   }
 
-  componentDidMount(){
-    const {
-      query,
-    } = this.props;
-    this.onQuery({
-      ...query,
-      status: 2,
-    });
+  componentDidMount() {
+    this.getOffice();
   }
 
   handleClick = e => {
@@ -369,6 +366,28 @@ class Payment extends React.PureComponent {
     });
   }
 
+  getOffice = () => {
+    console.log('这里是分公司列表');
+    this.props.dispatch({
+      type: 'costGlobal/officeListAndRole',
+      payload: {},
+    }).then(() => {
+      const { officeListAndRole } = this.props;
+      console.log('🚀 ~ file: index.js ~ line 375 ~ Payment ~ officeListAndRole', officeListAndRole);
+      const list = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'officeName',
+        tName: 'title',
+        tId: 'value',
+        otherKeys: ['parentId']
+      }, officeListAndRole);
+      this.setState({
+        officeList: list,
+      });
+    });
+  }
+
   render() {
     const {
       list,
@@ -382,7 +401,7 @@ class Payment extends React.PureComponent {
       recordPage,
       recordTotal,
     } = this.props;
-    const { status, visibleConfirm, selectedRowKeys, selectedRows } = this.state;
+    const { status, visibleConfirm, selectedRowKeys, selectedRows, officeList } = this.state;
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -591,6 +610,7 @@ class Payment extends React.PureComponent {
           recordList={recordList}
           recordPage={{...recordPage, total: recordTotal}}
           onRecord={this.onRecord}
+          officeList={officeList}
         />
         <ConfirmPay
           batchDetails={batchDetails}

@@ -11,6 +11,7 @@ import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
 import PayModal from './PayModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
+import SearchBanner from '../../../statistics/overview/components/Search/Searchs';
 
 const { RangePicker } = DatePicker;
 const { APP_API } = constants;
@@ -18,6 +19,7 @@ const { APP_API } = constants;
 class PayTemp extends React.PureComponent {
   constructor(props) {
     super(props);
+    console.log('🚀 ~ file: PayTemp.js ~ line 22 ~ PayTemp ~ constructor ~ props', props);
     this.state = {
       status: '2',
       selectedRowKeys: [],
@@ -28,6 +30,31 @@ class PayTemp extends React.PureComponent {
       accountType: [],
       pageNo: 1,
       show: true,
+      searchList: [{
+        type: 'rangeTime',
+        label: '提交时间',
+        placeholder: '请选择',
+        key: ['startTime', 'endTime'],
+        id: 'startTime',
+        out: 1
+      },
+      {
+        type: 'tree',
+        label: '分公司',
+        placeholder: '请选择',
+        key: 'officeIds',
+        id: 'officeIds',
+        out: 1,
+        options: props.officeList
+      },
+      {
+        type: 'search',
+        label: '外部选择',
+        placeholder: '单号、事由、收款人',
+        key: 'searchContent',
+        id: 'searchContent',
+        out: 1
+      }]
     };
   }
 
@@ -35,6 +62,8 @@ class PayTemp extends React.PureComponent {
     const {
       query,
     } = this.props;
+    console.log('officeList', this.props.officeList);
+    // this.onSearch();
     this.onQuery({
       ...query,
       status: 2,
@@ -263,24 +292,8 @@ class PayTemp extends React.PureComponent {
     }
     const ids = `${selectedRowKeys.join(',')}`;
     if (!Number(templateType)) {
-      // window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
-      // window.location.href = `${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`;
-      // this.props.dispatch({
-      //   type: 'global/invoicePrint',
-      //   payload: {
-      //     ids,
-      //   }
-      // });
       ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`);
     } else {
-      // window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
-      // window.location.href = `${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${ids}`;
-      // this.props.dispatch({
-      //   type: 'global/loanPrint',
-      //   payload: {
-      //     ids,
-      //   }
-      // });
       ddOpenLink(`${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${ids}`);
     }
   }
@@ -374,6 +387,18 @@ class PayTemp extends React.PureComponent {
     });
   }
 
+  onChangeSearch = val => {
+    this.setState({
+        searchList: val
+    }, () => {
+        this.onQuery({
+          pageNo: 1,
+          pageSize: 10
+        });
+      }
+    );
+  };
+
   render() {
     const {
       status,
@@ -382,6 +407,7 @@ class PayTemp extends React.PureComponent {
       selectedRows,
       accountTypes,
       show,
+      searchList,
     } = this.state;
     const {
       list,
@@ -421,136 +447,141 @@ class PayTemp extends React.PureComponent {
       fixed: true
     };
     return (
-      <div className="content-dt" style={{padding: 0}}>
-        <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
-          <Menu.Item key={2}>
-            待发放
-          </Menu.Item>
-          <Menu.Item key={1}>
-            已票签
-          </Menu.Item>
-          <Menu.Item key={3}>
-            已发放
-          </Menu.Item>
-        </Menu>
-        <>
-          {
-            Number(status) === 1 && show &&
-            <div className={style.production}>
-              <div className={style.texts}>
-                <i className="iconfont iconinfo-cirlce" />
-                <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放</span>
-              </div>
-              <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
-            </div>
-          }
-        </>
-        <div className={Number(status) === 1 && show ? cs(style.payContent, style.noPadding) : style.payContent}>
-          <div className="cnt-header" style={{display: 'flex'}}>
-            <div className="head_lf">
-              {
-                (Number(status) === 2 || Number(status) === 1) &&
-                <>
-                  <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
-                    <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
-                  </PayModal>
-                  <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? '移至已票签' : '移回待发放'}</Button>
-                </>
-              }
-              <DropBtn
-                selectKeys={selectedRowKeys}
-                total={total}
-                onExport={(key) => this.export(key)}
-                noLevels
-              />
-              <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
-              <Form style={{display: 'flex', marginLeft: '8px'}}>
-                <Form.Item label="提交时间">
-                  {
-                    getFieldDecorator('createTime')(
-                      <RangePicker
-                        className="m-l-8"
-                        placeholder="请选择时间"
-                        format="YYYY-MM-DD"
-                        style={{ width: '250px' }}
-                        showTime={{
-                          hideDisabledOptions: true,
-                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                        }}
-                        onOk={() => this.onOk()}
-                        onChange={() => this.handChange()}
-                      />
-                    )
-                  }
-                </Form.Item>
-                <Search
-                  placeholder="单号 事由 收款人"
-                  style={{ width: '272px', marginLeft: '8px' }}
-                  onSearch={(e) => this.onSearch(e)}
-                />
-              </Form>
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <p className="c-black-85 fw-500 fs-14">
-              已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
-            </p>
+      <div style={{padding: 0}}>
+        <div className={style.titleMenu}>
+          <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
+            <Menu.Item key={2}>
+              待发放
+            </Menu.Item>
+            <Menu.Item key={1}>
+              已票签
+            </Menu.Item>
+            <Menu.Item key={3}>
+              已发放
+            </Menu.Item>
+          </Menu>
+        </div>
+        <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
+        <div className="content-dt" style={{padding: 0}}>
+          <>
             {
-              Number(status) === 1 &&
-              <div className="head_rf">
-                <TableTemplate
-                  page={recordPage}
-                  onQuery={onRecord}
-                  columns={recordColumns}
-                  list={recordList}
-                  placeholder="输入详情内容搜索"
-                  sWidth='800px'
-                >
-                  <div className="head_rf" style={{ cursor: 'pointer' }}>
-                    <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                    <span className="fs-14 c-black-65">操作记录</span>
-                  </div>
-                </TableTemplate>
+              Number(status) === 1 && show &&
+              <div className={style.production}>
+                <div className={style.texts}>
+                  <i className="iconfont iconinfo-cirlce" />
+                  <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放</span>
+                </div>
+                <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
               </div>
             }
-          </div>
-          <Table
-            columns={columns}
-            dataSource={list}
-            rowSelection={rowSelection}
-            scroll={{ x: 2400 }}
-            rowKey="id"
-            loading={loading}
-            onChange={this.handleTableChange}
-            pagination={{
-              current: query.pageNo,
-              total,
-              size: 'small',
-              showTotal: () => (`共${total}条数据`),
-              showSizeChanger: true,
-              showQuickJumper: true,
-              onShowSizeChange: (cur, size) => {
-                console.log('分页改变');
-                const createTime = this.props.form.getFieldValue('createTime');
-                let startTime = '';
-                let endTime = '';
-                if (createTime && createTime.length > 0) {
-                  startTime = moment(createTime[0]).format('x');
-                  endTime = moment(createTime[1]).format('x');
+          </>
+          <div className={Number(status) === 1 && show ? cs(style.payContent, style.noPadding) : style.payContent}>
+            <div className="cnt-header" style={{display: 'flex'}}>
+              <div className="head_lf">
+                {
+                  (Number(status) === 2 || Number(status) === 1) &&
+                  <>
+                    <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
+                      <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
+                    </PayModal>
+                    <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? '移至已票签' : '移回待发放'}</Button>
+                  </>
                 }
-                const { searchContent } = this.state;
-                this.onQuery({
-                  pageNo: cur,
-                  pageSize: size,
-                  searchContent,
-                  status,
-                  endTime,
-                  startTime,
-                  accountTypes
-                });
+                <DropBtn
+                  selectKeys={selectedRowKeys}
+                  total={total}
+                  onExport={(key) => this.export(key)}
+                  noLevels
+                />
+                <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
+                <Form style={{display: 'flex', marginLeft: '8px'}}>
+                  <Form.Item label="提交时间">
+                    {
+                      getFieldDecorator('createTime')(
+                        <RangePicker
+                          className="m-l-8"
+                          placeholder="请选择时间"
+                          format="YYYY-MM-DD"
+                          style={{ width: '250px' }}
+                          showTime={{
+                            hideDisabledOptions: true,
+                            defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                          }}
+                          onOk={() => this.onOk()}
+                          onChange={() => this.handChange()}
+                        />
+                      )
+                    }
+                  </Form.Item>
+                  <Search
+                    placeholder="单号 事由 收款人"
+                    style={{ width: '272px', marginLeft: '8px' }}
+                    onSearch={(e) => this.onSearch(e)}
+                  />
+                </Form>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <p className="c-black-85 fw-500 fs-14">
+                已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
+              </p>
+              {
+                Number(status) === 1 &&
+                <div className="head_rf">
+                  <TableTemplate
+                    page={recordPage}
+                    onQuery={onRecord}
+                    columns={recordColumns}
+                    list={recordList}
+                    placeholder="输入详情内容搜索"
+                    sWidth='800px'
+                  >
+                    <div className="head_rf" style={{ cursor: 'pointer' }}>
+                      <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+                      <span className="fs-14 c-black-65">操作记录</span>
+                    </div>
+                  </TableTemplate>
+                </div>
               }
-            }}
-          />
+            </div>
+            <Table
+              columns={columns}
+              dataSource={list}
+              rowSelection={rowSelection}
+              scroll={{ x: 2400 }}
+              rowKey="id"
+              loading={loading}
+              onChange={this.handleTableChange}
+              pagination={{
+                current: query.pageNo,
+                total,
+                size: 'small',
+                showTotal: () => (`共${total}条数据`),
+                showSizeChanger: true,
+                showQuickJumper: true,
+                onShowSizeChange: (cur, size) => {
+                  console.log('分页改变');
+                  const createTime = this.props.form.getFieldValue('createTime');
+                  let startTime = '';
+                  let endTime = '';
+                  if (createTime && createTime.length > 0) {
+                    startTime = moment(createTime[0]).format('x');
+                    endTime = moment(createTime[1]).format('x');
+                  }
+                  const { searchContent } = this.state;
+                  this.onQuery({
+                    pageNo: cur,
+                    pageSize: size,
+                    searchContent,
+                    status,
+                    endTime,
+                    startTime,
+                    accountTypes
+                  });
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
     );

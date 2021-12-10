@@ -34,3 +34,17 @@
 .noPadding{
   padding-top: 0;
 }
+.titleMenu{
+  padding-left: 8px;
+  background: #fff;
+  :global{
+    .ant-menu-horizontal{
+      border-bottom: none;
+      height: 58px;
+    }
+    .ant-menu-item{
+      padding: 0;
+      margin: 10px 24px 0;
+    }
+  }
+}

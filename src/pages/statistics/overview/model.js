@@ -402,7 +402,7 @@ export default {
           Number(((((submitSum - submitSumYear) / submitSumYear).toFixed(2)) * 100).toFixed(0))
           : 0;
           response.unshift({
-            deptName: '合计',
+            officeName: '合计',
             id: -1,
             'submitSum': submitSum,
             'submitSumAll': submitSum,
@@ -470,6 +470,9 @@ export default {
         break;
         case 5:
           url = api.supplierDetail;
+        break;
+        case 6:
+          url = api.officeDetail;
         break;
         default:
           break;
