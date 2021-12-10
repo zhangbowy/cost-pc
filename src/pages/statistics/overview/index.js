@@ -37,7 +37,7 @@ const menu = [{
 }, {
   key: '6',
   name: '分公司支出',
-  url: 'statistics_office',
+  url: 'statistics_branchOffice',
 }];
 const objStatus = {
   2: {
@@ -120,11 +120,6 @@ class EchartsTest extends Component {
           newArr.push(it);
         }
       });
-      newArr.push({
-        key: '6',
-        name: '分公司支出',
-        url: 'statistics_office',
-      });
       this.setState({
         menus: newArr,
       });
@@ -182,7 +177,8 @@ class EchartsTest extends Component {
               startTime: Number(times.startTime),
               endTime: Number(times.endTime),
             },
-            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
+            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~
+            ${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
           };
         }
         return { ...it };

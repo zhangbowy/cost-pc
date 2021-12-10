@@ -238,12 +238,6 @@ class Statistics extends React.PureComponent {
         ? JSON.parse(localStorage.getItem('submitTime'))
         : null;
     localStorage.removeItem('submitTime');
-    // const defaults = localStorage.getItem('defaultLocal') ?
-    // JSON.parse(localStorage.getItem('defaultLocal')) : null;
-    // localStorage.removeItem('defaultLocal');
-    console.log('返回的历史数据时间', staticsObj[statusTime].key);
-    console.log('返回的历史数据时间', searchList);
-    console.log('返回的历史数据时间', times);
     let arr = [...searchList];
     arr = searchList.map(it => {
       if (it.key === 'statusList' && linkStatus) {
@@ -585,30 +579,6 @@ class Statistics extends React.PureComponent {
       .then(() => {
         message.success('导入需要一些时间，导入完成后将会发送工作通知，请留意');
         this.handleCancel();
-        // const now=new Date();
-        // this.time(now);
-        // this.setState({
-        //   importStatus: false,
-        //   importLoading: false
-        // });
-        // const { historyImportStatus } = this.props;
-        // if (historyImportStatus) {
-          // sessionStorage.setItem(
-          //   'importResult',
-          //   JSON.stringify({
-          //     ...historyImportStatus,
-          //     date: moment(now).format('YYYY-MM-DD HH:mm:ss')
-          //   })
-          // );
-          // this.setState({
-          //   // importResult: historyImportStatus,
-          //   percent: 100,
-          //   importLoading: false,
-          //   msgTimeOut:false
-          // });
-        // } else {
-
-        // }
       });
   };
 

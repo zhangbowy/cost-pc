@@ -56,26 +56,6 @@ class ImportData extends Component {
       .then(() => {
         message.success('导入需要一些时间，导入完成后将会发送工作通知，请留意');
         this.handleCancel();
-        // const now=new Date();
-        // this.time(now);
-        // const { historyImportStatus } = this.props;
-        // if (historyImportStatus) {
-        //   sessionStorage.setItem('importResult',JSON.stringify({
-        //     ...historyImportStatus,
-        //     date: moment(now).format('YYYY-MM-DD HH:mm:ss')
-        //   }));
-        //   this.setState({
-        //     // importResult: historyImportStatus,
-        //     percent: 100,
-        //     importLoading: false,
-        //     msgTimeOut:false
-        //   });
-        // } else {
-        //   this.setState({
-        //     importStatus: false,
-        //     importLoading: false
-        //   });
-        // }
       });
   };
 

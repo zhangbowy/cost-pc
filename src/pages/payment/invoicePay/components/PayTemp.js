@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Table, Menu, Button, Form, DatePicker, message } from 'antd';
+import { Table, Menu, Button, Form, message } from 'antd';
 import moment from 'moment';
-import Search from 'antd/lib/input/Search';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
@@ -13,7 +12,6 @@ import PayModal from './PayModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
 import SearchBanner from '../../../statistics/overview/components/Search/Searchs';
 
-const { RangePicker } = DatePicker;
 const { APP_API } = constants;
 @Form.create()
 class PayTemp extends React.PureComponent {
@@ -25,36 +23,10 @@ class PayTemp extends React.PureComponent {
       selectedRowKeys: [],
       count: 0,
       sumAmount: 0,
-      searchContent: '',
       selectedRows: [],
       accountType: [],
       pageNo: 1,
       show: true,
-      searchList: [{
-        type: 'rangeTime',
-        label: '提交时间',
-        placeholder: '请选择',
-        key: ['startTime', 'endTime'],
-        id: 'startTime',
-        out: 1
-      },
-      {
-        type: 'tree',
-        label: '分公司',
-        placeholder: '请选择',
-        key: 'officeIds',
-        id: 'officeIds',
-        out: 1,
-        options: props.officeList
-      },
-      {
-        type: 'search',
-        label: '外部选择',
-        placeholder: '单号、事由、收款人',
-        key: 'searchContent',
-        id: 'searchContent',
-        out: 1
-      }]
     };
   }
 
@@ -62,8 +34,6 @@ class PayTemp extends React.PureComponent {
     const {
       query,
     } = this.props;
-    console.log('officeList', this.props.officeList);
-    // this.onSearch();
     this.onQuery({
       ...query,
       status: 2,
@@ -72,14 +42,6 @@ class PayTemp extends React.PureComponent {
 
   handleClick = e => {
     const { query } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent } = this.state;
     this.setState({
       status: e.key,
       selectedRowKeys: [],
@@ -91,9 +53,6 @@ class PayTemp extends React.PureComponent {
     this.onQuery({
       ...query,
       status: e.key,
-      searchContent,
-      startTime,
-      endTime,
       pageNo: 1,
       isSign: Number(e.key) === 1,
     });
@@ -152,13 +111,6 @@ class PayTemp extends React.PureComponent {
     const {
       query,
     } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
     if (val) {
       this.setState({
         selectedRows: [],
@@ -166,29 +118,12 @@ class PayTemp extends React.PureComponent {
         sumAmount: 0,
       });
     }
-    const { status, searchContent } = this.state;
+    const { status } = this.state;
     this.onQuery({
       ...query,
       pageNo: 1,
       status,
-      startTime,
-      endTime,
-      searchContent,
     });
-  }
-
-  handChange = (date) => {
-    if (!date) {
-      const { status, searchContent } = this.state;
-      const {
-        query,
-      } = this.props;
-      this.onQuery({
-        ...query,
-        status,
-        searchContent,
-      });
-    }
   }
 
   onLink = (id) => {
@@ -213,55 +148,27 @@ class PayTemp extends React.PureComponent {
     });
   }
 
-  onSearch = (val) => {
-    const { query } = this.props;
-    const { status, accountTypes } = this.state;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    this.setState({
-      searchContent: val,
-    });
-    this.onQuery({
-      ...query,
-      searchContent: val,
-      status,
-      startTime,
-      endTime,
-      accountTypes
-    });
-  }
-
   export = (key) => {
-    const { selectedRowKeys, status, searchContent, accountTypes } = this.state;
-    const { namespace } = this.props;
+    const { selectedRowKeys, status, accountTypes } = this.state;
+    const { namespace, searchList } = this.props;
     if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
     }
     let params = {};
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
     let url = `${namespace}/exporting`;
     if (key === '1') {
       params = {
         ids: selectedRowKeys
       };
     } else if (key === '2') {
-      params = {
-        searchContent,
-        startTime,
-        endTime,
-      };
+      searchList.forEach(it => {
+        if (it.value) {
+          Object.assign(params, {
+            ...it.value
+          });
+        }
+      });
     }
     if(Number(status) !== 2 && Number(status) !== 1) {
       url = `${namespace}/exported`;
@@ -321,15 +228,7 @@ class PayTemp extends React.PureComponent {
   }
 
   handleTableChange = (pagination, filters) => {
-
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent, status } = this.state;
+    const { status } = this.state;
     this.setState({
       accountTypes: filters.accountType,
       pageNo: pagination.current,
@@ -338,29 +237,25 @@ class PayTemp extends React.PureComponent {
         pageNo: pagination.current,
         pageSize: pagination.pageSize,
         accountTypes: filters.accountType || [],
-        searchContent,
         status,
-        endTime,
-        startTime,
       });
     });
 
   };
 
   onMove = () => {
-    const { selectedRowKeys, accountTypes, searchContent, status } = this.state;
+    const { selectedRowKeys, accountTypes, status } = this.state;
     const { templateType, query } = this.props;
     if (!selectedRowKeys.length) {
       message.error('请至少选择一条数据');
       return;
     }
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
+    const params = {
+      pageNo: 1,
+      pageSize: query.pageSize,
+      accountTypes,
+      status,
+    };
     this.props.operationSign({
       invoiceIds: selectedRowKeys,
       templateType,
@@ -369,15 +264,7 @@ class PayTemp extends React.PureComponent {
       this.setState({
         selectedRowKeys: [],
       });
-      this.onQuery({
-        pageNo: 1,
-        pageSize: query.pageSize,
-        accountTypes,
-        searchContent,
-        status,
-        endTime,
-        startTime,
-      });
+      this.onQuery(params);
     });
   }
 
@@ -387,18 +274,6 @@ class PayTemp extends React.PureComponent {
     });
   }
 
-  onChangeSearch = val => {
-    this.setState({
-        searchList: val
-    }, () => {
-        this.onQuery({
-          pageNo: 1,
-          pageSize: 10
-        });
-      }
-    );
-  };
-
   render() {
     const {
       status,
@@ -407,12 +282,10 @@ class PayTemp extends React.PureComponent {
       selectedRows,
       accountTypes,
       show,
-      searchList,
     } = this.state;
     const {
       list,
       query,
-      form: { getFieldDecorator },
       total,
       loading,
       columns,
@@ -421,7 +294,9 @@ class PayTemp extends React.PureComponent {
       recordList,
       recordPage,
       onRecord,
+      searchList,
     } = this.props;
+
     const recordColumns = [{
       title: '姓名',
       dataIndex: 'createName',
@@ -461,7 +336,17 @@ class PayTemp extends React.PureComponent {
             </Menu.Item>
           </Menu>
         </div>
-        <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
+        <SearchBanner
+          list={searchList || []}
+          onChange={val => this.props.onChangeSearch(val, () => {
+            this.onQuery({
+              pageNo: 1,
+              pageSize: query.pageSize,
+              accountTypes,
+              status,
+            });
+          })}
+        />
         <div className="content-dt" style={{padding: 0}}>
           <>
             {
@@ -494,31 +379,6 @@ class PayTemp extends React.PureComponent {
                   noLevels
                 />
                 <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
-                <Form style={{display: 'flex', marginLeft: '8px'}}>
-                  <Form.Item label="提交时间">
-                    {
-                      getFieldDecorator('createTime')(
-                        <RangePicker
-                          className="m-l-8"
-                          placeholder="请选择时间"
-                          format="YYYY-MM-DD"
-                          style={{ width: '250px' }}
-                          showTime={{
-                            hideDisabledOptions: true,
-                            defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                          }}
-                          onOk={() => this.onOk()}
-                          onChange={() => this.handChange()}
-                        />
-                      )
-                    }
-                  </Form.Item>
-                  <Search
-                    placeholder="单号 事由 收款人"
-                    style={{ width: '272px', marginLeft: '8px' }}
-                    onSearch={(e) => this.onSearch(e)}
-                  />
-                </Form>
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -560,22 +420,10 @@ class PayTemp extends React.PureComponent {
                 showSizeChanger: true,
                 showQuickJumper: true,
                 onShowSizeChange: (cur, size) => {
-                  console.log('分页改变');
-                  const createTime = this.props.form.getFieldValue('createTime');
-                  let startTime = '';
-                  let endTime = '';
-                  if (createTime && createTime.length > 0) {
-                    startTime = moment(createTime[0]).format('x');
-                    endTime = moment(createTime[1]).format('x');
-                  }
-                  const { searchContent } = this.state;
                   this.onQuery({
                     pageNo: cur,
                     pageSize: size,
-                    searchContent,
                     status,
-                    endTime,
-                    startTime,
                     accountTypes
                   });
                 }
