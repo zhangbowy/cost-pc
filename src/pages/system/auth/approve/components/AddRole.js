@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, TreeSelect, Button } from 'antd';
+import { Modal, Form, TreeSelect, Button, Select } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
 import { formItemLayout, defaultTitle } from '@/utils/constants';
 import Lines from '@/components/StyleCom/Lines';
 
-const { SHOW_PARENT, SHOW_CHILD } = TreeSelect;
+const { SHOW_PARENT } = TreeSelect;
 @Form.create()
 @connect(({ global, loading, approveRole, costGlobal, session }) => ({
   costCategoryList: global.costCategoryList,
@@ -178,13 +178,6 @@ class AddRole extends Component {
       tId: 'value',
       otherKeys: ['type']
     }, costCategoryList);
-    const officeList = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'officeName',
-      tName: 'title',
-      tId: 'value',
-    }, officeTree);
     const {
       visible,
       category,
@@ -268,20 +261,21 @@ class AddRole extends Component {
               }
             </Form.Item>
             {
-              officeList && officeList.length > 0 &&
+              officeTree && officeTree.length > 0 &&
               <Form.Item label="所在公司" {...formItemLayout}>
                 {
                   getFieldDecorator('officeIds', {
                     initialValue: officeIds,
                   })(
-                    <TreeSelect
-                      treeData={officeList}
-                      treeCheckable
-                      placeholder="请选择"
-                      style={{width: '100%'}}
-                      showCheckedStrategy={SHOW_CHILD}
-                      dropdownStyle={{height: '300px'}}
-                    />
+                    <Select mode="multiple">
+                      {
+                        officeTree.map(it => (
+                          <Select.Option key={it.id} placeholder="请选择">
+                            {it.officeName}
+                          </Select.Option>
+                        ))
+                      }
+                    </Select>
                   )
                 }
               </Form.Item>
