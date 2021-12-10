@@ -9,17 +9,9 @@ import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
-// import AddCost from './AddCost';
 import { getArrayColor, classifyIcon } from '../../../utils/constants';
 import { ddPreviewImage } from '../../../utils/ddApi';
 
-// const labelInfo = {
-//   costName: '支出类别',
-//   costSum: '金额(元)',
-//   costNote: '费用备注',
-//   imgUrl: '图片',
-//   happenTime: '发生日期'
-// };
 @connect(({ costGlobal, global }) => ({
   listFolder: costGlobal.folderList,
   expenseList: global.expenseList,
@@ -39,6 +31,7 @@ class AddFolder extends Component {
       selectedRowKeys:[],
       selectedRows: [],
       folderList: [], // 列表
+      searchContent: '',
     };
   }
 
@@ -128,6 +121,7 @@ class AddFolder extends Component {
       visible: false,
       selectedRowKeys: [],
       selectedRows: [],
+      searchContent: ''
     });
   }
 
@@ -269,13 +263,37 @@ class AddFolder extends Component {
   }
 
   onSearch = (e) => {
+    this.setState({
+      searchContent: e,
+    });
+    const { officeId, expenseList } = this.props;
     this.props.dispatch({
       type: 'costGlobal/listFolder',
       payload: {
         pageSize: 100,
         pageNo: 1,
         searchContent: e,
+        officeId: officeId || ''
       }
+    }).then(() => {
+      const { listFolder } = this.props;
+      const ids = expenseList.map(it => it.id);
+      const arr = [];
+      listFolder.forEach(item => {
+        if (!ids.includes(item.categoryId)) {
+          arr.push({
+            ...item,
+            disabled: true,
+          });
+        } else {
+          arr.push({
+            ...item
+          });
+        }
+      });
+      this.setState({
+        folderList: arr,
+      });
     });
   }
 
@@ -288,7 +306,8 @@ class AddFolder extends Component {
     const {
       visible,
       selectedRowKeys,
-      folderList
+      folderList,
+      searchContent
     } = this.state;
     const columns = [{
       title: '支出类别',
@@ -425,9 +444,11 @@ class AddFolder extends Component {
           <div className="m-b-16">
             {/* <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" /> */}
             <Search
-              placeholder="请输入单号、事由"
+              placeholder="请输入支出类别名称搜索"
               style={{ width: '292px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
+              value={searchContent}
+              onInput={e => this.setState({ searchContent: e.target.value })}
             />
             <span>未报销支出共计 {folderSum.totalCount}笔，{folderSum.costSumStr}</span>
           </div>
@@ -439,6 +460,7 @@ class AddFolder extends Component {
                 dataSource={folderList}
                 pagination={false}
                 rowKey="id"
+                scroll={{ y: 332 }}
               />
             </div>
           </div>

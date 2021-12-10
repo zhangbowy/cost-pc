@@ -54,7 +54,7 @@ class ImportData extends Component {
         payload: formData
       })
       .then(() => {
-        message.success('完成导入后，发送工作通知');
+        message.success('导入需要一些时间，导入完成后将会发送工作通知，请留意');
         this.handleCancel();
         // const now=new Date();
         // this.time(now);
