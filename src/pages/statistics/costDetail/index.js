@@ -701,6 +701,7 @@ class Statistics extends React.PureComponent {
       historyImportStatus,
       loadingImportant
     } = this.props;
+      console.log('🚀 ~ file: index.js ~ line 704 ~ Statistics ~ render ~ query', query);
     const recordColumns = [
       {
         title: '姓名',
@@ -1024,14 +1025,15 @@ class Statistics extends React.PureComponent {
             rowSelection={rowSelection}
             onChange={this.handleTableChange}
             rowKey="id"
-            scroll={{ x: 3220 }}
+            scroll={{ x: 3220, y: 'calc(100vh - 400px)' }}
             pagination={{
-              ...query,
+              current: query.pageNo,
               total,
+              pageSize: query.pageSize,
               size: 'small',
               showTotal: () => `共${total}条数据`,
               showSizeChanger: true,
-              showQuickJumper: true
+              showQuickJumper: true,
             }}
           />
         </div>
