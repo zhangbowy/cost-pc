@@ -24,11 +24,12 @@ export default {
   effects: {
     *list({ payload }, { call, put }) {
       const response = yield call(post, api.list, payload);
+      console.log('🚀 ~ file: model.js ~ line 27 ~ *list ~ payload', payload);
       yield put({
         type: 'save',
         payload: {
           list: response.list || [],
-          queryPage: {
+          query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
