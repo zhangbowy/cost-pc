@@ -41,7 +41,8 @@ export default {
     key: 'print',
     value: '打印设置',
   }],
-  imgPath: `${APP_API}/cost/upload/image`
+  imgPath: `${APP_API}/cost/upload/image`,
+  filePath: `${APP_API}/cost/upload/file`,
 };
 
 /* ---------- Layout ----------*/

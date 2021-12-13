@@ -35,7 +35,8 @@ const labelInfo = {
   imgUrl: '图片',
   happenTime: '发生日期',
   flightLevel: '航班仓型',
-  officeId: '所在公司'
+  officeId: '所在公司',
+  ossFileUrl: '康帕斯附件',
 };
 @Form.create()
 @connect(({ global, costGlobal, session }) => ({
@@ -78,6 +79,7 @@ class AddCost extends Component {
       treeList: [],
       fileUrl: [],
       officeId: '',
+      ossFileUrl: [],
       // treeExpandedKeys: [],
     };
   }
@@ -272,7 +274,8 @@ class AddCost extends Component {
                 currencySymbol: currency.currencySymbol || '¥',
                 imgUrl: detailFolder.imgUrl,
                 fileUrl: detailFolder.fileUrl || [],
-                officeId: detailFolder.officeId
+                officeId: detailFolder.officeId,
+                ossFileUrl: detailFolder.ossFileUrl || [],
               });
               const expands = detailFolder.selfCostDetailFieldVos ?
               [...detailFolder.expandCostDetailFieldVos, ...detailFolder.selfCostDetailFieldVos]
@@ -330,6 +333,7 @@ class AddCost extends Component {
             exchangeRate: detail.exchangeRate || '1',
             currencySymbol: detail.currencySymbol || '¥',
             costDetailShareVOS: newArray,
+            ossFileUrl: detail.ossFileUrl || [],
             expandField,
             imgUrl: detail.imgUrl || [],
             costSum: detail.costSum,
@@ -901,6 +905,7 @@ class AddCost extends Component {
       treeList,
       fileUrl,
       officeId,
+      ossFileUrl,
     } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
@@ -1407,24 +1412,24 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'imgUrl' && showField.imgUrl.status &&
+                          it.field === 'ossFileUrl' && showField.ossFileUrl.status &&
                           <Col span={12}>
                             <Form.Item
-                              label={labelInfo.imgUrl}
+                              label={labelInfo.ossFileUrl}
                               {...formItemLayout}
                             >
                               {
-                                getFieldDecorator('KPSFileUrl', {
-                                  initialValue: imgUrl.length ? imgUrl : null,
+                                getFieldDecorator('ossFileUrl', {
+                                  initialValue: ossFileUrl.length ? ossFileUrl : null,
                                   rules: [{
-                                    required: !!(showField.imgUrl.isWrite), message: '请选择图片'
+                                    required: !!(showField.ossFileUrl.isWrite), message: '请选择图片'
                                   }]
                                 })(
                                   <UploadFile
                                     onChange={(val) => this.onChangeFile(val)}
-                                    fileUrl={imgUrl}
+                                    fileUrl={ossFileUrl}
                                     userInfo={userInfo}
-                                    disabled={modify && !showField.imgUrl.isModify}
+                                    disabled={modify && !showField.ossFileUrl.isModify}
                                   />
                                 )
                               }

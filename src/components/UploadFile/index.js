@@ -6,7 +6,7 @@ import style from './index.scss';
 import fileIcon from '../../utils/fileIcon';
 // import { ddPreviewImage } from '../../utils/ddApi';
 
-const {imgPath} = constants;
+const {filePath} = constants;
 
 class UploadFile extends Component {
   constructor(props) {
@@ -63,7 +63,7 @@ class UploadFile extends Component {
           disabled={disabled}
           showUploadList={false}
           // loading={loading}
-          action={imgPath}
+          action={filePath}
           beforeUpload={this.beforeUpload}
           onSuccess={this.handleChange}
           data={{ companyId: userInfo ? userInfo.companyId : '' }}
