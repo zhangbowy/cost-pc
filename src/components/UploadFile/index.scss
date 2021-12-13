@@ -1,0 +1,31 @@
+.imgClass{
+  display: flex;
+  flex-wrap: wrap;
+  :global(.ant-upload.ant-upload-select-picture-card) {
+    width: 60px!important;
+    height: 60px!important;
+    background: rgba(0, 0, 0, 0.02);
+  }
+  :global(.ant-upload-picture-card-wrapper){
+    width: auto!important;
+  }
+}
+.img{
+  width: 60px;
+  height: 60px;
+  margin-right: 8px;
+  cursor: pointer;
+  position: relative;
+  border:1px solid rgba(0,0,0,0.15);
+  border-radius:3px;
+  img{
+    border-radius: 3px;
+    height: 100%;
+  }
+  :global(.iconfont) {
+    position: absolute;
+    right: 0;
+    top: -20px;
+    right: -7px;
+  }
+}

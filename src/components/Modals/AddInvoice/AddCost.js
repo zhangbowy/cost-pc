@@ -17,6 +17,7 @@ import { compare, handleProduction, guid, objToArr, getTimeIdNo } from '../../..
 import fields from '../../../utils/fields';
 import defaultFunc from './utils';
 import { fileUpload } from '../../../utils/ddApi';
+import UploadFile from '../../UploadFile';
 // import TreeCatogory from './TreeCatogory';
 
 const { addCostValue } = defaultFunc;
@@ -1389,6 +1390,39 @@ class AddCost extends Component {
                                   <UploadImg
                                     onChange={(val) => this.onChangeImg(val)}
                                     imgUrl={imgUrl}
+                                    userInfo={userInfo}
+                                    disabled={modify && !showField.imgUrl.isModify}
+                                  />
+                                )
+                              }
+                              {
+                                it.itemExplain && !!(it.itemExplain.length) &&
+                                it.itemExplain.map(item => (
+                                  <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                    {item.note}
+                                  </p>
+                                ))
+                              }
+                            </Form.Item>
+                          </Col>
+                        }
+                        {
+                          it.field === 'imgUrl' && showField.imgUrl.status &&
+                          <Col span={12}>
+                            <Form.Item
+                              label={labelInfo.imgUrl}
+                              {...formItemLayout}
+                            >
+                              {
+                                getFieldDecorator('KPSFileUrl', {
+                                  initialValue: imgUrl.length ? imgUrl : null,
+                                  rules: [{
+                                    required: !!(showField.imgUrl.isWrite), message: '请选择图片'
+                                  }]
+                                })(
+                                  <UploadFile
+                                    onChange={(val) => this.onChangeFile(val)}
+                                    fileUrl={imgUrl}
                                     userInfo={userInfo}
                                     disabled={modify && !showField.imgUrl.isModify}
                                   />
