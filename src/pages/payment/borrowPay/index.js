@@ -96,6 +96,14 @@ class BorrowPay extends React.PureComponent {
         isSign: Number(payload.status) === 1,
       });
     }
+    const { searchList } = this.state;
+    searchList.forEach(it => {
+      if (it.value) {
+        Object.assign(payload, {
+          ...it.value
+        });
+      }
+    });
     this.props.dispatch({
       type: 'borrowPay/list',
       payload: {
