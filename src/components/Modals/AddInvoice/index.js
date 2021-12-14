@@ -316,11 +316,12 @@ class AddInvoice extends Component {
           });
         }
         const { officeList } = this.props;
+        console.log('🚀 ~ file: index.js ~ line 318 ~ AddInvoice ~ Promise.all ~ officeList', officeList);
         if (officeList.length > 0 && officeList.length === 1) {
-          if (detail.officeId && officeList.findIndex(it => it.id === detail.officeId) === -1) {
+          if (!detail.officeId || officeList.findIndex(it => it.id === detail.officeId) === -1) {
             detail={
               ...detail,
-              officeId: officeList[0].officeId,
+              officeId: officeList[0].id,
             };
           }
         }

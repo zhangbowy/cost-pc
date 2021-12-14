@@ -129,7 +129,7 @@ class AddRole extends Component {
             makeDept,
             bearDept,
             approveRoleId: id,
-            officeIds: values.officeIds,
+            officeIds: values.officeIds || [],
             id: detail && detail.id ? detail.id : '',
           }
         }).then(() => {
@@ -267,10 +267,10 @@ class AddRole extends Component {
                   getFieldDecorator('officeIds', {
                     initialValue: officeIds,
                   })(
-                    <Select mode="multiple">
+                    <Select mode="multiple" placeholder="请选择">
                       {
                         officeTree.map(it => (
-                          <Select.Option key={it.id} placeholder="请选择">
+                          <Select.Option key={it.id}>
                             {it.officeName}
                           </Select.Option>
                         ))
