@@ -34,6 +34,10 @@ const menu = [{
   key: '5',
   name: '供应商支出',
   url: 'statistics_supplier',
+}, {
+  key: '6',
+  name: '分公司支出',
+  url: 'statistics_branchOffice',
 }];
 const objStatus = {
   2: {
@@ -78,6 +82,7 @@ const objStatus = {
   projectList: costGlobal.projectList,
   supplierList: global.supplierList,
   roleStatics: costGlobal.roleStatics,
+  officeListAndRole: costGlobal.officeListAndRole,
 }))
 class EchartsTest extends Component {
 
@@ -172,7 +177,8 @@ class EchartsTest extends Component {
               startTime: Number(times.startTime),
               endTime: Number(times.endTime),
             },
-            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
+            valueStr: `${moment(Number(times.startTime)).format('YYYY-MM-DD')}~
+            ${moment(Number(times.endTime)).format('YYYY-MM-DD')}`
           };
         }
         return { ...it };
@@ -217,7 +223,7 @@ class EchartsTest extends Component {
           width: query === 'dept' ? 160 : 100,
         }]]
       });
-      if (Number(params) === 1 || Number(params) === 2) {
+      if (Number(params) === 1 || Number(params) === 2 || Number(params) === 6) {
         cols = update(cols, {
           $splice: [[cols.length , 0,{
             title: '操作',
@@ -289,17 +295,20 @@ class EchartsTest extends Component {
     console.log('EchartsTest -> search -> searchList', searchList);
     const { dispatch } = this.props;
     const _this = this;
-    const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
+    const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList', 'officeListAndRole'];
     const arr = fetchs.map(it => {
       return dispatch({
-        type: it === 'projectList' ? `costGlobal/${it}` :`global/${it}`,
+        type: it === 'projectList' || it === 'officeListAndRole'
+          ? `costGlobal/${it}`
+          :`global/${it}`,
         payload: {},
       });
     });
+    console.log('fetch', fetchs);
     Promise.all(arr).then(() => {
-      const { costCategoryList, invoiceList, projectList, supplierList } = _this.props;
+      const { costCategoryList, invoiceList, projectList, supplierList, officeListAndRole } = _this.props;
       const treeList = [costCategoryList, projectList, invoiceList];
-      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds'];
+      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds', 'officeIds'];
       const obj = {};
       const newTree = treeList.map((it, i) => {
         return treeConvert({
@@ -311,7 +320,16 @@ class EchartsTest extends Component {
           otherKeys: ['parentId']
         }, it);
       });
+      const officeLists =  treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'officeName',
+        tName: 'title',
+        tId: 'value',
+        otherKeys: ['parentId']
+      }, officeListAndRole);
       newTree.push(supplierList);
+      newTree.push(officeLists);
       newTree.forEach((it, index) => {
         Object.assign(obj, {
           [keys[index]]: it,

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, TreeSelect, Button } from 'antd';
+import { Modal, Form, TreeSelect, Button, Select } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
@@ -9,11 +9,13 @@ import Lines from '@/components/StyleCom/Lines';
 
 const { SHOW_PARENT } = TreeSelect;
 @Form.create()
-@connect(({ global, loading, approveRole }) => ({
+@connect(({ global, loading, approveRole, costGlobal, session }) => ({
   costCategoryList: global.costCategoryList,
   loading: loading.effects['approveRole/add'] ||
            loading.effects['approveRole/edit'] || false,
   details: approveRole.details,
+  officeTree: costGlobal.officeTree,
+  userInfo: session.userInfo,
 }))
 class AddRole extends Component {
   static propTypes = {
@@ -28,10 +30,15 @@ class AddRole extends Component {
     bearUser: [],
     makeDept: [],
     bearDept: [],
+    officeIds: []
   }
 
   onShow = () => {
     const { title, detail } = this.props;
+    this.props.dispatch({
+      type: 'costGlobal/officeTree',
+      payload: {},
+    });
     this.props.dispatch({
       type: 'global/costList',
       payload: {},
@@ -57,6 +64,7 @@ class AddRole extends Component {
                 value: it.id,
               };
             }) : [],
+            officeIds: details.officeVOS ? details.officeVOS.map(it => it.id) : [],
             visible: true,
           });
         });
@@ -77,6 +85,7 @@ class AddRole extends Component {
       bearUser: [],
       makeDept: [],
       bearDept: [],
+      officeIds: []
     });
   }
 
@@ -89,7 +98,7 @@ class AddRole extends Component {
       id,
       onOk,
       detail,
-      costCategoryList
+      costCategoryList,
     } = this.props;
     const {
       userVo,
@@ -98,6 +107,7 @@ class AddRole extends Component {
       makeDept,
       bearDept,
     } = this.state;
+
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -119,6 +129,7 @@ class AddRole extends Component {
             makeDept,
             bearDept,
             approveRoleId: id,
+            officeIds: values.officeIds,
             id: detail && detail.id ? detail.id : '',
           }
         }).then(() => {
@@ -157,6 +168,7 @@ class AddRole extends Component {
       costCategoryList,
       loading,
       title,
+      officeTree
     } = this.props;
     const list = treeConvert({
       rootId: 0,
@@ -174,6 +186,7 @@ class AddRole extends Component {
       bearUser,
       makeDept,
       bearDept,
+      officeIds
     } = this.state;
     return (
       <span>
@@ -239,6 +252,7 @@ class AddRole extends Component {
                     treeData={list}
                     labelInValue
                     treeCheckable
+                    placeholder="请选择"
                     style={{width: '100%'}}
                     showCheckedStrategy={SHOW_PARENT}
                     dropdownStyle={{height: '300px'}}
@@ -246,6 +260,26 @@ class AddRole extends Component {
                 )
               }
             </Form.Item>
+            {
+              officeTree && officeTree.length > 0 &&
+              <Form.Item label="所在公司" {...formItemLayout}>
+                {
+                  getFieldDecorator('officeIds', {
+                    initialValue: officeIds,
+                  })(
+                    <Select mode="multiple">
+                      {
+                        officeTree.map(it => (
+                          <Select.Option key={it.id} placeholder="请选择">
+                            {it.officeName}
+                          </Select.Option>
+                        ))
+                      }
+                    </Select>
+                  )
+                }
+              </Form.Item>
+            }
           </Form>
         </Modal>
       </span>

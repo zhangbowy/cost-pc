@@ -23,4 +23,7 @@ export default {
   projectExport: `${APP_API}/cost/export/project/pc`,
   peopleExport: `${APP_API}/cost/export/staff/pc`,
   supplierExport: `${APP_API}/cost/export/supplier/pc`,
+  office: `${APP_API}/cost/statistics/v3/office/pc`, // 分公司列表
+  officeExport: `${APP_API}/cost/export/office/pc`, // 分公导出
+  officeDetail: `${APP_API}/cost/statistics/v3/office/list`,
 };

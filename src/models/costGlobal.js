@@ -64,6 +64,8 @@ export default {
     deptAndUser: {}, // 关联dingUserId
     roleUserList: [], // 角色列表
     paymentMethod: 0, // 控制开关
+    officeList: [], // 查询分公司列表
+    officeListAndRole: [], // 查询分公司列表
     // historyImportStatus: {},
   },
   effects: {
@@ -527,6 +529,15 @@ export default {
         type: 'save',
         payload: {
           historyImportStatus: response || {},
+        },
+      });
+    },
+    *officeListAndRole({ payload }, { call, put }){
+      const response = yield call(get, api.officeListAndRole, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          officeListAndRole: response || [],
         },
       });
     },

@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Table, Menu, Button, Form, DatePicker, message } from 'antd';
+import { Table, Menu, Button, Form, message } from 'antd';
 import moment from 'moment';
-import Search from 'antd/lib/input/Search';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
@@ -11,19 +10,19 @@ import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
 import PayModal from './PayModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
+import SearchBanner from '../../../statistics/overview/components/Search/Searchs';
 
-const { RangePicker } = DatePicker;
 const { APP_API } = constants;
 @Form.create()
 class PayTemp extends React.PureComponent {
   constructor(props) {
     super(props);
+    console.log('🚀 ~ file: PayTemp.js ~ line 22 ~ PayTemp ~ constructor ~ props', props);
     this.state = {
       status: '2',
       selectedRowKeys: [],
       count: 0,
       sumAmount: 0,
-      searchContent: '',
       selectedRows: [],
       accountType: [],
       pageNo: 1,
@@ -43,14 +42,6 @@ class PayTemp extends React.PureComponent {
 
   handleClick = e => {
     const { query } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent } = this.state;
     this.setState({
       status: e.key,
       selectedRowKeys: [],
@@ -62,9 +53,6 @@ class PayTemp extends React.PureComponent {
     this.onQuery({
       ...query,
       status: e.key,
-      searchContent,
-      startTime,
-      endTime,
       pageNo: 1,
       isSign: Number(e.key) === 1,
     });
@@ -123,13 +111,6 @@ class PayTemp extends React.PureComponent {
     const {
       query,
     } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
     if (val) {
       this.setState({
         selectedRows: [],
@@ -137,29 +118,12 @@ class PayTemp extends React.PureComponent {
         sumAmount: 0,
       });
     }
-    const { status, searchContent } = this.state;
+    const { status } = this.state;
     this.onQuery({
       ...query,
       pageNo: 1,
       status,
-      startTime,
-      endTime,
-      searchContent,
     });
-  }
-
-  handChange = (date) => {
-    if (!date) {
-      const { status, searchContent } = this.state;
-      const {
-        query,
-      } = this.props;
-      this.onQuery({
-        ...query,
-        status,
-        searchContent,
-      });
-    }
   }
 
   onLink = (id) => {
@@ -184,55 +148,27 @@ class PayTemp extends React.PureComponent {
     });
   }
 
-  onSearch = (val) => {
-    const { query } = this.props;
-    const { status, accountTypes } = this.state;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    this.setState({
-      searchContent: val,
-    });
-    this.onQuery({
-      ...query,
-      searchContent: val,
-      status,
-      startTime,
-      endTime,
-      accountTypes
-    });
-  }
-
   export = (key) => {
-    const { selectedRowKeys, status, searchContent, accountTypes } = this.state;
-    const { namespace } = this.props;
+    const { selectedRowKeys, status, accountTypes } = this.state;
+    const { namespace, searchList } = this.props;
     if (selectedRowKeys.length ===  0 && key === '1') {
       message.error('请选择要导出的数据');
       return;
     }
     let params = {};
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
     let url = `${namespace}/exporting`;
     if (key === '1') {
       params = {
         ids: selectedRowKeys
       };
     } else if (key === '2') {
-      params = {
-        searchContent,
-        startTime,
-        endTime,
-      };
+      searchList.forEach(it => {
+        if (it.value) {
+          Object.assign(params, {
+            ...it.value
+          });
+        }
+      });
     }
     if(Number(status) !== 2 && Number(status) !== 1) {
       url = `${namespace}/exported`;
@@ -263,24 +199,8 @@ class PayTemp extends React.PureComponent {
     }
     const ids = `${selectedRowKeys.join(',')}`;
     if (!Number(templateType)) {
-      // window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
-      // window.location.href = `${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`;
-      // this.props.dispatch({
-      //   type: 'global/invoicePrint',
-      //   payload: {
-      //     ids,
-      //   }
-      // });
       ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${ids}`);
     } else {
-      // window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
-      // window.location.href = `${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${ids}`;
-      // this.props.dispatch({
-      //   type: 'global/loanPrint',
-      //   payload: {
-      //     ids,
-      //   }
-      // });
       ddOpenLink(`${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${ids}`);
     }
   }
@@ -308,15 +228,7 @@ class PayTemp extends React.PureComponent {
   }
 
   handleTableChange = (pagination, filters) => {
-
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent, status } = this.state;
+    const { status } = this.state;
     this.setState({
       accountTypes: filters.accountType,
       pageNo: pagination.current,
@@ -325,29 +237,25 @@ class PayTemp extends React.PureComponent {
         pageNo: pagination.current,
         pageSize: pagination.pageSize,
         accountTypes: filters.accountType || [],
-        searchContent,
         status,
-        endTime,
-        startTime,
       });
     });
 
   };
 
   onMove = () => {
-    const { selectedRowKeys, accountTypes, searchContent, status } = this.state;
+    const { selectedRowKeys, accountTypes, status } = this.state;
     const { templateType, query } = this.props;
     if (!selectedRowKeys.length) {
       message.error('请至少选择一条数据');
       return;
     }
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
+    const params = {
+      pageNo: 1,
+      pageSize: query.pageSize,
+      accountTypes,
+      status,
+    };
     this.props.operationSign({
       invoiceIds: selectedRowKeys,
       templateType,
@@ -356,15 +264,7 @@ class PayTemp extends React.PureComponent {
       this.setState({
         selectedRowKeys: [],
       });
-      this.onQuery({
-        pageNo: 1,
-        pageSize: query.pageSize,
-        accountTypes,
-        searchContent,
-        status,
-        endTime,
-        startTime,
-      });
+      this.onQuery(params);
     });
   }
 
@@ -386,7 +286,6 @@ class PayTemp extends React.PureComponent {
     const {
       list,
       query,
-      form: { getFieldDecorator },
       total,
       loading,
       columns,
@@ -395,7 +294,9 @@ class PayTemp extends React.PureComponent {
       recordList,
       recordPage,
       onRecord,
+      searchList,
     } = this.props;
+
     const recordColumns = [{
       title: '姓名',
       dataIndex: 'createName',
@@ -421,136 +322,114 @@ class PayTemp extends React.PureComponent {
       fixed: true
     };
     return (
-      <div className="content-dt" style={{padding: 0}}>
-        <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
-          <Menu.Item key={2}>
-            待发放
-          </Menu.Item>
-          <Menu.Item key={1}>
-            已票签
-          </Menu.Item>
-          <Menu.Item key={3}>
-            已发放
-          </Menu.Item>
-        </Menu>
-        <>
-          {
-            Number(status) === 1 && show &&
-            <div className={style.production}>
-              <div className={style.texts}>
-                <i className="iconfont iconinfo-cirlce" />
-                <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放</span>
-              </div>
-              <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
-            </div>
-          }
-        </>
-        <div className={Number(status) === 1 && show ? cs(style.payContent, style.noPadding) : style.payContent}>
-          <div className="cnt-header" style={{display: 'flex'}}>
-            <div className="head_lf">
-              {
-                (Number(status) === 2 || Number(status) === 1) &&
-                <>
-                  <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
-                    <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
-                  </PayModal>
-                  <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? '移至已票签' : '移回待发放'}</Button>
-                </>
-              }
-              <DropBtn
-                selectKeys={selectedRowKeys}
-                total={total}
-                onExport={(key) => this.export(key)}
-                noLevels
-              />
-              <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
-              <Form style={{display: 'flex', marginLeft: '8px'}}>
-                <Form.Item label="提交时间">
-                  {
-                    getFieldDecorator('createTime')(
-                      <RangePicker
-                        className="m-l-8"
-                        placeholder="请选择时间"
-                        format="YYYY-MM-DD"
-                        style={{ width: '250px' }}
-                        showTime={{
-                          hideDisabledOptions: true,
-                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                        }}
-                        onOk={() => this.onOk()}
-                        onChange={() => this.handChange()}
-                      />
-                    )
-                  }
-                </Form.Item>
-                <Search
-                  placeholder="单号 事由 收款人"
-                  style={{ width: '272px', marginLeft: '8px' }}
-                  onSearch={(e) => this.onSearch(e)}
-                />
-              </Form>
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <p className="c-black-85 fw-500 fs-14">
-              已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
-            </p>
+      <div style={{padding: 0}}>
+        <div className={style.titleMenu}>
+          <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
+            <Menu.Item key={2}>
+              待发放
+            </Menu.Item>
+            <Menu.Item key={1}>
+              已票签
+            </Menu.Item>
+            <Menu.Item key={3}>
+              已发放
+            </Menu.Item>
+          </Menu>
+        </div>
+        <SearchBanner
+          list={searchList || []}
+          onChange={val => this.props.onChangeSearch(val, () => {
+            this.onQuery({
+              pageNo: 1,
+              pageSize: query.pageSize,
+              accountTypes,
+              status,
+            });
+          })}
+        />
+        <div className="content-dt" style={{padding: 0}}>
+          <>
             {
-              Number(status) === 1 &&
-              <div className="head_rf">
-                <TableTemplate
-                  page={recordPage}
-                  onQuery={onRecord}
-                  columns={recordColumns}
-                  list={recordList}
-                  placeholder="输入详情内容搜索"
-                  sWidth='800px'
-                >
-                  <div className="head_rf" style={{ cursor: 'pointer' }}>
-                    <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                    <span className="fs-14 c-black-65">操作记录</span>
-                  </div>
-                </TableTemplate>
+              Number(status) === 1 && show &&
+              <div className={style.production}>
+                <div className={style.texts}>
+                  <i className="iconfont iconinfo-cirlce" />
+                  <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放</span>
+                </div>
+                <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
               </div>
             }
-          </div>
-          <Table
-            columns={columns}
-            dataSource={list}
-            rowSelection={rowSelection}
-            scroll={{ x: 2400 }}
-            rowKey="id"
-            loading={loading}
-            onChange={this.handleTableChange}
-            pagination={{
-              current: query.pageNo,
-              total,
-              size: 'small',
-              showTotal: () => (`共${total}条数据`),
-              showSizeChanger: true,
-              showQuickJumper: true,
-              onShowSizeChange: (cur, size) => {
-                console.log('分页改变');
-                const createTime = this.props.form.getFieldValue('createTime');
-                let startTime = '';
-                let endTime = '';
-                if (createTime && createTime.length > 0) {
-                  startTime = moment(createTime[0]).format('x');
-                  endTime = moment(createTime[1]).format('x');
+          </>
+          <div className={Number(status) === 1 && show ? cs(style.payContent, style.noPadding) : style.payContent}>
+            <div className="cnt-header" style={{display: 'flex'}}>
+              <div className="head_lf">
+                {
+                  (Number(status) === 2 || Number(status) === 1) &&
+                  <>
+                    <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
+                      <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
+                    </PayModal>
+                    <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? '移至已票签' : '移回待发放'}</Button>
+                  </>
                 }
-                const { searchContent } = this.state;
-                this.onQuery({
-                  pageNo: cur,
-                  pageSize: size,
-                  searchContent,
-                  status,
-                  endTime,
-                  startTime,
-                  accountTypes
-                });
+                <DropBtn
+                  selectKeys={selectedRowKeys}
+                  total={total}
+                  onExport={(key) => this.export(key)}
+                  noLevels
+                />
+                <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <p className="c-black-85 fw-500 fs-14">
+                已选{selectedRowKeys.length}张单据，共计¥{sumAmount/100}
+              </p>
+              {
+                Number(status) === 1 &&
+                <div className="head_rf">
+                  <TableTemplate
+                    page={recordPage}
+                    onQuery={onRecord}
+                    columns={recordColumns}
+                    list={recordList}
+                    placeholder="输入详情内容搜索"
+                    sWidth='800px'
+                  >
+                    <div className="head_rf" style={{ cursor: 'pointer' }}>
+                      <i className="iconfont iconcaozuojilu c-black-65" style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+                      <span className="fs-14 c-black-65">操作记录</span>
+                    </div>
+                  </TableTemplate>
+                </div>
               }
-            }}
-          />
+            </div>
+            <Table
+              columns={columns}
+              dataSource={list}
+              rowSelection={rowSelection}
+              scroll={{ x: 2400 }}
+              rowKey="id"
+              loading={loading}
+              onChange={this.handleTableChange}
+              pagination={{
+                current: query.pageNo,
+                total,
+                size: 'small',
+                showTotal: () => (`共${total}条数据`),
+                showSizeChanger: true,
+                showQuickJumper: true,
+                onShowSizeChange: (cur, size) => {
+                  this.onQuery({
+                    pageNo: cur,
+                    pageSize: size,
+                    status,
+                    accountTypes
+                  });
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
     );

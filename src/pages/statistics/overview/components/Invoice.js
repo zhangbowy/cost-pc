@@ -42,6 +42,13 @@ const exportKey = {
     key: '5',
     value: '人员',
   }],
+  6: [{
+    key: '1',
+    value: '类别',
+  }, {
+    key: '5',
+    value: '人员',
+  }],
   4: [{
     key: '1',
     value: '类别',

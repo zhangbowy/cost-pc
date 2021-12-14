@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import update from 'immutability-helper';
@@ -420,7 +421,11 @@ class FormStyle extends Component {
                 item.type === 'select' ?
                   <Select
                     style={{ width: '160px' }}
-                    value={item.value ? { key: item.value[item.key] } : undefined}
+                    value={item.value && Array.isArray(item.value)
+                      ? item.value[item.key].map(it => { return { key: it }; })
+                      : item.value ? { key: item.value[item.key] }
+                      : undefined}
+                    mode={item.mode || 'default'}
                     onChange={val => this.onChangeSelect(val, index)}
                     labelInValue
                   >

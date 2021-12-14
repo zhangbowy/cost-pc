@@ -247,7 +247,6 @@ class PayModal extends React.PureComponent {
       paymentMethod,
     } = this.props;
     const { visible, defAcc, count, amount, flag, status, prod, imgUrl } = this.state;
-    console.log('PayModal -> render -> status', status);
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

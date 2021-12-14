@@ -412,6 +412,11 @@ class ChangeForm extends Component {
     return val;
   }
 
+  onGetSingleVal = (key) => {
+    const { form: { getFieldValue } } = this.props;
+    return getFieldValue(key);
+  }
+
   onChangeSelect = (val, obj) => {
     const { onChangeData, expandVos } = this.props;
     const list = [...expandVos];

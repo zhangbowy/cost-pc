@@ -832,11 +832,10 @@ class AddInvoice extends Component {
     }, () => {
       // const { costDetailsVo } = this.state;
       const { borrowArr, total } = this.state;
-      const { form: { getFieldValue } } = this.props;
       this.onAddBorrow(borrowArr);
       if (Number(total) === 0 && (djDetail.categoryStatus && djDetail.templateType === 2)) {
         this.setState({
-          total: getFieldValue('applicationSum') || 0,
+          total: (this.changeForm && this.changeForm.onGetSingleVal('applicationSum')) || 0,
         }, () => {
           this.getNode();
         });
@@ -936,6 +935,7 @@ class AddInvoice extends Component {
   getNode = (payload) => {
     const { id, operateType } = this.props;
     const { details, loanUserId, total, expandVos } = this.state;
+    console.log('🚀 ~ file: index.js ~ line 939 ~ AddInvoice ~ total', total);
       console.log('AddInvoice -> getNode -> details', details);
       const objs = {
         ...payload,
@@ -952,6 +952,7 @@ class AddInvoice extends Component {
         projectId: details.projectId || '',
         supplierId: details.supplierId || '',
         expandVos,
+        officeId: details.officeId || ''
       };
     const { templateType } = this.props;
     if (Number(templateType) === 1) {
@@ -1444,6 +1445,8 @@ class AddInvoice extends Component {
             costDetailsVo: newArr,
             applyArr: [],
             borrowArr: []
+          }, () => {
+            this.getNode({});
           });
         },
         onCancel: () => {
@@ -1453,6 +1456,8 @@ class AddInvoice extends Component {
     } else {
       this.setState({
         details: { ...details, officeId: val }
+      }, () => {
+        this.getNode({});
       });
     }
   }

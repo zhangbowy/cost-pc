@@ -1,12 +1,8 @@
 import React from 'react';
-import { message, Form, Modal, Divider, Tooltip } from 'antd';
+import { message, Modal, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
-// import { formItemLayout } from '@/utils/constants';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
-// import Search from 'antd/lib/input/Search';
-import { rowSelect } from '@/utils/common';
-import constants from '@/utils/constants';
 import Tags from '@/components/Tags';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/PayModal';
@@ -17,9 +13,7 @@ import { ddPreviewImage } from '../../../utils/ddApi';
 import TableImg from '../../../components/LittleCmp/TableImg';
 
 const { confirm } = Modal;
-const { APP_API } = constants;
-@Form.create()
-@connect(({ loading, payment, global }) => ({
+@connect(({ loading, payment, global, costGlobal }) => ({
   loading: loading.effects['payment/list'] || false,
   list: payment.list,
   query: payment.query,
@@ -29,6 +23,7 @@ const { APP_API } = constants;
   recordList: payment.recordList,
   recordPage: payment.recordPage,
   recordTotal: payment.recordTotal,
+  officeListAndRole: costGlobal.officeListAndRole,
 }))
 class Payment extends React.PureComponent {
   constructor(props) {
@@ -36,146 +31,57 @@ class Payment extends React.PureComponent {
     this.state = {
       status: '2',
       selectedRowKeys: [],
-      count: 0,
-      sumAmount: 0,
-      searchContent: '',
       selectedRows: [],
       visibleConfirm: false,
-      visible: false,
+      searchList: [{
+        type: 'rangeTime',
+        label: '提交时间',
+        placeholder: '请选择',
+        key: ['startTime', 'endTime'],
+        id: 'startTime',
+        out: 1
+      },
+      {
+        type: 'search',
+        label: '外部选择',
+        placeholder: '单号、事由、收款人',
+        key: 'searchContent',
+        id: 'searchContent',
+        out: 1
+      }]
     };
   }
 
-  componentDidMount(){
-    const {
-      query,
-    } = this.props;
-    this.onQuery({
-      ...query,
-      status: 2,
-    });
+  componentDidMount() {
+    this.getOffice();
   }
 
-  handleClick = e => {
-    const { query } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent } = this.state;
+  onChangeSearch = (val,callback) => {
     this.setState({
-      status: e.key,
-      selectedRowKeys: [],
-      selectedRows: [],
-      sumAmount: 0,
-    });
-    this.onQuery({
-      ...query,
-      status: e.key,
-      searchContent,
-      startTime,
-      endTime,
-      pageNo: 1,
-    });
-  };
-
-  onSelectAll = (selected, selectedRows, changeRows) => {
-    const result = rowSelect.onSelectAll(this.state, selected, changeRows);
-    const _selectedRows = result.selectedRows;
-    const { selectedRowKeys } = result;
-    let amount = 0;
-    _selectedRows.forEach(item => {
-      amount+=item.submitSum;
-    });
-
-    this.setState({
-        selectedRows: _selectedRows,
-        selectedRowKeys,
-        sumAmount: amount,
-    });
-  };
-
-  onSelect = (record, selected) => {
-      const {
-          selectedRows,
-          selectedRowKeys,
-      } = rowSelect.onSelect(this.state, record, selected);
-      console.log(selectedRowKeys);
-      let amount = 0;
-      selectedRows.forEach(item => {
-        amount+=item.submitSum;
-      });
-      this.setState({
-          selectedRows,
-          selectedRowKeys,
-          sumAmount: amount,
-      });
-  };
-
-  onDelete = (id) => {
-      const {
-          selectedRows,
-          selectedRowKeys,
-      } = rowSelect.onDelete(this.state, id);
-      let amount = 0;
-      selectedRows.forEach(item => {
-        amount+=item.submitSum;
-      });
-      this.setState({
-          selectedRows,
-          selectedRowKeys,
-          sumAmount: amount,
-      });
+        searchList: val
+    }, () => {
+        if (callback) callback();
+      }
+    );
   };
 
   onOk = (val) => {
     const {
       query,
     } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
     if (val) {
       this.setState({
         selectedRows: [],
         selectedRowKeys: [],
-        sumAmount: 0,
       });
     }
-    const { status, searchContent } = this.state;
+    const { status } = this.state;
     const obj = {
       pageSize: query.pageSize,
       pageNo: 1,
       status,
-      startTime,
-      endTime,
-      searchContent,
     };
     this.onQuery({ ...obj });
-  }
-
-  handChange = (date) => {
-    if (!date) {
-      const { status, searchContent } = this.state;
-      const {
-        query,
-      } = this.props;
-      this.onQuery({
-        ...query,
-        status,
-        searchContent,
-      });
-    }
-  }
-
-  onLink = (id) => {
-    this.props.history.push(`/system/auth/${id}`);
   }
 
   onQuery = (payload) => {
@@ -185,6 +91,14 @@ class Payment extends React.PureComponent {
         isSign: Number(payload.status) === 1,
       });
     }
+    const { searchList } = this.state;
+    searchList.forEach(it => {
+      if (it.value) {
+        Object.assign(payload, {
+          ...it.value
+        });
+      }
+    });
     this.props.dispatch({
       type: 'payment/list',
       payload: {
@@ -192,94 +106,6 @@ class Payment extends React.PureComponent {
         accountTypes: payload.accountTypes || []
       },
     });
-  }
-
-  onChange = (rows, keys) => {
-    let amount = 0;
-    keys.forEach(item => {
-      if (item.submitSum) {
-        amount+=item.submitSum;
-      }
-    });
-    this.setState({
-      selectKey: keys,
-      count: keys.length,
-      sumAmount: amount/100,
-    });
-  }
-
-  onSearch = (val) => {
-    const { query } = this.props;
-    const { status } = this.state;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    this.setState({
-      searchContent: val,
-    });
-    this.onQuery({
-      ...query,
-      searchContent: val,
-      status,
-      startTime,
-      endTime,
-    });
-  }
-
-  export = (key) => {
-    const { selectedRowKeys, status, searchContent } = this.state;
-    if (selectedRowKeys.length ===  0 && key === '1') {
-      message.error('请选择要导出的数据');
-      return;
-    }
-    let params = {};
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    let url = 'payment/exporting';
-    if (key === '1') {
-      params = {
-        ids: selectedRowKeys
-      };
-    } else if (key === '2') {
-      params = {
-        searchContent,
-        startTime,
-        endTime,
-      };
-    }
-    if(Number(status) !== 2) {
-      url = 'payment/exported';
-    }
-    this.props.dispatch({
-      type: url,
-      payload: {
-        ...params,
-      }
-    }).then(() => {
-      message.success('导出成功');
-    });
-  }
-
-  print = () => {
-    const { selectedRowKeys } = this.state;
-    if (selectedRowKeys.length > 1) {
-      message.error('只支持打印一条数据');
-      return;
-    }
-    if (selectedRowKeys.length === 0) {
-      message.error('请选择一条数据打印');
-      return;
-    }
-    window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem('token')}&id=${selectedRowKeys[0]}`;
   }
 
   // 拒绝
@@ -369,6 +195,36 @@ class Payment extends React.PureComponent {
     });
   }
 
+  getOffice = () => {
+    this.props.dispatch({
+      type: 'costGlobal/officeListAndRole',
+      payload: {},
+    }).then(() => {
+      const { searchList } = this.state;
+      const arr = [...searchList];
+      const { officeListAndRole } = this.props;
+      if (officeListAndRole.length) {
+        arr.splice(1,0,{
+          type: 'select',
+          label: '分公司',
+          placeholder: '请选择',
+          key: 'officeIds',
+          id: 'officeIds',
+          options: officeListAndRole,
+          fileName: {
+            key: 'id',
+            name: 'officeName'
+          },
+          out: 1
+        });
+      }
+      console.log('🚀 ~ file: index.js ~ line 404 ~ Payment ~ arr', arr);
+      this.setState({
+        searchList: arr,
+      });
+    });
+  }
+
   render() {
     const {
       list,
@@ -381,8 +237,9 @@ class Payment extends React.PureComponent {
       recordList,
       recordPage,
       recordTotal,
+      officeListAndRole,
     } = this.props;
-    const { status, visibleConfirm, selectedRowKeys, selectedRows } = this.state;
+    const { status, visibleConfirm, selectedRowKeys, selectedRows, searchList } = this.state;
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -591,6 +448,9 @@ class Payment extends React.PureComponent {
           recordList={recordList}
           recordPage={{...recordPage, total: recordTotal}}
           onRecord={this.onRecord}
+          officeList={officeListAndRole}
+          onChangeSearch={this.onChangeSearch}
+          searchList={searchList}
         />
         <ConfirmPay
           batchDetails={batchDetails}
