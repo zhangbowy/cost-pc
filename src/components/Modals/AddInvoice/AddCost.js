@@ -36,7 +36,6 @@ const labelInfo = {
   happenTime: '发生日期',
   flightLevel: '航班仓型',
   officeId: '所在公司',
-  ossFileUrl: '康帕斯附件',
 };
 @Form.create()
 @connect(({ global, costGlobal, session }) => ({
@@ -423,6 +422,7 @@ class AddCost extends Component {
       currencySymbol: '¥',
       details: {},
       fileUrl: [],
+      ossFileUrl: [],
       // treeExpandedKeys: [],
     });
   }
@@ -488,7 +488,8 @@ class AddCost extends Component {
       currencyName,
       exchangeRate,
       currencySymbol,
-      fileUrl
+      fileUrl,
+      ossFileUrl,
     } = this.state;
     const _this = this;
 
@@ -508,11 +509,16 @@ class AddCost extends Component {
         if (val.fileUrl) {
           fileUrls = fileUrl;
         }
+        let ossFileUrls  = [];
+        if (val.ossFileUrl) {
+          ossFileUrls = ossFileUrl;
+        }
         const detail = addCostValue({
           costDate,
           val,
           imgUrl,
           fileUrl: fileUrls,
+          ossFileUrl: ossFileUrls,
           shareAmount,
           details,
           lbDetail,
@@ -745,9 +751,9 @@ class AddCost extends Component {
   }
 
 
-  onChangeImg = (val) => {
+  onChangeImg = (val, key) => {
     this.setState({
-      imgUrl: val,
+      [key]: val,
     });
   }
 
@@ -1113,7 +1119,7 @@ class AddCost extends Component {
                     return (
                       <>
                         {
-                          it.fieldType === 7 &&
+                          it.fieldType === 7 && it.field === 'fileUrl' &&
                           <Col span={12}>
                             <Form.Item
                               label={it.name}
@@ -1393,7 +1399,7 @@ class AddCost extends Component {
                                   }]
                                 })(
                                   <UploadImg
-                                    onChange={(val) => this.onChangeImg(val)}
+                                    onChange={(val) => this.onChangeImg(val, 'imgUrl')}
                                     imgUrl={imgUrl}
                                     userInfo={userInfo}
                                     disabled={modify && !showField.imgUrl.isModify}
@@ -1415,7 +1421,7 @@ class AddCost extends Component {
                           it.field === 'ossFileUrl' && showField.ossFileUrl.status &&
                           <Col span={12}>
                             <Form.Item
-                              label={labelInfo.ossFileUrl}
+                              label={showField.ossFileUrl.name}
                               {...formItemLayout}
                             >
                               {
@@ -1426,7 +1432,7 @@ class AddCost extends Component {
                                   }]
                                 })(
                                   <UploadFile
-                                    onChange={(val) => this.onChangeFile(val)}
+                                    onChange={(val) => this.onChangeImg(val, 'ossFileUrl')}
                                     fileUrl={ossFileUrl}
                                     userInfo={userInfo}
                                     disabled={modify && !showField.ossFileUrl.isModify}

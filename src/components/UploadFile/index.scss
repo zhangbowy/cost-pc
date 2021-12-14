@@ -29,3 +29,19 @@
     right: -7px;
   }
 }
+.fileList{
+  display: flex;
+  height: 22px;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  img{
+    // height: 20px;
+    width:16px;
+    margin-right: 8px;
+  }
+  :global(.iconfont) {
+    color: rgba(0, 0, 0, 0.5);
+    margin-left: 8px;
+  }
+}

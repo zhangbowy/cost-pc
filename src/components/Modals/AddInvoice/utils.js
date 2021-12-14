@@ -171,6 +171,7 @@ export default {
         exceedMessage: item.exceedMessage || '',
         exceedContents: item.exceedContents || [],
         fileUrl: item.fileUrl || [],
+        ossFileUrl: item.ossFileUrl || [],
         officeId: item.officeId || '',
       };
       if (item.flightLevel || (item.flightLevel === 0)) {
@@ -241,6 +242,7 @@ export default {
     val,
     imgUrl,
     fileUrl,
+    ossFileUrl,
     shareAmount,
     details,
     lbDetail,
@@ -256,6 +258,7 @@ export default {
     let detail = {
       costDate,
       fileUrl,
+      ossFileUrl,
       note: val.note || '',
       costSum: val.costSum,
       categoryId: val.categoryId,

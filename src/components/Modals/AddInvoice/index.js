@@ -66,6 +66,7 @@ class AddInvoice extends Component {
     this.state = {
       visible: false,
       imgUrl: [],
+      ossFileUrl: [],
       depList: [], // 所在部门
       createDepList: [], // 报销部门
       accountList: [], // 收款账户
@@ -469,6 +470,7 @@ class AddInvoice extends Component {
     this.setState({
       fileUrl: detail.fileUrl || [], // 附件
       imgUrl: detail.imgUrl ? detail.imgUrl  : [],
+      ossFileUrl: detail.ossFileUrl ? detail.ossFileUrl : [],
     });
     await this.props.dispatch({
       type: 'costGlobal/userDep',
@@ -748,6 +750,7 @@ class AddInvoice extends Component {
     this.setState({
       visible: false,
       imgUrl: [],
+      ossFileUrl: [],
       depList: [], // 所在部门
       createDepList: [], // 报销部门
       accountList: [], // 收款账户
@@ -1062,6 +1065,7 @@ class AddInvoice extends Component {
     }
     const {
       imgUrl,
+      ossFileUrl,
       fileUrl,
       nodes,
       costDetailsVo,
@@ -1126,6 +1130,7 @@ class AddInvoice extends Component {
       supplierId: val.supplier ? val.supplier.split('_')[1] : '',
       imgUrl,
       fileUrl,
+      ossFileUrl,
       submitSum: ((total * 1000)/10).toFixed(0),
       expandSubmitFieldVos,
       selfSubmitFieldVos
@@ -1527,6 +1532,7 @@ class AddInvoice extends Component {
     const {
       visible,
       imgUrl,
+      ossFileUrl,
       depList,
       createDepList,
       accountList,
@@ -1617,6 +1623,7 @@ class AddInvoice extends Component {
               showField={showField}
               newshowField={newshowField}
               imgUrl={imgUrl}
+              ossFileUrl={ossFileUrl}
               fileUrl={fileUrl}
               modify={modify}
               templateType={Number(templateType)}

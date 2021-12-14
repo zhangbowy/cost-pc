@@ -13,6 +13,7 @@ import { placeholderType } from '../../../utils/constants';
 import { compare, setTime, handleProduction } from '../../../utils/common';
 import defaultFunc from './utils';
 import style from './index.scss';
+import UploadFile from '../../UploadFile';
 
 const {Option} = Select;
 const { RangePicker, MonthPicker } = DatePicker;
@@ -219,10 +220,10 @@ class ChangeForm extends Component {
     }
   }
 
-  onChangeImg = (val) => {
+  onChangeImg = (val, key) => {
     const { onChangeData } = this.props;
     onChangeData({
-      imgUrl: val,
+      [key]: val,
     });
   }
 
@@ -299,6 +300,7 @@ class ChangeForm extends Component {
       users,
       showField,
       newshowField,
+      ossFileUrl,
     } = this.props;
     let params = {};
     console.log('newshowField', newshowField);
@@ -360,6 +362,7 @@ class ChangeForm extends Component {
           fileUrl,
           expandSubmitFieldVos,
           selfSubmitFieldVos,
+          ossFileUrl,
           showField: JSON.stringify(newshowField),
         };
         if (val.month) {
@@ -487,6 +490,7 @@ renderTreeNodes = data =>
       users,
       depList,
       officeList,
+      ossFileUrl,
     } = this.props;
     const projectList = treeConvert({
       rootId: 0,
@@ -961,7 +965,7 @@ renderTreeNodes = data =>
                                 }]
                               })(
                                 <UploadImg
-                                  onChange={(val) => this.onChangeImg(val)}
+                                  onChange={(val) => this.onChangeImg(val, 'imgUrl')}
                                   imgUrl={imgUrl}
                                   userInfo={userInfo}
                                   disabled={modify && !showField.imgUrl.isModify}
@@ -972,6 +976,41 @@ renderTreeNodes = data =>
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
                                 <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}}>
+                                  {item.note}
+                                </p>
+                              ))
+                            }
+                          </Form.Item>
+                        </Col>
+                        :
+                        null
+                    }
+                    {
+                      itw.field === 'ossFileUrl' && showField.ossFileUrl.status ?
+                        <Col span={12}>
+                          <Form.Item
+                            label={showField.ossFileUrl.name}
+                            {...formItemLayout}
+                          >
+                            {
+                              getFieldDecorator('ossFileUrl', {
+                                initialValue: ossFileUrl.length ? ossFileUrl : null,
+                                rules: [{
+                                  required: !!(showField.ossFileUrl.isWrite), message: '请选择图片'
+                                }]
+                              })(
+                                <UploadFile
+                                  onChange={(val) => this.onChangeImg(val, 'ossFileUrl')}
+                                  fileUrl={ossFileUrl}
+                                  userInfo={userInfo}
+                                  disabled={modify && !showField.ossFileUrl.isModify}
+                                />
+                              )
+                            }
+                            {
+                              itw.itemExplain && !!(itw.itemExplain.length) &&
+                              itw.itemExplain.map(item => (
+                                <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
                                   {item.note}
                                 </p>
                               ))
