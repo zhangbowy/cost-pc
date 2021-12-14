@@ -319,6 +319,10 @@ class InvoiceDetail extends Component {
     });
   }
 
+  previewFileOss = (val) => {
+    window.open(val);
+  }
+
   previewImage = (arr, index, flag) => {
     ddPreviewImage({
       urlArray: !flag ? arr.map(it => it.imgUrl) : arr,
@@ -326,7 +330,11 @@ class InvoiceDetail extends Component {
     });
   }
 
-  previewFiles = (options) => {
+  previewFiles = (options, field) => {
+    if (field === 'ossFileUrl') {
+      window.open(options.fileUrl);
+      return;
+    }
     this.props.dispatch({
       type: 'global/isApproval',
       payload: {
@@ -712,6 +720,7 @@ class InvoiceDetail extends Component {
             details={details}
             previewImage={this.previewImage}
             previewFiles={this.previewFiles}
+            previewFileOss={this.previewFileOss}
           />
           {
             aliTrip.alitripCostCenterId && (userInfo.userId === details.userId) &&

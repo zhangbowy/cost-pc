@@ -225,7 +225,7 @@ class CostDetailTable extends PureComponent {
             textWrap: 'word-break',
             width: 150
           };
-        } else if (item.field === 'fileUrl') {
+        } else if (item.field === 'fileUrl' || item.field === 'ossFileUrl') {
           objs = {
             title: (
               <>
@@ -252,23 +252,32 @@ class CostDetailTable extends PureComponent {
             ),
             dataIndex: 'fileUrl',
             render: (_, record) => {
-              const { fileUrl } = record;
+              const { fileUrl, ossFileUrl } = record;
+              const fileList = item.field === 'fileUrl' ? fileUrl : ossFileUrl;
               return (
                 <span>
                   {
-                    fileUrl && fileUrl.length ?
-                    fileUrl.length === 1 ?
-                      <div className={style.files} onClick={() => previewFiles(fileUrl[0])}>
-                        <img
-                          className='attachment-icon'
-                          src={fileIcon[fileUrl[0].fileType]}
-                          alt='attachment-icon'
-                        />
+                    fileList && fileList.length ?
+                    fileList.length === 1 ?
+                      <div className={style.files} onClick={() => previewFiles(fileUrl[0], item.field)}>
+                        {
+                          item.field === 'fileUrl' &&
+                          <img
+                            className='attachment-icon'
+                            src={fileIcon[fileUrl[0].fileType]}
+                            alt='attachment-icon'
+                          />
+                        }
                         <div className={style.filename}>
                           <span className={style.filename__base}>
-                            {fileUrl[0].fileName.substring(0, fileUrl[0].fileName.length-(fileUrl[0].fileType.length + 1))}
+                            { item.field === 'fileUrl'
+                                ? fileUrl[0].fileName.substring(0, fileUrl[0].fileName.length-(fileUrl[0].fileType.length + 1))
+                                : fileUrl[0].fileName}
                           </span>
-                          <span className={style.filename__extension}>.{fileUrl[0].fileType}</span>
+                          {
+                            item.field === 'fileUrl' &&
+                            <span className={style.filename__extension}>.{fileUrl[0].fileType}</span>
+                          }
                         </div>
                       </div>
                       :
@@ -277,16 +286,26 @@ class CostDetailTable extends PureComponent {
                         content={(
                           <div>
                             {
-                              fileUrl.map(items => (
-                                <div className={style.files} key={items.fileId} onClick={() => previewFiles(items)}>
-                                  <img
-                                    className='attachment-icon'
-                                    src={fileIcon[items.fileType]}
-                                    alt='attachment-icon'
-                                  />
+                              fileList.map(items => (
+                                <div className={style.files} key={items.fileId || items.fileUrl} onClick={() => previewFiles(items, item.field)}>
+                                  {
+                                    item.field === 'fileUrl' &&
+                                    <img
+                                      className='attachment-icon'
+                                      src={fileIcon[items.fileType]}
+                                      alt='attachment-icon'
+                                    />
+                                  }
                                   <div className={style.filename}>
-                                    <span className={style.filename__base}>{items.fileName.substring(0, items.fileName.length-(items.fileType.length + 1))}</span>
-                                    <span className={style.filename__extension}>.{items.fileType}</span>
+                                    <span className={style.filename__base}>
+                                      { item.field === 'fileUrl'
+                                         ? items.fileName.substring(0, items.fileName.length-(items.fileType.length + 1))
+                                         : items.fileName}
+                                    </span>
+                                    {
+                                      item.field === 'fileUrl' &&
+                                      <span className={style.filename__extension}>.{items.fileType}</span>
+                                    }
                                   </div>
                                 </div>
                               ))

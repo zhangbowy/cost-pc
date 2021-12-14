@@ -4,7 +4,7 @@ import { Row, Col } from 'antd';
 import style from './index.scss';
 import fileIcon from '../../../utils/fileIcon';
 
-const MainText = ({ showFields, details, previewImage, previewFiles }) => {
+const MainText = ({ showFields, details, previewImage, previewFiles, previewFileOss }) => {
   return (
     <>
       <Row className="m-l-10">
@@ -58,7 +58,7 @@ const MainText = ({ showFields, details, previewImage, previewFiles }) => {
                   {
                     showFields.imgUrl.itemExplain && showFields.imgUrl.itemExplain.map((its, i) => {
                       return(
-                        <p className="c-black-45 fs-12 m-b-0">
+                        <p className="c-black-45 fs-12 m-b-0" key={its.msg}>
                           {i===0 ? '(' : ''}
                           {its.msg}
                           {(i+1) === showFields.imgUrl.itemExplain.length ? ')' : ''}
@@ -97,10 +97,44 @@ const MainText = ({ showFields, details, previewImage, previewFiles }) => {
                   {
                     showFields.fileUrl.itemExplain && showFields.fileUrl.itemExplain.map((its, i) => {
                       return(
-                        <p className="c-black-45 fs-12 m-b-0">
+                        <p className="c-black-45 fs-12 m-b-0" key={its.msg}>
                           {i===0 ? '(' : ''}
                           {its.msg}
                           {(i+1) === showFields.fileUrl.itemExplain.length ? ')' : ''}
+                        </p>
+                      );
+                    })
+                  }
+                </span>
+              </div>
+            </Col>
+          </Row>
+          :
+          null
+      }
+      {
+        showFields.ossFileUrl && showFields.ossFileUrl.status ?
+          <Row className="m-l-10">
+            <Col span={8} className="m-t-16">
+              <div style={{display: 'flex'}}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
+                <span className={cs('fs-14', 'c-black-65', style.file)}>
+                  {
+                    details.ossFileUrl && details.ossFileUrl.length ? details.ossFileUrl.map(it => (
+                      <div className={style.files} onClick={() => previewFileOss(it)}>
+                        <p key={it.fileUrl} style={{marginBottom: '8px'}}>{it.fileName}</p>
+                      </div>
+                    ))
+                    :
+                    <span>-</span>
+                  }
+                  {
+                    showFields.ossFileUrl.itemExplain && showFields.ossFileUrl.itemExplain.map((its, i) => {
+                      return(
+                        <p className="c-black-45 fs-12 m-b-0" key={its.msg}>
+                          {i===0 ? '(' : ''}
+                          {its.msg}
+                          {(i+1) === showFields.ossFileUrl.itemExplain.length ? ')' : ''}
                         </p>
                       );
                     })

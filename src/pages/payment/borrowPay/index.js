@@ -215,7 +215,6 @@ class BorrowPay extends React.PureComponent {
           out: 1
         });
       }
-      console.log('🚀 ~ file: index.js ~ line 404 ~ Payment ~ arr', arr);
       this.setState({
         searchList: arr,
       });
