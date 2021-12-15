@@ -25,7 +25,7 @@ const wait = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/wait-upl
 const unknown = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/unknown.png';
 
 const projectConfig = {
-  uploadChannelOssUrl: `${APP_API}/cost/upload/file`,
+  uploadChannelOssUrl: 'http://cost-pc.forwe.work/cost/upload/file',
 };
 
 const uploadRequest = '支持上传多种渠道的简历，格式包括PDF、DOCX、DOC、PNG、JPG、JPEG，文件需小于50M';
