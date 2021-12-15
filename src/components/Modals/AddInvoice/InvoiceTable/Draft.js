@@ -128,7 +128,6 @@ class Draft extends Component {
 
   render() {
     const { draftList, total, loading, page, draftTotal } = this.props;
-    console.log('Draft -> render -> page', page);
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     const columns = [{
       title: '序号',

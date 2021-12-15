@@ -1,0 +1,111 @@
+.mpg-resume-from-channel--header--title{
+  padding: 1.4rem 2.4rem 1.6rem;
+  color: rgba(0, 0, 0, .85);
+  font-family: 'PingFangSC-Semibold', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
+  font-weight: 600;
+  background-color: #fff;
+}
+.mpg-resume-from-channel--header--upload{
+  cursor: pointer;
+  .ant-upload{
+    width: 100%;
+  }
+
+}
+
+.mpg-resume-from-channel--header--upload-wrap{
+  height: 8.8rem;
+  padding: 1.6rem 1.7rem 1.1rem 1.4rem;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.mpg-resume-from-channel--header--upload-wrap{
+  display: flex;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: rows;
+  word-break: break-all;
+}
+
+.mpg-resume-from-channel--header--upload-image{
+  flex: none;
+  margin-top: .2rem;
+  margin-right: .8rem;
+  width: 4.9rem;
+  height: 4.9rem;
+  object-fit: cover;
+}
+
+.mpg-resume-from-channel--header--upload-body{
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.mpg-resume-from-channel--header--upload-content{
+  flex: auto;
+  display: flex;
+  flex-direction: center;
+}
+.mpg-resume-from-channel--header--upload-center{
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+}
+.mpg-resume-from-channel--header--upload-topic{
+  flex: auto;
+  display: flex;
+  align-items: center;
+}
+
+.mpg-resume-from-channel--header--upload-title{
+  font-family: 'PingFangSC-Regular', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
+  font-weight: 400;
+  color: rgba(0, 0, 0, .85);
+}
+.mpg-resume-from-channel--header--upload-remove{
+  margin-left: .8rem;
+  height: 2rem;
+  color: rgba(0, 0, 0, .25);
+}
+
+.mpg-resume-from-channel--header--upload-percent-wrap{
+  flex: none;
+  width: 15rem;
+  height: .3rem;
+  margin-top: .8rem;
+  background-color: rgba(0, 0, 0, .05);
+  border-radius: .3rem;
+  overflow: hidden;
+}
+
+.mpg-resume-from-channel--header--upload-percent{
+  width: 0;
+  height: 100%;
+  background-color: #00c75f;
+  transition: width .2s;
+}
+
+.ant-upload p.mpg-resume-from-channel--header--upload-status{
+  flex: none;
+  margin-top: .8rem;
+  color: rgba(0, 0, 0, .45);
+  &.is-error{
+    color: #ff5a5f;
+  }
+
+}
+
+.mpg-resume-from-channel--header--upload-button{
+  color: #ff7a20;
+  font-size: 9rem;
+}
+.ant-upload p.mpg-resume-from-channel--header--upload-request{
+  flex: none;
+  margin-top: .8rem;
+  color: rgba(0, 0, 0, .45);
+  white-space: normal;
+}
+
