@@ -5,6 +5,7 @@ import Main from '@/components/Layout/Main';
 import NoDing from '@/components/NoDing';
 import constants from '../utils/constants';
 import Transform from '../components/Transform';
+import UploadFileMini from '../components/UploadFileMini';
 
 const { isInDingTalk } = constants;
 @connect(({ session }) => ({
@@ -26,13 +27,22 @@ class BasicLayout extends React.PureComponent {
         <Transform />
       );
     }
+    if (url.indexOf('uploadMini') > -1) {
+      return (
+        <UploadFileMini />
+      );
+    }
+    console.log(1);
     if (!isLogin && isInDingTalk) {
       return null;
     }
+    console.log(2);
     if (Number(status) === 1) {
       return <NoDing type="403" configs={userInfo.costConfigCheckVo || {}} />;
     }
+    console.log(3);
     if (!isInDingTalk) {
+      console.log('🚀 ~ file: index.js ~ line 36 ~ BasicLayout ~ render ~ url.indexOf(\'/upload\')', url.indexOf('/upload'));
       return <NoDing type="500" />;
     }
     if (url.indexOf('/_aliPayConfirms') !== -1) {

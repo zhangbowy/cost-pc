@@ -40,7 +40,8 @@ const { isInDingTalk } = constants;
 }
 
 const corpId = getCorpid() || [];
-if (isInDingTalk && (window.location.href.indexOf('transformPage') === -1)) {
+if (isInDingTalk && (window.location.href.indexOf('transformPage') === -1)
+&& (window.location.href.indexOf('uploadMini') === -1)) {
   // 钉钉免登
   ddConfig.auth(corpId).then((res) => {
     // 用户信息存储

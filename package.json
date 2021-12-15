@@ -4,7 +4,7 @@
   "description": "鑫支出",
   "author": "Tan Wei",
   "scripts": {
-    "start": "PORT=8084 umi dev",
+    "start": "PORT=8082 umi dev",
     "build": "umi build",
     "build:test": "SPD_ENV=test umi build",
     "build:pre": "SPD_ENV=pre umi build",

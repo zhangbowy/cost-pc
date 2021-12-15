@@ -1,12 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-shadow */
 import React, { memo, useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import './index.scss';
-import { Upload } from 'antd';
+import { message, Upload } from 'antd';
 import classnames from 'classnames';
-import Icon from '@/components/Icon';
-import { errMsg } from '@/utils/mReactDom';
+import { useLocation } from 'react-router-dom';
+import dd from 'dingtalk-jsapi';
+import { getQuery } from '@/utils/query';
+import style from './index.scss';
+// import Icon from '@/components/Icon';
+// import { errMsg } from '@/utils/mReactDom';
 
 const srcList = {
   jpg: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/jpg-file.png',
@@ -22,7 +24,9 @@ const SIZE_LIMIT = 50 * 1024 * 1024;
 const wait = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/wait-upload.png';
 const unknown = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/unknown.png';
 
-const projectConfig = require('@/project.config');
+const projectConfig = {
+  uploadChannelOssUrl: `${APP_API}/cost/upload/file`,
+};
 
 const uploadRequest = '支持上传多种渠道的简历，格式包括PDF、DOCX、DOC、PNG、JPG、JPEG，文件需小于50M';
 
@@ -33,7 +37,12 @@ const statusTexts = {
   error: '上传失败！'
 };
 
-const Header = ({ onChange, fileList, companyId }) => {
+const UploadFileMini = ({ onChange, fileList }) => {
+  const location = useLocation();
+  const { companyId } = getQuery(location) || {};
+  dd.onMessage = (e) => {
+    console.log(e);
+  };
   const handleChange = useCallback(
     ({ fileList = [] }) => {
       onChange && onChange(fileList);
@@ -52,13 +61,13 @@ const Header = ({ onChange, fileList, companyId }) => {
     [companyId]
   );
   const statusText = statusTexts[status];
-  const handleRemove = useCallback(
-    e => {
-      e.stopPropagation();
-      onChange && onChange([]);
-    },
-    [onChange]
-  );
+  // const handleRemove = useCallback(
+  //   e => {
+  //     e.stopPropagation();
+  //     onChange && onChange([]);
+  //   },
+  //   [onChange]
+  // );
   const src = useMemo(
     () => {
       if (!uid) {
@@ -73,25 +82,24 @@ const Header = ({ onChange, fileList, companyId }) => {
   const handleBeforeUpload = file => {
     const { size, name } = file;
     if (size > SIZE_LIMIT) {
-      errMsg('文件不能大于50M');
+      message.error('文件不能大于50M');
       return Upload.LIST_IGNORE;
     }
     const names = (name || '').split('.');
     const extName = names[names.length - 1];
     if (!srcList[extName]) {
-      errMsg('请上传PDF、DOCX、DOC、PNG、JPG、JPEG格式的文件');
+      message.error('请上传PDF、DOCX、DOC、PNG、JPG、JPEG格式的文件');
       return Upload.LIST_IGNORE;
     }
     return true;
   };
 
   return (
-    <div className='mpg-resume-from-channel--header'>
-      <p className='mpg-resume-from-channel--header--title'>投递简历</p>
+    <div className={style['mpg-resume-from-channel--header']}>
       <Upload
         accept='.doc,.docx,.jpg,.jpeg,.png,.pdf,application/pdf,image/jpeg,image/jpg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         action={projectConfig.uploadChannelOssUrl}
-        className='mpg-resume-from-channel--header--upload'
+        className={style['mpg-resume-from-channel--header--upload']}
         fileList={fileList}
         onChange={handleChange}
         maxCount={1}
@@ -99,17 +107,17 @@ const Header = ({ onChange, fileList, companyId }) => {
         data={data}
         beforeUpload={handleBeforeUpload}
       >
-        <div className='mpg-resume-from-channel--header--upload-wrap'>
+        <div className={style['mpg-resume-from-channel--header--upload-wrap']}>
           <img
-            className='mpg-resume-from-channel--header--upload-image'
+            className={style['mpg-resume-from-channel--header--upload-image']}
             src={src}
             alt='upload'
           />
-          <div className='mpg-resume-from-channel--header--upload-body'>
-            <div className='mpg-resume-from-channel--header--upload-content'>
-              <div className='mpg-resume-from-channel--header--upload-center'>
-                <div className='mpg-resume-from-channel--header--upload-topic'>
-                  <p className='mpg-resume-from-channel--header--upload-title'>
+          <div className={style['mpg-resume-from-channel--header--upload-body']}>
+            <div className={style['mpg-resume-from-channel--header--upload-content']}>
+              <div className={style['mpg-resume-from-channel--header--upload-center']}>
+                <div className={style['mpg-resume-from-channel--header--upload-topic']}>
+                  <p className={style['mpg-resume-from-channel--header--upload-title']}>
                     { name || '附件简历' }
                   </p>
                   {
@@ -118,19 +126,19 @@ const Header = ({ onChange, fileList, companyId }) => {
                       status === 'done' ||
                       status === 'success'
                     ) &&
-                    <Icon
+                    {/* <Icon
                       className='mpg-resume-from-channel--header--upload-remove'
                       type='iconqingkong'
                       category='proj'
                       onClick={handleRemove}
-                    />
+                    /> */}
                   }
                 </div>
                 {
                   status === 'uploading' &&
-                  <div className='mpg-resume-from-channel--header--upload-percent-wrap'>
+                  <div className={style['mpg-resume-from-channel--header--upload-percent-wrap']}>
                     <div
-                      className='mpg-resume-from-channel--header--upload-percent'
+                      className={style['mpg-resume-from-channel--header--upload-percent']}
                       style={{ width: `${percent}%` }}
                     />
                   </div>
@@ -139,7 +147,7 @@ const Header = ({ onChange, fileList, companyId }) => {
                   statusText &&
                   <p
                     className={classnames(
-                      'mpg-resume-from-channel--header--upload-status',
+                      style['mpg-resume-from-channel--header--upload-status'],
                       { 'is-error': status === 'error' }
                     )}
                   >
@@ -147,13 +155,13 @@ const Header = ({ onChange, fileList, companyId }) => {
                   </p>
                 }
               </div>
-              <p className='mpg-resume-from-channel--header--upload-button'>
+              <p className={style['mpg-resume-from-channel--header--upload-button']}>
                 { uid ? '重新上传' : '点击上传' }
               </p>
             </div>
             {
               !uid &&
-              <p className='mpg-resume-from-channel--header--upload-request'>
+              <p className={style['mpg-resume-from-channel--header--upload-request']}>
                 { uploadRequest }
               </p>
             }
@@ -163,10 +171,5 @@ const Header = ({ onChange, fileList, companyId }) => {
     </div>
   );
 };
-Header.propTypes = {
-  fileList: PropTypes.array,
-  onChange: PropTypes.func,
-  companyId: PropTypes.string
-};
 
-export default memo(Header);
+export default memo(UploadFileMini);
