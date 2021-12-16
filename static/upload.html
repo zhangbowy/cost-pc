@@ -239,16 +239,25 @@
     // 网页向小程序 postMessage 消息
 
     // 接收来自小程序的消息。
+    window.onload = function () {
     let company = '';
     let newToken = '';
     var fileList = [];
-    JSON.stringify(dd.onMessage);
+    alert(JSON.stringify(dd.onMessage));
     dd.onMessage = function(e) {
       const { companyId, token } = e;
       newToken = token;
       company = companyId;
       alert(JSON.stringify(e)); //{'sendToWebView': '1'}
     }
+    dd.postMessage({
+      name: 'ceshiyixia',
+      params: {
+        title: '亲',
+        content: '您本月的账单已出',
+        buttonText: '我知道了',
+      }
+    })
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0]
         var formData = new FormData();
@@ -270,7 +279,7 @@
                     const { result } = data;
                     fileList.push(result[0]);
                     dom(fileList);
-                } else{
+                } else {
                     alert(data.message);
                 }
             }
@@ -279,9 +288,6 @@
 
     function onSave(){
         dd.postMessage({fileList: JSON.stringify(fileList)});
-    }
-    function remove() {
-
     }
     function dom(fileList) {
         let str = '';
@@ -333,5 +339,6 @@
         })
     }
     onDel('#onDel')
+  }
 </script>
 </html>
