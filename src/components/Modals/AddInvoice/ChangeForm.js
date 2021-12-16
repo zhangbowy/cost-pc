@@ -996,7 +996,8 @@ renderTreeNodes = data =>
                               getFieldDecorator('ossFileUrl', {
                                 initialValue: ossFileUrl.length ? ossFileUrl : null,
                                 rules: [{
-                                  required: !!(showField.ossFileUrl.isWrite), message: '请选择图片'
+                                  required: !!(showField.ossFileUrl.isWrite), message :
+                                  `请选择${showField.ossFileUrl.name}`
                                 }]
                               })(
                                 <UploadFile

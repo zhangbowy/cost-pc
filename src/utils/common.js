@@ -565,3 +565,9 @@ export const timeDateStr = (date) => {
 export const dateToStr = (date, formate) => {
   return moment(moment(Number(date))).format(formate);
 };
+
+export const  srcName = (name) => {
+  const names = (name || '').split('.');
+  const extName = names[names.length - 1];
+  return extName.toLowerCase();
+};

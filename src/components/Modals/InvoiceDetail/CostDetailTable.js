@@ -5,7 +5,7 @@ import { Table, Tooltip, Popover, Tag } from 'antd';
 import moment from 'moment';
 import cs from 'classnames';
 import style from './index.scss';
-import { handleProduction, compare } from '../../../utils/common';
+import { handleProduction, compare, srcName } from '../../../utils/common';
 import fields from '../../../utils/fields';
 import fileIcon from '../../../utils/fileIcon';
 
@@ -261,12 +261,18 @@ class CostDetailTable extends PureComponent {
                     fileList.length === 1 ?
                       <div className={style.files} onClick={() => previewFiles(fileList[0], item.field)}>
                         {
-                          item.field === 'fileUrl' &&
-                          <img
-                            className='attachment-icon'
-                            src={fileIcon[fileUrl[0].fileType]}
-                            alt='attachment-icon'
-                          />
+                          item.field === 'fileUrl' ?
+                            <img
+                              className='attachment-icon'
+                              src={fileIcon[fileUrl[0].fileType]}
+                              alt='attachment-icon'
+                            />
+                            :
+                            <img
+                              className='attachment-icon'
+                              src={fileIcon[srcName(fileUrl[0].fileName)]}
+                              alt='attachment-icon'
+                            />
                         }
                         <div className={style.filename}>
                           <span className={style.filename__base}>
@@ -289,12 +295,18 @@ class CostDetailTable extends PureComponent {
                               fileList.map(items => (
                                 <div className={style.files} key={items.fileId || items.fileUrl} onClick={() => previewFiles(items, item.field)}>
                                   {
-                                    item.field === 'fileUrl' &&
-                                    <img
-                                      className='attachment-icon'
-                                      src={fileIcon[items.fileType]}
-                                      alt='attachment-icon'
-                                    />
+                                    item.field === 'fileUrl' ?
+                                      <img
+                                        className='attachment-icon'
+                                        src={fileIcon[items.fileType]}
+                                        alt='attachment-icon'
+                                      />
+                                      :
+                                      <img
+                                        className='attachment-icon'
+                                        src={fileIcon[srcName(items.fileName)]}
+                                        alt='attachment-icon'
+                                      />
                                   }
                                   <div className={style.filename}>
                                     <span className={style.filename__base}>

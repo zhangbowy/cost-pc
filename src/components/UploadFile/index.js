@@ -3,6 +3,8 @@ import { Upload, Icon, message, Button } from 'antd';
 // import cs from 'classnames';
 import constants from '@/utils/constants';
 import style from './index.scss';
+import fileIcon from '../../utils/fileIcon';
+import { srcName } from '../../utils/common';
 // import fileIcon from '../../utils/fileIcon';
 // import { ddPreviewImage } from '../../utils/ddApi';
 
@@ -77,11 +79,16 @@ class UploadFile extends Component {
         <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
           支持扩展名：.rar .zip .doc .docx .pdf .jpg...
         </p>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
+        <div style={{display: 'flex', flexDirection: 'column', width: 'inherit', overflow: 'hidden'}}>
           {
             fileUrl.map((item, index) => (
-              <div key={item.fileId} className={style.fileList} onClick={() => this.previewFile(item.fileUrl)}>
+              <div key={item.fileUrl} className={style.fileList} onClick={() => this.previewFile(item.fileUrl)}>
                 <div className={style.fileIcon}>
+                  <img
+                    className='attachment-icon'
+                    src={fileIcon[srcName(item.fileName)]}
+                    alt='attachment-icon'
+                  />
                   <span className="eslips-1">{item.fileName}</span>
                 </div>
                 <i

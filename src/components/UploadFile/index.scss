@@ -45,3 +45,15 @@
     margin-left: 8px;
   }
 }
+.fileIcon{
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  span{
+    display: block;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+  }
+}

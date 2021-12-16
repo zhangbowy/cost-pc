@@ -3,6 +3,7 @@ import cs from 'classnames';
 import { Row, Col } from 'antd';
 import style from './index.scss';
 import fileIcon from '../../../utils/fileIcon';
+import { srcName } from '../../../utils/common';
 
 const MainText = ({ showFields, details, previewImage, previewFiles, previewFileOss }) => {
   return (
@@ -117,12 +118,17 @@ const MainText = ({ showFields, details, previewImage, previewFiles, previewFile
           <Row className="m-l-10">
             <Col span={8} className="m-t-16">
               <div style={{display: 'flex'}}>
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.ossFileUrl.name}：</span>
                 <span className={cs('fs-14', 'c-black-65', style.file)}>
                   {
                     details.ossFileUrl && details.ossFileUrl.length ? details.ossFileUrl.map(it => (
                       <div className={style.files} onClick={() => previewFileOss(it.fileUrl)}>
-                        <p key={it.fileUrl} style={{marginBottom: '8px'}}>{it.fileName}</p>
+                        <img
+                          className='attachment-icon'
+                          src={fileIcon[srcName(it.fileName)]}
+                          alt='attachment-icon'
+                        />
+                        <p key={it.fileId} style={{marginBottom: '8px'}}>{it.fileName}</p>
                       </div>
                     ))
                     :
