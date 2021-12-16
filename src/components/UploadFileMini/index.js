@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-shadow */
-import React, { memo, useCallback, useMemo } from 'react';
-import { message, Upload } from 'antd';
+import React, { memo, useState, useMemo } from 'react';
+import { Upload } from 'antd';
 import classnames from 'classnames';
 import { useLocation } from 'react-router-dom';
 import dd from 'dingtalk-jsapi';
+import { Button } from 'antd-mobile';
 import { getQuery } from '@/utils/query';
 import style from './index.scss';
 // import Icon from '@/components/Icon';
@@ -19,7 +20,7 @@ const srcList = {
   docx: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/word-file.png'
 };
 
-const SIZE_LIMIT = 50 * 1024 * 1024;
+// const SIZE_LIMIT = 50 * 1024 * 1024;
 
 const wait = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/wait-upload.png';
 const unknown = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/unknown.png';
@@ -37,37 +38,39 @@ const statusTexts = {
   error: '上传失败！'
 };
 
-const UploadFileMini = ({ onChange, fileList }) => {
+const UploadFileMini = () => {
   const location = useLocation();
   const { companyId } = getQuery(location) || {};
+  const [fileList, setFileList] = useState([]);
   dd.onMessage = (e) => {
     console.log(e);
   };
-  const handleChange = useCallback(
-    ({ fileList = [] }) => {
-      onChange && onChange(fileList);
-    },
-    [onChange]
-  );
-  const { status, percent, name, uid } = useMemo(
-    () => (fileList && fileList[0]) || {},
-    [fileList]
-  );
-  const data = useMemo(
-    () => ({
-      companyId,
-      fileType: 99
-    }),
-    [companyId]
-  );
-  const statusText = statusTexts[status];
-  // const handleRemove = useCallback(
-  //   e => {
-  //     e.stopPropagation();
-  //     onChange && onChange([]);
+  // const handleChange = useCallback(
+  //   ({ fileList = [] }) => {
+  //     onChange && onChange(fileList);
   //   },
   //   [onChange]
   // );
+  const handleChange = (info) => {
+  console.log('🚀 ~ file: index.js ~ line 54 ~ handleChange ~ info', info);
+    if (info.result) {
+      setFileList([...fileList, ...info.result]);
+    }
+  };
+
+  const { status, name, uid } = useMemo(
+    () => (fileList && fileList[0]) || {},
+    [fileList]
+  );
+
+  const statusText = statusTexts[status];
+
+  const handleRemove = (e, index) => {
+    e.stopPropagation();
+    const img = [...fileList];
+    img.splice(index, 1);
+    setFileList(img);
+  };
   const src = useMemo(
     () => {
       if (!uid) {
@@ -75,99 +78,120 @@ const UploadFileMini = ({ onChange, fileList }) => {
       }
       const names = (name || '').split('.');
       const extName = names[names.length - 1];
-      return srcList[extName] || unknown;
+      return srcList[extName.toLowerCase()] || unknown;
     },
     [uid, name]
   );
-  const handleBeforeUpload = file => {
-    const { size, name } = file;
-    if (size > SIZE_LIMIT) {
-      message.error('文件不能大于50M');
-      return Upload.LIST_IGNORE;
-    }
+  const srcName = (name) => {
     const names = (name || '').split('.');
     const extName = names[names.length - 1];
-    if (!srcList[extName]) {
-      message.error('请上传PDF、DOCX、DOC、PNG、JPG、JPEG格式的文件');
-      return Upload.LIST_IGNORE;
-    }
-    return true;
+    return srcList[extName.toLowerCase()] || unknown;
   };
+  const onSave = () => {
+    dd.postMessage({
+      fileList: JSON.stringify(fileList),
+    });
+  };
+  // const handleBeforeUpload = file => {
+  //   const { size, name } = file;
+  //   if (size > SIZE_LIMIT) {
+  //     message.error('文件不能大于50M');
+  //     return Upload.LIST_IGNORE,
+  //   }
+  //   const names = (name || '').split('.');
+  //   const extName = names[names.length - 1];
+  //   console.log('🚀 ~ file: index.js ~ line 91 ~ UploadFileMini ~ extName', extName);
+  //   if (!srcList[extName.toLowerCase()]) {
+  //     message.error('请上传PDF、DOCX、DOC、PNG、JPG、JPEG格式的文件');
+  //     return Upload.LIST_IGNORE;
+  //   }
+  //   return true;
+  // };
 
   return (
-    <div className={style['mpg-resume-from-channel--header']}>
-      <Upload
-        accept='.doc,.docx,.jpg,.jpeg,.png,.pdf,application/pdf,image/jpeg,image/jpg,image/png,image/gif,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        action={projectConfig.uploadChannelOssUrl}
-        className={style['mpg-resume-from-channel--header--upload']}
-        fileList={fileList}
-        onChange={handleChange}
-        maxCount={1}
-        showUploadList={false}
-        data={data}
-        beforeUpload={handleBeforeUpload}
-      >
-        <div className={style['mpg-resume-from-channel--header--upload-wrap']}>
-          <img
-            className={style['mpg-resume-from-channel--header--upload-image']}
-            src={src}
-            alt='upload'
-          />
-          <div className={style['mpg-resume-from-channel--header--upload-body']}>
-            <div className={style['mpg-resume-from-channel--header--upload-content']}>
-              <div className={style['mpg-resume-from-channel--header--upload-center']}>
-                <div className={style['mpg-resume-from-channel--header--upload-topic']}>
-                  <p className={style['mpg-resume-from-channel--header--upload-title']}>
-                    { name || '附件简历' }
-                  </p>
+    <div className={style.fileNameBody}>
+      <div className={style['mpg-resume-from-channel--header']}>
+        <Upload
+          name="file"
+          multiple
+          action={projectConfig.uploadChannelOssUrl}
+          className={style['mpg-resume-from-channel--header--upload']}
+          fileList={fileList}
+          onSuccess={handleChange}
+          maxCount={9}
+          showUploadList={false}
+          data={{ companyId }}
+          headers={{
+            token: 'ca394cd0-5458-46e1-abd0-d8e2ec5c2e59'
+          }}
+        >
+          <div className={style['mpg-resume-from-channel--header--upload-wrap']}>
+            <img
+              className={style['mpg-resume-from-channel--header--upload-image']}
+              src={src}
+              alt='upload'
+            />
+            <div className={style['mpg-resume-from-channel--header--upload-body']}>
+              <div className={style['mpg-resume-from-channel--header--upload-content']}>
+                <div className={style['mpg-resume-from-channel--header--upload-center']}>
+                  <div className={style['mpg-resume-from-channel--header--upload-topic']}>
+                    <p className={style['mpg-resume-from-channel--header--upload-title']}>
+                      上传附件
+                    </p>
+                  </div>
                   {
-                    (
-                      status === 'error' ||
-                      status === 'done' ||
-                      status === 'success'
-                    ) &&
-                    {/* <Icon
-                      className='mpg-resume-from-channel--header--upload-remove'
-                      type='iconqingkong'
-                      category='proj'
-                      onClick={handleRemove}
-                    /> */}
+                    statusText &&
+                    <p
+                      className={classnames(
+                        style['mpg-resume-from-channel--header--upload-status'],
+                        { 'is-error': status === 'error' }
+                      )}
+                    >
+                      { statusText }
+                    </p>
                   }
                 </div>
-                {
-                  status === 'uploading' &&
-                  <div className={style['mpg-resume-from-channel--header--upload-percent-wrap']}>
-                    <div
-                      className={style['mpg-resume-from-channel--header--upload-percent']}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                }
-                {
-                  statusText &&
-                  <p
-                    className={classnames(
-                      style['mpg-resume-from-channel--header--upload-status'],
-                      { 'is-error': status === 'error' }
-                    )}
-                  >
-                    { statusText }
-                  </p>
-                }
+                <p className={style['mpg-resume-from-channel--header--upload-button']}>
+                  { uid ? '重新上传' : '点击上传' }
+                </p>
               </div>
-              <p className={style['mpg-resume-from-channel--header--upload-button']}>
-                { uid ? '重新上传' : '点击上传' }
-              </p>
-            </div>
-            {
-              !uid &&
               <p className={style['mpg-resume-from-channel--header--upload-request']}>
                 { uploadRequest }
               </p>
-            }
+            </div>
           </div>
-        </div>
-      </Upload>
+        </Upload>
+        {
+          fileList && fileList.map((it, index) => (
+            <div className={style.list}>
+              <div className={style.fileTitle} key={it.fileUrl}>
+                <div className={style['mpg-resume-from-channel--header--upload-topic']}>
+                  {
+                    srcName[it.fileName] &&
+                    <img
+                      className={style['mpg-resume-from-channel--header--upload-image']}
+                      src={srcName[it.fileName]}
+                      alt='upload'
+                    />
+                  }
+                  <p className={style.fileName}>
+                    { it.fileName}
+                  </p>
+                </div>
+                <i
+                  className='iconfont icona-shibai3x'
+                  type='iconqingkong'
+                  category='proj'
+                  onClick={e => handleRemove(e,index)}
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div className={style.btns}>
+        <Button type="primary" className={style.antdBtn} onClick={onSave}>完成</Button>
+      </div>
     </div>
   );
 };

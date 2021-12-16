@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传附件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body{
+        background: #F5F5F6;
+        }
+        .mpg-resume-from-channel--header{
+        margin: 0 1rem 1rem;
+        background: #fff;
+        padding-bottom: 0.1rem;
+        }
+        .mpg-resume-from-channel--header--title{
+        padding: 1.4rem 2.4rem 1.6rem;
+        color: rgba(0, 0, 0, .85);
+        font-size: 1rem;
+        font-family: 'PingFangSC-Semibold', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
+        font-weight: 600;
+        background-color: #fff;
+        }
+        .inputFile{
+            width: 100%;
+            filter: Alpha(opacity=0);
+            -moz-opacity:0;
+            opacity: 0;
+            position: absolute;
+            z-index: 2;
+        }
+        .mpg-resume-from-channel--header--upload{
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .ant-upload{
+            width: 100%;
+        }
+
+        .mpg-resume-from-channel--header--upload-wrap{
+            padding: 1rem;
+            background-color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mpg-resume-from-channel--header--upload-wrap{
+            display: flex;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: rows;
+            word-break: break-all;
+        }
+
+        .mpg-resume-from-channel--header--upload-image{
+            flex: none;
+            margin-top: .2rem;
+            margin-right: .8rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            object-fit: cover;
+        }
+
+        .mpg-resume-from-channel--header--upload-body{
+            flex: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mpg-resume-from-channel--header--upload-content{
+            flex: auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        .mpg-resume-from-channel--header--upload-center{
+            flex: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .mpg-resume-from-channel--header--upload-topic{
+            flex: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .mpg-resume-from-channel--header--upload-title{
+            font-family: 'PingFangSC-Regular', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
+            font-weight: 500;
+            color: rgba(0, 0, 0, .85);
+        }
+        .mpg-resume-from-channel--header--upload-remove{
+            margin-left: .8rem;
+            height: 2rem;
+            color: rgba(0, 0, 0, .25);
+        }
+
+        .mpg-resume-from-channel--header--upload-percent-wrap{
+            flex: none;
+            width: 15rem;
+            height: .3rem;
+            margin-top: .8rem;
+            background-color: rgba(0, 0, 0, .05);
+            border-radius: .3rem;
+            overflow: hidden;
+        }
+
+        .mpg-resume-from-channel--header--upload-percent{
+        width: 0;
+        height: 100%;
+        background-color: #00c75f;
+        transition: width .2s;
+        }
+
+        .ant-upload p.mpg-resume-from-channel--header--upload-status{
+        flex: none;
+        margin-top: .8rem;
+        color: rgba(0, 0, 0, .45);
+        }
+        .is-error{
+            color: #ff5a5f;
+        }
+
+        .mpg-resume-from-channel--header--upload-button{
+            font-size: 1rem;
+            color: #00C795;
+        }
+        .mpg-resume-from-channel--header--upload-request{
+            flex: none;
+            margin-top: .8rem;
+            color: rgba(0, 0, 0, .45);
+            white-space: normal;
+            font-size: .75rem;
+        }
+        .list{
+            margin: 0 1rem 1rem 1rem;
+            background: #F7F8FA;
+            border-radius: .1875rem;
+        }
+        .fileName{
+        padding: .875rem .5rem;
+        font-size: .875rem;
+        }
+        .fileTitle{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        }
+        .fileTitle i{
+            color: rgba(0, 0, 0, .45);
+            margin-right: .8125rem;
+        }
+        .btns{
+        position: absolute;
+        bottom: 0;
+        background: #FFFFFF;
+        width: 100%;
+        }
+        .fileNameBody{
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        }
+        .antdBtn{
+            height: 2.75rem;
+            background: #00C795;
+            font-size: 1.0625rem;
+            color: #fff;
+            text-align: center;
+            line-height: 2.75rem;
+            margin: 16px;
+        }
+        .fileImg{
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-left: .5rem;
+        }
+
+    </style>
+    <script type="text/javascript" src="https://appx/web-view.min.js"></script>
+</head>
+<body>
+    <div class="fileNameBody">
+        <div class='mpg-resume-from-channel--header'>
+        <div class='mpg-resume-from-channel--header--upload-wrap'>
+            <input type="file" class="inputFile" id="file-input" name="fileContent" />
+            <img
+                class='mpg-resume-from-channel--header--upload-image'
+                src="https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/wait-upload.png"
+                alt='upload'
+            />
+            <div class='mpg-resume-from-channel--header--upload-body'>
+                <div class='mpg-resume-from-channel--header--upload-content'>
+                <div class='mpg-resume-from-channel--header--upload-center'>
+                    <div class='mpg-resume-from-channel--header--upload-topic'>
+                    <p class='mpg-resume-from-channel--header--upload-title'>
+                        上传附件
+                    </p>
+                    </div>
+                </div>
+                <p class='mpg-resume-from-channel--header--upload-button'>
+                    点击上传
+                </p>
+                </div>
+                <p class='mpg-resume-from-channel--header--upload-request'>
+                    支持上传多种渠道的简历，格式包括PDF、DOCX、DOC、PNG、JPG、JPEG，文件需小于50M
+                </p>
+            </div>
+        </div>
+          <div id="fileLists"></div>
+        </div>
+        <div class="btns">
+          <div type="primary" class="antdBtn" onclick="onSave">完成</div>
+        </div>
+      </div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<script>
+    //设置根元素字体
+    // var win = window,
+    // doc = document;
+    // function setFontSize() {
+    // 　　var winWidth = $(window).width();
+
+    // 　　//750这个数字是根据你的设计图的实际大小来的，所以值具体根据设计图的大小
+    // 　　var size = (winWidth / 750) * 100;
+    // 　　doc.documentElement.style.fontSize = (size < 100 ? size : 100) + 'px';
+    // };
+    // //这里我们给个定时器来实现页面加载完毕再进行字体设置
+    // setTimeout(function() {
+    // 　　//初始化
+    // 　　setFontSize();
+    // }, 100);
+    // 网页向小程序 postMessage 消息
+
+    // 接收来自小程序的消息。
+    dd.onMessage = function(e) {
+    console.log(e); //{'sendToWebView': '1'}
+    }
+    var fileList = [];
+    $('#file-input').change(function(){
+        var fileItem = $('#file-input')[0].files[0]
+        var formData = new FormData();
+            formData.append('file', fileItem)
+            formData.append('companyId', '470547661288640512')
+            formData.append('token', '1bca77f6-3a1b-466f-99d1-977fc80a5305')
+        $.ajax ({
+            type : "post",
+            url : "http://cost-pc.forwe.work/cost/upload/file",
+            data : formData,
+            async : true,
+            cache : false,
+            contentType : false,
+            processData : false,
+            dataType : 'json',
+            success : function (data) {
+                if (data.code == 200){
+                    console.log(data);
+                    const { result } = data;
+                    fileList.push(result[0]);
+                    dom(fileList);
+                } else{
+                    alert(data.message);
+                }
+            }
+        });
+    });
+
+    function onSave(){
+        dd.postMessage({fileList: JSON.stringify(fileList)});
+    }
+    function remove() {
+
+    }
+    function dom(fileList) {
+        let str = '';
+        for (var i=0; i< fileList.length; i++) {
+            var it = fileList[i];
+            str+=`<div class='list'>
+                <div class='fileTitle' key={it.fileUrl}>
+                  <div class='mpg-resume-from-channel--header--upload-topic'>
+                    <img
+                        class='fileImg'
+                        src=${srcName(it.fileName)}
+                        alt='upload'
+                    />
+                    <p class='fileName'>
+                      ${it.fileName}
+                    </p>
+                  </div>
+                  <i
+                    class='iconfont icona-shibai3x'
+                    id="iconDel"
+                    index=${index}
+                    type='iconqingkong'
+                    category='proj'
+                  ></i>
+                </div>
+              </div>`;
+        }
+        $('#fileLists').append(str);
+    }
+    function srcName(name){
+        var srcList = {
+            jpg: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/jpg-file.png',
+            jpeg: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/jpg-file.png',
+            png: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/ppt-file.png',
+            pdf: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/pdf-file.png',
+            doc: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/word-file.png',
+            docx: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/word-file.png'
+        };
+        var unknown = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/unknown.png';
+        var names = (name || '').split('.');
+        var extName = names[names.length - 1];
+        return srcList[extName.toLowerCase()] || unknown;
+    }
+    function onDel(dom) {
+        $(dom).on('click', function () {
+            $(this).parent().remove();
+            var i = $(this).attr('index');
+            fileList.splice(i, 1);
+        })
+    }
+    onDel('#onDel')
+</script>
+</html>
