@@ -259,7 +259,7 @@ class CostDetailTable extends PureComponent {
                   {
                     fileList && fileList.length ?
                     fileList.length === 1 ?
-                      <div className={style.files} onClick={() => previewFiles(fileUrl[0], item.field)}>
+                      <div className={style.files} onClick={() => previewFiles(fileList[0], item.field)}>
                         {
                           item.field === 'fileUrl' &&
                           <img
@@ -271,8 +271,8 @@ class CostDetailTable extends PureComponent {
                         <div className={style.filename}>
                           <span className={style.filename__base}>
                             { item.field === 'fileUrl'
-                                ? fileUrl[0].fileName.substring(0, fileUrl[0].fileName.length-(fileUrl[0].fileType.length + 1))
-                                : fileUrl[0].fileName}
+                                ? fileList[0].fileName.substring(0, fileUrl[0].fileName.length-(fileUrl[0].fileType.length + 1))
+                                : fileList[0].fileName}
                           </span>
                           {
                             item.field === 'fileUrl' &&

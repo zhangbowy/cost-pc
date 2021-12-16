@@ -121,7 +121,7 @@ const MainText = ({ showFields, details, previewImage, previewFiles, previewFile
                 <span className={cs('fs-14', 'c-black-65', style.file)}>
                   {
                     details.ossFileUrl && details.ossFileUrl.length ? details.ossFileUrl.map(it => (
-                      <div className={style.files} onClick={() => previewFileOss(it)}>
+                      <div className={style.files} onClick={() => previewFileOss(it.fileUrl)}>
                         <p key={it.fileUrl} style={{marginBottom: '8px'}}>{it.fileName}</p>
                       </div>
                     ))
