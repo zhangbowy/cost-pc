@@ -239,16 +239,22 @@
     // 网页向小程序 postMessage 消息
 
     // 接收来自小程序的消息。
-    dd.onMessage = function(e) {
-    console.log(e); //{'sendToWebView': '1'}
-    }
+    let company = '';
+    let newToken = '';
     var fileList = [];
+    JSON.stringify(dd.onMessage);
+    dd.onMessage = function(e) {
+      const { companyId, token } = e;
+      newToken = token;
+      company = companyId;
+      alert(JSON.stringify(e)); //{'sendToWebView': '1'}
+    }
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0]
         var formData = new FormData();
             formData.append('file', fileItem)
-            formData.append('companyId', '470547661288640512')
-            formData.append('token', '1bca77f6-3a1b-466f-99d1-977fc80a5305')
+            formData.append('companyId', company)
+            formData.append('token', newToken)
         $.ajax ({
             type : "post",
             url : "http://cost-pc.forwe.work/cost/upload/file",
