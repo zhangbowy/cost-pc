@@ -239,11 +239,6 @@
     let newToken = getQueryVariable('token');
     var fileList = [];
     // dd.postMessage({ onmessage: '' });
-    setTimeout(() => {
-      dd.getMessage = function(e) {
-        alert(e);
-      }
-    }, 10000);
     // dd.getMessage((e) => {
     //   alert(e.companyId);
     // })();
@@ -259,6 +254,9 @@
     window.dd.onMessage = function(e){
       if (e.token) {
         fileList = e.fileList;
+        company = e.companyId;
+        newToken = e.token;
+        alert(e.token);
         dom(fileList);
       }
     }
@@ -275,13 +273,15 @@
 
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0];
+        dd.postMessage({ name: fileItem.name });
         if (fileList.length > 9) {
+          alert('不能超过9张')
           return;
         }
         var formData = new FormData();
             formData.append('file', fileItem)
-            formData.append('companyId', '470547661288640512')
-            formData.append('token', '3fa5ac62-7e60-48e0-8ceb-b2cec625c0bf')
+            formData.append('companyId', company)
+            formData.append('token', newToken)
             formData.append('fileName', fileItem.name)
         $.ajax ({
             type : "post",

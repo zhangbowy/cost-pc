@@ -325,7 +325,7 @@ class CostDetailTable extends PureComponent {
                           </div>
                         )}
                       >
-                        <span style={{color: 'rgba(52, 64, 162, 0.8)'}}>共{fileUrl.length}个附件</span>
+                        <span style={{color: 'rgba(52, 64, 162, 0.8)'}}>共{fileList.length}个附件</span>
                       </Popover>
                       :
                       <span>-</span>
