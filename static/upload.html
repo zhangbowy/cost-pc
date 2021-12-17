@@ -293,7 +293,7 @@
 
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0];
-        // dd.postMessage({ name: fileItem.name, company, newToken });
+        dd.postMessage({ name: fileItem.name, company, newToken });
         if (fileList.length > 8) {
           alert('不能超过9张');
           return;
