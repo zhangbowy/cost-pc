@@ -43,7 +43,7 @@ const MainText = ({ showFields, details, previewImage, previewFiles, previewFile
       {
         showFields.imgUrl && showFields.imgUrl.status ?
           <Row className="m-l-10">
-            <Col span={8} className="m-t-16">
+            <Col span={24} className="m-t-16">
               <div style={{display: 'flex'}}>
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>图片：</span>
                 <span className={cs(style.imgUrl, style.wraps)}>
@@ -77,7 +77,7 @@ const MainText = ({ showFields, details, previewImage, previewFiles, previewFile
       {
         showFields.fileUrl && showFields.fileUrl.status ?
           <Row className="m-l-10">
-            <Col span={8} className="m-t-16">
+            <Col span={24} className="m-t-16">
               <div style={{display: 'flex'}}>
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>附件：</span>
                 <span className={cs('fs-14', 'c-black-65', style.file)}>
@@ -116,7 +116,7 @@ const MainText = ({ showFields, details, previewImage, previewFiles, previewFile
       {
         showFields.ossFileUrl && showFields.ossFileUrl.status ?
           <Row className="m-l-10">
-            <Col span={8} className="m-t-16">
+            <Col span={24} className="m-t-16">
               <div style={{display: 'flex'}}>
                 <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{showFields.ossFileUrl.name}：</span>
                 <span className={cs('fs-14', 'c-black-65', style.file)}>

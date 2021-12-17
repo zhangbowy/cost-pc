@@ -220,13 +220,20 @@ export default {
   onInitKey: (arr) => {
     const newArr = [];
     arr.forEach((item, i) => {
-      const obj = { ...item, key: (getTimeIdNo()+i) };
+      const obj = {
+        ...item,
+        key: (getTimeIdNo()+i),
+        costSum: item.costSum/100,
+        shareTotal: item.costDetailShareVOS.length ? item.costSum/100 : 0,
+      };
       if (item.costDetailShareVOS) {
         const newShare = [];
         item.costDetailShareVOS.forEach((it) => {
           newShare.push({
             ...it,
             key:  getTimeIdNo(),
+            shareScale: it.shareScale ? it.shareScale/100 : 0,
+            shareAmount: it.shareAmount/100,
           });
         });
         Object.assign(obj, {
@@ -235,6 +242,8 @@ export default {
       }
       newArr.push(obj);
     });
+    console.log('🚀 ~ file: utils.js ~ line 248 ~ newArr', newArr);
+
     return newArr;
   },
   addCostValue: ({
@@ -370,26 +379,35 @@ export default {
   handleExceed: (costDetailsVo, checkStandard) => {
     const newArr = [];
     costDetailsVo.forEach(item => {
-      let obj = { ...item };
+      let obj = { ...item,costSum: item.costSum/100,
+        shareTotal: item.costDetailShareVOS.length ? item.costSum/100 : 0, };
       if (checkStandard.second[item.key] && checkStandard.second[item.key].length) {
         obj = { ...obj, exceedMessage: checkStandard.second[item.key].join('；') };
       } else {
         obj = { ...obj, exceedMessage: '' };
       }
+      const arr = [];
       if (checkStandard.exceedContents && checkStandard.exceedContents[item.key]) {
         obj = {...obj, exceedContents: checkStandard.exceedContents[item.key].exceedContents};
         const shares = checkStandard.exceedContents[item.key].shares || {};
-        const arr = [];
         if (item.costDetailShareVOS) {
           item.costDetailShareVOS.forEach(it => {
             if (shares[it.key]) {
-              arr.push({ ...it, exceedContents: shares[it.key] });
+              arr.push({ ...it, exceedContents: shares[it.key],shareScale: it.shareScale ? it.shareScale/100 : 0,
+                shareAmount: it.shareAmount/100, });
             } else {
-              arr.push({ ...it, exceedContents: [] });
+              arr.push({ ...it, exceedContents: [],shareScale: it.shareScale ? it.shareScale/100 : 0,
+                shareAmount: it.shareAmount/100, });
             }
           });
           obj = {...obj, costDetailShareVOS: arr};
         }
+      } else if (item.costDetailShareVOS) {
+        item.costDetailShareVOS.forEach(it => {
+          arr.push({ ...it, exceedContents: [],shareScale: it.shareScale ? it.shareScale/100 : 0,
+            shareAmount: it.shareAmount/100, });
+        });
+        obj = {...obj, costDetailShareVOS: arr};
       }
       newArr.push(obj);
     });

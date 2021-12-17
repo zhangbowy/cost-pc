@@ -493,8 +493,8 @@ export const costClassify = [{
 export const changeOrder = ['userJson', 'deptId', 'receiptId', 'supplier', 'costCategory', 'project'];
 
 export const changeDefaultStr = {
-  0: ['reason', 'note', 'imgUrl', 'fileUrl'],
-  1: ['reason', 'loanSum', 'repaymentTime', 'note', 'imgUrl', 'fileUrl']
+  0: ['reason', 'note', 'imgUrl', 'fileUrl', 'ossFileUrl'],
+  1: ['reason', 'loanSum', 'repaymentTime', 'note', 'imgUrl', 'fileUrl', 'ossFileUrl']
 };
 
 export const placeholderType = {

@@ -33,6 +33,7 @@
             opacity: 0;
             position: absolute;
             z-index: 2;
+            height: 4.25rem;
         }
         .mpg-resume-from-channel--header--upload{
             cursor: pointer;
@@ -250,13 +251,13 @@
     //     buttonText: '我知道了',
     //   }
     // })
+    $("input").attr('data-role','none');
     dd.postMessage({ type: 'init' });
     window.dd.onMessage = function(e){
       if (e.token) {
         fileList = e.fileList;
         company = e.companyId;
         newToken = e.token;
-        alert(e.token);
         dom(fileList);
       }
     }
@@ -282,7 +283,8 @@
             formData.append('file', fileItem)
             formData.append('companyId', company)
             formData.append('token', newToken)
-            formData.append('fileName', fileItem.name)
+            formData.append('name', fileItem.name)
+        alert(fileItem.name);
         $.ajax ({
             type : "post",
             url : "http://cost-pc.forwe.work/cost/upload/file",

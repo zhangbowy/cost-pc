@@ -627,11 +627,11 @@ class AddInvoice extends Component {
         message.error('部分支出类别不可用，已自动删除');
       }
       const newArr = this.onInitCategory(banArr);
+      const newArrKey = defaultFunc.onInitKey([...arr, ...newArr]);
       // 初始化的数据存储后续比较
       this.setState({
-        hisCostDetailsVo: [...arr, ...newArr],
+        hisCostDetailsVo: newArrKey,
       });
-      const newArrKey = defaultFunc.onInitKey([...arr, ...newArr]);
       this.onAddCost(newArrKey);
     });
   }
@@ -650,8 +650,6 @@ class AddInvoice extends Component {
       const obj = {
         ...it,
         key: `a_${index}`,
-        costSum: currency.id ? it.costSum/100 : it.costSum/100,
-        shareTotal: it.costDetailShareVOS.length ? it.costSum/100 : 0,
       };
       if (it.costDetailShareVOS) {
         it.costDetailShareVOS.forEach((item, i) => {
@@ -659,8 +657,6 @@ class AddInvoice extends Component {
           costDetailShareVOS.push({
             key: `b_${i}`,
             ...item,
-            shareScale: item.shareScale ? item.shareScale/100 : 0,
-            shareAmount: currency.id ? item.shareAmount/100 : item.shareAmount/100,
             depList: item.userId ? userDeps[item.userId] : userDeps['-1'],
             users: userJsons,
           });
