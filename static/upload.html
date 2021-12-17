@@ -314,6 +314,7 @@
             dataType : 'json',
             success : function (data) {
               // dd.postMessage({ data: data });
+              alert(JSON.stringify(data));
               if (data.code == 200){
                   console.log(data);
                   var res = data.result;
