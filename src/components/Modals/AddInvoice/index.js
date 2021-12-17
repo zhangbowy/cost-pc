@@ -852,11 +852,12 @@ class AddInvoice extends Component {
   checkStandard = (costDetailsVo, flag) => {
     const { id } = this.props;
     const { users, details } = this.state;
+    const newCostDetailsVo = flag ? costDetailsVo : defaultFunc.handleCost(costDetailsVo, id);
     return new Promise((resolve) => {
       this.props.dispatch({
         type: 'costGlobal/checkStandard',
         payload: {
-          costDetailsVo: flag ? costDetailsVo : defaultFunc.handleCost(costDetailsVo, id),
+          costDetailsVo: newCostDetailsVo,
           userId: details.userId,
           dingUserId: users && users.length ? users[0].userId : '',
           deptId: details.deptId,
@@ -867,9 +868,9 @@ class AddInvoice extends Component {
         let error = '';
         if (!flag) {
           if (checkStandard && checkStandard.second) {
-            newArr = defaultFunc.handleExceed(costDetailsVo,checkStandard);
+            newArr = defaultFunc.handleExceed(newCostDetailsVo,checkStandard);
           } else if (checkStandMsg) {
-            newArr = costDetailsVo;
+            newArr = newCostDetailsVo;
             error = true;
             message.error(checkStandMsg);
           }

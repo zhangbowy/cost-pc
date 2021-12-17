@@ -23,7 +23,7 @@
         color: rgba(0, 0, 0, .85);
         font-size: 1rem;
         font-family: 'PingFangSC-Semibold', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
-        font-weight: 600;
+        font-weight: bold;
         background-color: #fff;
         }
         .inputFile{
@@ -90,7 +90,7 @@
 
         .mpg-resume-from-channel--header--upload-title{
             font-family: 'PingFangSC-Regular', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
-            font-weight: 500;
+            font-weight: bold;
             color: rgba(0, 0, 0, .85);
         }
         .mpg-resume-from-channel--header--upload-remove{
@@ -165,6 +165,7 @@
         width: 100vw;
         height: 100vh;
         position: relative;
+        overflow: hidden;
         }
         .antdBtn{
             height: 2.75rem;
@@ -180,9 +181,19 @@
             height: 1.5rem;
             margin-left: .5rem;
         }
+        #iconDel{
+          width: .75rem;
+          height: .75rem;
+          margin-right: .5rem;
+        }
 
     </style>
     <script type="text/javascript" src="https://appx/web-view.min.js"></script>
+    <script>
+      //通过window.screen.width获取屏幕的宽度
+      var offWidth = window.screen.width / 24; //这里用宽度/30表示1rem取得的px
+      document.getElementsByTagName("html")[0].style.fontSize = offWidth + 'px'; //把rem的值复制给顶级标签html的font-size
+    </script>
 </head>
 <body>
     <div class="fileNameBody">
@@ -191,7 +202,7 @@
             <input type="file" class="inputFile" id="file-input" name="fileContent" />
             <img
                 class='mpg-resume-from-channel--header--upload-image'
-                src="https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/wait-upload.png"
+                src="https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/%E9%99%84%E4%BB%B6%402x.png"
                 alt='upload'
             />
             <div class='mpg-resume-from-channel--header--upload-body'>
@@ -221,34 +232,21 @@
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
 <script>
-    //设置根元素字体
-    // var win = window,
-    // doc = document;
-    // function setFontSize() {
-    // 　　var winWidth = $(window).width();
-
-    // 　　//750这个数字是根据你的设计图的实际大小来的，所以值具体根据设计图的大小
-    // 　　var size = (winWidth / 750) * 100;
-    // 　　doc.documentElement.style.fontSize = (size < 100 ? size : 100) + 'px';
-    // };
-    // //这里我们给个定时器来实现页面加载完毕再进行字体设置
-    // setTimeout(function() {
-    // 　　//初始化
-    // 　　setFontSize();
-    // }, 100);
     // 网页向小程序 postMessage 消息
-
     // 接收来自小程序的消息。
     window.onload = function () {
     let company = getQueryVariable('company');
     let newToken = getQueryVariable('token');
     var fileList = [];
-    // dd.onMessage = function(e) {
-    //   const { companyId, token } = e;
-    //   newToken = getQueryVariable('company');
-    //   company = getQueryVariable('token');
-    //   alert(JSON.stringify(e)); //{'sendToWebView': '1'}
-    // }
+    // dd.postMessage({ onmessage: '' });
+    setTimeout(() => {
+      dd.getMessage = function(e) {
+        alert(e);
+      }
+    }, 10000);
+    // dd.getMessage((e) => {
+    //   alert(e.companyId);
+    // })();
     // dd.postMessage({
     //   name: 'ceshiyixia',
     //   params: {
@@ -257,6 +255,13 @@
     //     buttonText: '我知道了',
     //   }
     // })
+    dd.postMessage({ type: 'init' });
+    window.dd.onMessage = function(e){
+      if (e.token) {
+        fileList = e.fileList;
+        dom(fileList);
+      }
+    }
 
     function getQueryVariable(variable){
       var query = window.location.search.substring(1);
@@ -269,11 +274,15 @@
     }
 
     $('#file-input').change(function(){
-        var fileItem = $('#file-input')[0].files[0]
+        var fileItem = $('#file-input')[0].files[0];
+        if (fileList.length > 9) {
+          return;
+        }
         var formData = new FormData();
             formData.append('file', fileItem)
             formData.append('companyId', '470547661288640512')
             formData.append('token', '3fa5ac62-7e60-48e0-8ceb-b2cec625c0bf')
+            formData.append('fileName', fileItem.name)
         $.ajax ({
             type : "post",
             url : "http://cost-pc.forwe.work/cost/upload/file",
@@ -298,57 +307,78 @@
     $('#onSave').click(function(){
       dd.postMessage({ params: { fileList: JSON.stringify(fileList) } });
     });
+    window.onDel = function(obj) {
+      console.log('zoulema');
+      $(obj).parent().remove();
+      var i = $(obj).attr('index');
+      console.log("🚀 ~ file: upload.html ~ line 353 ~ i", i);
+      fileList.splice(i, 1);
+    }
     function dom(fileList) {
-        let str = '';
-        for (var i=0; i< fileList.length; i++) {
-            var it = fileList[i];
-            str+=`<div class='list'>
-                <div class='fileTitle' key={it.fileUrl}>
-                  <div class='mpg-resume-from-channel--header--upload-topic'>
-                    <img
-                        class='fileImg'
-                        src=${srcName(it.fileName)}
-                        alt='upload'
-                    />
-                    <p class='fileName'>
-                      ${it.fileName}
-                    </p>
-                  </div>
-                  <i
-                    class='iconfont icona-shibai3x'
-                    id="iconDel"
-                    index=${i}
-                    type='iconqingkong'
-                    category='proj'
-                  ></i>
+      // dd.postMessage({ fileList: JSON.stringify(fileList) });
+      let str = '';
+      for (var i=0; i< fileList.length; i++) {
+          var it = fileList[i];
+          str+=`<div class='list'>
+              <div class='fileTitle' key={it.fileUrl}>
+                <div class='mpg-resume-from-channel--header--upload-topic'>
+                  <img
+                      class='fileImg'
+                      src=${srcName(it.fileName)}
+                      alt='upload'
+                  />
+                  <p class='fileName'>
+                    ${it.fileName}
+                  </p>
                 </div>
-              </div>`;
-        }
-        $('#fileLists').empty();
-        $('#fileLists').append(str);
+                <img
+                  class='iconfont icona-shibai3x'
+                  src="https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/%E6%B8%85%E7%A9%BA%403x.png"
+                  id="iconDel"
+                  index=${i}
+                  onclick='onDel(this)'
+                  type='iconqingkong'
+                  category='proj'
+                ></img>
+              </div>
+            </div>`;
+      }
+      $('#fileLists').empty();
+      $('#fileLists').append(str);
     }
     function srcName(name){
         var srcList = {
-            jpg: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/jpg-file.png',
-            jpeg: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/jpg-file.png',
-            png: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/ppt-file.png',
-            pdf: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/pdf-file.png',
-            doc: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/word-file.png',
-            docx: 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/word-file.png'
+            jpg: 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/jpgfile.png',
+            jpeg: 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/jpgfile.png',
+            png: 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/jpgfile.png',
+            pdf: 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/pdffile.png',
+            doc: 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/wordfile.png',
+            docx: 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/wordfile.png'
         };
-        var unknown = 'https://xfw-recruit.oss-cn-hangzhou.aliyuncs.com/base/xzp/unknown.png';
+        var unknown = 'https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/unknowfile.png';
         var names = (name || '').split('.');
         var extName = names[names.length - 1];
         return srcList[extName.toLowerCase()] || unknown;
     }
-    function onDel(dom) {
-        $(dom).on('click', function () {
-            $(this).parent().remove();
-            var i = $(this).attr('index');
-            fileList.splice(i, 1);
-        })
+
+    function alert(text,delay,speed1,speed2) {
+      /*======================================     消息提示    =======================================*/
+      var _this = this;
+      var informMove = false ;
+      if(informMove == true){ return false; } informMove = true;
+      var informDiv = $('<div style="width: 3rem;padding: 0.75rem; background:rgba(0,0,0,0.5); color:#fff; font-size:13px; line-height:20px; position:fixed; left:50%; top:0%; z-index:9999; border-radius:10px; opacity:0; -webkit-transform:translateX(-50%); -moz-transform:translateX(-50%); -ms-transform:translateX(-50%); transform:translateX(-50%);">success</div>');
+      if(text)informDiv.text(text);
+      //停留时间
+      if(!delay)delay     = 1000;
+      //出现时间
+      if(!speed1)speed1   = 200;
+      //消失时间
+      if(!speed2)speed2   = 300;
+      informDiv.appendTo($('body')).animate({"top":"20%","opacity":"1"},speed1).delay(delay).animate({"top":"0%","opacity":"0"},speed2,function(){
+          informDiv.remove();
+          informMove = false;
+      });
     }
-    onDel('#onDel')
   }
 </script>
 </html>

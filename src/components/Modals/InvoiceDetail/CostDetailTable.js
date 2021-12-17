@@ -270,7 +270,7 @@ class CostDetailTable extends PureComponent {
                             :
                             <img
                               className='attachment-icon'
-                              src={fileIcon[srcName(fileUrl[0].fileName)]}
+                              src={fileIcon[srcName(fileList[0].fileName)]}
                               alt='attachment-icon'
                             />
                         }

@@ -393,6 +393,8 @@ export default {
       }
       newArr.push(obj);
     });
+    console.log('🚀 ~ file: utils.js ~ line 399 ~ newArr', newArr);
+
     return newArr;
   },
   // handleChildren(tree, arr){
