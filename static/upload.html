@@ -239,8 +239,8 @@
     // 网页向小程序 postMessage 消息
     // 接收来自小程序的消息。
     window.onload = function () {
-    let company = getQueryVariable('company');
-    let newToken = getQueryVariable('token');
+    let company = '';
+    let newToken = '';
     var fileList = [];
     // dd.postMessage({ onmessage: '' });
     // dd.getMessage((e) => {
@@ -278,8 +278,8 @@
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0];
         dd.postMessage({ name: fileItem.name });
-        if (fileList.length > 9) {
-          alert('不能超过9张')
+        if (fileList.length > 8) {
+          alert('不能超过9张');
           return;
         }
         var formData = new FormData();
@@ -297,6 +297,7 @@
             processData : false,
             dataType : 'json',
             success : function (data) {
+              dd.postMessage({ data: data });
               if (data.code == 200){
                   console.log(data);
                   var res = data.result;
