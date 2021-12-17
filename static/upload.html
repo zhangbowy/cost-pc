@@ -270,15 +270,15 @@
     //   }
     // })
     $("input").attr('data-role','none');
-    // dd.postMessage({ type: 'init' });
-    // window.dd.onMessage = function(e){
-    //   if (e.token) {
-    //     fileList = e.fileList;
-    //     company = e.companyId;
-    //     newToken = e.token;
-    //     dom(fileList);
-    //   }
-    // }
+    dd.postMessage({ type: 'init' });
+    window.dd.onMessage = function(e){
+      if (e.token) {
+        fileList = e.fileList;
+        company = e.companyId;
+        newToken = e.token;
+        dom(fileList);
+      }
+    }
 
 
     function getQueryVariable(variable){
@@ -300,8 +300,8 @@
         }
         var formData = new FormData();
             formData.append('file', fileItem)
-            formData.append('companyId', '470547661288640512')
-            formData.append('token', '9ee6625f-f088-473c-8fbc-27c342fa05e9')
+            formData.append('companyId', company)
+            formData.append('token', newToken)
             formData.append('name', fileItem.name)
         $.ajax ({
             type : "post",
@@ -313,7 +313,7 @@
             processData : false,
             dataType : 'json',
             success : function (data) {
-              // dd.postMessage({ data: data });
+              dd.postMessage({ data: JSON.stringify(data) });
               alert(JSON.stringify(data));
               if (data.code == 200){
                   console.log(data);
