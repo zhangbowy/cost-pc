@@ -309,12 +309,11 @@
             data : formData,
             async : true,
             cache : false,
-            contentType : 'application/json; charset=utf-8',
+            contentType : false,
             processData : false,
             // dataType : 'json',
             success : function (data) {
               dd.postMessage({ data: JSON.stringify(data) });
-              alert(JSON.stringify(data));
               if (data.code == 200){
                   console.log(data);
                   var res = data.result;
