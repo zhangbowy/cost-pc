@@ -4,7 +4,7 @@ import { Table, Popover, Tag, Tooltip } from 'antd';
 import moment from 'moment';
 import fileIcon from '@/utils/fileIcon.js';
 import style from './index.scss';
-import { isJsonString } from '../../../utils/common';
+import { isJsonString, srcName } from '../../../utils/common';
 
 function RecordHistory(props) {
   const {
@@ -36,12 +36,12 @@ function RecordHistory(props) {
           );
         }
         return (
-          <span className={arr && (arr.length > 0) ?  style.imgUrlScroll : style.imgUrl}>
+          <span className={arr && (arr.length > 0) ?  style.fileUrlScroll : style.imgUrl}>
             {arr && arr.map((it) => (
               <div className={style.files} onClick={() => previewFiles(it)}>
                 <img
                   className='attachment-icon'
-                  src={fileIcon[it.fileType]}
+                  src={fileIcon[it.fileType ? it.fileType : srcName(it.fileName)]}
                   alt='attachment-icon'
                 />
                 <p key={it.fileId} style={{marginBottom: '8px'}}>{it.fileName}</p>
@@ -135,7 +135,7 @@ function RecordHistory(props) {
         }
         return (
           <span
-            className={record.imgUrl && (record.imgUrl.length > 0) ?  style.imgUrlScroll : style.imgUrl}
+            className={record.imgUrl && (record.imgUrl.length > 0) ?  style.fileUrlScroll : style.imgUrl}
             style={{
               flexDirection: 'column',
               overflow: 'scroll',
@@ -148,7 +148,7 @@ function RecordHistory(props) {
               <div className={style.files} onClick={() => previewFiles(it)}>
                 <img
                   className='attachment-icon'
-                  src={fileIcon[it.fileType]}
+                  src={fileIcon[it.fileType ? it.fileType : srcName(it.fileName)]}
                   alt='attachment-icon'
                 />
                 <p key={it.fileId} style={{marginBottom: '8px'}}>{it.fileName}</p>

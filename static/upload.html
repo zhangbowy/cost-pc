@@ -12,19 +12,22 @@
         }
         body{
           background: #F5F5F6;
+          overflow: hidden;
+          height: 100vh;
         }
         .mpg-resume-from-channel--header{
-        margin: 1rem;
-        background: #fff;
-        padding-bottom: 0.1rem;
+          margin: 1rem;
+          background: #fff;
+          padding-bottom: 0.1rem;
+          border-radius: .25rem;
         }
         .mpg-resume-from-channel--header--title{
-        padding: 1.4rem 2.4rem 1.6rem;
-        color: rgba(0, 0, 0, .85);
-        font-size: 1rem;
-        font-family: 'PingFangSC-Semibold', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
-        font-weight: bold;
-        background-color: #fff;
+          padding: 1.4rem 2.4rem 1.6rem;
+          color: rgba(0, 0, 0, .85);
+          font-size: 1rem;
+          font-family: 'PingFangSC-Semibold', 'PingFang SC', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", 'Roboto', "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 'SimSun', sans-serif;
+          font-weight: bold;
+          background-color: #fff;
         }
         .inputFile{
             width: 100%;
@@ -48,6 +51,7 @@
             background-color: #fff;
             overflow: hidden;
             position: relative;
+            border-radius: .25rem;
         }
 
         .mpg-resume-from-channel--header--upload-wrap{
@@ -111,10 +115,10 @@
         }
 
         .mpg-resume-from-channel--header--upload-percent{
-        width: 0;
-        height: 100%;
-        background-color: #00c75f;
-        transition: width .2s;
+          width: 0;
+          height: 100%;
+          background-color: #00c75f;
+          transition: width .2s;
         }
 
         .ant-upload p.mpg-resume-from-channel--header--upload-status{
@@ -138,13 +142,23 @@
             font-size: .75rem;
         }
         .list{
-            margin: 0 1rem 1rem 1rem;
+            margin: 0 1rem 0.75rem 1rem;
             background: #F7F8FA;
-            border-radius: .1875rem;
+            border-radius: .3rem;
         }
         .fileName{
-        padding: .875rem .5rem;
-        font-size: .875rem;
+          overflow: hidden;
+          /* height: 1rem; */
+          padding: 0.875rem 0.5rem;
+          font-size: .875rem;
+          text-overflow: ellipsis;
+          /* height: 1rem; */
+          flex: auto;
+          word-break: break-word;
+          word-break: break-word;
+          /* -webkit-line-clamp: 2; */
+          -webkit-box-orient: vertical;
+          display: -webkit-box;
         }
         .fileTitle{
         display: flex;
@@ -183,12 +197,13 @@
             margin-left: .5rem;
         }
         #iconDel{
-          width: .75rem;
-          height: .75rem;
-          margin-right: .5rem;
+          width: 1rem;
+          height: auto;
+          margin-right: 1rem;
         }
         #fileLists{
           overflow-y: scroll;
+          -webkit-overflow-scrolling: touch;
         }
 
     </style>
@@ -202,31 +217,31 @@
 <body>
     <div class="fileNameBody">
         <div class='mpg-resume-from-channel--header'>
-        <div class='mpg-resume-from-channel--header--upload-wrap'>
-            <input type="file" class="inputFile" id="file-input" name="fileContent" />
-            <img
-                class='mpg-resume-from-channel--header--upload-image'
-                src="https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/%E9%99%84%E4%BB%B6%402x.png"
-                alt='upload'
-            />
-            <div class='mpg-resume-from-channel--header--upload-body'>
-                <div class='mpg-resume-from-channel--header--upload-content'>
-                <div class='mpg-resume-from-channel--header--upload-center'>
-                    <div class='mpg-resume-from-channel--header--upload-topic'>
-                    <p class='mpg-resume-from-channel--header--upload-title'>
-                        上传附件
-                    </p>
-                    </div>
-                </div>
-                <p class='mpg-resume-from-channel--header--upload-button'>
-                    点击上传
-                </p>
-                </div>
-                <p class='mpg-resume-from-channel--header--upload-request'>
-                    支持上传多种渠道的简历，格式包括PDF、DOCX、DOC、PNG、JPG、JPEG，文件需小于50M
-                </p>
-            </div>
-        </div>
+          <div class='mpg-resume-from-channel--header--upload-wrap'>
+              <input type="file" class="inputFile" id="file-input" name="fileContent" />
+              <img
+                  class='mpg-resume-from-channel--header--upload-image'
+                  src="https://xfw-cost.oss-cn-hangzhou.aliyuncs.com/cost-test/pdf/%E9%99%84%E4%BB%B6%402x.png"
+                  alt='upload'
+              />
+              <div class='mpg-resume-from-channel--header--upload-body'>
+                  <div class='mpg-resume-from-channel--header--upload-content'>
+                  <div class='mpg-resume-from-channel--header--upload-center'>
+                      <div class='mpg-resume-from-channel--header--upload-topic'>
+                      <p class='mpg-resume-from-channel--header--upload-title'>
+                          上传附件
+                      </p>
+                      </div>
+                  </div>
+                  <p class='mpg-resume-from-channel--header--upload-button'>
+                      点击上传
+                  </p>
+                  </div>
+                  <p class='mpg-resume-from-channel--header--upload-request'>
+                      支持上传多种渠道的简历，格式包括PDF、DOCX、DOC、PNG、JPG、JPEG，文件需小于50M
+                  </p>
+              </div>
+          </div>
           <div id="fileLists"></div>
         </div>
         <div class="btns">
@@ -255,15 +270,16 @@
     //   }
     // })
     $("input").attr('data-role','none');
-    dd.postMessage({ type: 'init' });
-    window.dd.onMessage = function(e){
-      if (e.token) {
-        fileList = e.fileList;
-        company = e.companyId;
-        newToken = e.token;
-        dom(fileList);
-      }
-    }
+    // dd.postMessage({ type: 'init' });
+    // window.dd.onMessage = function(e){
+    //   if (e.token) {
+    //     fileList = e.fileList;
+    //     company = e.companyId;
+    //     newToken = e.token;
+    //     dom(fileList);
+    //   }
+    // }
+
 
     function getQueryVariable(variable){
       var query = window.location.search.substring(1);
@@ -277,15 +293,15 @@
 
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0];
-        dd.postMessage({ name: fileItem.name });
+        // dd.postMessage({ name: fileItem.name, company, newToken });
         if (fileList.length > 8) {
           alert('不能超过9张');
           return;
         }
         var formData = new FormData();
             formData.append('file', fileItem)
-            formData.append('companyId', company)
-            formData.append('token', newToken)
+            formData.append('companyId', '470547661288640512')
+            formData.append('token', '9ee6625f-f088-473c-8fbc-27c342fa05e9')
             formData.append('name', fileItem.name)
         $.ajax ({
             type : "post",
@@ -297,11 +313,11 @@
             processData : false,
             dataType : 'json',
             success : function (data) {
-              dd.postMessage({ data: data });
+              // dd.postMessage({ data: data });
               if (data.code == 200){
                   console.log(data);
                   var res = data.result;
-                  fileList.push(res[0]);
+                  fileList.unshift(res[0]);
                   dom(fileList);
               } else {
                   alert(data.message);
@@ -385,5 +401,10 @@
       });
     }
   }
+  const height = document.body.clientHeight;
+  const topHeight = $('.mpg-resume-from-channel--header--upload-wrap').height();
+  const bottomHei = $('.btns').height();
+  console.log(topHeight);
+  $('#fileLists').css('max-height', height-topHeight-bottomHei-45);
 </script>
 </html>

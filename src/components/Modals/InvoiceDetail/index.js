@@ -331,7 +331,7 @@ class InvoiceDetail extends Component {
   }
 
   previewFiles = (options, field) => {
-    if (field === 'ossFileUrl') {
+    if (field === 'ossFileUrl' || options.fileUrl) {
       window.open(options.fileUrl);
       return;
     }

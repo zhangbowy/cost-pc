@@ -36,6 +36,14 @@
   align-items: center;
   overflow-x: scroll;
 }
+.fileUrlScroll{
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  max-height: 51px;
+  display: inline-block;
+  padding: 8px 0px;
+}
 .file{
   display: flex;
   flex-direction: column;
