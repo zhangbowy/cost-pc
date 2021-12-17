@@ -299,10 +299,10 @@
           return;
         }
         var formData = new FormData();
-            formData.append('file', fileItem)
-            formData.append('companyId', company)
-            formData.append('token', newToken)
-            formData.append('name', fileItem.name)
+        formData.append('file', fileItem);
+        formData.append('companyId', company);
+        formData.append('token', newToken);
+        formData.append('name', fileItem.name);
         $.ajax ({
             type : "post",
             url : "http://cost-pc.forwe.work/cost/upload/file",
@@ -323,6 +323,9 @@
               } else {
                   alert(data.message);
               }
+            },
+            error:function(jqXHR){
+              dd.postMessage({ status: JSON.stringify(jqXHR) });
             }
         });
     });
