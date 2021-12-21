@@ -1,23 +1,24 @@
 
 
 import React from 'react';
-import { Menu, Tooltip, Table } from 'antd';
+import { Menu, Tooltip, Table, Badge } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import cs from 'classnames';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
-import { getArrayValue, invoiceStatus } from '../../utils/constants';
+import { getArrayColor, getArrayValue, invoiceStatus } from '../../utils/constants';
 import { ddOpenSlidePanel } from '../../utils/ddApi';
 import SearchBanner from '../statistics/overview/components/Search/Searchs';
 
-@connect(({ loading, approvalList, global }) => ({
+@connect(({ loading, approvalList, global, costGlobal }) => ({
   loading: loading.effects['approvalList/list'] || false,
   list: approvalList.list,
   query: approvalList.query,
   total: approvalList.total,
   invoiceList: global.invoiceList,
+  officeListAndRole: costGlobal.officeListAndRole
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -47,7 +48,11 @@ class Summary extends React.PureComponent {
           placeholder: '请选择',
           key: 'invoiceTemplateIds',
           id: 'invoiceTemplateIds',
-          out: 1
+          out: 1,
+          fileName: {
+            key: 'id',
+            name: 'name'
+          }
         },
         {
           type: 'search',
@@ -71,22 +76,23 @@ class Summary extends React.PureComponent {
 
   }
 
-  search = (searchList, callback) => {
-    console.log('EchartsTest -> search -> searchList', searchList);
+  search = (newA, callback) => {
+    const searchList = [...newA];
     const { dispatch } = this.props;
     const _this = this;
-    const fetchs = ['invoiceList'];
+    const fetchs = ['invoiceList', 'officeListAndRole'];
     const arr = fetchs.map(it => {
       return dispatch({
-        type: it === 'projectList' ? `costGlobal/${it}` : `global/${it}`,
+        type: it === 'officeListAndRole' ? `costGlobal/${it}` : `global/${it}`,
         payload: {}
       });
     });
     Promise.all(arr).then(() => {
-      const { invoiceList } = _this.props;
+      const { invoiceList, officeListAndRole } = _this.props;
       const treeList = [invoiceList];
       const keys = [
         'invoiceTemplateIds',
+        'officeIds'
       ];
       const obj = {};
       const newTree = treeList.map((it) => {
@@ -101,21 +107,32 @@ class Summary extends React.PureComponent {
           it
         );
       });
+      newTree.push(officeListAndRole);
       newTree.forEach((it, index) => {
         Object.assign(obj, {
           [keys[index]]: it
         });
       });
+      if (officeListAndRole.length > 0) {
+        searchList.splice(3, 0, {
+          type: 'select',
+          label: '分公司',
+          placeholder: '请选择',
+          key: 'officeIds',
+          id: 'officeIds',
+          out: 1,
+          fileName: {
+            key: 'id',
+            name: 'officeName'
+          }
+        });
+      }
       const newSearch = [];
       searchList.forEach(it => {
         if (keys.includes(it.key)) {
           newSearch.push({
             ...it,
             options: obj[it.key],
-            fileName: {
-              key: 'id',
-              name: 'name'
-            }
           });
         } else {
           newSearch.push({ ...it });
@@ -269,9 +286,24 @@ class Summary extends React.PureComponent {
       title: '单据状态',
       dataIndex: 'statusStr',
       width: 100,
-      render: (_, record) => (
-        <span>{record.statusMsg || getArrayValue(record.status, invoiceStatus)}</span>
-      )
+      render: (_, record) => {
+        const { status } = record;
+        return (
+          <span>
+            <Badge
+              color={
+                getArrayColor(`${status}`, invoiceStatus) === '-'
+                  ? 'rgba(255, 148, 62, 1)'
+                  : getArrayColor(`${status}`, invoiceStatus)
+              }
+              text={
+                record.statusStr ||
+                getArrayValue(record.status, invoiceStatus)
+              }
+            />
+          </span>
+        );
+      },
     }];
 
     if (Number(current) === 0) {

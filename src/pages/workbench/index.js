@@ -7,7 +7,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select } from 'antd';
+import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select, Badge } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import Search from 'antd/lib/input/Search';
@@ -27,6 +27,7 @@ import { dateToTime } from '../../utils/util';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
 import CenterReport from './components/Boss/CenterReport';
 import BottomChart from './components/Boss/BottomChart';
+import { getArrayColor } from '../../utils/constants';
 
 @Form.create()
 @connect(({ loading, workbench, session, global, costGlobal }) => ({
@@ -489,9 +490,24 @@ class Workbench extends PureComponent {
       title: '单据状态',
       dataIndex: 'statusStr',
       width: 100,
-      render: (_, record) => (
-        <span>{record.statusStr || getArrayValue(record.status, invoiceStatus)}</span>
-      )
+      render: (_, record) => {
+        const { status } = record;
+        return (
+          <span>
+            <Badge
+              color={
+                getArrayColor(`${status}`, invoiceStatus) === '-'
+                  ? 'rgba(255, 148, 62, 1)'
+                  : getArrayColor(`${status}`, invoiceStatus)
+              }
+              text={
+                record.statusStr ||
+                getArrayValue(record.status, invoiceStatus)
+              }
+            />
+          </span>
+        );
+      },
     }, {
       title: '操作',
       dataIndex: 'ope',
