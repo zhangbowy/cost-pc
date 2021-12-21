@@ -532,6 +532,10 @@ class AddCost extends Component {
           costType,
           arr
         });
+        if (imgUrl && imgUrl.length > 9) {
+          message.error('图片不能超过9张');
+          return;
+        }
         if (costType){
           const newArr = [];
           detail.costDetailShareVOS.forEach(it => {

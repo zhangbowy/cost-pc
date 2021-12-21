@@ -1224,6 +1224,10 @@ class AddInvoice extends Component {
       hisCostDetailsVo,
       modifyNote
     } = this.state;
+    if (params.imgUrl && params.imgUrl.length > 9) {
+      message.error('图片不能超过9张');
+      return;
+    }
     if (operateType !== 'modify') {
       dispatch({
         type: templateType ? invoiceJson[templateType].addUrl : 'global/addInvoice',
