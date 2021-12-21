@@ -757,9 +757,6 @@ class AddCost extends Component {
 
 
   onChangeImg = (val, key) => {
-    if (key === 'imhUrl' && val && val.length > 9) {
-      message.error('图片不能超过9张');
-    }
     this.setState({
       [key]: val,
     });

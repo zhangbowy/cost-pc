@@ -18,12 +18,17 @@ class UploadImg extends Component {
   handleChange = (info) => {
     console.log('UploadImg -> handleChange -> info', info);
     const img = this.state.imgUrl;
+    let arr = [...img, info.result];
     if (info.result.imgUrl) {
+      if (arr.length > 9) {
+        message.error('图片最多不超过9张');
+        arr = arr.slice(0,8);
+      }
       this.setState({
-        imgUrl: [...img, info.result]
+        imgUrl: arr
       });
     }
-    this.props.onChange([...img, info.result]);
+    this.props.onChange(arr);
   }
 
   onDelete = (index) => {

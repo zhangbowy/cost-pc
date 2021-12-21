@@ -222,9 +222,6 @@ class ChangeForm extends Component {
 
   onChangeImg = (val, key) => {
     const { onChangeData } = this.props;
-    if (key === 'imhUrl' && val && val.length > 9) {
-      message.error('图片不能超过9张');
-    }
     onChangeData({
       [key]: val,
     });
