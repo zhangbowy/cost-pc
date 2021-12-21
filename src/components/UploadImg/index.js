@@ -18,16 +18,18 @@ class UploadImg extends Component {
   handleChange = (info) => {
     console.log('UploadImg -> handleChange -> info', info);
     const img = this.state.imgUrl;
-    let arr = [...img, info.result];
-    if (info.result.imgUrl) {
-      if (arr.length > 9) {
-        message.error('图片最多不超过9张');
-        arr = arr.slice(0,8);
-      }
-      this.setState({
-        imgUrl: arr
-      });
+    if (img.length === 9) {
+      return;
     }
+    let arr = info.result.imgUrl ? [...img, info.result] : [...img];
+    if (arr.length > 9) {
+      console.log('🚀 ~ file: index.js ~ line 25 ~ UploadImg ~ arr', arr);
+      message.error('图片最多不超过9张');
+      arr = arr.slice(0,8);
+    }
+    this.setState({
+      imgUrl: arr
+    });
     this.props.onChange(arr);
   }
 
