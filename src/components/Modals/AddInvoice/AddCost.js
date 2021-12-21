@@ -513,6 +513,10 @@ class AddCost extends Component {
         if (val.ossFileUrl) {
           ossFileUrls = ossFileUrl;
         }
+        if (imgUrl && imgUrl.length > 9) {
+          message.error('图片不能超过9张');
+          return;
+        }
         const detail = addCostValue({
           costDate,
           val,
@@ -532,10 +536,7 @@ class AddCost extends Component {
           costType,
           arr
         });
-        if (imgUrl && imgUrl.length > 9) {
-          message.error('图片不能超过9张');
-          return;
-        }
+
         if (costType){
           const newArr = [];
           detail.costDetailShareVOS.forEach(it => {
@@ -756,6 +757,9 @@ class AddCost extends Component {
 
 
   onChangeImg = (val, key) => {
+    if (key === 'imhUrl' && val && val.length > 9) {
+      message.error('图片不能超过9张');
+    }
     this.setState({
       [key]: val,
     });

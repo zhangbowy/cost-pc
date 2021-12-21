@@ -36,10 +36,12 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
     }
     return item;
   };
+
   const onChangeTree = (val, key) => {
+    const arr = [...val];
     onChangeState('lineParams', {
       ...lineParams,
-      [key]: val,
+      [key]: arr,
     });
   };
   const handleArr = (arr) => {
@@ -70,6 +72,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
       value,
     };
   };
+
   return (
     <div className={style.bottomChart}>
       <div className={style.header}>
@@ -96,7 +99,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
             dropdownStyle={{height: '300px'}}
             showSearch
             treeNodeFilterProp='title'
-            onChange={val => onChangeTree(val, 'categoryIds')}
+            onChange={(val) => onChangeTree(val, 'categoryIds')}
             getPopupContainer={triggerNode => triggerNode.parentNode}
           />
           <TreeSelect
