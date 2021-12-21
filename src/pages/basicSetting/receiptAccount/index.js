@@ -87,7 +87,7 @@ class Account extends Component {
     const { list, query, total, loading } = this.props;
 
     const columns = [{
-      title: '名称',
+      title: '收款人名称',
       dataIndex: 'name',
       render: (_, record) => (
         <span>

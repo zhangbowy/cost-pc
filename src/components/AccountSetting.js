@@ -16,7 +16,7 @@ import { compare } from '../utils/common';
 const { Option } = Select;
 const formLabel = {
   type: '账户类型',
-  name: '名称',
+  name: '收款人名称',
   card: '银行卡号',
   alipay: '账号',
   bankName: '开户行',

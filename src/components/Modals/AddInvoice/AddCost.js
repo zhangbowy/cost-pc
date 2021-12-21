@@ -495,7 +495,6 @@ class AddCost extends Component {
 
     this.props.form.validateFieldsAndScroll((err, val) => {
       if (!err) {
-        console.log('AddCost -> handleOk -> val', val);
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
           message.error('分摊明细金额合计不等于支出金额，请修改');
@@ -532,6 +531,10 @@ class AddCost extends Component {
           costType,
           arr
         });
+        if (imgUrl && imgUrl.length > 9) {
+          message.error('最多只能上传9张图片');
+          return;
+        }
         if (costType){
           const newArr = [];
           detail.costDetailShareVOS.forEach(it => {

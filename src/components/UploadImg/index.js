@@ -38,6 +38,9 @@ class UploadImg extends Component {
     this.setState({
       imgUrl: imgs,
     });
+    if (imgs.length > 9) {
+      message.error('最多只能上传9张图片');
+    }
     this.props.onChange(imgs);
   }
 
