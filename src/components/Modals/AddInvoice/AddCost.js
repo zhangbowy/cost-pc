@@ -383,7 +383,7 @@ class AddCost extends Component {
             Object.assign(obj, {
               users: it.userJson ? it.userJson.map(its => { return { ...its, userName: its.name }; }) : [],
               depList: userDeps[`${it.userId}`],
-              deptId: userDeps[`${it.userId}`].findIndex(item => item.deptId === it.deptId) > -1
+              deptId: userDeps[`${it.userId}`].findIndex(item => `${item.deptId}` === `${it.deptId}`) > -1
                 ? it.deptId : '',
             });
           } else if (initDep.findIndex(item => item.deptId === it.deptId) === -1) {
@@ -1162,7 +1162,7 @@ class AddCost extends Component {
                                 支持扩展名：.rar .zip .doc .docx .pdf .jpg...
                               </p>
                               {
-                                fileUrl.map((item, index) => (
+                                fileUrl && fileUrl.length > 0 && fileUrl.map((item, index) => (
                                   <div key={item.fileId} className={style.fileList} onClick={() => this.previewFiless(item)}>
                                     <div className={style.fileIcon}>
                                       <img
