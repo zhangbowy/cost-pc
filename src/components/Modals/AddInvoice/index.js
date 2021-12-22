@@ -1225,7 +1225,7 @@ class AddInvoice extends Component {
       modifyNote
     } = this.state;
     if (params.imgUrl && params.imgUrl.length > 9) {
-      message.error('图片最多只能上传9张');
+      message.error('图片不能超过9张');
       return;
     }
     if (operateType !== 'modify') {

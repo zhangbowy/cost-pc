@@ -41,7 +41,6 @@ class CostTable extends Component {
 
   render() {
     const { list, userInfo, invoiceId, modify, templateType, officeId } = this.props;
-    console.log('CostTable -> render -> list', list);
     const newList = [];
     list.forEach(it => {
       const obj = {};

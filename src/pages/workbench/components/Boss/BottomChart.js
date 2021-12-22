@@ -8,7 +8,7 @@ import TimeComp from '../TimeComp';
 import fields from '../../../../utils/fields';
 
 const {monthAndYear} = fields;
-const { SHOW_CHILD, SHOW_PARENT } = TreeSelect;
+const { SHOW_PARENT } = TreeSelect;
 const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
   lineParams,
   onlyDeptList, lineCharts, barCharts }) => {
@@ -36,10 +36,12 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
     }
     return item;
   };
+
   const onChangeTree = (val, key) => {
+    const arr = [...val];
     onChangeState('lineParams', {
       ...lineParams,
-      [key]: val,
+      [key]: arr,
     });
   };
   const handleArr = (arr) => {
@@ -70,6 +72,7 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
       value,
     };
   };
+
   return (
     <div className={style.bottomChart}>
       <div className={style.header}>
@@ -92,11 +95,11 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
             treeData={costList}
             placeholder="支出类别"
             treeCheckable
-            showCheckedStrategy={SHOW_CHILD}
+            showCheckedStrategy={SHOW_PARENT}
             dropdownStyle={{height: '300px'}}
             showSearch
             treeNodeFilterProp='title'
-            onChange={val => onChangeTree(val, 'categoryIds')}
+            onChange={(val) => onChangeTree(val, 'categoryIds')}
             getPopupContainer={triggerNode => triggerNode.parentNode}
           />
           <TreeSelect

@@ -4,6 +4,7 @@ import ReactEcharts from 'echarts-for-react';
 import { defaultColor } from '../../utils/constants';
 import styles from './index.scss';
 import NoData from '../NoData';
+import { compare } from '../../utils/common';
 // import { defaultColor } from '../../utils/constants';
 
 const LineAndColumn = ({ lineCharts, barCharts }) => {
@@ -63,7 +64,14 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
       padding: 0,
       formatter: (params) => {
         let lis = '';
-        params.forEach(item => {
+        const barQ = params.filter(it => it.seriesType === 'bar' && it.seriesName === '其他') || [];
+        const lineQ = params.filter(it => it.seriesType === 'line' && it.seriesName === '其他') || [];
+        const bars = params.filter(it => it.seriesType === 'bar' && it.seriesName !== '其他')
+          .sort(compare('value', true)) || [];
+        const lines = params.filter(it => it.seriesType === 'line' && it.seriesName !== '其他')
+          .sort(compare('value', true)) || [];
+        const resultList = [...bars, ...barQ, ...lines,...lineQ];
+        resultList.forEach(item => {
           let strs = `<span class=${styles.tooltipBall} style='background:${item.color}' ></span>`;
           if (item.seriesType === 'line') {
             strs = `<span class=${styles.tooltipBill} style='background:${item.color}' ><i style='border: 1px solid ${item.color}'></i></span>`;

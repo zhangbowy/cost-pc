@@ -383,7 +383,7 @@ class AddCost extends Component {
             Object.assign(obj, {
               users: it.userJson ? it.userJson.map(its => { return { ...its, userName: its.name }; }) : [],
               depList: userDeps[`${it.userId}`],
-              deptId: userDeps[`${it.userId}`].findIndex(item => item.deptId === it.deptId) > -1
+              deptId: userDeps[`${it.userId}`].findIndex(item => `${item.deptId}` === `${it.deptId}`) > -1
                 ? it.deptId : '',
             });
           } else if (initDep.findIndex(item => item.deptId === it.deptId) === -1) {
@@ -512,6 +512,10 @@ class AddCost extends Component {
         if (val.ossFileUrl) {
           ossFileUrls = ossFileUrl;
         }
+        if (imgUrl && imgUrl.length > 9) {
+          message.error('图片不能超过9张');
+          return;
+        }
         const detail = addCostValue({
           costDate,
           val,
@@ -531,10 +535,6 @@ class AddCost extends Component {
           costType,
           arr
         });
-        if (imgUrl && imgUrl.length > 9) {
-          message.error('最多只能上传9张图片');
-          return;
-        }
         if (costType){
           const newArr = [];
           detail.costDetailShareVOS.forEach(it => {
@@ -1161,7 +1161,7 @@ class AddCost extends Component {
                                 支持扩展名：.rar .zip .doc .docx .pdf .jpg...
                               </p>
                               {
-                                fileUrl.map((item, index) => (
+                                fileUrl && fileUrl.length > 0 && fileUrl.map((item, index) => (
                                   <div key={item.fileId} className={style.fileList} onClick={() => this.previewFiless(item)}>
                                     <div className={style.fileIcon}>
                                       <img

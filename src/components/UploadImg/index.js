@@ -18,12 +18,19 @@ class UploadImg extends Component {
   handleChange = (info) => {
     console.log('UploadImg -> handleChange -> info', info);
     const img = this.state.imgUrl;
-    if (info.result.imgUrl) {
-      this.setState({
-        imgUrl: [...img, info.result]
-      });
+    if (img.length === 9) {
+      return;
     }
-    this.props.onChange([...img, info.result]);
+    let arr = info.result.imgUrl ? [...img, info.result] : [...img];
+    if (arr.length > 9) {
+      console.log('🚀 ~ file: index.js ~ line 25 ~ UploadImg ~ arr', arr);
+      message.error('图片最多不超过9张');
+      arr = arr.slice(0,8);
+    }
+    this.setState({
+      imgUrl: arr
+    });
+    this.props.onChange(arr);
   }
 
   onDelete = (index) => {
@@ -38,9 +45,6 @@ class UploadImg extends Component {
     this.setState({
       imgUrl: imgs,
     });
-    if (imgs.length > 9) {
-      message.error('最多只能上传9张图片');
-    }
     this.props.onChange(imgs);
   }
 

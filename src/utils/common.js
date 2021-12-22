@@ -308,7 +308,14 @@ export const PROJECTURL = {
 };
 
 // sort排序
-export const compare = (property) => {
+export const compare = (property, sort) => {
+  if (sort) {
+    return function(a,b){
+      const value1 = a[property];
+      const value2 = b[property];
+      return value2 - value1;
+  };
+  }
   return function(a,b){
       const value1 = a[property];
       const value2 = b[property];
