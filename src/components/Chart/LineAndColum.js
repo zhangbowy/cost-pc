@@ -8,7 +8,7 @@ import { compare } from '../../utils/common';
 // import { defaultColor } from '../../utils/constants';
 
 const LineAndColumn = ({ lineCharts, barCharts }) => {
-  const { value } = barCharts;
+  const { sum, value } = barCharts;
   const value1 = lineCharts.value || [];
   const xAxisData = barCharts.xList || [];
   const splitNumber=5;
@@ -17,7 +17,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
   const min2=Math.min.call(null, ...value1);
 
   // 取splitNumber的倍数
-  const max1= Math.ceil((Math.max.call(null,...value)/9.5)*10);
+  const max1= Math.ceil(sum);
   const max2= Math.ceil((Math.max.call(null,...value1)/9.5)*10);
 
   const barOption = [];
@@ -25,9 +25,10 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     barOption.push({
       name: el,
       type: 'bar',
-      stack: true,
+      stack: '部门金额',
       data: barCharts.dataList.map(it => it[el]),
       barMaxWidth : 40,
+      // yAxisIndex: 0,
     });
   });
   const lineOptions = [];
@@ -133,7 +134,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
               color:'#fff'     // X轴的颜色
           },
         },
-        boundaryGap: false,
+        // boundaryGap: false,
         nameTextStyle: {
           color: 'rgba(0,0,0,0.65)',
           padding:[0,8,10,0],

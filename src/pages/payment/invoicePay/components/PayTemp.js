@@ -408,7 +408,7 @@ class PayTemp extends React.PureComponent {
               columns={columns}
               dataSource={list}
               rowSelection={rowSelection}
-              scroll={{ x: 2400 }}
+              scroll={{ x: Number(status) !== 3 ? 1200 : 1800 }}
               rowKey="id"
               loading={loading}
               onChange={this.handleTableChange}

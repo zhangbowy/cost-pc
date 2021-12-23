@@ -53,10 +53,13 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
       return 0;
     });
     const newList = [];
+    let sum = 0;
     xs.forEach(it => {
       const newArr = arr.filter(item => item.time === it);
       let obj = {};
       newArr.forEach(item => {
+        const vals = item.value || 0;
+        sum +=vals;
         obj = {
           ...obj,
           [item.name]: item.value/100,
@@ -64,12 +67,14 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
       });
       newList.push(obj);
     });
+    console.log('🚀 ~ file: BottomChart.js ~ line 57 ~ handleArr ~ sum', sum);
     const keys = newList.length ? Object.keys(newList[0]) : [];
     return {
       keys,
       dataList: newList,
       xList: xs,
       value,
+      sum: sum/100,
     };
   };
 
