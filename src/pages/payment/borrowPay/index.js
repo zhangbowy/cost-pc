@@ -384,7 +384,7 @@ class BorrowPay extends React.PureComponent {
       fixed: 'right',
       className: 'fixCenter'
     }];
-    if(Number(status) !== 2) {
+    if(Number(status) === 3) {
       columns.splice(8, 0, {
         title: '发放人',
         dataIndex: 'payUserName',
