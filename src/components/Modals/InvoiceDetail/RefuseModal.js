@@ -49,7 +49,7 @@ class RefuseModal extends Component {
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title="拒绝理由"
+          title={(<span className="isRequired">拒绝理由</span>)}
           visible={visible}
           onCancel={this.onCancel}
           footer={[
@@ -61,7 +61,10 @@ class RefuseModal extends Component {
             <Form.Item>
               {
                 getFieldDecorator('rejectNote', {
-                  rules: [{ max: 30, message: '限制30个字以内' }]
+                  rules: [
+                    { max: 30, message: '限制30个字以内' },
+                    { required: true, message: '请输入拒绝理由' }
+                  ]
                 })(
                   <TextArea
                     placeholder="请输入拒绝理由，或点击下方标签快捷输入，限制30个字以内"

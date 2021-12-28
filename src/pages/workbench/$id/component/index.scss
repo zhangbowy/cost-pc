@@ -1,0 +1,14 @@
+.formColumn{
+  :global(.ant-form-item) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.moneyList{
+  display: flex;
+  align-items: center;
+}
+.right{
+  display: flex;
+  align-items: center;
+}

@@ -4,11 +4,13 @@ import { connect } from 'dva';
 import cs from 'classnames';
 import { Modal, Tooltip } from 'antd';
 import { debounce } from 'lodash-decorators';
+import withRouter from 'umi/withRouter';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
-import AddInvoice from './AddInvoice';
+// import AddInvoice from './AddInvoice';
 import Tags from '../Tags';
 
+@withRouter
 @connect(({ global, costGlobal }) => ({
   currencyList: global.currencyList,
   queryTemplateIds: costGlobal.queryTemplateIds,
@@ -23,10 +25,10 @@ class SelectInvoice extends Component {
     scrollCancel: false,
     list: [],
     id: 'often',
-    selectCost: [],
-    templateType: 0,
-    invoiceVisible: false,
-    invoiceId: '',
+    // selectCost: [],
+    // templateType: 0,
+    // invoiceVisible: false,
+    // invoiceId: '',
   }
 
   componentDidUpdate(prevProps){
@@ -136,22 +138,23 @@ class SelectInvoice extends Component {
       this.setState({
         list: lists,
         visible: true,
-        selectCost: arr,
+        // selectCost: arr,
       });
     });
   }
 
   modalOk = (item) => {
-    this.setState({
-      invoiceVisible: true,
-      invoiceId: item.id,
-      templateType: item.templateType,
-      visible: false,
-    }, () => {
-      if (this.props.onCancel) {
-        this.props.onCancel();
-      }
-    });
+    this.props.history.push(`/workbench/${item.templateType}~${item.id}`);
+    // this.setState({
+    //   invoiceVisible: true,
+    //   invoiceId: item.id,
+    //   templateType: item.templateType,
+    //   visible: false,
+    // }, () => {
+    //   if (this.props.onCancel) {
+    //     this.props.onCancel();
+    //   }
+    // });
   }
 
   scrollToAnchor = (anchorName) => {
@@ -211,14 +214,14 @@ class SelectInvoice extends Component {
     });
   }
 
-  onChangeVi = () => {
-    this.setState({
-      invoiceVisible: false,
-    });
-  }
+  // onChangeVi = () => {
+  //   this.setState({
+  //     invoiceVisible: false,
+  //   });
+  // }
 
   render() {
-    const { list, visible, id, selectCost, invoiceVisible, templateType, invoiceId } = this.state;
+    const { list, visible, id } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
@@ -325,7 +328,7 @@ class SelectInvoice extends Component {
               }
             </div>
           </div>
-          <AddInvoice
+          {/* <AddInvoice
             templateType={templateType}
             visible={invoiceVisible}
             id={invoiceId}
@@ -338,7 +341,7 @@ class SelectInvoice extends Component {
                 this.props.onCallback();
               }
             }}
-          />
+          /> */}
         </Modal>
       </span>
     );

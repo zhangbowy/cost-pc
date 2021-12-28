@@ -251,7 +251,11 @@ class Payment extends React.PureComponent {
           </Tooltip>
           {
             record.isModify &&
-              <Tags color='rgba(0, 199, 149, 0.08)'>改单</Tags>
+              <Tags
+                color='rgba(255, 47, 0, 0.08)'
+                nameColor='rgba(255, 47, 0, 1)'
+                name="改单"
+              />
           }
         </span>
       ),
@@ -266,11 +270,11 @@ class Payment extends React.PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 130,
+      width: 140,
     }, {
       title: '账户类型',
       dataIndex: 'accountType',
-      width: 80,
+      width: 100,
       filters: filterAccount,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
@@ -326,7 +330,7 @@ class Payment extends React.PureComponent {
           </span>
         );
       },
-      width: 140,
+      width: 150,
     }, {
       title: '提交人',
       dataIndex: 'createName',

@@ -13,7 +13,7 @@ function Tags(props) {
         borderColor: props.color || 'rgba(0, 199, 149, 0.08)',
       }}
     >
-      <span>{props.name}</span>
+      <span style={{color: props.nameColor || 'rgba(0,0,0,0.85)'}}>{props.name}</span>
       {props.children}
     </div>
   );
