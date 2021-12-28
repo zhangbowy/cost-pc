@@ -379,7 +379,9 @@ class AddInvoice extends Component {
           }
         } else {
           const contents = JsonParse(contentJson);
-          const officeLists = await this.fetchOfficeList({ userId: contents.userId });
+          const officeLists = await this.fetchOfficeList({
+            dingUserId: contents.userJson && contents.userJson.length ? contents.userJson[0].userId : ''
+          });
           console.log('AddInvoice -> onShowHandle -> officeLists', officeLists);
           if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
             Object.assign(contents, {
@@ -894,8 +896,9 @@ class AddInvoice extends Component {
           userJson: val,
         }
       }).then(() => {
-        const { deptInfo } = this.props;
-        resolve(deptInfo);
+        const { deptInfo, userId } = this.props;
+        console.log('🚀 ~ file: index.js ~ line 900 ~ AddInvoice ~ returnnewPromise ~ deptInfo', deptInfo);
+        resolve({ deptInfo, userId });
       });
     });
   }
