@@ -896,8 +896,9 @@ class AddInvoice extends Component {
           userJson: val,
         }
       }).then(() => {
-        const { deptInfo } = this.props;
-        resolve(deptInfo);
+        const { deptInfo, userId } = this.props;
+        console.log('🚀 ~ file: index.js ~ line 900 ~ AddInvoice ~ returnnewPromise ~ deptInfo', deptInfo);
+        resolve({ deptInfo, userId });
       });
     });
   }
