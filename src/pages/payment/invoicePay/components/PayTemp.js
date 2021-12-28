@@ -173,6 +173,9 @@ class PayTemp extends React.PureComponent {
     if(Number(status) !== 2 && Number(status) !== 1) {
       url = `${namespace}/exported`;
     }
+    if (Number(status) === 5) {
+      url = `${namespace}/exportRefuse`;
+    }
     console.log('是这里吗', url);
     this.props.dispatch({
       type: url,

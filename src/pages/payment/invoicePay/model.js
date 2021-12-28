@@ -65,6 +65,11 @@ export default {
       Object.assign(payload, { exportType:'export', fileName: '已发放列表' });
       yield call(post, api.payedExport, payload);
     },
+    // 已拒绝
+    *exportRefuse({ payload }, { call }) {
+      Object.assign(payload, { exportType:'export', fileName: '已拒绝列表' });
+      yield call(post, api.exportRefuse, payload);
+    },
     // 待发放
     *exporting({ payload }, { call }) {
       console.log('走到了这里了吗，奇怪', payload);

@@ -11,4 +11,5 @@ export default {
   refuse: `${APP_API}/cost/invoice/payment/reject`, // 拒绝
   operationSign: `${APP_API}/cost/invoice/payment/operationSign`,
   record: `${APP_API}/cost/invoice/payment/operationSign/record`,
+  exportRefuse: `${APP_API}/cost/export/refusePay`,
 };

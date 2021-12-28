@@ -67,7 +67,6 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
       });
       newList.push(obj);
     });
-    console.log('🚀 ~ file: BottomChart.js ~ line 57 ~ handleArr ~ sum', sum);
     const keys = newList.length ? Object.keys(newList[0]) : [];
     return {
       keys,

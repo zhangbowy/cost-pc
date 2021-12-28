@@ -29,10 +29,10 @@ function Header(props) {
       </section>
       <div className={style.headerLeft}>
         <Avatar avatar={props.userInfo && props.userInfo.avatar} name={props.userInfo && props.userInfo.name} size={72} />
-        <p className="m-l-24">
+        <div className="m-l-24">
           <p className="c-black-85 fs-20 fw-600 li-28 m-b-12">你好，{props.userInfo && props.userInfo.name}！</p>
           <p className="c-black-85 fs-14 li-22">WELCOME 欢迎使用鑫支出</p>
-        </p>
+        </div>
       </div>
       <div className={style.headerRight}>
         <LoanTable>

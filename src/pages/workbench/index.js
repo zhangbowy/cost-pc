@@ -526,15 +526,7 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) &&
             <Divider type="vertical" />
           }
-          <InvoiceDetail
-            id={record.invoiceId}
-            templateId={record.invoiceTemplateId}
-            templateType={record.templateType}
-            allow="copy"
-            onCallback={() => this.onPersonal()}
-          >
-            <a>查看</a>
-          </InvoiceDetail>
+          <a>撤销</a>
         </span>
       ),
       width: 100,

@@ -172,7 +172,7 @@ class ApproveNode extends Component {
           <div className={style.approve_box}>
             {
               approveNodesList.map((item, index) => (
-                <div className={style.approve_item_box}>
+                <div className={style.approve_item_box} key={item.title}>
                   <div className={cs(style.approve_item, `${ (index === 0 || index === approveNodesList.length - 1) ? style.relative : '' }`)}>
                     <div className="left">
                       { index === 0 && (<div className={style.border_left_top} />) }
@@ -196,7 +196,7 @@ class ApproveNode extends Component {
                       }
                       {
                         item.shortUsers.map((it, ind) => (
-                          <div className={style.user_list_box}>
+                          <div className={style.user_list_box} key={it.userName}>
                             {item.userList.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
                             <div className={cs(style.users_box, style.ellipsis)}>
                               <Avatar avatar={it.avatar} name={it.userName} size={36} className={style.avatar} />

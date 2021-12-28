@@ -60,6 +60,7 @@ const head = {
 const RightChart = ({ loading, submitReport }) => {
   const [type, setType] = useState(0);
   const [count, setCount] = useState(0);
+
   return (
     <Spin spinning={loading}>
       <div className={style.right}>
@@ -119,7 +120,7 @@ const RightChart = ({ loading, submitReport }) => {
                 return count ? [2,3,4,5].includes(it.standardType) : [0,1].includes(it.standardType);
               })
               .map((it, index) => (
-                <div className={style.ctl}>
+                <div className={style.ctl} key={it.standardName || it.deptId}>
                   {
                     list[type].arr.map((item, i) => {
                       let str = it[item] || '-';
