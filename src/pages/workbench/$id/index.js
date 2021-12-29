@@ -96,6 +96,7 @@ class addInvoice extends PureComponent {
       exceedVisible: false,
       submitParams: {},
       id: '',
+      operateType: '', // 操作类型，add: 新增
     };
   }
 
@@ -105,12 +106,13 @@ class addInvoice extends PureComponent {
     const idArr = id.split('~');
     console.log('🚀 ~ file: index.js ~ line 21 ~ addInvoice ~ componentDidMount ~ idArr', idArr);
     this.onShowHandle({
-      templateType: Number(idArr[0]),
-      id: idArr[1]
+      templateType: Number(idArr[1]),
+      id: idArr[2],
+      operateType: idArr[0],
     });
   }
 
-  fetchList = ({ templateType, id },callback) => {
+  fetchList = ({ templateType, id, operateType },callback) => {
     const {
       userInfo,
       dispatch
@@ -193,6 +195,7 @@ class addInvoice extends PureComponent {
         loanUserId: userInfo.dingUserId,
         templateType,
         id,
+        operateType,
       }, () => {
         if (callback) {
           callback();
@@ -210,7 +213,7 @@ class addInvoice extends PureComponent {
     });
   }
 
-  onShowHandle = async({ templateType,id }) => {
+  onShowHandle = async({ templateType,id, operateType }) => {
     let detail = this.state.details;
     const {
       contentJson,
@@ -227,7 +230,7 @@ class addInvoice extends PureComponent {
       message.error('该单据模板不可用，草稿无效请删除');
       return;
     }
-    this.fetchList({ templateType, id }, async() => {
+    this.fetchList({ templateType, id, operateType }, async() => {
       const create = this.state.depList;
       if (create && create.length > 0) {
         // this.props.form.setFieldsValue({
@@ -322,6 +325,8 @@ class addInvoice extends PureComponent {
           }
         }
         if (!contentJson) {
+          let costSelect = localStorage.getItem('selectCost') || '';
+          localStorage.removeItem('selectCost');
           this.setState({
             details: {
               ...detail,
@@ -334,8 +339,9 @@ class addInvoice extends PureComponent {
             inDetails: djDetails,
             aliTripAuth: aliTripAuth && aliTripAuth.length ? aliTripAuth[0] : {},
           }, () => {
-            if (this.props.costSelect) {
-              const { costSelect, expenseList } = this.props;
+            if (costSelect) {
+              costSelect = JSON.parse(costSelect);
+              const { expenseList } = this.props;
               const arrs = [];
               const categoryIds = expenseList.map(it => it.id);
               const category = [];
@@ -370,7 +376,7 @@ class addInvoice extends PureComponent {
               }
             }
           });
-          if (!this.props.costSelect) {
+          if (!costSelect) {
             this.getNode();
           }
         } else {
@@ -413,7 +419,8 @@ class addInvoice extends PureComponent {
   onInit = async(detail, djDetails) => {
     // const { templateType } = detail;
     const expandField = [];
-    const { operateType, userInfo } = this.props;
+    const { userInfo } = this.props;
+    const { operateType } = this.state;
     console.log('AddInvoice -> onInit -> detail', detail);
     let applyArr = detail.applicationIds && detail.applicationIds.length &&
       operateType !== 'modify' && operateType !== 'copy' ?

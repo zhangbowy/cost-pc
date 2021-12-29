@@ -25,7 +25,7 @@ class SelectInvoice extends Component {
     scrollCancel: false,
     list: [],
     id: 'often',
-    // selectCost: [],
+    selectCost: [],
     // templateType: 0,
     // invoiceVisible: false,
     // invoiceId: '',
@@ -138,13 +138,17 @@ class SelectInvoice extends Component {
       this.setState({
         list: lists,
         visible: true,
-        // selectCost: arr,
+        selectCost: arr,
       });
     });
   }
 
   modalOk = (item) => {
-    this.props.history.push(`/workbench/${item.templateType}~${item.id}`);
+    const { selectCost } = this.state;
+    if (selectCost) {
+      localStorage.setItem('selectCost', JSON.stringify(selectCost));
+    }
+    this.props.history.push(`/workbench/add~${item.templateType}~${item.id}`);
     // this.setState({
     //   invoiceVisible: true,
     //   invoiceId: item.id,

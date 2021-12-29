@@ -74,7 +74,7 @@ export default {
     *exporting({ payload }, { call }) {
       console.log('走到了这里了吗，奇怪', payload);
       if (payload.isSign) {
-        Object.assign(payload, { exportType:'export', fileName: '待票签列表' });
+        Object.assign(payload, { exportType:'export', fileName: '已票签列表' });
       } else {
         Object.assign(payload, { exportType:'export', fileName: '待发放列表' });
       }
