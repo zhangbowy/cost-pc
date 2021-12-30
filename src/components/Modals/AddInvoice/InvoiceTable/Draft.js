@@ -126,6 +126,18 @@ class Draft extends Component {
     });
   }
 
+  onEdit = ({ isTemplateDel, isTemplateUsed, invoiceId, templateType, details }) => {
+    let str = 'edit';
+    if (isTemplateDel) {
+      str = 'isTemplateDel';
+    }
+    if (isTemplateUsed) {
+      str = 'isTemplateUsed';
+    }
+    localStorage.setItem('contentJson', details);
+    this.props.history.push(`/workbench/${str}~${templateType}~${invoiceId}`);
+  }
+
   render() {
     const { draftList, total, loading, page, draftTotal } = this.props;
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
@@ -203,7 +215,18 @@ class Draft extends Component {
             draftId={record.id}
             isTemplateDel={record.isTemplateDel}
           >
-            <a>编辑</a>
+            <a
+              onClick={() => this.onEdit({
+                id: record.id,
+                isTemplateDel: record.isTemplateDel,
+                isTemplateUsed: record.isTemplateUsed,
+                templateType: record.templateType,
+                invoiceId: record.invoiceTemplateId,
+                details: record.contentJson
+              })}
+            >
+              编辑
+            </a>
           </AddInvoice>
         </span>
       ),

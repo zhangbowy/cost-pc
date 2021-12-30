@@ -10,7 +10,7 @@ import style from './index.scss';
 import Lines from '../../../components/StyleCom/Lines';
 import Bottom from './component/Bottom';
 import ChangeForm from './component/FormList';
-import { JsonParse } from '../../../utils/common';
+import { JsonParse, sortBy } from '../../../utils/common';
 import AddCost from '../../../components/Modals/AddInvoice/AddCost';
 import AddFolder from '../../../components/Modals/AddInvoice/AddFolder';
 import CostTable from '../../../components/Modals/AddInvoice/CostTable';
@@ -104,7 +104,6 @@ class addInvoice extends PureComponent {
     const { id } = this.props.match.params;
     console.log(id);
     const idArr = id.split('~');
-    console.log('🚀 ~ file: index.js ~ line 21 ~ addInvoice ~ componentDidMount ~ idArr', idArr);
     this.onShowHandle({
       templateType: Number(idArr[1]),
       id: idArr[2],
@@ -906,10 +905,11 @@ class addInvoice extends PureComponent {
   onAddBorrow = (val) => {
     console.log('AddInvoice -> onAddBorrow -> val', val);
     const detailList = [...val];
+    const newArr = detailList.sort(sortBy('createTime', true));
     let money = Number(this.state.total);
     let assessSum = 0;
     if (money || (money === 0)) {
-      detailList.forEach(it => {
+      newArr.forEach(it => {
         console.log(money);
         if(Number(money) < (it.waitAssessSum/100)) {
           it.money = money;
@@ -923,7 +923,7 @@ class addInvoice extends PureComponent {
       });
     }
     this.setState({
-      borrowArr: detailList,
+      borrowArr: newArr.map((it, index) => { return { ...it, sort: index }; }),
       assessSum: Number(assessSum.toFixed(2)),
     });
   }
