@@ -33,6 +33,7 @@ class AddAccount extends React.PureComponent {
       type: '0',
       visible: false,
       imgUrl: [],
+      isShowInput: false,
     };
   }
 
@@ -62,14 +63,21 @@ class AddAccount extends React.PureComponent {
         }
       }).then(() => {
         const { detail } = this.props;
+        const isInput = detail.bankName && (
+          bankList.findIndex(it => it === detail.bankName) === -1 ||
+          detail.bankName === '其他银行'
+        );
         this.setState({
           visible: true,
           type,
           imgUrl: detail.qrUrl ? [{ imgUrl: detail.qrUrl }] : [],
+          isShowInput: isInput,
           data: {
             ...detail,
             awAreas: detail.awAreas ?
               detail.awAreas.sort(compare('level')).map(it => it.areaCode) : undefined,
+            bankName: isInput ? '其他银行' : detail.bankName,
+            bankName1: isInput && detail.bankName !== '其他银行' ? detail.bankName : ''
           },
           treeList
         });
@@ -82,7 +90,15 @@ class AddAccount extends React.PureComponent {
       });
     }
   });
+  }
 
+  onChangeAccount = (val) => {
+    this.props.form.setFieldsValue({
+      bankName1: '',
+    });
+    this.setState({
+      isShowInput: val === '其他银行',
+    });
   }
 
   onRest = () => {
@@ -133,7 +149,10 @@ class AddAccount extends React.PureComponent {
 
         dispatch({
           type: action,
-          payload,
+          payload: {
+            ...payload,
+            bankName: payload.bankName === '其他银行' ? value.bankName1 : payload.bankName,
+          },
         }).then(() => {
           message.success('操作成功');
           this.setState({
@@ -149,11 +168,11 @@ class AddAccount extends React.PureComponent {
   onChange = (value) => {
     this.setState({
       type: value,
+      isShowInput: false,
     });
   }
 
   onChangeImg = val => {
-  console.log('AddAccount -> val', val);
     this.setState({
       imgUrl: val,
     });
@@ -173,6 +192,7 @@ class AddAccount extends React.PureComponent {
       data,
       treeList,
       imgUrl,
+      isShowInput,
     } = this.state;
     return (
       <span>
@@ -256,16 +276,17 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('bankName', {
                     initialValue: data && data.bankName,
-                    /* rules: [
+                    rules: [
                       {
                         required: !!(Number(type) === 0),
                         message: '请选择开户行'
                       }
-                    ] */
+                    ]
                   })(
                     <Select
                       showSearch
                       placeholder="请选择"
+                      onChange={this.onChangeAccount}
                       getPopupContainer={triggerNode => triggerNode.parentNode}
                     >
                       {
@@ -280,11 +301,31 @@ class AddAccount extends React.PureComponent {
               </Form.Item>
             }
             {
+              isShowInput && Number(type) === 0 &&
+              <Form.Item label='开户行名称'>
+                {
+                  getFieldDecorator('bankName1', {
+                    initialValue: data && data.bankName1,
+                    rules: [{
+                      required: !!(Number(type) === 0),
+                      message: '请输入开户行'
+                    }]
+                  })(
+                    <Input placeholder="请输入开户行" />
+                  )
+                }
+              </Form.Item>
+            }
+            {
               Number(type) === 0 &&
               <Form.Item label={labelInfo.awAreas}>
                 {
                   getFieldDecorator('awAreas', {
                     initialValue: (data && data.awAreas) || [],
+                    rules: [{
+                      required: !!(Number(type) === 0),
+                      message: `请选择${labelInfo.awAreas}`
+                    }]
                   })(
                     <Cascader
                       options={treeList}
@@ -301,6 +342,10 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('bankNameBranch', {
                     initialValue: data && data.bankNameBranch,
+                    rules:[{
+                      required: !!(Number(type) === 0),
+                      message: `请输入${labelInfo.bankNameBranch}`
+                    }]
                   })(
                     <Input placeholder={`请输入${labelInfo.bankNameBranch}`} />
                   )

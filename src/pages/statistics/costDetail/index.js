@@ -905,7 +905,7 @@ class Statistics extends React.PureComponent {
     return (
       <div style={{ padding: 0 }}>
         <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
-        <div className="content-dt" style={{ height: 'auto', padding: '24px' }}>
+        <div className="content-dt" style={{ height: 'auto', padding: '32px' }}>
           <div className="cnt-header" style={{marginBottom: historyImportStatus&&historyImportStatus.errorCount ? '16px' : '0px'}}>
             <div
               className="head_lf"

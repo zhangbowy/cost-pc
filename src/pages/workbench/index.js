@@ -614,7 +614,7 @@ class Workbench extends PureComponent {
                     margin: '16px'
                   }}
                 >
-                  <div style={{ margin: '0 16px' }}>
+                  <div style={{ margin: '0 32px' }}>
                     <p className="fw-500 fs-14 c-black-85 m-t-16">我发起的单据</p>
                     <div className={style.searchs} style={{ marginTop: isBoss ? '24px' : '16px' }}>
                       <Form layout="inline" style={{display: 'flex'}}>

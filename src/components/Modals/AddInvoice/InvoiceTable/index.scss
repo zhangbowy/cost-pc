@@ -121,3 +121,10 @@
     }
   }
 }
+.categoryName{
+  vertical-align: middle;
+  max-width: 130px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

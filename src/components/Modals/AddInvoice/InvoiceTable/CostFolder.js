@@ -262,6 +262,7 @@ class CostFolder extends Component {
     const columns = [{
       title: '支出类别',
       dataIndex: 'categoryName',
+      ellipsis: true,
       render: (_, record) => (
         <span className={style.cateNames}>
           <i
@@ -273,7 +274,14 @@ class CostFolder extends Component {
               verticalAlign: 'middle'
             }}
           />
-          <span style={{verticalAlign: 'middle'}}>{record.categoryName}</span>
+          <Tooltip title={record.categoryName}>
+            <span
+              style={{maxWidth: record.showAlitripIcon ? '130px' : '154px'}}
+              className={style.categoryName}
+            >
+              {record.categoryName}
+            </span>
+          </Tooltip>
           {
             record.showAlitripIcon &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />

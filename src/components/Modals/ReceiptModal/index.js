@@ -33,7 +33,8 @@ class AddAccount extends React.PureComponent {
       type: '0',
       visible: false,
       treeList: [],
-      imgUrl: []
+      imgUrl: [],
+      isShowInput: false,
     };
   }
 
@@ -102,7 +103,10 @@ class AddAccount extends React.PureComponent {
         const action = 'global/addAcc';
         dispatch({
           type: action,
-          payload,
+          payload: {
+            ...payload,
+            bankName: value.bankName === '其他银行' ? value.bankName1 : value.bankName,
+          },
         }).then(() => {
           message.success('新增成功');
           this.setState({
@@ -121,6 +125,15 @@ class AddAccount extends React.PureComponent {
     });
   }
 
+  onChangeAccount = (val) => {
+    this.props.form.setFieldsValue({
+      bankName1: '',
+    });
+    this.setState({
+      isShowInput: val === '其他银行',
+    });
+  }
+
   render() {
     const {
       children,
@@ -134,7 +147,8 @@ class AddAccount extends React.PureComponent {
       loading,
       data,
       treeList,
-      imgUrl
+      imgUrl,
+      isShowInput
     } = this.state;
     return (
       <span>
@@ -220,6 +234,7 @@ class AddAccount extends React.PureComponent {
                       showSearch
                       placeholder="请选择"
                       getPopupContainer={triggerNode => triggerNode.parentNode}
+                      onChange={this.onChangeAccount}
                     >
                       {
                         bankList.map((it) => (
@@ -233,11 +248,31 @@ class AddAccount extends React.PureComponent {
               </Form.Item>
             }
             {
+              isShowInput && Number(type) === 0 &&
+              <Form.Item label='开户行名称'>
+                {
+                  getFieldDecorator('bankName1', {
+                    initialValue: data && data.bankName1,
+                    rules: [{
+                      required: !!(Number(type) === 0),
+                      message: '请输入开户行'
+                    }]
+                  })(
+                    <Input placeholder="请输入开户行" />
+                  )
+                }
+              </Form.Item>
+            }
+            {
               Number(type) === 0 &&
               <Form.Item label={labelInfo.awAreas}>
                 {
                   getFieldDecorator('awAreas', {
                     initialValue: (data && data.awAreas) || [],
+                    rules: [{
+                      required: !!(Number(type) === 0),
+                      message: `请选择${labelInfo.awAreas}`
+                    }]
                   })(
                     <Cascader
                       options={treeList}
@@ -254,6 +289,10 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('bankNameBranch', {
                     initialValue: data && data.bankNameBranch,
+                    rules: [{
+                      required: !!(Number(type) === 0),
+                      message: `请输入${labelInfo.bankNameBranch}`
+                    }]
                   })(
                     <Input placeholder={`请输入${labelInfo.bankNameBranch}`} />
                   )
