@@ -627,7 +627,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -703,7 +703,7 @@ renderTreeNodes = data =>
                           {
                             itw.itemExplain && !!(itw.itemExplain.length) &&
                             itw.itemExplain.map(item => (
-                              <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                              <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                 {item.note}
                               </p>
                             ))
@@ -794,7 +794,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -830,7 +830,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -863,7 +863,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -892,7 +892,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -945,7 +945,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -981,7 +981,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -1017,7 +1017,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -1058,7 +1058,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -1115,7 +1115,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -1154,7 +1154,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -1182,7 +1182,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))
@@ -1229,7 +1229,7 @@ renderTreeNodes = data =>
                             {
                               itw.itemExplain && !!(itw.itemExplain.length) &&
                               itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1" style={{marginBottom: 0, marginTop: 0}} key={item.note}>
+                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                                   {item.note}
                                 </p>
                               ))

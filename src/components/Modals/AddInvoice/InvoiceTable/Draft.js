@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { Modal, Divider, Button, Popconfirm, message, Tooltip } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 import InvoiceTable from '.';
 // import style from './index.scss';
 import { rowSelect } from '../../../../utils/common';
-import AddInvoice from '..';
 
+@withRouter
 @connect(({ costGlobal, loading }) => ({
   draftList: costGlobal.draftList,
   total: costGlobal.total,
@@ -126,16 +127,18 @@ class Draft extends Component {
     });
   }
 
-  onEdit = ({ isTemplateDel, isTemplateUsed, invoiceId, templateType, details }) => {
-    let str = 'edit';
+  onEdit = ({ isTemplateDel, isTemplateUsed, invoiceId, templateType, details, id }) => {
+    const str = 'draft';
     if (isTemplateDel) {
-      str = 'isTemplateDel';
+      message.error('管理员已删除该单据模板，草稿无效请删除');
+      return;
     }
-    if (isTemplateUsed) {
-      str = 'isTemplateUsed';
+    if (!isTemplateUsed) {
+      message.error('该单据模板不可用，草稿无效请删除');
+      return;
     }
     localStorage.setItem('contentJson', details);
-    this.props.history.push(`/workbench/${str}~${templateType}~${invoiceId}`);
+    this.props.history.push(`/workbench/${str}~${templateType}~${invoiceId}~${id}`);
   }
 
   render() {
@@ -197,37 +200,18 @@ class Draft extends Component {
             <span className="deleteColor">删除</span>
           </Popconfirm>
           <Divider type="vertical" />
-          <AddInvoice
-            templateType={record.templateType}
-            id={record.invoiceTemplateId}
-            contentJson={record.contentJson}
-            isTemplateUsed={record.isTemplateUsed}
-            onHandleOk={() => {
-              this.onQuery({
-                pageNo: 1,
-                pageSize: 10,
-                searchContent,
-              });
-              if (this.props.onPerson) {
-                this.props.onPerson();
-              }
-            }}
-            draftId={record.id}
-            isTemplateDel={record.isTemplateDel}
+          <a
+            onClick={() => this.onEdit({
+              id: record.id,
+              isTemplateDel: record.isTemplateDel,
+              isTemplateUsed: record.isTemplateUsed,
+              templateType: record.templateType,
+              invoiceId: record.invoiceTemplateId,
+              details: record.contentJson
+            })}
           >
-            <a
-              onClick={() => this.onEdit({
-                id: record.id,
-                isTemplateDel: record.isTemplateDel,
-                isTemplateUsed: record.isTemplateUsed,
-                templateType: record.templateType,
-                invoiceId: record.invoiceTemplateId,
-                details: record.contentJson
-              })}
-            >
-              编辑
-            </a>
-          </AddInvoice>
+            编辑
+          </a>
         </span>
       ),
       className: 'fixCenter',

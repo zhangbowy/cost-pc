@@ -104,14 +104,20 @@ class addInvoice extends PureComponent {
     const { id } = this.props.match.params;
     console.log(id);
     const idArr = id.split('~');
-    this.onShowHandle({
+    const params = {
       templateType: Number(idArr[1]),
       id: idArr[2],
       operateType: idArr[0],
-    });
+    };
+    if (idArr[0] === 'draft') {
+      Object.assign(params, {
+        draftId: idArr[3],
+      });
+    }
+    this.onShowHandle(params);
   }
 
-  fetchList = ({ templateType, id, operateType },callback) => {
+  fetchList = ({ templateType, id, operateType, draftId },callback) => {
     const {
       userInfo,
       dispatch
@@ -195,6 +201,7 @@ class addInvoice extends PureComponent {
         templateType,
         id,
         operateType,
+        draftId: draftId || '',
       }, () => {
         if (callback) {
           callback();
@@ -212,24 +219,15 @@ class addInvoice extends PureComponent {
     });
   }
 
-  onShowHandle = async({ templateType,id, operateType }) => {
+  onShowHandle = async({ templateType,id, operateType, draftId }) => {
     let detail = this.state.details;
     const {
-      contentJson,
-      isTemplateDel,
-      isTemplateUsed,
       userInfo,
     } = this.props;
+    const contentJson = localStorage.getItem('contentJson');
+    // localStorage.removeItem('contentJson');
     const _this = this;
-    if (isTemplateDel) {
-      message.error('管理员已删除该单据模板，草稿无效请删除');
-      return;
-    }
-    if (isTemplateUsed === false) {
-      message.error('该单据模板不可用，草稿无效请删除');
-      return;
-    }
-    this.fetchList({ templateType, id, operateType }, async() => {
+    this.fetchList({ templateType, id, operateType, draftId }, async() => {
       const create = this.state.depList;
       if (create && create.length > 0) {
         // this.props.form.setFieldsValue({
@@ -325,7 +323,7 @@ class addInvoice extends PureComponent {
         }
         if (!contentJson) {
           let costSelect = localStorage.getItem('selectCost') || '';
-          localStorage.removeItem('selectCost');
+          // localStorage.removeItem('selectCost');
           this.setState({
             details: {
               ...detail,
@@ -1077,9 +1075,10 @@ class addInvoice extends PureComponent {
       expandField,
       showField,
       borrowArr,
-      applyArr
+      applyArr,
+      draftId
     } = this.state;
-    const { id, templateType, draftId, djDetail, detailJson,
+    const { id, templateType, djDetail, detailJson,
       detailType, } = this.props;
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
@@ -1219,12 +1218,13 @@ class addInvoice extends PureComponent {
   }
 
   onSubmit = (params) => {
-    const { dispatch, templateType, draftId, operateType } = this.props;
+    const { dispatch, templateType, operateType } = this.props;
     const {
       costDetailsVo,
       historyParams,
       hisCostDetailsVo,
-      modifyNote
+      modifyNote,
+      draftId
     } = this.state;
     if (params.imgUrl && params.imgUrl.length > 9) {
       message.error('图片不能超过9张');
