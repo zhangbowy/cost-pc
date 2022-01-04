@@ -75,6 +75,7 @@ const staticsObj = {
   supplierList: global.supplierList,
   userInfo: session.userInfo,
   uploadRes: global.uploadRes,
+  officeListAndRole: costGlobal.officeListAndRole,
   historyImportStatus: costGlobal.historyImportStatus,
   loadingImportant: loading.effects['costGlobal/historyImport'] || false,
 }))
@@ -167,6 +168,17 @@ class Statistics extends React.PureComponent {
           placeholder: '请选择',
           key: 'invoiceTemplateIds',
           id: 'invoiceTemplateIds'
+        },
+        {
+          type: 'select',
+          label: '分公司',
+          placeholder: '请选择',
+          key: 'officeIds',
+          id: 'officeIds',
+          fileName: {
+            key: 'id',
+            name: 'officeName'
+          },
         },
         {
           type: 'tree',
@@ -287,17 +299,18 @@ class Statistics extends React.PureComponent {
     console.log('EchartsTest -> search -> searchList', searchList);
     const { dispatch } = this.props;
     const _this = this;
-    const fetchs = ['projectList','invoiceList', 'supplierList', 'costList'];
+    const fetchs = ['projectList','invoiceList', 'supplierList', 'costList', 'officeListAndRole'];
     const arr = fetchs.map(it => {
       return dispatch({
-        type: it === 'projectList' ? `costGlobal/${it}` : `global/${it}`,
+        type: it === 'projectList' || it === 'officeListAndRole' ?
+          `costGlobal/${it}` : `global/${it}`,
         payload: {}
       });
     });
     Promise.all(arr).then(() => {
-      const { costCategoryList, projectList, supplierList, invoiceList } = _this.props;
+      const { costCategoryList, projectList, supplierList, invoiceList, officeListAndRole } = _this.props;
       const treeList = [costCategoryList, projectList, invoiceList];
-      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds'];
+      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds', 'officeIds'];
       const obj = {};
       const newTree = treeList.map((it, i) => {
         return treeConvert(
@@ -312,6 +325,7 @@ class Statistics extends React.PureComponent {
         );
       });
       newTree.push(supplierList);
+      newTree.push(officeListAndRole);
       newTree.forEach((it, index) => {
         Object.assign(obj, {
           [keys[index]]: it
@@ -323,7 +337,7 @@ class Statistics extends React.PureComponent {
           newSearch.push({
             ...it,
             options: obj[it.key],
-            fileName: {
+            fileName: it.fileName || {
               key: 'id',
               name: 'name'
             }

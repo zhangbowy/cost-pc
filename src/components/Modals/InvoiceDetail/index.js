@@ -4,6 +4,7 @@ import { Modal, message, Button, Divider, Tooltip, Timeline, Popover } from 'ant
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
 import fields from '@/utils/fields';
@@ -29,6 +30,7 @@ import BasicText from './BasicText';
 
 const { aliTraffic } = fields;
 const { APP_API } = constants;
+@withRouter
 @connect(({ global, costGlobal, session }) => ({
   invoiceDetail: global.invoiceDetail,
   approvedUrl: global.approvedUrl,
@@ -412,14 +414,17 @@ class InvoiceDetail extends Component {
         message.error('不可使用该单据，请联系管理员“超管”' );
         return;
       }
-      this.setState({
-        operateType,
-        visible: false,
-      }, () => {
-        this.setState({
-          invoiceVisible: true,
-        });
-      });
+      localStorage.setItem('contentJson', JSON.stringify(details));
+      localStorage.removeItem('selectCost');
+      this.props.history.push(`/workbench/${operateType}~${details.templateType}~${details.invoiceTemplateId}~${details.id}`);
+      // this.setState({
+      //   operateType,
+      //   visible: false,
+      // }, () => {
+      //   this.setState({
+      //     invoiceVisible: true,
+      //   });
+      // });
     });
   }
 

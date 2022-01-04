@@ -644,7 +644,7 @@ renderTreeNodes = data =>
                   <>
                     {
                       itw.field === 'reason' && !!(itw.status) &&
-                      <Col span={22}>
+                      <Col span={21} className="m-t-24">
                         <Form.Item label={showField.reason && showField.reason.name}>
                           {
                             getFieldDecorator('reason', {
@@ -1100,7 +1100,6 @@ renderTreeNodes = data =>
                               })(
                                 <TreeSelect
                                   style={{width: '100%'}}
-                                  className="m-l-8"
                                   placeholder={showField.project && showField.project.note ?
                                   showField.project.note : '请选择'}
                                   dropdownStyle={{height: '300px'}}

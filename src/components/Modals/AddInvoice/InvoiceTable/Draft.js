@@ -138,6 +138,7 @@ class Draft extends Component {
       return;
     }
     localStorage.setItem('contentJson', details);
+    localStorage.removeItem('selectCost');
     this.props.history.push(`/workbench/${str}~${templateType}~${invoiceId}~${id}`);
   }
 

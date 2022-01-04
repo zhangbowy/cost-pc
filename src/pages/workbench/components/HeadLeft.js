@@ -4,10 +4,9 @@ import { Button } from 'antd';
 import style from './index.scss';
 import SelectInvoice from '../../../components/Modals/SelectInvoice';
 import AddCost from '../../../components/Modals/AddInvoice/AddCost';
-import AddInvoice from '../../../components/Modals/AddInvoice';
 
 function HeadLeft(props) {
-  const { OftenTemplate } = props;
+  const { OftenTemplate, onToAdd } = props;
   return (
     <div className={style.headLeftC}>
       <div className={style.btns}>
@@ -28,14 +27,16 @@ function HeadLeft(props) {
       <div style={{ display: 'flex', minWidth: '368px', overflow: 'hidden' }} className="addWidth">
         {
           OftenTemplate.map(it => (
-            <AddInvoice key={it.id} id={it.id} templateType={it.templateType} onHandleOk={props.onOk}>
-              <div className={style.tags} key={it.id}>
-                <span className={style.iconfonts}>
-                  <i className="iconfont iconorder_fill" />
-                </span>
-                <span className="m-l-8 eslips-1" style={{flex: 1, display: 'inline-block'}}>{it.name}</span>
-              </div>
-            </AddInvoice>
+            <span className="invoiceFirst" key={it.id}>
+              <span className="invoiceSecond">
+                <div className={style.tags} onClick={() => onToAdd(it.templateType, it.id)}>
+                  <span className={style.iconfonts}>
+                    <i className="iconfont iconorder_fill" />
+                  </span>
+                  <span className="m-l-8 eslips-1" style={{flex: 1, display: 'inline-block'}}>{it.name}</span>
+                </div>
+              </span>
+            </span>
           ))
         }
       </div>

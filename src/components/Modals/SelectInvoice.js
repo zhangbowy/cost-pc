@@ -148,6 +148,7 @@ class SelectInvoice extends Component {
     if (selectCost) {
       localStorage.setItem('selectCost', JSON.stringify(selectCost));
     }
+    localStorage.removeItem('contentJson');
     this.props.history.push(`/workbench/add~${item.templateType}~${item.id}`);
     // this.setState({
     //   invoiceVisible: true,

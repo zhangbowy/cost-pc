@@ -409,6 +409,12 @@ class Workbench extends PureComponent {
     this.props.history.push('/statistics/costDetail');
   }
 
+  onToAdd = (templateType, id) => {
+    localStorage.removeItem('contentJson');
+    localStorage.removeItem('selectCost');
+    this.props.history.push(`/workbench/add~${templateType}~${id}`);
+  }
+
   render() {
     const { list, total, query,
         userInfo, loading, invoiceList,
@@ -555,7 +561,7 @@ class Workbench extends PureComponent {
               {
                 !isBoss &&
                 <div className={style.ad}>
-                  <HeadLeft onOk={() => this.onPersonal()} OftenTemplate={OftenTemplate} />
+                  <HeadLeft onOk={() => this.onPersonal()} OftenTemplate={OftenTemplate} onToAdd={this.onToAdd}/>
                   <HeadRight onOk={() => this.onPersonal()} />
                 </div>
               }

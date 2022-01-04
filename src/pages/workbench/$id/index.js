@@ -743,6 +743,8 @@ class addInvoice extends PureComponent {
     if (this.handleCancel) {
       this.handleCancel();
     }
+    localStorage.removeItem('contentJson');
+    localStorage.removeItem('selectCost');
     this.setState({
       imgUrl: [],
       ossFileUrl: [],
@@ -775,6 +777,7 @@ class addInvoice extends PureComponent {
       exceedVisible: false,
       submitParams: {},
     });
+    this.props.history.goBack();
   }
 
   //  添加费用成功
@@ -1529,7 +1532,6 @@ class addInvoice extends PureComponent {
       officeList, // 所在公司列表,
       aliCostAndI,
       checkStandard,
-      modify,
       supplierList
     } = this.props;
     const {
@@ -1553,6 +1555,7 @@ class addInvoice extends PureComponent {
       applyArr,
       newshowField,
       modifyNote,
+      operateType,
       applyDetailList,
       expandVos,
       travelList,
@@ -1562,12 +1565,8 @@ class addInvoice extends PureComponent {
       exceedVisible,
       id
     } = this.state;
+    const modify = operateType === 'modify';
     const routes = [
-      // {
-      //   path: '/basicSetting/invoice',
-      //   breadcrumbName: '返回上一页',
-      //   paths: 'basicSetting/invoice'
-      // },
       {
         path: 'second',
         breadcrumbName: `${title !== 'add' ? '编辑' : '新建'}单据模板`,
@@ -1585,7 +1584,7 @@ class addInvoice extends PureComponent {
             }
           />
         </div>
-        <div className="content-dt">
+        <div className="content-dt" style={{height: 'calc(100vh - 200px)'}}>
           <Lines name="基本信息" />
           <ChangeForm
             userInfo={userInfo}
@@ -1621,7 +1620,7 @@ class addInvoice extends PureComponent {
               templateType === 3 ||
               (templateType === 2 && !!djDetail.categoryStatus)) &&
               <>
-                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
                   <Lines name="支出明细" />
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
                     {
@@ -1697,7 +1696,7 @@ class addInvoice extends PureComponent {
           {
             djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&
             <>
-              <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+              <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
                 <Lines name="借款核销" />
                 <div style={{textAlign: 'center'}} className={style.addbtn}>
                   {
@@ -1729,7 +1728,7 @@ class addInvoice extends PureComponent {
           {
             djDetail.isRelationApply && (!modify || (modify && this.state.applyArr && applyArr.length > 0 )) ?
               <>
-                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
                   <Lines name="关联申请单" />
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
                     {
@@ -1774,7 +1773,7 @@ class addInvoice extends PureComponent {
           }
           {
             modify &&
-            <div style={{paddingTop: '24px', paddingBottom: '100px'}}>
+            <div style={{paddingTop: '24px', paddingBottom: '100px', width: '90%'}}>
               <div className={style.header} style={{padding: 0, marginBottom: '16px'}}>
                 <div className={style.line} />
                 <span>改单理由</span>
