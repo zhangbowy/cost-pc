@@ -1535,8 +1535,8 @@ class addInvoice extends PureComponent {
       officeList, // 所在公司列表,
       aliCostAndI,
       checkStandard,
-      supplierList
     } = this.props;
+    const supplierList = this.onSelectTree();
     const {
       total,
       templateType,

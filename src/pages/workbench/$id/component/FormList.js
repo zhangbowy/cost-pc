@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
-import { Form, Input, Row, Col, Divider, Button,
+import { Form, Input, Divider, Button,
   Icon, Select, TreeSelect, InputNumber, DatePicker, message } from 'antd';
 import moment from 'moment';
 import cs from 'classnames';
@@ -327,8 +327,10 @@ class ChangeForm extends Component {
             if (Number(it.fieldType) === 5 && val[it.field]) {
               Object.assign(obj, {
                 startTime: Number(it.dateType) === 2 ?
-                moment(val[it.field][0]).format('x') : moment(val[it.field]).format('x'),
-                endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
+                moment(`${moment(val[it.field][0]).format('YYYY-MM-DD')} 00:00:00`).format('x')
+                : moment(`${moment(val[it.field]).format('YYYY-MM-DD')} 00:00:00`).format('x'),
+                endTime: Number(it.dateType) === 2 ?
+                moment(`${moment(val[it.field][1]).format('YYYY-MM-DD')} 23:59:59`).format('x') : '',
               });
             }
             if (Number(it.fieldType) === 9) {
@@ -493,6 +495,7 @@ renderTreeNodes = data =>
       officeList,
       ossFileUrl,
     } = this.props;
+      console.log('🚀 ~ file: FormList.js ~ line 496 ~ ChangeForm ~ render ~ supplierList', supplierList);
     const projectList = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -504,749 +507,693 @@ renderTreeNodes = data =>
     }, usableProject.sort(compare('sort')));
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 7 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-      },
-    };
-    const formItemLayouts = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 7 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 13 },
-      },
-    };
+
     return (
       <Form
         className={cs('formItem', style.formColumn)}
         refs={forms => {this.invoice = forms;}}
         layout="vertical"
       >
-        <Row style={{display: 'flex', flexWrap: 'wrap'}}>
-          {
-            newForm && (newForm.length > 0) &&
-            newForm.filter(it => it.fieldType !== 9).map(itw => {
-              if (itw.field.indexOf('expand_') > -1 || itw.field.indexOf('self_') > -1) {
-                let renderForm = null;
-                let rule = [];
-                let initMsg = itw.msg || '';
-                if (Number(itw.fieldType) === 0) {
+        {
+          newForm && (newForm.length > 0) &&
+          newForm.filter(it => it.fieldType !== 9).map(itw => {
+            if (itw.field.indexOf('expand_') > -1 || itw.field.indexOf('self_') > -1) {
+              let renderForm = null;
+              let rule = [];
+              let initMsg = itw.msg || '';
+              if (Number(itw.fieldType) === 0) {
+                renderForm = (
+                  <Input
+                    placeholder={itw.note ? itw.note : '请输入'}
+                    disabled={modify && !itw.isModify}
+                  />
+                );
+                rule = [{ max: 20, message: '限制20个字' }];
+              } else if (Number(itw.fieldType) === 1) {
+                renderForm = (
+                  <TextArea
+                    placeholder={itw.note ? itw.note : '请输入'}
+                    disabled={modify && !itw.isModify}
+                  />
+                );
+                rule = [{ max: 128, message: '限制128个字' }];
+              } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
+                if (Number(itw.fieldType) === 8) {
+                  console.log('render -> itw.msg', itw.msg);
+                  initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
+                }
+                renderForm = (
+                  <Select
+                    placeholder={itw.note ? itw.note : '请选择'}
+                    disabled={modify && !itw.isModify}
+                    mode={Number(itw.fieldType) === 8 ? 'multiple' : ''}
+                    onChange={val => this.onChangeSelect(val, {
+                      fieldType: itw.fieldType, field: itw.field })}
+                  >
+                    {
+                      itw.options && itw.options.map(iteems => (
+                        <Select.Option key={iteems}>{iteems}</Select.Option>
+                      ))
+                    }
+                  </Select>
+                );
+              } else if (itw.fieldType === 5) {
+                if (itw.dateType === 1) {
+                  initMsg = itw.startTime ? moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
                   renderForm = (
-                    <Input
-                      placeholder={itw.note ? itw.note : '请输入'}
-                      disabled={modify && !itw.isModify}
-                    />
-                  );
-                  rule = [{ max: 20, message: '限制20个字' }];
-                } else if (Number(itw.fieldType) === 1) {
-                  renderForm = (
-                    <TextArea
-                      placeholder={itw.note ? itw.note : '请输入'}
-                      disabled={modify && !itw.isModify}
-                    />
-                  );
-                  rule = [{ max: 128, message: '限制128个字' }];
-                } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
-                  if (Number(itw.fieldType) === 8) {
-                    console.log('render -> itw.msg', itw.msg);
-                    initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
-                  }
-                  renderForm = (
-                    <Select
+                    <DatePicker
+                      style={{width: '100%'}}
                       placeholder={itw.note ? itw.note : '请选择'}
                       disabled={modify && !itw.isModify}
-                      mode={Number(itw.fieldType) === 8 ? 'multiple' : ''}
-                      onChange={val => this.onChangeSelect(val, {
-                        fieldType: itw.fieldType, field: itw.field })}
-                    >
+                    />
+                  );
+                } else {
+                  initMsg = itw.startTime && itw.endTime ?
+                      [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                      moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
+                  renderForm = (
+                    <RangePicker
+                      style={{width: '280px' }}
+                      placeholder={itw.note ? itw.note : '请选择时间'}
+                      format="YYYY-MM-DD"
+                      disabled={modify && itw.isModify}
+                      showTime={{
+                        hideDisabledOptions: true,
+                        defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                      }}
+                    />
+                  );
+                }
+              }
+              return (
+                <>
+                  {
+                    itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
+                    && itw.fieldType !== 10 ?
+                      <Form.Item label={itw.name} >
+                        {
+                          getFieldDecorator(itw.field, {
+                            initialValue: initMsg || undefined,
+                            rules: [
+                              {
+                                required: !!(itw.isWrite),
+                                message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}`
+                              },
+                              ...rule,
+                            ],
+                          })(
+                            renderForm
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                </>
+              );
+            }
+              return (
+                <>
+                  {
+                    itw.field === 'reason' && !!(itw.status) &&
+                      <Form.Item label={showField.reason && showField.reason.name} style={{width: '936px', marginTop: '24px'}}>
+                        {
+                          getFieldDecorator('reason', {
+                            initialValue: details.reason || '',
+                            rules:[{ required: true, message: '请输入事由' }]
+                          })(
+                            <TextArea
+                              disabled={modify && showField.reason && !showField.reason.isModify}
+                              placeholder={showField.reason && showField.reason.note ? showField.reason.note : '请输入'}
+                            />
+                          )
+                        }
+                      </Form.Item>
+                  }
+                  {
+                    itw.field === 'userJson' && !!(itw.status) &&
+                    <Form.Item label={showField.userJson && showField.userJson.name} >
+                      <SelectPeople
+                        users={users}
+                        placeholder='请选择'
+                        onSelectPeople={(val) => this.selectPle(val)}
+                        invalid={false}
+                        disabled={Number(templateType) || modify}
+                        flag="users"
+                        isInput
+                        multiple={false}
+                        close
+                      />
+                    </Form.Item>
+                  }
+                  {
+                    itw.field === 'deptId' && !!(itw.status) &&
+                    <Form.Item label={showField.deptId && showField.deptId.name} >
                       {
-                        itw.options && itw.options.map(iteems => (
-                          <Select.Option key={iteems}>{iteems}</Select.Option>
+                        getFieldDecorator('deptId', {
+                          initialValue: details.deptId ? `${details.deptId}` : '',
+                          rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
+                        })(
+                          <Select
+                            placeholder={showField.deptId && showField.deptId.note ? showField.deptId.note : '请选择'}
+                            onChange={this.onChangeDept}
+                            disabled={modify}
+                          >
+                            {
+                              depList && depList.map(it => (
+                                <Option key={it.deptId}>{it.name}</Option>
+                              ))
+                            }
+                          </Select>
+                        )
+                      }
+                      {
+                        itw.itemExplain && !!(itw.itemExplain.length) &&
+                        itw.itemExplain.map(item => (
+                          <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                            {item.note}
+                          </p>
                         ))
                       }
-                    </Select>
-                  );
-                } else if (itw.fieldType === 5) {
-                  if (itw.dateType === 1) {
-                    initMsg = itw.startTime ? moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '';
-                    renderForm = (
-                      <DatePicker
-                        style={{width: '100%'}}
-                        placeholder={itw.note ? itw.note : '请选择'}
-                        disabled={modify && !itw.isModify}
-                      />
-                    );
-                  } else {
-                    initMsg = itw.startTime && itw.endTime ?
-                        [moment(moment(Number(itw.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-                        moment(moment(Number(itw.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : [];
-                    renderForm = (
-                      <RangePicker
-                        style={{width: '280px' }}
-                        placeholder={itw.note ? itw.note : '请选择时间'}
-                        format="YYYY-MM-DD"
-                        disabled={modify && itw.isModify}
-                        showTime={{
-                          hideDisabledOptions: true,
-                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                        }}
-                      />
-                    );
+                    </Form.Item>
                   }
-                }
-                return (
-                  <>
-                    {
-                      itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
-                      && itw.fieldType !== 10 ?
-                        <Col span={8}>
-                          <Form.Item label={itw.name} {...formItemLayout}>
-                            {
-                              getFieldDecorator(itw.field, {
-                                initialValue: initMsg || undefined,
-                                rules: [
-                                  {
-                                    required: !!(itw.isWrite),
-                                    message: `请${Number(itw.fieldType === 2) ? '选择' : '输入'}${itw.name}`
-                                  },
-                                  ...rule,
-                                ],
-                              })(
-                                renderForm
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                  </>
-                );
-              }
-                return (
-                  <>
-                    {
-                      itw.field === 'reason' && !!(itw.status) &&
-                      <Col style={{width: '88.8%'}} className="m-t-24">
-                        <Form.Item label={showField.reason && showField.reason.name}>
-                          {
-                            getFieldDecorator('reason', {
-                              initialValue: details.reason || '',
-                              rules:[{ required: true, message: '请输入事由' }]
-                            })(
-                              <TextArea
-                                disabled={modify && showField.reason && !showField.reason.isModify}
-                                placeholder={showField.reason && showField.reason.note ? showField.reason.note : '请输入'}
-                              />
-                            )
-                          }
-                        </Form.Item>
-                      </Col>
-                    }
-                    {
-                      itw.field === 'userJson' && !!(itw.status) &&
-                      <Col span={8}>
-                        <Form.Item label={showField.userJson && showField.userJson.name} {...formItemLayout}>
-                          <SelectPeople
-                            users={users}
-                            placeholder='请选择'
-                            onSelectPeople={(val) => this.selectPle(val)}
-                            invalid={false}
-                            disabled={Number(templateType) || modify}
-                            flag="users"
-                            isInput
-                            multiple={false}
-                            close
-                          />
-                        </Form.Item>
-                      </Col>
-                    }
-                    {
-                      itw.field === 'deptId' && !!(itw.status) &&
-                      <Col span={8}>
-                        <Form.Item label={showField.deptId && showField.deptId.name} {...formItemLayout}>
-                          {
-                            getFieldDecorator('deptId', {
-                              initialValue: details.deptId ? `${details.deptId}` : '',
-                              rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
-                            })(
-                              <Select
-                                placeholder={showField.deptId && showField.deptId.note ? showField.deptId.note : '请选择'}
-                                onChange={this.onChangeDept}
-                                disabled={modify}
-                              >
-                                {
-                                  depList && depList.map(it => (
-                                    <Option key={it.deptId}>{it.name}</Option>
-                                  ))
-                                }
-                              </Select>
-                            )
-                          }
-                          {
-                            itw.itemExplain && !!(itw.itemExplain.length) &&
-                            itw.itemExplain.map(item => (
-                              <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                {item.note}
-                              </p>
-                            ))
-                          }
-                        </Form.Item>
-                      </Col>
-                    }
-                    {
-                      itw.field === 'deptId' && !modify &&
-                        <Col span={8}>
-                          <Form.Item label={labelInfo.createDeptId} {...formItemLayout}>
-                            {
-                              getFieldDecorator('createDeptId', {
-                                initialValue: details.createDeptId ? `${details.createDeptId}` : '',
-                                rules: [{ required: true, message: '请选择部门' }]
-                              })(
-                                <Select
-                                  placeholder={showField.createDeptId && showField.createDeptId.note
-                                  ? showField.createDeptId.note : '请选择'}
-                                  onChange={this.onChangeCreate}
-                                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  disabled={modify}
-                                >
-                                  {
-                                    createDepList && createDepList.map(it => (
-                                      <Option key={`${it.deptId}`}>{it.name}</Option>
-                                    ))
-                                  }
-                                </Select>
-                              )
-                            }
-                          </Form.Item>
-                        </Col>
-                    }
-                    {
-                      itw.field === 'deptId' && officeList.length > 0 && !modify &&
-                        <Col span={8}>
-                          <Form.Item label={labelInfo.officeId} {...formItemLayout}>
-                            {
-                              getFieldDecorator('officeId', {
-                                initialValue: details.officeId &&
-                                officeList.findIndex(it => it.id === details.officeId) > -1 ?
-                                `${details.officeId}` : officeList.length === 1 ? officeList[0].id : undefined,
-                                rules: [{ required: true, message: '请选择公司' }]
-                              })(
-                                <Select
-                                  placeholder='请选择'
-                                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  disabled={modify}
-                                  onChange={e => this.props.onChangeOffice(e, () => {
-                                    this.props.form.setFieldsValue({ officeId: details.officeId });
-                                  })}
-                                >
-                                  {
-                                    officeList && officeList.map(it => (
-                                      <Option key={`${it.id}`}>{it.officeName}</Option>
-                                    ))
-                                  }
-                                </Select>
-                              )
-                            }
-                          </Form.Item>
-                        </Col>
-                    }
-                    {
-                      itw.field === 'loanSum' && itw.status ?
-                        <Col span={8}>
-                          <Form.Item label={showField.loanSum && showField.loanSum.name} {...formItemLayout}>
-                            {
-                              getFieldDecorator('loanSum', {
-                                initialValue: details.loanSum || '',
-                                rules: [{
-                                  required: !!(showField.loanSum && showField.loanSum.isWrite),
-                                  message: `请输入${showField.loanSum && showField.loanSum.name}`
-                                }, {
-                                  validator: this.checkMoney
-                                }]
-                              })(
-                                <InputNumber
-                                  disabled={modify && !showField.loanSum.isModify}
-                                  onChange={val => this.inputMoney(val)}
-                                  placeholder={showField.loanSum && showField.loanSum.note ?
-                                    showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
-                                  style={{width: '100%'}}
-                                />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'applicationSum' && itw.status ?
-                        <Col span={8}>
-                          <Form.Item label={showField.applicationSum && showField.applicationSum.name} {...formItemLayout}>
-                            {
-                              getFieldDecorator('applicationSum', {
-                                initialValue: details.applicationSum || '',
-                                rules: [{
-                                  required: !!(showField.applicationSum && showField.applicationSum.isWrite),
-                                  message: `请输入${showField.applicationSum && showField.applicationSum.name}`
-                                }, {
-                                  validator: this.checkMoney
-                                }]
-                              })(
-                                <InputNumber
-                                  disabled={modify && !showField.applicationSum.isModify}
-                                  onChange={val => this.inputMoney(val)}
-                                  placeholder={showField.applicationSum && showField.applicationSum.note ?
-                                    showField.applicationSum.note : `请输入${showField.applicationSum && showField.applicationSum.name}`}
-                                  style={{width: '100%'}}
-                                />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'repaymentTime' && itw.status ?
-                        <Col span={8}>
-                          <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} {...formItemLayout}>
-                            {
-                              getFieldDecorator('repaymentTime', {
-                                initialValue: details.repaymentTime ?
-                                moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
-                                rules: [{
-                                  required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
-                                  message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
-                                }]
-                              })(
-                                <DatePicker
-                                  disabledDate={defaultFunc.disabledDate}
-                                  disabledTime={defaultFunc.disabledDateTime}
-                                  disabled={modify && !showField.repaymentTime.isModify}
-                                />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'month' && itw.status ?
-                        <Col span={8}>
-                          <Form.Item label={showField.month && showField.month.name} {...formItemLayout}>
-                            {
-                              getFieldDecorator('month', {
-                                initialValue: details.month ?
-                                moment(moment(Number(details.month)).format('YYYY-MM'), 'YYYY-MM') : undefined,
-                                rules: [{
-                                  required: !!(showField.month && showField.month.isWrite),
-                                  message: `请选择${showField.month && showField.month.name}`
-                                }]
-                              })(
-                                <MonthPicker placeholder={showField.month.note || '请选择'} />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'happenTime' && itw.status ?
-                        <Col span={8}>
-                          <Form.Item label={showField.happenTime && showField.happenTime.name} {...formItemLayout}>
-                            {
-                              Number(showField.happenTime.dateType) === 1 &&
-                              getFieldDecorator('time', {
-                                initialValue: details.startTime ?
-                                moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
-                                rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                              })(
-                                <DatePicker
-                                  style={{width: '100%'}}
-                                  disabled={modify && !showField.happenTime.isModify}
-                                />
-                              )
-                            }
-                            {
-                              Number(showField.happenTime.dateType) === 2 &&
-                              getFieldDecorator('time', {
-                                initialValue: details.startTime && details.endTime ?
-                                  [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-                                  moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
-                                  :
-                                  [],
-                                rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
-                              })(
-                                <RangePicker
-                                  style={{width: '280px' }}
-                                  placeholder={showField.happenTime && showField.happenTime.note ?
-                                  showField.happenTime.note : '请选择时间'}
-                                  disabled={modify && !showField.happenTime.isModify}
-                                  format="YYYY-MM-DD"
-                                  showTime={{
-                                    hideDisabledOptions: true,
-                                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                                  }}
-                                />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'imgUrl' && showField.imgUrl.status ?
-                        <Col span={8}>
-                          <Form.Item
-                            label={labelInfo.imgUrl}
-                            {...formItemLayout}
-                          >
-                            {
-                              getFieldDecorator('img', {
-                                initialValue: imgUrl && imgUrl.length ? imgUrl : null,
-                                rules: [{
-                                  required: !!(showField.imgUrl.isWrite),
-                                  message: '请选择图片'
-                                }]
-                              })(
-                                <UploadImg
-                                  onChange={(val) => this.onChangeImg(val, 'imgUrl')}
-                                  imgUrl={imgUrl}
-                                  userInfo={userInfo}
-                                  disabled={modify && !showField.imgUrl.isModify}
-                                />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'ossFileUrl' && showField.ossFileUrl.status ?
-                        <Col span={8}>
-                          <Form.Item
-                            label={showField.ossFileUrl.name}
-                            {...formItemLayout}
-                          >
-                            {
-                              getFieldDecorator('ossFileUrl', {
-                                initialValue: ossFileUrl.length ? ossFileUrl : null,
-                                rules: [{
-                                  required: !!(showField.ossFileUrl.isWrite), message :
-                                  `请选择${showField.ossFileUrl.name}`
-                                }]
-                              })(
-                                <UploadFile
-                                  onChange={(val) => this.onChangeImg(val, 'ossFileUrl')}
-                                  fileUrl={ossFileUrl}
-                                  userInfo={userInfo}
-                                  disabled={modify && !showField.ossFileUrl.isModify}
-                                />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'fileUrl' && showField.fileUrl.status ?
-                        <Col span={8}>
-                          <Form.Item
-                            label={labelInfo.fileUrl}
-                            {...formItemLayout}
-                          >
-                            {
-                              getFieldDecorator('fileUrl', {
-                                initialValue: fileUrl && fileUrl.length ? fileUrl : null,
-                                rules: [{
-                                  required: !!(showField.fileUrl.isWrite),
-                                  message: '请选择附件'
-                                }]
-                              })(
-                                <Button
-                                  onClick={() => uploadFiles((val) => {
-                                    if (val && val.length) {
-                                      this.props.form.setFieldsValue({ fileUrl: val });
-                                    }
-                                  })}
-                                  disabled={(modify && !showField.fileUrl.isModify)}
-                                >
-                                  <Icon type="upload" /> 上传文件
-                                </Button>
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                            <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
-                              支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+                  {
+                    itw.field === 'deptId' && !modify &&
+                      <Form.Item label={labelInfo.createDeptId} >
+                        {
+                          getFieldDecorator('createDeptId', {
+                            initialValue: details.createDeptId ? `${details.createDeptId}` : '',
+                            rules: [{ required: true, message: '请选择部门' }]
+                          })(
+                            <Select
+                              placeholder={showField.createDeptId && showField.createDeptId.note
+                              ? showField.createDeptId.note : '请选择'}
+                              onChange={this.onChangeCreate}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              disabled={modify}
+                            >
+                              {
+                                createDepList && createDepList.map(it => (
+                                  <Option key={`${it.deptId}`}>{it.name}</Option>
+                                ))
+                              }
+                            </Select>
+                          )
+                        }
+                      </Form.Item>
+                  }
+                  {
+                    itw.field === 'deptId' && officeList.length > 0 && !modify &&
+                      <Form.Item label={labelInfo.officeId} >
+                        {
+                          getFieldDecorator('officeId', {
+                            initialValue: details.officeId &&
+                            officeList.findIndex(it => it.id === details.officeId) > -1 ?
+                            `${details.officeId}` : officeList.length === 1 ? officeList[0].id : undefined,
+                            rules: [{ required: true, message: '请选择公司' }]
+                          })(
+                            <Select
+                              placeholder='请选择'
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              disabled={modify}
+                              onChange={e => this.props.onChangeOffice(e, () => {
+                                this.props.form.setFieldsValue({ officeId: details.officeId });
+                              })}
+                            >
+                              {
+                                officeList && officeList.map(it => (
+                                  <Option key={`${it.id}`}>{it.officeName}</Option>
+                                ))
+                              }
+                            </Select>
+                          )
+                        }
+                      </Form.Item>
+                  }
+                  {
+                    itw.field === 'loanSum' && itw.status ?
+                      <Form.Item label={showField.loanSum && showField.loanSum.name} >
+                        {
+                          getFieldDecorator('loanSum', {
+                            initialValue: details.loanSum || '',
+                            rules: [{
+                              required: !!(showField.loanSum && showField.loanSum.isWrite),
+                              message: `请输入${showField.loanSum && showField.loanSum.name}`
+                            }, {
+                              validator: this.checkMoney
+                            }]
+                          })(
+                            <InputNumber
+                              disabled={modify && !showField.loanSum.isModify}
+                              onChange={val => this.inputMoney(val)}
+                              placeholder={showField.loanSum && showField.loanSum.note ?
+                                showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
+                              style={{width: '100%'}}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
                             </p>
-                            {
-                              fileUrl.map((it, index) => (
-                                <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
-                                  <div className={style.fileIcon}>
-                                    <img
-                                      className='attachment-icon'
-                                      src={fileIcon[it.fileType]}
-                                      alt='attachment-icon'
-                                    />
-                                    <span className="eslips-1">{it.fileName}</span>
-                                  </div>
-                                  <i
-                                    className="iconfont icondelete_fill"
-                                    onClick={(e) => this.onDelFile(index, e, modify && !showField.fileUrl.isModify)}
-                                  />
-                                </div>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'project' && showField.project.status ?
-                        <Col span={8}>
-                          <Form.Item label={labelInfo.project} {...formItemLayout}>
-                            {
-                              getFieldDecorator('projectId', {
-                                initialValue: details.projectId || undefined,
-                                rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
-                              })(
-                                <TreeSelect
-                                  style={{width: '100%'}}
-                                  placeholder={showField.project && showField.project.note ?
-                                  showField.project.note : '请选择'}
-                                  dropdownStyle={{height: '300px'}}
-                                  showSearch
-                                  treeNodeFilterProp='title'
-                                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                                >
-                                  {this.renderTreeNodes(projectList)}
-                                </TreeSelect>
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'supplier' && showField.supplier.status ?
-                        <Col span={8}>
-                          <Form.Item label={labelInfo.supplier} {...formItemLayout}>
-                            {
-                              getFieldDecorator('supplier', {
-                                initialValue: details.supplier || undefined,
-                                rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
-                              })(
-                                <TreeSelect
-                                  showSearch
-                                  treeNodeFilterProp='searchs'
-                                  placeholder={showField.supplier && showField.supplier.note ?
-                                  showField.supplier.note : '请选择'}
-                                  style={{width: '100%'}}
-                                  treeDefaultExpandAll
-                                  dropdownStyle={{height: '300px'}}
-                                  onChange={(val) => this.onChangePro(val, 'supplier')}
-                                  treeNodeLabelProp="newName"
-                                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  disabled={modify}
-                                >
-                                  {this.treeNodeRender(supplierList)}
-                                </TreeSelect>
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'note' && showField.note.status ?
-                        <Col span={8}>
-                          <Form.Item label={labelInfo.note} {...formItemLayout}>
-                            {
-                              getFieldDecorator('note',{
-                                initialValue: details.note || '',
-                                rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
-                              })(
-                                <Input
-                                  placeholder={showField.note && showField.note.note ? showField.note.note : '请输入'}
-                                  disabled={modify && !showField.note.isModify}
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'applicationSum' && itw.status ?
+                      <Form.Item label={showField.applicationSum && showField.applicationSum.name} >
+                        {
+                          getFieldDecorator('applicationSum', {
+                            initialValue: details.applicationSum || '',
+                            rules: [{
+                              required: !!(showField.applicationSum && showField.applicationSum.isWrite),
+                              message: `请输入${showField.applicationSum && showField.applicationSum.name}`
+                            }, {
+                              validator: this.checkMoney
+                            }]
+                          })(
+                            <InputNumber
+                              disabled={modify && !showField.applicationSum.isModify}
+                              onChange={val => this.inputMoney(val)}
+                              placeholder={showField.applicationSum && showField.applicationSum.note ?
+                                showField.applicationSum.note : `请输入${showField.applicationSum && showField.applicationSum.name}`}
+                              style={{width: '100%'}}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'repaymentTime' && itw.status ?
+                      <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} >
+                        {
+                          getFieldDecorator('repaymentTime', {
+                            initialValue: details.repaymentTime ?
+                            moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                            rules: [{
+                              required: !!(showField.repaymentTime && showField.repaymentTime.isWrite),
+                              message: `请选择${showField.repaymentTime && showField.repaymentTime.name}`
+                            }]
+                          })(
+                            <DatePicker
+                              disabledDate={defaultFunc.disabledDate}
+                              disabledTime={defaultFunc.disabledDateTime}
+                              disabled={modify && !showField.repaymentTime.isModify}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'month' && itw.status ?
+                      <Form.Item label={showField.month && showField.month.name} >
+                        {
+                          getFieldDecorator('month', {
+                            initialValue: details.month ?
+                            moment(moment(Number(details.month)).format('YYYY-MM'), 'YYYY-MM') : undefined,
+                            rules: [{
+                              required: !!(showField.month && showField.month.isWrite),
+                              message: `请选择${showField.month && showField.month.name}`
+                            }]
+                          })(
+                            <MonthPicker placeholder={showField.month.note || '请选择'} />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'happenTime' && itw.status ?
+                      <Form.Item label={showField.happenTime && showField.happenTime.name} >
+                        {
+                          Number(showField.happenTime.dateType) === 1 &&
+                          getFieldDecorator('time', {
+                            initialValue: details.startTime ?
+                            moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                            rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                          })(
+                            <DatePicker
+                              style={{width: '100%'}}
+                              disabled={modify && !showField.happenTime.isModify}
+                            />
+                          )
+                        }
+                        {
+                          Number(showField.happenTime.dateType) === 2 &&
+                          getFieldDecorator('time', {
+                            initialValue: details.startTime && details.endTime ?
+                              [moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
+                              moment(moment(Number(details.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')]
+                              :
+                              [],
+                            rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
+                          })(
+                            <RangePicker
+                              style={{width: '280px' }}
+                              placeholder={showField.happenTime && showField.happenTime.note ?
+                              showField.happenTime.note : '请选择时间'}
+                              disabled={modify && !showField.happenTime.isModify}
+                              format="YYYY-MM-DD"
+                              showTime={{
+                                hideDisabledOptions: true,
+                                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                              }}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'imgUrl' && showField.imgUrl.status ?
+                      <Form.Item
+                        label={labelInfo.imgUrl}
+
+                      >
+                        {
+                          getFieldDecorator('img', {
+                            initialValue: imgUrl && imgUrl.length ? imgUrl : null,
+                            rules: [{
+                              required: !!(showField.imgUrl.isWrite),
+                              message: '请选择图片'
+                            }]
+                          })(
+                            <UploadImg
+                              onChange={(val) => this.onChangeImg(val, 'imgUrl')}
+                              imgUrl={imgUrl}
+                              userInfo={userInfo}
+                              disabled={modify && !showField.imgUrl.isModify}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'ossFileUrl' && showField.ossFileUrl.status ?
+                      <Form.Item
+                        label={showField.ossFileUrl.name}
+                      >
+                        {
+                          getFieldDecorator('ossFileUrl', {
+                            initialValue: ossFileUrl.length ? ossFileUrl : null,
+                            rules: [{
+                              required: !!(showField.ossFileUrl.isWrite), message :
+                              `请选择${showField.ossFileUrl.name}`
+                            }]
+                          })(
+                            <UploadFile
+                              onChange={(val) => this.onChangeImg(val, 'ossFileUrl')}
+                              fileUrl={ossFileUrl}
+                              userInfo={userInfo}
+                              disabled={modify && !showField.ossFileUrl.isModify}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'fileUrl' && showField.fileUrl.status ?
+                      <Form.Item
+                        label={labelInfo.fileUrl}
+
+                      >
+                        {
+                          getFieldDecorator('fileUrl', {
+                            initialValue: fileUrl && fileUrl.length ? fileUrl : null,
+                            rules: [{
+                              required: !!(showField.fileUrl.isWrite),
+                              message: '请选择附件'
+                            }]
+                          })(
+                            <Button
+                              onClick={() => uploadFiles((val) => {
+                                if (val && val.length) {
+                                  this.props.form.setFieldsValue({ fileUrl: val });
+                                }
+                              })}
+                              disabled={(modify && !showField.fileUrl.isModify)}
+                            >
+                              <Icon type="upload" /> 上传文件
+                            </Button>
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                        <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
+                          支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+                        </p>
+                        {
+                          fileUrl.map((it, index) => (
+                            <div key={it.fileId} className={style.fileList} onClick={() => this.previewFiless(it)}>
+                              <div className={style.fileIcon}>
+                                <img
+                                  className='attachment-icon'
+                                  src={fileIcon[it.fileType]}
+                                  alt='attachment-icon'
                                 />
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                    {
-                      itw.field === 'receiptId' && showField.receiptId.status ?
-                        <Col span={8} style={{position: 'relative'}}>
-                          <Form.Item label={labelInfo.receiptId} {...formItemLayouts}>
-                            {
-                              getFieldDecorator('receiptId', {
-                                initialValue: details.receiptId ? [details.receiptId] : undefined,
-                                rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
-                              })(
-                                <Select
-                                  placeholder={showField.receiptId && showField.receiptId.note ?
-                                  showField.receiptId.note : placeholderType[showField.receiptId.fieldType]}
-                                  dropdownClassName={style.opt}
-                                  onChange={(val) => this.onChangeAcc(val)}
-                                  optionLabelProp="label"
-                                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  disabled={modify && !showField.receiptId.isModify}
-                                  showSearch
-                                  optionFilterProp="label"
-                                >
-                                  {
-                                    accountList.map(it => (
-                                      <Option key={it.id} value={it.id} label={it.name}>
-                                        <div className={style.selects}>
-                                          <p className="c-black fs-14">{it.name} </p>
-                                          <p className="c-black-36 fs-13">{typeObj[it.type]}{it.account}</p>
-                                        </div>
-                                        <Divider type="horizontal" />
-                                      </Option>
-                                    ))
-                                  }
-                                </Select>
-                              )
-                            }
-                            {
-                              itw.itemExplain && !!(itw.itemExplain.length) &&
-                              itw.itemExplain.map(item => (
-                                <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                                  {item.note}
-                                </p>
-                              ))
-                            }
-                            {
-                              !modify &&
-                              <ReceiptModal title="add" onOk={handelAcc}>
-                                <a className={style.addReceipt}>新增</a>
-                              </ReceiptModal>
-                            }
-                          </Form.Item>
-                        </Col>
-                        :
-                        null
-                    }
-                  </>
-                );
-            })
-          }
-        </Row>
+                                <span className="eslips-1">{it.fileName}</span>
+                              </div>
+                              <i
+                                className="iconfont icondelete_fill"
+                                onClick={(e) => this.onDelFile(index, e, modify && !showField.fileUrl.isModify)}
+                              />
+                            </div>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'project' && showField.project.status ?
+                      <Form.Item label={labelInfo.project} >
+                        {
+                          getFieldDecorator('projectId', {
+                            initialValue: details.projectId || undefined,
+                            rules: [{ required: !!(showField.project.isWrite), message: '请选择项目' }]
+                          })(
+                            <TreeSelect
+                              style={{width: '100%'}}
+                              placeholder={showField.project && showField.project.note ?
+                              showField.project.note : '请选择'}
+                              dropdownStyle={{height: '300px'}}
+                              showSearch
+                              treeNodeFilterProp='title'
+                              disabled={modify && !showField.project.isModify}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                            >
+                              {this.renderTreeNodes(projectList)}
+                            </TreeSelect>
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'supplier' && showField.supplier.status ?
+                      <Form.Item label={labelInfo.supplier} >
+                        {
+                          getFieldDecorator('supplier', {
+                            initialValue: details.supplier || undefined,
+                            rules: [{ required: !!(showField.supplier.isWrite), message: '请选择供应商账号' }]
+                          })(
+                            <TreeSelect
+                              showSearch
+                              treeNodeFilterProp='searchs'
+                              placeholder={showField.supplier && showField.supplier.note ?
+                              showField.supplier.note : '请选择'}
+                              style={{width: '100%'}}
+                              treeDefaultExpandAll
+                              dropdownStyle={{height: '300px'}}
+                              onChange={(val) => this.onChangePro(val, 'supplier')}
+                              treeNodeLabelProp="newName"
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              disabled={modify && !showField.supplier.isModify}
+                            >
+                              {this.treeNodeRender(supplierList)}
+                            </TreeSelect>
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'note' && showField.note.status ?
+                      <Form.Item label={labelInfo.note} >
+                        {
+                          getFieldDecorator('note',{
+                            initialValue: details.note || '',
+                            rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
+                          })(
+                            <Input
+                              placeholder={showField.note && showField.note.note ? showField.note.note : '请输入'}
+                              disabled={modify && !showField.note.isModify}
+                            />
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                      </Form.Item>
+                      :
+                      null
+                  }
+                  {
+                    itw.field === 'receiptId' && showField.receiptId.status ?
+                      <Form.Item label={labelInfo.receiptId}>
+                        {
+                          getFieldDecorator('receiptId', {
+                            initialValue: details.receiptId ? [details.receiptId] : undefined,
+                            rules: [{ required: !!(showField.receiptId && showField.receiptId.isWrite), message: '请输入收款账户' }],
+                          })(
+                            <Select
+                              placeholder={showField.receiptId && showField.receiptId.note ?
+                              showField.receiptId.note : placeholderType[showField.receiptId.fieldType]}
+                              dropdownClassName={style.opt}
+                              onChange={(val) => this.onChangeAcc(val)}
+                              optionLabelProp="label"
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              disabled={modify && !showField.receiptId.isModify}
+                              showSearch
+                              optionFilterProp="label"
+                              style={{width: '238px'}}
+                            >
+                              {
+                                accountList.map(it => (
+                                  <Option key={it.id} value={it.id} label={it.name}>
+                                    <div className={style.selects}>
+                                      <p className="c-black fs-14">{it.name} </p>
+                                      <p className="c-black-36 fs-13">{typeObj[it.type]}{it.account}</p>
+                                    </div>
+                                    <Divider type="horizontal" />
+                                  </Option>
+                                ))
+                              }
+                            </Select>
+                          )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
+                        }
+                        {
+                          !modify &&
+                          <ReceiptModal title="add" onOk={handelAcc}>
+                            <a className={style.addReceipt}>新增</a>
+                          </ReceiptModal>
+                        }
+                      </Form.Item>
+                    :
+                    null
+                  }
+                </>
+              );
+          })
+        }
       </Form>
     );
   }

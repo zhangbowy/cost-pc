@@ -1,9 +1,30 @@
 .formColumn{
   margin-top: 24px;
   margin-left: 4px;
+  width: 984px;
+  display: flex;
+  flex-wrap: wrap;
   :global(.ant-form-item) {
     display: flex;
     flex-direction: column;
+  }
+  :global{
+    .ant-row{
+      width: 280px;
+      margin-right: 48px;
+    }
+    .ant-col-8{
+      width: 280px;
+    }
+    .ant-col-sm-16{
+      width: 280px;
+    }
+    .ant-form-vertical .ant-form-item-label{
+      width: 280px;
+    }
+    .ant-mentions, form textarea.ant-input{
+      margin-bottom: 0px;
+    }
   }
 }
 .moneyList{

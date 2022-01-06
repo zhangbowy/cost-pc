@@ -578,3 +578,9 @@ export const  srcName = (name) => {
   const extName = names[names.length - 1];
   return extName.toLowerCase();
 };
+
+// export const dateToChange = (date, type) => {
+//   if (type === 0) {
+//     return moment()
+//   }
+// };
