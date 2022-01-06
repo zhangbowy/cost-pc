@@ -577,7 +577,7 @@ class AddCostTable extends Component {
     };
     return (
       <div style={{paddingTop: '24px'}}>
-        <div className={style.header} style={{ display: 'flex' }}>
+        <div className={style.header} style={{ display: 'flex', alignItems: 'center' }}>
           <div className={style.line} />
           <span>分摊</span>
           {

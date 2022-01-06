@@ -238,9 +238,20 @@ class Setting extends Component {
     const supplierAccounts = data.supplierAccounts ? [...data.supplierAccounts] : [];
     let datas = {...data};
     if (action === 'edit') {
-      supplierAccounts.splice(editIndex, 1, val);
+      const newLists = [...supplierAccounts];
+      newLists.splice(editIndex, 1, val);
+      const res1 = newLists.map(item => item.name);
+      const accounts1 = newLists.map(item => item.account);
+      if (Array.from(new Set(res1)).length < res1.length) {
+        callback('repeat');
+      } else if (Array.from(new Set(accounts1)).length < accounts1.length) {
+        callback('repeatAccount');
+      } else {
+        supplierAccounts.splice(editIndex, 1, val);
+        callback();
+      }
       // data.supplierAccounts[editIndex] = val;
-      callback();
+      // callback();
     } else {
       const res = supplierAccounts.filter(item => item.name === val.name);
       const accounts = supplierAccounts.filter(item => item.account === val.account);

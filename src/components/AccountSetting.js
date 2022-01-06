@@ -51,6 +51,7 @@ class AccountSetting extends Component {
       data: { type: 0 },
       treeList: [],
       imgUrl: [],
+      isShowInput: false,
     };
   }
 
@@ -75,12 +76,17 @@ class AccountSetting extends Component {
         tName: 'label',
         tId: 'value'
       }, areaCode);
+      const isInput = data.bankName &&
+      (bankList.findIndex(it => it === data.bankName) === -1 || data.bankName === '其他银行');
       this.setState({
         visible: true,
+        isShowInput: isInput,
         data: {
           ...datas,
           awAreas: datas.awAreas ?
           datas.awAreas.sort(compare('level')).map(it => it.areaCode) : undefined,
+          bankName: isInput ? '其他银行' : data.bankName,
+          bankName1: isInput ? data.bankName : '',
         },
         imgUrl: datas.qrUrl ? [{ imgUrl: datas.qrUrl }] : [],
         treeList
@@ -118,6 +124,7 @@ class AccountSetting extends Component {
         Object.assign(val, {
           ...values,
           awAreas,
+          bankName: values.bankName === '其他银行' ? values.bankName1 : values.bankName,
         });
         console.log('开户省市区', awAreas);
         callback(val, this.checkResult);
@@ -155,8 +162,17 @@ class AccountSetting extends Component {
     });
   }
 
+  onChangeAccount = (val) => {
+    this.props.form.setFieldsValue({
+      bankName1: '',
+    });
+    this.setState({
+      isShowInput: val === '其他银行',
+    });
+  }
+
   render() {
-    const { visible, data, treeList, imgUrl } = this.state;
+    const { visible, data, treeList, imgUrl, isShowInput } = this.state;
     const { form: { getFieldDecorator }, userInfo } = this.props;
     return (
       <span>
@@ -227,13 +243,13 @@ class AccountSetting extends Component {
                 <Form.Item key="bankName" label={formLabel.bankName}>
                   {
                     getFieldDecorator('bankName', {
-                      initialValue: data.bankName,
+                      initialValue: data && data.bankName,
                       rules: [{
                         required: true,
                         message: '请选择开户行'
                       }]
                     })(
-                      <Select placeholder="请选择开户行">
+                      <Select placeholder="请选择开户行" onChange={this.onChangeAccount}>
                         {bankList.map(item => (
                           <Option key={item} value={item}>{item}</Option>
                         ))}
@@ -241,10 +257,27 @@ class AccountSetting extends Component {
                     )
                   }
                 </Form.Item>
+                {
+                  isShowInput &&
+                  <Form.Item label="开户行名称">
+                    {
+                      getFieldDecorator('bankName1', {
+                        initialValue: data.bankName1 || '',
+                        rules: [{
+                          required: true,
+                          message: '请输入开户行'
+                        }]
+                      })(
+                        <Input placeholder="请输入开户行" />
+                      )
+                    }
+                  </Form.Item>
+                }
                 <Form.Item label={formLabel.awAreas} key="awAreas">
                   {
                     getFieldDecorator('awAreas', {
                       initialValue: (data && data.awAreas) || [],
+                      rules: [{ required: true, message: `请选择${formLabel.awAreas}` }]
                     })(
                       <Cascader
                         options={treeList}
@@ -257,6 +290,7 @@ class AccountSetting extends Component {
                   {
                     getFieldDecorator('bankNameBranch', {
                       initialValue: (data && data.bankNameBranch) || '',
+                      rules: [{ required: true, message: `请输入${formLabel.bankNameBranch}` }]
                     })(
                       <Input placeholder={`请输入${formLabel.bankNameBranch}`} />
                     )

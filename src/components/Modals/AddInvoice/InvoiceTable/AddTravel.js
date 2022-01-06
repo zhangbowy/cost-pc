@@ -199,7 +199,8 @@ class AddTravel extends PureComponent {
         deptId: values.deptId,
         deptName: values.deptName,
         userId: values.value,
-        userName: values.title
+        userName: values.title,
+        oaUserId: values.oaId,
       }
     });
   }

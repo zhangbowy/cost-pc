@@ -231,7 +231,7 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
                 <span className="m-r-8">{ receipt.name }</span>
                 { receipt.type ? getArrayValue(receipt.type, accountType) : ''}
                 <span className="m-r-8">{ receipt.bankName }</span>
-                {receipt.account}<br />
+                <span className="m-r-8">{receipt.account}</span>
                 {
                   !!receipt.bankNameBranch &&
                   <span className="m-r-8">{receipt.bankNameBranch}</span>
