@@ -270,11 +270,11 @@ class Payment extends React.PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 140,
+      width: 100,
     }, {
       title: '账户类型',
       dataIndex: 'accountType',
-      width: 100,
+      width: 80,
       filters: filterAccount,
       render: (text) => (
         <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
@@ -334,7 +334,7 @@ class Payment extends React.PureComponent {
     }, {
       title: '提交人',
       dataIndex: 'createName',
-      width: 100,
+      width: 80,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
@@ -371,7 +371,7 @@ class Payment extends React.PureComponent {
           </InvoiceDetail>
         </span>
       ),
-      width: 140,
+      width: 135,
       fixed: 'right',
       className: 'fixCenter'
     }];
@@ -379,7 +379,7 @@ class Payment extends React.PureComponent {
       columns.splice(8, 0, {
         title: '发放人',
         dataIndex: 'payUserName',
-        width: 100,
+        width: 80,
       }, {
         title: '付款时间',
         dataIndex: 'payTime',
@@ -412,7 +412,7 @@ class Payment extends React.PureComponent {
             </span>
           );
         },
-        width: 140,
+        width: 100,
       });
     };
     if (isViewVoucher) {
@@ -437,6 +437,20 @@ class Payment extends React.PureComponent {
         title: '票审人',
         dataIndex: 'signUserName',
         width: 100,
+      });
+    }
+    if(Number(status) === 5) {
+      columns.splice(0, 0, {
+        title: '拒绝理由',
+        dataIndex: 'refuseReason',
+        width: 100,
+      }, {
+        title: '拒绝时间',
+        dataIndex: 'refuseTime',
+        width: 100,
+        render: (text) => (
+          <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
+        ),
       });
     }
     return (

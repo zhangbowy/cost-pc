@@ -493,7 +493,6 @@ renderTreeNodes = data =>
       officeList,
       ossFileUrl,
     } = this.props;
-    console.log('项目的列表', usableProject);
     const projectList = treeConvert({
       rootId: 0,
       pId: 'parentId',

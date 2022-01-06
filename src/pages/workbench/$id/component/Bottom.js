@@ -6,7 +6,7 @@ import FooterBar from '../../../../components/FooterBar';
 import { numSub } from '../../../../utils/float';
 
 export default function Bottom({ total, onSave, onCancel,
-  templateType, djDetail, assessSum, onDraft, draftLoading, loading }) {
+  templateType, djDetail, assessSum, onDraft, draftLoading, loading, modify }) {
   return (
     <FooterBar
       left={(
@@ -42,14 +42,17 @@ export default function Bottom({ total, onSave, onCancel,
                 合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span>
               </span>
           }
-          <Button
-            type="default"
-            className="m-r-8 m-l-8"
-            onClick={onDraft}
-            loading={draftLoading}
-          >
-            保存
-          </Button>
+          {
+            !modify &&
+            <Button
+              type="default"
+              className="m-r-8 m-l-8"
+              onClick={onDraft}
+              loading={draftLoading}
+            >
+              保存
+            </Button>
+          }
           <Button
             type="primary"
             onClick={onSave}

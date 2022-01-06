@@ -107,7 +107,7 @@ class AddFolder extends Component {
       this.setState({
         visible: true,
         selectedRowKeys: Array.from(new Set(keys)) || [],
-        selectedRows: newArr,
+        selectedRows: newArr.filter(it => it.detailFolderId),
         details: list,
         folderList: arr,
       });
@@ -177,6 +177,7 @@ class AddFolder extends Component {
   handleHis = (selectedRows) => {
     const arr = [];
     const { currencyList } = this.props;
+    console.log('🚀 ~ file: AddFolder.js ~ line 178 ~ AddFolder ~ selectedRows', selectedRows);
     selectedRows.forEach(it => {
       let currency = {};
       const costDetailShareVOS = [];
@@ -208,8 +209,10 @@ class AddFolder extends Component {
         currencySymbol: currency.currencySymbol || '¥',
       });
     });
-
-    this.props.onAddCost(arr);
+    console.log('🚀 ~ file: AddFolder.js ~ line 212 ~ AddFolder ~ arr', arr);
+    if (arr && arr.length) {
+      this.props.onAddCost(arr);
+    }
     this.onCancel();
   }
 

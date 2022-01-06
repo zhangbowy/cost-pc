@@ -171,9 +171,16 @@ class Summary extends React.PureComponent {
     const { searchList } = this.state;
     searchList.forEach(it => {
       if (it.value) {
-        Object.assign(payload, {
-          ...it.value
-        });
+        console.log('🚀 ~ file: index.js ~ line 174 ~ Summary ~ it', it.value);
+        if (it.value.officeIds) {
+          Object.assign(payload, {
+            officeIds: [it.value.officeIds]
+          });
+        } else {
+          Object.assign(payload, {
+            ...it.value
+          });
+        }
       }
     });
     Object.assign(payload, {

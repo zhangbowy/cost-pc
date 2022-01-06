@@ -260,7 +260,11 @@ class BorrowPay extends React.PureComponent {
           </Tooltip>
           {
             record.isModify &&
-              <Tags color='rgba(0, 199, 149, 0.08)'>改单</Tags>
+            <Tags
+              color='rgba(255, 47, 0, 0.08)'
+              nameColor='rgba(255, 47, 0, 1)'
+              name="改单"
+            />
           }
         </span>
       ),
@@ -275,7 +279,7 @@ class BorrowPay extends React.PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 130,
+      width: 100,
     }, {
       title: '账户类型',
       dataIndex: 'accountType',
@@ -439,6 +443,20 @@ class BorrowPay extends React.PureComponent {
             }
           </>
         )
+      });
+    }
+    if(Number(status) === 5) {
+      columns.splice(0, 0, {
+        title: '拒绝理由',
+        dataIndex: 'refuseReason',
+        width: 100,
+      }, {
+        title: '拒绝时间',
+        dataIndex: 'refuseTime',
+        width: 100,
+        render: (text) => (
+          <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
+        ),
       });
     }
     return (

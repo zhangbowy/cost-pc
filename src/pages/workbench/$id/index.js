@@ -784,6 +784,7 @@ class addInvoice extends PureComponent {
 
   //  添加费用成功
   onAddCost = async(val, index, flag) => {
+    console.log('🚀 ~ file: index.js ~ line 787 ~ addInvoice ~ onAddCost=async ~ val', val);
     const { costDetailsVo } = this.state;
     let  share = [...costDetailsVo];
     const detail = this.state.details;
@@ -1811,6 +1812,7 @@ class addInvoice extends PureComponent {
           draftLoading={draftLoading}
           djDetail={djDetail}
           assessSum={assessSum}
+          modify={modify}
         />
         <StandardModal
           visible={exceedVisible}
