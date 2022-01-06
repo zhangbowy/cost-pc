@@ -708,7 +708,7 @@ class FormStyle extends Component {
 
   render() {
     // const { dateType } = this.state;
-    const { fields, type } = this.props;
+    const { fields, type, node } = this.props;
     console.log(fields);
     return (
       <>
@@ -718,6 +718,7 @@ class FormStyle extends Component {
               {
                 fields.map((it, index) => this.onNode(it, index))
               }
+              {node}
             </div>
             :
             <div>

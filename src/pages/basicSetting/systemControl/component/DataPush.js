@@ -24,11 +24,11 @@ class DataPush extends PureComponent {
     super(props);
     this.state = {
       list: [{
-        id: 'weekMessage',
+        id: 'weeklyReportSetting',
         name: '1. 周报数据推送',
         img: week,
         list: [{
-          id: 'weekMessage',
+          id: 'weeklyReportSetting',
           key: 'userPush',
           rowSpan: 2,
           userPush: 0,
@@ -36,15 +36,15 @@ class DataPush extends PureComponent {
           pushDate: 9,
         }, {
           key: 'rolePush',
-          id: 'weekMessage',
+          id: 'weeklyReportSetting',
           rowSpan: 0,
         }]
       }, {
-        id: 'monthMessage',
+        id: 'monthlyReportSetting',
         name: '2. 月报数据推送',
         img: month,
         list: [{
-          id: 'monthMessage',
+          id: 'monthlyReportSetting',
           key: 'userPush',
           rowSpan: 2,
           userPush: 0,
@@ -52,7 +52,7 @@ class DataPush extends PureComponent {
           pushDate: 9,
         }, {
           key: 'rolePush',
-          id: 'monthMessage',
+          id: 'monthlyReportSetting',
           rowSpan: 0,
         }]
       }],
@@ -64,44 +64,44 @@ class DataPush extends PureComponent {
   static getDerivedStateFromProps(props, state) {
     if (props.details !== state.list) {
       console.log('DataPush -> getDerivedStateFromProps -> details走了吗', props.details);
-      const { details: { monthMessage, weekMessage } } = props;
+      const { details: { monthlyReportSetting, weeklyReportSetting } } = props;
       const newArr = [{
-        id: 'weekMessage',
+        id: 'weeklyReportSetting',
         name: '1. 周报数据推送',
         img: week,
         list: [{
-          ...weekMessage,
-          id: 'weekMessage',
+          ...weeklyReportSetting,
+          id: 'weeklyReportSetting',
           key: 'userPush',
           rowSpan: 2,
         }, {
-          ...weekMessage,
+          ...weeklyReportSetting,
           key: 'rolePush',
-          id: 'weekMessage',
+          id: 'weeklyReportSetting',
           rowSpan: 0,
         }]
       }, {
-        id: 'monthMessage',
+        id: 'monthlyReportSetting',
         name: '2. 月报数据推送',
         img: month,
         list: [{
-          ...monthMessage,
-          id: 'monthMessage',
+          ...monthlyReportSetting,
+          id: 'monthlyReportSetting',
           key: 'userPush',
           rowSpan: 2,
 
         }, {
-          ...monthMessage,
+          ...monthlyReportSetting,
           key: 'rolePush',
-          id: 'monthMessage',
+          id: 'monthlyReportSetting',
           rowSpan: 0,
         }]
       }];
       return {
         list: newArr,
         roles: {
-          monthMessage: (monthMessage && monthMessage.roles) || [],
-          weekMessage: (weekMessage && weekMessage.roles) || [],
+          monthlyReportSetting: (monthlyReportSetting && monthlyReportSetting.roles) || [],
+          weeklyReportSetting: (weeklyReportSetting && weeklyReportSetting.roles) || [],
         }
       };
     }
@@ -192,7 +192,7 @@ class DataPush extends PureComponent {
         if (record.key === 'userPush') {
           const useStr = record.users && record.users.length ? record.users.map(it => it.name).join('、') : '';
           return (
-            <div className={style.selP} onClick={e => this.handlePeople(e, record)}>
+            <span className={style.selP} onClick={e => this.handlePeople(e, record)}>
               <img src={add} alt="选择人员" />
               {
                 useStr ?
@@ -200,7 +200,7 @@ class DataPush extends PureComponent {
                   :
                   <span style={{color: '#00C795'}}>选择人员</span>
               }
-            </div>
+            </span>
           );
         }
         const roleStr = record.roles && record.roles.length ? record.roles.map(it => it.name).join('、') : '';
@@ -264,7 +264,7 @@ class DataPush extends PureComponent {
           },
           children: (
             <Form.Item style={{marginBottom: 0}}>
-              <Switch value={!record.isPush} onChange={e => this.onChange(Number(!e), record, 'isPush')} />
+              <Switch value={record.isPush} onChange={e => this.onChange(e, record, 'isPush')} />
             </Form.Item>
           )
         };

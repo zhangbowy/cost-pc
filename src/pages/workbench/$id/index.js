@@ -553,7 +553,7 @@ class addInvoice extends PureComponent {
 
   onInitBorrow = (arrs, costDetails) => {
     console.log('AddInvoice -> onInitBorrow -> arrs', arrs);
-    const { operateType } = this.props;
+    const { operateType } = this.state;
     const ids = arrs.map(it => it.loanId);
     const arr = operateType === 'modify' ? arrs : [];
     if (ids.length && operateType !== 'modify' && operateType !== 'copy') {
@@ -591,7 +591,8 @@ class addInvoice extends PureComponent {
     const ids = arrs.map(it => it.detailFolderId);
     const arr = [];
     const banArr = [];
-    const { expenseList, operateType } = this.props;
+    const { operateType } = this.state;
+    const { expenseList } = this.props;
     let isShowMsg = false;
     const categoryIds = expenseList.map(it => it.id);
     this.props.dispatch({
@@ -937,8 +938,7 @@ class addInvoice extends PureComponent {
   }
 
   getNode = (payload) => {
-    const { id, operateType } = this.props;
-    const { details, loanUserId, total, expandVos } = this.state;
+    const { details, loanUserId, total, expandVos, id, operateType } = this.state;
     console.log('🚀 ~ file: index.js ~ line 939 ~ AddInvoice ~ total', total);
       console.log('AddInvoice -> getNode -> details', details);
       const objs = {
@@ -992,9 +992,10 @@ class addInvoice extends PureComponent {
       showField,
       // newshowField,
       borrowArr,
-      applyArr
+      applyArr,
+      id,
     } = this.state;
-    const { id, djDetail, detailJson, detailType } = this.props;
+    const { djDetail, detailJson, detailType } = this.props;
     let params = {
       ...details,
       invoiceTemplateId: id,
@@ -1079,9 +1080,10 @@ class addInvoice extends PureComponent {
       showField,
       borrowArr,
       applyArr,
-      draftId
+      draftId,
+      id
     } = this.state;
-    const { id, templateType, djDetail, detailJson,
+    const { templateType, djDetail, detailJson,
       detailType, } = this.props;
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
@@ -1214,20 +1216,21 @@ class addInvoice extends PureComponent {
         receiptName: details.receiptName || ''
       }
     }).then(() => {
-      this.onCancel();
       message.success('保存草稿成功');
-      this.props.onHandleOk();
+      this.onCancel();
     });
   }
 
   onSubmit = (params) => {
-    const { dispatch, templateType, operateType } = this.props;
+    const { dispatch } = this.props;
     const {
       costDetailsVo,
       historyParams,
       hisCostDetailsVo,
       modifyNote,
-      draftId
+      draftId,
+      templateType,
+      operateType,
     } = this.state;
     if (params.imgUrl && params.imgUrl.length > 9) {
       message.error('图片不能超过9张');
@@ -1244,7 +1247,6 @@ class addInvoice extends PureComponent {
       }).then(() => {
         this.onCancel();
         message.success('发起单据成功');
-        this.props.onHandleOk();
       });
     } else {
       const compareParams = defaultFunc.compareParams({
@@ -1267,7 +1269,6 @@ class addInvoice extends PureComponent {
       }).then(() => {
         this.onCancel();
         message.success('修改单据成功');
-        this.props.onHandleOk();
       });
     }
   }
@@ -1312,8 +1313,8 @@ class addInvoice extends PureComponent {
   }
 
   chargeHandle = (params) => {
-    const { borrowArr } = this.state;
-    const { templateType, waitLists, operateType } = this.props;
+    const { borrowArr, operateType, templateType } = this.state;
+    const { waitLists } = this.props;
     if (templateType && Number(templateType)) {
       this.onSubmit(params);
     } else if (borrowArr.length === 0 && (waitLists.length > 0) && operateType !== 'modify') {
@@ -1363,7 +1364,7 @@ class addInvoice extends PureComponent {
       payload: {},
     }).then(() => {
       const { uploadSpace } = this.props;
-      fileUpload({spaceId: uploadSpace, max: 9}, (arr) => {
+      fileUpload({spaceId: uploadSpace, max: 100}, (arr) => {
         let file = _this.state.fileUrl;
         file = [...file, ...arr];
         _this.setState({
@@ -1789,8 +1790,9 @@ class addInvoice extends PureComponent {
         </div>
         <Bottom
           total={total}
-          onSave={this.onSave}
+          onSave={this.handleOk}
           onCancel={this.onCancel}
+          onDraft={this.handelOkDraft}
           loading={loading}
           draftLoading={draftLoading}
           djDetail={djDetail}

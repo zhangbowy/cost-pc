@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Menu, Button, Form, message } from 'antd';
+import { Table, Menu, Button, Form, message, Checkbox } from 'antd';
 import moment from 'moment';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
@@ -27,6 +27,7 @@ class PayTemp extends React.PureComponent {
       accountType: [],
       pageNo: 1,
       show: true,
+      isOnlyShowModify: false,
     };
   }
 
@@ -131,6 +132,10 @@ class PayTemp extends React.PureComponent {
   }
 
   onQuery = (payload) => {
+    const { isOnlyShowModify } = this.state;
+    Object.assign(payload, {
+      isOnlyShowModify
+    });
     this.props.onQuerys(payload);
   }
 
@@ -277,6 +282,23 @@ class PayTemp extends React.PureComponent {
     });
   }
 
+  onChangeCheck = e => {
+    this.setState({
+      isOnlyShowModify: e.target.checked,
+    }, () => {
+      const {
+        query,
+      } = this.props;
+      const { status } = this.state;
+      this.onQuery({
+        ...query,
+        pageNo: 1,
+        status,
+      });
+    });
+
+  }
+
   render() {
     const {
       status,
@@ -352,7 +374,14 @@ class PayTemp extends React.PureComponent {
               status,
             });
           })}
-        />
+        >
+          <Checkbox
+            className="m-l-16"
+            style={{marginTop: '5px'}}
+            onChange={e => this.onChangeCheck(e)}
+          >改单历史
+          </Checkbox>
+        </SearchBanner>
         <div className="content-dt" style={{padding: 0}}>
           <>
             {

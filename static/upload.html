@@ -238,7 +238,7 @@
                   </p>
                   </div>
                   <p class='mpg-resume-from-channel--header--upload-request'>
-                      支持上传多种渠道的简历，格式包括PDF、DOCX、DOC、PNG、JPG、JPEG，文件需小于50M
+                      支持上传多种渠道的简历，格式包括PDF、OFD，文件需小于50M
                   </p>
               </div>
           </div>
@@ -294,10 +294,6 @@
     $('#file-input').change(function(){
         var fileItem = $('#file-input')[0].files[0];
         dd.postMessage({ name: fileItem.name, company, newToken });
-        if (fileList.length > 8) {
-          alert('不能超过9张');
-          return;
-        }
         var formData = new FormData();
         formData.append('file', fileItem);
         formData.append('companyId', company);

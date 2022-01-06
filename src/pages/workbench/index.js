@@ -28,6 +28,7 @@ import aliLogo from '@/assets/img/aliTrip/alitrip.png';
 import CenterReport from './components/Boss/CenterReport';
 import BottomChart from './components/Boss/BottomChart';
 import { getArrayColor } from '../../utils/constants';
+import { ddOpenSlidePanel } from '../../utils/ddApi';
 
 @Form.create()
 @connect(({ loading, workbench, session, global, costGlobal }) => ({
@@ -437,7 +438,7 @@ class Workbench extends PureComponent {
     const columns = [{
       title: '事由',
       dataIndex: 'reason',
-      width: 120,
+      width: 100,
       ellipsis: true,
       textWrap: 'word-break',
       render: (_, record) => (
@@ -471,7 +472,7 @@ class Workbench extends PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 140,
+      width: 120,
       render: (_, record) => (
         <span>
           <span>{record.invoiceNo}</span>
@@ -491,7 +492,7 @@ class Workbench extends PureComponent {
       render: (_, record) => (
         <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD') : '-'}</span>
       ),
-      width: 140,
+      width: 120,
     }, {
       title: '单据状态',
       dataIndex: 'statusStr',
@@ -532,10 +533,20 @@ class Workbench extends PureComponent {
             ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) &&
             <Divider type="vertical" />
           }
-          <a>撤销</a>
+          <a
+            onClick={() => {
+              ddOpenSlidePanel(record.url, '审批详情', (res) => {
+                console.log(res);
+              }, (e) => {
+                console.log(e);
+              });
+            }}
+          >
+            撤销
+          </a>
         </span>
       ),
-      width: 100,
+      width: 120,
       fixed: 'right',
       className: 'fixCenter'
     }];

@@ -5,7 +5,8 @@ import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import { numSub } from '../../../../utils/float';
 
-export default function Bottom({ total, onSave, onCancel, templateType, djDetail, assessSum }) {
+export default function Bottom({ total, onSave, onCancel,
+  templateType, djDetail, assessSum, onDraft, draftLoading, loading }) {
   return (
     <FooterBar
       left={(
@@ -44,13 +45,15 @@ export default function Bottom({ total, onSave, onCancel, templateType, djDetail
           <Button
             type="default"
             className="m-r-8 m-l-8"
-            onClick={() => onSave('up')}
+            onClick={onDraft}
+            loading={draftLoading}
           >
             保存
           </Button>
           <Button
             type="primary"
-            onClick={() => onSave('up')}
+            onClick={onSave}
+            loading={loading}
           >
             确定
           </Button>

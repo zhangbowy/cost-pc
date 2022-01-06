@@ -74,10 +74,10 @@ class UploadFile extends Component {
             token: localStorage.getItem('token') || ''
           }}
         >
-          {fileUrl && fileUrl.length < (maxLen || 9) && uploadButton}
+          {fileUrl && fileUrl.length < (maxLen || 100) && uploadButton}
         </Upload>
         <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
-          支持扩展名：.rar .zip .doc .docx .pdf .jpg...
+          支持扩展名：.ofd .pdf
         </p>
         <div style={{display: 'flex', flexDirection: 'column', width: 'inherit', overflow: 'hidden'}}>
           {

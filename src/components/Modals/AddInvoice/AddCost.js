@@ -1142,8 +1142,7 @@ class AddCost extends Component {
                                         this.props.form.setFieldsValue({ fileUrl: val });
                                       }
                                     })}
-                                    disabled={(fileUrl && (fileUrl.length > 9 || fileUrl.length === 9))
-                                      || (modify && !showField.fileUrl.isModify)}
+                                    disabled={(modify && !showField.fileUrl.isModify)}
                                   >
                                     <Icon type="upload" /> 上传文件
                                   </Button>

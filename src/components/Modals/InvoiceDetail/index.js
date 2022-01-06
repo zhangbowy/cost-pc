@@ -361,7 +361,6 @@ class InvoiceDetail extends Component {
         }
       }).then(() => {
         const { cityInfo } = this.props;
-        console.log('InvoiceDetail -> cityInfo -> cityInfo', cityInfo);
         const arr = {};
         if (cityInfo.success) {
           cityInfo.result.forEach(it => {
