@@ -398,6 +398,7 @@ class InvoiceDetail extends Component {
 
   onChangeType = (operateType) => {
     const { details } = this.state;
+    const { templateType } = this.props;
     this.props.dispatch({
       type: 'costGlobal/checkTemplate',
       payload: {
@@ -415,7 +416,7 @@ class InvoiceDetail extends Component {
       }
       localStorage.setItem('contentJson', JSON.stringify(details));
       localStorage.removeItem('selectCost');
-      this.props.history.push(`/workbench/${operateType}~${details.templateType}~${details.invoiceTemplateId}~${details.id}`);
+      this.props.history.push(`/workbench/${operateType}~${templateType}~${details.invoiceTemplateId}~${details.id}`);
       // this.setState({
       //   operateType,
       //   visible: false,
