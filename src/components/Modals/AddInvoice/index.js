@@ -18,7 +18,7 @@ import ApproveNode from '../ApproveNode';
 import { numAdd, numSub, numMulti } from '../../../utils/float';
 import AddApply from './AddApply';
 import { invoiceJson } from '../../../utils/constants';
-import { JsonParse } from '../../../utils/common';
+import { JsonParse, sortBy } from '../../../utils/common';
 import ApplyTable from './ApplyTable';
 import AddFolder from './AddFolder';
 import defaultFunc from './utils';
@@ -907,11 +907,11 @@ class AddInvoice extends Component {
   onAddBorrow = (val) => {
     console.log('AddInvoice -> onAddBorrow -> val', val);
     const detailList = [...val];
+    const newArr = detailList.sort(sortBy('createTime', true));
     let money = Number(this.state.total);
     let assessSum = 0;
     if (money || (money === 0)) {
-      detailList.forEach(it => {
-        console.log(money);
+      newArr.forEach(it => {
         if(Number(money) < (it.waitAssessSum/100)) {
           it.money = money;
           assessSum+=money;
@@ -924,7 +924,7 @@ class AddInvoice extends Component {
       });
     }
     this.setState({
-      borrowArr: detailList,
+      borrowArr: newArr.map((it, index) => { return {...it, sort: index}; }),
       assessSum: Number(assessSum.toFixed(2)),
     });
   }
