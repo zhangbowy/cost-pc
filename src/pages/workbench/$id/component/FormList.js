@@ -644,7 +644,7 @@ renderTreeNodes = data =>
                   <>
                     {
                       itw.field === 'reason' && !!(itw.status) &&
-                      <Col span={21} className="m-t-24">
+                      <Col style={{width: '88.8%'}} className="m-t-24">
                         <Form.Item label={showField.reason && showField.reason.name}>
                           {
                             getFieldDecorator('reason', {

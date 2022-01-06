@@ -1624,8 +1624,8 @@ class addInvoice extends PureComponent {
                 (templateType === 2 && !!djDetail.categoryStatus)) &&
                 <>
                   <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
-                    <Lines name="支出明细" />
-                    <div style={{textAlign: 'center'}} className={style.addbtn}>
+                    <Lines name={`支出明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />
+                    <div className={costDetailsVo && costDetailsVo.length > 0 ? style.addBtns : style.addbtn}>
                       {
                         !modify &&
                         <AddCost
@@ -1637,7 +1637,13 @@ class addInvoice extends PureComponent {
                           templateType={Number(templateType)}
                           officeId={details.officeId}
                         >
-                          <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加</Button>
+                          <Button
+                            icon={costDetailsVo && costDetailsVo.length > 0 ? 'none' : 'plus'}
+                            className={style.addHandle}
+                            key="handle"
+                            type={costDetailsVo && costDetailsVo.length > 0 ? 'primary' : 'default'}
+                          >手动添加
+                          </Button>
                         </AddCost>
                       }
                       {
@@ -1651,7 +1657,12 @@ class addInvoice extends PureComponent {
                           invoiceName={inDetails.name}
                           officeId={details.officeId}
                         >
-                          <Button icon="plus" style={{ width: '231px' }} key="export">账本导入</Button>
+                          <Button
+                            icon={costDetailsVo && costDetailsVo.length > 0 ? 'none' : 'plus'}
+                            className={style.costExport}
+                            key="export"
+                          >账本导入
+                          </Button>
                         </AddFolder>
                       }
                       {
