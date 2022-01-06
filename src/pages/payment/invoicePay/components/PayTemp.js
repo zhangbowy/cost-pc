@@ -379,7 +379,7 @@ class PayTemp extends React.PureComponent {
             className="m-l-16"
             style={{marginTop: '5px'}}
             onChange={e => this.onChangeCheck(e)}
-          >改单历史
+          >仅看已改单
           </Checkbox>
         </SearchBanner>
         <div className="content-dt" style={{padding: 0}}>

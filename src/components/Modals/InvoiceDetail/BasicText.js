@@ -340,7 +340,7 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
         details.reasonForRejection &&
         <Col span={8} className="m-t-16">
           <div style={{display: 'flex'}}>
-            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>拒绝原因：</span>
+            <span className={cs('fs-14', 'c-black-85', style.nameTil, 'deleteColor')}>拒绝原因：</span>
             <span className={cs('fs-14','c-black-65', style.rightFlex)}>
               {details.reasonForRejection}
             </span>

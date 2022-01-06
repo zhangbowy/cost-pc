@@ -135,6 +135,7 @@ class Workbench extends PureComponent {
         },
       });
     });
+    const _this = this;
     Promise.all(arr).then(() => {
       const { personal, roleStatics } = this.props;
       const arrs = roleStatics.filter(it => it.url === 'statistics_department');
@@ -142,17 +143,17 @@ class Workbench extends PureComponent {
       if (arrs && arrs.length) {
         flagMenu = true;
       }
-      this.setState({
+      _this.setState({
         personal,
         flagMenu,
       });
-      this.onQuery({
+      _this.onQuery({
         isComplete: false,
         pageNo: 1,
         pageSize: 10,
       });
       // 支出简报
-      this.onQueryChart({
+      _this.onQueryChart({
         ...dateToTime('0_m'),
         dateType: 0,
       });
@@ -160,7 +161,7 @@ class Workbench extends PureComponent {
 
   }
 
-  onQueryChart = payload => {
+  onQueryChart = (payload) => {
     this.props.dispatch({
       type: 'workbench/submitReport',
       payload,

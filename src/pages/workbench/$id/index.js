@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import React, { PureComponent } from 'react';
-import { message, PageHeader, Button, Input, Modal } from 'antd';
+import { message, PageHeader, Button, Input, Modal, Spin } from 'antd';
 import { connect } from 'dva';
 import moment  from 'moment';
 import PageHead from '@/components/pageHead';
@@ -59,6 +59,7 @@ const { confirm } = Modal;
   loading.effects['global/addSalary'] ||
   loading.effects['global/addPay'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
+  initLoading: loading.effects['global/users'] || false,
 }))
 class addInvoice extends PureComponent {
   constructor(props) {
@@ -1585,209 +1586,211 @@ class addInvoice extends PureComponent {
             }
           />
         </div>
-        <div className="content-dt" style={{height: 'calc(100vh - 200px)'}}>
-          <Lines name="基本信息" />
-          <ChangeForm
-            userInfo={userInfo}
-            showField={showField}
-            newshowField={newshowField}
-            imgUrl={imgUrl}
-            ossFileUrl={ossFileUrl}
-            fileUrl={fileUrl}
-            modify={modify}
-            templateType={templateType}
-            supplierList={supplierList}
-            handelAcc={this.handelAcc}
-            usableProject={usableProject}
-            accountList={accountList}
-            users={users}
-            depList={depList}
-            expandField={expandField}
-            details={details}
-            createDepList={createDepList}
-            djDetail={djDetail}
-            uploadFiles={this.onUploadFiles}
-            onChangeData={this.changeSetData}
-            costDetailsVo={costDetailsVo}
-            selectPle={this.selectPle}
-            wrappedComponentRef={form => {this.changeForm = form;}}
-            expandVos={expandVos}
-            officeList={officeList}
-            onChangeOffice={this.onChangeOffice}
-            checkOffice={this.checkOffice}
-          />
-          {
-              (!templateType ||
-              templateType === 3 ||
-              (templateType === 2 && !!djDetail.categoryStatus)) &&
+        <Spin spinning={this.props.initLoading}>
+          <div className="content-dt" style={{height: 'calc(100vh - 200px)'}}>
+            <Lines name="基本信息" />
+            <ChangeForm
+              userInfo={userInfo}
+              showField={showField}
+              newshowField={newshowField}
+              imgUrl={imgUrl}
+              ossFileUrl={ossFileUrl}
+              fileUrl={fileUrl}
+              modify={modify}
+              templateType={templateType}
+              supplierList={supplierList}
+              handelAcc={this.handelAcc}
+              usableProject={usableProject}
+              accountList={accountList}
+              users={users}
+              depList={depList}
+              expandField={expandField}
+              details={details}
+              createDepList={createDepList}
+              djDetail={djDetail}
+              uploadFiles={this.onUploadFiles}
+              onChangeData={this.changeSetData}
+              costDetailsVo={costDetailsVo}
+              selectPle={this.selectPle}
+              wrappedComponentRef={form => {this.changeForm = form;}}
+              expandVos={expandVos}
+              officeList={officeList}
+              onChangeOffice={this.onChangeOffice}
+              checkOffice={this.checkOffice}
+            />
+            {
+                (!templateType ||
+                templateType === 3 ||
+                (templateType === 2 && !!djDetail.categoryStatus)) &&
+                <>
+                  <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
+                    <Lines name="支出明细" />
+                    <div style={{textAlign: 'center'}} className={style.addbtn}>
+                      {
+                        !modify &&
+                        <AddCost
+                          userInfo={userInfo}
+                          invoiceId={id}
+                          onAddCost={this.onAddCost}
+                          key="handle"
+                          modify={modify}
+                          templateType={Number(templateType)}
+                          officeId={details.officeId}
+                        >
+                          <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加</Button>
+                        </AddCost>
+                      }
+                      {
+                        !modify && !Number(templateType) &&
+                        <AddFolder
+                          userInfo={userInfo}
+                          invoiceId={id}
+                          onAddCost={this.onAddCost}
+                          key="export"
+                          list={costDetailsVo}
+                          invoiceName={inDetails.name}
+                          officeId={details.officeId}
+                        >
+                          <Button icon="plus" style={{ width: '231px' }} key="export">账本导入</Button>
+                        </AddFolder>
+                      }
+                      {
+                        costDetailsVo && costDetailsVo.length > 0 &&
+                        <CostTable
+                          list={costDetailsVo}
+                          userInfo={userInfo}
+                          invoiceId={id}
+                          onChangeData={(val) => this.onChangeData(val)}
+                          addCost={this.onAddCost}
+                          modify={modify}
+                          templateType={Number(templateType)}
+                          officeId={details.officeId}
+                        />
+                      }
+                    </div>
+                  </div>
+                </>
+              }
+            {
+              (detailJson && detailJson.length > 0) && templateType === 2 &&
+              <CategoryTable
+                list={detailJson}
+                onRef={ref => {this.onCategoryStatus = ref;}}
+                detailList={applyDetailList}
+              />
+            }
+            {
+              templateType === 2 && aliTripAuth.status &&
+              <AddTravel
+                travelList={travelList}
+                aliTripFields={aliTripFields}
+                aliCostAndI={aliCostAndI}
+                aliTripAuth={aliTripAuth}
+                hisAliTrip={hisAliTrip || {}}
+                userInfo={userInfo}
+                onGetFunc={func => {
+                  this.handleOpenModal = func;
+                }}
+                onResetFun={func => {
+                  this.handleCancel = func;
+                }}
+              />
+            }
+            {
+              djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&
               <>
                 <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
-                  <Lines name="支出明细" />
+                  <Lines name="借款核销" />
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
                     {
                       !modify &&
-                      <AddCost
+                      <AddBorrow
                         userInfo={userInfo}
                         invoiceId={id}
-                        onAddCost={this.onAddCost}
-                        key="handle"
-                        modify={modify}
-                        templateType={Number(templateType)}
+                        onAddBorrow={arr => this.onAddBorrow(arr)}
+                        list={borrowArr}
                         officeId={details.officeId}
                       >
-                        <Button icon="plus" className="m-r-8" style={{ width: '231px' }} key="handle">手动添加</Button>
-                      </AddCost>
+                        <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
+                      </AddBorrow>
                     }
                     {
-                      !modify && !Number(templateType) &&
-                      <AddFolder
+                      this.state.borrowArr && this.state.borrowArr.length > 0 &&
+                      <BorrowTable
+                        list={borrowArr}
                         userInfo={userInfo}
                         invoiceId={id}
-                        onAddCost={this.onAddCost}
-                        key="export"
-                        list={costDetailsVo}
-                        invoiceName={inDetails.name}
-                        officeId={details.officeId}
-                      >
-                        <Button icon="plus" style={{ width: '231px' }} key="export">账本导入</Button>
-                      </AddFolder>
-                    }
-                    {
-                      costDetailsVo && costDetailsVo.length > 0 &&
-                      <CostTable
-                        list={costDetailsVo}
-                        userInfo={userInfo}
-                        invoiceId={id}
-                        onChangeData={(val) => this.onChangeData(val)}
-                        addCost={this.onAddCost}
+                        onChangeData={(val,keys) => this.changeBorrows(val,keys)}
                         modify={modify}
-                        templateType={Number(templateType)}
-                        officeId={details.officeId}
                       />
                     }
                   </div>
                 </div>
               </>
             }
-          {
-            (detailJson && detailJson.length > 0) && templateType === 2 &&
-            <CategoryTable
-              list={detailJson}
-              onRef={ref => {this.onCategoryStatus = ref;}}
-              detailList={applyDetailList}
-            />
-          }
-          {
-            templateType === 2 && aliTripAuth.status &&
-            <AddTravel
-              travelList={travelList}
-              aliTripFields={aliTripFields}
-              aliCostAndI={aliCostAndI}
-              aliTripAuth={aliTripAuth}
-              hisAliTrip={hisAliTrip || {}}
-              userInfo={userInfo}
-              onGetFunc={func => {
-                this.handleOpenModal = func;
-              }}
-              onResetFun={func => {
-                this.handleCancel = func;
-              }}
-            />
-          }
-          {
-            djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&
-            <>
-              <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
-                <Lines name="借款核销" />
-                <div style={{textAlign: 'center'}} className={style.addbtn}>
-                  {
-                    !modify &&
-                    <AddBorrow
-                      userInfo={userInfo}
-                      invoiceId={id}
-                      onAddBorrow={arr => this.onAddBorrow(arr)}
-                      list={borrowArr}
-                      officeId={details.officeId}
-                    >
-                      <Button icon="plus" style={{ width: '231px' }}>选择借款</Button>
-                    </AddBorrow>
-                  }
-                  {
-                    this.state.borrowArr && this.state.borrowArr.length > 0 &&
-                    <BorrowTable
-                      list={borrowArr}
-                      userInfo={userInfo}
-                      invoiceId={id}
-                      onChangeData={(val,keys) => this.changeBorrows(val,keys)}
-                      modify={modify}
-                    />
-                  }
-                </div>
-              </div>
-            </>
-          }
-          {
-            djDetail.isRelationApply && (!modify || (modify && this.state.applyArr && applyArr.length > 0 )) ?
-              <>
-                <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
-                  <Lines name="关联申请单" />
-                  <div style={{textAlign: 'center'}} className={style.addbtn}>
-                    {
-                      !modify &&
-                      <AddApply
-                        userInfo={userInfo}
-                        invoiceId={id}
-                        onAddBorrow={arr => this.onAddApply(arr)}
-                        list={applyArr}
-                        costList={costDetailsVo}
-                        onAddCost={this.onAddCost}
-                        officeId={details.officeId}
-                      >
-                        <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
-                      </AddApply>
-                    }
-                    {
-                      this.state.applyArr && applyArr.length > 0 &&
-                      <ApplyTable
-                        list={applyArr}
-                        userInfo={userInfo}
-                        invoiceId={id}
-                        modify={modify}
-                        onChangeData={(val,keys) => this.changeApply(val,keys)}
-                      />
-                    }
+            {
+              djDetail.isRelationApply && (!modify || (modify && this.state.applyArr && applyArr.length > 0 )) ?
+                <>
+                  <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
+                    <Lines name="关联申请单" />
+                    <div style={{textAlign: 'center'}} className={style.addbtn}>
+                      {
+                        !modify &&
+                        <AddApply
+                          userInfo={userInfo}
+                          invoiceId={id}
+                          onAddBorrow={arr => this.onAddApply(arr)}
+                          list={applyArr}
+                          costList={costDetailsVo}
+                          onAddCost={this.onAddCost}
+                          officeId={details.officeId}
+                        >
+                          <Button icon="plus" style={{ width: '231px' }}>选择申请单</Button>
+                        </AddApply>
+                      }
+                      {
+                        this.state.applyArr && applyArr.length > 0 &&
+                        <ApplyTable
+                          list={applyArr}
+                          userInfo={userInfo}
+                          invoiceId={id}
+                          modify={modify}
+                          onChangeData={(val,keys) => this.changeApply(val,keys)}
+                        />
+                      }
+                    </div>
                   </div>
-                </div>
-              </>
-              :
-              null
-          }
-          {
-            !modify &&
-            <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-              <Lines name="审批流程" />
-              <ApproveNode
-                approveNodes={nodes}
-                onChangeForm={(val) => this.onChangeNode(val)}
-              />
-            </div>
-          }
-          {
-            modify &&
-            <div style={{paddingTop: '24px', paddingBottom: '100px', width: '90%'}}>
-              <div className={style.header} style={{padding: 0, marginBottom: '16px'}}>
-                <div className={style.line} />
-                <span>改单理由</span>
+                </>
+                :
+                null
+            }
+            {
+              !modify &&
+              <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                <Lines name="审批流程" />
+                <ApproveNode
+                  approveNodes={nodes}
+                  onChangeForm={(val) => this.onChangeNode(val)}
+                />
               </div>
-              <TextArea
-                placeholder="请输入改单理由(必填)"
-                style={{height: '128px'}}
-                value={modifyNote}
-                onInput={(e) => { this.setState({ modifyNote: e.target.value }); }}
-              />
-            </div>
-          }
-        </div>
+            }
+            {
+              modify &&
+              <div style={{paddingTop: '24px', paddingBottom: '100px', width: '90%'}}>
+                <div className={style.header} style={{padding: 0, marginBottom: '16px'}}>
+                  <div className={style.line} />
+                  <span>改单理由</span>
+                </div>
+                <TextArea
+                  placeholder="请输入改单理由(必填)"
+                  style={{height: '128px'}}
+                  value={modifyNote}
+                  onInput={(e) => { this.setState({ modifyNote: e.target.value }); }}
+                />
+              </div>
+            }
+          </div>
+        </Spin>
         <Bottom
           total={total}
           onSave={this.handleOk}
