@@ -506,7 +506,6 @@ renderTreeNodes = data =>
     }, usableProject.sort(compare('sort')));
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
-
     return (
       <Form
         className={cs('formItem', style.formColumn)}
@@ -1117,7 +1116,10 @@ renderTreeNodes = data =>
                         {
                           getFieldDecorator('note',{
                             initialValue: details.note || '',
-                            rules: [{ required: !!(showField.note.isWrite), message: '请输入备注' }]
+                            rules: [
+                              { required: !!(showField.note.isWrite), message: '请输入备注' },
+                              { max: 128, message: '备注最多128个字' },
+                            ]
                           })(
                             <Input
                               placeholder={showField.note && showField.note.note ? showField.note.note : '请输入'}
