@@ -53,7 +53,7 @@ class UploadFile extends Component {
     const { userInfo, disabled, maxLen } = this.props;
     const { fileUrl } = this.state;
     const uploadButton = (
-      <Button>
+      <Button disabled={disabled}>
         <Icon type="upload" />上传文件
       </Button>
     );

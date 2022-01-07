@@ -59,7 +59,7 @@ const { confirm } = Modal;
   loading.effects['global/addSalary'] ||
   loading.effects['global/addPay'] || false,
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
-  initLoading: loading.effects['global/users'] || false,
+  initLoading: loading.effects['global/djDetail'] || false,
 }))
 class addInvoice extends PureComponent {
   constructor(props) {
@@ -231,9 +231,6 @@ class addInvoice extends PureComponent {
     this.fetchList({ templateType, id, operateType, draftId }, async() => {
       const create = this.state.depList;
       if (create && create.length > 0) {
-        // this.props.form.setFieldsValue({
-        //   deptId: `${create[0].deptId}`,
-        // });
         detail = {
           ...detail,
           userId: this.props.userId,
@@ -286,7 +283,6 @@ class addInvoice extends PureComponent {
           createDepList: dep,
           travelList: selfTravel && selfTravel.length ? selfTravel[0] : {},
         });
-
         const obj = {};
         if (djDetails.showField && djDetails.showField.length) {
           djDetails.showField.forEach(item => {
@@ -306,7 +302,6 @@ class addInvoice extends PureComponent {
         }
         const aliTripArr = [...djDetails.selfField, ...djDetails.expandField];
         const aliTripAuth = aliTripArr.filter(it => it.fieldType === 10);
-        // const { aliCostAndI, deptTree } = this.props;
         if (aliCostAndI && aliTripAuth && aliTripAuth.length) {
           this.setState({
             aliTripFields: { aliCostAndI, deptTree, aliAuth: aliTripAuth[0] },
@@ -355,7 +350,6 @@ class addInvoice extends PureComponent {
                 message.error(`${msg}支出类别被删除，请重新选择`);
               }
               if (arrs.length) {
-                console.log('走了这里嘛，在账本导入这里');
                 const { details } = this.state;
                 this.setState({
                   details: {
@@ -380,7 +374,6 @@ class addInvoice extends PureComponent {
         } else {
           const contents = JsonParse(contentJson);
           const officeLists = await this.fetchOfficeList({ userId: contents.userId });
-          console.log('AddInvoice -> onShowHandle -> officeLists', officeLists);
           if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
             Object.assign(contents, {
               officeId: officeLists.length === 1 ? officeLists[0].id : undefined,
@@ -784,7 +777,6 @@ class addInvoice extends PureComponent {
 
   //  添加费用成功
   onAddCost = async(val, index, flag) => {
-    console.log('🚀 ~ file: index.js ~ line 787 ~ addInvoice ~ onAddCost=async ~ val', val);
     const { costDetailsVo } = this.state;
     let  share = [...costDetailsVo];
     const detail = this.state.details;
@@ -1625,7 +1617,7 @@ class addInvoice extends PureComponent {
                 templateType === 3 ||
                 (templateType === 2 && !!djDetail.categoryStatus)) &&
                 <>
-                  <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
+                  <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
                     <Lines name={`支出明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />
                     <div className={costDetailsVo && costDetailsVo.length > 0 ? style.addBtns : style.addbtn}>
                       {
@@ -1712,7 +1704,7 @@ class addInvoice extends PureComponent {
             {
               djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&
               <>
-                <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
+                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
                   <Lines name="借款核销" />
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
                     {
@@ -1744,7 +1736,7 @@ class addInvoice extends PureComponent {
             {
               djDetail.isRelationApply && (!modify || (modify && this.state.applyArr && applyArr.length > 0 )) ?
                 <>
-                  <div style={{paddingTop: '24px', paddingBottom: '30px', width: '90%'}}>
+                  <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
                     <Lines name="关联申请单" />
                     <div style={{textAlign: 'center'}} className={style.addbtn}>
                       {
@@ -1789,7 +1781,7 @@ class addInvoice extends PureComponent {
             }
             {
               modify &&
-              <div style={{paddingTop: '24px', paddingBottom: '100px', width: '90%'}}>
+              <div style={{paddingTop: '24px', paddingBottom: '100px'}}>
                 <div className={style.header} style={{padding: 0, marginBottom: '16px'}}>
                   <div className={style.line} />
                   <span>改单理由</span>

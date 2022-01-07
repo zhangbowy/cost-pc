@@ -304,7 +304,6 @@ class ChangeForm extends Component {
       ossFileUrl,
     } = this.props;
     let params = {};
-    console.log('newshowField', newshowField);
     form.validateFieldsAndScroll((err, val) => {
       if (!err) {
         const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);

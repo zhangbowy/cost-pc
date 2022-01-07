@@ -311,8 +311,11 @@ class AddCost extends Component {
           newArray = await this.handleDept(listArr, userIdArr, officeId, initDep);
         } else {
           newArray = newArray.map(it => {
+            const isShowDep = initDep.findIndex(item => item.deptId == it.deptId) > -1;
             return {
               ...it,
+              deptId: isShowDep ? it.deptId : '',
+              deptName: isShowDep ? it.deptName : '',
               depList: initDep,
             };
           });
