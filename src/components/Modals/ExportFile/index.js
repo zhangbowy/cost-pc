@@ -184,6 +184,7 @@ class ExportFile extends React.PureComponent {
     formData.append('file', fileList[0]);
     formData.append('expenseId',expenseId);
     formData.append('uniqueId',uniqueId);
+
     this.props.dispatch({
       type: 'costGlobal/upload',
       payload: formData
@@ -204,7 +205,7 @@ class ExportFile extends React.PureComponent {
   }
 
   render() {
-    const { children, loading } = this.props;
+    const { children, loading, officeId } = this.props;
     const { uploadModalVisible, resultModalVisible, uploadRes, fileList } = this.state;
     return (
       <span>
@@ -223,7 +224,7 @@ class ExportFile extends React.PureComponent {
               <p className="fs-14 c-black-65" style={{ lineHeight: '30px' }}>1. 根据分摊表单的内容(是否按项目分摊)，生成对应的批量导入模版</p>
               <p className="fs-14 c-black-65" style={{ lineHeight: '30px' }}>
                 2.下载此支出类别专属分摊模版：
-                <a href={`${APP_API}/cost/export/invoice/costDetail/share/template?token=${localStorage.getItem('token')}`} size="small" className={cs('m-l-8', styles.download)}>下载模板</a>
+                <a href={`${APP_API}/cost/export/invoice/costDetail/share/template?token=${localStorage.getItem('token')}&officeId=${officeId || ''}}`} size="small" className={cs('m-l-8', styles.download)}>下载模板</a>
               </p>
               <p className="fs-14 c-black-65" style={{ lineHeight: '30px' }}>3. 请选择要导入的项目文件</p>
               <div className={cs('m-t-8', styles.import_wrapper)}>

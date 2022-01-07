@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
@@ -386,7 +387,7 @@ class AddCost extends Component {
               deptId: userDeps[`${it.userId}`].findIndex(item => `${item.deptId}` === `${it.deptId}`) > -1
                 ? it.deptId : '',
             });
-          } else if (initDep.findIndex(item => item.deptId === it.deptId) === -1) {
+          } else if (initDep.findIndex(item => item.deptId == it.deptId) === -1) {
             Object.assign(obj, {
               deptId: '',
               depList: initDep

@@ -423,6 +423,7 @@ class AddCostTable extends Component {
       modify,
       expenseId,
       uniqueId,
+      officeId
     } = this.props;
     const { costDetailShareVOS, shareAmount, costSum, currencyId,
       currencySymbol, exchangeRate, selectedRowKeys } = this.state;
@@ -465,7 +466,7 @@ class AddCostTable extends Component {
                 >
                   {
                     record.depList && record.depList.map(it => (
-                      <Option key={`${it.deptId}`} label={it.name}>{it.name}</Option>
+                      <Option key={`${it.deptId}`}>{it.name}</Option>
                     ))
                   }
                 </Select>
@@ -601,6 +602,7 @@ class AddCostTable extends Component {
                 expenseId={expenseId}
                 callback={this.onAdds}
                 uniqueId={uniqueId}
+                officeId={officeId}
               >
                 <Button className="m-r-8" type="default" disabled={!costSum}>批量导入</Button>
               </ExportFile>

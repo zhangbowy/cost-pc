@@ -65,6 +65,18 @@ export default {
           if (JSON.stringify(imgs) !== JSON.stringify(newImg)) {
             Object.assign(newParams, { [item]: params[item] });
           }
+        }else if (item === 'fileUrl') {
+          const file = hisParams[item] ? hisParams[item].map(it => it.fileId) : [];
+          const newFile = params[item] ? params[item].map(it => it.fileId) : [];
+          if (JSON.stringify(file) !== JSON.stringify(newFile)) {
+            Object.assign(newParams, { [item]: params[item] });
+          }
+        }else if (item === 'ossFileUrl') {
+          const ossFile = hisParams[item] ? hisParams[item].map(it => it.fileUrl) : [];
+          const newOssFile = params[item] ? params[item].map(it => it.fileUrl) : [];
+          if (JSON.stringify(ossFile) !== JSON.stringify(newOssFile)) {
+            Object.assign(newParams, { [item]: params[item] });
+          }
         } else {
           Object.assign(newParams, { [item]: params[item] });
         }

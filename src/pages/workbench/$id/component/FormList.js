@@ -495,7 +495,6 @@ renderTreeNodes = data =>
       officeList,
       ossFileUrl,
     } = this.props;
-      console.log('🚀 ~ file: FormList.js ~ line 496 ~ ChangeForm ~ render ~ supplierList', supplierList);
     const projectList = treeConvert({
       rootId: 0,
       pId: 'parentId',
