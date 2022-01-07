@@ -73,7 +73,7 @@ class ApplyTable extends Component {
             !modify &&
               <Divider type="vertical" />
           }
-          <InvoiceDetail id={record.id} templateType={2}>
+          <InvoiceDetail id={record.applicationId || record.id} templateType={2}>
             <a>查看</a>
           </InvoiceDetail>
         </span>

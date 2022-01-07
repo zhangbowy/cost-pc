@@ -79,7 +79,7 @@ class UploadFile extends Component {
         <p className="fs-14 c-black-45 li-1 m-t-8" style={{marginBottom: 0}}>
           支持扩展名：.ofd .pdf
         </p>
-        <div style={{display: 'flex', flexDirection: 'column', width: 'inherit', overflow: 'hidden'}}>
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%', overflow: 'hidden'}}>
           {
             fileUrl.map((item, index) => (
               <div key={item.fileUrl} className={style.fileList} onClick={() => this.previewFile(item.fileUrl)}>

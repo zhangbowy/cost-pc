@@ -32,7 +32,7 @@ const MainText = ({ showFields, details, previewImage, previewFiles, previewFile
           <Row className="m-l-10">
             <Col span={24} className="m-t-16">
               <div style={{display: 'flex'}}>
-                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据备注：</span>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil, style.four)}>单据备注：</span>
                 <span className="fs-14 c-black-65">{details.note}</span>
               </div>
             </Col>
