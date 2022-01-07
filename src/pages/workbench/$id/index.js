@@ -1083,9 +1083,10 @@ class addInvoice extends PureComponent {
       borrowArr,
       applyArr,
       draftId,
-      id
+      id,
+      templateType
     } = this.state;
-    const { templateType, djDetail, detailJson,
+    const { djDetail, detailJson,
       detailType, } = this.props;
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
     const dept = createDepList.filter(it => `${it.deptId}` === `${val.createDeptId}`);
