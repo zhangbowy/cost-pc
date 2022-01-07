@@ -1250,7 +1250,10 @@ class AddCost extends Component {
                                 {
                                   getFieldDecorator('note', {
                                     initialValue: details.note || '',
-                                    rules: [{ required: !!(showField.costNote.isWrite), message: '请输入备注' }]
+                                    rules: [
+                                      { required: !!(showField.costNote.isWrite), message: '请输入备注' },
+                                      { max: 128, message: '备注最多128个字' },
+                                    ]
                                   })(
                                     <Input
                                       placeholder={showField.costNote.note ? showField.costNote.note : '请输入'}
