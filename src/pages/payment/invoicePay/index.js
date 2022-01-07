@@ -11,6 +11,8 @@ import { getArrayValue, accountType, filterAccount } from '../../../utils/consta
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
 import TableImg from '../../../components/LittleCmp/TableImg';
+import imgs from '../../../assets/img/refuse.png';
+import style from './index.scss';
 
 const { confirm } = Modal;
 @connect(({ loading, payment, global, costGlobal }) => ({
@@ -23,6 +25,7 @@ const { confirm } = Modal;
   recordList: payment.recordList,
   recordPage: payment.recordPage,
   recordTotal: payment.recordTotal,
+  isModifyInvoice: costGlobal.isModifyInvoice,
   officeListAndRole: costGlobal.officeListAndRole,
 }))
 class Payment extends React.PureComponent {
@@ -48,11 +51,16 @@ class Payment extends React.PureComponent {
         key: 'searchContent',
         id: 'searchContent',
         out: 1
-      }]
+      }],
+      isShow: true,
     };
   }
 
   componentDidMount() {
+    this.props.dispatch({
+      type: 'costGlobal/queryModifyOrder',
+      payload:{}
+    });
     this.getOffice();
   }
 
@@ -239,7 +247,8 @@ class Payment extends React.PureComponent {
       recordTotal,
       officeListAndRole,
     } = this.props;
-    const { status, visibleConfirm, selectedRowKeys, selectedRows, searchList } = this.state;
+    const { status, visibleConfirm, selectedRowKeys, selectedRows, searchList, isShow } = this.state;
+    const refuse = localStorage.getItem('refuseShow');
     const columns = [{
       title: '报销事由',
       dataIndex: 'reason',
@@ -455,6 +464,18 @@ class Payment extends React.PureComponent {
     }
     return (
       <>
+        {
+          (!refuse && isShow) &&
+          <div
+            className={style.mask}
+            onClick={() => {
+              localStorage.setItem('refuseShow', '1');
+              this.setState({ isShow: false });
+            }}
+          >
+            <img src={imgs} alt="遮罩" />
+          </div>
+        }
         <PayTemp
           {...this.props}
           namespace="payment"
@@ -476,6 +497,7 @@ class Payment extends React.PureComponent {
           officeList={officeListAndRole}
           onChangeSearch={this.onChangeSearch}
           searchList={searchList}
+          isModifyInvoice={this.props.isModifyInvoice}
         />
         <ConfirmPay
           batchDetails={batchDetails}

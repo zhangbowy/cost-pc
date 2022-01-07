@@ -11,6 +11,8 @@ import PayModal from '../invoicePay/components/PayModal';
 import ConfirmPay from '../invoicePay/components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
 import TableImg from '../../../components/LittleCmp/TableImg';
+import style from '../invoicePay/index.scss';
+import imgs from '../../../assets/img/refuse.png';
 
 const { confirm } = Modal;
 @connect(({ loading, borrowPay, costGlobal }) => ({
@@ -22,6 +24,7 @@ const { confirm } = Modal;
   recordList: borrowPay.recordList,
   recordPage: borrowPay.recordPage,
   recordTotal: borrowPay.recordTotal,
+  isModifyInvoice: costGlobal.isModifyInvoice,
   officeListAndRole: costGlobal.officeListAndRole,
 }))
 class BorrowPay extends React.PureComponent {
@@ -30,6 +33,7 @@ class BorrowPay extends React.PureComponent {
     this.state = {
       status: '2',
       selectedRowKeys: [],
+      isShow: true,
       searchList: [{
         type: 'rangeTime',
         label: '提交时间',
@@ -54,6 +58,10 @@ class BorrowPay extends React.PureComponent {
     const {
       query,
     } = this.props;
+    this.props.dispatch({
+      type: 'costGlobal/queryModifyOrder',
+      payload:{}
+    });
     this.getOffice();
     this.onQuery({
       ...query,
@@ -248,6 +256,7 @@ class BorrowPay extends React.PureComponent {
       selectedRowKeys,
       selectedRows,
       searchList,
+      isShow
     } = this.state;
     const columns = [{
       title: '借款事由',
@@ -459,8 +468,21 @@ class BorrowPay extends React.PureComponent {
         ),
       });
     }
+    const refuse = localStorage.getItem('refuseLoan');
     return (
       <>
+        {
+          (!refuse && isShow) &&
+          <div
+            className={style.mask}
+            onClick={() => {
+              localStorage.setItem('refuseLoan', '1');
+              this.setState({ isShow: false });
+            }}
+          >
+            <img src={imgs} alt="遮罩" />
+          </div>
+        }
         <PayTemp
           {...this.props}
           list={list}
@@ -481,6 +503,7 @@ class BorrowPay extends React.PureComponent {
           onRecord={this.onRecord}
           searchList={searchList}
           onChangeSearch={this.onChangeSearch}
+          isModifyInvoice={this.props.isModifyInvoice}
         />
         <ConfirmPay
           batchDetails={batchDetails}

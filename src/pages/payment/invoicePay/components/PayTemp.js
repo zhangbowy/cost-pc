@@ -320,6 +320,7 @@ class PayTemp extends React.PureComponent {
       recordPage,
       onRecord,
       searchList,
+      isModifyInvoice
     } = this.props;
 
     const recordColumns = [{
@@ -375,12 +376,15 @@ class PayTemp extends React.PureComponent {
             });
           })}
         >
-          <Checkbox
-            className="m-l-16"
-            style={{marginTop: '5px'}}
-            onChange={e => this.onChangeCheck(e)}
-          >仅看已改单
-          </Checkbox>
+          {
+            isModifyInvoice &&
+            <Checkbox
+              className="m-l-16"
+              style={{marginTop: '5px'}}
+              onChange={e => this.onChangeCheck(e)}
+            >仅看已改单
+            </Checkbox>
+          }
         </SearchBanner>
         <div className="content-dt" style={{padding: 0}}>
           <>

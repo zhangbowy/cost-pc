@@ -1517,7 +1517,6 @@ class addInvoice extends PureComponent {
 
   render() {
     const {
-      title,
       userInfo,
       loading,
       draftLoading,
@@ -1565,7 +1564,7 @@ class addInvoice extends PureComponent {
     const routes = [
       {
         path: 'second',
-        breadcrumbName: `${title !== 'add' ? '编辑' : '新建'}单据模板`,
+        breadcrumbName: `${operateType === 'modify' ? '编辑' : '新建'}单据`,
       },
     ];
     return (
