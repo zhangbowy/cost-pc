@@ -107,7 +107,11 @@ class Summary extends React.PureComponent {
           it
         );
       });
-      newTree.push(officeListAndRole);
+      let newArr = [];
+      if (officeListAndRole.length) {
+        newArr = [...officeListAndRole, { id: -1, officeName: '其他' }];
+      }
+      newTree.push(newArr);
       newTree.forEach((it, index) => {
         Object.assign(obj, {
           [keys[index]]: it

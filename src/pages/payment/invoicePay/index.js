@@ -452,7 +452,7 @@ class Payment extends React.PureComponent {
       columns.splice(0, 0, {
         title: '拒绝理由',
         dataIndex: 'refuseReason',
-        width: 100,
+        width: 120,
       }, {
         title: '拒绝时间',
         dataIndex: 'refuseTime',

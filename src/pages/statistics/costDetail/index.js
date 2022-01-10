@@ -170,17 +170,6 @@ class Statistics extends React.PureComponent {
           id: 'invoiceTemplateIds'
         },
         {
-          type: 'select',
-          label: '分公司',
-          placeholder: '请选择',
-          key: 'officeIds',
-          id: 'officeIds',
-          fileName: {
-            key: 'id',
-            name: 'officeName'
-          },
-        },
-        {
           type: 'tree',
           label: '项目',
           placeholder: '请选择',
@@ -310,7 +299,7 @@ class Statistics extends React.PureComponent {
     Promise.all(arr).then(() => {
       const { costCategoryList, projectList, supplierList, invoiceList, officeListAndRole } = _this.props;
       const treeList = [costCategoryList, projectList, invoiceList];
-      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds', 'officeIds'];
+      const keys = ['categoryIds', 'projectIds', 'invoiceTemplateIds', 'supplierIds'];
       const obj = {};
       const newTree = treeList.map((it, i) => {
         return treeConvert(
@@ -346,6 +335,20 @@ class Statistics extends React.PureComponent {
           newSearch.push({ ...it });
         }
       });
+      if (officeListAndRole.length) {
+        newSearch.push({
+          type: 'select',
+          label: '分公司',
+          placeholder: '请选择',
+          key: 'officeIds',
+          id: 'officeIds',
+          options: [...officeListAndRole, { id: -1, officeName: '其他' }],
+          fileName: {
+            key: 'id',
+            name: 'officeName'
+          },
+        });
+      }
       this.setState(
         {
           searchList: newSearch

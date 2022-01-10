@@ -459,6 +459,12 @@ class BorrowPay extends React.PureComponent {
         title: '拒绝理由',
         dataIndex: 'refuseReason',
         width: 100,
+        textWrap: 'word-break',
+        render: (_, record) => (
+          <Tooltip placement="topLeft" title={record.refuseReason || ''}>
+            <span className="eslips-2 m-r-8">{record.refuseReason}</span>
+          </Tooltip>
+        )
       }, {
         title: '拒绝时间',
         dataIndex: 'refuseTime',
