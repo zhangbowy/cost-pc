@@ -350,7 +350,7 @@ class customQuery extends Component {
     return (
       <div className="ant-table-wrapper">
         <div style={{background: '#fff', padding: '24px 0'}}>
-          <p className="m-l-24 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>自定义查询</p>
+          <p className="m-l-24 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>经营责任报表</p>
           <p className="m-l-24 c-black-65">支持类别、部门、时间等多维度组合查询</p>
         </div>
         <div className={cs('content-dt', style.contents)}>

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { message, PageHeader, Button, Input, Modal, Spin } from 'antd';
 import { connect } from 'dva';
 import moment  from 'moment';
@@ -61,7 +61,7 @@ const { confirm } = Modal;
   draftLoading: loading.effects['costGlobal/addDraft'] || false,
   initLoading: loading.effects['global/djDetail'] || false,
 }))
-class addInvoice extends PureComponent {
+class addInvoice extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -1341,6 +1341,7 @@ class addInvoice extends PureComponent {
 
   // 子组件改变父组件的state
   changeSetData = (val, flag) => {
+  console.log('🚀 ~ file: index.js ~ line 1344 ~ addInvoice ~ val', val);
     this.setState({
       ...val,
     }, () => {
@@ -1559,6 +1560,7 @@ class addInvoice extends PureComponent {
       exceedVisible,
       id
     } = this.state;
+      console.log('🚀 ~ file: index.js ~ line 1562 ~ addInvoice ~ render ~ fileUrl', fileUrl);
     const modify = operateType === 'modify';
     const routes = [
       {

@@ -237,6 +237,7 @@ class ChangeForm extends Component {
     }
     const files = this.props.fileUrl;
     files.splice(index, 1);
+    console.log('🚀 ~ file: FormList.js ~ line 240 ~ ChangeForm ~ files', files);
     onChangeData({
       fileUrl: files,
     });
@@ -494,6 +495,7 @@ renderTreeNodes = data =>
       officeList,
       ossFileUrl,
     } = this.props;
+      console.log('🚀 ~ file: FormList.js ~ line 498 ~ ChangeForm ~ render ~ fileUrl', fileUrl);
     const projectList = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -503,6 +505,7 @@ renderTreeNodes = data =>
       tId: 'value',
       otherKeys: ['type']
     }, usableProject.sort(compare('sort')));
+
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
     return (
@@ -625,7 +628,10 @@ renderTreeNodes = data =>
                         {
                           getFieldDecorator('reason', {
                             initialValue: details.reason || '',
-                            rules:[{ required: true, message: '请输入事由' }]
+                            rules:[
+                              { required: true, message: '请输入事由' },
+                              { max: 128, message: '最多128字' },
+                            ]
                           })(
                             <TextArea
                               disabled={modify && showField.reason && !showField.reason.isModify}

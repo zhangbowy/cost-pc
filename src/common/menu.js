@@ -167,7 +167,7 @@ const menuData = [
       path: 'costDetail',
     }, {
       id: 'statistics_customQuery',
-      name: '自定义查询',
+      name: '经营责任报表',
       myIcon: '',
       path: 'customQuery',
     }, {
