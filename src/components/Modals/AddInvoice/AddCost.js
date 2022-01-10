@@ -90,9 +90,6 @@ class AddCost extends Component {
       url: 'global/getCurrency',
       params: {  }
     }, {
-      url: 'global/usableSupplier',
-      params: {  }
-    }, {
       url: 'global/usableProject',
       params: { type: 1 }
     }, {

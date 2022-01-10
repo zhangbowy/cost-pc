@@ -9,7 +9,7 @@ import treeConvert from '@/utils/treeConvert';
 
 const labelInfo = {
   type: '账户类型',
-  name: '名称',
+  name: '收款人名称',
   account: '银行卡号',
   note: '备注',
   defaultStatus: '启用',

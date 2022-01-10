@@ -53,6 +53,7 @@ class AddCostTable extends Component {
         currencySymbol: prevProps.currencySymbol || '',
       };
     }
+    return null;
   }
 
   onAddCost = (obj) => {

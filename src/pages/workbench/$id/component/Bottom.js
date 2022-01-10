@@ -5,13 +5,10 @@ import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import { numSub } from '../../../../utils/float';
 
-export default function Bottom({ total, onSave, onCancel,
+export default function Bottom({ total, onSave,
   templateType, djDetail, assessSum, onDraft, draftLoading, loading, modify }) {
   return (
     <FooterBar
-      left={(
-        <Button type="default" className="m-r-8" onClick={() => onCancel()}>取消</Button>
-      )}
       right={(
         <div className={style.right}>
           {

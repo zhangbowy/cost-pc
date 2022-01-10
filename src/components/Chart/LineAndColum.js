@@ -25,7 +25,7 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
     barOption.push({
       name: el,
       type: 'bar',
-      stack: '部门金额',
+      stack: 'total',
       data: barCharts.dataList.map(it => it[el]),
       barMaxWidth : 40,
       // yAxisIndex: 0,
@@ -72,7 +72,8 @@ const LineAndColumn = ({ lineCharts, barCharts }) => {
         const lines = params.filter(it => it.seriesType === 'line' && it.seriesName !== '其他')
           .sort(compare('value', true)) || [];
         const resultList = [...bars, ...barQ, ...lines,...lineQ];
-        resultList.forEach(item => {
+        const newResult = resultList.filter(it => it.value);
+        newResult.forEach(item => {
           let strs = `<span class=${styles.tooltipBall} style='background:${item.color}' ></span>`;
           if (item.seriesType === 'line') {
             strs = `<span class=${styles.tooltipBill} style='background:${item.color}' ><i style='border: 1px solid ${item.color}'></i></span>`;

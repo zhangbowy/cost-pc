@@ -57,14 +57,18 @@ const BottomChart = ({ onChangeState, submitTime,  costCategoryList,
     xs.forEach(it => {
       const newArr = arr.filter(item => item.time === it);
       let obj = {};
+      let singSum = 0;
       newArr.forEach(item => {
         const vals = item.value || 0;
-        sum +=vals;
+        singSum +=vals;
         obj = {
           ...obj,
           [item.name]: item.value/100,
         };
       });
+      if (singSum > sum) {
+        sum = singSum;
+      }
       newList.push(obj);
     });
     const keys = newList.length ? Object.keys(newList[0]) : [];
