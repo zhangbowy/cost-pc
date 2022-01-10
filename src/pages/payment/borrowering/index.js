@@ -8,6 +8,7 @@ import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
+import { numAdd } from '@/utils/float';
 import style from './index.scss';
 import RecordModal from './components/RecordModal';
 import AddModal from './components/AddModal';
@@ -287,6 +288,7 @@ class Payments extends React.PureComponent {
       form: { getFieldDecorator },
       total,
       loading,
+      loanSumObj,
     } = this.props;
     const columns = [{
       title: '借款事由',
@@ -465,7 +467,9 @@ class Payments extends React.PureComponent {
           <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
             {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
             借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)}
-            {status==='2'?`，待还款共计¥${sumAmount?loanSumAll/100:(this.props.loanSumObj&&this.props.loanSumObj.waitAssessSumAll/100 || 0)}`:''}
+            {status==='2'?`，待还款共计¥${sumAmount
+            ?loanSumAll/100
+            :(loanSumObj && numAdd(loanSumObj.waitAssessSumAll || 0, loanSumObj.freezeSum || 0)/100 || 0)}`:''}
           </p>
           <Table
             columns={columns}
