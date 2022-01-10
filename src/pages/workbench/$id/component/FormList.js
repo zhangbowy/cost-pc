@@ -72,7 +72,7 @@ class ChangeForm extends Component {
     if (val.users && val.users.length > 0) {
       const flags = await this.props.checkOffice({ dingUserId: val.users[0].userId });
       if (!flags) return;
-      const deptInfo = await this.props.selectPle(JSON.stringify(val.users));
+      const { deptInfo, userId } = await this.props.selectPle(JSON.stringify(val.users));
       onChangeData({
         users: val.users,
         depList: deptInfo,
@@ -83,7 +83,7 @@ class ChangeForm extends Component {
         });
         detail = {
           ...detail,
-          userId: this.props.userId,
+          userId,
           deptId: deptInfo[0].deptId,
         };
       } else {
@@ -92,7 +92,7 @@ class ChangeForm extends Component {
         });
         detail = {
           ...detail,
-          userId: this.props.userId,
+          userId,
         };
       }
       onChangeData({

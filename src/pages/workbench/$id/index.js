@@ -891,8 +891,8 @@ class addInvoice extends PureComponent {
           userJson: val,
         }
       }).then(() => {
-        const { deptInfo } = this.props;
-        resolve(deptInfo);
+        const { deptInfo, userId } = this.props;
+        resolve({ deptInfo, userId });
       });
     });
   }
@@ -1043,7 +1043,6 @@ class addInvoice extends PureComponent {
     }
     if (this.handleOpenModal) {
       const aliTrips = await this.handleOpenModal();
-      console.log('AddInvoice -> handleOk -> aliTrips', aliTrips);
       Object.assign(params, {
         trip: aliTrips,
       });
