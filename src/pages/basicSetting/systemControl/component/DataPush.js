@@ -268,7 +268,7 @@ class DataPush extends PureComponent {
           },
           children: (
             <Form.Item style={{marginBottom: 0}}>
-              <Switch value={record.isPush} onChange={e => this.onChange(e, record, 'isPush')} />
+              <Switch checked={record.isPush} onChange={e => this.onChange(e, record, 'isPush')} />
             </Form.Item>
           )
         };
