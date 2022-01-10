@@ -1615,7 +1615,9 @@ class addInvoice extends PureComponent {
                 templateType === 3 ||
                 (templateType === 2 && !!djDetail.categoryStatus)) &&
                 <>
-                  <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                  <div style={{paddingTop: '24px', paddingBottom: '30px',
+                    width: this.state.costDetailsVo.length ? '100%' : '936px'}}
+                  >
                     <Lines name={`支出明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />
                     <div className={costDetailsVo && costDetailsVo.length > 0 ? style.addBtns : style.addbtn}>
                       {
@@ -1702,7 +1704,9 @@ class addInvoice extends PureComponent {
             {
               djDetail.isRelationLoan && (!modify || (modify && this.state.borrowArr && borrowArr.length > 0 )) &&
               <>
-                <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                <div style={{paddingTop: '24px', paddingBottom: '30px',
+                  width: this.state.borrowArr.length ? '100%' : '936px'}}
+                >
                   <Lines name="借款核销" />
                   <div style={{textAlign: 'center'}} className={style.addbtn}>
                     {
@@ -1734,7 +1738,9 @@ class addInvoice extends PureComponent {
             {
               djDetail.isRelationApply && (!modify || (modify && this.state.applyArr && applyArr.length > 0 )) ?
                 <>
-                  <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+                  <div style={{paddingTop: '24px', paddingBottom: '30px',
+                    width: this.state.applyArr.length ? '100%' : '936px'}}
+                  >
                     <Lines name="关联申请单" />
                     <div style={{textAlign: 'center'}} className={style.addbtn}>
                       {

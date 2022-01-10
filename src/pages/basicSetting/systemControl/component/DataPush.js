@@ -27,6 +27,7 @@ class DataPush extends PureComponent {
         id: 'weeklyReportSetting',
         name: '1. 周报数据推送',
         img: week,
+        initDetail: {},
         list: [{
           id: 'weeklyReportSetting',
           key: 'userPush',
@@ -62,7 +63,7 @@ class DataPush extends PureComponent {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.details !== state.list) {
+    if (props.details !== state.initDetail) {
       console.log('DataPush -> getDerivedStateFromProps -> details走了吗', props.details);
       const { details: { monthlyReportSetting, weeklyReportSetting } } = props;
       const newArr = [{
@@ -99,6 +100,7 @@ class DataPush extends PureComponent {
       }];
       return {
         list: newArr,
+        initDetail: props.details,
         roles: {
           monthlyReportSetting: (monthlyReportSetting && monthlyReportSetting.roles) || [],
           weeklyReportSetting: (weeklyReportSetting && weeklyReportSetting.roles) || [],
@@ -115,26 +117,25 @@ class DataPush extends PureComponent {
     choosePeople(
       record.users ? record.users.map(it => it.userId) : [],
      (res) => {
+     console.log('🚀 ~ file: DataPush.js ~ line 120 ~ DataPush ~ res', res);
       const arr = [];
-      if (res) {
-        if (res) {
-          res.forEach(item => {
-            arr.push({
-              userId: item.emplId,
-              id: item.emplId,
-              name: item.name,
-              avatar: item.avatar,
-            });
+      if (res.length) {
+        res.forEach(item => {
+          arr.push({
+            userId: item.emplId,
+            id: item.emplId,
+            name: item.name,
+            avatar: item.avatar,
           });
-          _this.props.onChange({
-            ...details,
-            [record.id]: {
-              ...details[record.id],
-              users: arr,
-            }
-          });
-          console.log('添加的人员', arr);
-        }
+        });
+        _this.props.onChange({
+          ...details,
+          [record.id]: {
+            ...details[record.id],
+            users: arr,
+          }
+        });
+        console.log('添加的人员', arr);
       }
     }, {
       multiple: true,
@@ -147,6 +148,9 @@ class DataPush extends PureComponent {
     console.log('DataPush -> handleRole -> roles', roles);
     if (roles[record.id] && roles[record.id].length) {
       this.onChange(roles[record.id], record, 'roles');
+      this.setState({
+        roleVisible: false,
+      });
     } else {
       message.error('不能为空');
     }

@@ -25,7 +25,10 @@
   :global(.iconfont) {
     position: absolute;
     right: 0;
-    top: -12px;
+    top: -9px;
     right: -7px;
+    height: 16px;
+    display: inline-block;
+    line-height: 16px;
   }
 }
