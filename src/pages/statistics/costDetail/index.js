@@ -1012,7 +1012,7 @@ class Statistics extends React.PureComponent {
             rowSelection={rowSelection}
             onChange={this.handleTableChange}
             rowKey="id"
-            scroll={{ x: 3220, y: 'calc(100vh - 400px)' }}
+            scroll={{ x: 3220 }}
             pagination={{
               current: query.pageNo,
               total,

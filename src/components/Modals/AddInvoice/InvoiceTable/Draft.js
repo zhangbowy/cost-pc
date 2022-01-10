@@ -44,6 +44,7 @@ class Draft extends Component {
   }
 
   onCancel = () => {
+    this.props.onPerson();
     this.setState({
       selectedRowKeys:[],
       selectedRows: [],
@@ -97,6 +98,7 @@ class Draft extends Component {
   }
 
   onDelete = (id) => {
+    const { selectedRowKeys } = this.state;
     let ids = this.state.selectedRowKeys;
     if (id) {
       ids = [id];
@@ -111,6 +113,15 @@ class Draft extends Component {
         ids,
       }
     }).then(() => {
+      if (Array.isArray(ids)) {
+        this.setState({
+          selectedRowKeys: [],
+        });
+      } else {
+        this.setState({
+          selectedRowKeys: selectedRowKeys.filter(it => it !== id)
+        });
+      }
       const { page } = this.props;
       const { searchContent } = this.state;
       this.onQuery({

@@ -64,6 +64,8 @@ class CostFolder extends Component {
       selectedRows: [],
       visible: false,
       officeId: '',
+    }, () => {
+      this.props.onPerson();
     });
   }
 
