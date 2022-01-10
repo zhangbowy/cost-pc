@@ -3,6 +3,7 @@
   padding: 0;
   height: calc(100vh - 220px);
   overflow: hidden;
+  min-width: 1000px;
 }
 .cntLeft{
   width: 240px;
@@ -26,6 +27,26 @@
     }
     .ant-form-item-label{
       line-height: 32px;
+    }
+  }
+}
+.tableHeight{
+  :global{
+    .ant-table-scroll{
+      min-height: 400px;
+    }
+    .ant-table-body{
+      min-height: 400px;
+    }
+  }
+}
+.tableMin{
+  :global{
+    .ant-table-scroll{
+      min-height: 245px;
+    }
+    .ant-table-body{
+      min-height: 245px;
     }
   }
 }

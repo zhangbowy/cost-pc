@@ -334,11 +334,13 @@ class customQuery extends Component {
                 columns={childColumnns}
                 dataSource={detailList}
                 scroll={{y: 245}}
+                rowKey='costCategoryId'
                 loading={childLoading}
+                className={style.tableMin}
               />
             </div>
           )}
-          autoAdjustOverflow
+          // autoAdjustOverflow
           trigger='click'
           overlayClassName={style.toolTips}
           onVisibleChange={(val) => this.onVisibleChange(val, record.deptId, record.sid)}
@@ -349,7 +351,7 @@ class customQuery extends Component {
     }];
     return (
       <div className="ant-table-wrapper">
-        <div style={{background: '#fff', padding: '24px 0'}}>
+        <div style={{background: '#fff', padding: '24px 0', minWidth: '1000px'}}>
           <p className="m-l-24 m-b-8 c-black-85 fs-20" style={{ fontWeight: 'bold' }}>经营责任报表</p>
           <p className="m-l-24 c-black-65">支持类别、部门、时间等多维度组合查询</p>
         </div>
@@ -408,6 +410,7 @@ class customQuery extends Component {
                 defaultExpandedRowKeys={list.length === 1 ? list.map(it => it.id) : []}
                 expandedRowKeys={expandIds}
                 scroll={{ y: 'calc(100vh - 400px)' }}
+                className={style.tableHeight}
                 onExpand={(b, r) => {
                   this.setState({
                     expandIds: b ? [...expandIds, r.id] : expandIds.filter(i => i !== r.id)
