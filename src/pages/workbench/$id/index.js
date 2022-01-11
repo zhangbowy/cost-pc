@@ -1566,7 +1566,7 @@ class addInvoice extends Component {
     const routes = [
       {
         path: 'second',
-        breadcrumbName: `${operateType === 'modify' ? '编辑' : '新建'}单据`,
+        breadcrumbName: `${operateType === 'modify' ? '编辑' : '新建'}${djDetail.name}单据`,
       },
     ];
     return (

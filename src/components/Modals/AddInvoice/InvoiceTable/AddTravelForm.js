@@ -26,7 +26,6 @@ const moments = [{
 const RadioGroup = Radio.Group;
 @Form.create()
 @connect(({ costGlobal }) => ({
-  provinceAndCity: costGlobal.provinceAndCity,
   aliTripCity: costGlobal.aliTripCity,
 }))
 class AddTravelForm extends Component {
@@ -128,21 +127,6 @@ class AddTravelForm extends Component {
       keys: keys.filter(i => i.key !== k),
     });
   };
-
-  handleCity = (code, type) => {
-    console.log('handleCity -> type', type);
-    const { provinceAndCity } = this.props;
-    let list = provinceAndCity.normalList;
-    if (type === 0 || type === '飞机') {
-      list = provinceAndCity.airportCityList;
-    }else if (type === 1 || type === '火车') {
-      list = provinceAndCity.trainStationCityList;
-    }
-    const city = list.filter(it => `${it.areaCode}` === `${code}` || `${it.areaName}` === `${code}`);
-    console.log('citys', city);
-    console.log('citysList', list);
-    return city[0];
-  }
 
   handleSubmit = () => {
     console.log(this.props.form);
