@@ -533,6 +533,7 @@ renderTreeNodes = data =>
                   <TextArea
                     placeholder={itw.note ? itw.note : '请输入'}
                     disabled={modify && !itw.isModify}
+                    autoSize={{maxRows: 5}}
                   />
                 );
                 rule = [{ max: 128, message: '限制128个字' }];

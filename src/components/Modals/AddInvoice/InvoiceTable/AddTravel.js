@@ -272,16 +272,6 @@ class AddTravel extends PureComponent {
     const { aliTripFields, aliTripAuth, form: { getFieldDecorator }, hisAliTrip } = this.props;
     const { aliCostAndI, deptTree } = aliTripFields;
     const { subTrip } = this.state;
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 7 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-      },
-    };
     const { alitripExpensesOwner } = this.state;
     return (
       <div className="formItem">
@@ -294,7 +284,7 @@ class AddTravel extends PureComponent {
         </div>
         {
           subTrip.length === 0 ?
-            <div style={{textAlign: 'center'}} className={style.addbtn}>
+            <div style={{textAlign: 'center', width: '936px'}} className={style.addbtn}>
               <AddTravelForm
                 onOk={this.onGetTrip}
                 hasFellowTraveler={aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable}
@@ -359,9 +349,9 @@ class AddTravel extends PureComponent {
         }
         {
           aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable &&
-          <Row>
+          <Row className={style.formColumn}>
             <Col span={12}>
-              <Form.Item label="成本中心" {...formItemLayout}>
+              <Form.Item label="成本中心">
                 {
                   getFieldDecorator('alitripCostCenterId', {
                     initialValue: hisAliTrip.alitripCostCenterId ?
@@ -385,7 +375,7 @@ class AddTravel extends PureComponent {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="发票抬头" {...formItemLayout}>
+              <Form.Item label="发票抬头">
                 {
                   getFieldDecorator('alitripInvoiceTitleId', {
                     initialValue: hisAliTrip.alitripInvoiceTitleId ?
@@ -412,7 +402,7 @@ class AddTravel extends PureComponent {
               aliTripAuth.alitripSetting.hasFellowTraveler &&
               <>
                 <Col span={12} className={style.treeSelects}>
-                  <Form.Item label="同行人" {...formItemLayout}>
+                  <Form.Item label="同行人">
                     {
                       getFieldDecorator('fellowTravelers', {
                         initialValue: hisAliTrip.fellowTravelers ?
@@ -454,7 +444,6 @@ class AddTravel extends PureComponent {
                         </Tooltip>
                       </span>
                     )}
-                    {...formItemLayout}
                   >
                     {
                       getFieldDecorator('alitripExpensesOwner', {
@@ -485,7 +474,7 @@ class AddTravel extends PureComponent {
                             <TreeSelect
                               treeNodeFilterProp="label"
                               placeholder='请选择费用归属人'
-                              style={{width: '100%'}}
+                              style={{width: '280px'}}
                               dropdownStyle={{height: '300px'}}
                               getPopupContainer={triggerNode => triggerNode.parentNode}
                               showSearch

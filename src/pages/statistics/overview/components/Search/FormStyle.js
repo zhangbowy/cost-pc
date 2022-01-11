@@ -688,6 +688,7 @@ class FormStyle extends Component {
               placeholder={item.placeholder}
               labelInValue
               mode="multiple"
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={(val) => this.onChangeSelect(val, index)}
               value={item.value ? item.value[item.key].map(it => { return { key: it }; }) : undefined}
             >

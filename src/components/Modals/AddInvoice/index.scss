@@ -348,11 +348,15 @@
   }
 }
 .travelForm{
+  width: 936px;
   :global{
     .ant-radio-group{
       .ant-radio-wrapper:nth-last-child(1){
         margin-right: 0px;
       }
+    }
+    .ant-row{
+      width: 936px !important;
     }
   }
 }
@@ -361,6 +365,49 @@
     li.ant-select-tree-treenode-disabled > .ant-select-tree-node-content-wrapper span{
       color: rgba(0, 0, 0, 0.45);
       cursor: text;
+    }
+  }
+}
+
+.formColumn{
+  margin-top: 24px;
+  margin-left: 4px;
+  width: 984px;
+  display: flex;
+  flex-wrap: wrap;
+  :global(.ant-form-item) {
+    display: flex;
+    flex-direction: column;
+  }
+  :global{
+    .ant-col-12{
+      width: 280px;
+      margin-right: 48px;
+    }
+    .ant-row{
+      width: 280px;
+      margin-right: 48px;
+    }
+    .ant-col{
+      text-align: left;
+    }
+    .ant-col-8{
+      width: 280px;
+    }
+    .ant-col-sm-16{
+      width: 280px;
+    }
+    .ant-form-vertical .ant-form-item-label{
+      width: 280px;
+    }
+    .ant-mentions, form textarea.ant-input{
+      margin-bottom: 0px;
+    }
+    .ant-calendar-picker{
+      width: 100%;
+    }
+    .ant-form-item-control{
+      line-height: 32px;
     }
   }
 }
