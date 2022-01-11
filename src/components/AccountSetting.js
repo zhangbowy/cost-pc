@@ -152,7 +152,14 @@ class AccountSetting extends Component {
     const { data } = this.state;
     data.type = e;
     this.props.form.resetFields();
-    this.setState({ data, imgUrl: [] });
+    this.setState({ data, imgUrl: [], isShowInput: false }, () => {
+      if (Number(e) === 0) {
+        console.log('走了吗');
+        this.props.form.setFieldsValue({
+          bankName: null,
+        });
+      }
+    });
   }
 
   onChangeImg = val => {

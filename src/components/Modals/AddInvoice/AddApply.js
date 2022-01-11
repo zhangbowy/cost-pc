@@ -18,9 +18,9 @@ import { sortBy } from '../../../utils/common';
 //   imgUrl: '图片',
 //   happenTime: '发生日期'
 // };
-@connect(({ addInvoice, costGlobal }) => ({
-  associateLists: addInvoice.associateLists,
-  waitLoanSum: addInvoice.waitLoanSum,
+@connect(({ invoiceHandle, costGlobal }) => ({
+  associateLists: invoiceHandle.associateLists,
+  waitLoanSum: invoiceHandle.waitLoanSum,
   checkFolderList: costGlobal.checkFolderList
 }))
 @Form.create()
@@ -222,7 +222,7 @@ class AddApply extends Component {
 
   onSearch = (e) => {
     this.props.dispatch({
-      type: 'addInvoice/associateLists',
+      type: 'invoiceHandle/associateLists',
       payload: {
         pageSize: 100,
         pageNo: 1,

@@ -151,6 +151,13 @@ class AddAccount extends React.PureComponent {
     this.setState({
       type: value,
       isShowInput: false,
+    }, () => {
+      if (Number(value) === 0) {
+        console.log('走了吗');
+        this.props.form.setFieldsValue({
+          bankName: null,
+        });
+      }
     });
   }
 

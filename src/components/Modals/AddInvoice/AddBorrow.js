@@ -17,9 +17,9 @@ import { sortBy } from '../../../utils/common';
 //   imgUrl: '图片',
 //   happenTime: '发生日期'
 // };
-@connect(({ addInvoice }) => ({
-  waitList: addInvoice.waitList,
-  waitLoanSum: addInvoice.waitLoanSum,
+@connect(({ invoiceHandle }) => ({
+  waitList: invoiceHandle.waitList,
+  waitLoanSum: invoiceHandle.waitLoanSum,
 }))
 @Form.create()
 class AddBorrow extends Component {
@@ -48,7 +48,7 @@ class AddBorrow extends Component {
   onShow = async() => {
     const { officeId } = this.props;
     this.props.dispatch({
-      type: 'addInvoice/waitList',
+      type: 'invoiceHandle/waitList',
       payload: {
         pageNo: 1,
         pageSize: 1000,
@@ -127,7 +127,7 @@ class AddBorrow extends Component {
 
   onSearch = (e) => {
     this.props.dispatch({
-      type: 'addInvoice/waitList',
+      type: 'invoiceHandle/waitList',
       payload: {
         pageSize: 100,
         pageNo: 1,

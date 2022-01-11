@@ -170,6 +170,13 @@ class AddAccount extends React.PureComponent {
     this.setState({
       type: value,
       isShowInput: false,
+    }, () => {
+      if (Number(value) === 0) {
+        console.log('走了吗');
+        this.props.form.setFieldsValue({
+          bankName: null,
+        });
+      }
     });
   }
 
@@ -293,7 +300,7 @@ class AddAccount extends React.PureComponent {
                       {
                         bankList.map((it) => (
                           // eslint-disable-next-line react/no-array-index-key
-                          <Option key={it}>{it}</Option>
+                          <Option key={it} value={it}>{it}</Option>
                         ))
                       }
                     </Select>
