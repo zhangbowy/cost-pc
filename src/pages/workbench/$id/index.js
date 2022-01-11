@@ -1791,7 +1791,7 @@ class addInvoice extends Component {
               <div style={{paddingTop: '24px', paddingBottom: '100px'}}>
                 <div className={style.header} style={{padding: 0, marginBottom: '16px'}}>
                   <div className={style.line} />
-                  <span>改单理由</span>
+                  <p className="isRequired">改单理由</p>
                 </div>
                 <TextArea
                   placeholder="请输入改单理由(必填)"

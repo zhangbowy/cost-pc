@@ -4,6 +4,7 @@ import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus, getArrayColor } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
+import style from './index.scss';
 
 const statusStr = {
   1: '该单据审批中，可让发起人自行撤销',
@@ -106,13 +107,22 @@ class SummaryCmp extends Component {
       onSelectAll: this.onSelectAll,
       columnWidth: '24px'
     };
+    const spanStyle = {
+      width: '150px', overflow: 'hidden', textWrap: 'word-break',
+      textOverflow: 'ellipsis', display: 'inline-block', maxHeight: '54px'
+    };
     const columns = [{
     title: '事由',
       dataIndex: 'reason',
       width: 150,
+      // ellipsis: true,
+      textWrap: 'word-break',
       render: (_, record) => (
         <InvoiceDetail id={record.id} templateType={0}>
-          <span>
+          <span
+            className={style.reasonSpan}
+            style={spanStyle}
+          >
             <Tooltip placement="topLeft" title={record.reason || ''}>
               <a className="eslips-2">{record.reason}</a>
             </Tooltip>
@@ -185,7 +195,7 @@ class SummaryCmp extends Component {
         width: 150,
         render: (_, record) => (
           <InvoiceDetail id={record.id} templateType={1}>
-            <span>
+            <span className={style.reasonSpan} style={spanStyle}>
               <Tooltip placement="topLeft" title={record.reason || ''}>
                 <a className="eslips-2">{record.reason}</a>
               </Tooltip>
@@ -273,7 +283,7 @@ class SummaryCmp extends Component {
           width: 150,
           render: (_, record) => (
             <InvoiceDetail id={record.id} templateType={2}>
-              <span>
+              <span className={style.reasonSpan} style={spanStyle}>
                 <Tooltip placement="topLeft" title={record.reason || ''}>
                   <a className="eslips-2">{record.reason}</a>
                 </Tooltip>
@@ -342,7 +352,7 @@ class SummaryCmp extends Component {
             width: 150,
             render: (_, record) => (
               <InvoiceDetail id={record.id} templateType={3}>
-                <span>
+                <span className={style.reasonSpan}>
                   <Tooltip placement="topLeft" title={record.reason || ''}>
                     <a className="eslips-2">{record.reason}</a>
                   </Tooltip>
@@ -404,7 +414,7 @@ class SummaryCmp extends Component {
               width: 150,
               render: (_, record) => (
                 <InvoiceDetail id={record.id} templateType={record.templateType}>
-                  <span>
+                  <span className={style.reasonSpan} style={spanStyle}>
                     <Tooltip placement="topLeft" title={record.reason || ''}>
                       <a className="eslips-2">{record.reason}</a>
                     </Tooltip>
