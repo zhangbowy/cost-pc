@@ -92,7 +92,8 @@ class AddAccount extends React.PureComponent {
   onRest = () => {
     this.props.form.resetFields();
     this.setState({
-      type: '0'
+      type: '0',
+      isShowInput: false,
     });
   }
 

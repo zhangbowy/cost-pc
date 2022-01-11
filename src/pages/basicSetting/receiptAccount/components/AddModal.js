@@ -106,6 +106,7 @@ class AddAccount extends React.PureComponent {
     this.setState({
       type: '0',
       imgUrl: [],
+      isShowInput: false,
     });
   }
 
