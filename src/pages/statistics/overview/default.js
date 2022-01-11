@@ -322,7 +322,7 @@ export default {
     columns: [{
       title: '供应商',
       dataIndex: 'supplierName',
-      width: 80,
+      width: 150,
       render: (_, record) => (
         <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.supplierName}</span>
       )
@@ -381,7 +381,7 @@ export default {
     columns: [{
       title: '分公司',
       dataIndex: 'officeName',
-      width: 80,
+      width: 150,
       render: (_, record) => (
         <span style={{fontWeight: record.id === -1 ? 'bolder' : 'normal'}}>{record.officeName}</span>
       )
@@ -398,7 +398,8 @@ export default {
     chartName: 'officeName',
     type: 'officeId',
     tableProps: {
-      rowKey: 'id'
+      rowKey: 'id',
+      scroll: { x: '1200px' }
     },
     searchList: [{
       type: 'timeC',

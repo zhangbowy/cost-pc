@@ -50,7 +50,7 @@ class AddApply extends Component {
   onShow = async() => {
     const { officeId } = this.props;
     this.props.dispatch({
-      type: 'addInvoice/associateLists',
+      type: 'invoiceHandle/associateLists',
       payload: {
         pageNo: 1,
         pageSize: 1000,
