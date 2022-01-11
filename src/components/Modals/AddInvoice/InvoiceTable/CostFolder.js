@@ -296,7 +296,11 @@ class CostFolder extends Component {
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span className={record.costDetailShareVOS && record.costDetailShareVOS.length > 0 ? '' : 'm-r-72'}>{record.currencySumStr ?  `${record.costSumStr}(${record.currencySumStr})`: record.costSumStr}</span>
+          <span
+            className={record.costDetailShareVOS && record.costDetailShareVOS.length > 0 ? '' : 'm-r-72'}
+            style={{display: 'inline-block'}}
+          >{record.currencySumStr ?  `${record.costSumStr}(${record.currencySumStr})`: record.costSumStr}
+          </span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover
@@ -399,9 +403,12 @@ class CostFolder extends Component {
       columns.splice(2,0, {
         title: '分公司',
         dataIndex: 'officeName',
+        ellipsis: true,
         width: 120,
         render: (text) => (
-          <span>{text || '-'}</span>
+          <Tooltip title={text || '-'}>
+            <span>{text || '-'}</span>
+          </Tooltip>
         )
       });
     }
@@ -448,7 +455,7 @@ class CostFolder extends Component {
             loading={loading}
             onQuery={this.onQuery}
             searchContent={searchContent}
-            scroll={{x: '1120px'}}
+            scroll={{x: '1250px'}}
             page={{
               pageNo: folderPage.pageNo,
               pageSize: folderPage.pageSize,
