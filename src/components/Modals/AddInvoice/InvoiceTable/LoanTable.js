@@ -86,7 +86,7 @@ class LoanTable extends Component {
         title: '事由',
         dataIndex: 'reason',
         render: (_,record) => (
-          <span>
+          <span className="spanStyle">
             <InvoiceDetail templateType={1} id={record.loanId}>
               <Tooltip placement="topLeft" title={record.reason || ''}>
                 <span className="eslips-2 ope-btn" style={{ cursor: 'pointer' }}>{record.reason}</span>

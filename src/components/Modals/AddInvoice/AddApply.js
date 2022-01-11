@@ -18,9 +18,9 @@ import { sortBy } from '../../../utils/common';
 //   imgUrl: '图片',
 //   happenTime: '发生日期'
 // };
-@connect(({ workbench, costGlobal }) => ({
-  associateLists: workbench.associateLists,
-  waitLoanSum: workbench.waitLoanSum,
+@connect(({ addInvoice, costGlobal }) => ({
+  associateLists: addInvoice.associateLists,
+  waitLoanSum: addInvoice.waitLoanSum,
   checkFolderList: costGlobal.checkFolderList
 }))
 @Form.create()
@@ -50,7 +50,7 @@ class AddApply extends Component {
   onShow = async() => {
     const { officeId } = this.props;
     this.props.dispatch({
-      type: 'workbench/associateLists',
+      type: 'addInvoice/associateLists',
       payload: {
         pageNo: 1,
         pageSize: 1000,
@@ -222,7 +222,7 @@ class AddApply extends Component {
 
   onSearch = (e) => {
     this.props.dispatch({
-      type: 'workbench/associateLists',
+      type: 'addInvoice/associateLists',
       payload: {
         pageSize: 100,
         pageNo: 1,

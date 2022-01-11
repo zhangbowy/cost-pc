@@ -126,6 +126,14 @@
     line-height: 1;
     content: '*';
   }
+  .spanStyle{
+    width: 150px;
+    overflow: hidden;
+    word-wrap: word-break;
+    text-overflow: ellipsis;
+      display: inline-block;
+      max-height: 54px;
+  }
 
   .errorColor{
     color: #FF5A5F;

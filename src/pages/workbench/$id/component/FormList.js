@@ -1179,18 +1179,18 @@ renderTreeNodes = data =>
                           )
                         }
                         {
+                          !modify &&
+                          <ReceiptModal title="add" onOk={handelAcc}>
+                            <a className={style.addReceipt}>新增</a>
+                          </ReceiptModal>
+                        }
+                        {
                           itw.itemExplain && !!(itw.itemExplain.length) &&
                           itw.itemExplain.map(item => (
                             <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
                               {item.note}
                             </p>
                           ))
-                        }
-                        {
-                          !modify &&
-                          <ReceiptModal title="add" onOk={handelAcc}>
-                            <a className={style.addReceipt}>新增</a>
-                          </ReceiptModal>
                         }
                       </Form.Item>
                     :
