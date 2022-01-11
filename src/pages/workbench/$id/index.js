@@ -373,6 +373,7 @@ class addInvoice extends Component {
           }
         } else {
           const contents = JsonParse(contentJson);
+          console.log('🚀 ~ file: index.js ~ line 229 ~ addInvoice ~ onShowHandle=async ~ contents', contents);
           const officeLists = await this.fetchOfficeList({ userId: contents.userId });
           if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
             Object.assign(contents, {
@@ -547,6 +548,7 @@ class addInvoice extends Component {
 
   onInitBorrow = (arrs, costDetails) => {
     console.log('AddInvoice -> onInitBorrow -> arrs', arrs);
+    console.log('AddInvoice -> onInitBorrow -> arrs', costDetails);
     const { operateType } = this.state;
     const ids = arrs.map(it => it.loanId);
     const arr = operateType === 'modify' ? arrs : [];
@@ -620,8 +622,11 @@ class addInvoice extends Component {
       if (isShowMsg && (operateType === 'copy')) {
         message.error('部分支出类别不可用，已自动删除');
       }
+      console.log('🚀 ~ file: index.js ~ line 625 ~ addInvoice ~ newArr', arr);
       const newArr = this.onInitCategory(banArr);
+      console.log('🚀 ~ file: index.js ~ line 625 ~ addInvoice ~ newArr', newArr);
       const newArrKey = defaultFunc.onInitKey([...arr, ...newArr]);
+      console.log('🚀 ~ file: index.js ~ line 627 ~ addInvoice ~ newArrKey', newArrKey);
       // 初始化的数据存储后续比较
       this.setState({
         hisCostDetailsVo: newArrKey,
@@ -682,15 +687,12 @@ class addInvoice extends Component {
         ...it,
         key: it.id,
         folderType: 'folder',
-        costSum: currency.id ? it.currencySum/100 : it.costSum/100,
         detailFolderId: it.id,
       };
       if (it.costDetailShareVOS) {
         it.costDetailShareVOS.forEach(item => {
           costDetailShareVOS.push({
             ...item,
-            shareScale: item.shareScale ? item.shareScale/100 : 0,
-            shareAmount: currency.id ? item.currencySum/100 : item.shareAmount/100,
           });
         });
       }
@@ -1560,7 +1562,6 @@ class addInvoice extends Component {
       exceedVisible,
       id
     } = this.state;
-      console.log('🚀 ~ file: index.js ~ line 1562 ~ addInvoice ~ render ~ fileUrl', fileUrl);
     const modify = operateType === 'modify';
     const routes = [
       {
