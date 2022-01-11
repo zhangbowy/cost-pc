@@ -352,7 +352,7 @@ class SummaryCmp extends Component {
             width: 150,
             render: (_, record) => (
               <InvoiceDetail id={record.id} templateType={3}>
-                <span className={style.reasonSpan}>
+                <span className={style.reasonSpan} style={spanStyle}>
                   <Tooltip placement="topLeft" title={record.reason || ''}>
                     <a className="eslips-2">{record.reason}</a>
                   </Tooltip>
