@@ -375,7 +375,6 @@ class addInvoice extends Component {
           const contents = JsonParse(contentJson);
           console.log('🚀 ~ file: index.js ~ line 229 ~ addInvoice ~ onShowHandle=async ~ contents', contents);
           const officeLists = await this.fetchOfficeList({
-            userId: contents.userId || '',
             dingUserId: contents.userJson && contents.userJson.length ? contents.userJson[0].userId : '' });
           if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
             Object.assign(contents, {
