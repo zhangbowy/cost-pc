@@ -67,7 +67,7 @@ class Conditions extends Component {
   state = {
     lists: this.props.conditions && this.props.conditions.length > 0 ?
     this.props.conditions : defaultList[this.props.templateType],
-    method: this.props.conditionNode && this.props.conditionNode.methods ? this.props.conditionNode.methods : 'OR',
+    method: this.props.conditionNode && this.props.conditionNode.method ? this.props.conditionNode.method : 'OR',
   }
 
   /**
