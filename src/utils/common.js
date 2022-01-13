@@ -3,7 +3,10 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable no-param-reassign */
 import moment from 'moment';
-import { condExclude, condThan } from './constants';
+import constants, { condExclude, condThan } from './constants';
+import { ddOpenLink } from './ddApi';
+
+const { APP_API } = constants;
 
 const conditionType = {
   'condition_creator_user_dept': {
@@ -577,6 +580,19 @@ export const  srcName = (name) => {
   const names = (name || '').split('.');
   const extName = names[names.length - 1];
   return extName.toLowerCase();
+};
+
+// 单据打印
+export const handelOkPrint = ({ id, templateType }) => {
+  if (Number(templateType) === 1) {
+    ddOpenLink(`${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem('token')}&ids=${id}`);
+  } else if (Number(templateType) === 0) {
+    ddOpenLink(`${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem('token')}&ids=${id}`);
+  } else if (Number(templateType) === 2) {
+    ddOpenLink(`${APP_API}/cost/pdf/batch/application?token=${localStorage.getItem('token')}&ids=${id}`);
+  } else {
+    ddOpenLink(`${APP_API}/cost/pdf/batch/salary?token=${localStorage.getItem('token')}&ids=${id}`);
+  }
 };
 
 // export const dateToChange = (date, type) => {

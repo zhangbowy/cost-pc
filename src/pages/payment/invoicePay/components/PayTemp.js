@@ -11,8 +11,10 @@ import style from '../index.scss';
 import PayModal from './PayModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
 import SearchBanner from '../../../statistics/overview/components/Search/Searchs';
+import fields from '../../../../utils/fields';
 
 const { APP_API } = constants;
+const { signName } = fields;
 @Form.create()
 class PayTemp extends React.PureComponent {
   constructor(props) {
@@ -355,7 +357,7 @@ class PayTemp extends React.PureComponent {
               待发放
             </Menu.Item>
             <Menu.Item key={1}>
-              已票签
+              已{signName[templateType]}
             </Menu.Item>
             <Menu.Item key={3}>
               已发放
@@ -393,7 +395,7 @@ class PayTemp extends React.PureComponent {
               <div className={style.production}>
                 <div className={style.texts}>
                   <i className="iconfont iconinfo-cirlce" />
-                  <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放</span>
+                  <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已{signName[templateType]}，由出纳统一发放</span>
                 </div>
                 <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
               </div>
@@ -408,7 +410,7 @@ class PayTemp extends React.PureComponent {
                     <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
                       <Button type="primary" style={{marginRight: '8px'}}>发起支付</Button>
                     </PayModal>
-                    <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? '移至已票签' : '移回待发放'}</Button>
+                    <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? `移至已${signName[templateType]}` : '移回待发放'}</Button>
                   </>
                 }
                 <DropBtn

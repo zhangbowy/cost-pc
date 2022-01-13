@@ -192,5 +192,9 @@ export default {
       name: '其他城市',
       key: -1
     },
+  },
+  signName: {
+    0: '票签',
+    1: '制单'
   }
 };

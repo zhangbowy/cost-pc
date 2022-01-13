@@ -7,7 +7,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select, Badge } from 'antd';
+import { Table, Popconfirm, Divider, Icon, Tooltip, Form, Select, Badge, Dropdown, Menu, message } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import Search from 'antd/lib/input/Search';
@@ -29,6 +29,7 @@ import CenterReport from './components/Boss/CenterReport';
 import BottomChart from './components/Boss/BottomChart';
 import { getArrayColor } from '../../utils/constants';
 import { ddOpenSlidePanel } from '../../utils/ddApi';
+import { handelOkPrint } from '../../utils/common';
 
 @Form.create()
 @connect(({ loading, workbench, session, global, costGlobal }) => ({
@@ -57,6 +58,10 @@ import { ddOpenSlidePanel } from '../../utils/ddApi';
   lineCharts: workbench.lineCharts,
   barCharts: workbench.barCharts,
   onlyDeptList: costGlobal.onlyDeptList,
+  loanDetail: global.loanDetail,
+  applyDetail: global.applyDetail,
+  salaryDetail: global.salaryDetail,
+  invoiceDetail: global.invoiceDetail,
   chartLoading: loading.effects['workbench/submitReport'] || false,
 }))
 class Workbench extends PureComponent {
@@ -417,6 +422,71 @@ class Workbench extends PureComponent {
     this.props.history.push(`/workbench/add~${templateType}~${id}`);
   }
 
+  // 更多的操作
+  handleClick = (type, data) => {
+    const { invoiceId, templateType } = data;
+    const { userInfo } = this.props;
+    let url = '';
+    let params = null;
+    switch(type) {
+      //    撤销
+      case 'back':
+        ddOpenSlidePanel(data.url, '审批详情', (res) => {
+          console.log(res);
+        }, (e) => {
+          console.log(e);
+        });
+        break;
+      // 复制
+      case 'copy':
+        url = 'global/invoiceDetail';
+        params = { id: invoiceId };
+        if (Number(templateType) === 1) {
+          url = 'global/loanDetail';
+          params = { loanId: invoiceId };
+        } else if (Number(templateType) === 2) {
+          url = 'global/applyDetail';
+          params = { applicationId: invoiceId };
+        } else if (Number(templateType) === 3) {
+          url = 'global/salaryDetail';
+          params = { id: invoiceId };
+        }
+        this.props.dispatch({
+          type: url,
+          payload: params
+        }).then(async() => {
+          const { invoiceDetail, loanDetail, applyDetail, salaryDetail } = this.props;
+          let details = invoiceDetail;
+          if (Number(templateType) === 1) {
+            details = loanDetail;
+          } else if (Number(templateType) === 2) {
+            details = applyDetail;
+          } else if (Number(templateType) === 3) {
+            details = salaryDetail;
+          }
+          // 部分单据不能复制
+          if ((details.isEnterpriseAlitrip || details.isHistoryImport) &&
+          (userInfo.userId === details.createId)) {
+            message.error(`${details.isHistoryImport ? '历史数据' : '阿里商旅自动'}导入单据，不支持复制`);
+            return;
+          }
+          localStorage.setItem('contentJson', JSON.stringify(details));
+          localStorage.removeItem('selectCost');
+          this.props.history.push(`/workbench/copy~${templateType}~${data.invoiceTemplateId}~${invoiceId}`);
+        });
+        break;
+      // 打印
+      case 'print':
+        handelOkPrint({
+          id: data.invoiceId,
+          templateType: data.templateType
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
   render() {
     const { list, total, query,
         userInfo, loading, invoiceList,
@@ -519,35 +589,72 @@ class Workbench extends PureComponent {
     }, {
       title: '操作',
       dataIndex: 'ope',
-      render: (_, record) => (
-        <span>
-          {
-            ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) &&
-            <Popconfirm
-              title="是否确认删除？"
-              onConfirm={() => this.onDelete(record.invoiceId, record.templateType)}
-            >
-              <span className="deleteColor">删除</span>
-            </Popconfirm>
-          }
-          {
-            ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) &&
+      render: (_, record) =>
+      {
+        const btns = [{
+          node: (
+            <span className="pd-20-9 c-black-65">
+              复制
+            </span>
+          ),
+          key: 'copy'
+        }, {
+          node: (
+            <span className="pd-20-9">
+              打印
+            </span>
+          ),
+          key: 'print'
+        }];
+        if ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) {
+          btns.push({
+            node: (
+              <span className="pd-20-9">
+                撤销
+              </span>
+            ),
+            key: 'back'
+          });
+        }
+        const menu = (
+          <Menu>
+            {
+              btns.map((item) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Menu.Item
+                  key={item.key}
+                  onClick={() => this.handleClick(item.key, record)}
+                >{item.node}
+                </Menu.Item>
+              ))
+            }
+          </Menu>
+        );
+        return (
+          <span>
+            {
+              ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) ?
+                <Popconfirm
+                  title="是否确认删除？"
+                  onConfirm={() => this.onDelete(record.invoiceId, record.templateType)}
+                >
+                  <span className="deleteColor">删除</span>
+                </Popconfirm>
+                :
+                <a>
+                  撤销
+                </a>
+            }
             <Divider type="vertical" />
-          }
-          <a
-            onClick={() => {
-              ddOpenSlidePanel(record.url, '审批详情', (res) => {
-                console.log(res);
-              }, (e) => {
-                console.log(e);
-              });
-            }}
-          >
-            撤销
-          </a>
-        </span>
-      ),
-      width: 120,
+            <Dropdown overlay={menu}>
+              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                更多 <Icon type="down" />
+              </a>
+            </Dropdown>
+          </span>
+        );
+      },
+      width: 130,
       fixed: 'right',
       className: 'fixCenter'
     }];

@@ -13,8 +13,10 @@ import { ddPreviewImage } from '../../../utils/ddApi';
 import TableImg from '../../../components/LittleCmp/TableImg';
 import style from '../invoicePay/index.scss';
 import imgs from '../../../assets/img/refuse.png';
+import fields from '../../../utils/fields';
 
 const { confirm } = Modal;
+const { signName } = fields;
 @connect(({ loading, borrowPay, costGlobal }) => ({
   loading: loading.effects['borrowPay/list'] || false,
   list: borrowPay.list,
@@ -174,7 +176,7 @@ class BorrowPay extends React.PureComponent {
       type: 'borrowPay/operationSign',
       payload,
     }).then(() => {
-      message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
+      message.success(payload.isSign ? `已完成${signName[1]}` : '已退回制单人重新制单');
       if (callback) {
         callback();
       }
@@ -201,7 +203,7 @@ class BorrowPay extends React.PureComponent {
         type: 'borrowPay/operationSign',
         payload,
       }).then(() => {
-        message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
+        message.success(payload.isSign ? '已完成制单' : '已退回制单人重新制单');
         this.onOk();
         resolve(true);
       });
