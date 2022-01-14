@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Table, Tooltip, Tag, Popover } from 'antd';
+import { Modal, Form, Table, Tooltip, Tag, Popover, message } from 'antd';
 import Search from 'antd/lib/input/Search';
 import moment from 'moment';
 import { connect } from 'dva';
@@ -47,7 +47,11 @@ class AddFolder extends Component {
   }
 
   onShow = async() => {
-    const { officeId } = this.props;
+    const { officeId, isShowToast } = this.props;
+    if (isShowToast && !officeId) {
+      message.error('请先填写所在公司');
+      return;
+    }
     await this.props.dispatch({
       type: 'costGlobal/listFolder',
       payload: {

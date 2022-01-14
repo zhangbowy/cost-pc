@@ -143,11 +143,15 @@ class AddCost extends Component {
   }
 
   onShow = async() => {
-    const { costType, isDelete4Category, officeId } = this.props;
+    const { costType, isDelete4Category, officeId, isShowToast } = this.props;
     console.log('AddCost -> onShow -> officeId', officeId);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
+      return;
+    }
+    if (isShowToast && !officeId) {
+      message.error('请先填写所在公司');
       return;
     }
     this.fetchInit(async() => {
