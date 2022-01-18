@@ -85,7 +85,7 @@ export default {
       });
     },
     *isOpenProject({ payload }, { call, put }) {
-      const response = yield call(get, api.isOpenProject, payload);
+      const response = yield call(post, api.isOpenProject, payload);
       yield put({
         type: 'save',
         payload: {

@@ -315,6 +315,11 @@ class CategoryAdd extends PureComponent {
       selectList: newSelectList
     }, () => {
       console.log('data', this.state.data);
+      const { data } = this.state;
+      this.isOpenProject({
+        isAllCostCategory: data.isAllCostCategory,
+        costCategory: data.costCategory
+      });
     });
   }
 
@@ -439,6 +444,12 @@ class CategoryAdd extends PureComponent {
       this.setState({
         data: datas,
         current: flag === 'up' ? basicStr[index+1].key : basicStr[index-1].key,
+      }, () => {
+        const newData = this.state.data;
+        this.isOpenProject({
+          isAllCostCategory: newData.isAllCostCategory,
+          costCategory: newData.costCategory
+        });
       });
     }
   }
