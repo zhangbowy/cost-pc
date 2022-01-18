@@ -8,6 +8,7 @@ import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import TimeComp from '../../workbench/components/TimeComp';
 import autoHeight from '../../../components/AutoHeight';
+import { compare } from '../../../utils/common';
 
 const { TreeNode } = Tree;
 const { SHOW_PARENT } = TreeSelect;
@@ -297,14 +298,13 @@ class customQuery extends Component {
       height,
     } = this.props;
     console.log('render -> height', height);
-
     const lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
       name: 'costName',
       tName: 'title',
       tId: 'value'
-    }, costCategoryList);
+    }, costCategoryList.sort(compare('sort')));
     const { submitTime, categoryIds, expandIds } = this.state;
     const columns = [{
       title: '承担部门',

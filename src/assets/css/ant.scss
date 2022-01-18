@@ -35,7 +35,9 @@
   // .ant-layout{
   //   min-width: 1000px;
   // }
-
+  .ant-btn{
+    border-radius: 2px!important;
+  }
   .ant-table-body {
     overflow-x: hidden !important;
     &:hover {

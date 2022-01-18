@@ -662,7 +662,9 @@ renderTreeNodes = data =>
                     <Form.Item label={showField.deptId && showField.deptId.name} >
                       {
                         getFieldDecorator('deptId', {
-                          initialValue: details.deptId ? `${details.deptId}` : '',
+                          initialValue: details.deptId
+                            && depList.findIndex(it => `${it.deptId}` === `${details.deptId}`) > -1
+                            ? `${details.deptId}` : '',
                           rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
                         })(
                           <Select
@@ -693,7 +695,9 @@ renderTreeNodes = data =>
                       <Form.Item label={labelInfo.createDeptId} >
                         {
                           getFieldDecorator('createDeptId', {
-                            initialValue: details.createDeptId ? `${details.createDeptId}` : '',
+                            initialValue: details.createDeptId
+                              && createDepList.findIndex(it => `${it.deptId}` === `${details.createDeptId}`) > -1
+                              ? `${details.createDeptId}` : '',
                             rules: [{ required: true, message: '请选择部门' }]
                           })(
                             <Select
