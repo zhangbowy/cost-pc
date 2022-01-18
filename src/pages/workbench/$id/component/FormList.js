@@ -1061,6 +1061,7 @@ renderTreeNodes = data =>
                               treeNodeFilterProp='title'
                               disabled={modify && !showField.project.isModify}
                               getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onChange={(val) => this.onChangePro(val, 'project')}
                             >
                               {this.renderTreeNodes(projectList)}
                             </TreeSelect>
