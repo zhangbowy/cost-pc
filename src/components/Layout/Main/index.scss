@@ -52,3 +52,13 @@
   left: 0;
   right: 0;
 }
+.ding{
+  transition: all .3s;
+   position: fixed;
+   bottom: 74px;
+   right: -42px;
+   z-index: 100;
+}
+.ding:hover{
+  right:20px;
+}

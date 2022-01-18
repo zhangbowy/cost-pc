@@ -71,8 +71,9 @@ class App extends React.PureComponent {
               userInfo.xding &&
               <>
                 <div
-                  style={{ position: 'fixed', bottom: '74px', right: '23px', zIndex: '100' }}
+                  // style={{ position: 'fixed', bottom: '74px', right: '-42px', zIndex: '100' }}
                   onClick={() => this.onLink()}
+                  className={styles.ding}
                 >
                   <img src={logo} alt="logo" style={{ width: '84px' }} />
                 </div>
