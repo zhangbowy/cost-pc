@@ -395,7 +395,14 @@ class PayTemp extends React.PureComponent {
               <div className={style.production}>
                 <div className={style.texts}>
                   <i className="iconfont iconinfo-cirlce" />
-                  <span className="c-black-65">如有票据签收/核对环节，可将核对后的单据暂时移至已{signName[templateType]}，由出纳统一发放</span>
+                  <span className="c-black-65">
+                    {
+                      templateType ?
+                      '如有制单环节，可将制单后的单据暂时移至已制单，统一处理'
+                      :
+                      '如有票据签收/核对环节，可将核对后的单据暂时移至已票签，由出纳统一发放'
+                    }
+                  </span>
                 </div>
                 <i className="iconfont iconguanbi c-black-65 fs-14" style={{ cursor: 'pointer' }} onClick={() => this.handle()} />
               </div>
