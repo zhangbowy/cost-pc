@@ -45,6 +45,14 @@ class BorrowPay extends React.PureComponent {
         out: 1
       },
       {
+        type: 'deptAndUser',
+        label: '提交部门/人',
+        placeholder: '请选择',
+        key: ['userVOS', 'deptVOS'],
+        id: 'userVOS',
+        out: 1
+      },
+      {
         type: 'search',
         label: '外部选择',
         placeholder: '单号、事由、收款人',

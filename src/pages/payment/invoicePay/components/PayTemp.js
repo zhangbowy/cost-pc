@@ -30,6 +30,7 @@ class PayTemp extends React.PureComponent {
       pageNo: 1,
       show: true,
       isOnlyShowModify: false,
+      isCheckExported: false,
     };
   }
 
@@ -284,9 +285,9 @@ class PayTemp extends React.PureComponent {
     });
   }
 
-  onChangeCheck = e => {
+  onChangeCheck = (value, key) => {
     this.setState({
-      isOnlyShowModify: e.target.checked,
+      [key]: value,
     }, () => {
       const {
         query,
@@ -296,6 +297,7 @@ class PayTemp extends React.PureComponent {
         ...query,
         pageNo: 1,
         status,
+        [key]: value,
       });
     });
 
@@ -377,17 +379,7 @@ class PayTemp extends React.PureComponent {
               status,
             });
           })}
-        >
-          {
-            isModifyInvoice &&
-            <Checkbox
-              className="m-l-16"
-              style={{marginTop: '5px'}}
-              onChange={e => this.onChangeCheck(e)}
-            >仅看已改单
-            </Checkbox>
-          }
-        </SearchBanner>
+        />
         <div className="content-dt" style={{padding: 0}}>
           <>
             {
@@ -427,6 +419,26 @@ class PayTemp extends React.PureComponent {
                   noLevels
                 />
                 <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
+              </div>
+              <div className="head_rf">
+                {
+                  isModifyInvoice &&
+                  <Checkbox
+                    className="m-l-16"
+                    style={{marginTop: '5px'}}
+                    onChange={e => this.onChangeCheck(e.target.checked, 'isOnlyShowModify')}
+                  >仅看已改单
+                  </Checkbox>
+                }
+                {
+                  templateType === 0 &&
+                  <Checkbox
+                    className="m-l-16"
+                    style={{marginTop: '5px'}}
+                    onChange={e => this.onChangeCheck(e.target.checked, 'isCheckExported')}
+                  >仅看已导出
+                  </Checkbox>
+                }
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>

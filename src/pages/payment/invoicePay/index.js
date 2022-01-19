@@ -45,6 +45,14 @@ class Payment extends React.PureComponent {
         out: 1
       },
       {
+        type: 'deptAndUser',
+        label: '提交部门/人',
+        placeholder: '请选择',
+        key: ['userVOS', 'deptVOS'],
+        id: 'userVOS',
+        out: 1
+      },
+      {
         type: 'search',
         label: '外部选择',
         placeholder: '单号、事由、收款人',
@@ -281,6 +289,10 @@ class Payment extends React.PureComponent {
       dataIndex: 'invoiceNo',
       width: 100,
     }, {
+      title: '提交人',
+      dataIndex: 'createName',
+      width: 80,
+    }, {
       title: '账户类型',
       dataIndex: 'accountType',
       width: 80,
@@ -340,10 +352,6 @@ class Payment extends React.PureComponent {
         );
       },
       width: 150,
-    }, {
-      title: '提交人',
-      dataIndex: 'createName',
-      width: 80,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',

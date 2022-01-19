@@ -324,6 +324,10 @@ class CategoryAdd extends PureComponent {
   }
 
   isOpenProject = ({ isAllCostCategory, costCategory }) => {
+    const { templateType } = this.state;
+    if (templateType === 2 || templateType === 1) {
+      return;
+    }
     const params = {
       isAll: isAllCostCategory,
     };
