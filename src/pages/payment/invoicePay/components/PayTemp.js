@@ -51,6 +51,7 @@ class PayTemp extends React.PureComponent {
       selectedRowKeys: [],
       selectedRows: [],
       sumAmount: 0,
+      isCheckExported: false,
     });
 
     this.props.onChangeStatus(e.key);
@@ -431,7 +432,7 @@ class PayTemp extends React.PureComponent {
                   </Checkbox>
                 }
                 {
-                  templateType === 0 &&
+                  templateType === 0 && Number(status) === 1 &&
                   <Checkbox
                     className="m-l-16"
                     style={{marginTop: '5px'}}
