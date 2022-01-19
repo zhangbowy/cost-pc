@@ -368,8 +368,8 @@ class CostDetailTable extends PureComponent {
                   `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}
                   {
                     record.costSumInfo &&
-                    <Tooltip title={`费用包含：${record.costSumInfo}`}>
-                      <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                    <Tooltip title={`${record.costSumInfo}`}>
+                      <i className="iconfont iconIcon-yuangongshouce m-l-8 m-r-8" />
                     </Tooltip>
                   }
                 </span>
