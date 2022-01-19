@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Table, Divider, Button, Tag, message, Modal, Tooltip } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { connect } from 'dva';
-import { accountType, getArrayValue } from '@/utils/constants';
+// import { accountType, getArrayValue } from '@/utils/constants';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
-import { signStatus } from '../../../utils/constants';
+import style from './index.scss';
+// import { signStatus } from '../../../utils/constants';
 
 const { confirm } = Modal;
 @connect(({ loading, account, session }) => ({
@@ -100,77 +101,77 @@ class Account extends Component {
   }
 
   render() {
-    const { list, query, total, loading } = this.props;
-    const columns = [{
-      title: '名称',
-      dataIndex: 'name',
-      render: (_, record) => (
-        <span>
-          <span style={{ marginRight: '8px' }}>{record.name}</span>
-          { record.isDefault && <Tag color="blue">默认</Tag> }
-          { record.status === 0 && <Tag color="red">已停用</Tag> }
-        </span>
-      ),
-      width: 220
-    }, {
-      title: '账户类型',
-      dataIndex: 'type',
-      render: (_, record) => (
-        <span>{getArrayValue(record.type, accountType)}</span>
-      ),
-      width: 100
-    }, {
-      title: '签约状态',
-      dataIndex: 'signStatus',
-      render: (_, record) => (
-        <>
-          {
-            record.type === 1 ?
-              <span>{getArrayValue(record.signStatus, signStatus)}</span>
-              :
-              '-'
-          }
-        </>
-      ),
-      width: 100
-    }, {
-      title: '备注',
-      dataIndex: 'note',
-      width: 160,
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
-    }, {
-      title: '操作',
-      dataIndex: 'ope',
-      render: (_, record) => (
-        <span style={{ width: '120px', display: 'inline-block', textAlign: 'left' }}>
-          <span className="deleteColor" onClick={() => this.handleVisibleChange(record.id)}>删除</span>
-          <Divider type="vertical" />
-          <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
-            <a>编辑</a>
-          </AddAccount>
-          {
-            record.type === 1 && !record.signStatus &&
-            <>
-              <Divider type="vertical" />
-              <a onClick={() => this.sign(record.account)}>签约</a>
-            </>
-           }
-        </span>
-      ),
-      width: '120px',
-      className: 'fixCenter',
-      fix: 'right'
-    }];
+    // const { list, query, total, loading } = this.props;
+    // const columns = [{
+    //   title: '名称',
+    //   dataIndex: 'name',
+    //   render: (_, record) => (
+    //     <span>
+    //       <span style={{ marginRight: '8px' }}>{record.name}</span>
+    //       { record.isDefault && <Tag color="blue">默认</Tag> }
+    //       { record.status === 0 && <Tag color="red">已停用</Tag> }
+    //     </span>
+    //   ),
+    //   width: 220
+    // }, {
+    //   title: '账户类型',
+    //   dataIndex: 'type',
+    //   render: (_, record) => (
+    //     <span>{getArrayValue(record.type, accountType)}</span>
+    //   ),
+    //   width: 100
+    // }, {
+    //   title: '签约状态',
+    //   dataIndex: 'signStatus',
+    //   render: (_, record) => (
+    //     <>
+    //       {
+    //         record.type === 1 ?
+    //           <span>{getArrayValue(record.signStatus, signStatus)}</span>
+    //           :
+    //           '-'
+    //       }
+    //     </>
+    //   ),
+    //   width: 100
+    // }, {
+    //   title: '备注',
+    //   dataIndex: 'note',
+    //   width: 160,
+    //   render: (text) => (
+    //     <span>
+    //       <Tooltip placement="topLeft" title={text || ''}>
+    //         <span className="eslips-2">{text}</span>
+    //       </Tooltip>
+    //     </span>
+    //   ),
+    // }, {
+    //   title: '操作',
+    //   dataIndex: 'ope',
+    //   render: (_, record) => (
+    //     <span style={{ width: '120px', display: 'inline-block', textAlign: 'left' }}>
+    //       <span className="deleteColor" onClick={() => this.handleVisibleChange(record.id)}>删除</span>
+    //       <Divider type="vertical" />
+    //       <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
+    //         <a>编辑</a>
+    //       </AddAccount>
+    //       {
+    //         record.type === 1 && !record.signStatus &&
+    //         <>
+    //           <Divider type="vertical" />
+    //           <a onClick={() => this.sign(record.account)}>签约</a>
+    //         </>
+    //        }
+    //     </span>
+    //   ),
+    //   width: '120px',
+    //   className: 'fixCenter',
+    //   fix: 'right'
+    // }];
     return (
       <div>
         <PageHead title="公司付款账户设置" />
-        <div className="content-dt">
+        <div className={style.content}>
           <div className="cnt-header">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">
@@ -178,32 +179,6 @@ class Account extends Component {
               </AddAccount>
             </div>
           </div>
-          <Table
-            columns={columns}
-            dataSource={list}
-            loading={loading}
-            scroll={{ x: '640px' }}
-            pagination={{
-              current: query.pageNo,
-              total,
-              onChange: (pageNumber) => {
-                this.onQuery({
-                  pageNo: pageNumber,
-                  pageSize: query.pageSize
-                });
-              },
-              size: 'small',
-              showTotal: () => (`共${total}条数据`),
-              showSizeChanger: true,
-              showQuickJumper: true,
-              onShowSizeChange: (cur, size) => {
-                this.onQuery({
-                  pageNo: cur,
-                  pageSize: size
-                });
-              }
-            }}
-          />
         </div>
       </div>
     );
