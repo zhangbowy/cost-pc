@@ -641,7 +641,7 @@ class Workbench extends PureComponent {
                   <span className="deleteColor">删除</span>
                 </Popconfirm>
                 :
-                <a>
+                <a onClick={() => this.handleClick('back', record)}>
                   撤销
                 </a>
             }
