@@ -610,7 +610,7 @@ class Workbench extends PureComponent {
           btns.push({
             node: (
               <span className="pd-20-9">
-                撤销
+                查看
               </span>
             ),
             key: 'back'
@@ -642,7 +642,7 @@ class Workbench extends PureComponent {
                 </Popconfirm>
                 :
                 <a onClick={() => this.handleClick('back', record)}>
-                  撤销
+                  {record.status === 3 || record.status === 2 ? '查看' : '撤销'}
                 </a>
             }
             <Divider type="vertical" />

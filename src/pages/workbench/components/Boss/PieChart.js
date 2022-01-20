@@ -22,7 +22,7 @@ function PieChart({ data, total, current, title, onLink, totalStr }) {
       zlevel: 0,
       text: [
         `{name|${title}支出合计}`,
-        `{value|￥${  totalStr || total/100  }}`,
+        `{value|${  totalStr || total/100  }}`,
       ].join('\n'),
       rich: {
         value: {
@@ -33,7 +33,7 @@ function PieChart({ data, total, current, title, onLink, totalStr }) {
         },
         name: {
           color: 'rgba(0,0,0,0.45)',
-          lineHeight: 22,
+          lineHeight: 24,
           fontSize: 14
         },
       },
@@ -44,7 +44,7 @@ function PieChart({ data, total, current, title, onLink, totalStr }) {
         rich: {
           value: {
             color: 'rgba(0,0,0,0.85)',
-            fontSize: 24,
+            fontSize: 22,
             lineHeight: 32,
             fontFamily: 'Helvetica, sans-serif, Arial'
           },
