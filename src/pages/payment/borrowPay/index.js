@@ -300,6 +300,10 @@ class BorrowPay extends React.PureComponent {
       dataIndex: 'invoiceNo',
       width: 100,
     }, {
+      title: '提交人',
+      dataIndex: 'createName',
+      width: 100,
+    }, {
       title: '账户类型',
       dataIndex: 'accountType',
       filters: filterAccount,
@@ -350,10 +354,6 @@ class BorrowPay extends React.PureComponent {
         );
       },
       width: 140,
-    }, {
-      title: '提交人',
-      dataIndex: 'createName',
-      width: 100,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',
