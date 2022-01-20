@@ -6,6 +6,7 @@ import style from './index.scss';
 
 function index({ templatePdfVo, selectList, templateType, onChange,
   isRelationLoan, corpName, invoiceName, categoryStatus, isOpenProject }) {
+  console.log('🚀 ~ file: index.js ~ line 9 ~ isOpenProject', isOpenProject);
   const expandList = selectList.filter(it => it.field.indexOf('expand') > -1) || [];
   const isProject = selectList.findIndex(it => it.field === 'project') > -1;
   return (
@@ -25,7 +26,8 @@ function index({ templatePdfVo, selectList, templateType, onChange,
             isRelationLoan={isRelationLoan}
             corpName={corpName}
             invoiceName={invoiceName}
-            isProject={isOpenProject || isProject}
+            isProject={isProject}
+            isOpenProject={isOpenProject}
             categoryStatus={categoryStatus}
             notes={selectList.filter(it => it.field === 'note')}
             supplier={selectList.filter(it => it.field === 'supplier')}

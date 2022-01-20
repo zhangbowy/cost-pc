@@ -18,7 +18,7 @@ const tempObj = {
   3: '提交'
 };
 function Right({ templateType, templatePdfVo, corpName,
-  isRelationLoan, invoiceName, categoryStatus, notes, supplier, isProject }) {
+  isRelationLoan, invoiceName, categoryStatus, notes, supplier, isProject, isOpenProject }) {
   const list = templatePdfVo.templatePdfExpandVos || [];
   const one = list.filter(it => it.fieldType === 1) || [];
 console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
@@ -177,7 +177,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
                   <th>承担人/部门</th>
                 }
                 {
-                  isProject && templatePdfVo.isProject &&
+                  isOpenProject && templatePdfVo.isProject &&
                   <th>项目</th>
                 }
                 <th>支出类别</th>

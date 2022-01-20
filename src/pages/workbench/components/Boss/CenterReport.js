@@ -28,28 +28,28 @@ const listP = [{
   type: 'annulusSymbolType'
 }];
 const list = [{
-  key: 'needPayCostSum',
+  key: 'needPayCostSumStr',
   img: one,
   bg: one1,
   name: '待付金额',
   color: '#FFFBF9',
   status: 2,
 }, {
-  key: 'paidCostSum',
+  key: 'paidCostSumStr',
   img: two,
   bg: two1,
   name: '已付金额',
   color: '#F6FDFC',
   status: 3,
 }, {
-  key: 'approvalInProgress',
+  key: 'approvalInProgressStr',
   img: three,
   bg: three1,
   name: '审核中金额',
   color: '#FFFAFA',
   status: 1,
 }, {
-  key: 'repaymentSum',
+  key: 'repaymentSumStr',
   img: four,
   bg: four1,
   name: '借款待还金额',
@@ -102,7 +102,7 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                 <Fragment key={it.key}>
                   <img src={it.img} alt="展示图片" />
                   <img src={it.bg} alt="展示图片" className={style.absoluteImg} />
-                  <p className="c-black-85 fw-500 fs-20 m-l-24">¥{data[it.key] ? data[it.key]/100 : 0}</p>
+                  <p className="c-black-85 fw-500 fs-20 m-l-24">{data[it.key] ? data[it.key] : 0}</p>
                   <p className="c-black-65 m-l-24">{it.name}</p>
                 </Fragment>
               );

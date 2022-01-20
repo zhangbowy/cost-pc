@@ -91,9 +91,13 @@ class Left extends Component {
       templateType,
       isProject,
     } = this.props;
-    const lists = basicSet[templateType];
-    if (isProject && lists.findIndex(it => it.key === 'isProject') === -1) {
-      lists.push({ key: 'isProject', value: '项目信息' });
+    let lists = basicSet[templateType];
+    if (isProject) {
+      if (lists.findIndex(it => it.key === 'isProject') === -1) {
+        lists.push({ key: 'isProject', value: '项目信息' });
+      }
+    } else {
+      lists = lists.filter(it => it.key !== 'isProject');
     }
     return (
       <div className={style.left}>
@@ -110,7 +114,7 @@ class Left extends Component {
           <Form.Item label="基础设置" colon={false}>
             <div className={style.checkbox}>
               {
-                basicSet[templateType].map(it => (
+                lists.map(it => (
                   <Checkbox
                     key={it.key}
                     checked={templatePdfVo[it.key]}
