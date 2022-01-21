@@ -3,10 +3,58 @@
   .ant-layout{
     background: #F7F8FA!important;
   }
+  //写在这里
   .ant-layout-sider {
-    // max-width: 190px !important;
-    // width: 190px !important;
-    // min-width: 190px !important;
+    .ant-menu-inline-collapsed{
+      .ant-menu-item-selected{ 
+        border-left: 4px solid rgba(26, 206, 179, 1)!important;
+        // i{
+        //   color:rgba(0, 199, 149, 1)!important;
+        // }
+      } 
+      width: 64px!important;
+      .ant-menu-item{
+        padding: 0 23px !important;
+      }
+      .ant-menu-submenu > .ant-menu-submenu-title{
+        padding: 0 23px !important;
+      }
+    }
+ .app-menu{ 
+  .ant-menu-item-selected{ 
+        border-left: 4px solid rgba(26, 206, 179, 1)!important;
+        // i{
+        //   color:rgba(0, 199, 149, 1)!important;
+        // }
+      } 
+  .ant-menu-item{
+    line-height: 56px!important;
+    height: 56px!important;
+    margin: 0!important;
+  }
+  .ant-menu-submenu{
+    .ant-menu-submenu-title{
+    line-height: 56px!important;
+    height: 56px!important;
+    margin: 0!important;
+    }
+    .ant-menu-sub{
+    .ant-menu-item{
+      line-height: 44px!important;
+      height: 44px!important;
+    }
+    }
+  }
+  .ant-menu-submenu-vertical{
+    .ant-menu-sub{
+      background-color: #fff!important;
+      // .ant-menu-item{
+      //   line-height: 44px!important;
+      //   height: 44px!important;
+      // }
+      }
+  }
+  }
   }
   // .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td,
   // .ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
@@ -67,7 +115,7 @@
     font-weight: bold;
   }
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    // background-color: inherit !important;
+    background-color: #1a1d25 !important;
   }
   .ant-layout {
     background-color: rgba(247, 248, 250, 1);
@@ -125,6 +173,13 @@
     border-top: 1px solid #e8e8e8!important;
     border-bottom: 1px solid #e8e8e8!important;
   }
+.ant-menu-dark, .ant-menu-dark .ant-menu-sub {
+    background:rgba(37, 40, 52, 1)!important;
+    box-sizing:border-box;
+}
+.ant-menu-dark .ant-menu-inline.ant-menu-sub{
+ box-shadow: none!important;
+}
   .ant-divider-horizontal{
     margin: 0;
   }
@@ -219,7 +274,6 @@
       background: rgba(0, 199, 149, 1)!important;
     }
   }
-
   .addWidth {
     :global(.invoiceFirst) {
       display: inline-block;

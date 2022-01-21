@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable react/no-access-state-in-setstate */
 /* eslint-disable react/no-deprecated */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -11,6 +13,8 @@ import {
   Icon,
   Button,
 } from 'antd';
+import left from '@/assets/img/left.png';
+import right from '@/assets/img/right.png';
 import { urlToList } from '@/utils/common';
 // import constants from '@/utils/constants';
 import styles from './index.scss';
@@ -60,6 +64,7 @@ class App extends React.PureComponent {
   state = {
     openKeys: getMenuKey(this.props),
     prevPath: '',
+    collapsed: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -126,6 +131,13 @@ class App extends React.PureComponent {
     });
   };
 
+  // 是否折叠
+  toggle = () => {
+    this.setState({
+      collapsed:!this.state.collapsed,
+    });
+  };
+  
   render() {
     const {
       collapsed,
@@ -142,14 +154,25 @@ class App extends React.PureComponent {
       <Layout.Sider
         trigger={null}
         // collapsible
-        collapsed={false}
+        collapsed={this.state.collapsed}
         onCollapse={onCollapse}
         breakpoint="lg"
         className={styles.sider}
+        collapsedWidth='64'
+        width="190"
       >
+        {/* 是否折叠 */}
+
+        <div className={styles.trigger} onClick={this.toggle}>
+          <img src={this.state.collapsed?left:right} alt=""/>
+        </div>
         <div className={styles.logo}>
           <Link to="/">
-            <span className={styles.img} />
+            {/* <div className={styles.img}><span className={styles.newLogo}/><span className={styles.logoFont}/></div> */}
+            <div className={styles.logoContainer}>
+              <span className={styles.newLogo} />
+              {this.state.collapsed?'':<span className={styles.logoFont} />}
+            </div>
             {/* <h1>{constants.APP_NAME}</h1> */}
           </Link>
         </div>
@@ -170,18 +193,20 @@ class App extends React.PureComponent {
           {this.getMenuItems(menus)}
         </Menu>
         <div className={styles.footerSider}>
-          <i className={styles.lines} />
+          {this.state.collapsed?'':<i className={styles.lines} />}
           <InitModal>
             <div className="f-c m-b-8 cur-p t-l" style={{width: '100%'}}>
-              <i className="iconfont iconlianxikefu m-r-8" />
-              <span>联系我们</span>
+              <i className="iconfont iconlianxikefu m-r-8"/>
+              {this.state.collapsed?'':<span>联系我们</span>}
             </div>
           </InitModal>
-          <p className="f-c-85 fs-12 m-b-16">遇到问题？想开通更多功能请联系我们</p>
+          {this.state.collapsed ? '' : <p className="f-c-85 fs-12 m-b-16" >遇到问题？想开通更多功能请联系我们</p>}
           <Services costConfigCheckVo={costConfigCheckVo} status={status} visible={Number(status) === 2}>
-            <Button type="primary" className={styles.footBtn}>版本升级</Button>
+            {this.state.collapsed ? <i className="iconfont iconxufeishengji m-r-4" style={{color:'#ffcb37',fontSize:'16px'}}/>: <Button type="primary" className={styles.footBtn}> <i className="iconfont iconxufeishengji m-r-4" style={{fontSize:'16px'}}/><span>版本升级</span></Button>}
+            {/* <img src={imgUrl} style={{ width: '18px', height: '18px' }} className={styles.upgradeImg2} /> */}
+            {/* <i className="iconfont iconxufeishengji m-r-8" style={{width: '18px', height: '18px',color:'#ffcb37'}}/> */}
           </Services>
-          <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}>{costConfigCheckVo.version}</p>
+          <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}> </p>
         </div>
       </Layout.Sider>
     );

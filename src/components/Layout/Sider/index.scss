@@ -19,21 +19,39 @@
 }
 
 .logo {
+  position: relative;
   // padding-left: 40px;
   height: 79px;
   // padding-top: 24px;
   line-height: 79px;
   color: #fff;
-  background: rgba(0, 21, 41, 1);
+  background:rgba(37, 40, 52, 1);
   overflow: hidden;
   text-align: center;
-  .img {
-    display: inline-block;
-    vertical-align: middle;
-    width: 108px;
-    height: 32px;
-    background: url(@/assets/img/logo.png) no-repeat;
-    background-size: contain;
+  .logoContainer {
+     position: absolute;
+     left: 50%;
+     top: 50%;
+     transform: translate(-50%, -50%);
+     width: 108px;
+     height: 32px;
+     .newLogo,.logoFont{
+     vertical-align:top;
+     display: inline-block;
+     height: 32px;
+    }
+    .newLogo{
+      width: 32px;
+      background: url(@/assets/img/newLogo.png) no-repeat; 
+      background-size: cover;
+      background-position:0 4px;
+    }
+    .logoFont{
+      margin-left: 4px;
+      width: 72px;
+      background: url(@/assets/img/logoFont.png) no-repeat;
+      background-size: cover;
+    }
   }
   h1 {
     display: inline-block;
@@ -48,7 +66,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 23px;
 }
 .lines{
   width:131px;
@@ -56,11 +74,15 @@
   background: rgba(255, 255, 255, 0.15);
   margin-bottom: 16px;
 }
+.bottom32{
+  margin-bottom:24px;
+}
 .footBtn{
   width: 100%;
-  background: rgba(250, 202, 79, 1);
-  color: rgba(0, 0, 0, 0.85);
-  border-color: rgba(250, 202, 79, 1);
+  background: rgba(37, 40, 52, 1);
+  color: rgba(255, 203, 55, 1);
+  font-size: 14px;
+  border:1px solid rgba(250, 202, 79, 1);
 }
 .footBtn:hover{
   background: rgba(250, 202, 79, 1);
@@ -89,3 +111,21 @@
   text-align: center;
   margin-left: 12px;
 }
+.sider{
+  position: relative;
+  background:rgba(37, 40, 52, 1);
+  .trigger {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right:-12px;
+    width: 12px;
+    height: 66px;
+    box-sizing: border-box;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+}
+}
+  
