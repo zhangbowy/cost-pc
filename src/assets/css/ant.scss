@@ -152,8 +152,16 @@
   .ant-table-scroll .ant-table-row-hover{
     background: #fafafa!important;
   }
-  .ant-modal-body .ant-table-scroll .ant-table-row-hover{
+ .ant-table-scroll .ant-table-row-hover{
     background: #fafafa!important;
+  }
+  .ant-modal-body{
+    height: 445px;
+    padding: 0!important;
+  }
+  .ant-modal-content{
+    background-color:transparent!important;
+    box-shadow:none!important;
   }
   .ant-table-fixed .ant-table-row-hover>td{
     background: #fafafa!important;

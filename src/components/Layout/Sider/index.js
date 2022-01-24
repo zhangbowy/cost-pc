@@ -203,8 +203,6 @@ class App extends React.PureComponent {
           {this.state.collapsed ? '' : <p className="f-c-85 fs-12 m-b-16" >遇到问题？想开通更多功能请联系我们</p>}
           <Services costConfigCheckVo={costConfigCheckVo} status={status} visible={Number(status) === 2}>
             {this.state.collapsed ? <i className="iconfont iconxufeishengji m-r-4" style={{color:'#ffcb37',fontSize:'16px'}}/>: <Button type="primary" className={styles.footBtn}> <i className="iconfont iconxufeishengji m-r-4" style={{fontSize:'16px'}}/><span>版本升级</span></Button>}
-            {/* <img src={imgUrl} style={{ width: '18px', height: '18px' }} className={styles.upgradeImg2} /> */}
-            {/* <i className="iconfont iconxufeishengji m-r-8" style={{width: '18px', height: '18px',color:'#ffcb37'}}/> */}
           </Services>
           <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}> </p>
         </div>
