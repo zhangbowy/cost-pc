@@ -10,9 +10,10 @@ function Services(props) {
   };
   const costConfigCheckVo = props.costConfigCheckVo || {};
   // const status = costConfigCheckVo.status;
-  const goUpdate = () => {
-    console.log('kfds');
-  };
+  // const goUpdate = () => {
+  //   console.log(props,'9999999');
+  //   console.log('kfds');
+  // };
   return (
     <div style={{width: '100%'}}>
       <span onClick={onShow}>{props.children}</span>
@@ -23,6 +24,7 @@ function Services(props) {
         footer={null}
         maskClosable={false}
         closable={Number(props.status) !== 2}
+        className={style.bg}
       >
         <div className={style.modals}>
           {/* <p className="fs-26 fw-600 c-black-85 m-b-18">{props.isDelay ? '已到期，请扫码购买' : '升级享受更多服务'}</p> */}
@@ -46,7 +48,10 @@ function Services(props) {
               <span>扫码升级</span>
             </div>
           </Popover> */}
-          <div className={style.update} onClick={goUpdate}> </div>
+          {/* 续费升级按钮 */}
+          <div>
+            <a href="https://h5.dingtalk.com/appcenter/index-pc.html?ddtab=true&funnelsource=recruit_pc&#/detail/DD_GOODS-101001059326" target="_blank" rel='noreferrer' className={style.update}>立即续费升级</a>
+          </div>
         </div>
       </Modal>
     </div>
