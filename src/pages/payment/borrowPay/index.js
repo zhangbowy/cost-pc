@@ -231,8 +231,8 @@ class BorrowPay extends React.PureComponent {
           type: 'select',
           label: '分公司',
           placeholder: '请选择',
-          key: 'officeIds',
-          id: 'officeIds',
+          key: 'officeId',
+          id: 'officeId',
           options: officeListAndRole,
           fileName: {
             key: 'id',
