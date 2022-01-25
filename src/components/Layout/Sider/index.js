@@ -147,6 +147,8 @@ class App extends React.PureComponent {
       status,
     } = this.props;
     const { openKeys } = this.state;
+    // 是否折叠
+    const isCollapsed = this.state.collapsed;
     const selectedKeys = getMenuKey(this.props);
     const menuProps = collapsed ? {} : { openKeys };
     const costConfigCheckVo = userInfo.costConfigCheckVo || {};
@@ -154,7 +156,7 @@ class App extends React.PureComponent {
       <Layout.Sider
         trigger={null}
         // collapsible
-        collapsed={this.state.collapsed}
+        collapsed={isCollapsed}
         onCollapse={onCollapse}
         breakpoint="lg"
         className={styles.sider}
@@ -164,14 +166,13 @@ class App extends React.PureComponent {
         {/* 是否折叠 */}
 
         <div className={styles.trigger} onClick={this.toggle}>
-          <img src={this.state.collapsed?left:right} alt=""/>
+          <img src={isCollapsed?left:right} alt=""/>
         </div>
         <div className={styles.logo}>
           <Link to="/">
-            {/* <div className={styles.img}><span className={styles.newLogo}/><span className={styles.logoFont}/></div> */}
             <div className={styles.logoContainer}>
               <span className={styles.newLogo} />
-              {this.state.collapsed?'':<span className={styles.logoFont} />}
+              {isCollapsed?'':<span className={styles.logoFont} />}
             </div>
             {/* <h1>{constants.APP_NAME}</h1> */}
           </Link>
@@ -193,16 +194,16 @@ class App extends React.PureComponent {
           {this.getMenuItems(menus)}
         </Menu>
         <div className={styles.footerSider}>
-          {this.state.collapsed?'':<i className={styles.lines} />}
+          {isCollapsed?'':<i className={styles.lines} />}
           <InitModal>
             <div className="f-c m-b-8 cur-p t-l" style={{width: '100%'}}>
               <i className="iconfont iconlianxikefu m-r-8"/>
-              {this.state.collapsed?'':<span>联系我们</span>}
+              {isCollapsed?'':<span>联系我们</span>}
             </div>
           </InitModal>
-          {this.state.collapsed ? '' : <p className="f-c-85 fs-12 m-b-16" >遇到问题？想开通更多功能请联系我们</p>}
+          <p className="f-c-85 fs-12 m-b-16" > {isCollapsed ? null: '遇到问题？想开通更多功能请联系我们'}</p>
           <Services costConfigCheckVo={costConfigCheckVo} status={status} visible={Number(status) === 2}>
-            {this.state.collapsed ? <i className="iconfont iconxufeishengji m-r-4" style={{color:'#ffcb37',fontSize:'16px'}}/>: <Button type="primary" className={styles.footBtn}> <i className="iconfont iconxufeishengji m-r-4" style={{fontSize:'16px'}}/><span>版本升级</span></Button>}
+            {isCollapsed ? <i className="iconfont iconxufeishengji m-r-4" style={{color:'#ffcb37',fontSize:'16px'}}/>: <Button type="primary" className={styles.footBtn}> <i className="iconfont iconxufeishengji m-r-4" style={{fontSize:'16px'}}/><span>版本升级</span></Button>}
           </Services>
           <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}> </p>
         </div>

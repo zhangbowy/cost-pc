@@ -1,0 +1,59 @@
+.cardContent:hover {
+  box-shadow: 0px 10px 32px 0px rgba(157, 163, 180, 0.2);
+  border-radius: 2px;
+}
+
+.cardContent :global .ant-card-body {
+  padding: 17px 30px 37px 24px;
+}
+
+.cardContent :global .ant-tag {
+  text-align: center;
+  width: 40px;
+  height: 22px;
+  line-height: 20px;
+  border: 0;
+  margin-left: 8px;
+  border-radius: 4px;
+}
+
+.cardContent .bankName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardContent .bankName i {
+  color: rgba(0, 0, 0, 0.85);
+  margin: 0 5px 4px 0;
+  font-size: 17.5px;
+}
+
+.cardContent .account, .cardContent .bankNameBranch {
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.cardContent .name {
+  display: inline-block;
+  max-width: 294px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.cardContent .note {
+  display: inline-block;
+  max-width: 294px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+  margin-left: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -5,6 +5,7 @@ import { accountType, getArrayValue } from '@/utils/constants';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
 import { signStatus } from '../../../utils/constants';
+import AccountCart from '@/components/Account/';
 
 const { confirm } = Modal;
 @connect(({ loading, account, session }) => ({
@@ -101,6 +102,7 @@ class Account extends Component {
 
   render() {
     const { list, query, total, loading } = this.props;
+    console.log(list,'9999');
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -170,13 +172,19 @@ class Account extends Component {
     return (
       <div>
         <PageHead title="公司付款账户设置" />
-        <div className="content-dt">
+        <div className="content-dt" style={{padding:'0px'}}>
           <div className="cnt-header">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">
                 <Button type="primary">新增付款账户</Button>
               </AddAccount>
             </div>
+          </div>
+          {/* 放置卡片 */}
+          <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+            {list.map((item) => {
+              return <AccountCart item={item} key={item.id}/>;
+            })}
           </div>
           <Table
             columns={columns}
