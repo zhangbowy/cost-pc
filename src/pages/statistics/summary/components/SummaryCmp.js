@@ -137,7 +137,7 @@ class SummaryCmp extends Component {
         <span>{text && text / 100}</span>
       ),
       className: 'moneyCol',
-      width: 140,
+      width: 160,
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -210,7 +210,7 @@ class SummaryCmp extends Component {
           <span>{text && text / 100}</span>
         ),
         className: 'moneyCol',
-        width: 140,
+        width: 160,
       }, {
         title: '待核销金额(元)',
         dataIndex: 'waitAssessSum',

@@ -106,7 +106,7 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                   <p className="c-black-65 m-l-24">{it.name}</p>
                 </Fragment>
               );
-              if (it.key === 'repaymentSum') {
+              if (it.key === 'repaymentSumStr') {
                 return (
                   <TempTable
                     loanList={submitReportDetail}
@@ -124,7 +124,7 @@ const CenterReport = ({ data, loading, submitReportDetail, reportChange, onChang
                   </TempTable>
                 );
               }
-              if (it.key === 'approvalInProgress') {
+              if (it.key === 'approvalInProgressStr') {
                 return (
                   <TempTable
                     loanList={submitReportDetail}
