@@ -9,7 +9,6 @@
 
 .cardContent :global .ant-tag {
   text-align: center;
-  width: 40px;
   height: 22px;
   line-height: 20px;
   border: 0;
@@ -17,13 +16,17 @@
   border-radius: 4px;
 }
 
-.cardContent .bankName {
+.cardContent :global .anticon-line {
+  transform: rotateZ(90deg);
+}
+
+.cardContent .accountType {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.cardContent .bankName i {
+.cardContent .accountType i {
   color: rgba(0, 0, 0, 0.85);
   margin: 0 5px 4px 0;
   font-size: 17.5px;

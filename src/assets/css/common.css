@@ -348,6 +348,10 @@
   margin-top: 2px !important;
 }
 
+:global .m-t-4 {
+  margin-top: 4px !important;
+}
+
 :global .m-t-8 {
   margin-top: 8px !important;
 }
