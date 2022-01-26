@@ -1,33 +1,57 @@
 import React from 'react';
-import { Card,Tag,Icon} from 'antd';
+import { Card,Tag,Icon,Tooltip} from 'antd';
 import styles from './index.scss';
 
 export default function index(props) {
-    const { item } = props;
-    // 账户类型
-  const accountType = (type) => {
+    console.log(props,'00000');
+    const {item,delCart,editCart,signCart} = props;
+    const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;    
+   // 账户类型
+    const accountType = (aType) => {
     const theType = {
       1: '支付宝',
       2: '现金',
       3: '微信',
       4: '其他账户类型'
     };
-    return theType[type];
+    return theType[aType];
   };
     // 账户图标
-  const accountIcon = (type) => {
+  const accountIcon = (aType) => {
     const icon = {
-      0: <i className="iconfont iconyinhangka1 m-t-4 bank" style={{ color: 'rgba(255, 146, 0, 1)' }} />,
-      1: <i className="iconfont iconzhifubao1 m-t-4 alipay" style={{ color: 'rgba(3, 122, 254, 1)' }} />,
-      2: <i className="iconfont iconxianjin1 m-t-4 money" style={{ color: 'rgba(255, 185, 0, 1)' }} />,
-      3: <i className="iconfont iconweixin1 m-t-4 wechat" style={{ color: 'rgba(10, 206, 102, 1)' }} />,
-      4: <i className="iconfont iconqitabeifen m-t-4 other" style={{ color: 'rgba(0, 0, 0, 0.16)' }} />,
+      0: <i className="iconfont iconyinhangka1 m-t-4" style={{ color: 'rgba(255, 146, 0, 1)' }} />,
+      1: <i className="iconfont iconzhifubao1 m-t-4" style={{ color: 'rgba(3, 122, 254, 1)' }} />,
+      2: <i className="iconfont iconxianjin1 m-t-4" style={{ color: 'rgba(255, 185, 0, 1)' }} />,
+      3: <i className="iconfont iconweixin1 m-t-4" style={{ color: 'rgba(10, 206, 102, 1)' }} />,
+      4: <i className="iconfont iconqitabeifen m-t-4" style={{ color: 'rgba(0, 0, 0, 0.16)' }} />,
     };
-    return icon[type];
+    return icon[aType];
   };
     // 内容为空时，横杠代替
     const empty = () => {
      return <Icon type="minus" className={styles.minus} style={{marginLeft:'10px'}} />;
+    };
+    // 开户省市
+    const accountCity = () => {
+        if (awAreas.length) {
+            if (awAreas[0].areaName === awAreas[1].areaName) {
+                return awAreas[0].areaName; 
+            }
+                return `${awAreas[0].areaName}${awAreas[1].areaName}`;
+            }
+        return null;
+    };
+    // 删除账户
+    const del = (theId) => {
+        delCart(theId);
+    };
+    // 编辑账户
+    const edit = () => {
+        editCart();
+    };
+    // 编辑账户
+    const sign = (theAccount) => {
+        signCart(theAccount);
     };
     return (
       <Card style={{ width:'390px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
@@ -35,32 +59,38 @@ export default function index(props) {
         <div className={styles.accountType}>
           <span style={{ display: 'flex', alignItems: 'center' }}>
             {/* 账户图标 */}
-            {accountIcon(item.type)}
-            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)' }}>{item.bankName||accountType(item.type)}</span>
+            {accountIcon(type)}
+            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)' }}>{bankName||accountType(type)}</span>
           </span>
-          <span style={{color:'rgba(0, 0, 0, 0.65)'}}><i className="iconfont icona-caozuo3x"/></span>
+          <span className={styles.caozuo}>
+            <i className="iconfont icona-caozuo3x" />
+            <dl className={styles.content}>
+              <dt onClick={()=>edit(id)}>编辑</dt>         
+              <dt onClick={()=>del(id)}>删除</dt>         
+              {!signStatus&&signStatus!=null?<dt onClick={()=>sign(account)}>签约</dt>:<dt>-</dt>}         
+            </dl>     
+          </span>
         </div>
         {/* 名称 */}
         <div style={{ display: 'flex', alignItems: 'center',margin:'15px 0',lineHeight:'24px' }}>
-          <span className={styles.name}>{item.name}</span>
+          <span className={styles.name}>{name}</span>
           {/* 是否默认/已停用 */}
-          {item.isDefault?<Tag color="blue">默认</Tag>:null}
-          {/* <Tag color="red">已停用</Tag> */}
+          {(isDefault?<Tag color="blue">默认</Tag>:null)||(!status?<Tag color="red">已停用</Tag>:null)}
         </div>
         {/* 卡号/账号 */}
         <div>
           <i className="iconfont iconzhanghao c-black-016" />
-          {item.type===2||item.type===4?empty():<span className={styles.account}>{item.account}</span>}
+          {type===2||type===4?empty():<span className={styles.account}>{account}</span>}
         </div>
         {/* 开户行/支行 */}
         <div style={{ margin:'10px 0'}}>
           <i className="iconfont iconkaihushengshi c-black-016" />
-          {item.bankName ? <span className={styles.bankNameBranch}>浙江省杭州市 <i style={{ color: 'rgba(216, 216, 216, 1)' }}><Icon type="line" /></i> {item.bankNameBranch}</span>:empty()}
+          {bankName ? <span className={styles.bankNameBranch}>{accountCity()}<i style={{ color: 'rgba(216, 216, 216, 1)' }}><Icon type="line" /></i> {bankNameBranch}</span>:empty()}
         </div>
         {/* 备注 */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <i className="iconfont iconbeizhu c-black-016" />
-          {item.note?<span className={styles.note}>{item.note}</span>:empty()}
+          {note?<Tooltip placement="topLeft" title={note}><span className={styles.note}>{note}</span></Tooltip>:empty()}
         </div>
       </Card>
     );

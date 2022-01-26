@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Table, Divider, Button, Tag, message, Modal, Tooltip } from 'antd';
+import { Table,  Button,  message, Modal} from 'antd';
 import { connect } from 'dva';
-import { accountType, getArrayValue } from '@/utils/constants';
 import AddAccount from './components/AddModal';
-import { signStatus } from '../../../utils/constants';
+import AccountCart from '@/components/Account/';
 
 const { confirm } = Modal;
 @connect(({ loading, receiptAcc, session }) => ({
@@ -82,70 +81,27 @@ class Account extends Component {
     const { query } = this.props;
     this.onQuery({ ...query });
   }
+  // 删除账户
+
+  delchange = (id) => {
+    this.handleVisibleChange(id);
+  }
+  // 编辑账户
+
+  editchange = () => {
+    this.onOk();
+  }
 
   render() {
     const { list, query, total, loading } = this.props;
-
-    const columns = [{
-      title: '收款人名称',
-      dataIndex: 'name',
-      render: (_, record) => (
-        <span>
-          <span style={{ marginRight: '8px' }}>{record.name}</span>
-          { record.isDefault && <Tag color="blue">默认</Tag> }
-          { record.status === 0 && <Tag color="red">已停用</Tag> }
-        </span>
-      ),
-      width: 140
-    }, {
-      title: '账户类型',
-      dataIndex: 'type',
-      render: (_, record) => (
-        <span>{getArrayValue(record.type, accountType)}</span>
-      ),
-      width: 100
-    }, {
-      title: '签约状态',
-      dataIndex: 'signStatus',
-      render: (_, record) => (
-        <>
-          {
-            record.type === 1 ?
-              <span>{getArrayValue(record.signStatus, signStatus)}</span>
-              :
-              '-'
-          }
-        </>
-      ),
-      width: 100
-    }, {
-      title: '备注',
-      dataIndex: 'note',
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
-      width: 160
-    }, {
+    const columns = [   {
       title: '操作',
       dataIndex: 'ope',
       render: (_, record) => (
         <span>
-          <span className="deleteColor" onClick={() => this.handleVisibleChange(record.id)}>删除</span>
-          <Divider type="vertical" />
           <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
             <a>编辑</a>
           </AddAccount>
-          {/* {
-            record.type === 1 && !record.signStatus &&
-            <>
-              <Divider type="vertical" />
-              <a onClick={() => this.sign(record.account)}>签约</a>
-            </>
-           } */}
         </span>
       ),
       width: 80,
@@ -160,9 +116,12 @@ class Account extends Component {
               <Button type="primary">新增收款账户</Button>
             </AddAccount>
           </div>
-          {/* <div className="head_rg">
-            <span>排序</span>
-          </div> */}
+        </div>
+        {/* 放置卡片 */}
+        <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+          {list.map((item) => {
+             return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} editCart={(c) => this.editchange(c)}/>;
+            })}
         </div>
         <Table
           columns={columns}
