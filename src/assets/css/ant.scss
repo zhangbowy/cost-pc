@@ -6,12 +6,12 @@
   //写在这里
   .ant-layout-sider {
     .ant-menu-inline-collapsed{
-      .ant-menu-item-selected{ 
+      .ant-menu-item-selected{
         border-left: 4px solid rgba(26, 206, 179, 1)!important;
         // i{
         //   color:rgba(0, 199, 149, 1)!important;
         // }
-      } 
+      }
       width: 64px!important;
       .ant-menu-item{
         padding: 0 23px !important;
@@ -20,13 +20,13 @@
         padding: 0 23px !important;
       }
     }
- .app-menu{ 
-  .ant-menu-item-selected{ 
+ .app-menu{
+  .ant-menu-item-selected{
         border-left: 4px solid rgba(26, 206, 179, 1)!important;
         // i{
         //   color:rgba(0, 199, 149, 1)!important;
         // }
-      } 
+      }
   .ant-menu-item{
     line-height: 56px!important;
     height: 56px!important;
@@ -296,4 +296,17 @@
     z-index: 10;
   }
 
+  .ant-select-selection{
+    border-radius: 2px!important;
+  }
+  .ant-input{
+    border-radius: 2px!important;
+  }
+
+  .ant-input-number-input{
+    border-radius: 2px!important;
+  }
+  .ant-btn{
+    border-radius: 2px!important;
+  }
 }

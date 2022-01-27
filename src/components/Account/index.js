@@ -1,11 +1,11 @@
 import React from 'react';
 import { Card,Tag,Icon,Tooltip} from 'antd';
 import styles from './index.scss';
-import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal';
+// import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal';
 
 export default function index(props) {
-    const {item,delCart,onOk,signCart} = props;
-    const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;    
+    const {item,delCart,signCart} = props;
+    const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;
    // 账户类型
     const accountType = (aType) => {
     const theType = {
@@ -35,7 +35,7 @@ export default function index(props) {
     const accountCity = () => {
         if (awAreas.length) {
             if (awAreas[0].areaName === awAreas[1].areaName) {
-                return awAreas[0].areaName; 
+                return awAreas[0].areaName;
             }
                 return `${awAreas[0].areaName}${awAreas[1].areaName}`;
             }
@@ -46,9 +46,9 @@ export default function index(props) {
         delCart(theId);
     };
     // 编辑账户
-    const edit = () => {
-        onOk();
-    };
+    // const edit = () => {
+    //     onOk();
+    // };
     // 编辑账户
     const sign = (theAccount) => {
         signCart(theAccount);
@@ -65,10 +65,10 @@ export default function index(props) {
           <span className={styles.caozuo}>
             <i className="iconfont icona-caozuo3x" />
             <dl className={styles.content}>
-              <dt onClick={()=>edit(id)}><AddAccount title="edit" record={item} onClick={() =>onOk()}>编辑</AddAccount></dt>         
-              <dt onClick={()=>del(id)}>删除</dt>         
-              {!signStatus&&signStatus!=null?<dt onClick={()=>sign(account)}>签约</dt>:<dt>-</dt>}         
-            </dl>     
+              {/* <dt onClick={()=>edit(id)}><AddAccount title="edit" record={item} onClick={() =>onOk()}>编辑</AddAccount></dt>          */}
+              <dt onClick={()=>del(id)}>删除</dt>
+              {!signStatus&&signStatus!=null?<dt onClick={()=>sign(account)}>签约</dt>:<dt>-</dt>}
+            </dl>
           </span>
         </div>
         {/* 名称 */}

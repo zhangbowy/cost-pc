@@ -86,7 +86,7 @@ class Account extends Component {
   delchange = (id) => {
     this.handleVisibleChange(id);
   }
-  
+
   render() {
     const { list, query, total, loading } = this.props;
     const onChange = (pageNumber) => {
@@ -102,7 +102,7 @@ class Account extends Component {
       });
     };
     return (
-      <div className="content-dt">
+      <div className="content-dt" style={{ backgroundColor: '#F7F8FA'}}>
         <div className="cnt-header">
           <div className="head_lf">
             <AddAccount onOk={this.onOk} title="add">
