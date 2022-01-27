@@ -102,7 +102,7 @@ class Account extends Component {
       });
     };
     return (
-      <div className="content-dt">
+      <div className="content-dt content-add">
         <div className="cnt-header">
           <div className="head_lf">
             <AddAccount onOk={this.onOk} title="add">

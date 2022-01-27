@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card,Tag,Icon,Tooltip} from 'antd';
 import styles from './index.scss';
-import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal';
+import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
 
 export default function index(props) {
     const {item,delCart,onOk,signCart} = props;
@@ -46,10 +46,6 @@ export default function index(props) {
         delCart(theId);
     };
     // 编辑账户
-    const edit = () => {
-        onOk();
-    };
-    // 编辑账户
     const sign = (theAccount) => {
         signCart(theAccount);
     };
@@ -65,7 +61,7 @@ export default function index(props) {
           <span className={styles.caozuo}>
             <i className="iconfont icona-caozuo3x" />
             <dl className={styles.content}>
-              <dt onClick={()=>edit(id)}><AddAccount title="edit" record={item} onClick={() =>onOk()}>编辑</AddAccount></dt>         
+              <dt><AddAccount title="edit" record={item} onOk={() =>onOk()}>编辑</AddAccount></dt>         
               <dt onClick={()=>del(id)}>删除</dt>         
               {!signStatus&&signStatus!=null?<dt onClick={()=>sign(account)}>签约</dt>:<dt>-</dt>}         
             </dl>     
@@ -85,7 +81,9 @@ export default function index(props) {
         {/* 开户行/支行 */}
         <div style={{ margin:'10px 0'}}>
           <i className="iconfont iconkaihushengshi c-black-016" />
-          {bankName ? <span className={styles.bankNameBranch}>{accountCity()}<i style={{ color: 'rgba(216, 216, 216, 1)' }}><Icon type="line" /></i> {bankNameBranch}</span>:empty()}
+          {bankName ?
+            <span className={styles.bankNameBranch}>{accountCity()}<i style={{ color: 'rgba(216, 216, 216, 1)' }}><Icon type="line" /></i> {bankNameBranch}</span>
+            : empty()}
         </div>
         {/* 备注 */}
         <div style={{ display: 'flex', alignItems: 'center' }}>

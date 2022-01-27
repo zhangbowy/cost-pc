@@ -28,13 +28,20 @@
     background: #fff;
   }
   .content-dt{
-    background: #f7f8fa;
+    background: #ffff;
     height: 100%;
     padding: 24px 32px;
     margin: 24px;
     border-radius:2px;
     overflow-y: scroll;
     min-width: 952px;
+  }
+  .content-add{
+    overflow-y: unset;
+    background: #f7f8fa;
+    .cnt-header{
+      margin-bottom: 0;
+    }
   }
   .app_header {
     height: 106px;
