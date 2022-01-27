@@ -442,7 +442,7 @@ class AddCost extends Component {
       tId: 'value',
       tName: 'title',
       otherKeys: ['type','showField', 'icon', 'note']
-    }, newList);
+    }, newList.sort(compare('sort')));
     function addParams(lists){
       lists.forEach(it => {
         if (it.type === 0) {
