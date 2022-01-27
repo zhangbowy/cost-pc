@@ -54,8 +54,8 @@ class ChangeForm extends Component {
       if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
         callback('金额小数不能超过2位');
       }
-      if (value > 100000000 || value === 100000000) {
-        callback('金额需小于1个亿');
+      if (value > 100000000000000 || value === 100000000000000) {
+        callback('金额需小于1万个亿');
       }
       if (value < 0) {
         callback('金额不能小于零');
@@ -662,7 +662,9 @@ renderTreeNodes = data =>
                     <Form.Item label={showField.deptId && showField.deptId.name} >
                       {
                         getFieldDecorator('deptId', {
-                          initialValue: details.deptId ? `${details.deptId}` : '',
+                          initialValue: details.deptId
+                            && depList.findIndex(it => `${it.deptId}` === `${details.deptId}`) > -1
+                            ? `${details.deptId}` : '',
                           rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
                         })(
                           <Select
@@ -693,7 +695,9 @@ renderTreeNodes = data =>
                       <Form.Item label={labelInfo.createDeptId} >
                         {
                           getFieldDecorator('createDeptId', {
-                            initialValue: details.createDeptId ? `${details.createDeptId}` : '',
+                            initialValue: details.createDeptId
+                              && createDepList.findIndex(it => `${it.deptId}` === `${details.createDeptId}`) > -1
+                              ? `${details.createDeptId}` : '',
                             rules: [{ required: true, message: '请选择部门' }]
                           })(
                             <Select
@@ -1061,6 +1065,7 @@ renderTreeNodes = data =>
                               treeNodeFilterProp='title'
                               disabled={modify && !showField.project.isModify}
                               getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onChange={(val) => this.onChangePro(val, 'project')}
                             >
                               {this.renderTreeNodes(projectList)}
                             </TreeSelect>

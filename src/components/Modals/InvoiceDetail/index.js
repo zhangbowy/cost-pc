@@ -28,7 +28,7 @@ import MainText from './MainText';
 import BasicText from './BasicText';
 // import { DownloadFile } from '../../../utils/ddApi';
 
-const { aliTraffic } = fields;
+const { aliTraffic, signName } = fields;
 const { APP_API } = constants;
 @withRouter
 @connect(({ global, costGlobal, session }) => ({
@@ -662,7 +662,7 @@ class InvoiceDetail extends Component {
                 {
                   canRefuse &&
                   <Button className="m-r-8" onClick={() => this.onChangeSign()}>
-                    { isSign ? '移回待发放' : '移至已票签' }
+                    { isSign ? '移回待发放' : `移至已${signName[templateType]}` }
                   </Button>
                 }
                 {

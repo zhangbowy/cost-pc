@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import cs from 'classnames';
-import { Modal, Tooltip } from 'antd';
+import { Modal, Tooltip, Button } from 'antd';
 import { debounce } from 'lodash-decorators';
 import withRouter from 'umi/withRouter';
+import Search from 'antd/lib/input/Search';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 // import AddInvoice from './AddInvoice';
-import Tags from '../Tags';
+// import Tags from '../Tags';
 
 @withRouter
 @connect(({ global, costGlobal }) => ({
@@ -24,7 +25,7 @@ class SelectInvoice extends Component {
     visible: false,
     scrollCancel: false,
     list: [],
-    id: 'often',
+    id: '',
     selectCost: [],
     // templateType: 0,
     // invoiceVisible: false,
@@ -210,6 +211,11 @@ class SelectInvoice extends Component {
     );
   };
 
+  onSearch = (val) => {
+    console.log('🚀 ~ file: SelectInvoice.js ~ line 215 ~ SelectInvoice ~ val', val);
+
+  }
+
   onCancel = () => {
     if (this.props.onCancel) {
       this.props.onCancel();
@@ -232,25 +238,27 @@ class SelectInvoice extends Component {
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
         <Modal
           title={null}
-          footer={null}
+          footer={[
+            <Button key="cancel" type="default">取消</Button>,
+            <Button key="go">去填写单据</Button>,
+          ]}
           onCancel={this.onCancel}
           visible={visible}
-          width="780px"
+          width="980px"
           bodyStyle={{
             height: '500px',
-            padding: '38px 40px 34px'
+            padding: '38px 24px 34px 32px'
           }}
         >
-          <p className="fs-24 fw-500 m-b-24 c-black-85">选择单据模板</p>
+          <p className="fs-24 fw-500 m-b-16 c-black-85">选择单据模板</p>
           <div className={style.scrollCont}>
             <div className={style.slInLeft}>
-              <p className="c-black-25 fs-14">选择分组</p>
+              <p className="c-black-85 fs-14 fw-500 m-t-16">全部</p>
               <div className={style.scroll}>
                 {
                   list.map(it => (
                     <p className={cs(style.namePro, 'm-b-16')} key={it.id} onClick={() => this.scrollToAnchor(it.id)}>
                       <span className={id ===it.id ? cs(style.name, 'c-black-85', 'fw-500') : cs(style.name, 'c-black-65')}>{it.name}</span>
-                      <span className="c-black-25">{it.children ? it.children.length : 0}</span>
                     </p>
                   ))
                 }
@@ -261,6 +269,13 @@ class SelectInvoice extends Component {
               ref={scroll => {this.scroll=scroll;}}
               onScroll={({target}) => this.handleScroll(target)}
             >
+              <div className="m-r-8">
+                <Search
+                  placeholder="请输入单据名称"
+                  className="m-b-16"
+                  onSearch={this.onSearch}
+                />
+              </div>
               {
                 list.map(it => {
                   let childrens = null;
@@ -299,30 +314,28 @@ class SelectInvoice extends Component {
                   }
                   return (
                     <div className="m-b-20" key={it.id} id={it.id} data-id={it.id} dataset={it}>
-                      <div style={{display: 'flex', alignItems: 'center'}} className="m-b-12">
-                        <p className="c-black-85 fs-16 fw-500" style={{marginBottom: '0'}}>
-                          {it.name}
-                        </p>
-                        <span style={{ marginLeft: '6px' }}>
+                      <div style={{display: 'flex', alignItems: 'center'}} className="m-b-8">
+                        <span style={{ marginRight: '6px' }}>
                           {
                             (it.type === 0) && it.templateType === 0 &&
-                            <Tags color='rgba(38, 128, 242, 0.08)'>
-                              报销
-                            </Tags>
+                            <i className="iconfont icona-baoxiaodan3x" />
                           }
                           {
                             (it.type === 0) && it.templateType === 1 &&
-                            <Tags color='rgba(0, 199, 149, 0.08)'>
-                              借款
-                            </Tags>
+                            <i className="iconfont icona-jiekuandan3x" />
                           }
                           {
                             (it.type === 0) && it.templateType === 2 &&
-                            <Tags color='rgba(255, 159, 0, 0.08)'>
-                              申请
-                            </Tags>
+                            <i className="iconfont icona-shenqingdan3x" />
+                          }
+                          {
+                            (it.type === 0) && it.templateType === 3 &&
+                            <i className="iconfont icona-zidingyifenzu3x" />
                           }
                         </span>
+                        <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
+                          {it.name}
+                        </p>
                       </div>
                       <div style={{display: 'flex', flexWrap: 'wrap'}}>
                         {childrens}
@@ -333,20 +346,6 @@ class SelectInvoice extends Component {
               }
             </div>
           </div>
-          {/* <AddInvoice
-            templateType={templateType}
-            visible={invoiceVisible}
-            id={invoiceId}
-            // onHandleOk={this.props.onOk}
-            costSelect={selectCost}
-            onChangeVisible={() => this.onChangeVi()}
-            onFolder={() => { this.setState({ visible: false }); if (this.props.onHandle) this.props.onHandle(); }}
-            onHandleOk={() => {
-              if (this.props.onCallback) {
-                this.props.onCallback();
-              }
-            }}
-          /> */}
         </Modal>
       </span>
     );

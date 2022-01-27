@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button,  message, Modal,Pagination} from 'antd';
+import { Button, message, Modal } from 'antd';
 import { connect } from 'dva';
+// import { accountType, getArrayValue } from '@/utils/constants';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
-import AccountCart from '@/components/Account/';
+// import { signStatus } from '../../../utils/constants';
 
 const { confirm } = Modal;
 @connect(({ loading, account, session }) => ({
@@ -78,7 +79,7 @@ class Account extends Component {
       }
     });
   }
-  
+
   onOk = () => {
     const { query } = this.props;
     this.onQuery({ ...query });
@@ -111,18 +112,18 @@ class Account extends Component {
   render() {
     const { list, query, total, loading } = this.props;
     console.log(list, query, total, loading,'666666');
-    const onChange = (pageNumber) => {
-      this.onQuery({
-        pageNo: pageNumber,
-        pageSize: query.pageSize
-      });
-    };
-    const onShowSizeChange = (cur, size) => {
-      this.onQuery({
-        pageNo: cur,
-        pageSize: size
-      });
-    };
+    // const onChange = (pageNumber) => {
+    //   this.onQuery({
+    //     pageNo: pageNumber,
+    //     pageSize: query.pageSize
+    //   });
+    // };
+    // const onShowSizeChange = (cur, size) => {
+    //   this.onQuery({
+    //     pageNo: cur,
+    //     pageSize: size
+    //   });
+    // };
     return (
       <div>
         <PageHead title="公司付款账户设置" />
@@ -134,26 +135,6 @@ class Account extends Component {
               </AddAccount>
             </div>
           </div>
-          {/* 放置卡片 */}
-          <div style={{ display: 'flex', flexWrap: 'wrap'}}>
-            {list.map((item) => {
-              return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()} signCart={(c) => this.signChange(c)}/>;
-            })}
-          </div>
-          {/* 分页 */}
-          <Pagination
-            style={{float:'right',margin:'16px 0'}}
-            loading={loading}
-            size="small"
-            current={query.pageNo}
-            total={total}
-            showQuickJumper
-            showSizeChanger
-            defaultCurrent={2}
-            onChange={onChange}
-            onShowSizeChange={onShowSizeChange}
-            showTotal={() => (`共${total}条数据`)}
-          />
         </div>
       </div>
     );

@@ -42,7 +42,7 @@
     }
     .newLogo{
       width: 32px;
-      background: url(@/assets/img/newLogo.png) no-repeat; 
+      background: url(@/assets/img/newLogo.png) no-repeat;
       background-size: cover;
       background-position:0 4px;
     }
@@ -128,4 +128,11 @@
     }
 }
 }
-  
+
+.menuStyle{
+  :global{
+    .ant-menu-sub{
+      background: #fff;
+    }
+  }
+}

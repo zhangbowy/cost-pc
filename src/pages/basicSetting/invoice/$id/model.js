@@ -11,6 +11,7 @@ export default {
     expandLists: [],
     fieldList: [], // 获取公有字段
     approveList: [],
+    isOpenProject: false,
   },
   effects: {
     *allList({ payload }, { call, put }) {
@@ -82,7 +83,16 @@ export default {
           detail: response || {},
         },
       });
-    }
+    },
+    *isOpenProject({ payload }, { call, put }) {
+      const response = yield call(post, api.isOpenProject, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          isOpenProject: response || false,
+        },
+      });
+    },
   },
   reducers: {
     save(state, { payload }) {

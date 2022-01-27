@@ -75,7 +75,6 @@ class Left extends Component {
     console.log('Left -> checkValues', checkValues);
     const { expandList } = this.props;
     const templatePdfExpandVos = expandList.filter(it => checkValues.includes(it.field)) || [];
-    console.log('Left -> templatePdfExpandVos', templatePdfExpandVos);
     const obj = { ...this.props.templatePdfVo };
     Object.assign(obj, {
       templatePdfExpandVos,
@@ -89,8 +88,13 @@ class Left extends Component {
     const {
       expandList,
       templatePdfVo,
-      templateType
+      templateType,
+      isProject,
     } = this.props;
+    const lists = basicSet[templateType];
+    if (isProject && lists.findIndex(it => it.key === 'isProject') === -1) {
+      lists.push({ key: 'isProject', value: '项目信息' });
+    }
     return (
       <div className={style.left}>
         <Form style={{ padding: '1px 0px' }}>

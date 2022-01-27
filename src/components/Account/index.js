@@ -3,9 +3,10 @@ import { Card,Tag,Icon,Tooltip} from 'antd';
 import styles from './index.scss';
 import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
 
+
 export default function index(props) {
-    const {item,delCart,onOk,signCart} = props;
-    const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;    
+    const {item,delCart,signCart,onOk} = props;
+    const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;
    // 账户类型
     const accountType = (aType) => {
     const theType = {
@@ -35,7 +36,7 @@ export default function index(props) {
     const accountCity = () => {
         if (awAreas.length) {
             if (awAreas[0].areaName === awAreas[1].areaName) {
-                return awAreas[0].areaName; 
+                return awAreas[0].areaName;
             }
                 return `${awAreas[0].areaName}${awAreas[1].areaName}`;
             }
@@ -44,8 +45,8 @@ export default function index(props) {
     // 删除账户
     const del = (theId) => {
         delCart(theId);
-    };
-    // 编辑账户
+  };
+    // 签约
     const sign = (theAccount) => {
         signCart(theAccount);
     };

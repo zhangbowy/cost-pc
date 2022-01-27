@@ -137,7 +137,7 @@ class App extends React.PureComponent {
       collapsed:!this.state.collapsed,
     });
   };
-  
+
   render() {
     const {
       collapsed,
@@ -180,7 +180,7 @@ class App extends React.PureComponent {
         <Menu
           theme="dark"
           mode="inline"
-          className="app-menu"
+          className={isCollapsed ? cs('app-menu', styles.menuStyle) : 'app-menu'}
           {...menuProps}
           selectedKeys={selectedKeys}
           onOpenChange={this.onOpenChange}

@@ -37,7 +37,8 @@ const basicStr = [{
   approveList: addInvoice.approveList,
   expandLists: addInvoice.expandLists,
   fieldList: addInvoice.fieldList,
-  isModifyInvoice: costGlobal.isModifyInvoice
+  isModifyInvoice: costGlobal.isModifyInvoice,
+  isOpenProject: addInvoice.isOpenProject,
 }))
 class CategoryAdd extends PureComponent {
 
@@ -58,6 +59,7 @@ class CategoryAdd extends PureComponent {
       'isImage':true,
       templatePdfExpandVos: [],
     },
+    isOpenProject: false,
     reLoan: [],
     reApply: [],
   }
@@ -302,7 +304,6 @@ class CategoryAdd extends PureComponent {
     const newSelectList = [...selectList];
     if (this.childRef && this.childRef.getRightParams) {
       const valStr = this.childRef.getRightParams();
-      console.log('CategoryAdd -> onStep -> valStr', valStr);
       if (!valStr) {
         return;
       }
@@ -312,6 +313,33 @@ class CategoryAdd extends PureComponent {
     this.setState({
       current: e.key,
       selectList: newSelectList
+    }, () => {
+      console.log('data', this.state.data);
+      const { data } = this.state;
+      this.isOpenProject({
+        isAllCostCategory: data.isAllCostCategory,
+        costCategory: data.costCategory
+      });
+    });
+  }
+
+  isOpenProject = ({ isAllCostCategory, costCategory }) => {
+    const params = {
+      isAll: isAllCostCategory,
+    };
+    if (!isAllCostCategory) {
+      Object.assign(params, {
+        costCategoryIds: costCategory,
+      });
+    }
+    this.props.dispatch({
+      type: 'addInvoice/isOpenProject',
+      payload: {...params},
+    }).then(() => {
+      const { isOpenProject } = this.props;
+      this.setState({
+        isOpenProject,
+      });
     });
   }
 
@@ -322,10 +350,10 @@ class CategoryAdd extends PureComponent {
     const paramsT = id.split('_');
     const { userInfo } = this.props;
     const datas = data;
+    console.log('🚀 ~ file: index.js ~ line 325 ~ CategoryAdd ~ datas', datas);
     const newSelectList = [...selectList];
     if (this.formRef && this.formRef.getFormItem) {
       const values = this.formRef.getFormItem();
-      console.log('CategoryAdd -> onStep -> values', values);
       if(!values) {
         return;
       }
@@ -334,10 +362,8 @@ class CategoryAdd extends PureComponent {
         status: values.status ? 1 : 0,
       });
     }
-    console.log('CategoryAdd -> onStep -> valStr', this.childRef);
     if (this.childRef && this.childRef.getRightParams) {
       const valStr = this.childRef.getRightParams();
-      console.log('CategoryAdd -> onStep -> valStr', valStr);
       if (!valStr) {
         return;
       }
@@ -374,7 +400,6 @@ class CategoryAdd extends PureComponent {
         });
       }
       const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
-      console.log('CategoryAdd -> onStep -> showField', showField);
       const url = title === 'add' || paramsT.length === 3 ? 'addInvoice/add' : 'addInvoice/edit';
       const params = {
         ...datas,
@@ -416,10 +441,15 @@ class CategoryAdd extends PureComponent {
       });
     } else {
       const index = basicStr.findIndex(it => it.key === current);
-      console.log('CategoryAdd -> onStep -> index', index);
       this.setState({
         data: datas,
         current: flag === 'up' ? basicStr[index+1].key : basicStr[index-1].key,
+      }, () => {
+        const newData = this.state.data;
+        this.isOpenProject({
+          isAllCostCategory: newData.isAllCostCategory,
+          costCategory: newData.costCategory
+        });
       });
     }
   }
@@ -433,7 +463,6 @@ class CategoryAdd extends PureComponent {
       let newArr = [...fieldList];
       const oldField = newArr.map(it => it.field);
       const add = [];
-      console.log('CategoryAdd -> onChangeData -> value', value);
       const fields = value.map(it => {
         if (!oldField.includes(it.field) && (it.field.indexOf('expand_') > -1)) {
           add.push(it);
@@ -502,6 +531,7 @@ class CategoryAdd extends PureComponent {
       templatePdfVo,
       reLoan,
       reApply,
+      isOpenProject,
     } = this.state;
     const {  dispatch, userInfo } = this.props;
     const { categoryList, data, templateType } = this.state;
@@ -629,6 +659,7 @@ class CategoryAdd extends PureComponent {
               isRelationLoan={data.isRelationLoan}
               invoiceName={data.name}
               categoryStatus={data.categoryStatus}
+              isOpenProject={isOpenProject}
             />
           </div>
         }
