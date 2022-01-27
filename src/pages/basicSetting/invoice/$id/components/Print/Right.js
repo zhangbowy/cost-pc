@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import cs from 'classnames';
 import style from './index.scss';
@@ -17,12 +18,17 @@ const tempObj = {
   3: '提交'
 };
 function Right({ templateType, templatePdfVo, corpName,
-  isRelationLoan, invoiceName, categoryStatus, notes, supplier }) {
+  isRelationLoan, invoiceName, categoryStatus, notes, supplier, isProject }) {
   const list = templatePdfVo.templatePdfExpandVos || [];
   const one = list.filter(it => it.fieldType === 1) || [];
+console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
   const two = list.filter(it => it.fieldType !== 1 && Number(it.fieldType) !== 3);
   const twos = arrayGroup(two, 2);
+  console.log('🚀 ~ file: Right.js ~ line 27 ~ twos', twos);
   const lists = list.filter(it => Number(it.fieldType) === 3);
+  if (isProject && templatePdfVo.isProject) {
+    twos.push([{ field: 'project', name: '项目' }]);
+  }
   return (
     <div style={{ background: '#fff', position: 'relative' }} className={style[pdf[templatePdfVo.paperType]]}>
       <img src={zdx} alt='装订线' className={style.zdx} />
@@ -166,9 +172,13 @@ function Right({ templateType, templatePdfVo, corpName,
             <table>
               <tr>
                 {
-                  Number(templateType) === 0 ||
-                  (Number(templateType) === 3 && !Number(templatePdfVo.paperType)) &&
+                  (Number(templateType) === 0 ||
+                  Number(templateType) === 3) &&
                   <th>承担人/部门</th>
+                }
+                {
+                  isProject && templatePdfVo.isProject &&
+                  <th>项目</th>
                 }
                 <th>支出类别</th>
                 <th>备注</th>
@@ -177,8 +187,12 @@ function Right({ templateType, templatePdfVo, corpName,
               </tr>
               <tr>
                 <td
-                  colSpan={Number(templateType) === 0 ||
-                  (Number(templateType) === 3 && !Number(templatePdfVo.paperType)) ? '5' : '4'}
+                  colSpan={
+                    ((Number(templateType) === 0 ||
+                      (Number(templateType) === 3)) && isProject && templatePdfVo.isProject) ? '6'
+                      : ((Number(templateType) === 0 ||
+                      (Number(templateType) === 3)) || (isProject && templatePdfVo.isProject)) ? 5 : '4'
+}
                 />
               </tr>
             </table>

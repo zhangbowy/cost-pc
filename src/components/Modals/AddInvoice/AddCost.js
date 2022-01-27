@@ -143,11 +143,15 @@ class AddCost extends Component {
   }
 
   onShow = async() => {
-    const { costType, isDelete4Category, officeId } = this.props;
+    const { costType, isDelete4Category, officeId, isShowToast } = this.props;
     console.log('AddCost -> onShow -> officeId', officeId);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
+      return;
+    }
+    if (isShowToast && !officeId) {
+      message.error('请先填写所在公司');
       return;
     }
     this.fetchInit(async() => {
@@ -438,7 +442,7 @@ class AddCost extends Component {
       tId: 'value',
       tName: 'title',
       otherKeys: ['type','showField', 'icon', 'note']
-    }, newList);
+    }, newList.sort(compare('sort')));
     function addParams(lists){
       lists.forEach(it => {
         if (it.type === 0) {
@@ -780,8 +784,8 @@ class AddCost extends Component {
       if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
         callback('金额小数不能超过2位');
       }
-      if (value > 100000000 || value === 100000000) {
-        callback('金额需小于1个亿');
+      if (value > 100000000000000 || value === 100000000000000) {
+        callback('金额需小于1万个亿');
       }
       if (value < 0) {
         callback('金额不能小于零');

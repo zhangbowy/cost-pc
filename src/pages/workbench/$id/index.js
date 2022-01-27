@@ -1634,6 +1634,7 @@ class addInvoice extends Component {
                           modify={modify}
                           templateType={Number(templateType)}
                           officeId={details.officeId}
+                          isShowToast={officeList.length}
                         >
                           <Button
                             icon={costDetailsVo && costDetailsVo.length > 0 ? 'none' : 'plus'}
@@ -1654,6 +1655,7 @@ class addInvoice extends Component {
                           list={costDetailsVo}
                           invoiceName={inDetails.name}
                           officeId={details.officeId}
+                          isShowToast={officeList.length}
                         >
                           <Button
                             icon={costDetailsVo && costDetailsVo.length > 0 ? 'none' : 'plus'}

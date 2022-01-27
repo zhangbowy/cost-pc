@@ -16,4 +16,5 @@ export default{
   expandLists: `${APP_API}/cost/category/queryExpand`,
   fieldList: `${APP_API}/cost/invoice/template/fieldList`,
   approve: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`,
+  isOpenProject: `${APP_API}/cost/category/isOpenProject`,
 };

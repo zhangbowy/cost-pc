@@ -53,8 +53,8 @@ class ChangeForm extends Component {
       if (!/^(([1-9]{1}\d*)|(0{1}))(\.\d{0,2})?$/.test(value)) {
         callback('金额小数不能超过2位');
       }
-      if (value > 100000000 || value === 100000000) {
-        callback('金额需小于1个亿');
+      if (value > 100000000000000 || value === 100000000000000) {
+        callback('金额需小于1万个亿');
       }
       if (value < 0) {
         callback('金额不能小于零');

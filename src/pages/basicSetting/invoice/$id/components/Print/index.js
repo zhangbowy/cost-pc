@@ -5,9 +5,9 @@ import Right from './Right';
 import style from './index.scss';
 
 function index({ templatePdfVo, selectList, templateType, onChange,
-  isRelationLoan, corpName, invoiceName, categoryStatus }) {
+  isRelationLoan, corpName, invoiceName, categoryStatus, isOpenProject }) {
   const expandList = selectList.filter(it => it.field.indexOf('expand') > -1) || [];
-  console.log(selectList);
+  const isProject = selectList.findIndex(it => it.field === 'project') > -1;
   return (
     <>
       <Left
@@ -15,6 +15,7 @@ function index({ templatePdfVo, selectList, templateType, onChange,
         templatePdfVo={templatePdfVo}
         onChange={onChange}
         templateType={templateType}
+        isProject={isOpenProject || isProject}
       />
       <div className={style.rightContainer}>
         <div className={style.rights}>
@@ -24,6 +25,7 @@ function index({ templatePdfVo, selectList, templateType, onChange,
             isRelationLoan={isRelationLoan}
             corpName={corpName}
             invoiceName={invoiceName}
+            isProject={isOpenProject || isProject}
             categoryStatus={categoryStatus}
             notes={selectList.filter(it => it.field === 'note')}
             supplier={selectList.filter(it => it.field === 'supplier')}

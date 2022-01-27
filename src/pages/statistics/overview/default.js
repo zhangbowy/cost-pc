@@ -103,7 +103,7 @@ export default {
       valueStr: initMonth.valueStr,
     }, {
       type: 'dept',
-      label: '承担部门',
+      label: '部门',
       placeholder: '请选择',
       key: 'deptVos',
       id: 'deptVos',
@@ -163,7 +163,7 @@ export default {
       valueStr: initMonth.valueStr,
     }, {
       type: 'dept',
-      label: '承担部门',
+      label: '部门',
       placeholder: '请选择',
       key: 'deptVos',
       id: 'deptVos',
@@ -303,7 +303,7 @@ export default {
       valueStr: initMonth.valueStr,
     }, {
       type: 'deptAndUser',
-      label: '承担部门/人',
+      label: '部门/人',
       placeholder: '请选择',
       key: ['userVos', 'deptVos'],
       id: 'userVos',
