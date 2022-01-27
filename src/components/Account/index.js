@@ -5,7 +5,7 @@ import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
 
 
 export default function index(props) {
-    const {item,delCart,signCart,onOk} = props;
+    const {item,delCart,signCart,onOk,personal} = props;
     const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;
    // 账户类型
     const accountType = (aType) => {
@@ -64,7 +64,7 @@ export default function index(props) {
             <dl className={styles.content}>
               <dt><AddAccount title="edit" record={item} onOk={() =>onOk()}>编辑</AddAccount></dt>         
               <dt onClick={()=>del(id)}>删除</dt>         
-              {!signStatus&&signStatus!=null?<dt onClick={()=>sign(account)}>签约</dt>:<dt>-</dt>}         
+              {(!signStatus&&signStatus!=null||!personal&&personal!=null)?<dt onClick={()=>sign(account)}>签约</dt>:null}         
             </dl>     
           </span>
         </div>

@@ -90,6 +90,7 @@ class Account extends Component {
 
   render() {
     const { list, query, total, loading } = this.props;
+    console.log(list,'个人收款账户list');
     const onChange = (pageNumber) => {
       this.onQuery({
         pageNo: pageNumber,
@@ -116,7 +117,7 @@ class Account extends Component {
           {/* 放置卡片 */}
           <div style={{ display: 'flex', flexWrap: 'wrap'}}>
             {list.map((item) => {
-             return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()}/>;
+             return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} signChange={(c) => this.signChange(c)} onOk={() => this.onOk()}/>;
             })}
           </div>
           <Pagination
