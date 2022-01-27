@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Button,  message, Modal} from 'antd';
+import { Button,  message, Modal,Pagination} from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
@@ -102,11 +102,6 @@ class Account extends Component {
   delchange = (id) => {
     this.handleVisibleChange(id);
   }
-  // 编辑账户
-
-  editchange = () => {
-    this.onOk();
-  }
   // 签约
 
   signChange = (account) => {
@@ -115,16 +110,18 @@ class Account extends Component {
 
   render() {
     const { list, query, total, loading } = this.props;
-    console.log(list,'9999');
-    const columns = [ {
-      render: (_, record) => (
-        <span>
-          <AddAccount title="edit" record={record} onOk={() => this.onOk()}>
-            <a>编辑</a>
-          </AddAccount>
-        </span>
-      ),
-    }];
+    const onChange = (pageNumber) => {
+      this.onQuery({
+        pageNo: pageNumber,
+        pageSize: query.pageSize
+      });
+    };
+    const onShowSizeChange = (cur, size) => {
+      this.onQuery({
+        pageNo: cur,
+        pageSize: size
+      });
+    };
     return (
       <div>
         <PageHead title="公司付款账户设置" />
@@ -139,33 +136,22 @@ class Account extends Component {
           {/* 放置卡片 */}
           <div style={{ display: 'flex', flexWrap: 'wrap'}}>
             {list.map((item) => {
-              return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} editCart={(c) => this.editchange(c)} signCart={(c) => this.signChange(c)}/>;
+              return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()} signCart={(c) => this.signChange(c)}/>;
             })}
           </div>
-          <Table
-            columns={columns}
-            dataSource={list}
+          {/* 分页 */}
+          <Pagination
+            style={{float:'right',margin:'16px 0'}}
             loading={loading}
-            pagination={{
-              current: query.pageNo,
-              total,
-              onChange: (pageNumber) => {
-                this.onQuery({
-                  pageNo: pageNumber,
-                  pageSize: query.pageSize
-                });
-              },
-              size: 'small',
-              showTotal: () => (`共${total}条数据`),
-              showSizeChanger: true,
-              showQuickJumper: true,
-              onShowSizeChange: (cur, size) => {
-                this.onQuery({
-                  pageNo: cur,
-                  pageSize: size
-                });
-              }
-            }}
+            size="small"
+            current={query.pageNo}
+            total={total}
+            showQuickJumper
+            showSizeChanger
+            defaultCurrent={2}
+            onChange={onChange}
+            onShowSizeChange={onShowSizeChange}
+            showTotal={() => (`共${total}条数据`)}
           />
         </div>
       </div>
