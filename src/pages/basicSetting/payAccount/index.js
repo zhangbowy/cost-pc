@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Button, message, Modal } from 'antd';
+import { Button, message, Modal,Pagination } from 'antd';
 import { connect } from 'dva';
-// import { accountType, getArrayValue } from '@/utils/constants';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
-// import { signStatus } from '../../../utils/constants';
+import AccountCart from '@/components/Account/';
 
 const { confirm } = Modal;
 @connect(({ loading, account, session }) => ({
@@ -112,29 +111,48 @@ class Account extends Component {
   render() {
     const { list, query, total, loading } = this.props;
     console.log(list, query, total, loading,'666666');
-    // const onChange = (pageNumber) => {
-    //   this.onQuery({
-    //     pageNo: pageNumber,
-    //     pageSize: query.pageSize
-    //   });
-    // };
-    // const onShowSizeChange = (cur, size) => {
-    //   this.onQuery({
-    //     pageNo: cur,
-    //     pageSize: size
-    //   });
-    // };
+    const onChange = (pageNumber) => {
+      this.onQuery({
+        pageNo: pageNumber,
+        pageSize: query.pageSize
+      });
+    };
+    const onShowSizeChange = (cur, size) => {
+      this.onQuery({
+        pageNo: cur,
+        pageSize: size
+      });
+    };
     return (
       <div>
         <PageHead title="公司付款账户设置" />
-        <div className="content-dt content-add" style={{padding:'0px'}}>
+        <div className="content-dt content-add" style={{ backgroundColor: '#F7F8FA'}}>
           <div className="cnt-header">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">
-                <Button type="primary">新增付款账户</Button>
+                <Button type="primary">新增收款账户</Button>
               </AddAccount>
             </div>
           </div>
+          {/* 放置卡片 */}
+          <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+            {list.map((item) => {
+           return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()}/>;
+          })}
+          </div>
+          <Pagination
+            style={{float:'right',margin:'16px 0'}}
+            loading={loading}
+            size="small"
+            current={query.pageNo}
+            total={total}
+            showQuickJumper
+            showSizeChanger
+            defaultCurrent={2}
+            onChange={onChange}
+            onShowSizeChange={onShowSizeChange}
+            showTotal={() => (`共${total}条数据`)}
+          />
         </div>
       </div>
     );

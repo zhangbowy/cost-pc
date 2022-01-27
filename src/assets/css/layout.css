@@ -35,6 +35,7 @@
 :global .content-add {
   overflow-y: unset;
   background: #f7f8fa;
+  margin: 0;
 }
 
 :global .content-add .cnt-header {
