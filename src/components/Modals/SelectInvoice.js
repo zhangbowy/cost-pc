@@ -418,7 +418,7 @@ class SelectInvoice extends Component {
                                     }
                                   </span>
                                   <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
-                                    {it.name}
+                                    {it.name}（{it.children.length}）
                                   </p>
                                 </div>
                                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
