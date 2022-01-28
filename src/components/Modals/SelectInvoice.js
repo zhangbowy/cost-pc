@@ -278,19 +278,19 @@ class SelectInvoice extends Component {
           visible={visible}
           width="980px"
           bodyStyle={{
-            height: '500px',
-            padding: '38px 0px 34px 32px'
+            height: '540px',
+            padding: '24px 0px 0px 32px'
           }}
         >
-          <p className="fs-24 fw-500 m-b-16 c-black-85">选择单据模板</p>
+          <p className="fs-20 fw-500 m-b-16 c-black-85">选择单据模板</p>
           <div className={style.scrollCont}>
             <div className={style.slInLeft}>
-              <p className="c-black-85 fs-14 fw-500 m-t-16">全部</p>
-              <div className={style.scroll}>
+              <p className="c-black-85 fs-14 fw-500 m-t-12">全部</p>
+              <div className={cs(style.scroll, 'm-t-16')}>
                 {
                   list.map(it => (
                     <p className={cs(style.namePro, 'm-b-16')} key={it.id} onClick={() => this.scrollToAnchor(it.id)}>
-                      <span className={id ===it.id ? cs(style.name, 'c-black-85', 'fw-500') : cs(style.name, 'c-black-65')}>{it.name}</span>
+                      <span className={id ===it.id ? cs(style.name, 'c-black-85', 'fw-500') : cs(style.name, 'c-black-45')}>{it.name}</span>
                     </p>
                   ))
                 }
@@ -305,7 +305,7 @@ class SelectInvoice extends Component {
                 <Search
                   placeholder="请输入单据名称"
                   style={{marginBottom: '16px'}}
-                  onSearch={this.onSearch}
+                  onChange={e => this.onSearch(e.target.value)}
                   allowClear
                 />
               </div>
@@ -397,7 +397,7 @@ class SelectInvoice extends Component {
                               ));
                             }
                             return (
-                              <div className="m-b-20" key={it.id} id={it.id} data-id={it.id} dataset={it}>
+                              <div className="m-b-12" key={it.id} id={it.id} data-id={it.id} dataset={it}>
                                 <div style={{display: 'flex', alignItems: 'center'}} className="m-b-8">
                                   <span style={{ marginRight: '6px' }}>
                                     {
@@ -418,7 +418,8 @@ class SelectInvoice extends Component {
                                     }
                                   </span>
                                   <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
-                                    {it.name}（{it.children.length}）
+                                    {it.name}（
+                                    {it.children.length}）
                                   </p>
                                 </div>
                                 <div style={{display: 'flex', flexWrap: 'wrap'}}>

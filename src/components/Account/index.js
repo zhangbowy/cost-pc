@@ -62,10 +62,10 @@ export default function index(props) {
           <span className={styles.caozuo}>
             <i className="iconfont icona-caozuo3x" />
             <dl className={styles.content}>
-              <dt><AddAccount title="edit" record={item} onOk={() =>onOk()}>编辑</AddAccount></dt>         
-              <dt onClick={()=>del(id)}>删除</dt>         
-              {(!signStatus&&signStatus!=null||!personal&&personal!=null)?<dt onClick={()=>sign(account)}>签约</dt>:null}         
-            </dl>     
+              <dt><AddAccount title="edit" record={item} onOk={() =>onOk()}>编辑</AddAccount></dt>
+              <dt onClick={()=>del(id)}>删除</dt>
+              {(!signStatus&&signStatus!=null||!personal&&personal!=null) && item.type === 1?<dt onClick={()=>sign(account)}>签约</dt>:null}
+            </dl>
           </span>
         </div>
         {/* 名称 */}
