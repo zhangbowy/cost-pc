@@ -313,7 +313,6 @@
   }
   .ant-modal-footer{
     border-top: none!important;
-    box-shadow: 0px -1px 20px 0px rgba(0, 0, 0, 0.05);
     padding: 8px 32px 24px!important;
   }
 
@@ -390,5 +389,15 @@
     color: rgba(0, 199, 149, 1);
   }
 
+  .ant-tooltip{
+    max-height: 500px;
+  }
+  .ant-footer-shadow .ant-modal-footer{
+    box-shadow: 0px -1px 20px 0px rgba(0, 0, 0, 0.05);
+
+  }
+  .ant-input-number{
+    border-radius: 2px!important;
+  }
 }
 
