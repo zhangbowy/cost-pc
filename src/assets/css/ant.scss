@@ -382,6 +382,13 @@
   .ant-menu-dark .ant-menu-submenu-open > .ant-menu-submenu-title span .iconfont{
     color: rgba(0, 199, 149, 1);
   }
+  .ant-menu-submenu-selected > .ant-menu-submenu-title span .iconfont{
+    color: rgba(0, 199, 149, 1);
+  }
+
+  .ant-menu-item-selected > a .iconfont{
+    color: rgba(0, 199, 149, 1);
+  }
 
 }
 
