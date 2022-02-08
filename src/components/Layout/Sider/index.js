@@ -165,7 +165,7 @@ class App extends React.PureComponent {
         {/* 是否折叠 */}
 
         <div className={styles.trigger} onClick={this.toggle}>
-          <img src={isCollapsed?left:right} alt=""/>
+          <img src={isCollapsed?right:left} alt=""/>
         </div>
         <div className={styles.logo}>
           <Link to="/">
@@ -204,7 +204,7 @@ class App extends React.PureComponent {
           </InitModal>
           <p className="f-c-85 fs-12 m-b-16" > {isCollapsed ? null: '遇到问题？想开通更多功能请联系我们'}</p>
           <Services costConfigCheckVo={costConfigCheckVo} status={status} visible={Number(status) === 2}>
-            {!isCollapsed ? <i className="iconfont iconxufeishengji m-r-4" style={{color:'#ffcb37',fontSize:'16px'}}/>: <Button type="primary" className={styles.footBtn}> <i className="iconfont iconxufeishengji m-r-4" style={{fontSize:'16px'}}/><span>版本升级</span></Button>}
+            {isCollapsed ? <i className="iconfont iconxufeishengji m-r-4" style={{color:'#ffcb37',fontSize:'16px'}}/>: <Button type="primary" className={styles.footBtn}> <i className="iconfont iconxufeishengji m-r-4" style={{fontSize:'16px'}}/><span>版本升级</span></Button>}
           </Services>
           <p className="f-c-cost fs-12 m-t-8" style={{marginBottom: '24px'}}> </p>
         </div>

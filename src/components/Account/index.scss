@@ -5,7 +5,7 @@
 .cardContent{
     :global{
         .ant-card-body{
-        padding: 17px 30px 37px 24px;
+        padding: 17px 24px 37px 24px;
        }
         .ant-tag{
           text-align: center;
@@ -46,11 +46,14 @@
          width: 32px;
          height: 32px;
          border-radius: 2px;
+         i{
+          margin:0!important;
+         }
          .content{
           visibility: hidden;
           position:absolute;
           top: 34px;
-          right:0px;
+          right:-30px;
           width: 88px;
           display: flex;
           justify-content: center;

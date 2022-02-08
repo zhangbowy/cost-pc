@@ -68,14 +68,14 @@ export default function index(props) {
             <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)' }}>{accountType(type)||bankName}</span>
           </span>
           <span className={styles.caozuo}>
-            <i className="iconfont icona-caozuo3x" />
+            <i className="iconfont icona-caozuo3x"/>
             <dl className={styles.content}>
               <dt>
                 {/* 收付款编辑 */}
                 {personal!=null?<EditReceiptAccount title="edit" record={item} onOk={() => onOk()}>编辑</EditReceiptAccount>:<EditPayAccount title="edit" record={item} onOk={() => onOk()}>编辑</EditPayAccount>}
               </dt>         
-              <dt onClick={() => del(id)}>删除</dt>
               {((!signStatus&&signStatus!=null&&type===1)||!personal&&personal!=null)?<dt onClick={()=>sign(account)}>签约</dt>:null}         
+              <dt onClick={() => del(id)}>删除</dt>
             </dl>     
           </span>
         </div>
