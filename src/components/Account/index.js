@@ -28,12 +28,19 @@ export default function Account(props) {
   };
     // 账户图标
   const accountIcon = (aType) => {
+    // 已停用时灰度显示
+    const tColor = 'rgba(0, 0, 0, 0.25)';
     const icon = {
-      0: <i className="iconfont iconyinhangka1 m-t-4" style={{ color: 'rgba(255, 146, 0, 1)' }} />,
-      1: <i className="iconfont iconzhifubao1 m-t-4" style={{ color: 'rgba(3, 122, 254, 1)' }} />,
-      2: <i className="iconfont iconxianjin1 m-t-4" style={{ color: 'rgba(255, 185, 0, 1)' }} />,
-      3: <i className="iconfont iconweixin1 m-t-4" style={{ color: 'rgba(10, 206, 102, 1)' }} />,
-      4: <i className="iconfont iconqitabeifen m-t-4" style={{ color: 'rgba(0, 0, 0, 0.16)' }} />,
+      // 银行卡
+      0: <i className="iconfont iconyinhangka1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(255, 146, 0, 1)' }} />,
+      // 支付宝
+      1: <i className="iconfont iconzhifubao1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(3, 122, 254, 1)' }} />,
+      // 现金
+      2: <i className="iconfont iconxianjin1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(255, 185, 0, 1)' }} />,
+      // 微信
+      3: <i className="iconfont iconweixin1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(10, 206, 102, 1)' }} />,
+      // 其他账户类型
+      4: <i className="iconfont iconqitabeifen m-t-4" style={{ color: status===0?tColor:'rgba(0, 0, 0, 0.16)' }} />,
     };
     return icon[aType];
   };
@@ -83,8 +90,11 @@ export default function Account(props) {
         {/* 名称 */}
         <div style={{ display: 'flex', alignItems: 'center', margin: '15px 0', lineHeight: '24px' }}>
           <Tooltip placement="topLeft" title={name}><span className={styles.name}>{name}</span></Tooltip>
-          {/* 是否默认/已停用 */}
-          {(isDefault?<Tag color="blue">默认</Tag>:null)||(!status?<Tag color="red">已停用</Tag>:null)}
+          {/* 是否默认/已停用/已签约 */}
+          {isDefault ? <Tag color="blue">默认</Tag> : null}
+          {signStatus===0&&type===1?<Tag color="#f0f0f0">未签约</Tag>:null}
+          {signStatus === 2&&type===1 ? <Tag color="cyan">已签约</Tag> : null}
+          {!status ? <Tag color="red">已停用</Tag> : null}
         </div>
         {/* 卡号/账号 */}
         <div>
@@ -94,7 +104,7 @@ export default function Account(props) {
         {/* 开户行/支行 */}
         <div style={{ margin:'10px 0'}}>
           <i className="iconfont iconkaihushengshi c-black-016" />
-          {bankName ?
+          {type===0?
             <span className={styles.bankNameBranch}>{accountCity()}<i style={{ color: 'rgba(216, 216, 216, 1)' }}><Icon type="line" /></i> {bankNameBranch}</span>
             : empty()}
         </div>
