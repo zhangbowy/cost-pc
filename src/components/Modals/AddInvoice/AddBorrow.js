@@ -150,6 +150,9 @@ class AddBorrow extends Component {
       {
         title: '事由',
         dataIndex: 'reason',
+        ellipsis: true,
+        textWrap: 'word-break',
+        width: 100,
         render: (text) => (
           <span>
             <Tooltip placement="topLeft" title={text || ''}>

@@ -215,6 +215,7 @@ export default {
         });
       }
     });
+    console.log('🚀 ~ file: utils.js ~ line 220 ~ arr', arr);
     return arr;
   },
   onInitKey: (arr) => {
@@ -373,7 +374,7 @@ export default {
       currencySymbol,
       key: detail.key ? detail.key : getTimeIdNo(),
     };
-    console.log('detail', detail);
+    console.log('detail测试cost的值', detail);
     return detail;
   },
   handleExceed: (costDetailsVo, checkStandard) => {

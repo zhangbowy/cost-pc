@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
@@ -8,6 +9,7 @@ import withRouter from 'umi/withRouter';
 import Search from 'antd/lib/input/Search';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
+import NoData from '../NoData';
 // import AddInvoice from './AddInvoice';
 // import Tags from '../Tags';
 
@@ -27,6 +29,10 @@ class SelectInvoice extends Component {
     list: [],
     id: '',
     selectCost: [],
+    noTreeList: [],
+    searchContent: '',
+    searchList: [],
+    activeObj: {},
     // templateType: 0,
     // invoiceVisible: false,
     // invoiceId: '',
@@ -140,17 +146,25 @@ class SelectInvoice extends Component {
         list: lists,
         visible: true,
         selectCost: arr,
+        noTreeList: users,
       });
     });
   }
 
-  modalOk = (item) => {
+  handleOk = () => {
+    const { activeObj } = this.state;
     const { selectCost } = this.state;
     if (selectCost) {
       localStorage.setItem('selectCost', JSON.stringify(selectCost));
     }
     localStorage.removeItem('contentJson');
-    this.props.history.push(`/workbench/add~${item.templateType}~${item.id}`);
+    this.props.history.push(`/workbench/add~${activeObj.templateType}~${activeObj.id}`);
+  }
+
+  modalOk = (item) => {
+    this.setState({
+      activeObj: item,
+    });
     // this.setState({
     //   invoiceVisible: true,
     //   invoiceId: item.id,
@@ -213,6 +227,18 @@ class SelectInvoice extends Component {
 
   onSearch = (val) => {
     console.log('🚀 ~ file: SelectInvoice.js ~ line 215 ~ SelectInvoice ~ val', val);
+    const { noTreeList } = this.state;
+    if (val) {
+      this.setState({
+        searchList: noTreeList.filter(it => it.name.indexOf(val) > -1 && it.type),
+        searchContent: val
+      });
+    } else {
+      this.setState({
+        searchList: [],
+        searchContent: ''
+      });
+    }
 
   }
 
@@ -232,33 +258,45 @@ class SelectInvoice extends Component {
   // }
 
   render() {
-    const { list, visible, id } = this.state;
+    const { list, visible, id, searchList, searchContent, activeObj } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
         <Modal
           title={null}
           footer={[
-            <Button key="cancel" type="default">取消</Button>,
-            <Button key="go">去填写单据</Button>,
+            <Button key="cancel" type="default" onClick={this.onCancel}>取消</Button>,
+            <Button
+              key="go"
+              disabled={!activeObj.id}
+              type="primary"
+              onClick={this.handleOk}
+            >去填写单据
+            </Button>,
           ]}
           onCancel={this.onCancel}
           visible={visible}
           width="980px"
+          closeIcon={(
+            <div className="modalIcon">
+              <i className="iconfont icona-guanbi3x1" />
+            </div>
+          )}
+          wrapClassName="centerModal"
           bodyStyle={{
-            height: '500px',
-            padding: '38px 24px 34px 32px'
+            height: '540px',
+            padding: '24px 0px 0px 32px'
           }}
         >
-          <p className="fs-24 fw-500 m-b-16 c-black-85">选择单据模板</p>
+          <p className="fs-20 fw-500 m-b-16 c-black-85">选择单据模板</p>
           <div className={style.scrollCont}>
             <div className={style.slInLeft}>
-              <p className="c-black-85 fs-14 fw-500 m-t-16">全部</p>
-              <div className={style.scroll}>
+              <p className="c-black-85 fs-14 fw-500 m-t-12">全部</p>
+              <div className={cs(style.scroll, 'm-t-16')}>
                 {
                   list.map(it => (
                     <p className={cs(style.namePro, 'm-b-16')} key={it.id} onClick={() => this.scrollToAnchor(it.id)}>
-                      <span className={id ===it.id ? cs(style.name, 'c-black-85', 'fw-500') : cs(style.name, 'c-black-65')}>{it.name}</span>
+                      <span className={id ===it.id ? cs(style.name, 'c-black-85', 'fw-500') : cs(style.name, 'c-black-45')}>{it.name}</span>
                     </p>
                   ))
                 }
@@ -269,81 +307,137 @@ class SelectInvoice extends Component {
               ref={scroll => {this.scroll=scroll;}}
               onScroll={({target}) => this.handleScroll(target)}
             >
-              <div className="m-r-8">
+              <div className="m-r-32">
                 <Search
                   placeholder="请输入单据名称"
-                  className="m-b-16"
-                  onSearch={this.onSearch}
+                  style={{marginBottom: '16px'}}
+                  onChange={e => this.onSearch(e.target.value)}
+                  allowClear
                 />
               </div>
-              {
-                list.map(it => {
-                  let childrens = null;
-                  if (it.children) {
-                    childrens = it.children.map(item => (
+              <div className={style.scroll}>
+                {
+                  searchContent && searchList.length === 0 ?
+                    <div style={{marginTop: '76px', marginRight: '8px'}}>
+                      <NoData />
+                    </div>
+                    :
+                    searchContent && searchList.length > 0 ?
+                      <div className="m-b-20">
+                        <div style={{display: 'flex', alignItems: 'center'}} className="m-b-8">
+                          <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
+                            匹配到{searchList.length}个单据模板
+                          </p>
+                        </div>
+                        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                          {
+                          searchList.map(item => (
+                            <>
+                              {
+                                item.disabled ?
+                                  <Tooltip
+                                    title="已选的支出类别不支持该单据模版"
+                                    placement="bottom"
+                                  >
+                                    <div
+                                      className={style.tags}
+                                      key={item.id}
+                                      style={{
+                                        background: 'rgba(0,0,0,0.01)',
+                                        border: 'none',
+                                        cursor:'not-allowed',
+                                        boxShadow: 'none'
+                                      }}
+                                    >
+                                      <p className="c-black-15 fs-14">{item.name}</p>
+                                      <p className="fs-12 c-black-15 eslips-1">{item.note}</p>
+                                    </div>
+                                  </Tooltip>
+                                  :
+                                  <div className={activeObj.id === item.id ? cs(style.tags, style.active) : style.tags} key={item.id} onClick={() => this.modalOk(item)}>
+                                    <p className="c-black-85 fs-14">{item.name}</p>
+                                    <p className="fs-12 c-black-36 eslips-1">{item.note}</p>
+                                  </div>
+                              }
+                            </>
+                          ))
+                        }
+                        </div>
+                      </div>
+                    :
                       <>
                         {
-                          item.disabled ?
-                            <Tooltip
-                              title="已选的支出类别不支持该单据模版"
-                              placement="bottom"
-                            >
-                              <div
-                                className={style.tags}
-                                key={item.id}
-                                style={{
-                                  background: 'rgba(0,0,0,0.01)',
-                                  border: 'none',
-                                  cursor:'not-allowed',
-                                  boxShadow: 'none'
-                                }}
-                              >
-                                <p className="c-black-15 fs-14">{item.name}</p>
-                                <p className="fs-12 c-black-15 eslips-1">{item.note}</p>
+                          list.map(it => {
+                            let childrens = null;
+                            if (it.children) {
+                              childrens = it.children.map(item => (
+                                <>
+                                  {
+                                    item.disabled ?
+                                      <Tooltip
+                                        title="已选的支出类别不支持该单据模版"
+                                        placement="bottom"
+                                      >
+                                        <div
+                                          className={style.tags}
+                                          key={item.id}
+                                          style={{
+                                            background: 'rgba(0,0,0,0.01)',
+                                            border: 'none',
+                                            cursor:'not-allowed',
+                                            boxShadow: 'none'
+                                          }}
+                                        >
+                                          <p className="c-black-15 fs-14">{item.name}</p>
+                                          <p className="fs-12 c-black-15 eslips-1">{item.note}</p>
+                                        </div>
+                                      </Tooltip>
+                                      :
+                                      <div className={activeObj.id === item.id ? cs(style.tags, style.active) : style.tags} key={item.id} onClick={() => this.modalOk(item)}>
+                                        <p className="c-black-85 fs-14">{item.name}</p>
+                                        <p className="fs-12 c-black-36 eslips-1">{item.note}</p>
+                                      </div>
+                                  }
+                                </>
+
+                              ));
+                            }
+                            return (
+                              <div className="m-b-12" key={it.id} id={it.id} data-id={it.id} dataset={it}>
+                                <div style={{display: 'flex', alignItems: 'center'}} className="m-b-8">
+                                  <span style={{ marginRight: '6px' }}>
+                                    {
+                                      (it.type === 0) && it.templateType === 0 &&
+                                      <i className="iconfont icona-baoxiaodan3x" />
+                                    }
+                                    {
+                                      (it.type === 0) && it.templateType === 1 &&
+                                      <i className="iconfont icona-jiekuandan3x" />
+                                    }
+                                    {
+                                      (it.type === 0) && it.templateType === 2 &&
+                                      <i className="iconfont icona-shenqingdan3x" />
+                                    }
+                                    {
+                                      (it.type === 0) && it.templateType === 3 &&
+                                      <i className="iconfont icona-zidingyifenzu3x" />
+                                    }
+                                  </span>
+                                  <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
+                                    {it.name}（
+                                    {it.children.length}）
+                                  </p>
+                                </div>
+                                <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                  {childrens}
+                                </div>
                               </div>
-                            </Tooltip>
-                            :
-                            <div className={style.tags} key={item.id} onClick={() => this.modalOk(item)}>
-                              <p className="c-black-85 fs-14">{item.name}</p>
-                              <p className="fs-12 c-black-36 eslips-1">{item.note}</p>
-                            </div>
+                            );
+                          })
                         }
                       </>
-
-                    ));
-                  }
-                  return (
-                    <div className="m-b-20" key={it.id} id={it.id} data-id={it.id} dataset={it}>
-                      <div style={{display: 'flex', alignItems: 'center'}} className="m-b-8">
-                        <span style={{ marginRight: '6px' }}>
-                          {
-                            (it.type === 0) && it.templateType === 0 &&
-                            <i className="iconfont icona-baoxiaodan3x" />
-                          }
-                          {
-                            (it.type === 0) && it.templateType === 1 &&
-                            <i className="iconfont icona-jiekuandan3x" />
-                          }
-                          {
-                            (it.type === 0) && it.templateType === 2 &&
-                            <i className="iconfont icona-shenqingdan3x" />
-                          }
-                          {
-                            (it.type === 0) && it.templateType === 3 &&
-                            <i className="iconfont icona-zidingyifenzu3x" />
-                          }
-                        </span>
-                        <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
-                          {it.name}
-                        </p>
-                      </div>
-                      <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                        {childrens}
-                      </div>
-                    </div>
-                  );
-                })
-              }
+                }
+              </div>
             </div>
           </div>
         </Modal>

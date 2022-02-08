@@ -33,15 +33,16 @@
      left: 50%;
      top: 50%;
      transform: translate(-50%, -50%);
-     width: 108px;
-     height: 32px;
+     width: 116px;
+     height: 40px;
      .newLogo,.logoFont{
      vertical-align:top;
      display: inline-block;
-     height: 32px;
+     height: 40px;
+      width: 40px;
     }
     .newLogo{
-      width: 32px;
+      width: 40px;
       background: url(@/assets/img/newLogo.png) no-repeat;
       background-size: cover;
       background-position:0 4px;
@@ -127,12 +128,20 @@
       height: 100%;
     }
 }
+  :global{
+    .app-menu .ant-menu-submenu .ant-menu-submenu-popup .ant-menu-sub{
+      background-color: #001529!important;
+      min-width: 132px;
+      padding: 10px 0;
+    }
+  }
 }
 
 .menuStyle{
   :global{
-    .ant-menu-sub{
-      background: #fff;
-    }
+    // .ant-menu-sub{
+    //   background: #fff;
+    // }
+
   }
 }
