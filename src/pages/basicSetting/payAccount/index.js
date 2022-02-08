@@ -136,7 +136,7 @@ class Account extends Component {
           </div>
           {/* 放置卡片 */}
           <div style={{ display: 'flex', flexWrap: 'wrap'}}>
-            {list.map((item) => {
+            {list.map((item) => {     
            return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} signChange={(c) => this.signChange(c)} onOk={() => this.onOk()}/>;
           })}
           </div>

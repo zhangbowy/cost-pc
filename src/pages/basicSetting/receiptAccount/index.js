@@ -80,6 +80,7 @@ class Account extends Component {
 
   onOk = () => {
     const { query } = this.props;
+    console.log('缺少必要参数',query);
     this.onQuery({ ...query });
   }
   // 删除账户
@@ -117,7 +118,7 @@ class Account extends Component {
           {/* 放置卡片 */}
           <div style={{ display: 'flex', flexWrap: 'wrap'}}>
             {list.map((item) => {
-             return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} signChange={(c) => this.signChange(c)} onOk={() => this.onOk()}/>;
+             return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk1={() => this.onOk()}/>;
             })}
           </div>
           <Pagination

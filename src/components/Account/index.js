@@ -5,11 +5,12 @@ import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
 
 
 export default function index(props) {
-    const {item,delCart,signCart,onOk,personal} = props;
+    const {item,delCart,signChange,onOk,personal} = props;
     const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;
    // 账户类型
     const accountType = (aType) => {
-    const theType = {
+      const theType = {
+      0:'银行卡',
       1: '支付宝',
       2: '现金',
       3: '微信',
@@ -48,7 +49,7 @@ export default function index(props) {
   };
     // 签约
     const sign = (theAccount) => {
-        signCart(theAccount);
+      signChange(theAccount);
     };
     return (
       <Card style={{ width:'390px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
@@ -57,20 +58,20 @@ export default function index(props) {
           <span style={{ display: 'flex', alignItems: 'center' }}>
             {/* 账户图标 */}
             {accountIcon(type)}
-            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)' }}>{bankName||accountType(type)}</span>
+            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)' }}>{accountType(type)||bankName}</span>
           </span>
           <span className={styles.caozuo}>
             <i className="iconfont icona-caozuo3x" />
             <dl className={styles.content}>
               <dt><AddAccount title="edit" record={item} onOk={() =>onOk()}>编辑</AddAccount></dt>         
-              <dt onClick={()=>del(id)}>删除</dt>         
-              {(!signStatus&&signStatus!=null||!personal&&personal!=null)?<dt onClick={()=>sign(account)}>签约</dt>:null}         
+              <dt onClick={() => del(id)}>删除</dt>
+              {((!signStatus&&signStatus!=null&&type===1)||!personal&&personal!=null)?<dt onClick={()=>sign(account)}>签约</dt>:null}         
             </dl>     
           </span>
         </div>
         {/* 名称 */}
-        <div style={{ display: 'flex', alignItems: 'center',margin:'15px 0',lineHeight:'24px' }}>
-          <span className={styles.name}>{name}</span>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '15px 0', lineHeight: '24px' }}>
+          <Tooltip placement="topLeft" title={name}><span className={styles.name}>{name}</span></Tooltip>
           {/* 是否默认/已停用 */}
           {(isDefault?<Tag color="blue">默认</Tag>:null)||(!status?<Tag color="red">已停用</Tag>:null)}
         </div>
