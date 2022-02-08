@@ -33,6 +33,7 @@ class SelectInvoice extends Component {
     searchContent: '',
     searchList: [],
     activeObj: {},
+    isScroll: false,
     // templateType: 0,
     // invoiceVisible: false,
     // invoiceId: '',
@@ -192,14 +193,16 @@ class SelectInvoice extends Component {
   handleScroll = (el) => {
     if (el && el.children) {
       const lastChild = el.children.length - 1;
-      const top = el.scrollTop + 110;
+      // const top = el.scrollTop + 110;
+      const top = el.scrollTop + 174;
       const index = Array.prototype.findIndex.call(
         el.children, v => v.offsetTop > top
       ) - 1;
       const i = index < -1 || (index === -1) ? lastChild : index;
       const elChild = el.children[i];
       this.setState({
-        id: elChild.dataset ? elChild.dataset.id : 'often'
+        id: elChild.dataset ? elChild.dataset.id : 'often',
+        isScroll: el.scrollTop > 0,
       });
     }
     debounce(
@@ -218,7 +221,8 @@ class SelectInvoice extends Component {
           const i = index < -1 ? lastChild : index;
           const elChild = el.children[i];
           this.setState({
-            id: elChild.dataset ? elChild.dataset.id : 'often'
+            id: elChild.dataset ? elChild.dataset.id : 'often',
+            isScroll: el.scrollTop > 0,
           });
         }
       }, 100, { maxWait: 200 }
@@ -258,7 +262,8 @@ class SelectInvoice extends Component {
   // }
 
   render() {
-    const { list, visible, id, searchList, searchContent, activeObj } = this.state;
+    const { list, visible, id, searchList, searchContent, activeObj, isScroll } = this.state;
+    // const isScroll = this.scroll.scrollTop > 1;
     return (
       <span>
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
@@ -277,6 +282,7 @@ class SelectInvoice extends Component {
           onCancel={this.onCancel}
           visible={visible}
           width="980px"
+          className={isScroll ? 'ant-footer-shadow' : ''}
           closeIcon={(
             <div className="modalIcon">
               <i className="iconfont icona-guanbi3x1" />
@@ -284,7 +290,7 @@ class SelectInvoice extends Component {
           )}
           wrapClassName="centerModal"
           bodyStyle={{
-            height: '540px',
+            height: '580px',
             padding: '24px 0px 0px 32px'
           }}
         >
@@ -384,6 +390,7 @@ class SelectInvoice extends Component {
                                           style={{
                                             background: 'rgba(0,0,0,0.01)',
                                             border: 'none',
+
                                             cursor:'not-allowed',
                                             boxShadow: 'none'
                                           }}
@@ -403,7 +410,7 @@ class SelectInvoice extends Component {
                               ));
                             }
                             return (
-                              <div className="m-b-12" key={it.id} id={it.id} data-id={it.id} dataset={it}>
+                              <div className="m-b-8" key={it.id} id={it.id} data-id={it.id} dataset={it}>
                                 <div style={{display: 'flex', alignItems: 'center'}} className="m-b-8">
                                   <span style={{ marginRight: '6px' }}>
                                     {
