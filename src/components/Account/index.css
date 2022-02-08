@@ -13,7 +13,20 @@
   line-height: 24px;
   border: 0;
   margin-left: 8px;
+  margin-right: 0 !important;
   border-radius: 4px;
+}
+
+.cardContent :global .ant-tag-blue {
+  color: #037afe;
+}
+
+.cardContent :global .ant-tag-has-color {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.cardContent :global .ant-tag-cyan {
+  color: #00c795;
 }
 
 .cardContent :global .anticon-line {
@@ -89,7 +102,6 @@
 
 .cardContent .name {
   display: inline-block;
-  max-width: 294px;
   font-size: 18px;
   font-weight: 600;
   line-height: 28px;
