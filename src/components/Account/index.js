@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card,Tag,Icon,Tooltip} from 'antd';
 import styles from './index.scss';
 import EditPayAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
 import EditReceiptAccount from '@/pages/basicSetting/receiptAccount/components/AddModal.js';
 
-export default function index(props) {
+
+export default function Account(props) {
     const {item,delCart,signChange,onOk,personal} = props;
     const {id, awAreas, type, bankName, name, isDefault, status, account, bankNameBranch, note,signStatus } = item;
+
+    const [width, setWidth] = useState(window.innerWidth);
+    useEffect(() => {
+      const handleWindowResize = () => setWidth(window.innerWidth);
+      window.addEventListener('resize', handleWindowResize);
+      return () => window.removeEventListener('resize', handleWindowResize);
+    }, []);
    // 账户类型
     const accountType = (aType) => {
       const theType = {
@@ -59,7 +67,7 @@ export default function index(props) {
       signChange(theAccount);
     };
     return (
-      <Card style={{ width:'390px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
+      <Card style={{ width: width > 1280 ? '390px' : '336px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
         {/* 账户类型 */}
         <div className={styles.accountType}>
           <span style={{ display: 'flex', alignItems: 'center' }}>
