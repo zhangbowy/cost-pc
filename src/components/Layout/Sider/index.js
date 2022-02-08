@@ -184,12 +184,12 @@ class App extends React.PureComponent {
           {...menuProps}
           selectedKeys={selectedKeys}
           onOpenChange={this.onOpenChange}
-          // expandIcon={(prop) => {
-          //   console.log('App -> render -> prop', prop);
-          //   return(
-          //     <i className="iconfont iconjiantouxia" />
-          //   );
-          // }}
+          expandIcon={(prop) => {
+            console.log('App -> render -> prop', prop);
+            return(
+              <i className={prop.isOpen ? 'iconfont icona-shangjiantou3x' : 'iconfont icona-xiajiantou3x'} />
+            );
+          }}
         >
           {this.getMenuItems(menus)}
         </Menu>

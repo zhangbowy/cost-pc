@@ -277,7 +277,7 @@ class SelectInvoice extends Component {
           onCancel={this.onCancel}
           visible={visible}
           width="980px"
-          wrapClassName="vertical-center-modal"
+          wrapClassName="centerModal"
           bodyStyle={{
             height: '540px',
             padding: '24px 0px 0px 32px'

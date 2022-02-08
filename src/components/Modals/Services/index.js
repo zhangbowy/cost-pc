@@ -25,6 +25,7 @@ function Services(props) {
         maskClosable={false}
         closable={Number(props.status) !== 2}
         className={style.bg}
+        wrapClassName="centerModal"
       >
         <div className={style.modals}>
           {/* <p className="fs-26 fw-600 c-black-85 m-b-18">{props.isDelay ? '已到期，请扫码购买' : '升级享受更多服务'}</p> */}

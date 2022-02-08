@@ -321,5 +321,39 @@
     margin-left: 10px;
   }
 
+  .centerModal {
+    display: flex;
+    text-align: center;
+    .ant-modal {
+     top:auto;
+      display: inline-block;
+      align-self: center;
+      max-height: calc(100vh - 30px);
+      margin: auto;
+      text-align: left;
+      vertical-align: middle;
+    }
+  }
+  .ant-menu-submenu-inline > .ant-menu-submenu-title .icona-xiajiantou3x{
+    position: absolute;
+    // top: 50%;
+    right: 16px;
+    // width: 10px;
+    opacity: 0.45;
+  }
+  .ant-menu-dark .ant-menu-submenu-open > .ant-menu-submenu-title > .icona-xiajiantou3x{
+    opacity: 1;
+  }
+  .ant-menu-submenu-inline > .ant-menu-submenu-title .icona-shangjiantou3x{
+    position: absolute;
+    // top: 50%;
+    right: 16px;
+    // width: 10px;
+    opacity: 0.45;
+  }
+  .ant-menu-dark .ant-menu-submenu-open > .ant-menu-submenu-title > .icona-shangjiantou3x{
+    opacity: 1;
+  }
+
 }
 
