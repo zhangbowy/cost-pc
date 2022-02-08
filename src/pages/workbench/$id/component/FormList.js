@@ -630,7 +630,7 @@ renderTreeNodes = data =>
                             initialValue: details.reason || '',
                             rules:[
                               { required: true, message: '请输入事由' },
-                              { max: 128, message: '最多128字' },
+                              { max: 500, message: '最多500字' },
                             ]
                           })(
                             <TextArea
@@ -1128,7 +1128,7 @@ renderTreeNodes = data =>
                             initialValue: details.note || '',
                             rules: [
                               { required: !!(showField.note.isWrite), message: '请输入备注' },
-                              { max: 128, message: '备注最多128个字' },
+                              { max: 500, message: '备注最多500个字' },
                             ]
                           })(
                             <Input
