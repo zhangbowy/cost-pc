@@ -333,6 +333,10 @@
       text-align: left;
       vertical-align: middle;
     }
+    .ant-modal-close-x{
+      width: unset;
+      margin-right: 16px;
+    }
   }
   .ant-menu-submenu-inline > .ant-menu-submenu-title .icona-xiajiantou3x{
     position: absolute;
@@ -353,6 +357,30 @@
   }
   .ant-menu-dark .ant-menu-submenu-open > .ant-menu-submenu-title > .icona-shangjiantou3x{
     opacity: 1;
+  }
+
+  .modalIcon{
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    font-weight: 400;
+    &:hover{
+      background: #F8F8F8;
+    }
+  }
+  .modalIcon i{
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+  .ant-menu.ant-menu-dark .ant-menu-item-selected a{
+    margin-left: -4px;
+  }
+  .ant-menu-dark .ant-menu-submenu-open > .ant-menu-submenu-title span .iconfont{
+    color: rgba(0, 199, 149, 1);
   }
 
 }

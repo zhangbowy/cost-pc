@@ -277,6 +277,11 @@ class SelectInvoice extends Component {
           onCancel={this.onCancel}
           visible={visible}
           width="980px"
+          closeIcon={(
+            <div className="modalIcon">
+              <i className="iconfont icona-guanbi3x1" />
+            </div>
+          )}
           wrapClassName="centerModal"
           bodyStyle={{
             height: '540px',

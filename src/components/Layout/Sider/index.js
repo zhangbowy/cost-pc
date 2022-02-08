@@ -183,9 +183,11 @@ class App extends React.PureComponent {
           className={isCollapsed ? cs('app-menu', styles.menuStyle) : 'app-menu'}
           {...menuProps}
           selectedKeys={selectedKeys}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
           onOpenChange={this.onOpenChange}
           expandIcon={(prop) => {
             console.log('App -> render -> prop', prop);
+            if (isCollapsed) return null;
             return(
               <i className={prop.isOpen ? 'iconfont icona-shangjiantou3x' : 'iconfont icona-xiajiantou3x'} />
             );
