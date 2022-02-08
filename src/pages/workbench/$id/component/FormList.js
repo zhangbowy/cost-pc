@@ -630,7 +630,7 @@ renderTreeNodes = data =>
                             initialValue: details.reason || '',
                             rules:[
                               { required: true, message: '请输入事由' },
-                              { max: 128, message: '最多128字' },
+                              { max: 500, message: '最多500字' },
                             ]
                           })(
                             <TextArea

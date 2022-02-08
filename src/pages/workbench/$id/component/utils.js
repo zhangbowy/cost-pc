@@ -240,10 +240,10 @@ export default {
       };
       if (item.costDetailShareVOS) {
         const newShare = [];
-        item.costDetailShareVOS.forEach((it) => {
+        item.costDetailShareVOS.forEach((it,index) => {
           newShare.push({
             ...it,
-            key:  getTimeIdNo(),
+            key:  `${getTimeIdNo()}+${index}`,
             shareScale: it.shareScale ? it.shareScale/100 : 0,
             shareAmount: it.shareAmount/100,
           });
