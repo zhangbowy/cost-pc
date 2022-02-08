@@ -171,53 +171,57 @@ class ApproveNode extends Component {
           approveNodesList.length &&
           <div className={style.approve_box}>
             {
-              approveNodesList.map((item, index) => (
-                <div className={style.approve_item_box} key={item.title}>
-                  <div className={cs(style.approve_item, `${ (index === 0 || index === approveNodesList.length - 1) ? style.relative : '' }`)}>
-                    <div className="left">
-                      { index === 0 && (<div className={style.border_left_top} />) }
-                      {index === approveNodesList.length - 1 && (<div className={style.border_left_bottom} />)}
-                      <div className={style.node_info}>
-                        <span className={style.title}>{item.title}</span>
-                        <span className={style.tips}>{item.tips}</span>
+              approveNodesList.map((item, index) => {
+                console.log('审批人', item);
+                return (
+                  <div className={style.approve_item_box} key={item.nodeId}>
+                    <div className={cs(style.approve_item, `${ (index === 0 || index === approveNodesList.length - 1) ? style.relative : '' }`)}>
+                      <div className="left">
+                        { index === 0 && (<div className={style.border_left_top} />) }
+                        {index === approveNodesList.length - 1 && (<div className={style.border_left_bottom} />)}
+                        <div className={style.node_info}>
+                          <span className={style.title}>{item.title}</span>
+                          <span className={style.tips}>{item.tips}</span>
+                        </div>
+                      </div>
+                      <div className={style.right}>
+                        {
+                          item.userList.length > 3 &&
+                          (
+                            <ViewMore list={approveNodesList[index]}>
+                              <div className={cs(style.view_box, style.users_box, 'cur-p')}>
+                                <img alt="全部" src={allAvatars} mode="aspectFill" />
+                                <span className={style.text}>查看全部</span>
+                              </div>
+                            </ViewMore>
+                          )
+                        }
+                        {
+                          item.shortUsers.map((it, ind) => (
+                            <div className={style.user_list_box} key={it.userName}>
+                              {item.userList.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
+                              <div className={cs(style.users_box, style.ellipsis)}>
+                                <Avatar avatar={it.avatar} name={it.userName} size={36} className={style.avatar} />
+                                <span className={cs(style.user_name, 'eslips-2')}>{it.userName}</span>
+                              </div>
+                              {(ind < (item.shortUsers.length - 1)) && (<span className={style.add}>+</span>)}
+                            </div>
+                          ))
+                        }
+                        {
+                          (item.type === 'selfSelect' || (item.nodeType === 'notifier' && item.allowSelfChoose)) &&
+                          (
+                            <div className={cs(style.view_box, style.view_add_box, 'cur-p')}>
+                              <img alt="add" className={style.add_img} src={addAvatars} mode="aspectFill" onClick={() => this.choosePerson(index)} />
+                            </div>
+                          )
+                        }
                       </div>
                     </div>
-                    <div className={style.right}>
-                      {
-                        item.userList.length > 3 &&
-                        (
-                          <ViewMore list={approveNodesList[index]}>
-                            <div className={cs(style.view_box, style.users_box, 'cur-p')}>
-                              <img alt="全部" src={allAvatars} mode="aspectFill" />
-                              <span className={style.text}>查看全部</span>
-                            </div>
-                          </ViewMore>
-                        )
-                      }
-                      {
-                        item.shortUsers.map((it, ind) => (
-                          <div className={style.user_list_box} key={it.userName}>
-                            {item.userList.length > 3 && ind === 0 && (<span className={style.add}>+</span>)}
-                            <div className={cs(style.users_box, style.ellipsis)}>
-                              <Avatar avatar={it.avatar} name={it.userName} size={36} className={style.avatar} />
-                              <span className={cs(style.user_name, 'eslips-2')}>{it.userName}</span>
-                            </div>
-                            {(ind < (item.shortUsers.length - 1)) && (<span className={style.add}>+</span>)}
-                          </div>
-                        ))
-                      }
-                      {
-                        (item.type === 'selfSelect' || (item.nodeType === 'notifier' && item.allowSelfChoose)) &&
-                        (
-                          <div className={cs(style.view_box, style.view_add_box, 'cur-p')}>
-                            <img alt="add" className={style.add_img} src={addAvatars} mode="aspectFill" onClick={() => this.choosePerson(index)} />
-                          </div>
-                        )
-                      }
-                    </div>
                   </div>
-                </div>
-              ))
+                );
+              }
+              )
             }
           </div>
         }
