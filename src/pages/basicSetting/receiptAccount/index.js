@@ -118,7 +118,7 @@ class Account extends Component {
           {/* 放置卡片 */}
           <div style={{ display: 'flex', flexWrap: 'wrap'}}>
             {list.map((item) => {
-             return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk1={() => this.onOk()}/>;
+             return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()}/>;
             })}
           </div>
           <Pagination

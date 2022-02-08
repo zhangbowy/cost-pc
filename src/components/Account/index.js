@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card,Tag,Icon,Tooltip} from 'antd';
 import styles from './index.scss';
-import AddAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
+import EditPayAccount from '@/pages/basicSetting/payAccount/components/AddModal.js';
+import EditReceiptAccount from '@/pages/basicSetting/receiptAccount/components/AddModal.js';
 
 
 export default function index(props) {
@@ -63,7 +64,10 @@ export default function index(props) {
           <span className={styles.caozuo}>
             <i className="iconfont icona-caozuo3x" />
             <dl className={styles.content}>
-              <dt><AddAccount title="edit" record={item} onOk={() =>onOk()}>编辑</AddAccount></dt>         
+              <dt>
+                {/* 收付款编辑 */}
+                {personal!=null?<EditReceiptAccount title="edit" record={item} onOk={() => onOk()}>编辑</EditReceiptAccount>:<EditPayAccount title="edit" record={item} onOk={() => onOk()}>编辑</EditPayAccount>}
+              </dt>         
               <dt onClick={() => del(id)}>删除</dt>
               {((!signStatus&&signStatus!=null&&type===1)||!personal&&personal!=null)?<dt onClick={()=>sign(account)}>签约</dt>:null}         
             </dl>     
