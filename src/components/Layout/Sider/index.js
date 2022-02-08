@@ -140,7 +140,6 @@ class App extends React.PureComponent {
 
   render() {
     const {
-      collapsed,
       onCollapse,
       menus,
       userInfo,
@@ -150,7 +149,7 @@ class App extends React.PureComponent {
     // 是否折叠
     const isCollapsed = this.state.collapsed;
     const selectedKeys = getMenuKey(this.props);
-    const menuProps = collapsed ? {} : { openKeys };
+    const menuProps = isCollapsed ? {} : { openKeys };
     const costConfigCheckVo = userInfo.costConfigCheckVo || {};
     return (
       <Layout.Sider
