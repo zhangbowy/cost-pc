@@ -125,7 +125,9 @@ class Account extends Component {
     };
     return (
       <div>
-        <PageHead title="公司付款账户设置" />
+        <div style={{minWidth: '1094px'}}>
+          <PageHead title="公司付款账户设置" />
+        </div>
         <div className="content-dt content-add" style={{ backgroundColor: '#F7F8FA'}}>
           <div className="cnt-header">
             <div className="head_lf">
@@ -136,7 +138,7 @@ class Account extends Component {
           </div>
           {/* 放置卡片 */}
           <div style={{ display: 'flex', flexWrap: 'wrap'}}>
-            {list.map((item) => {     
+            {list.map((item) => {
            return <AccountCart key={item.id} item={item} delCart={(c) => this.delchange(c)} signChange={(c) => this.signChange(c)} onOk={() => this.onOk()}/>;
           })}
           </div>
