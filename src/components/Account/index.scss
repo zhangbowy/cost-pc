@@ -5,7 +5,7 @@
 .cardContent{
     :global{
         .ant-card-body{
-        padding: 17px 24px 37px 24px;
+        padding: 17px 24px 0 24px;
        }
         .ant-tag{
           text-align: center;
@@ -94,12 +94,17 @@
       font-size :14px;
       margin-left:10px;
      }
+     .bank{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+     }
     .name{
         display:inline-block;
         font-size: 18px;
         font-weight: 600;
         height: 28px;
-        line-height: 28px;
+        line-height: 30px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
