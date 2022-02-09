@@ -188,7 +188,7 @@ class App extends React.PureComponent {
             console.log('App -> render -> prop', prop);
             if (isCollapsed) return null;
             return(
-              <i className={prop.isOpen ? 'iconfont icona-shangjiantou3x' : 'iconfont icona-xiajiantou3x'} />
+              <i className={prop.isOpen ? 'iconfont icona-shangjiantou3x fs-12' : 'iconfont icona-xiajiantou3x fs-12'} />
             );
           }}
         >
