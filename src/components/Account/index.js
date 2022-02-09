@@ -67,7 +67,7 @@ export default function Account(props) {
       signChange(theAccount);
     };
     return (
-      <Card style={{ width: width < 1280 ? '390px' : '336px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
+      <Card style={{ width: width > 1280 ? '390px' : '336px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
         {/* 账户类型 */}
         <div className={styles.accountType}>
           <span style={{ display: 'flex', alignItems: 'center' }}>
