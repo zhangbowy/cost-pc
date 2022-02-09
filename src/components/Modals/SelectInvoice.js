@@ -415,19 +415,19 @@ class SelectInvoice extends Component {
                                   <span style={{ marginRight: '6px' }}>
                                     {
                                       (it.type === 0) && it.templateType === 0 &&
-                                      <i className="iconfont icona-baoxiaodan3x" />
+                                      <i className="iconfont icona-baoxiaodan3x" style={{marginLeft: '1px'}} />
                                     }
                                     {
                                       (it.type === 0) && it.templateType === 1 &&
-                                      <i className="iconfont icona-jiekuandan3x" />
+                                      <i className="iconfont icona-jiekuandan3x" style={{marginLeft: '1px'}} />
                                     }
                                     {
                                       (it.type === 0) && it.templateType === 2 &&
-                                      <i className="iconfont icona-shenqingdan3x" />
+                                      <i className="iconfont icona-shenqingdan3x" style={{marginLeft: '1px'}} />
                                     }
                                     {
                                       (it.type === 0) && it.templateType === 3 &&
-                                      <i className="iconfont icona-zidingyifenzu3x" />
+                                      <i className="iconfont icona-zidingyifenzu3x" style={{marginLeft: '1px'}} />
                                     }
                                   </span>
                                   <p className="c-black-85 fs-14 fw-500" style={{marginBottom: '0'}}>
