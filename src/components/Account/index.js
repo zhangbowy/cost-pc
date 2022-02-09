@@ -34,7 +34,7 @@ export default function Account(props) {
       // 银行卡
       0: <i className="iconfont iconyinhangka1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(255, 146, 0, 1)' }} />,
       // 支付宝
-      1: <i className="iconfont iconzhifubao1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(3, 122, 254, 1)' }} />,
+      1: <i className="iconfont iconzhifubao1" style={{ color: status === 0 ? tColor : 'rgba(3, 122, 254, 1)' }} />,
       // 现金
       2: <i className="iconfont iconxianjin1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(255, 185, 0, 1)' }} />,
       // 微信

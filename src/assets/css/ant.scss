@@ -12,6 +12,9 @@
         //   color:rgba(0, 199, 149, 1)!important;
         // }
       }
+      .ant-menu-item-active:hover a{
+        color:rgba(26, 206, 179, 1)!important;
+      }
       width: 64px!important;
       .ant-menu-item{
         padding: 0 23px !important;
