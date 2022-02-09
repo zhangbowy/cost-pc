@@ -32,15 +32,15 @@ export default function Account(props) {
     const tColor = 'rgba(0, 0, 0, 0.25)';
     const icon = {
       // 银行卡
-      0: <i className="iconfont iconyinhangka1" style={{ color: status === 0 ? tColor : 'rgba(255, 146, 0, 1)' }} />,
+      0: <i className="iconfont iconyinhangka1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(255, 146, 0, 1)' }} />,
       // 支付宝
-      1: <i className="iconfont iconzhifubao1" style={{ color: status === 0 ? tColor : 'rgba(3, 122, 254, 1)' }} />,
+      1: <i className="iconfont iconzhifubao1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(3, 122, 254, 1)' }} />,
       // 现金
-      2: <i className="iconfont iconxianjin1" style={{ color: status === 0 ? tColor : 'rgba(255, 185, 0, 1)' }} />,
+      2: <i className="iconfont iconxianjin1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(255, 185, 0, 1)' }} />,
       // 微信
-      3: <i className="iconfont iconweixin1" style={{ color: status === 0 ? tColor : 'rgba(10, 206, 102, 1)' }} />,
+      3: <i className="iconfont iconweixin1 m-t-4" style={{ color: status === 0 ? tColor : 'rgba(10, 206, 102, 1)' }} />,
       // 其他账户类型
-      4: <i className="iconfont iconqitabeifen" style={{ color: status===0?tColor:'rgba(0, 0, 0, 0.16)' }} />,
+      4: <i className="iconfont iconqitabeifen m-t-4" style={{ color: status===0?tColor:'rgba(0, 0, 0, 0.16)' }} />,
     };
     return icon[aType];
   };
@@ -88,7 +88,7 @@ export default function Account(props) {
           </span>
         </div>
         {/* 名称 */}
-        <div style={{ display: 'flex', alignItems: 'center', margin: '15px 0', lineHeight: '24px' }}>
+        <div style={{ display: 'flex',  margin: '15px 0', lineHeight: '24px' }}>
           <Tooltip placement="topLeft" title={name}><span className={styles.name}>{name}</span></Tooltip>
           {/* 是否默认/已停用/已签约 */}
           {isDefault ? <Tag color="blue">默认</Tag> : null}

@@ -46,6 +46,7 @@
          width: 32px;
          height: 32px;
          border-radius: 2px;
+         margin-bottom: 3px;
          i{
           margin:0!important;
          }
@@ -72,6 +73,10 @@
             width: 100%;
             line-height: 40px;
             cursor: pointer;
+            span{
+              display: inline-block;
+              width: 100%;
+            }
           }
           dt:hover{
             background: rgba(248, 248, 248, 1);
@@ -91,9 +96,10 @@
       margin-left:10px;
      }
     .name{
-        display: inline-block;
+        display:inline-block;
         font-size: 18px;
         font-weight: 600;
+        height: 28px;
         line-height: 28px;
         overflow: hidden;
         text-overflow: ellipsis;
