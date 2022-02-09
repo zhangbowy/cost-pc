@@ -27,7 +27,7 @@ class SelectInvoice extends Component {
     visible: false,
     scrollCancel: false,
     list: [],
-    id: '',
+    id: 'often',
     selectCost: [],
     noTreeList: [],
     searchContent: '',
@@ -297,7 +297,7 @@ class SelectInvoice extends Component {
           <p className="fs-20 fw-500 m-b-16 c-black-85">选择单据模板</p>
           <div className={style.scrollCont}>
             <div className={style.slInLeft}>
-              <p className="c-black-85 fs-14 fw-500 m-t-12">全部</p>
+              {/* <p className="c-black-85 fs-14 fw-500 m-t-12">全部</p> */}
               <div className={cs(style.scroll, 'm-t-16')}>
                 {
                   list.map(it => (
