@@ -467,7 +467,7 @@ class AddCostTable extends Component {
                 >
                   {
                     record.depList && record.depList.map(it => (
-                      <Option key={`${it.deptId}`}>{it.name}</Option>
+                      <Option key={`${it.deptId}`} label={it.name}>{it.name}</Option>
                     ))
                   }
                 </Select>
