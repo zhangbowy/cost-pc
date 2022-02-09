@@ -357,7 +357,7 @@ class AddAccount extends React.PureComponent {
               <div>
                 {
                   getFieldDecorator('status', {
-                    initialValue: !!((data && data.status === 1)),
+                    initialValue: !!((data && data.status === 1)) || (title === 'add'),
                     valuePropName: 'checked'
                   })(
                     <Switch />
