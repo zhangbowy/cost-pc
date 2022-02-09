@@ -21,7 +21,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const response = yield call(get, api.list, payload);
+      const response = yield call(post, api.list, payload);
       // eslint-disable-next-line no-return-assign
       const lists = response.list && response.list.length ? response.list.map(it => { return {...it, id: it.invoiceId, submitSum: it.loanSum}; }) : [];
       console.log('lists', lists);

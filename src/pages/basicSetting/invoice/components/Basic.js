@@ -429,6 +429,8 @@ class Basic extends React.PureComponent {
                       style={{width: '100%'}}
                       showCheckedStrategy={SHOW_CHILD}
                       dropdownStyle={{height: '300px'}}
+                      treeNodeFilterProp="label"
+                      autoClearSearchValue
                     />
                   )
                 }

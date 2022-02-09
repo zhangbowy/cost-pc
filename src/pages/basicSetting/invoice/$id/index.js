@@ -324,6 +324,10 @@ class CategoryAdd extends PureComponent {
   }
 
   isOpenProject = ({ isAllCostCategory, costCategory }) => {
+    const { templateType } = this.state;
+    if (Number(templateType) === 2 || Number(templateType) === 1) {
+      return;
+    }
     const params = {
       isAll: isAllCostCategory,
     };
@@ -337,6 +341,15 @@ class CategoryAdd extends PureComponent {
       payload: {...params},
     }).then(() => {
       const { isOpenProject } = this.props;
+      const { selectList, templatePdfVo } = this.state;
+      if (!isOpenProject && selectList.findIndex(it => it.field === 'project') === -1) {
+        this.setState({
+          templatePdfVo: {
+            ...templatePdfVo,
+            isProject: false,
+          }
+        });
+      }
       this.setState({
         isOpenProject,
       });

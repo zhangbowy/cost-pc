@@ -45,6 +45,14 @@ class BorrowPay extends React.PureComponent {
         out: 1
       },
       {
+        type: 'deptAndUser',
+        label: '提交部门/人',
+        placeholder: '请选择',
+        key: ['userVOS', 'deptVOS'],
+        id: 'userVOS',
+        out: 1
+      },
+      {
         type: 'search',
         label: '外部选择',
         placeholder: '单号、事由、收款人',
@@ -223,8 +231,8 @@ class BorrowPay extends React.PureComponent {
           type: 'select',
           label: '分公司',
           placeholder: '请选择',
-          key: 'officeIds',
-          id: 'officeIds',
+          key: 'officeId',
+          id: 'officeId',
           options: officeListAndRole,
           fileName: {
             key: 'id',
@@ -290,6 +298,10 @@ class BorrowPay extends React.PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
+      width: 110,
+    }, {
+      title: '提交人',
+      dataIndex: 'createName',
       width: 100,
     }, {
       title: '账户类型',
@@ -342,10 +354,6 @@ class BorrowPay extends React.PureComponent {
         );
       },
       width: 140,
-    }, {
-      title: '提交人',
-      dataIndex: 'createName',
-      width: 100,
     }, {
       title: '提交时间',
       dataIndex: 'createTime',

@@ -301,6 +301,10 @@
   .ant-menu-horizontal > .ant-menu-item-active,.ant-menu-horizontal > .ant-menu-item-selected{
     z-index: 10;
   }
+  .ant-tooltip-content{
+    max-height: 400px;
+    overflow-y: scroll;
+  }
 
   .ant-select-selection{
     border-radius: 2px!important;

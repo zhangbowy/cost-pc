@@ -368,8 +368,8 @@ class CostDetailTable extends PureComponent {
                   `${record.costSumStr}(${record.currencySumStr})` : `¥${record.costSum/100}`}
                   {
                     record.costSumInfo &&
-                    <Tooltip title={`费用包含：${record.costSumInfo}`}>
-                      <i className="iconfont iconIcon-yuangongshouce m-l-8" />
+                    <Tooltip title={`${record.costSumInfo}`}>
+                      <i className="iconfont iconIcon-yuangongshouce m-l-8 m-r-8" />
                     </Tooltip>
                   }
                 </span>
@@ -384,18 +384,20 @@ class CostDetailTable extends PureComponent {
                           <p key={record.id} className="c-black-85 fs-14 fw-500 m-b-8">
                             分摊明细：金额 ¥{record.costSum/100}{record.currencySumStr ? `(${record.currencySumStr})` : ''}
                           </p>
-                          {
-                            record.costDetailShareVOS.map(it => (
-                              <p key={it.id} className="c-black-36 fs-13">
-                                <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
-                                {
-                                  it.projectName &&
-                                  <span className="m-r-8">{it.projectName}</span>
-                                }
-                                <span>¥{it.shareAmount/100}{it.currencySumStr && record.currencyId &&  record.currencyId !== -1 ? `(${it.currencySumStr})` : ''}</span>
-                              </p>
-                            ))
-                          }
+                          <div style={{ maxHeight: '176px', overflowY: 'scroll' }}>
+                            {
+                              record.costDetailShareVOS.map(it => (
+                                <p key={it.id} className="c-black-36 fs-13">
+                                  <span className="m-r-8">{it.userName ? `${it.userName}/` : ''}{it.deptName}</span>
+                                  {
+                                    it.projectName &&
+                                    <span className="m-r-8">{it.projectName}</span>
+                                  }
+                                  <span>¥{it.shareAmount/100}{it.currencySumStr && record.currencyId &&  record.currencyId !== -1 ? `(${it.currencySumStr})` : ''}</span>
+                                </p>
+                              ))
+                            }
+                          </div>
                         </div>
                     )}
                     >

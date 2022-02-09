@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Divider, message, Menu, Form, DatePicker, Button } from 'antd';
+import { Table, Divider, message, Menu, Form, DatePicker, Button, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
@@ -294,6 +294,13 @@ class Payments extends React.PureComponent {
       title: '借款事由',
       dataIndex: 'reason',
       width: 150,
+      ellipsis: true,
+      textWrap: 'word-break',
+      render: (text) => (
+        <Tooltip title={text || ''} placement="topLeft">
+          <span>{text}</span>
+        </Tooltip>
+      )
     }, {
       title: '借款金额（元）',
       dataIndex: 'loanSum',

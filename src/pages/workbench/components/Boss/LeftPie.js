@@ -92,6 +92,7 @@ class LeftPie extends PureComponent {
           <PieChart
             data={data[btn[current].data] && data[btn[current].data].totalSum ? data[btn[current].data].appDimensionStatisticListReturnVos : []}
             total={data[btn[current].data] && data[btn[current].data].totalSum ? data[btn[current].data].totalSum : 0}
+            totalStr={data[btn[current].data] && data[btn[current].data].totalSumStr ? data[btn[current].data].totalSumStr : 0}
             current={current}
             title={btn[current].value}
             onLink={this.onLink}

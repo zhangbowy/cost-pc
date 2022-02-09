@@ -15,13 +15,14 @@ const tabList = [{
   key: 'appProjectStatisticReturnVo',
   value: '项目支出'
 }];
-function PieChart({ data, total, current, title, onLink }) {
+function PieChart({ data, total, current, title, onLink, totalStr }) {
+  console.log('🚀 ~ file: PieChart.js ~ line 19 ~ PieChart ~ data', data);
   const option = {
     title: {
       zlevel: 0,
       text: [
         `{name|${title}支出合计}`,
-        `{value|￥${  total/100  }}`,
+        `{value|${  totalStr || total/100  }}`,
       ].join('\n'),
       rich: {
         value: {
@@ -32,7 +33,7 @@ function PieChart({ data, total, current, title, onLink }) {
         },
         name: {
           color: 'rgba(0,0,0,0.45)',
-          lineHeight: 22,
+          lineHeight: 24,
           fontSize: 14
         },
       },
@@ -43,7 +44,7 @@ function PieChart({ data, total, current, title, onLink }) {
         rich: {
           value: {
             color: 'rgba(0,0,0,0.85)',
-            fontSize: 24,
+            fontSize: 22,
             lineHeight: 32,
             fontFamily: 'Helvetica, sans-serif, Arial'
           },
@@ -103,7 +104,8 @@ function PieChart({ data, total, current, title, onLink }) {
         data: data.map(it => {
           return {
             value: it.costSum/100,
-            name: it.dimensionName
+            name: it.dimensionName,
+            valueStr: it.costSumStr
           };
         })
       }
@@ -149,7 +151,7 @@ function PieChart({ data, total, current, title, onLink }) {
                       <span>{it.dimensionName}</span>
                     </div>
                     <div className={style.money}>
-                      <span className="c-black-65">¥ {it.costSum/100}</span>
+                      <span className="c-black-65">{it.costSumStr}</span>
                       <span className={style.line}>|</span>
                       <span className="c-black-45" style={{width: '102px', display: 'inline-block'}}>
                         <span>环比</span>
