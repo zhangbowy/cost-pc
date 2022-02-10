@@ -38,7 +38,7 @@ export default function Account(props) {
       // 现金
       2: <i className="iconfont iconxianjin1" style={{ color: status === 0 ? tColor : 'rgba(255, 185, 0, 1)' }} />,
       // 微信
-      3: <i className="iconfont iconweixin" style={{ color: status === 0 ? tColor : 'rgba(10, 206, 102, 1)' }} />,
+      3: <i className="iconfont iconweixin1" style={{ color: status === 0 ? tColor : 'rgba(10, 206, 102, 1)' }} />,
       // 其他账户类型
       4: <i className="iconfont iconqitabeifen" style={{ color: status===0?tColor:'rgba(0, 0, 0, 0.16)' }} />,
     };
@@ -70,10 +70,10 @@ export default function Account(props) {
       <Card style={{ width: width > 1280 ? '390px' : '336px',height:'220px',backgroundColor:'#fff',margin:'16px 16px 0 0'}} className={styles.cardContent} bordered={false}>
         {/* 账户类型 */}
         <div className={styles.accountType}>
-          <span style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ float:'left'}}>
             {/* 账户图标 */}
             {accountIcon(type)}
-            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)' }}>{accountType(type)||bankName}</span>
+            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(0, 0, 0, 0.65)',verticalAlign:'2px'}}>{accountType(type)||bankName}</span>
           </span>
           <span className={styles.caozuo}>
             <i className="iconfont icona-caozuo3x"/>
