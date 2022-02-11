@@ -348,6 +348,7 @@ class AddCostTable extends Component {
     const list = exportList && exportList.length ? exportList : [];
     const arrs = [];
     const { costDetailShareVOS, costSum, shareAmount } = this.state;
+    const { initDep } = this.props;
     console.log('onAdds -> costSum', costSum);
     const { modify } = this.props;
     const details = [...costDetailShareVOS];
@@ -365,7 +366,7 @@ class AddCostTable extends Component {
         key: `export_${getTimeId()}_${index}`,
         shareAmount: it.costAmount/100,
         shareScale: ((((it.costAmount/100)/costSum) * 10000).toFixed(0))/100,
-        depList: it.deptObject,
+        depList: it.deptObject || initDep,
         invoiceBaseId: details.invoiceBaseId,
         users: it.userId ? [{ userId: it.userId, name: it.userName, userName: it.userName }] : [],
       });
