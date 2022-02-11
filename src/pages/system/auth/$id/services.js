@@ -10,4 +10,5 @@ export default {
   userIdList: `${APP_API}/cost/role/dingUserIdList`,
   roleLists: `${APP_API}/cost/role/ding/role/list`,
   addddRole: `${APP_API}/cost/role/syn/ding/role`,
+
 };

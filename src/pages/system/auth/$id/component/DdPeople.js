@@ -4,9 +4,9 @@ import { Modal, Select } from 'antd';
 import { connect } from 'dva';
 
 const { Option, OptGroup } = Select;
-@connect(({ loading, setUser }) => ({
-  loading: loading.effects['setUser/list'] || false,
-  roleLists: setUser.roleLists,
+@connect(({ loading, costGlobal }) => ({
+  loading: loading.effects['costGlobal/list'] || false,
+  roleLists: costGlobal.roleLists,
 }))
 class DdPeople extends PureComponent {
   constructor(props) {
@@ -19,7 +19,7 @@ class DdPeople extends PureComponent {
 
   onShow = () => {
     this.props.dispatch({
-      type: 'setUser/roleLists',
+      type: 'costGlobal/roleLists',
       payload: {
         offset: 0,
         size: 100,
