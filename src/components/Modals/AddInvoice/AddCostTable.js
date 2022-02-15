@@ -366,7 +366,7 @@ class AddCostTable extends Component {
         key: `export_${getTimeId()}_${index}`,
         shareAmount: it.costAmount/100,
         shareScale: ((((it.costAmount/100)/costSum) * 10000).toFixed(0))/100,
-        depList: it.deptObject || initDep,
+        depList: it.deptObject && it.deptObject.length > 0 ? it.deptObject : initDep,
         invoiceBaseId: details.invoiceBaseId,
         users: it.userId ? [{ userId: it.userId, name: it.userName, userName: it.userName }] : [],
       });
