@@ -344,6 +344,13 @@
       width: unset;
       margin-right: 16px;
     }
+    .ant-modal-header{
+      padding: 24px 0 0 32px;
+      border-bottom: none;
+    }
+    .ant-modal-body{
+      padding: 24px 32px;
+    }
   }
   .ant-menu-submenu-inline > .ant-menu-submenu-title .icona-xiajiantou3x{
     position: absolute;
