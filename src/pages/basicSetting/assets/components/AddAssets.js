@@ -21,9 +21,19 @@ class AddAssets extends PureComponent {
               <i className="iconfont icona-guanbi3x1" />
             </div>
           )}
+          width="580px"
+          style={{
+            height: '480px'
+          }}
         >
           <Form layout="vertical">
             <Form.Item label="鑫资产分类">
+              <Input />
+            </Form.Item>
+            <Form.Item label="鑫支出对应类别">
+              <Input />
+            </Form.Item>
+            <Form.Item label="备注">
               <Input />
             </Form.Item>
           </Form>
