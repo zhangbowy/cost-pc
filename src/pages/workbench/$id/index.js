@@ -195,6 +195,7 @@ class addInvoice extends Component {
     });
     Promise.all(newArr).then(() => {
       const create = this.props.deptInfo;
+      console.log('🚀 ~ file: index.js ~ line 198 ~ addInvoice ~ Promise.all ~ create', create);
       this.setState({
         depList: create,
         users: userJson,
@@ -1530,6 +1531,7 @@ class addInvoice extends Component {
       officeList, // 所在公司列表,
       aliCostAndI,
       checkStandard,
+      userDeps,
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1604,6 +1606,7 @@ class addInvoice extends Component {
               details={details}
               createDepList={createDepList}
               djDetail={djDetail}
+              allDeptList={userDeps['-1']}
               uploadFiles={this.onUploadFiles}
               onChangeData={this.changeSetData}
               costDetailsVo={costDetailsVo}

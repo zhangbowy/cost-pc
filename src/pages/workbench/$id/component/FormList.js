@@ -494,6 +494,7 @@ renderTreeNodes = data =>
       depList,
       officeList,
       ossFileUrl,
+      allDeptList
     } = this.props;
     const projectList = treeConvert({
       rootId: 0,
@@ -507,6 +508,8 @@ renderTreeNodes = data =>
 
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
+    const deptList = modify ? allDeptList : depList;
+    const createDeptList = modify ? allDeptList : createDepList;
     return (
       <Form
         className={cs('formItem', style.formColumn)}
@@ -663,7 +666,7 @@ renderTreeNodes = data =>
                       {
                         getFieldDecorator('deptId', {
                           initialValue: details.deptId
-                            && depList.findIndex(it => `${it.deptId}` === `${details.deptId}`) > -1
+                            && deptList.findIndex(it => `${it.deptId}` === `${details.deptId}`) > -1
                             ? `${details.deptId}` : '',
                           rules: [{ required: true, message: `请选择${showField.deptId && showField.deptId.name}` }]
                         })(
@@ -673,7 +676,7 @@ renderTreeNodes = data =>
                             disabled={modify}
                           >
                             {
-                              depList && depList.map(it => (
+                              deptList && deptList.map(it => (
                                 <Option key={it.deptId}>{it.name}</Option>
                               ))
                             }
@@ -696,7 +699,7 @@ renderTreeNodes = data =>
                         {
                           getFieldDecorator('createDeptId', {
                             initialValue: details.createDeptId
-                              && createDepList.findIndex(it => `${it.deptId}` === `${details.createDeptId}`) > -1
+                              && createDeptList.findIndex(it => `${it.deptId}` === `${details.createDeptId}`) > -1
                               ? `${details.createDeptId}` : '',
                             rules: [{ required: true, message: '请选择部门' }]
                           })(
@@ -708,7 +711,7 @@ renderTreeNodes = data =>
                               disabled={modify}
                             >
                               {
-                                createDepList && createDepList.map(it => (
+                                createDeptList && createDeptList.map(it => (
                                   <Option key={`${it.deptId}`}>{it.name}</Option>
                                 ))
                               }
