@@ -142,7 +142,7 @@ class Account extends Component {
           </div>
           {list.length?null:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无付款账户" style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}}/>}
           <Pagination
-            style={{margin:'16px 0',position:'absolute',bottom:'24px',right:'32px'}}
+            style={{margin:'16px 0',position:'absolute',right:'32px'}}
             loading={loading}
             size="small"
             current={query.pageNo}
