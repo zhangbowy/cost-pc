@@ -270,9 +270,11 @@ export class NodeUtils {
    */
   static addApprovalNodes ( data, isBranchAction, newChildNode = undefined, flag ) {
     const datas = {...data};
+    console.log('🚀 ~ file: util.js ~ line 273 ~ NodeUtils ~ addApprovalNodes ~ data', data);
     const oldChildNode = {...data.childNode};
     console.log('NodeUtils -> addApprovalNodes -> datas', datas);
     newChildNode = newChildNode || this.createNode( 'approver', data.nodeId );
+    console.log('🚀 ~ file: util.js ~ line 276 ~ NodeUtils ~ addApprovalNodes ~ newChildNode', newChildNode);
     data.childNode = newChildNode;
     if ( oldChildNode ) {
       newChildNode.childNode = oldChildNode;
@@ -526,13 +528,15 @@ export class NodeUtils {
  * 更新数据
  */
   static getMockData (nodes, val, type) {
+    console.log('🚀 ~ file: util.js ~ line 531 ~ NodeUtils ~ getMockData ~ val', val);
+    console.log('🚀 ~ file: util.js ~ line 531 ~ NodeUtils ~ getMockData ~ type', type);
     let node = { ...nodes };
     console.log(val);
     function childNode(child){
       const result = {};
       // eslint-disable-next-line guard-for-in
       for (const key in child) {
-        if (typeof (child[key]) === 'object' && !Array.isArray(child[key])) {
+        if (typeof (child[key]) === 'object' && !Array.isArray(child[key]) && child[key]!== 'bizData') {
           let x = {};
           if ((val.nodeId === child.nodeId) && (val.nodeType !== 'route') && (type === 'add')) {
             x = {

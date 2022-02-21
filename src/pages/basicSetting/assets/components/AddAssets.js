@@ -30,6 +30,10 @@ class AddAssets extends PureComponent {
     });
   }
 
+  getChildren = (id = '', data = [], res = []) => {
+
+  }
+
   onOk = () => {
     const { list } = this.state;
     const { details, onOk } = this.props;
