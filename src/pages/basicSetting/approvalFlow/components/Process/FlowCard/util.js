@@ -530,7 +530,7 @@ export class NodeUtils {
       const result = {};
       // eslint-disable-next-line guard-for-in
       for (const key in child) {
-        if (typeof (child[key]) === 'object' && !Array.isArray(child[key])) {
+        if (typeof (child[key]) === 'object' && !Array.isArray(child[key]) && child[key] !== 'bizData') {
           let x = {};
           if ((val.nodeId === child.nodeId) && (val.nodeType !== 'route') && (type === 'add')) {
             x = {
@@ -545,6 +545,15 @@ export class NodeUtils {
             x = {
               ...child,
               childNode: val,
+            };
+            // x.childNode = val;
+            Object.assign(result, x);
+            return result;
+          }
+          if ((val.nodeId === child.nodeId) && (val.nodeType === 'route') && (type === 'add')) {
+            x = {
+              ...child,
+              childNode: val.childNode,
             };
             // x.childNode = val;
             Object.assign(result, x);
