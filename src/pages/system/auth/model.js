@@ -102,6 +102,9 @@ export default {
     *syncApproveRole({ payload }, { call }) {
       yield call(get, api.syncApproveRole, payload);
     },
+    *addDDRole({ payload }, { call }) {
+      yield call(post, api.addddRole, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

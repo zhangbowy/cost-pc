@@ -156,7 +156,7 @@ class setUser extends React.PureComponent {
         <div className="content-dt" style={{ height: 'auto' }}>
           <div style={{ display: 'flex' }}>
             <Button type="primary" style={{marginBottom: '15px'}} onClick={this.handleClick}>新增人员</Button>
-            <DdPeople onOk={this.onOk} roleId={role.id}>
+            <DdPeople onOk={this.onOk} roleId={role.id} pageType="role">
               <Button type="default" className="m-l-8">同步钉钉角色</Button>
             </DdPeople>
           </div>

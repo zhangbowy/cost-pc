@@ -19,4 +19,5 @@ export default {
   approveEdit: `${APP_API}/cost/approve/role/edit`,
   approveDetail: `${APP_API}/cost/approve/role/detail`,
   syncApproveRole: `${APP_API}/cost/approve/role/ding/syn/approved`,
+  addddRole: `${APP_API}/cost/approve/role/ding`,
 };

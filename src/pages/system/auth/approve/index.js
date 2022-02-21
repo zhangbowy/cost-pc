@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { Table, Popconfirm, Divider, Button, message, Tooltip, Modal } from 'antd';
 import ddImg from '@/assets/img/dingding.png';
 import AddModal from './components/AddModal';
+import DdPeople from '../$id/component/DdPeople';
 
 const { confirm } = Modal;
 @connect(({ auth, loading }) => ({
@@ -172,7 +173,9 @@ class ApproveIndex extends Component {
         <AddModal title="add" onOk={this.onOk} detail={{}}>
           <Button type="primary" className="m-b-16 m-r-8">新增</Button>
         </AddModal>
-        <Button type="default" onClick={() => this.again()}>同步钉钉审批角色</Button>
+        <DdPeople onOk={this.onOk} typePage="approve">
+          <Button type="default">同步钉钉审批角色</Button>
+        </DdPeople>
         <Table
           rowKey="id"
           columns={columns}

@@ -1,4 +1,6 @@
 .travel{
+  height: calc(100vh - 250px);
+  overflow-y: scroll;
   :global{
     .ant-steps-item-icon{
       width: 28px;

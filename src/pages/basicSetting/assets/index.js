@@ -1,35 +1,40 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Tree, Tooltip, Divider } from 'antd';
+import { Steps, Button, Table, Tooltip, Divider, Popconfirm } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
-import qrCode from '@/assets/img/aliCode.png';
 import style from './index.scss';
 import AddAssets from './components/AddAssets';
+import { ddOpenLink } from '../../../utils/ddApi';
+import FooterBar from '../../../components/FooterBar';
+// import { EditPrompt } from '../../../components/EditPrompt';
 
-const aliTravel = {
-  0: '机票',
-  1: '火车票',
-  2: '酒店',
-  3: '用车',
-};
 const { Step } = Steps;
-const { TreeNode } = Tree;
 @connect(({ assets, global }) => ({
   authorize: assets.authorize,
   list: assets.list,
+  assetsList: assets.assetsList,
   costCategoryList: global.costCategoryList,
 }))
 class AllTravelData extends PureComponent {
   state = {
     current: 2,
-    costCategoryId: '',
-    type: '',
+    costList: [],
+    list: [],
   }
 
   componentDidMount() {
     this.onQuery({});
+    this.props.dispatch({
+      type: 'assets/list',
+      payload: {},
+    }).then(() => {
+      const { list } = this.props;
+      this.setState({
+        list,
+      });
+    });
     this.props.dispatch({
       type: 'assets/authorize',
       payload: {},
@@ -40,75 +45,30 @@ class AllTravelData extends PureComponent {
     });
   }
 
-  confirm = () => {
-    const { type, costCategoryId } = this.state;
-    this.props.dispatch({
-      type: 'assets/editRef',
-      payload: {
-        type,
-        costCategoryId: costCategoryId[0],
-      }
-    }).then(() => {
+  getAssets = () => {
+    return new Promise(resolve => {
       this.props.dispatch({
-        type: 'assets/authorize',
-        payload: {},
+        type: 'assets/assetsList',
+        payload: {
+          type: 0
+        },
+      }).then(() => {
+        const { assetsList } = this.props;
+        const lists = treeConvert({
+          rootId: '0',
+          pId: 'parentId',
+          name: 'name',
+          id: 'id',
+          tName: 'label',
+          tId: 'value',
+          others: ['path', 'parentId']
+        }, assetsList);
+        resolve({
+          tree: lists,
+          lists: assetsList
+        });
       });
-      this.setState({
-      }, () => {
-        this.onQuery({});
-      });
-
     });
-  }
-
-  // 循环渲染树结构
-  loop = data => data.map(item => {
-    const { selectedKeys } = this.state;
-    if (item.children && item.children.length) {
-      return (
-        <TreeNode
-          key={item.value}
-          label={item.title}
-          value={item.value}
-          disabled={!item.type}
-          title={(
-            <div className={selectedKeys === item.value ? cs(style.costs, 'icons') : 'icons'}>
-              {
-                item.type ?
-                  <i className={cs(`icon${item.icon}`, 'iconfont')} />
-                  :
-                  null
-              }
-              <span>{item.title}</span>
-            </div>
-          )}
-        >
-          {this.loop(item.children)}
-        </TreeNode>
-      );
-    }
-    return <TreeNode
-      key={item.value}
-      label={item.title}
-      value={item.value}
-      disabled={!item.type}
-      title={(
-        <div style={{ width: '100%' }} className={selectedKeys === item.value ? cs(style.costs, 'icons') : 'icons'}>
-          {
-            item.type ?
-              <i className={cs(`icon${item.icon}`, 'iconfont', 'fs-24')} style={{verticalAlign: 'middle'}} />
-              :
-              null
-          }
-          <span className="m-l-8" style={{verticalAlign: 'middle'}}>{item.title}</span>
-        </div>
-      )}
-    />;
-  });
-
-  onNewSearch = (e) => {
-    console.log(e);
-    this.onQuery({ costName: e });
   }
 
   onQuery = (payload) => {
@@ -137,25 +97,74 @@ class AllTravelData extends PureComponent {
           otherKeys: ['type','showField', 'icon']
         }, costCategoryList);
       }
-      console.log(arr);
+      this.setState({
+        costList: arr,
+      });
     });
   }
 
-  onSelect = (selectedKeys, info, type) => {
-    console.log('selected', selectedKeys, info);
-    this.setState({
-      costCategoryId: selectedKeys,
-      type,
-    });
-  };
+  onOK = ({ type, editList }) => {
+  console.log('🚀 ~ file: index.js ~ line 107 ~ AllTravelData ~ editList', editList);
+    const { list } = this.state;
+    if (type === 'add') {
+      const newList = [...editList, ...list];
+      this.setState({
+        list: newList,
+      });
+    } else {
+      const listEdit = [...list];
+      const index = list.findIndex(it => it.id === editList.id);
+      listEdit.splice(index, 1, editList);
+      console.log('🚀 ~ file: index.js ~ line 116 ~ AllTravelData ~ list', listEdit);
+      this.setState({
+        list: listEdit,
+      });
+    }
+  }
 
   onCancel = () => {
     this.onQuery({});
   }
 
+  onDelete = (id) => {
+    const { list } = this.state;
+    this.setState({
+      list: list.filter(it => it.id !== id)
+    });
+  }
+
+  onSave = () => {
+    const { list } = this.state;
+    this.props.dispatch({
+      type: 'assets/onSave',
+      payload: {
+        list: list.map(it => {
+          return {
+            ...it,
+            id: it.id && `${it.id}`.indexOf('add_') > -1 ? '' : it.id
+          };
+        })
+      }
+    }).then(() => {
+      this.props.dispatch({
+        type: 'assets/list',
+        payload: {}
+      }).then(() => {
+        const newList = this.props.list;
+        this.setState({
+          list: newList,
+        });
+      });
+    });
+  }
+
+  onLink = () => {
+    ddOpenLink('https://h5.dingtalk.com/appcenter/index-pc.html?ddtab=true&funnelsource=xinfengwei&#/detail/FW_GOODS-1001006134');
+  }
+
   render () {
-    const { current } = this.state;
-    const { list, authorize } = this.props;
+    const { current, costList, list } = this.state;
+    const { authorize } = this.props;
     const columns = [{
       title: (
         <span>
@@ -165,11 +174,11 @@ class AllTravelData extends PureComponent {
           </Tooltip>
         </span>
       ),
-      dataIndex: 'costCategoryName',
+      dataIndex: 'categoryName',
       render: (_, record) =>  {
         return (
           <span>
-            <span className="m-r-8">{record.costCategoryName}</span>
+            <span className="m-r-8">{record.categoryName}</span>
           </span>
         );
       },
@@ -182,29 +191,40 @@ class AllTravelData extends PureComponent {
           </Tooltip>
         </span>
       ),
-      dataIndex: 'type',
-      render: (_, record) => (
-        <span>{aliTravel[record.type]}</span>
-      )
+      dataIndex: 'assetsTypeName',
     }, {
       title: '说明',
       dataIndex: 'note',
     }, {
       title: '操作',
       dataIndex: 'operate',
-      render: () => (
+      render: (_, record) => (
         <span>
-          <a>删除</a>
+          <Popconfirm
+            onConfirm={() => this.onDelete(record.id)}
+            title="请确认删除？"
+          >
+            <a>删除</a>
+          </Popconfirm>
           <Divider type="vertical" />
-          <a>编辑</a>
+          <AddAssets
+            details={record}
+            costList={costList}
+            getAssets={this.getAssets}
+            list={list}
+            type="edit"
+            onOk={this.onOK}
+          >
+            <a>编辑</a>
+          </AddAssets>
         </span>
       )
     }];
     return (
       <div>
-        <PageHead title="鑫资产数据集成" isShowBtn disabled={!authorize.isAuthorize} />
+        <PageHead title="鑫资产数据集成" />
         <div className={cs(style.travel, 'content-dt')}>
-          <Steps current={authorize.isAuthorize ? current : 0} onChange={this.onChange} direction="vertical">
+          <Steps current={authorize ? current : 0} onChange={this.onChange} direction="vertical">
             <Step
               title={(
                 <p className="fs-14" style={{ fontWeight: '400' }}>
@@ -214,9 +234,10 @@ class AllTravelData extends PureComponent {
               description={(
                 <div>
                   <p className="c-black-45 fs-12">公司开通「鑫资产」后，才可实现双方数据集成，请先开通鑫资产，</p>
-                  <Tooltip placement="top" title={(<img alt="二维码" src={qrCode} className={style.qrCode} />)} overlayClassName={style.tooltips}>
-                    <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }}>去开通</Button>
-                  </Tooltip>
+                  {
+                    !authorize &&
+                    <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }} onClick={() => this.onLink()}>去开通</Button>
+                  }
                 </div>
               )}
             />
@@ -225,21 +246,40 @@ class AllTravelData extends PureComponent {
               description={(
                 <div>
                   <p className="fs-14 c-black-45 m-b-24">鑫资产产生折旧费用后，支出数据会自动导入鑫支出，费用类型默认按照设置好的类目匹配规则自动导入鑫支出。</p>
-                  <div>
-                    <AddAssets>
-                      <Button type="primary" className="m-b-16">新增类目映射</Button>
-                    </AddAssets>
-                    <Table
-                      columns={columns}
-                      pagination={false}
-                      dataSource={list}
-                    />
-                  </div>
+                  {
+                    authorize &&
+                    <div>
+                      <AddAssets
+                        details={{}}
+                        costList={costList}
+                        getAssets={this.getAssets}
+                        list={list}
+                        type="add"
+                        onOk={this.onOK}
+                      >
+                        <Button type="primary" className="m-b-16">新增类目映射</Button>
+                      </AddAssets>
+                      <Table
+                        columns={columns}
+                        pagination={false}
+                        dataSource={list}
+                      />
+                    </div>
+                  }
                 </div>
               )}
             />
           </Steps>
+          <FooterBar
+            right={(
+              <div>
+                <span className="fs-14 c-black-45 m-r-16">上次保存时间：2022-02-21</span>
+                <Button type="primary" onClick={this.onSave}>保存</Button>
+              </div>
+            )}
+          />
         </div>
+        {/* <EditPrompt history={this.props.history} /> */}
       </div>
     );
   }

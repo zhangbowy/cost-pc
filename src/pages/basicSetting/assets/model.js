@@ -1,25 +1,43 @@
-import { get } from '@/utils/request';
+import { get, post } from '@/utils/request';
 import api from './services';
 
 export default {
   namespace: 'assets',
   state: {
     list: [],
-    authorize: {},
+    authorize: false,
+    assetsList: [],
   },
   effects: {
     *authorize({ payload }, { call, put }) {
-      const response = yield call(get, api.authorize, payload);
+      const response = yield call(post, api.authorize, payload);
       yield put({
         type: 'save',
         payload: {
-          authorize: response || {},
-          list: response.refs || [],
+          authorize: response || false,
         },
       });
     },
-    *editRef({ payload }, { call }) {
-      yield call(get, api.editRef, payload);
+    *assetsList({ payload }, { call, put }) {
+      const response = yield call(get, api.assetsList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          assetsList: response || [],
+        },
+      });
+    },
+    *list({ payload }, { call, put }) {
+      const response = yield call(get, api.list, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          list: response || [],
+        },
+      });
+    },
+    *onSave({ payload }, { call }) {
+      yield call(post, api.save, payload);
     },
   },
   reducers: {

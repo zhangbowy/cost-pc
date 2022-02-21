@@ -116,6 +116,7 @@ export class NodeUtils {
    * @returns { Object } 父节点
    */
   static getPreviousNode ( prevId, processData ) {
+    console.log('🚀 ~ file: util.js ~ line 119 ~ NodeUtils ~ getPreviousNode ~ prevId', prevId);
     if ( processData && (processData.nodeId === prevId) ) return processData;
     if ( processData.childNode ) {
       const r1 = this.getPreviousNode( prevId, processData.childNode );
@@ -167,6 +168,7 @@ export class NodeUtils {
       } );
     };
     if ( this.isConditionNode( nodeData ) ) {
+      console.log('prevNode', prevNode);
       const conditions = [...prevNode.conditionNodes];
       const cons = [...conditions];
       const index = cons.findIndex( c => c.nodeId === nodeData.nodeId );
