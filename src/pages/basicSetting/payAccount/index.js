@@ -109,7 +109,7 @@ class Account extends Component {
   }
 
   render() {
-    const { list,query, total, loading } = this.props;
+    const { list, query, total, loading } = this.props;
     console.log(list, query, total, loading, '666666');
     const onChange = (pageNumber) => {
       this.onQuery({
@@ -126,7 +126,7 @@ class Account extends Component {
     return (
       <div>
         <PageHead title="公司付款账户设置" />
-        <div className="content-dt content-add" style={{position:'relative', backgroundColor: '#F7F8FA'}}>
+        <div className="content-dt content-add" style={{backgroundColor: '#F7F8FA'}}>
           <div className="cnt-header">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">

@@ -322,6 +322,7 @@ class Summary extends React.PureComponent {
       this.setState({
         list: lists,
       });
+      console.log('lists999999',this.state.list);
       if (callback) {
         callback();
       }

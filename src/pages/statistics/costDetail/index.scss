@@ -20,3 +20,16 @@
     line-height: 1;
   }
 }
+:global{
+  .ant-tag{
+    height: 22px;
+    padding: 0 6px 0 5px;
+    line-height: 22px;
+    border:0;
+    margin-left: 8px;
+    border-radius: 4px;
+}
+.ant-tag-blue{
+  color:rgba(3, 122, 254, 1)
+}
+}

@@ -107,7 +107,7 @@ class Account extends Component {
     return (
       <div>
         <PageHead title="个人收款账户设置" />
-        <div className="content-dt content-add" style={{position:'relative', backgroundColor: '#F7F8FA'}}>
+        <div className="content-dt content-add" style={{backgroundColor: '#F7F8FA'}}>
           <div className="cnt-header">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">
