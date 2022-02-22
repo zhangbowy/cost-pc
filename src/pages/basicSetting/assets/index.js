@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Tooltip, Divider, Popconfirm } from 'antd';
+import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -148,6 +148,7 @@ class AllTravelData extends PureComponent {
         })
       }
     }).then(() => {
+      message.success('保存成功');
       this.props.dispatch({
         type: 'assets/list',
         payload: {}
@@ -167,6 +168,7 @@ class AllTravelData extends PureComponent {
   render () {
     const { current, costList, list } = this.state;
     const { authorize, saveTime } = this.props;
+    const newList = this.props.list;
     const columns = [{
       title: (
         <span>
@@ -290,7 +292,7 @@ class AllTravelData extends PureComponent {
                 <div>
                   {
                     saveTime &&
-                    <span className="fs-14 c-black-45 m-r-16">上次保存时间：{moment(saveTime).format('YYYY-MM-DD hh:mm:ss')}</span>
+                    <span className="fs-14 c-black-45 m-r-16">上次保存时间：{moment(saveTime).format('YYYY-MM-DD HH:mm:ss')}</span>
                   }
                   <Button type="primary" onClick={this.onSave}>保存</Button>
                 </div>
@@ -298,7 +300,7 @@ class AllTravelData extends PureComponent {
             />
           }
         </div>
-        <EditPrompt history={this.props.history} />
+        <EditPrompt history={this.props.history} isModal={JSON.stringify(newList) !== JSON.stringify(list)} />
       </div>
     );
   }

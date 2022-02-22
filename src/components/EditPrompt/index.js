@@ -3,8 +3,8 @@ import React , { useEffect, useState } from 'react';
 // import { history } from 'umi';
 import { Prompt } from 'react-router-dom';
 
-export const EditPrompt = (({ history }) => {
-    const [save, setSave] = useState(true);
+export const EditPrompt = (({ history, isModal }) => {
+    const [save, setSave] = useState(isModal);
     const listener = (e) => {
         e.preventDefault();
         // const confirmationMessage = '你确定离开此页面吗?';

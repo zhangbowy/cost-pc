@@ -8,7 +8,7 @@ import CostTreeSelect from '../../../../components/FormItems/CostTreeSelect';
 import { getTimeIdNo } from '../../../../utils/common';
 
 const { TreeNode } = Tree;
-const { SHOW_PARENT } = TreeSelect;
+const { SHOW_ALL } = TreeSelect;
 @Form.create()
 class AddAssets extends PureComponent {
   state={
@@ -111,10 +111,15 @@ class AddAssets extends PureComponent {
     });
   }
 
+  filterTreeNode = (inputValue, treeNode) => {
+  console.log('🚀 ~ file: AddAssets.js ~ line 115 ~ AddAssets ~ treeNode', treeNode);
+  console.log('🚀 ~ file: AddAssets.js ~ line 115 ~ AddAssets ~ inputValue', inputValue);
+    return treeNode.title.indexOf(inputValue) > -1;
+  }
+
   render() {
     const { children, details, costList } = this.props;
     const { visible, assetsList, listMap } = this.state;
-    console.log('🚀 ~ file: AddAssets.js ~ line 117 ~ AddAssets ~ render ~ listMap', listMap);
     const {
       form: { getFieldDecorator }
     } = this.props;
@@ -143,7 +148,7 @@ class AddAssets extends PureComponent {
                 getFieldDecorator('assetsTypeId', {
                   initialValue: details.assetsTypeId
                     ? [{value: details.assetsTypeId, label: details.assetsTypeName}]
-                    : undefined,
+                    : listMap,
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <TreeSelect
@@ -151,9 +156,11 @@ class AddAssets extends PureComponent {
                     showSearch
                     treeCheckable
                     placeholder="请选择"
-                    showCheckedStrategy={SHOW_PARENT}
+                    showCheckedStrategy={SHOW_ALL}
                     labelInValue
                     disabled={details.id}
+                    filterTreeNode={this.filterTreeNode}
+                    treeCheckStrictly
                   >
                     {this.loopData(assetsList)}
                   </TreeSelect>
