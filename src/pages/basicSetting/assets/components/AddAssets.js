@@ -148,7 +148,7 @@ class AddAssets extends PureComponent {
                 getFieldDecorator('assetsTypeId', {
                   initialValue: details.assetsTypeId
                     ? [{value: details.assetsTypeId, label: details.assetsTypeName}]
-                    : listMap,
+                    : undefined,
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <TreeSelect

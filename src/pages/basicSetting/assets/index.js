@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message } from 'antd';
+import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
+import img from '@/assets/img/xzc.png';
 import style from './index.scss';
 import AddAssets from './components/AddAssets';
 import { ddOpenLink } from '../../../utils/ddApi';
@@ -24,6 +25,7 @@ class AllTravelData extends PureComponent {
     current: 2,
     costList: [],
     list: [],
+    len: 0,
   }
 
   componentDidMount() {
@@ -35,6 +37,17 @@ class AllTravelData extends PureComponent {
       const { list } = this.props;
       this.setState({
         list,
+      });
+    });
+    this.props.dispatch({
+      type: 'assets/assetsList',
+      payload: {
+        type: 0
+      },
+    }).then(() => {
+      const { assetsList } = this.props;
+      this.setState({
+        len: assetsList.length,
       });
     });
     this.props.dispatch({
@@ -166,7 +179,7 @@ class AllTravelData extends PureComponent {
   }
 
   render () {
-    const { current, costList, list } = this.state;
+    const { current, costList, list, len } = this.state;
     const { authorize, saveTime } = this.props;
     const newList = this.props.list;
     const columns = [{
@@ -248,7 +261,20 @@ class AllTravelData extends PureComponent {
               )}
               description={(
                 <div>
-                  <p className="c-black-45 fs-12">公司开通「鑫资产」后，才可实现双方数据集成，请先开通鑫资产，</p>
+                  <p className="c-black-45 fs-12">
+                    公司开通「鑫资产」后，才可实现双方数据集成，请先开通鑫资产，
+                    <Popover
+                      overlayClassName={style.popImg}
+                      content={(
+                        <div className={style.popStyle}>
+                          <img src={img} alt="数据" style={{width: '384px'}} />
+                        </div>
+                      )}
+                      placement="rightTop"
+                    >
+                      <a>查看鑫资产介绍</a>
+                    </Popover>
+                  </p>
                   {
                     !authorize &&
                     <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }} onClick={() => this.onLink()}>去开通</Button>
@@ -260,20 +286,29 @@ class AllTravelData extends PureComponent {
               title={(<p className="fs-14 fw-400">类目映射（设置导入的鑫资产费用类别）</p>)}
               description={(
                 <div>
-                  <p className="fs-14 c-black-45 m-b-24">鑫资产产生折旧费用后，支出数据会自动导入鑫支出，费用类型默认按照设置好的类目匹配规则自动导入鑫支出。</p>
+                  <p className="fs-14 c-black-45 m-b-24">
+                    鑫资产产生折旧费用后，支出数据会自动导入鑫支出，费用类型默认按照设置好的类目匹配规则自动导入鑫支出。
+                  </p>
                   {
                     authorize &&
                     <div>
-                      <AddAssets
-                        details={{}}
-                        costList={costList}
-                        getAssets={this.getAssets}
-                        list={list}
-                        type="add"
-                        onOk={this.onOK}
-                      >
-                        <Button type="primary" className="m-b-16">新增类目映射</Button>
-                      </AddAssets>
+                      {
+                        len === list.length ?
+                          <Tooltip title="已经没有可新增的资产费用类别">
+                            <Button type="primary" className="m-b-16" disabled>新增类目映射</Button>
+                          </Tooltip>
+                          :
+                          <AddAssets
+                            details={{}}
+                            costList={costList}
+                            getAssets={this.getAssets}
+                            list={list}
+                            type="add"
+                            onOk={this.onOK}
+                          >
+                            <Button type="primary" className="m-b-16">新增类目映射</Button>
+                          </AddAssets>
+                      }
                       <Table
                         columns={columns}
                         pagination={false}
