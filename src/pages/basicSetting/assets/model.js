@@ -7,6 +7,7 @@ export default {
     list: [],
     authorize: false,
     assetsList: [],
+    saveTime: 0,
   },
   effects: {
     *authorize({ payload }, { call, put }) {
@@ -32,7 +33,8 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          list: response || [],
+          list: response.list || [],
+          saveTime: response.saveTime || '',
         },
       });
     },

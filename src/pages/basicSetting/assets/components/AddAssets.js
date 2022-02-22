@@ -16,6 +16,7 @@ class AddAssets extends PureComponent {
     assetsList: [],
     listIds: [],
     list: [],
+    listMap: []
   }
 
   onShow = async() => {
@@ -26,6 +27,7 @@ class AddAssets extends PureComponent {
       assetsList: tree,
       visible: true,
       listIds: list.map(it => it.assetsTypeId),
+      listMap: list.map(it => { return { value: it.assetsTypeId, label: it.assetsTypeName}; }),
       list: lists,
     });
   }
@@ -38,6 +40,7 @@ class AddAssets extends PureComponent {
     const { list } = this.state;
     const { details, onOk } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
+      console.log('valsssss', val);
       if (!err) {
         const params = {};
         const newList = [];
@@ -110,7 +113,8 @@ class AddAssets extends PureComponent {
 
   render() {
     const { children, details, costList } = this.props;
-    const { visible, assetsList } = this.state;
+    const { visible, assetsList, listMap } = this.state;
+    console.log('🚀 ~ file: AddAssets.js ~ line 117 ~ AddAssets ~ render ~ listMap', listMap);
     const {
       form: { getFieldDecorator }
     } = this.props;
@@ -137,7 +141,9 @@ class AddAssets extends PureComponent {
             <Form.Item label="鑫资产分类">
               {
                 getFieldDecorator('assetsTypeId', {
-                  initialValue: details.assetsTypeId ? [{key: details.assetsTypeId, label: details.assetsTypeName}] : undefined,
+                  initialValue: details.assetsTypeId
+                    ? [{value: details.assetsTypeId, label: details.assetsTypeName}]
+                    : undefined,
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <TreeSelect
@@ -157,7 +163,9 @@ class AddAssets extends PureComponent {
             <Form.Item label="鑫支出对应类别">
               {
                 getFieldDecorator('categoryId', {
-                  initialValue: details.categoryId ? [{ key: details.categoryId, label: details.categoryName }] : undefined,
+                  initialValue: details.categoryId
+                  ? { key: details.categoryId, value: details.categoryId, label: details.categoryName }
+                  : undefined,
                   rules: [{ required: true, message: '请选择' }]
                 })(
                   <CostTreeSelect

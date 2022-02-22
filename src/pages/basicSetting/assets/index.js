@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Steps, Button, Table, Tooltip, Divider, Popconfirm } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
+import moment from 'moment';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
@@ -16,6 +17,7 @@ const { Step } = Steps;
   list: assets.list,
   assetsList: assets.assetsList,
   costCategoryList: global.costCategoryList,
+  saveTime: assets.saveTime,
 }))
 class AllTravelData extends PureComponent {
   state = {
@@ -164,7 +166,7 @@ class AllTravelData extends PureComponent {
 
   render () {
     const { current, costList, list } = this.state;
-    const { authorize } = this.props;
+    const { authorize, saveTime } = this.props;
     const columns = [{
       title: (
         <span>
@@ -270,14 +272,20 @@ class AllTravelData extends PureComponent {
               )}
             />
           </Steps>
-          <FooterBar
-            right={(
-              <div>
-                <span className="fs-14 c-black-45 m-r-16">上次保存时间：2022-02-21</span>
-                <Button type="primary" onClick={this.onSave}>保存</Button>
-              </div>
-            )}
-          />
+          {
+            authorize &&
+            <FooterBar
+              right={(
+                <div>
+                  {
+                    saveTime &&
+                    <span className="fs-14 c-black-45 m-r-16">上次保存时间：{moment(saveTime).format('YYYY-MM-DD hh:mm:ss')}</span>
+                  }
+                  <Button type="primary" onClick={this.onSave}>保存</Button>
+                </div>
+              )}
+            />
+          }
         </div>
         {/* <EditPrompt history={this.props.history} /> */}
       </div>
