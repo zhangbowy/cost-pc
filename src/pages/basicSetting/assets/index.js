@@ -9,7 +9,7 @@ import style from './index.scss';
 import AddAssets from './components/AddAssets';
 import { ddOpenLink } from '../../../utils/ddApi';
 import FooterBar from '../../../components/FooterBar';
-// import { EditPrompt } from '../../../components/EditPrompt';
+import { EditPrompt } from '../../../components/EditPrompt';
 
 const { Step } = Steps;
 @connect(({ assets, global }) => ({
@@ -184,6 +184,7 @@ class AllTravelData extends PureComponent {
           </span>
         );
       },
+      width: 150,
     }, {
       title:  (
         <span>
@@ -194,9 +195,18 @@ class AllTravelData extends PureComponent {
         </span>
       ),
       dataIndex: 'assetsTypeName',
+      width: 150,
     }, {
       title: '说明',
       dataIndex: 'note',
+      width: 100,
+      render: (text) => (
+        <span>
+          <Tooltip placement="topLeft" title={text || ''}>
+            <span className="eslips-2">{text}</span>
+          </Tooltip>
+        </span>
+      ),
     }, {
       title: '操作',
       dataIndex: 'operate',
@@ -220,7 +230,8 @@ class AllTravelData extends PureComponent {
             <a>编辑</a>
           </AddAssets>
         </span>
-      )
+      ),
+      width: 80,
     }];
     return (
       <div>
@@ -287,7 +298,7 @@ class AllTravelData extends PureComponent {
             />
           }
         </div>
-        {/* <EditPrompt history={this.props.history} /> */}
+        <EditPrompt history={this.props.history} />
       </div>
     );
   }

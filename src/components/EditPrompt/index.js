@@ -7,9 +7,9 @@ export const EditPrompt = (({ history }) => {
     const [save, setSave] = useState(true);
     const listener = (e) => {
         e.preventDefault();
-        const confirmationMessage = '你确定离开此页面吗?';
-        (e || window.event).returnValue = confirmationMessage;
-        return confirmationMessage;
+        // const confirmationMessage = '你确定离开此页面吗?';
+        // (e || window.event).returnValue = confirmationMessage;
+        // return confirmationMessage;
     };
 
 

@@ -15,7 +15,7 @@ function CostTreeSelect(props) {
           key={item.value}
           label={item.title}
           value={item.value}
-          selectable={!item.disabled}
+          selectable={!!item.type}
           title={(
             <div className={cs('icons', item.type ? style.treeNodes : style.titles)}>
               {
@@ -54,7 +54,7 @@ function CostTreeSelect(props) {
       key={item.value}
       label={item.title}
       value={item.value}
-      selectable={!item.disabled}
+      selectable={!!item.type}
       title={(
         <div className={cs('icons', item.type ? style.treeNodes : style.titles)}>
           {
