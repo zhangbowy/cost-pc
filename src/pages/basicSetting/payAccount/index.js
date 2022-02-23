@@ -130,7 +130,7 @@ class Account extends Component {
           <div className="cnt-header">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">
-                <Button type="primary">新增收款账户</Button>
+                <Button type="primary">新增付款账户</Button>
               </AddAccount>
             </div>
           </div>
