@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Row, Col, Tooltip } from 'antd';
+import { Row, Col, Tooltip,Tag} from 'antd';
 import cs from 'classnames';
 import moment from 'moment';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
@@ -17,7 +17,7 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单据类型：</span>
         <span className="fs-14 c-black-65">{details.invoiceTemplateName}</span>
       </Col>
-      <Col span={8} className="m-t-16">
+      <Col span={8} className={cs('m-t-16',style.nameIcon)}>
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单号：</span>
         <span className="fs-14 c-black-65">
           {details.invoiceNo}
@@ -26,6 +26,14 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>
+        {/* 鑫资产标签 */}
+        {
+          details.isAssetsImport ? (
+            <Tag color="blue">
+              <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
+              <span>鑫资产</span>
+            </Tag>) : ''
+        }
       </Col>
       {
         Number(templateType) === 2 ?

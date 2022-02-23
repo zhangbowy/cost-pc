@@ -5,6 +5,7 @@
   }
   //写在这里
   .ant-layout-sider {
+    z-index: 100;
     .ant-menu-inline-collapsed{
       .ant-menu-item-selected{
         border-left: 4px solid rgba(26, 206, 179, 1)!important;

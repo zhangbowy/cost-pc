@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Tooltip, Select, Spin } from 'antd';
+import { Modal, Table, Tooltip, Select, Spin,Tag} from 'antd';
 import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
@@ -69,7 +69,7 @@ function InvoicePrice({ children, onQuery, id, title,
   const [query, setQuery] = useState('0');
   const [tableLoading, setTableLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
-
+console.log(list,'99999');
   const columns = [{
       title: '序号',
       dataIndex: 'index',
@@ -140,7 +140,7 @@ function InvoicePrice({ children, onQuery, id, title,
     },{
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 180,
+      width: list.isAssetsImport ? 230:180,
       render: (_, record) => (
         <span>
           <span>{record.invoiceNo}</span>
@@ -148,6 +148,15 @@ function InvoicePrice({ children, onQuery, id, title,
             record.isEnterpriseAlitrip &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
+          {
+            record.isAssetsImport ? 
+              <>
+                <Tag color="blue">
+                  <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
+                  <span>鑫资产</span>
+                </Tag>
+              </> : ''
+            }
         </span>
       )
     }, {
