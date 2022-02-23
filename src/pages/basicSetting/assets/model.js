@@ -5,7 +5,7 @@ export default {
   namespace: 'assets',
   state: {
     list: [],
-    authorize: false,
+    authorize: 1,
     assetsList: [],
     saveTime: 0,
   },

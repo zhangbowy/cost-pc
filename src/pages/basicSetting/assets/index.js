@@ -12,6 +12,11 @@ import { ddOpenLink } from '../../../utils/ddApi';
 import FooterBar from '../../../components/FooterBar';
 import { EditPrompt } from '../../../components/EditPrompt';
 
+const authObj = {
+  0: '已开通',
+  1: '已过期',
+  2: '未开通'
+};
 const { Step } = Steps;
 @connect(({ assets, global }) => ({
   authorize: assets.authorize,
@@ -54,10 +59,6 @@ class AllTravelData extends PureComponent {
     this.props.dispatch({
       type: 'assets/authorize',
       payload: {},
-    }).then(() => {
-      console.log(this.props.authorize);
-      const { authorize } = this.props;
-      localStorage.setItem('aliTripAuthorize', authorize.isAuthorize ? '0' : '1');
     });
   }
 
@@ -253,13 +254,13 @@ class AllTravelData extends PureComponent {
       <div>
         <PageHead title="鑫资产数据集成" />
         <div className={cs(style.travel, 'content-dt')}>
-          <Steps current={authorize ? current : 0} onChange={this.onChange} direction="vertical">
+          <Steps current={!authorize ? current : 0} onChange={this.onChange} direction="vertical">
             <Step
               title={(
                 <p className="fs-14" style={{ fontWeight: '400' }}>
                   开通鑫资产
                   <Tag color="rgba(0, 0, 0, 0.04)">
-                    <span className="c-black-65">未开通</span>
+                    <span className="c-black-65">{authObj[authorize]}</span>
                   </Tag>
                 </p>
               )}
@@ -280,7 +281,7 @@ class AllTravelData extends PureComponent {
                     </Popover>
                   </p>
                   {
-                    !authorize &&
+                    authorize &&
                     <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }} onClick={() => this.onLink()}>去开通</Button>
                   }
                 </div>
@@ -294,7 +295,7 @@ class AllTravelData extends PureComponent {
                     鑫资产产生折旧费用后，支出数据会自动导入鑫支出，费用类型默认按照设置好的类目匹配规则自动导入鑫支出。
                   </p>
                   {
-                    authorize &&
+                    !authorize &&
                     <div>
                       {
                         len === list.length ?
@@ -325,7 +326,7 @@ class AllTravelData extends PureComponent {
             />
           </Steps>
           {
-            authorize &&
+            !authorize &&
             <FooterBar
               right={(
                 <div>
