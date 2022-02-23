@@ -6,6 +6,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import React, { PureComponent } from 'react';
 import CostTreeSelect from '../../../../components/FormItems/CostTreeSelect';
 import { getTimeIdNo } from '../../../../utils/common';
+import style from '../index.scss';
 
 const { TreeNode } = Tree;
 const { SHOW_ALL } = TreeSelect;
@@ -142,7 +143,7 @@ class AddAssets extends PureComponent {
             height: '380px'
           }}
         >
-          <Form layout="vertical">
+          <Form layout="vertical" className={style.formLabel}>
             <Form.Item label="鑫资产分类">
               {
                 getFieldDecorator('assetsTypeId', {

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover } from 'antd';
+import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover, Tag } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -46,6 +46,7 @@ class AllTravelData extends PureComponent {
       },
     }).then(() => {
       const { assetsList } = this.props;
+      console.log('🚀 ~ file: index.js ~ line 49 ~ AllTravelData ~ componentDidMount ~ assetsList', assetsList);
       this.setState({
         len: assetsList.length,
       });
@@ -210,11 +211,11 @@ class AllTravelData extends PureComponent {
         </span>
       ),
       dataIndex: 'assetsTypeName',
-      width: 150,
+      width: 100,
     }, {
       title: '说明',
       dataIndex: 'note',
-      width: 100,
+      width: 150,
       render: (text) => (
         <span>
           <Tooltip placement="topLeft" title={text || ''}>
@@ -257,6 +258,9 @@ class AllTravelData extends PureComponent {
               title={(
                 <p className="fs-14" style={{ fontWeight: '400' }}>
                   开通鑫资产
+                  <Tag color="rgba(0, 0, 0, 0.04)">
+                    <span className="c-black-65">未开通</span>
+                  </Tag>
                 </p>
               )}
               description={(

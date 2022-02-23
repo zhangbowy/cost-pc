@@ -10,6 +10,9 @@
     .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail{
       padding: 28px 0 0px;
     }
+    .ant-tag{
+      padding: 0 8px;
+    }
   }
 }
 .first{
@@ -137,6 +140,14 @@
     }
     .ant-popover-inner{
       box-shadow: none;
+    }
+  }
+}
+.formLabel{
+  :global{
+    .ant-select-selection--multiple{
+      max-height: 32px;
+      overflow-y: scroll;
     }
   }
 }
