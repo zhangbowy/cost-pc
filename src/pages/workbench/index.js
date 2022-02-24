@@ -25,6 +25,7 @@ import RightChart from './components/Boss/RightChart';
 import Boss from './components/Boss';
 import { dateToTime } from '../../utils/util';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
+import xzcLogo from '@/assets/img/aliTrip/xzcLogo.png';
 import CenterReport from './components/Boss/CenterReport';
 import BottomChart from './components/Boss/BottomChart';
 import { getArrayColor } from '../../utils/constants';
@@ -549,7 +550,11 @@ class Workbench extends PureComponent {
           <span>{record.invoiceNo}</span>
           {
             record.isAlitrip &&
-            <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '16px', height: '16px',marginLeft: '8px' }} />
+          }
+          {
+            record.isAssetsImport &&
+            <img src={xzcLogo} alt="阿里商旅" style={{ width: '16px', height: '16px',marginLeft: '8px' }} />
           }
         </span>
       )
