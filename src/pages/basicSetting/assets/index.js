@@ -259,8 +259,8 @@ class AllTravelData extends PureComponent {
               title={(
                 <p className="fs-14" style={{ fontWeight: '400' }}>
                   开通鑫资产
-                  <Tag color="rgba(0, 0, 0, 0.04)" className="m-l-8">
-                    <span className="c-black-65">{authObj[authorize]}</span>
+                  <Tag color={authorize === 0 ? 'rgba(0, 199, 149, 0.1)' : 'rgba(0, 0, 0, 0.04)'} className="m-l-8">
+                    <span className={authorize === 0 ? 'sub-color' : 'c-black-65'}>{authObj[authorize]}</span>
                   </Tag>
                 </p>
               )}

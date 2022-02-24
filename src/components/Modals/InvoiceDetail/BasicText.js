@@ -140,8 +140,10 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
           {
             details.isEnterpriseAlitrip
             || details.isHistoryImport
+            || details.isAlitrip
             || details.cantCopy || details.isAssetsImport ?
               <DisabledTooltip
+                className="m-l-8"
                 title={`${details.isHistoryImport
               ? '历史数据导入'
               : details.isAssetsImport
@@ -150,7 +152,7 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
                 name="审批详情"
               />
             :
-              <span className="link-c m-l-8" onClick={() => onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
+              <span className="link-c m-l-8 cur-p" onClick={() => onLinkDetail(details.approvedUrl, details.approveStatus)}>审批详情</span>
           }
         </span>
       </Col>
