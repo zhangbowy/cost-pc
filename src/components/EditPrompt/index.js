@@ -4,6 +4,7 @@ import React , { useEffect, useState } from 'react';
 import { Prompt } from 'react-router-dom';
 
 export const EditPrompt = (({ history, isModal, onOk }) => {
+    console.log('🚀 ~ file: index.js ~ line 8 ~ EditPrompt ~ isModal', isModal);
     const [save, setSave] = useState(isModal);
     const listener = (e) => {
         e.preventDefault();

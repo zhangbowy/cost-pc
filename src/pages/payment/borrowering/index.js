@@ -184,20 +184,6 @@ class Payments extends React.PureComponent {
     });
   }
 
-  handChange = (date) => {
-    if (!date) {
-      const { status, searchContent } = this.state;
-      const {
-        query,
-      } = this.props;
-      this.onQuery({
-        ...query,
-        status,
-        searchContent,
-      });
-    }
-  }
-
   onLink = (id) => {
     this.props.history.push(`/system/auth/${id}`);
   }
@@ -281,12 +267,19 @@ class Payments extends React.PureComponent {
     });
   }
 
-  onChangeSearch = (val,callback) => {
+  onChangeSearch = (val) => {
     this.setState({
         searchList: val
     }, () => {
-        if (callback) callback();
-      }
+      const { status } = this.state;
+      const {
+        query,
+      } = this.props;
+      this.onQuery({
+        ...query,
+        status,
+      });
+    }
     );
   }
 

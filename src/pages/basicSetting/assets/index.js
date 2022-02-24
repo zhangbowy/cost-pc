@@ -3,10 +3,11 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover, Tag } from 'antd';
+import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover, Tag, Modal } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
+import { Prompt } from 'react-router-dom';
 import PageHead from '@/components/pageHead';
 import treeConvert from '@/utils/treeConvert';
 import img from '@/assets/img/xzc.png';
@@ -14,7 +15,7 @@ import style from './index.scss';
 import AddAssets from './components/AddAssets';
 import { ddOpenLink } from '../../../utils/ddApi';
 import FooterBar from '../../../components/FooterBar';
-import { EditPrompt } from '../../../components/EditPrompt';
+// import { EditPrompt } from '../../../components/EditPrompt';
 
 const authObj = {
   0: '已开通',
@@ -35,6 +36,7 @@ class AllTravelData extends PureComponent {
     costList: [],
     list: [],
     len: 0,
+    flag: true
   }
 
   componentDidMount() {
@@ -130,14 +132,15 @@ class AllTravelData extends PureComponent {
       const newList = [...editList, ...list];
       this.setState({
         list: newList,
+        flag: false,
       });
     } else {
       const listEdit = [...list];
       const index = list.findIndex(it => it.id === editList.id);
       listEdit.splice(index, 1, editList);
-      console.log('🚀 ~ file: index.js ~ line 116 ~ AllTravelData ~ list', listEdit);
       this.setState({
         list: listEdit,
+        flag: false,
       });
     }
   }
@@ -149,7 +152,8 @@ class AllTravelData extends PureComponent {
   onDelete = (id) => {
     const { list } = this.state;
     this.setState({
-      list: list.filter(it => it.id !== id)
+      list: list.filter(it => it.id !== id),
+      flag: false,
     });
   }
 
@@ -167,14 +171,8 @@ class AllTravelData extends PureComponent {
       }
     }).then(() => {
       message.success('保存成功');
-      this.props.dispatch({
-        type: 'assets/list',
-        payload: {}
-      }).then(() => {
-        const newList = this.props.list;
-        this.setState({
-          list: newList,
-        });
+      this.setState({
+        flag: true,
       });
     });
   }
@@ -236,9 +234,8 @@ class AllTravelData extends PureComponent {
       }
 
   render () {
-    const { current, costList, list, len } = this.state;
+    const { current, costList, list, len, flag } = this.state;
     const { authorize, saveTime } = this.props;
-    const newList = this.props.list;
     const columns = [{
       title: (
         <span>
@@ -400,10 +397,29 @@ class AllTravelData extends PureComponent {
             />
           }
         </div>
-        <EditPrompt
-          history={this.props.history}
-          onOk={this.onSave}
-          isModal={this.equalsObj(newList, list)}
+        <Prompt
+          when={!flag}
+          message={(location) => {
+            if (flag) return true;
+            Modal.confirm({
+              title: '确定离开当前页面吗？',
+              content: '当前编辑的信息尚未保存，离开当前页面将会丢失已填写的内容。',
+              okText: '保存',
+              cancelText: '离开本页',
+              onOk: () => {
+                this.onSave();
+              },
+              onCancel: () => {
+                this.setState({
+                  flag: true
+                });
+                setTimeout(() => {
+                  this.props.history.push(location.pathname);
+                });
+              }
+            });
+            return false;
+          }}
         />
       </div>
     );
