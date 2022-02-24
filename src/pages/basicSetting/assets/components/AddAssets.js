@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-undef */
-import { Form, Modal, Tree, TreeSelect } from 'antd';
+import { Form, Modal, Tooltip, Tree, TreeSelect } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { PureComponent } from 'react';
 import CostTreeSelect from '../../../../components/FormItems/CostTreeSelect';
@@ -98,7 +98,7 @@ class AddAssets extends PureComponent {
       if (item.children) {
         return (
           <TreeNode
-            title={item.label}
+            title={listIds.includes(item.value) ? (<Tooltip title="该类别已有映射关系">{item.label}</Tooltip>) : item.label}
             key={item.value}
             dataRef={item}
             disabled={listIds.includes(item.value)}
@@ -108,7 +108,17 @@ class AddAssets extends PureComponent {
           </TreeNode>
         );
       }
-      return <TreeNode key={item.value} title={item.label} {...item} value={item.value} disabled={listIds.includes(item.value)} />;
+      return (
+        <>
+          <TreeNode
+            key={item.value}
+            title={listIds.includes(item.value) ? (<Tooltip title="该类别已有映射关系">{item.label}</Tooltip>) : item.label}
+            {...item}
+            value={item.value}
+            disabled={listIds.includes(item.value)}
+          />
+        </>
+      );
     });
   }
 
