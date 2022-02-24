@@ -110,8 +110,8 @@ export default {
       if (response.assetsTypeNoticeType === 1) {
         const arr = response.names;
         const str = arr.length > 4 ? arr.slice(0,4) : arr;
-        Modal.confirm({
-          title: null,
+        Modal.info({
+          title: '提醒',
           content: `鑫资产新增了资产分类：${arr.length > 4 ? `${str.join(',')}...` : str.join(',')}，可至设置-鑫资产数据集成，添加类目映射`
         });
       }
