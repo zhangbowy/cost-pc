@@ -144,6 +144,9 @@
   }
 }
 .formLabel{
+  textarea{
+    resize: none;
+  }
   :global{
     .ant-select-selection--multiple{
       max-height: 32px;

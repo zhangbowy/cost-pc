@@ -231,7 +231,12 @@ class AllTravelData extends PureComponent {
         <span>
           <Popconfirm
             onConfirm={() => this.onDelete(record.id)}
-            title="请确认删除？"
+            title={(
+              <div style={{width: '260px'}}>
+                <p className="c-black-85 fw-500">请确认删除吗?</p>
+                <p className="c-black-65">删除后{record.assetsTypeName}的折旧费用将不会同步至鑫支出，点击右下角”保存”生效</p>
+              </div>
+            )}
           >
             <a>删除</a>
           </Popconfirm>
