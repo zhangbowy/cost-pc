@@ -142,7 +142,7 @@ class SummaryCmp extends Component {
       title: '单号',
       dataIndex: 'invoiceNo',
       render: (_, record) => (
-          record.isAssetsImport ? 
+          record.isAssetsImport ?
             <><span>{record.invoiceNo}</span><Tag color="blue"><i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} /><span>鑫资产</span></Tag></> :<span>{record.invoiceNo}</span>
       ),
       width: list.isAssetsImport ? 230:160,
@@ -501,7 +501,9 @@ class SummaryCmp extends Component {
                   (templateType === 4 && status === 3) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"
-                      onConfirm={() => this.onDelete(record.id, record.templateType, record.isEnterpriseAlitrip || record.isHistoryImport)}
+                      onConfirm={() => this.onDelete(record.id,
+                      record.templateType,
+                      record.isEnterpriseAlitrip || record.isHistoryImport || record.isAssetsImport)}
                       placement="topRight"
                     >
                       <a>删单</a>

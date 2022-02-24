@@ -15,7 +15,7 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          authorize: response || false,
+          authorize: response,
         },
       });
     },

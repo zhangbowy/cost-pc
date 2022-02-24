@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
 import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover, Tag } from 'antd';
 import cs from 'classnames';
@@ -121,7 +122,6 @@ class AllTravelData extends PureComponent {
   }
 
   onOK = ({ type, editList }) => {
-  console.log('🚀 ~ file: index.js ~ line 107 ~ AllTravelData ~ editList', editList);
     const { list } = this.state;
     if (type === 'add') {
       const newList = [...editList, ...list];
@@ -254,12 +254,12 @@ class AllTravelData extends PureComponent {
       <div>
         <PageHead title="鑫资产数据集成" />
         <div className={cs(style.travel, 'content-dt')}>
-          <Steps current={!authorize ? current : 0} onChange={this.onChange} direction="vertical">
+          <Steps current={authorize === 0 ? current : 0} onChange={this.onChange} direction="vertical">
             <Step
               title={(
                 <p className="fs-14" style={{ fontWeight: '400' }}>
                   开通鑫资产
-                  <Tag color="rgba(0, 0, 0, 0.04)">
+                  <Tag color="rgba(0, 0, 0, 0.04)" className="m-l-8">
                     <span className="c-black-65">{authObj[authorize]}</span>
                   </Tag>
                 </p>
@@ -281,7 +281,7 @@ class AllTravelData extends PureComponent {
                     </Popover>
                   </p>
                   {
-                    authorize &&
+                    authorize !== 0 &&
                     <Button type="primary" className="m-t-16" style={{ marginBottom: '60px' }} onClick={() => this.onLink()}>去开通</Button>
                   }
                 </div>
@@ -295,7 +295,7 @@ class AllTravelData extends PureComponent {
                     鑫资产产生折旧费用后，支出数据会自动导入鑫支出，费用类型默认按照设置好的类目匹配规则自动导入鑫支出。
                   </p>
                   {
-                    !authorize &&
+                    authorize === 0 &&
                     <div>
                       {
                         len === list.length ?
@@ -326,7 +326,7 @@ class AllTravelData extends PureComponent {
             />
           </Steps>
           {
-            !authorize &&
+            authorize === 0 &&
             <FooterBar
               right={(
                 <div>
@@ -340,7 +340,11 @@ class AllTravelData extends PureComponent {
             />
           }
         </div>
-        <EditPrompt history={this.props.history} isModal={JSON.stringify(newList) !== JSON.stringify(list)} />
+        <EditPrompt
+          history={this.props.history}
+          onOk={this.onSave}
+          isModal={JSON.stringify(newList) != JSON.stringify(list)}
+        />
       </div>
     );
   }
