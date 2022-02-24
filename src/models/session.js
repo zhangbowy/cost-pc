@@ -107,12 +107,12 @@ export default {
       // if (response.assetsTypeNoticeType === 1) {
       //   message.error(`鑫资产删除了资产分类：${response.names.join(',')}，被删除分类的折旧费用将不再拉取，历史数据不受影响`);
       // }
-      if (response.assetsTypeNoticeType === 2) {
+      if (response.assetsTypeNoticeType === 1) {
         const arr = response.names;
-        arr.splice(0,3);
-        Modal.info({
+        const str = arr.length > 4 ? arr.slice(0,4) : arr;
+        Modal.confirm({
           title: null,
-          content: `鑫资产新增了资产分类：${arr.join(',')}，可至设置-鑫资产数据集成，添加类目映射`
+          content: `鑫资产新增了资产分类：${arr.length > 4 ? `${str.join(',')}...` : str.join(',')}，可至设置-鑫资产数据集成，添加类目映射`
         });
       }
     },

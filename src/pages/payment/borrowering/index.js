@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { Table, Divider, message, Menu, Form, DatePicker, Button, Tooltip } from 'antd';
+import { Table, Divider, message, Menu, Button, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { formItemLayout } from '@/utils/constants';
-import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { rowSelect } from '@/utils/common';
 import DropBtn from '@/components/DropBtn';
@@ -12,16 +11,16 @@ import { numAdd } from '@/utils/float';
 import style from './index.scss';
 import RecordModal from './components/RecordModal';
 import AddModal from './components/AddModal';
+import SearchBanner from '../../statistics/overview/components/Search/Searchs';
 
-const { RangePicker } = DatePicker;
-@Form.create()
-@connect(({ loading, borrowering }) => ({
+@connect(({ loading, borrowering, costGlobal }) => ({
   loading: loading.effects['borrowering/list'] || false,
   list: borrowering.list,
   query: borrowering.query,
   total: borrowering.total,
   loanSumObj: borrowering.loanSumObj,
-  recordList: borrowering.recordList
+  recordList: borrowering.recordList,
+  officeListAndRole: costGlobal.officeListAndRole
 }))
 class Payments extends React.PureComponent {
   constructor(props) {
@@ -33,7 +32,31 @@ class Payments extends React.PureComponent {
       sumAmount: 0,
       searchContent: '',
       selectedRows: [],
-      loanSumAll:0
+      loanSumAll:0,
+      searchList: [{
+        type: 'rangeTime',
+        label: '提交时间',
+        placeholder: '请选择',
+        key: ['startTime', 'endTime'],
+        id: 'startTime',
+        out: 1
+      },
+      {
+        type: 'deptAndUser',
+        label: '提交部门/人',
+        placeholder: '请选择',
+        key: ['userVOS', 'deptVOS'],
+        id: 'userVOS',
+        out: 1
+      },
+      {
+        type: 'search',
+        label: '外部选择',
+        placeholder: '单号、事由、收款人',
+        key: 'searchContent',
+        id: 'searchContent',
+        out: 1
+      }]
     };
   }
 
@@ -41,6 +64,7 @@ class Payments extends React.PureComponent {
     const {
       query,
     } = this.props;
+    this.getOffice();
     this.onQuery({
       ...query,
       status: 2,
@@ -49,15 +73,6 @@ class Payments extends React.PureComponent {
 
   handleClick = e => {
     const { query } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { searchContent } = this.state;
-    console.log('e.key======',e.key);
     this.setState({
       status: e.key,
       selectedRowKeys: [],
@@ -67,9 +82,6 @@ class Payments extends React.PureComponent {
     this.onQuery({
       ...query,
       status: e.key,
-      searchContent,
-      startTime,
-      endTime,
       pageNo: 1,
     });
   };
@@ -132,24 +144,43 @@ class Payments extends React.PureComponent {
       });
   };
 
+  getOffice = () => {
+    this.props.dispatch({
+      type: 'costGlobal/officeListAndRole',
+      payload: {},
+    }).then(() => {
+      const { searchList } = this.state;
+      const arr = [...searchList];
+      const { officeListAndRole } = this.props;
+      if (officeListAndRole.length) {
+        arr.splice(1,0,{
+          type: 'select',
+          label: '分公司',
+          placeholder: '请选择',
+          key: 'officeId',
+          id: 'officeId',
+          options: officeListAndRole,
+          fileName: {
+            key: 'id',
+            name: 'officeName'
+          },
+          out: 1
+        });
+      }
+      this.setState({
+        searchList: arr,
+      });
+    });
+  }
+
   onOk = () => {
     const {
       query,
     } = this.props;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    const { status, searchContent } = this.state;
+    const { status } = this.state;
     this.onQuery({
       ...query,
       status,
-      startTime,
-      endTime,
-      searchContent,
     });
   }
 
@@ -174,6 +205,14 @@ class Payments extends React.PureComponent {
   onQuery = (payload) => {
     const obj = payload;
     obj.type = payload.status*1 - 2;
+    const { searchList } = this.state;
+    searchList.forEach(it => {
+      if (it.value) {
+        Object.assign(payload, {
+          ...it.value
+        });
+      }
+    });
     this.props.dispatch({
       type: 'borrowering/list',
       payload: obj,
@@ -197,28 +236,6 @@ class Payments extends React.PureComponent {
     });
   }
 
-  onSearch = (val) => {
-    const { query } = this.props;
-    const { status } = this.state;
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
-    this.setState({
-      searchContent: val,
-    });
-    this.onQuery({
-      ...query,
-      searchContent: val,
-      status,
-      startTime,
-      endTime,
-    });
-  }
-
   export = (key) => {
     const { selectedRowKeys, status, searchContent } = this.state;
     console.log('key======',key);
@@ -227,13 +244,6 @@ class Payments extends React.PureComponent {
       return;
     }
     let params = {};
-    const createTime = this.props.form.getFieldValue('createTime');
-    let startTime = '';
-    let endTime = '';
-    if (createTime && createTime.length > 0) {
-      startTime = moment(createTime[0]).format('x');
-      endTime = moment(createTime[1]).format('x');
-    }
     if (key === '1') {
       params = {
         ids: selectedRowKeys,
@@ -243,14 +253,11 @@ class Payments extends React.PureComponent {
     } else if (key === '3') {
       params = {
         searchContent,
-        startTime,
-        endTime,
         type:status-2,
         fileName:status==='2'?'待还款列表':'已还款列表',
         export: true
       };
     }
-    console.log(params);
     this.props.dispatch({
       type: 'borrowering/loanExported',
       payload: {
@@ -274,18 +281,27 @@ class Payments extends React.PureComponent {
     });
   }
 
+  onChangeSearch = (val,callback) => {
+    this.setState({
+        searchList: val
+    }, () => {
+        if (callback) callback();
+      }
+    );
+  }
+
   render() {
     const {
       status,
       selectedRowKeys,
       sumAmount,
       // selectedRows,
-      loanSumAll
+      loanSumAll,
+      searchList
     } = this.state;
     const {
       list,
       query,
-      form: { getFieldDecorator },
       total,
       loading,
       loanSumObj,
@@ -424,112 +440,74 @@ class Payments extends React.PureComponent {
     //   rowSelection=null;
     // }
     return (
-      <div className="content-dt" style={{padding: 0}}>
-        <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
-          <Menu.Item key={2}>
-            待还款
-          </Menu.Item>
-          <Menu.Item key={3}>
-            已还款
-          </Menu.Item>
-        </Menu>
-        <div className={style.payContent}>
-          <div className="cnt-header" style={{display: 'flex'}}>
-            <div className="head_lf">
-              <DropBtn
-                selectKeys={selectedRowKeys}
-                total={total}
-                onExport={(key) => this.export(key)}
-                noLevels
-              />
-              <Form style={{display: 'flex', marginLeft: '8px'}}>
-                <Form.Item label="提交时间">
-                  {
-                    getFieldDecorator('createTime')(
-                      <RangePicker
-                        className="m-l-8"
-                        placeholder="请选择时间"
-                        format="YYYY-MM-DD"
-                        showTime={{
-                          hideDisabledOptions: true,
-                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                        }}
-                        onOk={() => this.onOk()}
-                        onChange={() => this.handChange()}
-                      />
-                    )
-                  }
-                </Form.Item>
-                <Search
-                  placeholder="单号 事由 收款人"
-                  style={{ width: '272px', marginLeft: '8px' }}
-                  onSearch={(e) => this.onSearch(e)}
+      <div style={{padding: 0}}>
+        <div className={style.titleMenu}>
+          <Menu onClick={this.handleClick} selectedKeys={[status]} mode="horizontal">
+            <Menu.Item key={2}>
+              待还款
+            </Menu.Item>
+            <Menu.Item key={3}>
+              已还款
+            </Menu.Item>
+          </Menu>
+        </div>
+        <SearchBanner
+          list={searchList || []}
+          onChange={val => this.onChangeSearch(val)}
+        />
+        <div className="content-dt" style={{padding: 0}}>
+          <div className={style.payContent}>
+            <div className="cnt-header" style={{display: 'flex'}}>
+              <div className="head_lf">
+                <DropBtn
+                  selectKeys={selectedRowKeys}
+                  total={total}
+                  onExport={(key) => this.export(key)}
+                  noLevels
                 />
-              </Form>
+              </div>
+              {/* <div className="head_rg">
+                <span>排序</span>
+              </div> */}
             </div>
-            {/* <div className="head_rg">
-              <span>排序</span>
-            </div> */}
+            <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
+              {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
+              借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)}
+              {status==='2'?`，待还款共计¥${sumAmount
+              ?loanSumAll/100
+              :(loanSumObj && numAdd(loanSumObj.waitAssessSumAll || 0, loanSumObj.freezeSum || 0)/100 || 0)}`:''}
+            </p>
+            <Table
+              columns={columns}
+              dataSource={list}
+              rowSelection={rowSelection}
+              scroll={{ x: 1900 }}
+              rowKey="loanId"
+              loading={loading}
+              pagination={{
+                current: query.pageNo,
+                onChange: (pageNumber) => {
+                  this.onQuery({
+                    pageNo: pageNumber,
+                    pageSize: query.pageSize,
+                    status,
+                  });
+                },
+                total,
+                size: 'small',
+                showTotal: () => (`共${total}条数据`),
+                showSizeChanger: true,
+                showQuickJumper: true,
+                onShowSizeChange: (cur, size) => {
+                  this.onQuery({
+                    pageNo: cur,
+                    pageSize: size,
+                    status,
+                  });
+                }
+              }}
+            />
           </div>
-          <p className="c-black-85 fw-500 fs-14" style={{marginBottom: '8px'}}>
-            {selectedRowKeys.length?`已选${selectedRowKeys.length}张单据，`:''}
-            借款共计¥{sumAmount?sumAmount/100:(this.props.loanSumObj&&this.props.loanSumObj.loanSumAll/100 || 0)}
-            {status==='2'?`，待还款共计¥${sumAmount
-            ?loanSumAll/100
-            :(loanSumObj && numAdd(loanSumObj.waitAssessSumAll || 0, loanSumObj.freezeSum || 0)/100 || 0)}`:''}
-          </p>
-          <Table
-            columns={columns}
-            dataSource={list}
-            rowSelection={rowSelection}
-            scroll={{ x: 1900 }}
-            rowKey="loanId"
-            loading={loading}
-            pagination={{
-              current: query.pageNo,
-              onChange: (pageNumber) => {
-                const createTime = this.props.form.getFieldValue('createTime');
-                let startTime = '';
-                let endTime = '';
-                if (createTime && createTime.length > 0) {
-                  startTime = moment(createTime[0]).format('x');
-                  endTime = moment(createTime[1]).format('x');
-                }
-                const { searchContent } = this.state;
-                this.onQuery({
-                  pageNo: pageNumber,
-                  pageSize: query.pageSize,
-                  searchContent,
-                  status,
-                  endTime,
-                  startTime,
-                });
-              },
-              total,
-              size: 'small',
-              showTotal: () => (`共${total}条数据`),
-              showSizeChanger: true,
-              showQuickJumper: true,
-              onShowSizeChange: (cur, size) => {
-                const createTime = this.props.form.getFieldValue('createTime');
-                let startTime = '';
-                let endTime = '';
-                if (createTime && createTime.length > 0) {
-                  startTime = moment(createTime[0]).format('x');
-                  endTime = moment(createTime[1]).format('x');
-                }
-                const { searchContent } = this.state;
-                this.onQuery({
-                  pageNo: cur,
-                  pageSize: size,
-                  searchContent,
-                  status,
-                  endTime,
-                  startTime,
-                });
-              }
-            }}
-          />
         </div>
       </div>
     );
