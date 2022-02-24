@@ -118,6 +118,42 @@ class AddAssets extends PureComponent {
     return treeNode.title.indexOf(inputValue) > -1;
   }
 
+  addBtn = () => {
+    const dropdown = document.getElementsByClassName('_slslsl');
+    if (dropdown && dropdown.length) {
+      dropdown[0].firstChild.setAttribute('style', 'max-height: 300px;overflow-y: auto;padding-bottom:16px;');
+      const buttonBox = document.getElementById('_slsl_button');
+      if (buttonBox) {
+        return;
+      }
+      const buttonBoxEl = document.createElement('div');
+      buttonBoxEl.setAttribute('id', '_slsl_button');
+      buttonBoxEl.setAttribute('class', 'slsl_button');
+      const button = document.createElement('button');
+      button.setAttribute('class', 'ant-btn pmc-buttons-button ant-btn-primary');
+      button.setAttribute('style',
+      `float: right;margin: 16px;
+      height: 24px;
+      width: 50px;
+      padding: 0px;
+      font-size: 12px;`);
+      buttonBoxEl.appendChild(button);
+      const text = document.createTextNode('确定');
+      button.appendChild(text);
+      button.addEventListener(
+        'click',
+        e => {
+          e.stopPropagation();
+          const slslslBox = document.getElementsByClassName('_slslsl_box')[0];
+          slslslBox.click();
+        }
+      );
+      dropdown[0].appendChild(buttonBoxEl);
+    } else {
+      setTimeout(() => this.addBtn(), 50);
+    }
+  }
+
   render() {
     const { children, details, costList } = this.props;
     const { visible, assetsList, listMap } = this.state;
@@ -162,6 +198,9 @@ class AddAssets extends PureComponent {
                     disabled={details.id}
                     filterTreeNode={this.filterTreeNode}
                     treeCheckStrictly
+                    className='_slslsl_box'
+                    dropdownClassName='_slslsl'
+                    onClick={this.addBtn}
                   >
                     {this.loopData(assetsList)}
                   </TreeSelect>
