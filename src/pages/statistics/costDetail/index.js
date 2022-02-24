@@ -10,7 +10,8 @@ import {
   Dropdown,
   Menu,
   Badge,
-  Divider
+  Divider,
+  Tag
 } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
@@ -827,7 +828,7 @@ class Statistics extends React.PureComponent {
       {
         title: '单号',
         dataIndex: 'invoiceNo',
-        width: 140,
+        width: list.isAssetsImport ? 230:140,
         render: (_, record) => (
           <span>
             <span>{record.invoiceNo}</span>
@@ -838,6 +839,15 @@ class Statistics extends React.PureComponent {
                 style={{ width: '18px', height: '18px', marginLeft: '8px' }}
               />
             )}
+            {
+               record.isAssetsImport ? 
+                 <>
+                   <Tag color="blue">
+                     <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
+                     <span>鑫资产</span>
+                   </Tag>
+                 </> : ''
+            }
           </span>
         )
       },

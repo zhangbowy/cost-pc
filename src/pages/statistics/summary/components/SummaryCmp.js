@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Tooltip, Popconfirm, message, Badge } from 'antd';
+import { Table, Tooltip, Popconfirm, message, Badge ,Tag} from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus, getArrayColor } from '../../../../utils/constants';
@@ -141,7 +141,11 @@ class SummaryCmp extends Component {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 160,
+      render: (_, record) => (
+          record.isAssetsImport ?
+            <><span>{record.invoiceNo}</span><Tag color="blue"><i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} /><span>鑫资产</span></Tag></> :<span>{record.invoiceNo}</span>
+      ),
+      width: list.isAssetsImport ? 230:160,
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
@@ -497,7 +501,9 @@ class SummaryCmp extends Component {
                   (templateType === 4 && status === 3) ?
                     <Popconfirm
                       title="确认删除该单据吗？此操作不可恢复，需谨慎"
-                      onConfirm={() => this.onDelete(record.id, record.templateType, record.isEnterpriseAlitrip || record.isHistoryImport)}
+                      onConfirm={() => this.onDelete(record.id,
+                      record.templateType,
+                      record.isEnterpriseAlitrip || record.isHistoryImport || record.isAssetsImport)}
                       placement="topRight"
                     >
                       <a>删单</a>

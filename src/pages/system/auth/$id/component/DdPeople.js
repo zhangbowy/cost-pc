@@ -4,9 +4,9 @@ import { Modal, Select } from 'antd';
 import { connect } from 'dva';
 
 const { Option, OptGroup } = Select;
-@connect(({ loading, setUser }) => ({
-  loading: loading.effects['setUser/list'] || false,
-  roleLists: setUser.roleLists,
+@connect(({ loading, costGlobal }) => ({
+  loading: loading.effects['costGlobal/list'] || false,
+  roleLists: costGlobal.roleLists,
 }))
 class DdPeople extends PureComponent {
   constructor(props) {
@@ -19,7 +19,7 @@ class DdPeople extends PureComponent {
 
   onShow = () => {
     this.props.dispatch({
-      type: 'setUser/roleLists',
+      type: 'costGlobal/roleLists',
       payload: {
         offset: 0,
         size: 100,
@@ -33,13 +33,22 @@ class DdPeople extends PureComponent {
 
   onOk = () => {
     const { value } = this.state;
-    const { roleId } = this.props;
-    this.props.dispatch({
-      type: 'setUser/addddRole',
-      payload: {
-        dingRoleIds: value,
+    const { roleId, pageType } = this.props;
+    const params = { dingRoleIds: pageType !== 'role'
+      ? value.map(it => { return { id: it.key, name: it.label }; })
+      : value.map(it => it.id) };
+    if (pageType === 'role') {
+      Object.assign(params, {
         roleId,
-      }
+      });
+    } else {
+      Object.assign(params, {
+        list: params.dingRoleIds,
+      });
+    }
+    this.props.dispatch({
+      type: pageType === 'role' ? 'setUser/addddRole' : 'auth/addDDRole',
+      payload: params,
     }).then(() => {
       this.onCancel();
       this.props.onOk();
@@ -50,6 +59,7 @@ class DdPeople extends PureComponent {
   onCancel = () => {
     this.setState({
       visible: false,
+      value: [],
     });
   }
 
@@ -77,6 +87,7 @@ class DdPeople extends PureComponent {
             onChange={this.handleChange}
             style={{ width: '276px' }}
             placeholder="请选择钉钉角色"
+            labelInValue
           >
             {
               roleLists.map(it => (

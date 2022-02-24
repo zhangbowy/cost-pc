@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { message, Modal } from 'antd';
 import localMenu from '@/common/menu';
 import { post, get } from '@/utils/request';
 import api from '@/services/api';
@@ -100,6 +101,20 @@ export default {
     },
     *setUserRole({ payload }, { call }) {
       yield call(get, api.setUserRole, payload);
+    },
+    *getNotifyUser({ payload }, { call }) {
+      const response = yield call(get, api.getNotifyUser, payload);
+      // if (response.assetsTypeNoticeType === 1) {
+      //   message.error(`鑫资产删除了资产分类：${response.names.join(',')}，被删除分类的折旧费用将不再拉取，历史数据不受影响`);
+      // }
+      if (response.assetsTypeNoticeType === 1) {
+        const arr = response.names;
+        const str = arr.length > 4 ? arr.slice(0,4) : arr;
+        Modal.info({
+          title: '提醒',
+          content: `鑫资产新增了资产分类：${arr.length > 4 ? `${str.join(',')}...` : str.join(',')}，可至设置-鑫资产数据集成，添加类目映射`
+        });
+      }
     },
   },
   reducers: {

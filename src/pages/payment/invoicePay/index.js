@@ -287,7 +287,7 @@ class Payment extends React.PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 100,
+      width: 120,
     }, {
       title: '提交人',
       dataIndex: 'createName',

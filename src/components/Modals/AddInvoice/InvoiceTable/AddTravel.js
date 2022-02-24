@@ -349,150 +349,153 @@ class AddTravel extends PureComponent {
         }
         {
           aliTripAuth.alitripSetting && aliTripAuth.alitripSetting.isEnable &&
-          <Row className={style.formColumn}>
-            <Col span={12}>
-              <Form.Item label="成本中心">
-                {
-                  getFieldDecorator('alitripCostCenterId', {
-                    initialValue: hisAliTrip.alitripCostCenterId ?
-                    `${hisAliTrip.alitripCostCenterId}`: undefined,
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入成本中心'
-                      }
-                    ],
-                  })(
-                    <Select style={{width: '100%'}} placeholder="请选择">
-                      {
-                        aliCostAndI.costArr.map(it => (
-                          <Option key={`${it.value}`}>{it.label}</Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="发票抬头">
-                {
-                  getFieldDecorator('alitripInvoiceTitleId', {
-                    initialValue: hisAliTrip.alitripInvoiceTitleId ?
-                    `${hisAliTrip.alitripInvoiceTitleId}` : undefined,
-                    rules: [
-                      {
-                        required: true,
-                        message: '请输入发票抬头'
-                      }
-                    ],
-                  })(
-                    <Select style={{width: '100%'}} placeholder="请选择">
-                      {
-                        aliCostAndI.invoiceArr.map(it => (
-                          <Option key={`${it.value}`}>{it.label}</Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
-              </Form.Item>
-            </Col>
-            {
-              aliTripAuth.alitripSetting.hasFellowTraveler &&
-              <>
-                <Col span={12} className={style.treeSelects}>
-                  <Form.Item label="同行人">
-                    {
-                      getFieldDecorator('fellowTravelers', {
-                        initialValue: hisAliTrip.fellowTravelers ?
-                        hisAliTrip.fellowTravelers.map(it => {
-                          return it.key || `${it.deptId}${it.userId}`;
-                        }) : undefined,
-                      })(
-                        <TreeSelect
-                          treeNodeFilterProp="label"
-                          placeholder='请选择'
-                          style={{width: '100%'}}
-                          dropdownStyle={{height: '300px'}}
-                          treeCheckable
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                          showSearch
-                          onChange={this.onChangeNode}
-                          onSelect={this.onSelect}
-                          treeNodeLabelProp="label"
-                        >
-                          { this.loop(deptTree) }
-                        </TreeSelect>
-                      )
-                    }
-                  </Form.Item>
-                </Col>
-                <Col span={12} className={style.travelForm}>
-                  <Form.Item
-                    label={(
-                      <span>
-                        费用归属
-                        <Tooltip title={(
-                          <>
-                            <p>按分摊计入：商旅订单有除申请人之外的其他同行人，费用归属按照对应承担金额分别统计;</p>
-                            <p>均计入申请人：无论是否有同行人(分摊)，该申请单的行程费用均计入申请人及其部门</p>
-                          </>
-                          )}
-                        >
-                          <i className="iconfont iconshuomingwenzi m-l-4 c-black-36" style={{ verticalAlign: 'middle' }} />
-                        </Tooltip>
-                      </span>
-                    )}
-                  >
-                    {
-                      getFieldDecorator('alitripExpensesOwner', {
-                        initialValue: hisAliTrip.alitripExpensesOwner || '按分摊计入',
-                        rules: [{
-                            required: true,
-                            message: '请输入费用归属'
-                        }],
-                      })(
-                        <Radio.Group onChange={e => this.onChange(e)}>
-                          {
-                            cost.map(it => (
-                              <Radio key={it.value} value={it.value}>{it.label}</Radio>
-                            ))
-                          }
-                        </Radio.Group>
-                      )
-                    }
-                    {
-                      alitripExpensesOwner === '归属人' &&
-                      <Form.Item>
+          <Form>
+            <Row className={style.formColumn}>
+              <Col span={12}>
+                <Form.Item label="成本中心" colon={false}>
+                  {
+                    getFieldDecorator('alitripCostCenterId', {
+                      initialValue: hisAliTrip.alitripCostCenterId ?
+                      `${hisAliTrip.alitripCostCenterId}`: undefined,
+                      rules: [
                         {
-                          getFieldDecorator('expenseOwner', {
-                            initialValue: hisAliTrip.expenseOwner ?
-                            `${hisAliTrip.expenseOwner.deptId}${hisAliTrip.expenseOwner.userId}` : undefined,
-                            rules: [{ required: true, message: '请选择归属人' }]
-                          })(
-                            <TreeSelect
-                              treeNodeFilterProp="label"
-                              placeholder='请选择费用归属人'
-                              style={{width: '280px'}}
-                              dropdownStyle={{height: '300px'}}
-                              getPopupContainer={triggerNode => triggerNode.parentNode}
-                              showSearch
-                              treeNodeLabelProp="label"
-                              onChange={this.onChangeEx}
-                              dropdownClassName={style.peoples}
-                            >
-                              { this.loop(deptTree, 'users') }
-                            </TreeSelect>
-                          )
+                          required: true,
+                          message: '请输入成本中心'
                         }
-                      </Form.Item>
-                    }
-                  </Form.Item>
-                </Col>
-              </>
-            }
-          </Row>
+                      ],
+                    })(
+                      <Select style={{width: '100%'}} placeholder="请选择">
+                        {
+                          aliCostAndI.costArr.map(it => (
+                            <Option key={`${it.value}`}>{it.label}</Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="发票抬头" colon={false}>
+                  {
+                    getFieldDecorator('alitripInvoiceTitleId', {
+                      initialValue: hisAliTrip.alitripInvoiceTitleId ?
+                      `${hisAliTrip.alitripInvoiceTitleId}` : undefined,
+                      rules: [
+                        {
+                          required: true,
+                          message: '请输入发票抬头'
+                        }
+                      ],
+                    })(
+                      <Select style={{width: '100%'}} placeholder="请选择">
+                        {
+                          aliCostAndI.invoiceArr.map(it => (
+                            <Option key={`${it.value}`}>{it.label}</Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </Form.Item>
+              </Col>
+              {
+                aliTripAuth.alitripSetting.hasFellowTraveler &&
+                <>
+                  <Col span={12} className={style.treeSelects}>
+                    <Form.Item label="同行人" colon={false}>
+                      {
+                        getFieldDecorator('fellowTravelers', {
+                          initialValue: hisAliTrip.fellowTravelers ?
+                          hisAliTrip.fellowTravelers.map(it => {
+                            return it.key || `${it.deptId}${it.userId}`;
+                          }) : undefined,
+                        })(
+                          <TreeSelect
+                            treeNodeFilterProp="label"
+                            placeholder='请选择'
+                            style={{width: '100%'}}
+                            dropdownStyle={{height: '300px'}}
+                            treeCheckable
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
+                            showSearch
+                            onChange={this.onChangeNode}
+                            onSelect={this.onSelect}
+                            treeNodeLabelProp="label"
+                          >
+                            { this.loop(deptTree) }
+                          </TreeSelect>
+                        )
+                      }
+                    </Form.Item>
+                  </Col>
+                  <Col span={12} className={style.travelForm}>
+                    <Form.Item
+                      colon={false}
+                      label={(
+                        <span>
+                          费用归属
+                          <Tooltip title={(
+                            <>
+                              <p>按分摊计入：商旅订单有除申请人之外的其他同行人，费用归属按照对应承担金额分别统计;</p>
+                              <p>均计入申请人：无论是否有同行人(分摊)，该申请单的行程费用均计入申请人及其部门</p>
+                            </>
+                            )}
+                          >
+                            <i className="iconfont iconshuomingwenzi m-l-4 c-black-36" style={{ verticalAlign: 'middle' }} />
+                          </Tooltip>
+                        </span>
+                      )}
+                    >
+                      {
+                        getFieldDecorator('alitripExpensesOwner', {
+                          initialValue: hisAliTrip.alitripExpensesOwner || '按分摊计入',
+                          rules: [{
+                              required: true,
+                              message: '请输入费用归属'
+                          }],
+                        })(
+                          <Radio.Group onChange={e => this.onChange(e)}>
+                            {
+                              cost.map(it => (
+                                <Radio key={it.value} value={it.value}>{it.label}</Radio>
+                              ))
+                            }
+                          </Radio.Group>
+                        )
+                      }
+                      {
+                        alitripExpensesOwner === '归属人' &&
+                        <Form.Item>
+                          {
+                            getFieldDecorator('expenseOwner', {
+                              initialValue: hisAliTrip.expenseOwner ?
+                              `${hisAliTrip.expenseOwner.deptId}${hisAliTrip.expenseOwner.userId}` : undefined,
+                              rules: [{ required: true, message: '请选择归属人' }]
+                            })(
+                              <TreeSelect
+                                treeNodeFilterProp="label"
+                                placeholder='请选择费用归属人'
+                                style={{width: '280px'}}
+                                dropdownStyle={{height: '300px'}}
+                                getPopupContainer={triggerNode => triggerNode.parentNode}
+                                showSearch
+                                treeNodeLabelProp="label"
+                                onChange={this.onChangeEx}
+                                dropdownClassName={style.peoples}
+                              >
+                                { this.loop(deptTree, 'users') }
+                              </TreeSelect>
+                            )
+                          }
+                        </Form.Item>
+                      }
+                    </Form.Item>
+                  </Col>
+                </>
+              }
+            </Row>
+          </Form>
         }
       </div>
     );

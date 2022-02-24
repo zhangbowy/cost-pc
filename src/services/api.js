@@ -151,5 +151,7 @@ export default {
    historyImport: `${APP_API}/cost/excel/importExcel`,
    paymentMethod: `${APP_API}/cost/setting/detail`,
    historyImportResult: `${APP_API}/cost/excel/historyImportResult`,
-   officeListAndRole: `${APP_API}/cost/branch/office/list`,
+   officeListAndRole: `${APP_API}/cost/branch/office/list`, // 查询公司下面的人
+   roleLists: `${APP_API}/cost/role/ding/role/list`, // 查询钉钉审批角色列表
+   getNotifyUser: `${APP_API}/cost/assets/notifyUser`,
 };

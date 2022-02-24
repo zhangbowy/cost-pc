@@ -77,6 +77,10 @@ if (isInDingTalk && (window.location.href.indexOf('transformPage') === -1)
         type: 'session/getApproval',
         payload: {},
       });
+      await window.g_app._store.dispatch({
+        type: 'session/getNotifyUser',
+        payload: {},
+      });
     });
 
     // console.log(window.g_app._store);

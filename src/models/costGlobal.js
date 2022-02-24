@@ -66,6 +66,7 @@ export default {
     paymentMethod: 0, // 控制开关
     officeList: [], // 查询分公司列表
     officeListAndRole: [], // 查询分公司列表
+    roleLists: [], // 审批角色
     // historyImportStatus: {},
   },
   effects: {
@@ -538,6 +539,15 @@ export default {
         type: 'save',
         payload: {
           officeListAndRole: response || [],
+        },
+      });
+    },
+    *roleLists({ payload }, { call, put }) {
+      const response = yield call(get, api.roleLists, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          roleLists: response.openRoleGroups || [],
         },
       });
     },

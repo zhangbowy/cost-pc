@@ -5,6 +5,7 @@
   }
   //写在这里
   .ant-layout-sider {
+    z-index: 100;
     .ant-menu-inline-collapsed{
       .ant-menu-item-selected{
         border-left: 4px solid rgba(26, 206, 179, 1)!important;
@@ -344,6 +345,13 @@
       width: unset;
       margin-right: 16px;
     }
+    .ant-modal-header{
+      padding: 24px 0 0 32px;
+      border-bottom: none;
+    }
+    .ant-modal-body{
+      padding: 24px 32px;
+    }
   }
   .ant-menu-submenu-inline > .ant-menu-submenu-title .icona-xiajiantou3x{
     position: absolute;
@@ -405,6 +413,9 @@
 
   }
   .ant-input-number{
+    border-radius: 2px!important;
+  }
+  .ant-select-tree-dropdown .ant-select-dropdown-search .ant-select-search__field{
     border-radius: 2px!important;
   }
 }

@@ -1,0 +1,39 @@
+.treeNodes{
+  display: flex;
+  height: 38px;
+  align-items: center;
+  .notes{
+    display: flex;
+    flex-direction: column;
+    span{
+      display: inline-block;
+      max-width: 252px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    :global{
+      .ant-tooltip-inner{
+        max-width: 240px;
+        word-break: break-all;
+        white-space: normal;
+      }
+    }
+  }
+}
+.titles{
+  display: flex;
+  height: 22px;
+  align-items: center;
+  .notes{
+    display: flex;
+    flex-direction: column;
+    span{
+      display: inline-block;
+      max-width: 252px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}

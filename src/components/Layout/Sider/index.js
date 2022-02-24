@@ -185,7 +185,6 @@ class App extends React.PureComponent {
           getPopupContainer={triggerNode => triggerNode.parentNode}
           onOpenChange={this.onOpenChange}
           expandIcon={(prop) => {
-            console.log('App -> render -> prop', prop);
             if (isCollapsed) return null;
             return(
               <i className={prop.isOpen ? 'iconfont icona-shangjiantou3x fs-12' : 'iconfont icona-xiajiantou3x fs-12'} />

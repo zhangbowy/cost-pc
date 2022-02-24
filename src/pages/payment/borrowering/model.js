@@ -17,7 +17,7 @@ export default {
   },
   effects: {
     *list({ payload }, { call, put }) {
-      const response = yield call(get, api.list, payload);
+      const response = yield call(post, api.list, payload);
       console.log(response.list);
       const lists = response.pageResult.list && response.pageResult.list.map(it => { return {...it, id: it.loanId}; });
       yield put({

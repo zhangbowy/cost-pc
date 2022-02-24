@@ -1371,7 +1371,7 @@ class AddCost extends Component {
                                   rules: [{ required: !!(showField.happenTime.isWrite), message: '请选择时间' }]
                                 })(
                                   <RangePicker
-                                    style={{width: '280px' }}
+                                    style={{width: '100%' }}
                                     placeholder={showField.happenTime.note ?
                                     showField.happenTime.note : '请选择时间'}
                                     format="YYYY-MM-DD"
