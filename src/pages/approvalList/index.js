@@ -295,7 +295,7 @@ class Summary extends React.PureComponent {
       width: 150,
     }, {
       title: '单据状态',
-      dataIndex: 'statusStr',
+      dataIndex: 'statusMsg',
       width: 100,
       render: (_, record) => {
         const { status } = record;
@@ -308,7 +308,7 @@ class Summary extends React.PureComponent {
                   : getArrayColor(`${status}`, invoiceStatus)
               }
               text={
-                record.statusStr ||
+                record.statusMsg ||
                 getArrayValue(record.status, invoiceStatus)
               }
             />
