@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import { message } from 'antd';
-import { post } from '@/utils/request';
+import { post, get } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
 
@@ -42,6 +42,7 @@ export default {
     list: [],
     total: 0,
     sum: 0,
+    setDetail:{},
     queryPage: {
       pageSize: PAGE_SIZE,
       pageNo: 1
@@ -526,6 +527,19 @@ export default {
           chartList: response || [],
         },
       });
+    },
+    *setDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.setDetail, payload);
+      console.log('*list -> response', response);
+      yield put({
+        type: 'save',
+        payload: {
+          setDetail: response || {},
+        },
+      });
+    },
+    *set({ payload }, { call }) {
+      yield call(post, api.set, payload);
     },
   },
   reducers: {

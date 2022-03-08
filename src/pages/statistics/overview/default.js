@@ -208,18 +208,24 @@ export default {
       id: 'timeC',
       out: 1,
       value: {
-        dateType: 0,
-        startTime: initMonth.startTime,
-        endTime: initMonth.endTime,
+        dateType: -1,
       },
-      initialValue:  {
-        dateType: 0,
-        startTime: initMonth.startTime,
-        endTime: initMonth.endTime,
+      initialValue: {
+        dateType: -1,
       },
+      // value: {
+      //   dateType: 0,
+      //   startTime: initMonth.startTime,
+      //   endTime: initMonth.endTime,
+      // },
+      // initialValue:  {
+      //   dateType: 0,
+      //   startTime: initMonth.startTime,
+      //   endTime: initMonth.endTime,
+      // },
       isFixed: true,
-      initialValueStr: initMonth.valueStr,
-      valueStr: initMonth.valueStr,
+      // initialValueStr: initMonth.valueStr,
+      // valueStr: initMonth.valueStr,
     }, {
       type: 'deptAndUser',
       label: '提交部门/人',

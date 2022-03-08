@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Modal, Icon, Button, Input, Select, message } from 'antd';
 import { connect } from 'dva';
 import style from './addFlow.scss';
-import { repeatMethod } from '../../../../utils/constants';
+import { repeatMethod, autoPassList } from '../../../../utils/constants';
 import Process from './Process';
 
 @connect(({ global }) => ({
@@ -21,6 +21,7 @@ class AddFlow extends Component {
       flag: true,
       nodes: {},
       repeatMethods: '',
+      autoPass: '',
       name: '',
     };
   }
@@ -81,6 +82,7 @@ class AddFlow extends Component {
           nodes:initNode,
           ccPosition: initDetailNode.ccPosition,
           repeatMethods: initDetailNode.repeatMethod,
+          autoPass: initDetailNode.autoPass,
           visible: true,
           name
         });
@@ -99,6 +101,7 @@ class AddFlow extends Component {
           nodes,
           ccPosition: detailNode.ccPosition,
           repeatMethods: detailNode.repeatMethod,
+          autoPass: detailNode.autoPass,
           visible: true,
           name: title === 'copy' ? `${name}-副本` : name,
         });
@@ -117,6 +120,7 @@ class AddFlow extends Component {
       flag: true,
       nodes: {},
       repeatMethods: '',
+      autoPass: '',
     });
   }
 
@@ -158,6 +162,7 @@ class AddFlow extends Component {
         nodes,
         ccPosition: detailNode.ccPosition,
         repeatMethods: detailNode.repeatMethod,
+        autoPass: detailNode.autoPass,
       });
     });
   }
@@ -168,9 +173,9 @@ class AddFlow extends Component {
     });
   }
 
-  onChangRepeat = (val) => {
+  onChangRepeat = (val, key) => {
     this.setState({
-      repeatMethods: val,
+      [key]: val,
     });
   }
 
@@ -187,12 +192,13 @@ class AddFlow extends Component {
   save = () => {
     console.log(this.processData && this.processData.getData());
     const { templateType, processPersonId, title, dispatch } = this.props;
-    const { status, repeatMethods, ccPosition, name } = this.state;
+    const { status, repeatMethods, ccPosition, name, autoPass } = this.state;
 
     const data = this.processData.getData();
     const params = {
       uniqueMark: status,
       repeatMethod: repeatMethods,
+      autoPass,
       ccPosition,
       deepQueryFlag: false,
       templateType,
@@ -226,7 +232,7 @@ class AddFlow extends Component {
   render() {
     const { children, templateType, getCondition } = this.props;
     console.log('AddFlow -> render -> getCondition', getCondition);
-    const { visible, flag, ccPosition, nodes, repeatMethods, name } = this.state;
+    const { visible, flag, ccPosition, nodes, repeatMethods, name, autoPass } = this.state;
     console.log('AddFlow -> render -> ccPosition', ccPosition);
     return (
       <span>
@@ -273,7 +279,7 @@ class AddFlow extends Component {
                 <Select
                   value={repeatMethods}
                   style={{minWidth: '300px'}}
-                  onChange={(val) => this.onChangRepeat(val)}
+                  onChange={(val) => this.onChangRepeat(val, 'repeatMethods')}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                 >
                   {
@@ -282,7 +288,19 @@ class AddFlow extends Component {
                     ))
                   }
                 </Select>
-
+                <p>自动通过</p>
+                <Select
+                  value={autoPass}
+                  style={{minWidth: '300px'}}
+                  onChange={(val) => this.onChangRepeat(val, 'autoPass')}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                >
+                  {
+                    autoPassList.map(it => (
+                      <Select.Option key={it.key}>{it.value}</Select.Option>
+                    ))
+                  }
+                </Select>
               </div>
               <div className={style.approval_process}>
                 <Process

@@ -83,6 +83,7 @@ const objStatus = {
   supplierList: global.supplierList,
   roleStatics: costGlobal.roleStatics,
   officeListAndRole: costGlobal.officeListAndRole,
+  setDetail: overview.setDetail,
 }))
 class EchartsTest extends Component {
 
@@ -102,6 +103,7 @@ class EchartsTest extends Component {
       total: 0,
       expandIds: [],
       dateType: 0,
+      setDetail: {},
     };
   }
 
@@ -130,6 +132,15 @@ class EchartsTest extends Component {
       } else {
         this.onInits('1');
       }
+    });
+    this.props.dispatch({
+      type: 'overview/setDetail',
+      payload: {},
+    }).then(() => {
+      const { setDetail } = this.props;
+      this.setState({
+        setDetail
+      });
     });
   }
 
@@ -523,7 +534,7 @@ class EchartsTest extends Component {
   onGetTime = () => {
     const { searchList } = this.state;
     const timeC = searchList.filter(it => it.id === 'timeC');
-    if (timeC && timeC.length > 0) {
+    if (timeC && timeC.length > 0 && timeC[0].value) {
       const values = timeC[0].value;
       return {
         dateType: values.dateType,
@@ -618,6 +629,28 @@ class EchartsTest extends Component {
     });
   }
 
+  onSet = (e, key) => {
+    const { setDetail } = this.state;
+    this.props.dispatch({
+      type: 'overview/set',
+      payload: {
+        ...setDetail,
+        [key]: e.target.checked,
+      }
+    }).then(() => {
+      this.onQuery({
+        pageNo: 1,
+        pageSize: 10,
+      });
+      this.setState({
+        setDetail: {
+          ...setDetail,
+          [key]: e.target.checked,
+        }
+      });
+    });
+  }
+
   onChangeData = (key, value) => {
     this.setState({
       [key]: value,
@@ -626,7 +659,7 @@ class EchartsTest extends Component {
 
   render() {
     const { current, columns, searchList, list, menus,
-      queryPage, total, expandIds, dateType } = this.state;
+      queryPage, total, expandIds, dateType, setDetail } = this.state;
     const { tableProps } = defaultData[current];
     const { sum, loading } = this.props;
 
@@ -660,6 +693,8 @@ class EchartsTest extends Component {
           onExports={this.onExport}
           dateType={dateType}
           expandIds={expandIds}
+          setDetail={setDetail}
+          onSet={this.onSet}
           hisRecord={{
             total,
             sum,

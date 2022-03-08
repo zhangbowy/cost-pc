@@ -26,4 +26,6 @@ export default {
   office: `${APP_API}/cost/statistics/v3/office/pc`, // 分公司列表
   officeExport: `${APP_API}/cost/export/office/pc`, // 分公导出
   officeDetail: `${APP_API}/cost/statistics/v3/office/list`,
+  setDetail: `${APP_API}/cost/userSetting/detail`,
+  set: `${APP_API}/cost/userSetting/edit`,
 };

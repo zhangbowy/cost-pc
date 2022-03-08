@@ -69,7 +69,6 @@ function InvoicePrice({ children, onQuery, id, title,
   const [query, setQuery] = useState('0');
   const [tableLoading, setTableLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
-console.log(list,'99999');
   const columns = [{
       title: '序号',
       dataIndex: 'index',
@@ -149,7 +148,7 @@ console.log(list,'99999');
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
           {
-            record.isAssetsImport ? 
+            record.isAssetsImport ?
               <>
                 <Tag color="blue">
                   <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
