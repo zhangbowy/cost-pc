@@ -13,6 +13,13 @@ import { invoiceStatus, borrowStatus } from '../../../utils/constants';
 import SearchBanner from '../overview/components/Search/Searchs';
 
 const listSearch = [{
+  type: 'search',
+  label: '外部选择',
+  placeholder: '搜索单号、事由、收款账户名称',
+  key: 'content',
+  id: 'content',
+  out: 1,
+},{
   type: 'deptAndUser',
   label: '提交部门/人',
   placeholder: '请选择',
@@ -56,13 +63,6 @@ const listSearch = [{
   placeholder: '请选择',
   key: 'supplierIds',
   id: 'supplierIds',
-}, {
-  type: 'search',
-  label: '外部选择',
-  placeholder: '单号、事由、收款人',
-  key: 'content',
-  id: 'content',
-  out: 1,
 }];
 const apply = [{
   key: '1',
@@ -118,6 +118,7 @@ const salary = [{
   projectList: costGlobal.projectList,
   supplierList: global.supplierList,
   thirdList: summary.thirdList,
+  statisticsDimension:summary.statisticsDimension,
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -133,7 +134,11 @@ class Summary extends React.PureComponent {
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
+    this.props.dispatch({
+      type:'summary/statisticsDimension',
+      payload:{},
+   });
     const {
       query,
     } = this.props;
@@ -415,7 +420,7 @@ class Summary extends React.PureComponent {
     const { historyPage } = this.props;
     this.props.dispatch({
       type: 'summary/del',
-      payload: {id},
+      payload: { id },
     }).then(() => {
       this.props.dispatch({
         type: 'summary/historyList',
@@ -430,11 +435,27 @@ class Summary extends React.PureComponent {
       });
     });
   }
+  // 修改所属期
+
+  editBelongDate = ({ payload, callback }) => {
+    this.props
+      .dispatch({
+        type:'summary/submit',
+        payload
+      })
+      .then(() => {
+        const { query } = this.props;
+        this.onQuery({
+          ...query
+        });
+        callback();
+      });
+  }
 
   render() {
     const { loading, query, total,
        sum, userInfo, recordList, recordPage,
-       historyPage, historyList } = this.props;
+      historyPage, historyList, statisticsDimension } = this.props;
     const { current, selectedRowKeys, list,
       searchContent, sumAmount,
       selectedRows, searchList } = this.state;
@@ -455,8 +476,8 @@ class Summary extends React.PureComponent {
       title: '操作内容',
       dataIndex: 'operationType',
       width: 80,
-      render: () => (
-        <span>删除单据</span>
+      render: (_, record) => (
+        <span>{record.operationType===1?'删除单据':'修改所属期'}</span>
       )
     }, {
       title: '详情',
@@ -518,7 +539,7 @@ class Summary extends React.PureComponent {
           list={searchList || []}
           onChange={this.onChangeSearch}
         />
-        <div className="content-dt" style={{padding: 0, height: 'auto'}}>
+        <div className="content-dt" style={{ padding: 0, height: 'auto' }}>
           <div className={style.payContent}>
             <div className="cnt-header" style={{display: 'flex'}}>
               <div className="head_lf">
@@ -542,6 +563,7 @@ class Summary extends React.PureComponent {
                         list={historyList}
                         placeholder="输入详情内容搜索"
                         sWidth='800px'
+                        title="导入历史"
                       >
                         <div
                           style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}
@@ -561,6 +583,7 @@ class Summary extends React.PureComponent {
                   list={recordList}
                   placeholder="输入详情内容搜索"
                   sWidth='800px'
+                  title="操作记录"
                 >
                   <div
                     style={{cursor: 'pointer', verticalAlign: 'middle', display: 'flex'}}
@@ -568,7 +591,7 @@ class Summary extends React.PureComponent {
                     <div className={style.activebg}>
                       <i className="iconfont iconcaozuojilu m-r-8 c-black-65" />
                     </div>
-                    <span className="fs-14 c-black-65">操作日志</span>
+                    <span className="fs-14 c-black-65">操作记录</span>
                   </div>
                 </TableTemplate>
               </div>
@@ -589,12 +612,15 @@ class Summary extends React.PureComponent {
               sumAmount={sumAmount}
               loading={loading}
               onQuery={this.onQuery}
+              editBelongDate={(c)=>this.editBelongDate(c)}
               onSelect={this.onSelect}
               total={total}
               query={query}
               searchContent={searchContent}
               userInfo={userInfo}
               onDelInvoice={this.onDelete}
+              statisticsDimension={statisticsDimension}
+              current={current}
             />
           </div>
         </div>
