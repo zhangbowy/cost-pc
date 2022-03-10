@@ -459,7 +459,7 @@ class FormStyle extends Component {
             <Input
               key={item.id}
               placeholder={item.placeholder}
-              style={{ width: '272px',marginRight:'16px' }}
+              style={{ width: '272px' }}
               onInput={e => this.onChangeIn(e, index)}
             />
           );
