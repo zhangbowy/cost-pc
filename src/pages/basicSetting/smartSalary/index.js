@@ -199,14 +199,7 @@ class AllTravelData extends PureComponent {
     const { current, costList, list, len, authorize } = this.state;
     const { saveTime, form: { getFieldDecorator } } = this.props;
     const columns = [{
-      title: (
-        <span>
-          鑫支出类别
-          <Tooltip title="折旧费用按月计入">
-            <i className="iconfont iconshuomingwenzi fs-14 c-black-45 m-l-8" />
-          </Tooltip>
-        </span>
-      ),
+      title: '鑫支出类别',
       dataIndex: 'categoryName',
       render: (_, record) =>  {
         return (
@@ -264,7 +257,7 @@ class AllTravelData extends PureComponent {
     }];
     return (
       <div>
-        <PageHead title="鑫资产数据集成" isShowBtn disabled={!authorize.isAuthorize} />
+        <PageHead title="智能薪酬数据集成" isShowBtn disabled={!authorize.isAuthorize} />
         <div className={cs(style.travel, 'content-dt')}>
           <Steps current={authorize.isAuthorize ? current : 0} onChange={this.onChange} direction="vertical">
             <Step
@@ -327,7 +320,7 @@ class AllTravelData extends PureComponent {
                     <div>
                       {
                         len === list.length ?
-                          <Tooltip title="已经没有可新增的资产费用类别">
+                          <Tooltip title="已经没有可新增的智能薪酬类别">
                             <Button type="primary" className="m-b-16" disabled>新增智能薪酬字段</Button>
                           </Tooltip>
                           :
