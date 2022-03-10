@@ -1,0 +1,24 @@
+.editData{
+    :global{
+      .ant-modal-header{
+        padding:24px 32px 0 32px;
+        border: unset;
+        .ant-modal-title{
+          font-size: 20px;
+          color: rgba(0, 0, 0, 0.85);
+          line-height: 24px;
+          font-weight: 700;
+        }
+      }
+      .ant-modal-body{
+        padding:16px 32px 24px 32px;
+        .ant-form-item-label > label::after{
+          content: '';
+        }
+        .ant-form-item-label{
+          line-height: 22px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }

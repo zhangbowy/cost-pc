@@ -595,8 +595,7 @@ class InvoiceDetail extends Component {
                   <i className="iconfont icona-xiazai3x" onClick={() => this.handelOk()} />
                 </Tooltip>
                 {
-                  allow === 'copy' && (userInfo.userId === details.createId) && !details.isEnterpriseAlitrip &&
-                  !details.isHistoryImport && !details.cantCopy && !details.isAssetsImport &&
+                  allow === 'copy' && (userInfo.userId === details.createId) && !details.cantCopy && !details.thirdPlatformType&&
                     <Tooltip title="复制">
                       <i className="iconfont icona-fuzhi3x" onClick={() => this.onChangeType('copy')} />
                     </Tooltip>

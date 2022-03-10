@@ -11,7 +11,6 @@ import {
   Menu,
   Badge,
   Divider,
-  Tag
 } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
@@ -37,6 +36,8 @@ import {
 import ChangeDate from './component/ChangeDate';
 import ImportModal from '@/components/ImportModal';
 import MessageTip from './component/MessageTip';
+import xzcLogo from '@/assets/img/aliTrip/xzcLogo.png';
+import znxcLogo from '@/assets/img/aliTrip/znxcLogo.png';
 
 const { APP_API } = constants;
 const objStatus = {
@@ -62,7 +63,7 @@ const staticsObj = {
   }
 };
 @Form.create()
-@connect(({ loading, costDetail, costGlobal, global, session }) => ({
+@connect(({ loading, costDetail, costGlobal, global, session }) => ({  
   loading: loading.effects['costDetail/list'] || false,
   list: costDetail.list,
   query: costDetail.query,
@@ -832,7 +833,7 @@ class Statistics extends React.PureComponent {
         render: (_, record) => (
           <span>
             <span>{record.invoiceNo}</span>
-            {record.isEnterpriseAlitrip && (
+            {record.thirdPlatformType===0 && (
               <img
                 src={aliLogo}
                 alt="阿里商旅"
@@ -840,13 +841,23 @@ class Statistics extends React.PureComponent {
               />
             )}
             {
-               record.isAssetsImport ? 
-                 <>
-                   <Tag color="blue">
-                     <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
-                     <span>鑫资产</span>
-                   </Tag>
-                 </> : ''
+              record.thirdPlatformType===2 && (
+                <img
+                  src={xzcLogo}
+                  alt="鑫资产"
+                  style={{ width: '16px', height: '16px', marginLeft: '8px', verticalAlign: 'text-bottom' }}
+                />
+               )        
+            }
+            {
+              record.thirdPlatformType===3 && (
+                <img
+                  src={znxcLogo}
+                  alt="智能薪酬"
+                  style={{ width: '16px', height: '16px', marginLeft: '8px', verticalAlign: 'text-bottom' }}
+                />
+               )
+                   
             }
           </span>
         )
@@ -983,6 +994,7 @@ class Statistics extends React.PureComponent {
                   list={recordList}
                   placeholder="输入详情内容搜索"
                   sWidth="800px"
+                  title="操作记录"
                 >
                   <div className="head_rf" style={{ cursor: 'pointer' }}>
                     <i

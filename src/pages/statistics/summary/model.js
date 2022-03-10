@@ -23,6 +23,7 @@ export default {
       pageSize: 10,
       total: 0,
     },
+    statisticsDimension:''
   },
   effects: {
     *submitList({ payload }, { call, put }) {
@@ -91,6 +92,20 @@ export default {
     },
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
+    },
+    // 修改台账汇总--报销单所属期
+    *submit({ payload }, { call }) {
+      yield call(post, api.submit, payload);
+    },
+    // 判断当前哪种统计维度
+    *statisticsDimension({ payload }, { call,put }) {
+      const result = yield call(get, api.statisticsDimension, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          statisticsDimension:result.statisticsDimension
+        },
+      });
     },
     *thirdList({ payload }, { call, put }) {
       const response = yield call(post, api.thirdList, payload);
