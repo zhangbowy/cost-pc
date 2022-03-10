@@ -160,8 +160,10 @@
   background: #FAFAFA;
   border-radius: 1px;
   display: flex;
-  align-items: center;
+  // align-items: center;
+  justify-content: center;
   padding-left: 24px;
   margin-top: 16px;
   margin-bottom: 24px;
+  flex-direction: column;
 }

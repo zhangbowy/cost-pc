@@ -288,12 +288,13 @@ class AddFlow extends Component {
                     ))
                   }
                 </Select>
-                <p>自动通过</p>
+                <p className="m-t-16">自动通过</p>
                 <Select
                   value={autoPass}
                   style={{minWidth: '300px'}}
                   onChange={(val) => this.onChangRepeat(val, 'autoPass')}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
+                  placeholder="请选择"
                 >
                   {
                     autoPassList.map(it => (

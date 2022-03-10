@@ -9,4 +9,5 @@ export default {
   list: `${APP_API}/cost/assets/typeRef`,
   del: `${APP_API}/cost/smartSalary/deleteTypeRef`,
   edit: `${APP_API}/cost/smartSalary/editTypeRef`,
+  add: `${APP_API}/cost/smartSalary/typeRef`,
 };

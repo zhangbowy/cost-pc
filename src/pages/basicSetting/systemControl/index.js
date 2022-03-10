@@ -101,6 +101,15 @@ class SystemControl extends Component {
       ),
       name: '借款到期提醒',
       onCall: e => this.handleTables({isOpenLoan: e})
+    }, {
+      key: 'isShowClassifyTotal',
+      production: (
+        <p className={style.production}>
+          钉钉审批页面显示相同类别的金额合计
+        </p>
+      ),
+      name: '显示合计金额',
+      onCall: e => this.handleTables({isShowClassifyTotal: e})
     }];
   }
 
@@ -279,7 +288,8 @@ class SystemControl extends Component {
       switchCheck,
       isOpenProject,
       isOpenAgentPush: details.isOpenAgentPush,
-      isOpenLoan: details.isOpenLoan
+      isOpenLoan: details.isOpenLoan,
+      isShowClassifyTotal: details.isShowClassifyTotal
     };
     return (
       <div>

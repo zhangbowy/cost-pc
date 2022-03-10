@@ -224,70 +224,72 @@ export default {
     *project({ payload }, { call, put }) {
       const response = yield call(post, api.project, payload);
       console.log('*list -> response', response);
-      response.unshift({
-        projectName: '合计',
-        id: -1,
-        'submitSum': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumAll;
-        }, 0) : 0,
-        'submitSumAll': response && response.length ? response.reduce((prev, next) => {
-          return prev + next.submitSumAll;
-        }, 0) : 0,
-        'submitSumAnnulus': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumAnnulusAll;
-        }, 0) : 0,
-        'submitSumAnnulusAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumAnnulusAll;
-        }, 0) : 0,
-        'submitSumYear': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumYearAll;
-        }, 0) : 0,
-        'submitSumYearAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitSumYearAll;
-        }, 0) : 0,
-        'submitUserCount': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitUserCountAll;
-        }, 0) : 0,
-        'submitUserCountAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitUserCountAll;
-        }, 0) : 0,
-        'submitCount': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitCountAll;
-        }, 0) : 0,
-        'submitCountAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.submitCountAll;
-        }, 0) : 0,
-        'categoryCount': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.categoryCountAll;
-        }, 0) : 0,
-        'categoryCountAll': response && response.length ?
-        response.reduce((prev, next) => {
-          return prev + next.categoryCountAll;
-        }, 0) : 0,
-        'yearOnYear': response && response.length ?
-        response[0].yearOnYear : 0,
-        'annulus': response && response.length ?
-        response[0].annulus : 0,
-        'yearOnYearSymbolType': response && response.length ?
-        response[0].yearOnYearSymbolType : 0,
-        'annulusSymbolType': response && response.length ?
-        response[0].annulusSymbolType : 0,
-        children: []
-      });
+      if (response) {
+        response.unshift({
+          projectName: '合计',
+          id: -1,
+          'submitSum': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumAll;
+          }, 0) : 0,
+          'submitSumAll': response && response.length ? response.reduce((prev, next) => {
+            return prev + next.submitSumAll;
+          }, 0) : 0,
+          'submitSumAnnulus': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumAnnulusAll;
+          }, 0) : 0,
+          'submitSumAnnulusAll': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumAnnulusAll;
+          }, 0) : 0,
+          'submitSumYear': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumYearAll;
+          }, 0) : 0,
+          'submitSumYearAll': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitSumYearAll;
+          }, 0) : 0,
+          'submitUserCount': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitUserCountAll;
+          }, 0) : 0,
+          'submitUserCountAll': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitUserCountAll;
+          }, 0) : 0,
+          'submitCount': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitCountAll;
+          }, 0) : 0,
+          'submitCountAll': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.submitCountAll;
+          }, 0) : 0,
+          'categoryCount': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.categoryCountAll;
+          }, 0) : 0,
+          'categoryCountAll': response && response.length ?
+          response.reduce((prev, next) => {
+            return prev + next.categoryCountAll;
+          }, 0) : 0,
+          'yearOnYear': response && response.length ?
+          response[0].yearOnYear : 0,
+          'annulus': response && response.length ?
+          response[0].annulus : 0,
+          'yearOnYearSymbolType': response && response.length ?
+          response[0].yearOnYearSymbolType : 0,
+          'annulusSymbolType': response && response.length ?
+          response[0].annulusSymbolType : 0,
+          children: []
+        });
+      }
       yield put({
         type: 'save',
         payload: {
-          list: response.map(it => { return { ...it, submitSum: it.submitSumAll }; }) || [],
+          list: response ? response.map(it => { return { ...it, submitSum: it.submitSumAll }; }) : [],
         },
       });
     },

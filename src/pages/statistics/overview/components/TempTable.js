@@ -198,7 +198,7 @@ class TempTable extends PureComponent {
                   checked={currentType === 2 ? setDetail.isHideStoppedClassify : setDetail.isShowOnlyInProcess}
                   onChange={e => this.props.onSet(e, currentType === 2 ? 'isHideStoppedClassify' : 'isShowOnlyInProcess')}
                 >
-                  {currentType === 2 ? '隐藏已停用的类别': '显示所有项目'}
+                  {currentType === 2 ? '隐藏已停用的类别': '仅显示进行中的项目'}
                 </Checkbox>
               </div>
             }

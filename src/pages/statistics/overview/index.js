@@ -220,8 +220,6 @@ class EchartsTest extends Component {
                 query === 'dept' ?
                   <a>
                     {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
-                    { record.submitSum && record.id !== -1 && record.children &&
-                     record.children.length ?  `（本部${(record.submitSum/100).toFixed(2)}）` : ''}
                   </a>
                   :
                   <a>

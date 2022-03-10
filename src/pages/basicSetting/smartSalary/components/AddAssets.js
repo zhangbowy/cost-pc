@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-undef */
-import { Form, Modal, Tooltip, Tree, TreeSelect } from 'antd';
+import { Form, Modal, Select, Tooltip, Tree, TreeSelect } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { PureComponent } from 'react';
 import CostTreeSelect from '../../../../components/FormItems/CostTreeSelect';
+import ModalTemp from '../../../../components/ModalTemp';
 import { getTimeIdNo } from '../../../../utils/common';
 import style from '../index.scss';
 
@@ -17,61 +18,41 @@ class AddAssets extends PureComponent {
     assetsList: [],
     listIds: [],
     list: [],
-    listMap: []
   }
 
   onShow = async() => {
-    const { tree, lists } = await this.props.getAssets();
+    const { lists } = await this.props.getAssets();
     const { list } = this.props;
     // const ids = this.lookForAllId(tree);
     this.setState({
-      assetsList: tree,
+      assetsList: lists,
       visible: true,
-      listIds: list.map(it => it.assetsTypeId),
-      listMap: list.map(it => { return { value: it.assetsTypeId, label: it.assetsTypeName}; }),
+      listIds: list.map(it => it.humanCapitalId),
       list: lists,
     });
-  }
-
-  getChildren = (id = '', data = [], res = []) => {
-
   }
 
   onOk = () => {
     const { list } = this.state;
     const { details, onOk } = this.props;
     this.props.form.validateFieldsAndScroll((err, val) => {
-      console.log('valsssss', val);
       if (!err) {
-        const params = {};
-        const newList = [];
+        let params = {};
         if(details.id) {
-          Object.assign(params, {
+          params = {
             ...details,
             note: val.note,
             categoryId: val.categoryId.value,
             categoryName: val.categoryId.label,
-          });
+          };
         } else {
-          val.assetsTypeId.forEach((item, index) => {
-            const obj = list.filter(it => it.id === item.value)[0];
-            newList.push({
-              categoryId: val.categoryId.value,
-              categoryName: val.categoryId.label,
-              assetsTypeId: obj.id,
-              assetsTypeName: obj.name,
-              path: obj.path,
-              parentId: obj.parentId,
-              id: `add_${getTimeIdNo()}_${index}`,
-              note: val.note,
-            });
-          });
+          params={
+            ...val,
+            categoryId: val.categoryId.value,
+            categoryName: val.categoryId.label,
+          };
         }
-        console.log(newList);
-        onOk({
-          type: details.id ? 'edit' : 'add',
-          editList: details.id ? params : newList
-        });
+        onOk(params);
         this.onCancel();
       }
     });
@@ -90,42 +71,6 @@ class AddAssets extends PureComponent {
     this.setState({
       visible: false,
     });
-  }
-
-  loopData = data => {
-    const { listIds } = this.state;
-    return data.map(item => {
-      if (item.children) {
-        return (
-          <TreeNode
-            title={listIds.includes(item.value) ? (<Tooltip title="该类别已有映射关系">{item.label}</Tooltip>) : item.label}
-            key={item.value}
-            dataRef={item}
-            disabled={listIds.includes(item.value)}
-            value={item.value}
-          >
-            {this.loopData(item.children)}
-          </TreeNode>
-        );
-      }
-      return (
-        <>
-          <TreeNode
-            key={item.value}
-            title={listIds.includes(item.value) ? (<Tooltip title="该类别已有映射关系">{item.label}</Tooltip>) : item.label}
-            {...item}
-            value={item.value}
-            disabled={listIds.includes(item.value)}
-          />
-        </>
-      );
-    });
-  }
-
-  filterTreeNode = (inputValue, treeNode) => {
-  console.log('🚀 ~ file: AddAssets.js ~ line 115 ~ AddAssets ~ treeNode', treeNode);
-  console.log('🚀 ~ file: AddAssets.js ~ line 115 ~ AddAssets ~ inputValue', inputValue);
-    return treeNode.title.indexOf(inputValue) > -1;
   }
 
   addBtn = () => {
@@ -166,17 +111,17 @@ class AddAssets extends PureComponent {
 
   render() {
     const { children, details, costList } = this.props;
-    const { visible, assetsList, listMap } = this.state;
+    console.log('🚀 ~ file: AddAssets.js ~ line 128 ~ AddAssets ~ render ~ costList', costList);
+    const { visible, assetsList, listIds } = this.state;
     const {
       form: { getFieldDecorator }
     } = this.props;
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
-        <Modal
+        <ModalTemp
           title="新增类目映射"
           visible={visible}
-          wrapClassName="centerModal"
           closeIcon={(
             <div className="modalIcon">
               <i className="iconfont icona-guanbi3x1" />
@@ -184,36 +129,24 @@ class AddAssets extends PureComponent {
           )}
           onCancel={() => this.onCancel()}
           onOk={this.onOk}
-          width="580px"
-          bodyStyle={{
-            height: '380px'
-          }}
+          size="small"
         >
           <Form layout="vertical" className={style.formLabel}>
-            <Form.Item label="鑫资产分类">
+            <Form.Item label="智能薪酬">
               {
-                getFieldDecorator('assetsTypeId', {
-                  initialValue: details.assetsTypeId
-                    ? [{value: details.assetsTypeId, label: details.assetsTypeName}]
+                getFieldDecorator('humanCapitalIds', {
+                  initialValue: details.humanCapitalId
+                    ? [details.humanCapitalId]
                     : undefined,
                   rules: [{ required: true, message: '请选择' }]
                 })(
-                  <TreeSelect
-                    style={{width: '248px'}}
-                    showSearch
-                    treeCheckable
-                    placeholder="请选择"
-                    showCheckedStrategy={SHOW_ALL}
-                    labelInValue
-                    disabled={details.id}
-                    filterTreeNode={this.filterTreeNode}
-                    treeCheckStrictly
-                    className='_slslsl_box'
-                    dropdownClassName='_slslsl'
-                    onClick={this.addBtn}
-                  >
-                    {this.loopData(assetsList)}
-                  </TreeSelect>
+                  <Select style={{width: '248px'}} placeholder="请选择" disabled={details.humanCapitalId} mode="multiple">
+                    {
+                      assetsList.map(it => (
+                        <Select.Option disabled={listIds.includes(it.id)} key={it.id}>{it.name}</Select.Option>
+                      ))
+                    }
+                  </Select>
                 )
               }
             </Form.Item>
@@ -239,12 +172,12 @@ class AddAssets extends PureComponent {
                   initialValue: details.note || '',
                   rules: [{ max: 128, message: '不能多于128' }]
                 })(
-                  <TextArea placeholder="请输入" rows={4} maxLength={128} />
+                  <TextArea placeholder="请输入" rows={4} maxLength={128} style={{width: '516px'}} />
                 )
               }
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

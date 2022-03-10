@@ -41,11 +41,14 @@ export default {
     *onSave({ payload }, { call }) {
       yield call(post, api.save, payload);
     },
-    *onDel({ payload }, { call }) {
-      yield call(post, api.del, payload);
+    *del({ payload }, { call }) {
+      yield call(get, api.del, payload);
     },
-    *onEdit({ payload }, { call }) {
+    *edit({ payload }, { call }) {
       yield call(post, api.edit, payload);
+    },
+    *add({ payload }, { call }) {
+      yield call(post, api.add, payload);
     },
   },
   reducers: {
