@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Form, DatePicker } from 'antd';
 import moment from 'moment';
-import { formItemLayout } from '../../../../utils/constants';
+// import { formItemLayout } from '../../../../utils/constants';
 import style from './index.scss';
 
 const { MonthPicker } = DatePicker;
@@ -53,28 +53,29 @@ class ChangeDate extends Component {
           title="修改所属期"
           visible={visible}
           onCancel={this.onClose}
-          width="480px"
+          width="580px"
           bodyStyle={{
-            height: '212px',
-            padding: '40px 4px 0 48px'
+            height: '246px',
+            padding: '8px 0 0 32px'
           }}
           onOk={this.onConfirm}
+          className={style.editData}
         >
           <Form style={{width: '100%'}}>
             <Form.Item>
               <div className={style.price}>
                 <p className="c-black-85">该明细金额：</p>
-                <span className={style.money}>¥{money ? money/100 : '-'}</span>
+                <span>¥{money ? money/100 : '-'}</span>
                 <p className="c-black-85">，目前所属期为：</p>
-                <span className={style.money}>{month ? moment(month).format('YYYY-MM') : '-'}</span>
+                <span className={style.money}>{month ? moment(month).format('YYYY[年]MM[日]') : '-'}</span>
               </div>
             </Form.Item>
-            <Form.Item label="修改所属月份" {...formItemLayout}>
+            <Form.Item label="修改后所属月份">
               {
                 getFieldDecorator('month', {
                   rules: [{ required: true, message: '请选择日期' }]
                 })(
-                  <MonthPicker placeholder="请选择" style={{ width: '240px' }} />
+                  <MonthPicker placeholder="请选择" style={{ width: '320px' }} />
                 )
               }
             </Form.Item>

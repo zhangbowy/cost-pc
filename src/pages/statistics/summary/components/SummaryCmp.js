@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Table, Tooltip, Popconfirm, message, Badge ,Tag} from 'antd';
+import { Table, Tooltip, Popconfirm, message, Badge,Divider} from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import { getArrayValue, invoiceStatus, getArrayColor } from '../../../../utils/constants';
 import { rowSelect } from '../../../../utils/common';
 import style from './index.scss';
+import xzcLogo from '@/assets/img/aliTrip/xzcLogo.png';
+import znxcLogo from '@/assets/img/aliTrip/znxcLogo.png';
+import ChangeDate from '../../costDetail/component/ChangeDate';
 
 const statusStr = {
   1: '该单据审批中，可让发起人自行撤销',
@@ -95,11 +98,16 @@ class SummaryCmp extends Component {
       });
     });
   }
+  
+  // 修改所属期限
+  onOk = (payload, callback) => {
+    this.props.editBelongDate({ payload, callback });
+  };
 
   render () {
     const { selectedRowKeys } = this.state;
     const { list, loading, templateType,
-      query, total, searchContent, userInfo } = this.props;
+      query, total, searchContent, userInfo,statisticsDimension,current} = this.props;
     const rowSelection = {
       type: 'checkbox',
       selectedRowKeys,
@@ -142,10 +150,13 @@ class SummaryCmp extends Component {
       title: '单号',
       dataIndex: 'invoiceNo',
       render: (_, record) => (
-          record.isAssetsImport ?
-            <><span>{record.invoiceNo}</span><Tag color="blue"><i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} /><span>鑫资产</span></Tag></> :<span>{record.invoiceNo}</span>
+          (record.thirdPlatformType===2||record.thirdPlatformType===3 )?
+            <>
+              <span>{record.invoiceNo}</span>
+              <img src={record.thirdPlatformType===2?xzcLogo:znxcLogo} alt="鑫资产" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
+            </> : <span>{record.invoiceNo}</span>    
       ),
-      width: list.isAssetsImport ? 230:160,
+      width: list.thirdPlatformType===2||list.thirdPlatformType===3 ? 230:160,
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
@@ -516,10 +527,35 @@ class SummaryCmp extends Component {
                       <span style={{ cursor: 'pointer',color: 'rgba(0,0,0,0.25)' }}>删单</span>
                     </Tooltip>
                 }
+                {
+                  current==='0'&&(statisticsDimension!==2?
+                    <>
+                      <Divider type="vertical" />
+                      <ChangeDate
+                        month={record.happenTime}
+                        money={record.money}
+                        onOK={this.onOk}
+                        id={record.id}
+                      >
+                        <a>修改所属期</a>
+                      </ChangeDate>
+                    </>
+                  :
+                    <>
+                      <Divider type="vertical" />
+                      <Tooltip
+                        title='您的统计维度为‘费用发生日期’，一个单据可能存在多个归属时间，请至‘支出明细’修改'
+                        placement="topRight"
+                      >
+                        <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)' }}>修改所属期</span>
+                      </Tooltip>
+                    </>
+                  )
+                }
               </>
             );
           },
-          width: 80,
+          width: current==='0'?150:80,
           fixed: 'right',
           className: 'fixCenter'
         });

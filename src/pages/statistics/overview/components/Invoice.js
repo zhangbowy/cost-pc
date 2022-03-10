@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Tooltip, Select, Spin,Tag} from 'antd';
+import { Modal, Table, Tooltip, Select, Spin} from 'antd';
 import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
 import Chart from './Chart';
+import xzcLogo from '@/assets/img/aliTrip/xzcLogo.png';
+import znxcLogo from '@/assets/img/aliTrip/znxcLogo.png';
 
 const exportKey = {
   1: [{
@@ -144,18 +146,25 @@ function InvoicePrice({ children, onQuery, id, title,
         <span>
           <span>{record.invoiceNo}</span>
           {
-            record.isEnterpriseAlitrip &&
+            record.thirdPlatformType===0 &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
           {
-            record.isAssetsImport ?
+            record.thirdPlatformType===2 &&
               <>
-                <Tag color="blue">
+                {/* <Tag color="blue">
                   <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
                   <span>鑫资产</span>
-                </Tag>
-              </> : ''
-            }
+                </Tag> */}
+                <img src={xzcLogo} alt="鑫资产" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
+              </>
+          }
+          {
+            record.thirdPlatformType===3 &&
+              <>
+                <img src={znxcLogo} alt="智能薪酬" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
+              </>
+          }
         </span>
       )
     }, {

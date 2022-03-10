@@ -8,6 +8,13 @@ import style from './index.scss';
 import { invoiceStatus, getArrayValue, approveStatus, loanStatus, accountType } from '../../../utils/constants';
 import DisabledTooltip from './DisabledTooltip';
 
+const thirdInvoiceTig = {
+    0:'阿里商旅自动导入单据',
+    10: '鑫资产自动导入单据',
+    20: '智能薪酬自动导入单据',
+    30:'历史导入单据'
+  };
+
 const BasicText = ({ details, selfSubmitFieldVos, templateType,
   onLinkDetail, showFields, receipt,
   previewImage, supplierAccountVo, aliTrip, expandSubmitFieldVos }) => {
@@ -22,17 +29,24 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
         <span className="fs-14 c-black-65">
           {details.invoiceNo}
           {
-            details.isEnterpriseAlitrip &&
+            details.thirdInvoiceType===0 &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>
         {/* 鑫资产标签 */}
         {
-          details.isAssetsImport ? (
+          details.thirdInvoiceType===10 && (
             <Tag color="blue">
               <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
               <span>鑫资产</span>
-            </Tag>) : ''
+            </Tag>)
+        }
+        {/* 智能薪酬标签 */}
+        {
+          details.thirdInvoiceType===20 && (
+            <Tag color="orange">
+              <span>智能薪酬</span>
+            </Tag>) 
         }
       </Col>
       {
@@ -136,19 +150,13 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
         <span className="fs-14 c-black-65">
-          {getArrayValue(details.approveStatus, approveStatus)}
+          {getArrayValue(details.approveStatus, approveStatus)}   
           {
-            details.isEnterpriseAlitrip
-            || details.isHistoryImport
-            || details.isAlitrip
-            || details.cantCopy || details.isAssetsImport ?
+            details.cantCopy ||details.thirdInvoiceType ?
               <DisabledTooltip
                 className="m-l-8"
-                title={`${details.isHistoryImport
-              ? '历史数据导入'
-              : details.isAssetsImport
-              ? '鑫资产自动导入单据'
-              : '阿里商旅自动导入单据'}，无审批环节`}
+                title={`${thirdInvoiceTig[details.thirdInvoiceType]
+            }，无审批环节`}
                 name="审批详情"
               />
             :
