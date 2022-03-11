@@ -292,7 +292,7 @@ class AllTravelData extends PureComponent {
                               getFieldDecorator(it.key, {
                                 initialValue: authorize[it.key],
                               })(
-                                <Input placeholder="请输入" />
+                                <Input placeholder="请输入" style={{width: '248px'}} className="m-r-24" />
                               )
                             }
                           </Form.Item>

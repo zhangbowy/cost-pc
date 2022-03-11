@@ -166,4 +166,12 @@
   margin-top: 16px;
   margin-bottom: 24px;
   flex-direction: column;
+  :global{
+    .ant-form-item{
+      margin-right: 0px;
+    }
+    .ant-btn-primary{
+      margin-top: 4px;
+    }
+  }
 }
