@@ -61,7 +61,7 @@ const exportKey = {
 };
 const { Option } = Select;
 function InvoicePrice({ children, onQuery, id, title,
-   projectType, pageDetail, currentType }) {
+   projectType, pageDetail, currentType, isDeptSelf }) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
   const [pieChart, setPieChart] = useState(currentType === 1 ? '0' : '1');
@@ -186,6 +186,9 @@ function InvoicePrice({ children, onQuery, id, title,
 
     const onNewQuery = async(payload) => {
       let result = {};
+      Object.assign(payload, {
+        isDeptSelf
+      });
       if (payload.isTurnPage) {
         result = await pageDetail(payload);
       } else {
@@ -203,14 +206,14 @@ function InvoicePrice({ children, onQuery, id, title,
     const onSearch = (e) => {
       setSearch(e);
       setTableLoading(true);
-      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart, isDeptSelf });
     };
 
     const onChange = val => {
       setPieChart(val);
       setTableLoading(true);
       setChartLoading(true);
-      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val, isDeptSelf });
     };
   return (
     <span>

@@ -201,33 +201,40 @@ class EchartsTest extends Component {
         $splice: [[1, 0, {
           title: '金额（元）',
           dataIndex: 'submitSumAll',
-          render: (_, record) => (
-            <InvoicePrice
-              title={`${record[chartName]}支出统计`}
-              detailList={detailList}
-              onQuery={val => _this.inVoiceQuery(val)}
-              query={listQuery}
-              total={listTotal}
-              id={record[type] || record.userId || '-1'}
-              projectType={record.projectType}
-              pageDetail={_this.pageDetail}
-              chartList={pieChartVos}
-              onChart={val => this.onChart(val, Number(type))}
-              currentType={Number(params)}
-              loading={chartLoading}
-            >
-              {
-                query === 'dept' ?
-                  <a>
-                    {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
-                  </a>
-                  :
-                  <a>
-                    ¥{(record.submitSumAll/100).toFixed(2)}
-                  </a>
-              }
-            </InvoicePrice>
-          ),
+          render: (_, record) => {
+            let newId = record[type] || record.userId || '-1';
+            if (record.isDeptSelf) {
+              newId = record.parentId;
+            }
+            return(
+              <InvoicePrice
+                title={`${record[chartName]}支出统计`}
+                detailList={detailList}
+                onQuery={val => _this.inVoiceQuery(val)}
+                query={listQuery}
+                total={listTotal}
+                id={newId}
+                projectType={record.projectType}
+                pageDetail={_this.pageDetail}
+                chartList={pieChartVos}
+                onChart={val => this.onChart(val, Number(type))}
+                currentType={Number(params)}
+                loading={chartLoading}
+                isDeptSelf={record.isDeptSelf}
+              >
+                {
+                  query === 'dept' ?
+                    <a>
+                      {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
+                    </a>
+                    :
+                    <a>
+                      ¥{(record.submitSumAll/100).toFixed(2)}
+                    </a>
+                }
+              </InvoicePrice>
+            );
+          },
           className: 'moneyCol',
           width: query === 'dept' ? 160 : 100,
         }]]
@@ -238,37 +245,44 @@ class EchartsTest extends Component {
             title: '操作',
             dataIndex: 'ope',
             width: 180,
-            render: (_, record) => (
-              <span style={{ display: 'flex' }}>
-                <Chart
-                  data={record}
-                  onChart={this.onChart}
-                  chartName={chartName}
-                  type={query}
-                  changeMoney={100}
-                  getTime={this.onGetTime}
-                >
-                  <a>查看趋势图</a>
-                </Chart>
-                <Divider type="vertical" />
-                <InvoicePrice
-                  title={`${record[chartName]}支出统计`}
-                  detailList={detailList}
-                  onQuery={val => _this.inVoiceQuery(val)}
-                  query={listQuery}
-                  total={listTotal}
-                  id={record[type] || record.userId || '-1'}
-                  projectType={record.projectType}
-                  pageDetail={_this.pageDetail}
-                  chartList={pieChartVos}
-                  onChart={val => this.onChart(val, Number(type))}
-                  currentType={Number(params)}
-                  loading={chartLoading}
-                >
-                  <a>查看分布</a>
-                </InvoicePrice>
-              </span>
-            ),
+            render: (_, record) => {
+              let newIds = record[type] || record.userId || '-1';
+              if (record.isDeptSelf) {
+                newIds = record.parentId;
+              }
+              return (
+                <span style={{ display: 'flex' }}>
+                  <Chart
+                    data={record}
+                    onChart={this.onChart}
+                    chartName={chartName}
+                    type={query}
+                    changeMoney={100}
+                    getTime={this.onGetTime}
+                  >
+                    <a>查看趋势图</a>
+                  </Chart>
+                  <Divider type="vertical" />
+                  <InvoicePrice
+                    title={`${record[chartName]}支出统计`}
+                    detailList={detailList}
+                    onQuery={val => _this.inVoiceQuery(val)}
+                    query={listQuery}
+                    total={listTotal}
+                    id={newIds}
+                    projectType={record.projectType}
+                    pageDetail={_this.pageDetail}
+                    chartList={pieChartVos}
+                    onChart={val => this.onChart(val, Number(type))}
+                    currentType={Number(params)}
+                    loading={chartLoading}
+                    isDeptSelf={record.isDeptSelf}
+                  >
+                    <a>查看分布</a>
+                  </InvoicePrice>
+                </span>
+              );
+            },
             fixed: 'right'
           }]]});
       }

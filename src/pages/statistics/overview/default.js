@@ -79,7 +79,7 @@ export default {
     chartName: 'deptName',
     type: 'deptId',
     tableProps: {
-      rowKey: 'id',
+      rowKey: 'deptId',
       scroll: { x: '1200px' }
     },
     searchList: [{
