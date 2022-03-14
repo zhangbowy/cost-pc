@@ -8,7 +8,7 @@
     "build": "umi build",
     "build:test": "SPD_ENV=test umi build",
     "build:pre": "SPD_ENV=pre umi build",
-    "build:prod": "SPD_ENV=prod umi prod",
+    "build:prod": "SPD_ENV=prod umi build",
     "test": "umi test",
     "lint": "eslint --ext .js src",
     "lint:fix": "eslint src --fix",

@@ -44,6 +44,7 @@ class AllTravelData extends PureComponent {
     list: [],
     len: 0,
     authorize: {},
+    flag: true,
   }
 
   componentDidMount() {
@@ -166,6 +167,12 @@ class AllTravelData extends PureComponent {
     });
   }
 
+  onRemove = (val) => {
+    this.setState({
+      flag: val === 'save',
+    });
+  }
+
   onDelete = (id) => {
     this.props.dispatch({
       type: 'smartSalary/del',
@@ -196,7 +203,7 @@ class AllTravelData extends PureComponent {
   }
 
   render () {
-    const { current, costList, list, len, authorize } = this.state;
+    const { current, costList, list, len, authorize, flag } = this.state;
     const { saveTime, form: { getFieldDecorator } } = this.props;
     const columns = [{
       title: '鑫支出类别',
@@ -275,7 +282,7 @@ class AllTravelData extends PureComponent {
                       overlayClassName={style.popImg}
                       content={(
                         <div className={style.popStyle}>
-                          <img src={img} alt="数据" style={{width: '384px'}} />
+                          <img src={img} alt="数据" style={{width: '634px'}} />
                         </div>
                       )}
                       placement="rightTop"
@@ -292,13 +299,21 @@ class AllTravelData extends PureComponent {
                               getFieldDecorator(it.key, {
                                 initialValue: authorize[it.key],
                               })(
-                                <Input placeholder="请输入" style={{width: '248px'}} className="m-r-24" />
+                                <Input disabled={authorize.time && flag} placeholder="请输入" style={{width: '248px'}} className="m-r-24" />
                               )
                             }
                           </Form.Item>
                         ))
                       }
-                      <Button type="primary" onClick={this.onSubmit}>提交凭证</Button>
+                      {
+                        authorize.time && flag ?
+                          <Button type="primary" onClick={() => this.onRemove('change')}>修改凭证</Button>
+                        :
+                          <>
+                            <Button type="primary" className="m-r-8" onClick={this.onSubmit}>保存</Button>
+                            <Button type="default" onClick={() => this.onRemove('save')}>取消</Button>
+                          </>
+                      }
                     </Form>
                     {
                       authorize.time &&

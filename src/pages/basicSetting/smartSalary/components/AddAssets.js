@@ -75,6 +75,7 @@ class AddAssets extends PureComponent {
 
   addBtn = () => {
     const dropdown = document.getElementsByClassName('_slslsl');
+    console.log('🚀 ~ file: AddAssets.js ~ line 78 ~ AddAssets ~ dropdown', dropdown);
     if (dropdown && dropdown.length) {
       dropdown[0].firstChild.setAttribute('style', 'max-height: 300px;overflow-y: auto;padding-bottom:16px;');
       const buttonBox = document.getElementById('_slsl_button');
@@ -111,7 +112,6 @@ class AddAssets extends PureComponent {
 
   render() {
     const { children, details, costList } = this.props;
-    console.log('🚀 ~ file: AddAssets.js ~ line 128 ~ AddAssets ~ render ~ costList', costList);
     const { visible, assetsList, listIds } = this.state;
     const {
       form: { getFieldDecorator }
@@ -140,7 +140,15 @@ class AddAssets extends PureComponent {
                     : undefined,
                   rules: [{ required: true, message: '请选择' }]
                 })(
-                  <Select style={{width: '248px'}} placeholder="请选择" disabled={details.humanCapitalId} mode="multiple">
+                  <Select
+                    style={{width: '248px'}}
+                    placeholder="请选择"
+                    disabled={details.humanCapitalId}
+                    mode="multiple"
+                    className='_slslsl_box'
+                    dropdownClassName='_slslsl'
+                    onFocus={this.addBtn}
+                  >
                     {
                       assetsList.map(it => (
                         <Select.Option disabled={listIds.includes(it.id)} key={it.id}>{it.name}</Select.Option>
