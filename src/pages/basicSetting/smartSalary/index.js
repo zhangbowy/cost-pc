@@ -275,7 +275,7 @@ class AllTravelData extends PureComponent {
               )}
               description={(
                 <div>
-                  <p>1. 公司成功开通“智能薪酬专业版客户“及API接口后，才可实现双方数据集成（因薪资为保密数据，升级后联系智能薪酬客服开通API接口）；如未开通可先至应用市场进行开通。</p>
+                  <p className="c-black-45 fs-12">1. 公司成功开通“智能薪酬专业版客户“及API接口后，才可实现双方数据集成（因薪资为保密数据，升级后联系智能薪酬客服开通API接口）；如未开通可先至应用市场进行开通。</p>
                   <p className="c-black-45 fs-12">
                     2. 该密钥仅智能薪酬的主管理员可见
                     <Popover
