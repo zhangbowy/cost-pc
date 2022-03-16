@@ -31,7 +31,9 @@ class App extends React.PureComponent {
       title,
       note,
       disabled,
-      isShowBtn
+      isShowBtn,
+      okText,
+      failText,
       // collapsed,
     } = this.props;
     return (
@@ -69,7 +71,7 @@ class App extends React.PureComponent {
           isShowBtn ?
             disabled ?
               <Button type="primary" disabled={disabled} style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
-                { disabled ? '暂未开启' : '已开启' }
+                { disabled ? (failText || '暂未开启') : (okText || '已开启') }
               </Button>
               :
               <div style={{ position: 'absolute', right: '56px', bottom: '22px' }}>

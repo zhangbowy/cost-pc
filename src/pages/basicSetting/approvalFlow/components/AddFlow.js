@@ -21,7 +21,7 @@ class AddFlow extends Component {
       flag: true,
       nodes: {},
       repeatMethods: '',
-      autoPass: '',
+      autoPass: 'CHECK_NEED',
       name: '',
     };
   }
@@ -82,7 +82,7 @@ class AddFlow extends Component {
           nodes:initNode,
           ccPosition: initDetailNode.ccPosition,
           repeatMethods: initDetailNode.repeatMethod,
-          autoPass: initDetailNode.autoPass,
+          autoPass: initDetailNode.autoPass || 'CHECK_NEED',
           visible: true,
           name
         });
@@ -101,7 +101,7 @@ class AddFlow extends Component {
           nodes,
           ccPosition: detailNode.ccPosition,
           repeatMethods: detailNode.repeatMethod,
-          autoPass: detailNode.autoPass,
+          autoPass: detailNode.autoPass || 'CHECK_NEED',
           visible: true,
           name: title === 'copy' ? `${name}-副本` : name,
         });

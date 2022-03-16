@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 const widthSize = {
   'small': {
     width: '580px',
-    height: 378
+    height: 370
   },
   'default': {
     width: '780px',
@@ -31,7 +31,7 @@ class ModalTemp extends PureComponent {
   }
 
   render() {
-    const { children, size, footer } = this.props;
+    const { children, size, footer, newBodyStyle } = this.props;
     const { isScroll } = this.state;
     return (
       <Modal
@@ -45,8 +45,9 @@ class ModalTemp extends PureComponent {
         wrapClassName="centerModal"
         width={widthSize[size].width}
         bodyStyle={{
-          height: `${widthSize[size].height - (footer ? 40 : 0)}px`,
+          maxHeight: `${widthSize[size].height - (footer ? 40 : 0)}px`,
           padding: '24px 0px 0px 32px',
+          ...newBodyStyle,
         }}
       >
         <div

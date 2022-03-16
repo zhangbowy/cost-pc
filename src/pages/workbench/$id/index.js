@@ -968,9 +968,9 @@ class addInvoice extends Component {
         type: 'global/approveList',
         payload: {...objs},
       }).then(() => {
-        const { nodes } = this.props;
+        const { nodes, userInfo } = this.props;
         this.setState({
-          nodes,
+          nodes: adjustApprove(nodes, { loginInfo: userInfo }),
         });
       });
     }

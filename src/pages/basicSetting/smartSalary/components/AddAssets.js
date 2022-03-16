@@ -180,7 +180,7 @@ class AddAssets extends PureComponent {
                   initialValue: details.note || '',
                   rules: [{ max: 128, message: '不能多于128' }]
                 })(
-                  <TextArea placeholder="请输入" rows={4} maxLength={128} style={{width: '516px'}} />
+                  <TextArea placeholder="请输入" rows={4} maxLength={128} style={{width: '516px', height: '80px'}} />
                 )
               }
             </Form.Item>

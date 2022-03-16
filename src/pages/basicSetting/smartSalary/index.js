@@ -89,6 +89,7 @@ class AllTravelData extends PureComponent {
           this.setState({
             authorize,
             list: authorize.refs || [],
+            flag: true,
           });
         });
       }
@@ -264,7 +265,13 @@ class AllTravelData extends PureComponent {
     }];
     return (
       <div>
-        <PageHead title="智能薪酬数据集成" isShowBtn disabled={!authorize.isAuthorize} />
+        <PageHead
+          title="智能薪酬数据集成"
+          isShowBtn
+          disabled={!authorize.isAuthorize}
+          okText="授权成功"
+          failText="授权失败"
+        />
         <div className={cs(style.travel, 'content-dt')}>
           <Steps current={authorize.isAuthorize ? current : 0} onChange={this.onChange} direction="vertical">
             <Step

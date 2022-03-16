@@ -647,7 +647,7 @@ class EchartsTest extends Component {
       type: 'overview/set',
       payload: {
         ...setDetail,
-        [key]: e.target.checked,
+        [key]: e,
       }
     }).then(() => {
       this.onQuery({
@@ -657,7 +657,7 @@ class EchartsTest extends Component {
       this.setState({
         setDetail: {
           ...setDetail,
-          [key]: e.target.checked,
+          [key]: e,
         }
       });
     });
