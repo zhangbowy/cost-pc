@@ -853,6 +853,13 @@ export const repeatMethod = [{
   value: '当审批人出现多次时，去重保留最后一个'
 }];
 
+export const autoPassList = [{
+  key: 'AUTO_PASS',
+  value: '发起人和审批人是同一人时，审批自动通过'
+}, {
+  key: 'CHECK_NEED',
+  value: '发起人和审批人是同一人时，仍需审批'
+}];
 // 包含/不包含条件
 export const condExclude = [{
   key: 'include',

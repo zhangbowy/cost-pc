@@ -674,6 +674,7 @@ renderTreeNodes = data =>
                             placeholder={showField.deptId && showField.deptId.note ? showField.deptId.note : '请选择'}
                             onChange={this.onChangeDept}
                             disabled={modify}
+                            getPopupContainer={triggerNode => triggerNode.parentNode}
                           >
                             {
                               deptList && deptList.map(it => (

@@ -83,6 +83,7 @@ const objStatus = {
   supplierList: global.supplierList,
   roleStatics: costGlobal.roleStatics,
   officeListAndRole: costGlobal.officeListAndRole,
+  setDetail: overview.setDetail,
 }))
 class EchartsTest extends Component {
 
@@ -102,6 +103,7 @@ class EchartsTest extends Component {
       total: 0,
       expandIds: [],
       dateType: 0,
+      setDetail: {},
     };
   }
 
@@ -130,6 +132,15 @@ class EchartsTest extends Component {
       } else {
         this.onInits('1');
       }
+    });
+    this.props.dispatch({
+      type: 'overview/setDetail',
+      payload: {},
+    }).then(() => {
+      const { setDetail } = this.props;
+      this.setState({
+        setDetail
+      });
     });
   }
 
@@ -190,35 +201,31 @@ class EchartsTest extends Component {
         $splice: [[1, 0, {
           title: '金额（元）',
           dataIndex: 'submitSumAll',
-          render: (_, record) => (
-            <InvoicePrice
-              title={`${record[chartName]}支出统计`}
-              detailList={detailList}
-              onQuery={val => _this.inVoiceQuery(val)}
-              query={listQuery}
-              total={listTotal}
-              id={record[type] || record.userId || '-1'}
-              projectType={record.projectType}
-              pageDetail={_this.pageDetail}
-              chartList={pieChartVos}
-              onChart={val => this.onChart(val, Number(type))}
-              currentType={Number(params)}
-              loading={chartLoading}
-            >
-              {
-                query === 'dept' ?
-                  <a>
-                    {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
-                    { record.submitSum && record.id !== -1 && record.children &&
-                     record.children.length ?  `（本部${(record.submitSum/100).toFixed(2)}）` : ''}
-                  </a>
-                  :
-                  <a>
-                    ¥{(record.submitSumAll/100).toFixed(2)}
-                  </a>
-              }
-            </InvoicePrice>
-          ),
+          render: (_, record) => {
+            let newId = record[type] || record.userId || '-1';
+            if (record.isDeptSelf) {
+              newId = record.parentId;
+            }
+            return(
+              <InvoicePrice
+                title={`${record[chartName]}支出统计`}
+                detailList={detailList}
+                onQuery={val => _this.inVoiceQuery(val)}
+                query={listQuery}
+                total={listTotal}
+                id={newId}
+                projectType={record.projectType}
+                pageDetail={_this.pageDetail}
+                chartList={pieChartVos}
+                onChart={val => this.onChart(val, Number(type))}
+                currentType={Number(params)}
+                loading={chartLoading}
+                isDeptSelf={record.isDeptSelf}
+              >
+                <a>{record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}</a>
+              </InvoicePrice>
+            );
+          },
           className: 'moneyCol',
           width: query === 'dept' ? 160 : 100,
         }]]
@@ -229,37 +236,44 @@ class EchartsTest extends Component {
             title: '操作',
             dataIndex: 'ope',
             width: 180,
-            render: (_, record) => (
-              <span style={{ display: 'flex' }}>
-                <Chart
-                  data={record}
-                  onChart={this.onChart}
-                  chartName={chartName}
-                  type={query}
-                  changeMoney={100}
-                  getTime={this.onGetTime}
-                >
-                  <a>查看趋势图</a>
-                </Chart>
-                <Divider type="vertical" />
-                <InvoicePrice
-                  title={`${record[chartName]}支出统计`}
-                  detailList={detailList}
-                  onQuery={val => _this.inVoiceQuery(val)}
-                  query={listQuery}
-                  total={listTotal}
-                  id={record[type] || record.userId || '-1'}
-                  projectType={record.projectType}
-                  pageDetail={_this.pageDetail}
-                  chartList={pieChartVos}
-                  onChart={val => this.onChart(val, Number(type))}
-                  currentType={Number(params)}
-                  loading={chartLoading}
-                >
-                  <a>查看分布</a>
-                </InvoicePrice>
-              </span>
-            ),
+            render: (_, record) => {
+              let newIds = record[type] || record.userId || '-1';
+              if (record.isDeptSelf) {
+                newIds = record.parentId;
+              }
+              return (
+                <span style={{ display: 'flex' }}>
+                  <Chart
+                    data={record}
+                    onChart={this.onChart}
+                    chartName={chartName}
+                    type={query}
+                    changeMoney={100}
+                    getTime={this.onGetTime}
+                  >
+                    <a>查看趋势图</a>
+                  </Chart>
+                  <Divider type="vertical" />
+                  <InvoicePrice
+                    title={`${record[chartName]}支出统计`}
+                    detailList={detailList}
+                    onQuery={val => _this.inVoiceQuery(val)}
+                    query={listQuery}
+                    total={listTotal}
+                    id={newIds}
+                    projectType={record.projectType}
+                    pageDetail={_this.pageDetail}
+                    chartList={pieChartVos}
+                    onChart={val => this.onChart(val, Number(type))}
+                    currentType={Number(params)}
+                    loading={chartLoading}
+                    isDeptSelf={record.isDeptSelf}
+                  >
+                    <a>查看分布</a>
+                  </InvoicePrice>
+                </span>
+              );
+            },
             fixed: 'right'
           }]]});
       }
@@ -523,7 +537,7 @@ class EchartsTest extends Component {
   onGetTime = () => {
     const { searchList } = this.state;
     const timeC = searchList.filter(it => it.id === 'timeC');
-    if (timeC && timeC.length > 0) {
+    if (timeC && timeC.length > 0 && timeC[0].value) {
       const values = timeC[0].value;
       return {
         dateType: values.dateType,
@@ -618,6 +632,28 @@ class EchartsTest extends Component {
     });
   }
 
+  onSet = (e, key) => {
+    const { setDetail } = this.state;
+    this.props.dispatch({
+      type: 'overview/set',
+      payload: {
+        ...setDetail,
+        [key]: e,
+      }
+    }).then(() => {
+      this.onQuery({
+        pageNo: 1,
+        pageSize: 10,
+      });
+      this.setState({
+        setDetail: {
+          ...setDetail,
+          [key]: e,
+        }
+      });
+    });
+  }
+
   onChangeData = (key, value) => {
     this.setState({
       [key]: value,
@@ -626,7 +662,7 @@ class EchartsTest extends Component {
 
   render() {
     const { current, columns, searchList, list, menus,
-      queryPage, total, expandIds, dateType } = this.state;
+      queryPage, total, expandIds, dateType, setDetail } = this.state;
     const { tableProps } = defaultData[current];
     const { sum, loading } = this.props;
 
@@ -660,6 +696,8 @@ class EchartsTest extends Component {
           onExports={this.onExport}
           dateType={dateType}
           expandIds={expandIds}
+          setDetail={setDetail}
+          onSet={this.onSet}
           hisRecord={{
             total,
             sum,

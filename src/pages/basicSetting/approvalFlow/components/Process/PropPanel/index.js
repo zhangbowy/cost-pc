@@ -1,10 +1,11 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { Component } from 'react';
-import { Modal, Form, Button, message } from 'antd';
+import { Form, Button, message } from 'antd';
 import ApproveModal from './ApproveModal';
 import Conditions from './Conditions';
 import { NodeUtils } from '../FlowCard/util';
 import ApproveSend from './ApprovePay';
+import ModalTemp from '../../../../../../components/ModalTemp';
 
 const title = {
   condition: '条件设置',
@@ -150,12 +151,11 @@ render() {
     const { value, conditions, approveNode, templateType, getCondition } = this.props;
     const { visible, priorityLength } = this.state;
     return (
-      <Modal
+      <ModalTemp
         visible={visible}
         onCancel={this.onCancel}
         title={title[value && value.nodeType]}
-        width="780px"
-        bodyStyle={{height: '440px', overflowY: 'scroll'}}
+        size="default"
         footer={[
           <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
           <Button key="save" onClick={() => this.onSave()} type="primary">保存</Button>
@@ -194,7 +194,7 @@ render() {
             onChangeData={fn => {this.grand = fn;}}
           />
         }
-      </Modal>
+      </ModalTemp>
     );
   }
 }

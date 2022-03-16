@@ -26,6 +26,7 @@ import { invoiceJson } from '../../../utils/constants';
 import { numAdd, numMulti } from '../../../utils/float';
 import { fileUpload } from '../../../utils/ddApi';
 import treeConvert from '../../../utils/treeConvert';
+import { adjustApprove } from '../../../utils/approve';
 
 
 const { TextArea } = Input;
@@ -967,9 +968,9 @@ class addInvoice extends Component {
         type: 'global/approveList',
         payload: {...objs},
       }).then(() => {
-        const { nodes } = this.props;
+        const { nodes, userInfo } = this.props;
         this.setState({
-          nodes,
+          nodes: adjustApprove(nodes, { loginInfo: userInfo }),
         });
       });
     }
@@ -993,7 +994,7 @@ class addInvoice extends Component {
       applyArr,
       id,
     } = this.state;
-    const { djDetail, detailJson, detailType } = this.props;
+    const { djDetail, detailJson, detailType, userInfo } = this.props;
     let params = {
       ...details,
       invoiceTemplateId: id,
@@ -1015,7 +1016,7 @@ class addInvoice extends Component {
     const arr = defaultFunc.handleCost(costDetailsVo, id);
     params = {
       ...params,
-      nodeConfigInfo: nodes,
+      nodeConfigInfo: adjustApprove(nodes, { loginInfo: userInfo }),
       costDetailsVo: arr,
     };
     if (djDetail.isRelationLoan) {

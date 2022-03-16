@@ -315,8 +315,6 @@ class customQuery extends Component {
       render: (_, record) => (
         <span>
           {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
-          { record.submitSum && record.id !== -1 && record.children &&
-            record.children.length ?  `（本部${(record.submitSum/100).toFixed(2)}）` : ''}
         </span>
       )
     }, ...commons, {

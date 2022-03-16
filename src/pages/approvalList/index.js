@@ -57,7 +57,7 @@ class Summary extends React.PureComponent {
         {
           type: 'search',
           label: '外部选择',
-          placeholder: '单号、事由、收款人',
+          placeholder: '搜索单号、事由、收款账户名称',
           key: 'searchContent',
           id: 'searchContent',
           out: 1

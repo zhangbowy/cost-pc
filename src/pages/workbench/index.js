@@ -26,6 +26,7 @@ import Boss from './components/Boss';
 import { dateToTime } from '../../utils/util';
 import aliLogo from '@/assets/img/aliTrip/alitrip.png';
 import xzcLogo from '@/assets/img/aliTrip/xzcLogo.png';
+import znxcLogo from '@/assets/img/aliTrip/znxcLogo.png';
 import CenterReport from './components/Boss/CenterReport';
 import BottomChart from './components/Boss/BottomChart';
 import { getArrayColor } from '../../utils/constants';
@@ -544,17 +545,21 @@ class Workbench extends PureComponent {
     }, {
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 120,
+      width: 140,
       render: (_, record) => (
         <span>
           <span>{record.invoiceNo}</span>
           {
-            record.isAlitrip &&
-            <img src={aliLogo} alt="阿里商旅" style={{ width: '16px', height: '16px',marginLeft: '8px' }} />
+            record.thirdPlatformType===0 &&
+            <img src={aliLogo} alt="阿里商旅" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
           }
           {
-            record.isAssetsImport &&
-            <img src={xzcLogo} alt="阿里商旅" style={{ width: '16px', height: '16px',marginLeft: '8px' }} />
+            record.thirdPlatformType===2 &&
+            <img src={xzcLogo} alt="鑫资产" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
+          }
+          {
+            !record.thirdPlatformType===3 &&
+            <img src={znxcLogo} alt="智能薪酬" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom' }} />
           }
         </span>
       )
@@ -647,7 +652,7 @@ class Workbench extends PureComponent {
                 </Popconfirm>
                 :
                 <a onClick={() => this.handleClick('back', record)}>
-                  {record.status === 3 || record.status === 2 ? '查看' : '撤销'}
+                  {record.status === 3 || record.status === 2 ? '查看' : '审批'}
                 </a>
             }
             <Divider type="vertical" />

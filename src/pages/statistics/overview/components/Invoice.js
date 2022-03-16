@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Tooltip, Select, Spin,Tag} from 'antd';
+import { Modal, Table, Tooltip, Select, Spin} from 'antd';
 import Search from 'antd/lib/input/Search';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
 import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 import style from './index.scss';
 import Chart from './Chart';
+import xzcLogo from '@/assets/img/aliTrip/xzcLogo.png';
+import znxcLogo from '@/assets/img/aliTrip/znxcLogo.png';
 
 const exportKey = {
   1: [{
@@ -59,7 +61,7 @@ const exportKey = {
 };
 const { Option } = Select;
 function InvoicePrice({ children, onQuery, id, title,
-   projectType, pageDetail, currentType }) {
+   projectType, pageDetail, currentType, isDeptSelf }) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
   const [pieChart, setPieChart] = useState(currentType === 1 ? '0' : '1');
@@ -69,7 +71,6 @@ function InvoicePrice({ children, onQuery, id, title,
   const [query, setQuery] = useState('0');
   const [tableLoading, setTableLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
-console.log(list,'99999');
   const columns = [{
       title: '序号',
       dataIndex: 'index',
@@ -145,18 +146,25 @@ console.log(list,'99999');
         <span>
           <span>{record.invoiceNo}</span>
           {
-            record.isEnterpriseAlitrip &&
+            record.thirdPlatformType===0 &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
           {
-            record.isAssetsImport ? 
+            record.thirdPlatformType===2 &&
               <>
-                <Tag color="blue">
+                {/* <Tag color="blue">
                   <i className="iconfont iconxinzichan" style={{ verticalAlign: 'middle', marginRight: '3px' }} />
                   <span>鑫资产</span>
-                </Tag>
-              </> : ''
-            }
+                </Tag> */}
+                <img src={xzcLogo} alt="鑫资产" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
+              </>
+          }
+          {
+            record.thirdPlatformType===3 &&
+              <>
+                <img src={znxcLogo} alt="智能薪酬" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
+              </>
+          }
         </span>
       )
     }, {
@@ -178,6 +186,9 @@ console.log(list,'99999');
 
     const onNewQuery = async(payload) => {
       let result = {};
+      Object.assign(payload, {
+        isDeptSelf
+      });
       if (payload.isTurnPage) {
         result = await pageDetail(payload);
       } else {
@@ -195,14 +206,14 @@ console.log(list,'99999');
     const onSearch = (e) => {
       setSearch(e);
       setTableLoading(true);
-      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart, isDeptSelf });
     };
 
     const onChange = val => {
       setPieChart(val);
       setTableLoading(true);
       setChartLoading(true);
-      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val, isDeptSelf });
     };
   return (
     <span>
@@ -219,7 +230,7 @@ console.log(list,'99999');
       <Modal
         title={title}
         visible={visible}
-        onCancel={() => { setSearch('');setVisible(false); }}
+        onCancel={() => { setVisible(false);setSearch(''); }}
         footer={null}
         width="980px"
         bodyStyle={{

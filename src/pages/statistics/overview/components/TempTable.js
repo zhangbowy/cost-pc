@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon, Menu, Dropdown, Table, message } from 'antd';
+import { Button, Icon, Menu, Dropdown, Table, message, Switch } from 'antd';
 import NoRole from '@/components/StaticChart/component/NoRole';
 import noData from '@/assets/img/noData.png';
 import style from './index.scss';
@@ -161,7 +161,8 @@ class TempTable extends PureComponent {
 
   render () {
     const { list, columns, tableProps,
-      pagination, currentType, loading, isNoRole, expandIds } = this.props;
+      pagination, currentType, loading,
+      isNoRole, expandIds, setDetail } = this.props;
     const { selectedRowKeys } = this.state;
     return (
       <>
@@ -190,6 +191,17 @@ class TempTable extends PureComponent {
                 <Button className="m-l-8" onClick={() => this.print()}>打印</Button>
               }
             </div>
+            {
+              (currentType === 2 || currentType === 3) &&
+              <div className="head_rf" style={{lineHeight: '32px'}}>
+                <Switch
+                  checked={currentType === 2 ? setDetail.isHideStoppedClassify : setDetail.isShowOnlyInProcess}
+                  onChange={e => this.props.onSet(e, currentType === 2 ? 'isHideStoppedClassify' : 'isShowOnlyInProcess')}
+                />
+                <span className="m-l-8">{currentType === 2 ? '隐藏已停用的类别': '仅显示进行中的项目'}</span>
+              </div>
+            }
+
           </div>
           {
             (currentType === 4) ?

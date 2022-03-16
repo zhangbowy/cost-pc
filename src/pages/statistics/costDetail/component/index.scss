@@ -1,7 +1,31 @@
+.editData{
+  :global{
+    .ant-modal-header{
+      padding:26px 32px 0 32px;
+      border: unset;
+      .ant-modal-title{
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 24px;
+        font-weight: 700;
+      }
+    }
+    .ant-modal-body{
+      .ant-form-item-label > label::after{
+        content: '';
+      }
+      .ant-form-item-label{
+        line-height: 22px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
 .price {
   display: flex;
   width: 100%;
-  margin-left: 10px;
+  // padding-bottom: 16px;
+  color: rgba(0, 0, 0, 0.65);
   line-height: 22px;
   .money {
     color: rgba(255, 90, 95, 1);
@@ -11,7 +35,6 @@
   width: 100%;
   padding: 10px 16px;
   background: #FFF1F0;
-  // border: 1px solid rgba(0, 199, 149, 0.15);
   border-radius: 4px;
   span{
     line-height: 1;

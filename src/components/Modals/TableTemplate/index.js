@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from 'react';
-import { Modal, Form, Table, Button } from 'antd';
+import { Modal, Form, Table} from 'antd';
 import Search from 'antd/lib/input/Search';
 import style from './index.scss';
 
@@ -82,14 +82,16 @@ class TableTemplate extends Component {
         <Modal
           title={title}
           visible={visible}
-          width="880px"
-          bodyStyle={{height: '470px', overflowY: 'scroll'}}
+          width="980px"
+          bodyStyle={{height: '592px', overflowY: 'scroll'}}
           onCancel={this.onCancel}
           maskClosable={false}
-          footer={(
-            <>
-              <Button type="default" key="cen" onClick={this.onCancel}>取消</Button>
-            </>
+          footer={null}
+          className={style.editData}
+          closeIcon={(
+            <div className="modalIcon">
+              <i className="iconfont icona-guanbi3x1" />
+            </div>
           )}
         >
           <div className="m-b-16">
@@ -99,7 +101,7 @@ class TableTemplate extends Component {
                 this.searchInput = node;
               }}
               placeholder={placeholder}
-              style={{ width: '292px',marginRight:'20px' }}
+              style={{ width: '320px',marginRight:'20px' }}
               onSearch={(e) => this.onSearch(e)}
               allowClear="true"
             />
