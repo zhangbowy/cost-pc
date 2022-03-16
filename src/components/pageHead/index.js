@@ -36,6 +36,8 @@ class App extends React.PureComponent {
       failText,
       // collapsed,
     } = this.props;
+    const oks = okText || '已开启';
+    const fails = failText || '暂未开启';
     return (
       <div className={styles.headerTitle}>
         <div className={styles.headerBox}>
@@ -71,13 +73,13 @@ class App extends React.PureComponent {
           isShowBtn ?
             disabled ?
               <Button type="primary" disabled={disabled} style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
-                { disabled ? (failText || '暂未开启') : (okText || '已开启') }
+                { disabled ? fails : oks }
               </Button>
               :
               <div style={{ position: 'absolute', right: '56px', bottom: '22px' }}>
                 <div className={styles.alreadyOpen}>
                   <i className="iconfont iconxuanzhong m-r-8" />
-                  <span>已开启</span>
+                  <span>{oks}</span>
                 </div>
               </div>
             :

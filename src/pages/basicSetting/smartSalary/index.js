@@ -3,7 +3,7 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable eqeqeq */
 import React, { PureComponent } from 'react';
-import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover, Input, Modal, Form } from 'antd';
+import { Steps, Button, Table, Tooltip, Divider, Popconfirm, message, Popover, Input, Form } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
