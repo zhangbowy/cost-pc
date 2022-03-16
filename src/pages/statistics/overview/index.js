@@ -222,16 +222,7 @@ class EchartsTest extends Component {
                 loading={chartLoading}
                 isDeptSelf={record.isDeptSelf}
               >
-                {
-                  query === 'dept' ?
-                    <a>
-                      {record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}
-                    </a>
-                    :
-                    <a>
-                      ¥{(record.submitSumAll/100).toFixed(2)}
-                    </a>
-                }
+                <a>{record.submitSumAll ? (record.submitSumAll/100).toFixed(2) : 0}</a>
               </InvoicePrice>
             );
           },

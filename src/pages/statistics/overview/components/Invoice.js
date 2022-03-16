@@ -230,7 +230,7 @@ function InvoicePrice({ children, onQuery, id, title,
       <Modal
         title={title}
         visible={visible}
-        onCancel={() => { setSearch('');setVisible(false); }}
+        onCancel={() => { setVisible(false);setSearch(''); }}
         footer={null}
         width="980px"
         bodyStyle={{
