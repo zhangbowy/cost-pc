@@ -560,7 +560,7 @@ class SummaryCmp extends Component {
                     <>
                       <Divider type="vertical" />
                       <Tooltip
-                        title='您的统计维度为‘费用发生日期’，一个单据可能存在多个归属时间，请至‘支出明细’修改'
+                        title='你的统计维度为‘费用发生日期’，一个单据可能存在多个归属时间，请至‘支出明细’修改'
                         placement="topRight"
                       >
                         <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)' }}>修改所属期</span>

@@ -202,7 +202,7 @@ class customQuery extends Component {
     });
   }
 
-  onVisibleChange = (val, deptId, sid) => {
+  onVisibleChange = (val, { deptId, sid, isDeptSelf, parentId }) => {
     console.log('显示与隐藏', val);
     const { submitTime } = this.state;
     const obj = {
@@ -210,13 +210,15 @@ class customQuery extends Component {
     };
     if (!sid) {
       Object.assign(obj, {
-        deptId
+        deptId: isDeptSelf ? parentId : deptId,
+        isDeptSelf
       });
     } else {
       const deptIds = sid.split('_')[0];
       Object.assign(obj, {
         queryUserId: deptId,
-        deptId: deptIds
+        deptId: deptIds,
+        isDeptSelf,
       });
     }
     if (val) {
@@ -334,14 +336,13 @@ class customQuery extends Component {
                 scroll={{y: 245}}
                 rowKey='costCategoryId'
                 loading={childLoading}
-                className={style.tableMin}
               />
             </div>
           )}
           // autoAdjustOverflow
           trigger='click'
           overlayClassName={style.toolTips}
-          onVisibleChange={(val) => this.onVisibleChange(val, record.deptId, record.sid)}
+          onVisibleChange={(val) => this.onVisibleChange(val, {...record})}
         >
           <a>查看类别分布</a>
         </Popover>
