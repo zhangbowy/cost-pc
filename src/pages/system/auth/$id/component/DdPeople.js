@@ -72,7 +72,7 @@ class DdPeople extends PureComponent {
 
   render() {
     const { children, roleLists } = this.props;
-    const { visible } = this.state;
+    const { visible, value } = this.state;
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
@@ -88,6 +88,7 @@ class DdPeople extends PureComponent {
             style={{ width: '276px' }}
             placeholder="请选择钉钉角色"
             labelInValue
+            value={value}
           >
             {
               roleLists.map(it => (
