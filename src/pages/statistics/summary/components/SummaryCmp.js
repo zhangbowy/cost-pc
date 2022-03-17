@@ -110,16 +110,6 @@ class SummaryCmp extends Component {
     this.props.editBelongDate({ payload, callback });
   };
 
-  // 修改所属期限
-  onOk = (payload, callback) => {
-    this.props.editBelongDate({ payload, callback });
-  };
-
-  // 修改所属期限
-  onOk = (payload, callback) => {
-    this.props.editBelongDate({ payload, callback });
-  };
-
   render () {
     const { selectedRowKeys } = this.state;
     const { list, loading, templateType,
