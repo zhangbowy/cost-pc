@@ -310,7 +310,6 @@ class StaticChart extends Component {
             type === 'dept' ?
               <a>
                 {record.submitSumAll ? (record.submitSumAll/changeMoney).toFixed(2) : 0}
-                { record.submitSum && record.id !== -1 && record.children.length ?  `（本部${(record.submitSum/changeMoney).toFixed(2)}）` : ''}
               </a>
               :
               <a>

@@ -88,6 +88,11 @@ class TableTemplate extends Component {
           maskClosable={false}
           footer={null}
           className={style.editData}
+          closeIcon={(
+            <div className="modalIcon">
+              <i className="iconfont icona-guanbi3x1" />
+            </div>
+          )}
         >
           <div className="m-b-16">
             {/* <Input style={{width:'292px',marginRight:'20px'}} placeholder="请输入单号、事由" /> */}

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Form, DatePicker } from 'antd';
+import { Form, DatePicker } from 'antd';
 import moment from 'moment';
 // import { formItemLayout } from '../../../../utils/constants';
 import style from './index.scss';
+import ModalTemp from '../../../../components/ModalTemp';
 
 const { MonthPicker } = DatePicker;
 @Form.create()
@@ -49,17 +50,17 @@ class ChangeDate extends Component {
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
-        <Modal
+        <ModalTemp
           title="修改所属期"
           visible={visible}
           onCancel={this.onClose}
-          width="580px"
-          bodyStyle={{
-            height: '246px',
-            padding: '8px 0 0 32px'
-          }}
+          size="small"
           onOk={this.onConfirm}
-          className={style.editData}
+          newBodyStyle={{
+            height: '290px',
+            padding: '16px 0px 0px 32px'
+          }}
+          unset='true'
         >
           <Form style={{width: '100%'}}>
             <Form.Item>
@@ -80,7 +81,7 @@ class ChangeDate extends Component {
               }
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

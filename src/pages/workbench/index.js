@@ -652,7 +652,7 @@ class Workbench extends PureComponent {
                 </Popconfirm>
                 :
                 <a onClick={() => this.handleClick('back', record)}>
-                  {record.status === 3 || record.status === 2 ? '查看' : '撤销'}
+                  {record.status === 3 || record.status === 2 ? '查看' : '审批'}
                 </a>
             }
             <Divider type="vertical" />

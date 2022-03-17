@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import cs from 'classnames';
-import { Modal, Tooltip, Button } from 'antd';
+import { Modal, Tooltip } from 'antd';
 import { debounce } from 'lodash-decorators';
 import withRouter from 'umi/withRouter';
 import Search from 'antd/lib/input/Search';
@@ -165,6 +165,8 @@ class SelectInvoice extends Component {
   modalOk = (item) => {
     this.setState({
       activeObj: item,
+    }, () => {
+      this.handleOk();
     });
     // this.setState({
     //   invoiceVisible: true,
@@ -269,16 +271,17 @@ class SelectInvoice extends Component {
         <span onClick={() => this.onShow(true)}>{this.props.children}</span>
         <Modal
           title={null}
-          footer={[
-            <Button key="cancel" type="default" onClick={this.onCancel}>取消</Button>,
-            <Button
-              key="go"
-              disabled={!activeObj.id}
-              type="primary"
-              onClick={this.handleOk}
-            >去填写单据
-            </Button>,
-          ]}
+          // footer={[
+          //   <Button key="cancel" type="default" onClick={this.onCancel}>取消</Button>,
+          //   <Button
+          //     key="go"
+          //     disabled={!activeObj.id}
+          //     type="primary"
+          //     onClick={this.handleOk}
+          //   >去填写单据
+          //   </Button>,
+          // ]}
+          footer={null}
           onCancel={this.onCancel}
           visible={visible}
           width="980px"

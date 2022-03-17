@@ -341,6 +341,9 @@
       text-align: left;
       vertical-align: middle;
     }
+    .ant-modal-title{
+      font-size: 20px;
+    }
     .ant-modal-close-x{
       width: unset;
       margin-right: 16px;
@@ -351,6 +354,11 @@
     }
     .ant-modal-body{
       padding: 24px 32px;
+    }
+    .ant-modal-footer{
+      background: #fff;
+      z-index: 10;
+      position: relative;
     }
   }
   .ant-menu-submenu-inline > .ant-menu-submenu-title .icona-xiajiantou3x{

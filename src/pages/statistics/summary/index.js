@@ -13,6 +13,13 @@ import { invoiceStatus, borrowStatus } from '../../../utils/constants';
 import SearchBanner from '../overview/components/Search/Searchs';
 
 const listSearch = [{
+  type: 'search',
+  label: '外部选择',
+  placeholder: '搜索单号、事由、收款账户名称',
+  key: 'content',
+  id: 'content',
+  out: 1,
+},{
   type: 'deptAndUser',
   label: '提交部门/人',
   placeholder: '请选择',
@@ -56,16 +63,7 @@ const listSearch = [{
   placeholder: '请选择',
   key: 'supplierIds',
   id: 'supplierIds',
-  },
-  {
-    type: 'search',
-    label: '外部选择',
-    placeholder: '搜索单号、事由、收款账户名称',
-    key: 'content',
-    id: 'content',
-    out: 1,
-  },
-];
+}];
 const apply = [{
   key: '1',
   value: '审核中'

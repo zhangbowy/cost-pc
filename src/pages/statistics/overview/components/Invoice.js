@@ -61,7 +61,7 @@ const exportKey = {
 };
 const { Option } = Select;
 function InvoicePrice({ children, onQuery, id, title,
-   projectType, pageDetail, currentType }) {
+   projectType, pageDetail, currentType, isDeptSelf }) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
   const [pieChart, setPieChart] = useState(currentType === 1 ? '0' : '1');
@@ -71,7 +71,6 @@ function InvoicePrice({ children, onQuery, id, title,
   const [query, setQuery] = useState('0');
   const [tableLoading, setTableLoading] = useState(false);
   const [chartLoading, setChartLoading] = useState(false);
-  console.log(list,'99999');
   const columns = [{
       title: '序号',
       dataIndex: 'index',
@@ -161,7 +160,7 @@ function InvoicePrice({ children, onQuery, id, title,
               </>
           }
           {
-            record.thirdPlatformType===3 && 
+            record.thirdPlatformType===3 &&
               <>
                 <img src={znxcLogo} alt="智能薪酬" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
               </>
@@ -187,6 +186,9 @@ function InvoicePrice({ children, onQuery, id, title,
 
     const onNewQuery = async(payload) => {
       let result = {};
+      Object.assign(payload, {
+        isDeptSelf
+      });
       if (payload.isTurnPage) {
         result = await pageDetail(payload);
       } else {
@@ -204,14 +206,14 @@ function InvoicePrice({ children, onQuery, id, title,
     const onSearch = (e) => {
       setSearch(e);
       setTableLoading(true);
-      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: e, pieChart, isDeptSelf });
     };
 
     const onChange = val => {
       setPieChart(val);
       setTableLoading(true);
       setChartLoading(true);
-      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val });
+      onNewQuery({ pageNo: 1, pageSize: 10, id, projectType, searchContent: search, pieChart: val, isDeptSelf });
     };
   return (
     <span>
@@ -228,7 +230,7 @@ function InvoicePrice({ children, onQuery, id, title,
       <Modal
         title={title}
         visible={visible}
-        onCancel={() => { setSearch('');setVisible(false); }}
+        onCancel={() => { setVisible(false);setSearch(''); }}
         footer={null}
         width="980px"
         bodyStyle={{

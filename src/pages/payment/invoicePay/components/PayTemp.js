@@ -19,7 +19,6 @@ const { signName } = fields;
 class PayTemp extends React.PureComponent {
   constructor(props) {
     super(props);
-    console.log('🚀 ~ file: PayTemp.js ~ line 22 ~ PayTemp ~ constructor ~ props', props);
     this.state = {
       status: '2',
       selectedRowKeys: [],

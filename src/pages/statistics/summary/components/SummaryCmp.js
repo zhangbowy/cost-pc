@@ -17,6 +17,12 @@ const statusStr = {
   55: '该单据已审批拒绝，可让发起人自行删除',
   52: '该单据已发放拒绝，可让发起人自行删除',
 };
+const dateStr = {
+  1: '该单据审批中，无法修改',
+  4: '已终止的无效单据',
+  55: '已终止的无效单据',
+  52: '已终止的无效单据',
+};
 class SummaryCmp extends Component {
 
   constructor(props) {
@@ -104,6 +110,16 @@ class SummaryCmp extends Component {
     this.props.editBelongDate({ payload, callback });
   };
 
+  // 修改所属期限
+  onOk = (payload, callback) => {
+    this.props.editBelongDate({ payload, callback });
+  };
+
+  // 修改所属期限
+  onOk = (payload, callback) => {
+    this.props.editBelongDate({ payload, callback });
+  };
+
   render () {
     const { selectedRowKeys } = this.state;
     const { list, loading, templateType,
@@ -154,7 +170,7 @@ class SummaryCmp extends Component {
             <>
               <span>{record.invoiceNo}</span>
               <img src={record.thirdPlatformType===2?xzcLogo:znxcLogo} alt="鑫资产" style={{ width: '16px', height: '16px',marginLeft: '8px',verticalAlign:'text-bottom'}} />
-            </> : <span>{record.invoiceNo}</span>    
+            </> : <span>{record.invoiceNo}</span>
       ),
       width: list.thirdPlatformType===2||list.thirdPlatformType===3 ? 230:160,
     }, {
@@ -531,20 +547,30 @@ class SummaryCmp extends Component {
                   current==='0'&&(statisticsDimension!==2?
                     <>
                       <Divider type="vertical" />
-                      <ChangeDate
-                        month={record.happenTime}
-                        money={record.money}
-                        onOK={this.onOk}
-                        id={record.id}
-                      >
-                        <a>修改所属期</a>
-                      </ChangeDate>
+                      {
+                        dateStr[status] || dateStr[`${status}${approveStatus}`] ?
+                          <Tooltip
+                            title={dateStr[status] || dateStr[`${status}${approveStatus}`]}
+                            placement="topRight"
+                          >
+                            <span style={{ cursor: 'pointer',color: 'rgba(0,0,0,0.25)' }}>修改所属期</span>
+                          </Tooltip>
+                          :
+                          <ChangeDate
+                            month={record.happenTime}
+                            money={record.money}
+                            onOK={this.onOk}
+                            id={record.id}
+                          >
+                            <a>修改所属期</a>
+                          </ChangeDate>
+                      }
                     </>
                   :
                     <>
                       <Divider type="vertical" />
                       <Tooltip
-                        title='您的统计维度为‘费用发生日期’，一个单据可能存在多个归属时间，请至‘支出明细’修改'
+                        title='你的统计维度为‘费用发生日期’，一个单据可能存在多个归属时间，请至‘支出明细’修改'
                         placement="topRight"
                       >
                         <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)' }}>修改所属期</span>
