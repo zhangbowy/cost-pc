@@ -136,12 +136,13 @@ class SystemControl extends Component {
   }
 
   onInit = () => {
-    const { isModifyInvoice, isModifyReload, statisticsDimension, isOpenProject } = this.props;
+    const { isModifyInvoice, isModifyReload, statisticsDimension, isOpenProject, details } = this.props;
     this.setState({
       changeReload: isModifyReload,
       switchCheck: isModifyInvoice,
       statisticsDimension,
       isOpenProject,
+      paymentMethod: details.paymentMethod,
     });
   }
 

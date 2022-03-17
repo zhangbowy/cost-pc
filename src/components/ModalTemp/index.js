@@ -53,7 +53,7 @@ class ModalTemp extends PureComponent {
         <div
           style={{
             overflowY: 'scroll',
-            height: `${widthSize[size].height - (footer ? 64 : 0)}px`
+            height: `${widthSize[size].height - (footer ? 64 : 16)}px`
           }}
           onScroll={({target}) => this.handleScroll(target)}
         >
