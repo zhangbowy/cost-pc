@@ -1,10 +1,11 @@
 import React from 'react';
-import { Modal, Form, Input, Select, Button, message, Switch, Checkbox, Cascader } from 'antd';
-import { connect } from 'dva';
+import {Modal, Form, InputNumber, Input, Select, Button, message, Switch, Checkbox, Cascader, DatePicker} from 'antd';
+import {connect} from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
-import { formItemLayout, accountType, defaultTitle, bankList } from '@/utils/constants';
+import {formItemLayout, accountType, defaultTitle, bankList} from '@/utils/constants';
 import treeConvert from '@/utils/treeConvert';
-import { compare } from '../../../../utils/common';
+import {compare} from '../../../../utils/common';
+import  styles from './index.scss';
 
 const labelInfo = {
   type: '账户类型',
@@ -14,7 +15,9 @@ const labelInfo = {
   defaultStatus: '启用',
   status: '启用',
   bankNameBranch: '开户支行',
-  awAreas: '开户省市'
+  awAreas: '开户省市',
+  date: '初始日期',
+  amount: '初始金额'
 };
 const {Option} = Select;
 @Form.create()
@@ -203,6 +206,7 @@ class AddAccount extends React.PureComponent {
                 this.onRest();
                 this.setState({ visible: false });
           }}
+          className={styles.addAccountPop}
           maskClosable={false}
           footer={[
             <Button
@@ -247,11 +251,29 @@ class AddAccount extends React.PureComponent {
                 getFieldDecorator('name', {
                   initialValue: data && data.name,
                   rules: [
-                    { required: true, message: '请输入名称' },
-                    { max: 20, message: '不超过20个字' }
+                    {required: true, message: '请输入名称'},
+                    {max: 20, message: '不超过20个字'}
                   ]
                 })(
-                  <Input placeholder="请输入" />
+                  <Input placeholder="请输入"/>
+                )
+              }
+            </Form.Item>
+            <Form.Item label={labelInfo.amount}>
+              {
+                getFieldDecorator('amount', {
+                  initialValue: data && data.amount,
+                })(
+                  <InputNumber min={0} step={0.01} placeholder="请输入初始金额"/>
+                )
+              }
+            </Form.Item>
+            <Form.Item label={labelInfo.date}>
+              {
+                getFieldDecorator('date', {
+                  initialValue: data && data.date,
+                })(
+                  <DatePicker placeholder="请输入初始日期"/>
                 )
               }
             </Form.Item>
@@ -261,9 +283,12 @@ class AddAccount extends React.PureComponent {
                 {
                   getFieldDecorator('account', {
                     initialValue: data && data.account,
-                    rules: [{ required: (Number(type) !== 2 && Number(type) !== 4), message: `请输入${Number(type) === 0 ? labelInfo.account : '账号'}` }]
+                    rules: [{
+                      required: (Number(type) !== 2 && Number(type) !== 4),
+                      message: `请输入${Number(type) === 0 ? labelInfo.account : '账号'}`
+                    }]
                   })(
-                    <Input placeholder="请输入" />
+                    <Input placeholder="请输入"/>
                   )
                 }
               </Form.Item>

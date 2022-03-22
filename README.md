@@ -93,7 +93,7 @@
 │   ├── global.scss
 │   ├── layouts
 │   │   ├── index.css
-│   │   └── index.js
+│   │   └── index.scss
 │   ├── models
 │   │   ├── costGlobal.js
 │   │   ├── global.js
@@ -107,7 +107,7 @@
 │   │   ├── borrowering
 │   │   ├── businessSet
 │   │   ├── document.ejs
-│   │   ├── index.js
+│   │   ├── index.scss
 │   │   ├── payment
 │   │   ├── projectSupplier
 │   │   ├── redirect

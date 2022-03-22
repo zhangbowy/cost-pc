@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, message, Modal,Pagination,Empty } from 'antd';
+import {Button, message, Modal, Pagination, Empty, Tooltip} from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
@@ -131,7 +131,10 @@ class Account extends Component {
           <div className={style.accountStat}>
             <div className="total-amount">
               <span className={style.text}>
-                账户余额（元）
+                账户余额
+                <Tooltip title="账户余额 = 所有账户初始金额 + 流入 - 流出" >
+                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                </Tooltip>
               </span>
               <span className={style.num}>
                 1,200,568.08
