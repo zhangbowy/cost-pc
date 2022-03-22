@@ -35,85 +35,85 @@
 //       path: 'batch',
 //     }],
 //   },
-  // {
-  //   id: 'product_supplier',
-  //   name: '项目/供应商',
-  //   myIcon: 'xiangmugongyingshang',
-  //   path: 'project_supplier',
-  //   children: [{
-  //     id: 'product_supplier_product',
-  //     name: '项目',
-  //     path: 'project'
-  //   }, {
-  //     id: 'product_supplier_supplier',
-  //     name: '供应商',
-  //     path: 'supplier'
-  //   }]
-  // },
+// {
+//   id: 'product_supplier',
+//   name: '项目/供应商',
+//   myIcon: 'xiangmugongyingshang',
+//   path: 'project_supplier',
+//   children: [{
+//     id: 'product_supplier_product',
+//     name: '项目',
+//     path: 'project'
+//   }, {
+//     id: 'product_supplier_supplier',
+//     name: '供应商',
+//     path: 'supplier'
+//   }]
+// },
 //   {
 //     id: 'statistics',
 //     name: '支出费用明细',
 //     myIcon: 'iconzhichufeiyongtongji',
 //     path: 'statistics',
 //   },
-  // {
-  //   id: 'basicSetting',
-  //   name: '基础设置',
-  //   myIcon: 'iconjichushezhi',
-  //   path: 'basicSetting',
-  //   children: [{
-  //     id: 'basicSetting_costCategory',
-  //     name: '支出类别',
-  //     path: 'costCategory',
-  //   }, {
-  //     id: 'basicSetting_payAccount',
-  //     name: '付款账户',
-  //     path: 'payAccount',
-  //   }, {
-  //     id: 'basicSetting_receiptAccount',
-  //     name: '收款账户',
-  //     path: 'receiptAccount',
-  //   }, {
-  //     id: 'basicSetting_invoice',
-  //     name: '单据模板',
-  //     path: 'invoice',
-  //   }, {
-  //     id: 'basicSetting_approvalFlow',
-  //     name: '审批流',
-  //     path: 'approvalFlow',
-  //   },{
-  //     id: 'basicSetting_workpay',
-  //     name: '花呗工作花',
-  //     path: 'workpay',
-  //   },{
-  //     id: 'basicSetting_currency',
-  //     name: '多币种与汇率',
-  //     path: 'currency',
-  //   }, {
-  //     id: 'basicSetting_controller',
-  //     name: '控制中心',
-  //     path: 'controller',
-  //   }],
-  // },
-  // {
-  //   id: 'system',
-  //   name: '系统设置',
-  //   myIcon: 'iconxitongshezhi',
-  //   path: 'system',
-  //   children: [{
-  //     id: 'system_auth',
-  //     name: '权限设置',
-  //     path: 'auth',
-  //   }, {
-  //     id: 'system_peopleSetting',
-  //     name: '名额配置',
-  //     path: 'peopleSetting',
-  //   }, {
-  //     id: 'system_approve',
-  //     name: '审批角色',
-  //     path: 'approve',
-  //   }],
-  // }
+// {
+//   id: 'basicSetting',
+//   name: '基础设置',
+//   myIcon: 'iconjichushezhi',
+//   path: 'basicSetting',
+//   children: [{
+//     id: 'basicSetting_costCategory',
+//     name: '支出类别',
+//     path: 'costCategory',
+//   }, {
+//     id: 'basicSetting_payAccount',
+//     name: '付款账户',
+//     path: 'payAccount',
+//   }, {
+//     id: 'basicSetting_receiptAccount',
+//     name: '收款账户',
+//     path: 'receiptAccount',
+//   }, {
+//     id: 'basicSetting_invoice',
+//     name: '单据模板',
+//     path: 'invoice',
+//   }, {
+//     id: 'basicSetting_approvalFlow',
+//     name: '审批流',
+//     path: 'approvalFlow',
+//   },{
+//     id: 'basicSetting_workpay',
+//     name: '花呗工作花',
+//     path: 'workpay',
+//   },{
+//     id: 'basicSetting_currency',
+//     name: '多币种与汇率',
+//     path: 'currency',
+//   }, {
+//     id: 'basicSetting_controller',
+//     name: '控制中心',
+//     path: 'controller',
+//   }],
+// },
+// {
+//   id: 'system',
+//   name: '系统设置',
+//   myIcon: 'iconxitongshezhi',
+//   path: 'system',
+//   children: [{
+//     id: 'system_auth',
+//     name: '权限设置',
+//     path: 'auth',
+//   }, {
+//     id: 'system_peopleSetting',
+//     name: '名额配置',
+//     path: 'peopleSetting',
+//   }, {
+//     id: 'system_approve',
+//     name: '审批角色',
+//     path: 'approve',
+//   }],
+// }
 // ];
 // }
 const menuData = [
@@ -122,35 +122,41 @@ const menuData = [
     name: '工作台',
     myIcon: 'icongongzuotai',
     path: 'workbench',
-  },{
+  }, {
     id: 'payment',
     name: '财务',
     myIcon: 'iconbaoxiaodanguanli',
     path: 'payment',
-    children:[{
-      id: 'payment_invoicePay',
-      name: '报销单支付',
-      path: 'invoicePay'
-    }, {
-      id: 'payment_borrowPay',
-      name: '借款单支付',
-      path: 'borrowPay'
-    },{
-      id: 'payment_batch',
-      name: '对账批次',
-      path: 'batch',
-    },{
-      id: 'payment_borrowering',
-      name: '借款管理',
-      myIcon: '',
-      path: 'borrowering',
-    }]
-  },{
+    children: [
+      {
+        id: 'payment_verification',
+        name: '收款单核销',
+        path: 'verification'
+      }, {
+        id: 'payment_invoicePay',
+        name: '报销单支付',
+        path: 'invoicePay'
+      }, {
+        id: 'payment_borrowPay',
+        name: '借款单支付',
+        path: 'borrowPay'
+      }, {
+        id: 'payment_batch',
+        name: '对账批次',
+        path: 'batch',
+      }, {
+        id: 'payment_borrowering',
+        name: '借款管理',
+        myIcon: '',
+        path: 'borrowering',
+      }
+    ]
+  }, {
     id: 'redirect',
     name: '中转页',
     myIcon: 'icongongzuotai',
     path: 'redirect',
-  },{
+  }, {
     id: 'statistics',
     name: '统计',
     myIcon: 'iconzhichufeiyongtongji',
@@ -181,7 +187,7 @@ const menuData = [
       myIcon: '',
       path: 'branchOffice',
     }]
-  },{
+  }, {
     id: 'basicSettings',
     name: '设置',
     myIcon: 'iconxitongshezhi',
@@ -192,6 +198,12 @@ const menuData = [
     name: '设置',
     myIcon: 'iconshenpi1',
     path: 'approvalList',
+  },
+  {
+    id: 'incomeReport',
+    name: '收入提报',
+    myIcon: 'iconshenpi1',
+    path: 'incomeReport',
   },
   {
     id: 'basicSetting',
@@ -218,11 +230,11 @@ const menuData = [
       id: 'basicSetting_approvalFlow',
       name: '审批流',
       path: 'approvalFlow',
-    },{
+    }, {
       id: 'basicSetting_workpay',
       name: '花呗工作花',
       path: 'workpay',
-    },{
+    }, {
       id: 'basicSetting_currency',
       name: '多币种与汇率',
       path: 'currency',
@@ -271,6 +283,7 @@ const menuData = [
     }]
   },
 ];
+
 // 菜单访问路径解析
 function formatter(data, parentPath = '/') {
   return data.map(item => {

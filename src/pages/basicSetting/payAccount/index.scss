@@ -1,0 +1,42 @@
+.payAccountWarp {
+  background: #FFFFFF;
+  .accountStatsWarp {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px 24px;
+    .accountStat {
+      display: flex;
+      flex-direction: row;
+      width: 572px;
+      justify-content: space-between;
+      >div {
+        display: flex;
+        flex-direction: column;
+        .text {
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(0, 0, 0, 0.45);
+          line-height: 22px;
+          margin-bottom: 4px;
+        }
+        .num {
+          height: 28px;
+          font-size: 20px;
+          font-family: HelveticaNeue;
+          color: rgba(0, 0, 0, 0.85);
+          line-height: 28px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .cardList {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}

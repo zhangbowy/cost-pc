@@ -1,18 +1,30 @@
-.cardContent:hover{
+.cardContent:hover {
   box-shadow: 0px 10px 32px 0px rgba(157, 163, 180, 0.2);
   border-radius: 2px;
 }
-.cardContent{
-    :global{
-        .ant-card-body{
-        padding: 17px 24px 0 24px;
-       }
-        .ant-tag{
-          text-align: center;
-          height: 22px;
-          line-height: 24px;
-          border:0;
-          margin-left: 8px;
+
+.cardContent:nth-child(3n) {
+  margin: 0px 16px calc(4.3% / 2) 0 !important;
+}
+
+.cardContent {
+  //margin: 0px 1.4% 1.4% 0;
+  //flex: 3;
+  margin: 0px 0px calc(4.3%/ 2) 0;
+  width: 31.5%;
+  height: auto;
+  background-color: #fff;
+  :global {
+    .ant-card-body {
+      padding: 17px 24px 0 24px;
+    }
+
+    .ant-tag {
+      text-align: center;
+      height: 22px;
+      line-height: 24px;
+      border: 0;
+      margin-left: 8px;
           margin-right:0!important;
           border-radius: 4px;
       }
@@ -100,24 +112,50 @@
       white-space: nowrap;
      }
     .name{
-        display:inline-block;
-        font-size: 18px;
-        font-weight: 600;
-        height: 28px;
-        line-height: 30px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: rgba(0, 0, 0, 0.85);
-    }
-    .note{
       display: inline-block;
-      max-width: 294px;
-      color:rgba(0, 0, 0, 0.45);
-      font-size:14px;
-      margin-left:10px;
+      font-size: 18px;
+      font-weight: 600;
+      height: 28px;
+      line-height: 30px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+  .note {
+    display: inline-block;
+    max-width: 294px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 14px;
+    margin-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .balance {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 12px 0;
+    margin-top: 17px;
+
+    .balanceText {
+      height: 24px;
+      font-size: 12px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.45);
+      line-height: 24px;
+      margin-right: 8px;
+    }
+
+    .balanceNum {
+      height: 24px;
+      font-size: 14px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 24px;
     }
   }
+}
