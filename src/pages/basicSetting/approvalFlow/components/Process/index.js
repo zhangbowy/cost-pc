@@ -263,6 +263,7 @@ class Process extends Component {
 
   render() {
     const { scaleVal, step, updateId, data, verifyMode, visible, conditions, approveNode } = this.state;
+    console.log(conditions,'conditions');
     const { ccPosition, getCondition } = this.props;
     console.log('Process -> render -> ccPosition', ccPosition);
     const { templateType } = this.props;

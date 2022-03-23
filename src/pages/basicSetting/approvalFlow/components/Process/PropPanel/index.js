@@ -106,6 +106,7 @@ class PropPanel extends Component {
       priority: cond.priority,
       bizData: cond.bizData,
     };
+    console.log(val,'条件节点');
     this.props.onConfirm(val, nodeContent || '请输入条件');
     this.setState({
       visible: false,
