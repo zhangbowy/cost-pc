@@ -177,6 +177,7 @@ class Conditions extends Component {
   }
 
   selectPle = (val, index) => {
+    console.log(val,'val选择的值');
     const { lists } = this.state;
     const list = [...lists];
     const { form } = this.props;
@@ -238,6 +239,7 @@ class Conditions extends Component {
                 categoryId: val.categoryId ? val.categoryId[`${it.id}`] : '',
               }];
             }
+            console.log(values,'values值');
             rules = {
               type: it.key.indexOf('other') > -1 ? 'other' : it.key,
               typeName: it.value,
@@ -259,6 +261,7 @@ class Conditions extends Component {
           vals = null;
           return vals;
         }
+        console.log(conditions,'conditions的值');
         vals = {
           bizData: {
             conditionNode: {
@@ -271,6 +274,7 @@ class Conditions extends Component {
         };
       }
     });
+    console.log(vals, 'vals参数');
     return vals;
   }
 
@@ -307,6 +311,8 @@ class Conditions extends Component {
       supplierList,
       getCondition,
     } = this.props;
+    console.log(projectList, '原数据');
+    console.log(costCategoryList, '原数据');
     const PriArr = this.numToArr(priorityLength);
     const list = treeConvert({
       rootId: 0,
@@ -322,6 +328,7 @@ class Conditions extends Component {
       tName: 'title',
       tId: 'value'
     }, projectList);
+    console.log(projectLists,'树projectLists');
     const disList = this.onSelectTree();
     const { lists, method } = this.state;
     const formItemLayout = {
@@ -343,6 +350,7 @@ class Conditions extends Component {
     const formItems = keys.map((item, index) => {
       let valueList = [];
       if (item.key === 'project') {
+        console.log(item,'item.ruleValue');
         valueList = projectLists;
         SHOW = SHOW_PARENT;
       } else if (item.key === 'supplier') {
@@ -350,6 +358,7 @@ class Conditions extends Component {
       } else {
         valueList = list;
       }
+      console.log(valueList,'34300000');
       return (
         <Form.Item
           key={item.id}
@@ -434,6 +443,7 @@ class Conditions extends Component {
               )
             }
             {
+              // [{label:'123',value:'1235689'},{label:'234',value:'123568'}]
               item && item.type === 'selectTree' &&
               getFieldDecorator(`value[${item.id}]`, {
                 initialValue: item.ruleValue ? item.ruleValue : [],
