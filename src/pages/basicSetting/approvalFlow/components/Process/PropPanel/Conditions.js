@@ -12,7 +12,7 @@ import style from './index.scss';
 import { getArrayValue } from '../../../../../../utils/constants';
 
 const { Option } = Select;
-const { SHOW_CHILD } = TreeSelect;
+const { SHOW_CHILD, SHOW_PARENT } = TreeSelect;
 let id = 0;
 const defaultList = {
   '0': [{
@@ -76,6 +76,7 @@ class Conditions extends Component {
    * @memberof Conditions
    */
   onChange = (val, index) => {
+    console.log(val,'是什么');
     const {lists} = this.state;
     const { getCondition } = this.props;
     const list = [...lists];
@@ -222,6 +223,15 @@ class Conditions extends Component {
                 others: it.depts && it.depts.map(its => its.name).toString(),
               }];
             } else {
+              const projectValue = [];
+              // if (it.ruleType === 'project') {
+              //   val.value.a_0.map(selectValue => projectValue.push(selectValue.value)
+              //   );
+              //   console.log(projectValue,'projectValue');
+              //   console.log(it.id,val.value.a_0, it.ruleType, 'project类型中value的值');
+              // }
+              console.log(val.value.a_0,val.value[0], it.ruleType, '类型中value的值');
+              console.log(projectValue,val.value,'235');
               values = [{
                 type: it.ruleType,
                 value: val.value && it.type === 'inputNumber' ? (val.value[`${it.id}`] * 1000)/10 :  val.value[`${it.id}`].toString(),
@@ -325,16 +335,16 @@ class Conditions extends Component {
       },
     };
     getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
-    console.log(conditions);
     console.log('templateType', templateType);
     console.log(defaultList[templateType]);
     console.log(lists);
+    let SHOW = SHOW_CHILD;
     const keys = getFieldValue('keys');
-    console.log(keys);
     const formItems = keys.map((item, index) => {
       let valueList = [];
       if (item.key === 'project') {
         valueList = projectLists;
+        SHOW = SHOW_PARENT;
       } else if (item.key === 'supplier') {
         valueList = supplierList;
       } else {
@@ -433,7 +443,7 @@ class Conditions extends Component {
                   treeData={valueList}
                   treeCheckable
                   style={{width: '100%'}}
-                  showCheckedStrategy={SHOW_CHILD}
+                  showCheckedStrategy={SHOW}
                   dropdownStyle={{height: '300px'}}
                   placeholder="请选择"
                 />
