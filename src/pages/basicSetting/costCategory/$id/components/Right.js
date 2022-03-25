@@ -398,7 +398,7 @@ class Right extends PureComponent {
                     getFieldDecorator(`note[${details.field}]`, {
                       initialValue: details.note || '请输入',
                       rules: [
-                        { max: 30, message: '限制30个字' },
+                        { max:100, message: '限制100个字' },
                       ]
                     })(
                       <TextArea
@@ -415,7 +415,7 @@ class Right extends PureComponent {
                     getFieldDecorator(`name[${details.field}]`, {
                       initialValue: details.name,
                       rules: [
-                        { max: 10, message: '限制10个字' },
+                        { max: 15, message: '限制15个字' },
                         { required: true, message: '请输入字段标题', type: 'string' }
                       ]
                     })(

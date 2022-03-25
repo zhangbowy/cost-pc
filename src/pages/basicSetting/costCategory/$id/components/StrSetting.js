@@ -66,6 +66,7 @@ const selfStr = [{
 const StrSetting = ({ fieldList,
   selectList, onChangeData, selectId, childRef,
   type, templateType, isModifyInvoice, operateType }) => {
+  console.log(fieldList,'fieldList9999');
   const [cardList, setCardList] = useState(selectList);
   const [active, setActive] = useState('show');
   const [dragId, setDragId] = useState(selectId);

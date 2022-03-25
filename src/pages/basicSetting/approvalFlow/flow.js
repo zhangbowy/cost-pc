@@ -110,7 +110,7 @@ class ApprovalFlow extends Component {
   }
 
   save = () => {
-    console.log(this.processData && this.processData.getData());
+    console.log(this.processData && this.processData.getData(),'9999988888');
     const { status, repeatMethods, ccPosition } = this.state;
 
     const data = this.processData.getData();
@@ -158,6 +158,7 @@ class ApprovalFlow extends Component {
   render() {
     const { status, repeatMethods, nodes, ccPosition } = this.state;
     const { approvePersonList } = this.props;
+    console.log(approvePersonList,'好的你');
     return (
       <div style={{ height: '100%' }}>
         <div className="app_header">

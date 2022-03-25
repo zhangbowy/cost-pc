@@ -20,6 +20,7 @@ import defaultFunc from './utils';
 import { fileUpload } from '../../../utils/ddApi';
 import UploadFile from '../../UploadFile';
 // import TreeCatogory from './TreeCatogory';
+import Capitalization from '../Capitalization';
 
 const { addCostValue } = defaultFunc;
 const uniqueId = guid();
@@ -964,6 +965,7 @@ class AddCost extends Component {
               <Button type="primary" onClick={() => this.handleOk()}>保存</Button>
             </>
           )}
+          className={this.state.costDetailShareVOS.length>=4?style.shadow:''}
         >
           <div className={style.addCosts}>
             <Form className="formItem">
@@ -1205,6 +1207,9 @@ class AddCost extends Component {
                                     disabled={modify && showField.amount && !showField.amount.isModify}
                                   />
                                 )
+                                }
+                              {
+                                <Capitalization isMoney={`${this.state.costSum||''}`||''}/>
                               }
                               {
                                 it.itemExplain && it.itemExplain.length > 0 &&

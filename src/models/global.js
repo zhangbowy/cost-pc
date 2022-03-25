@@ -429,6 +429,7 @@ export default {
     // 项目列表
     *projectList({ payload }, { call, put }) {
       const response = yield call(get, api.projectList, payload);
+      console.log(response,'项目列表99999999');
       yield put({
         type: 'save',
         payload: {
