@@ -15,6 +15,7 @@ export default {
 
   /* ---------- 支出类别 ----------*/
   costCategoryList: `${APP_API}/cost/category/list`,
+  incomeCategoryList: `${APP_API}/cost/income/category/getList`,
   authApi: `${APP_API}/cost/user/jsapiAuth`,
   payAccount: `${APP_API}/cost/account/payment/list/on`,
   invoiceDetail: `${APP_API}/cost/invoice/submit/detail`,

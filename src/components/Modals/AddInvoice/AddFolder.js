@@ -327,7 +327,7 @@ class AddFolder extends Component {
                 <i
                   className={`iconfont icon${record.icon}`}
                   style={{
-                    color: getArrayColor(record.icon, classifyIcon),
+                    color: getArrayColor(record.icon, classifyIcon[0]),
                     fontSize: '24px',
                     marginRight: '4px',
                     opacity: 0.25,
@@ -344,7 +344,7 @@ class AddFolder extends Component {
                 <i
                   className={`iconfont icon${record.icon}`}
                   style={{
-                    color: getArrayColor(record.icon, classifyIcon),
+                    color: getArrayColor(record.icon, classifyIcon[0]),
                     fontSize: '24px',
                     marginRight: '4px'
                   }}

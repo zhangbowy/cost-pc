@@ -20,8 +20,26 @@ export default {
         },
       });
     },
+    *incomeList({ payload }, { call, put }) {
+      const response = yield call(get, api.incomeList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          list: response || [],
+        },
+      });
+    },
     *allList({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          allList: response || [],
+        },
+      });
+    },
+    *allIncomeList({ payload }, { call, put }) {
+      const response = yield call(get, api.incomeList, payload);
       yield put({
         type: 'save',
         payload: {
@@ -39,16 +57,31 @@ export default {
       });
     },
     *add({ payload }, { call }) {
-      yield call(post, api.addCostGroup, payload);
+      let url = api.addCostGroup;
+      const param = {...payload};
+      if (payload.costItem === '1') {
+        url = api.addIncomeGroup;
+      }
+      delete param.costItem;
+      yield call(post, url, param);
     },
     *copy({ payload }, { call }) {
-      yield call(get, api.copy, payload);
+      let url = api.addCostGroup;
+      const param = {...payload};
+      if (payload.costItem === '1') {
+        url = api.copyIncomeGroup;
+      }
+      delete param.costItem;
+      yield call(get, url, param);
     },
     *del({ payload }, { call }) {
       yield call(post, api.delCostGroup, payload);
     },
     *sort({ payload }, { call }) {
       yield call(post, api.sorts, payload);
+    },
+    *sortIncome({ payload }, { call }) {
+      yield call(post, api.sortIncome, payload);
     },
     *delCheck({ payload }, { call, put }) {
       const response = yield call(get, api.delCheck, payload);
@@ -60,7 +93,13 @@ export default {
       });
     },
     *edit({ payload }, { call }) {
-      yield call(post, api.edit, payload);
+      let url = api.addCostGroup;
+      const param = {...payload};
+      if (payload.costItem === '1') {
+        url = api.editIncomeGroup;
+      }
+      delete param.costItem;
+      yield call(post, url, param);
     },
     *delPer({ payload }, { call }) {
       yield call(post, api.delPer, payload);
@@ -70,6 +109,15 @@ export default {
     },
     *detail({ payload }, { call, put }) {
       const response = yield call(get, api.detailCost, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          details: response || {},
+        },
+      });
+    },
+    *detailIncome({ payload }, { call, put }) {
+      const response = yield call(get, api.detailIncome, payload);
       yield put({
         type: 'save',
         payload: {

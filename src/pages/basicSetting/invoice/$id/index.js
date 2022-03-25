@@ -66,31 +66,12 @@ class CategoryAdd extends PureComponent {
 
   componentDidMount() {
     const { id } = this.props.match.params;
-    const { userInfo, dispatch } = this.props;
+    const { dispatch } = this.props;
     const params = id.split('_');
     const templateType = id.split('_')[1];
     const title = id.split('_')[0];
     const titleType = params[2];
-    this.props.dispatch({
-      type: 'costGlobal/queryModifyOrder',
-      payload: {}
-    });
-    this.props.dispatch({
-      type: 'addInvoice/approveList',
-      payload: {
-        isAuth: true,
-      },
-    });
-    dispatch({
-      type: 'global/costList',
-      payload: {
-        companyId: userInfo.companyId,
-      }
-    }).then(() => {
-      this.props.dispatch({
-        type: 'addInvoice/allList',
-        payload: {}
-      }).then(() => {
+    this.fetchList(() => {
         const { costCategoryList } = this.props;
         const lists = costCategoryList;
         const list = treeConvert({
@@ -220,7 +201,46 @@ class CategoryAdd extends PureComponent {
             });
           }
         });
+      }, templateType);
+  }
+
+  fetchList = (callback, templateType) => {
+    const { dispatch, userInfo } = this.props;
+    const fetchList = [{
+      url: 'addInvoice/approveList',
+      params: {
+        isAuth: true,
+      },
+    },{
+      url: 'costGlobal/queryModifyOrder',
+      params: {}
+    },{
+      url: 'global/incomeCategoryList',
+      params: {}
+    }, {
+      url: 'global/costList',
+      params: {
+        companyId: userInfo.companyId,
+      }
+    }, {
+      url: 'addInvoice/allList',
+      payload: {
+        templateType
+      },
+    }];
+    const fetchs = fetchList.map(it => it.url);
+    const arr = fetchs.map((it, index) => {
+      return dispatch({
+        type: it,
+        payload: {
+          ...fetchList[index].params
+        },
       });
+    });
+    Promise.all(arr).then(() => {
+      if (callback) {
+        callback();
+      }
     });
   }
 
@@ -325,7 +345,7 @@ class CategoryAdd extends PureComponent {
 
   isOpenProject = ({ isAllCostCategory, costCategory }) => {
     const { templateType } = this.state;
-    if (Number(templateType) === 2 || Number(templateType) === 1) {
+    if (Number(templateType) === 2 || Number(templateType) === 1 || templateType > 15) {
       return;
     }
     const params = {
@@ -439,6 +459,7 @@ class CategoryAdd extends PureComponent {
         selfField: this.changeListArr(newArr.filter(it => it.field.indexOf('self_') > -1)),
         templatePdfVo: {
           ...templatePdfVo,
+          templateType: Number(templateType),
           templatePdfExpandVos: templatePdfVo.templatePdfExpandVos.map(it => { return{ ...it, isSelect: true }; })
         },
       };

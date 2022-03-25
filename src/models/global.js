@@ -57,6 +57,7 @@ export default {
     detailJson: [],
     detailType: 0,
     getCondition: [], // 获取条件分支的条件
+    incomeCategoryList: [], // 收入支出类别
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -65,6 +66,16 @@ export default {
         type: 'save',
         payload: {
           costCategoryList: response || [],
+        },
+      });
+    },
+    // 收入类别
+    *incomeCategoryList({ payload }, { call, put }) {
+      const response = yield call(get, api.incomeCategoryList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          incomeCategoryList: response || [],
         },
       });
     },

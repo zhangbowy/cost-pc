@@ -41,7 +41,11 @@ export default {
       yield call(post, api.edit, payload);
     },
     *del({ payload }, { call }) {
-      yield call(get, api.del, payload);
+      let url = api.del;
+      if (payload.templateType > 10) {
+        url = api.delIncome;
+      }
+      yield call(get, url, payload);
     },
     *delCheck({ payload }, { call, put }) {
       const response = yield call(get, api.delCheck, payload);
@@ -62,13 +66,25 @@ export default {
       });
     },
     *addGroup({ payload }, { call }) {
-      yield call(post, api.addGroup, payload);
+      let url = api.addGroup;
+      if (payload.templateType > 10) {
+        url = api.addIncomeGroup;
+      }
+      yield call(post, url, payload);
     },
     *editGroup({ payload }, { call }) {
-      yield call(post, api.editGroup, payload);
+      let url = api.editGroup;
+      if (payload.templateType > 10) {
+        url = api.editIncomeGroup;
+      }
+      yield call(post, url, payload);
     },
     *copyGroup({ payload }, { call }) {
-      yield call(get, api.copyGroup, payload);
+      let url = api.copyGroup;
+      if (payload.templateType > 10) {
+        url = api.copyIncomeGroup;
+      }
+      yield call(get, url, payload);
     },
     *sort({ payload }, { call }) {
       yield call(post, api.sorts, payload);

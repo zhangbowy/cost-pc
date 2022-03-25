@@ -293,7 +293,7 @@ class Conditions extends Component {
       conditions,
       conditionNode,
       projectList,
-      templateType,
+      // templateType,
       supplierList,
       getCondition,
     } = this.props;
@@ -325,10 +325,7 @@ class Conditions extends Component {
       },
     };
     getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
-    console.log(conditions);
-    console.log('templateType', templateType);
-    console.log(defaultList[templateType]);
-    console.log(lists);
+
     const keys = getFieldValue('keys');
     console.log(keys);
     const formItems = keys.map((item, index) => {

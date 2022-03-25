@@ -74,7 +74,8 @@ class Basic extends Component {
     const {
       form: { getFieldDecorator },
       list,
-      title
+      title,
+      costType
     } = this.props;
     const lists = list.filter(it => Number(it.type) === 0);
     const datas = treeConvert({
@@ -142,7 +143,7 @@ class Basic extends Component {
           <Form.Item label={labelInfo.icon}>
             <div className={style.iconMap}>
               {
-                classifyIcon.map(item => (
+                classifyIcon[costType].map(item => (
                   <div
                     className={item.key === active ? cs(style.iconList, style.activeIcon) : style.iconList}
                     key={item.key}

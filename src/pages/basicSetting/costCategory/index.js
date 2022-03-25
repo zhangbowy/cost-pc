@@ -14,9 +14,17 @@ import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
 import Tags from '../../../components/Tags';
 import Sort from '../../../components/TreeSort';
+import MenuItems from '../../../components/AntdComp/MenuItems';
 
 const namespace = 'costCategory';
 const { confirm } = Modal;
+const menuList = [{
+  key: '0',
+  value: '支出类别'
+}, {
+  key: '1',
+  value: '收入类别'
+}];
 @connect((state) => ({
   userInfo: state.session.userInfo,
   loading: state.loading.models[namespace],
@@ -36,6 +44,7 @@ class CostCategory extends React.PureComponent {
     this.state = {
       costName: '',
       typeVisible: false,
+      type: '0',
     };
   }
 
@@ -45,9 +54,11 @@ class CostCategory extends React.PureComponent {
 
   onQuery = (payload) => {
     const { userInfo, dispatch } = this.props;
+    const { type } = this.state;
     Object.assign(payload, { companyId: userInfo.companyId || '' });
+    const url = type === '0' ? 'costCategory/costList' : 'costCategory/incomeList';
     dispatch({
-      type: 'costCategory/costList',
+      type: url,
       payload,
     });
   }
@@ -84,6 +95,9 @@ class CostCategory extends React.PureComponent {
   }
 
   onAddCategory = (id) => {
+    const { type } = this.state;
+    localStorage.removeItem('costItem');
+    localStorage.setItem('costItem', type);
     this.props.history.push(`/basicSetting/costCategory/${id}`);
   }
 
@@ -119,9 +133,10 @@ class CostCategory extends React.PureComponent {
   // 获得排序结果
   getSort = (list, callback) => {
     const result = this.openTree(list, []);
+    const { type } = this.state;
     // 传给后端数据
     this.props.dispatch({
-      type: 'costCategory/sort',
+      type: type === '0' ? 'costCategory/sort' : 'costCategory/incomeSort',
       payload: {
         sortList: result
       }
@@ -163,13 +178,21 @@ class CostCategory extends React.PureComponent {
     });
   }
 
+  onHandle = (val) => {
+    this.setState({
+      type: val,
+    }, () => {
+      this.onQuery({});
+    });
+  }
+
   render() {
     const {
       list,
       loading
     } = this.props;
     const newArrs = list.map(it => ({ ...it, name: it.costName}));
-    const { typeVisible } = this.state;
+    const { typeVisible , type} = this.state;
     let lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -214,7 +237,7 @@ class CostCategory extends React.PureComponent {
         (<i
           className={cs('iconfont', `icon${record.icon}`)}
           style={{
-            color: getArrayColor(record.icon, classifyIcon),
+            color: getArrayColor(record.icon, classifyIcon[type]),
             fontSize: '30px',
           }}
         />) :
@@ -348,20 +371,38 @@ class CostCategory extends React.PureComponent {
     return (
       <div className="mainContainer">
         <PageHead title="支出类别设置" />
+        <div style={{width: '100%', marginTop: '-8px'}}>
+          <MenuItems
+            lists={menuList || []}
+            onHandle={(val) => this.onHandle(val)}
+            params={{
+              key: 'key',
+              value:'value'
+            }}
+            className="p-l-32 titleMenu"
+            status={type}
+          />
+        </div>
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">
-              <JudgeType
-                title="add"
-                data={{}}
-                onOk={this.onOk}
-                visible={typeVisible}
-                changeVisible={this.changeVisible}
-                linkInvoice={this.onAddCategory}
-              >
-                <Button type="primary" style={{marginRight: '8px'}}>新增支出类别</Button>
-              </JudgeType>
-              <AddGroup onOk={this.onOk} title="add" list={list}>
+              {
+                type === '0' ?
+                  <JudgeType
+                    title="add"
+                    data={{}}
+                    onOk={this.onOk}
+                    visible={typeVisible}
+                    changeVisible={this.changeVisible}
+                    linkInvoice={this.onAddCategory}
+                  >
+                    <Button type="primary" style={{marginRight: '8px'}}>新增支出类别</Button>
+                  </JudgeType>
+                  :
+                  <Button type="primary" style={{marginRight: '8px'}} onClick={() => this.onAddCategory('add')}>新增收入类别</Button>
+              }
+
+              <AddGroup onOk={this.onOk} title="add" list={list} type={type}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>
               <Form style={{display: 'inline-block'}}>
