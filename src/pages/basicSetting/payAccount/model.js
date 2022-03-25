@@ -9,12 +9,22 @@ export default {
     list: [],
     query: {
       pageNo: 1,
-      pageSize: PAGE_SIZE,
+      pageSize: PAGE_SIZE
     },
     total: 0,
-    detail: {},
+    detail: {
+      initialAmount: 0
+    },
     check: false,
-    signRes: ''
+    signRes: '',
+    amountMap: {
+      amountSum: 0,
+      costSum: 0,
+      incomeSum: 0,
+      amountSumStr: '0.00',
+      costSumStr: '0.00',
+      incomeSumStr: '0.00'
+    }
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -25,10 +35,10 @@ export default {
           list: response.list || [],
           query: {
             pageSize: payload.pageSize,
-            pageNo: payload.pageNo,
+            pageNo: payload.pageNo
           },
-          total: response.page ? response.page.total : 0,
-        },
+          total: response.page ? response.page.total : 0
+        }
       });
     },
     *sign({ payload }, { call, put }) {
@@ -36,8 +46,8 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          signRes: response || '',
-        },
+          signRes: response || ''
+        }
       });
     },
     *add({ payload }, { call }) {
@@ -52,8 +62,8 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          check: response,
-        },
+          check: response
+        }
       });
     },
     *del({ payload }, { call }) {
@@ -64,17 +74,33 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          detail: response || {},
-        },
+          detail: response || {}
+        }
       });
     },
+    /**
+     * 获取公司的总金额、流入、流出
+     * @param payload
+     * @param call
+     * @param put
+     * @return {Generator<*, void, *>}
+     */
+    *getAmountMap({ payload }, { call, put }) {
+      const response = yield call(get, api.amount, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          amountMap: response || {}
+        }
+      });
+    }
   },
   reducers: {
     save(state, { payload }) {
       return {
         ...state,
-        ...payload,
+        ...payload
       };
-    },
+    }
   }
 };

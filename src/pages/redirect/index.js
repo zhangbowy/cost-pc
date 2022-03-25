@@ -16,7 +16,7 @@ class Redirect extends PureComponent {
   render() {
     return (
       <div />
-      );
+    );
   }
 }
 

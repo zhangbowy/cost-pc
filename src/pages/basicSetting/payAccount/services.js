@@ -9,4 +9,5 @@ export default {
   add: `${APP_API}/cost/account/payment/add`,
   delPer: `${APP_API}/cost/account/payment/del/permit`,
   sign: `${APP_API}/cost/batch/getSignLink`,
+  amount: `${APP_API}/account/payment/amount`
 };

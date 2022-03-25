@@ -1,0 +1,71 @@
+.confirm{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.alert{
+  width: 340px;
+  height: 40px;
+  background: rgba(0, 199, 149, 0.04);
+  border: 1px solid rgba(0, 199, 149, 0.65);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+.content{
+  width: 340px;
+}
+
+.verifyPopWrap {
+  .chooseRowCount {
+    height: 21px;
+    font-size: 13px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.45);
+    line-height: 21px;
+  }
+  .totalAmount {
+    height: 21px;
+    font-size: 13px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 21px;
+  }
+  .formItem {
+    :global {
+      .ant-modal-body {
+        padding: 22px 31px;
+      }
+      .ant-form-item-label {
+        height: 21px;
+        font-size: 13px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 21px;
+        margin-bottom: 10px;
+      }
+      .ant-form-item-control {
+        line-height: 1;
+      }
+      .ant-form-item {
+        margin-bottom: 23px;
+      }
+      .ant-calendar-picker {
+        width: 100%;
+      }
+
+    }
+  }
+}
+
+.verifyMoney {
+  margin-bottom: 0;
+  width: 115px;
+  .verifyMoneyInput {
+    width: 100%;
+  }
+}
+
