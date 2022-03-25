@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, Form } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import style from './index.scss';
-import { refuseReason } from '../../../utils/constants';
+// import { refuseReason } from '../../../utils/constants';
 
 @Form.create()
 class RefuseModal extends Component {
@@ -67,20 +66,20 @@ class RefuseModal extends Component {
                   ]
                 })(
                   <TextArea
-                    placeholder="请输入拒绝理由，或点击下方标签快捷输入，限制30个字以内"
+                    placeholder="请输入拒绝理由"
                   />
                 )
               }
             </Form.Item>
           </Form>
-          <p className="m-b-15 fs-12" style={{ color: 'rgba(25,31,37,0.28)' }}>快捷输入</p>
-          <p>
-            {
-              refuseReason.map(it => (
-                <span className={style.tags} key={it.key} onClick={() => this.onChange(it.value)}>{it.value}</span>
-              ))
-            }
-          </p>
+          {/* <p className="m-b-15 fs-12" style={{ color: 'rgba(25,31,37,0.28)' }}>快捷输入</p> */}
+          {/* <p> */}
+          {/*  { */}
+          {/*    refuseReason.map(it => ( */}
+          {/*      <span className={style.tags} key={it.key} onClick={() => this.onChange(it.value)}>{it.value}</span> */}
+          {/*    )) */}
+          {/*  } */}
+          {/* </p> */}
         </Modal>
       </span>
     );
