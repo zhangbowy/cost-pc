@@ -120,11 +120,12 @@ class ApproveSend extends Component {
       form: { getFieldDecorator },
       approverRoleList,
       approveNode,
+      templateType
     } = this.props;
     const { users, type } = this.state;
     return (
       <Form>
-        <Form.Item label="发放节点名称" {...formItemLayout}>
+        <Form.Item label={templateType === 20 ? '收款节点名称' : '发放节点名称'} {...formItemLayout}>
           {
             getFieldDecorator('name', {
               initialValue: nodeDetail.name || '',
@@ -139,7 +140,7 @@ class ApproveSend extends Component {
               initialValue: type,
             })(
               <Radio.Group onChange={e => this.onChange(e)}>
-                <Radio value="assignMember">指定发放人</Radio>
+                <Radio value="assignMember">指定{templateType === 20 ? '收款' : '发放'}人</Radio>
                 <Radio value="approverRole">按审批角色分工</Radio>
               </Radio.Group>
             )
