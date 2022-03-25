@@ -369,17 +369,17 @@ class PayTemp extends React.PureComponent {
             </Menu.Item>
           </Menu>
         </div>
-        {/*<SearchBanner*/}
-        {/*  list={searchList || []}*/}
-        {/*  onChange={val => this.props.onChangeSearch(val, () => {*/}
-        {/*    this.onQuery({*/}
-        {/*      pageNo: 1,*/}
-        {/*      pageSize: query.pageSize,*/}
-        {/*      accountTypes,*/}
-        {/*      status,*/}
-        {/*    });*/}
-        {/*  })}*/}
-        {/*/>*/}
+        {/* <SearchBanner */}
+        {/*  list={searchList || []} */}
+        {/*  onChange={val => this.props.onChangeSearch(val, () => { */}
+        {/*    this.onQuery({ */}
+        {/*      pageNo: 1, */}
+        {/*      pageSize: query.pageSize, */}
+        {/*      accountTypes, */}
+        {/*      status, */}
+        {/*    }); */}
+        {/*  })} */}
+        {/* /> */}
         <div className="content-dt" style={{padding: 0}}>
           <>
             {

@@ -3,11 +3,14 @@ import { message, Modal, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
-import Tags from '@/components/Tags';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/PayModal';
 import { JsonParse } from '../../../utils/common';
-import { getArrayValue, accountType, filterAccount } from '../../../utils/constants';
+import {
+  getArrayValue,
+  accountType,
+  filterAccount
+} from '../../../utils/constants';
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
 import TableImg from '../../../components/LittleCmp/TableImg';
@@ -26,7 +29,7 @@ const { confirm } = Modal;
   recordPage: payment.recordPage,
   recordTotal: payment.recordTotal,
   isModifyInvoice: costGlobal.isModifyInvoice,
-  officeListAndRole: costGlobal.officeListAndRole,
+  officeListAndRole: costGlobal.officeListAndRole
 }))
 class Payment extends React.PureComponent {
   constructor(props) {
@@ -36,75 +39,77 @@ class Payment extends React.PureComponent {
       selectedRowKeys: [],
       selectedRows: [],
       visibleConfirm: false,
-      searchList: [{
-        type: 'rangeTime',
-        label: '提交时间',
-        placeholder: '请选择',
-        key: ['startTime', 'endTime'],
-        id: 'startTime',
-        out: 1
-      },
-      {
-        type: 'deptAndUser',
-        label: '提交部门/人',
-        placeholder: '请选择',
-        key: ['userVOS', 'deptVOS'],
-        id: 'userVOS',
-        out: 1
-      },
-      {
-        type: 'search',
-        label: '外部选择',
-        placeholder: '单号、事由、收款人',
-        key: 'searchContent',
-        id: 'searchContent',
-        out: 1
-      }],
-      isShow: true,
+      searchList: [
+        {
+          type: 'search',
+          label: '外部选择',
+          placeholder: '单号、事由、收款人',
+          key: 'searchContent',
+          id: 'searchContent',
+          out: 1
+        },
+        {
+          type: 'rangeTime',
+          label: '提交时间',
+          placeholder: '请选择',
+          key: ['startTime', 'endTime'],
+          id: 'startTime',
+          out: 1
+        },
+        {
+          type: 'deptAndUser',
+          label: '提交部门/人',
+          placeholder: '请选择',
+          key: ['userVOS', 'deptVOS'],
+          id: 'userVOS',
+          out: 1
+        }
+      ],
+      isShow: true
     };
   }
 
   componentDidMount() {
     this.props.dispatch({
       type: 'costGlobal/queryModifyOrder',
-      payload:{}
+      payload: {}
     });
     this.getOffice();
   }
 
-  onChangeSearch = (val,callback) => {
-    this.setState({
+  onChangeSearch = (val, callback) => {
+    this.setState(
+      {
         searchList: val
-    }, () => {
+      },
+      () => {
         if (callback) callback();
       }
     );
   };
 
-  onOk = (val) => {
-    const {
-      query,
-    } = this.props;
+  onOk = val => {
+    const { query } = this.props;
     if (val) {
       this.setState({
         selectedRows: [],
-        selectedRowKeys: [],
+        selectedRowKeys: []
       });
     }
     const { status } = this.state;
     const obj = {
       pageSize: query.pageSize,
       pageNo: 1,
-      status,
+      status
     };
     this.onQuery({ ...obj });
-  }
+  };
 
-  onQuery = (payload) => {
+  onQuery = payload => {
     if (payload.status) {
       Object.assign(payload, {
         status: Number(payload.status) === 1 ? 2 : payload.status,
-        isSign: Number(payload.status) === 1,
+        isSign: Number(payload.status) === 1
       });
     }
     const { searchList } = this.state;
@@ -120,126 +125,138 @@ class Payment extends React.PureComponent {
       payload: {
         ...payload,
         accountTypes: payload.accountTypes || []
-      },
+      }
     });
-  }
+  };
 
   // 拒绝
-  handleRefuse = (val) => {
+  handleRefuse = val => {
     confirm({
       title: '确认拒绝该单据？',
       onOk: () => {
-        this.props.dispatch({
-          type: 'payment/refuse',
-          payload: {
-            invoiceSubmitIds: [val.id],
-            rejectNote: val.rejectNote,
-            templateType: 0,
-          }
-        }).then(() => {
-          // callback();
-          message.success('拒绝成功');
-          this.onOk();
-        });
+        this.props
+          .dispatch({
+            type: 'payment/refuse',
+            payload: {
+              invoiceSubmitIds: [val.id],
+              rejectNote: val.rejectNote,
+              templateType: 0
+            }
+          })
+          .then(() => {
+            // callback();
+            message.success('拒绝成功');
+            this.onOk();
+          });
       }
     });
-  }
+  };
 
-  onChangeStatus = (val) => {
+  onChangeStatus = val => {
     this.setState({
-      status: val,
+      status: val
     });
-  }
+  };
 
   onConfirm = () => {
     this.onOk();
     console.log('确认一下');
     this.setState({
-      visibleConfirm: true,
+      visibleConfirm: true
     });
-  }
+  };
 
   onChangeVisible = () => {
     this.setState({
-      visibleConfirm: false,
+      visibleConfirm: false
     });
-  }
+  };
 
   previewImage = (arr, index) => {
     ddPreviewImage({
       urlArray: [arr],
-      index,
+      index
     });
-  }
+  };
 
   operationSign = (payload, callback) => {
-    this.props.dispatch({
-      type: 'payment/operationSign',
-      payload,
-    }).then(() => {
-      message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
-      if (callback) {
-        callback();
-      }
-    });
-  }
+    this.props
+      .dispatch({
+        type: 'payment/operationSign',
+        payload
+      })
+      .then(() => {
+        message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
+        if (callback) {
+          callback();
+        }
+      });
+  };
 
   onRecord = (payload, callback) => {
     Object.assign(payload, {
-      templateType: 0,
+      templateType: 0
     });
-    this.props.dispatch({
-      type: 'payment/record',
-      payload,
-    }).then(() => {
-      if (callback) {
-        callback();
-      }
-    });
-  }
-
-  onSign = (payload) => {
-    return new Promise(resolve => {
-      this.props.dispatch({
-        type: 'payment/operationSign',
-        payload,
-      }).then(() => {
-        message.success(payload.isSign ? '已完成票签' : '已退回签收人重新签收');
-        this.onOk();
-        resolve(true);
+    this.props
+      .dispatch({
+        type: 'payment/record',
+        payload
+      })
+      .then(() => {
+        if (callback) {
+          callback();
+        }
       });
+  };
+
+  onSign = payload => {
+    return new Promise(resolve => {
+      this.props
+        .dispatch({
+          type: 'payment/operationSign',
+          payload
+        })
+        .then(() => {
+          message.success(
+            payload.isSign ? '已完成票签' : '已退回签收人重新签收'
+          );
+          this.onOk();
+          resolve(true);
+        });
     });
-  }
+  };
 
   getOffice = () => {
-    this.props.dispatch({
-      type: 'costGlobal/officeListAndRole',
-      payload: {},
-    }).then(() => {
-      const { searchList } = this.state;
-      const arr = [...searchList];
-      const { officeListAndRole } = this.props;
-      if (officeListAndRole.length) {
-        arr.splice(1,0,{
-          type: 'select',
-          label: '分公司',
-          placeholder: '请选择',
-          key: 'officeId',
-          id: 'officeId',
-          options: officeListAndRole,
-          fileName: {
-            key: 'id',
-            name: 'officeName'
-          },
-          out: 1
+    this.props
+      .dispatch({
+        type: 'costGlobal/officeListAndRole',
+        payload: {}
+      })
+      .then(() => {
+        const { searchList } = this.state;
+        const arr = [...searchList];
+        const { officeListAndRole } = this.props;
+        if (officeListAndRole.length) {
+          arr.splice(1, 0, {
+            type: 'select',
+            label: '分公司',
+            placeholder: '请选择',
+            key: 'officeId',
+            id: 'officeId',
+            options: officeListAndRole,
+            fileName: {
+              key: 'id',
+              name: 'officeName'
+            },
+            out: 1
+          });
+        }
+        console.log('🚀 ~ file: index.js ~ line 404 ~ Payment ~ arr', arr);
+        this.setState({
+          searchList: arr
         });
-      }
-      console.log('🚀 ~ file: index.js ~ line 404 ~ Payment ~ arr', arr);
-      this.setState({
-        searchList: arr,
       });
-    });
-  }
+  };
 
   render() {
     const {
@@ -253,185 +270,162 @@ class Payment extends React.PureComponent {
       recordList,
       recordPage,
       recordTotal,
-      officeListAndRole,
+      officeListAndRole
     } = this.props;
-    const { status, visibleConfirm, selectedRowKeys, selectedRows, searchList, isShow } = this.state;
+    const {
+      status,
+      visibleConfirm,
+      selectedRowKeys,
+      selectedRows,
+      searchList,
+      isShow
+    } = this.state;
     const refuse = localStorage.getItem('refuseShow');
-    const columns = [{
-      title: '报销事由',
-      dataIndex: 'reason',
-      width: 140,
-      render: (_, record) => (
-        <span style={{display: 'flex'}}>
-          <Tooltip placement="topLeft" title={record.reason || ''}>
-            <span className="eslips-2 m-r-8">{record.reason}</span>
-          </Tooltip>
-          {
-            record.isModify &&
-              <Tags
-                color='rgba(255, 47, 0, 0.08)'
-                nameColor='rgba(255, 47, 0, 1)'
-                name="改单"
-              />
-          }
-        </span>
-      ),
-    }, {
-      title: '付款金额(元)',
-      dataIndex: 'submitSum',
-      render: (text) => (
-        <span>{text/100}</span>
-      ),
-      width: 100,
-      className: 'moneyCol',
-    }, {
-      title: '单号',
-      dataIndex: 'invoiceNo',
-      width: 120,
-    }, {
-      title: '提交人',
-      dataIndex: 'createName',
-      width: 80,
-    }, {
-      title: '账户类型',
-      dataIndex: 'accountType',
-      width: 80,
-      filters: filterAccount,
-      render: (text) => (
-        <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
-      ),
-      className: 'moneyCol',
-    }, {
-      title: '单据类型',
-      dataIndex: 'invoiceTemplateName',
-      width: 120,
-      render: (text) => (
-        <span>{text || '-'}</span>
-      )
-    }, {
-      title: '收款账户名称',
-      dataIndex: 'receiptName',
-      width: 120,
-      render: (_, record) => {
-        let name = record.receiptName;
-        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
-          name = record.supplierAccountVo.supplierAccountName;
-        }
-        return (
-          <span>{name || '-'}</span>
-        );
-      }
-    }, {
-      title: '个人/供应商收款账户',
-      dataIndex: 'receiptNameJson',
-      render: (_, record) => {
-        let account = record.receiptNameJson && JsonParse(record.receiptNameJson);
-        if (record.supplierAccountVo && record.supplierAccountVo.supplierAccountName) {
-          account = [{
-            ...record.supplierAccountVo,
-            type: record.supplierAccountVo.accountType,
-            account: record.supplierAccountVo.supplierAccount,
-          }];
-        }
-        return (
-          <span>
-            {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
-            { account && account[0] && account[0].bankName }
-            { account && account[0] && account[0].account }
-            {
-              account && account[0] && account[0].qrUrl &&
-              <img
-                src={account[0].qrUrl}
-                onClick={() => this.previewImage(account[0].qrUrl, 0)}
-                alt="二维码"
-                style={{ width: '40px', height: '40px', borderRadius: '4px', marginLeft: '4px' }}
-              />
-            }
-            {!account && '-'}
-          </span>
-        );
-      },
-      width: 150,
-    }, {
-      title: '提交时间',
-      dataIndex: 'createTime',
-      render: (text) => (
-        <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
-      ),
-      width: 100,
-    }, {
-      title: '操作',
-      dataIndex: 'ope',
-      render: (_, record) => (
-        <span>
-          {
-            Number(record.status) === 2 &&
-              <PayModal onOk={(val) => this.onOk(val)} data={record} templateType={0} selectKey={[record]} confirms={() => this.onConfirm()}>
-                <a>发起支付</a>
-              </PayModal>
-          }
-          {
-            Number(record.status) === 2 &&
-            <Divider type="vertical" />
-          }
-          <InvoiceDetail
-            id={record.invoiceId}
-            canRefuse={Number(record.status) === 2}
-            refuse={this.handleRefuse}
-            templateId={record.invoiceTemplateId}
-            templateType={0}
-            allow="modify"
-            onCallback={() => this.onOk()}
-            signCallback={this.onSign}
-          >
-            <a>查看</a>
-          </InvoiceDetail>
-        </span>
-      ),
-      width: 135,
-      fixed: 'right',
-      className: 'fixCenter'
-    }];
-    if(Number(status) === 3) {
-      columns.splice(8, 0, {
-        title: '发放人',
-        dataIndex: 'payUserName',
-        width: 80,
-      }, {
-        title: '付款时间',
-        dataIndex: 'payTime',
-        render: (text) => (
-          <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
-        ),
-        width: 100,
-      }, {
-        title: '付款账户',
-        dataIndex: 'payNameJson',
-        render: (_, record) => {
-          const account = record.payNameJson && JsonParse(record.payNameJson);
-          return (
-            <span>
-              {account && account[0] && account[0].type ? getArrayValue(account[0].type, accountType) : ''}
-              <span className="m-r-8">{ account && account[0] && account[0].bankName }</span>
-              { account && account[0] && account[0].account }
-            </span>
-          );
-        },
+    const columns = [
+      {
+        title: '单号',
+        dataIndex: 'invoiceNo',
         width: 140,
-      }, {
-        title: '付款账户名称',
-        dataIndex: 'payName',
+        render: (_, record) => (
+          <span style={{ display: 'flex' }}>
+            <Tooltip placement="topLeft" title={record.invoiceNo || ''}>
+              <span className="eslips-2 m-r-8">{1 || record.invoiceNo}</span>
+            </Tooltip>
+          </span>
+        )
+      },
+      {
+        title: '收款单金额(元)',
+        dataIndex: 'submitSum',
+        render: text => <span>{text / 100}</span>,
+        width: 100
+      },
+      {
+        title: '业务员',
+        dataIndex: '1',
+        width: 120
+      },
+      {
+        title: '账户类型',
+        dataIndex: 'accountType',
+        width: 120,
+        filters: filterAccount,
+        render: text => (
+          <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
+        )
+      },
+      {
+        title: '单据类型',
+        dataIndex: 'invoiceTemplateName',
+        width: 120,
+        render: text => <span>{text || '-'}</span>
+      },
+      {
+        title: '收款账户名称',
+        dataIndex: 'receiptName',
+        width: 120,
         render: (_, record) => {
-          const account = record.payNameJson && JsonParse(record.payNameJson);
-          return (
-            <span>
-              { account && account[0] && account[0].name }
-            </span>
-          );
+          let name = record.receiptName;
+          if (
+            record.supplierAccountVo &&
+            record.supplierAccountVo.supplierAccountName
+          ) {
+            name = record.supplierAccountVo.supplierAccountName;
+          }
+          return <span>{name || '-'}</span>;
+        }
+      },
+      {
+        title: '提交时间',
+        dataIndex: 'createTime',
+        render: text => (
+          <span>{text && moment(text).format('YYYY-MM-DD')}</span>
+        ),
+        width: 120
+      },
+      {
+        title: '操作',
+        dataIndex: 'ope',
+        render: (_, record) => (
+          <span>
+            {Number(record.status) === 2 && (
+              <PayModal
+                onOk={val => this.onOk(val)}
+                data={record}
+                templateType={0}
+                selectKey={[record]}
+                confirms={() => this.onConfirm()}
+              >
+                <a>发起收款</a>
+              </PayModal>
+            )}
+            {Number(record.status) === 2 && <Divider type="vertical" />}
+            <InvoiceDetail
+              id={record.invoiceId}
+              refuse={this.handleRefuse}
+              templateId={record.invoiceTemplateId}
+              templateType={4}
+              allow="modify"
+              onCallback={() => this.onOk()}
+              signCallback={this.onSign}
+              title="收款单详情"
+            >
+              <a>查看</a>
+            </InvoiceDetail>
+          </span>
+        ),
+        width: 135,
+        fixed: 'right',
+        className: 'fixCenter'
+      }
+    ];
+    if (Number(status) === 3) {
+      columns.splice(
+        8,
+        0,
+        {
+          title: '发放人',
+          dataIndex: 'payUserName',
+          width: 80
         },
-        width: 100,
-      });
-    };
+        {
+          title: '付款时间',
+          dataIndex: 'payTime',
+          render: text => (
+            <span>{text && moment(text).format('YYYY-MM-DD')}</span>
+          ),
+          width: 100
+        },
+        {
+          title: '付款账户',
+          dataIndex: 'payNameJson',
+          render: (_, record) => {
+            const account = record.payNameJson && JsonParse(record.payNameJson);
+            return (
+              <span>
+                {account && account[0] && account[0].type
+                  ? getArrayValue(account[0].type, accountType)
+                  : ''}
+                <span className="m-r-8">
+                  {account && account[0] && account[0].bankName}
+                </span>
+                {account && account[0] && account[0].account}
+              </span>
+            );
+          },
+          width: 140
+        },
+        {
+          title: '付款账户名称',
+          dataIndex: 'payName',
+          render: (_, record) => {
+            const account = record.payNameJson && JsonParse(record.payNameJson);
+            return <span>{account && account[0] && account[0].name}</span>;
+          },
+          width: 100
+        }
+      );
+    }
     if (isViewVoucher) {
       columns.splice(12, 0, {
         title: '付款凭证',
@@ -439,41 +433,44 @@ class Payment extends React.PureComponent {
         width: 100,
         render: (_, record) => (
           <>
-            {
-              record.payVoucher && record.payVoucher.length ?
-                <TableImg imgUrl={record.payVoucher} />
-                :
-                '-'
-            }
+            {record.payVoucher && record.payVoucher.length ? (
+              <TableImg imgUrl={record.payVoucher} />
+            ) : (
+              '-'
+            )}
           </>
         )
       });
     }
-    if(Number(status) === 1) {
+    if (Number(status) === 1) {
       columns.splice(8, 0, {
         title: '票审人',
         dataIndex: 'signUserName',
-        width: 100,
+        width: 100
       });
     }
-    if(Number(status) === 5) {
-      columns.splice(0, 0, {
-        title: '拒绝理由',
-        dataIndex: 'refuseReason',
-        width: 120,
-      }, {
-        title: '拒绝时间',
-        dataIndex: 'refuseTime',
-        width: 100,
-        render: (text) => (
-          <span>{ text && moment(text).format('YYYY-MM-DD') }</span>
-        ),
-      });
+    if (Number(status) === 5) {
+      columns.splice(
+        0,
+        0,
+        {
+          title: '拒绝理由',
+          dataIndex: 'refuseReason',
+          width: 120
+        },
+        {
+          title: '拒绝时间',
+          dataIndex: 'refuseTime',
+          width: 100,
+          render: text => (
+            <span>{text && moment(text).format('YYYY-MM-DD')}</span>
+          )
+        }
+      );
     }
     return (
       <>
-        {
-          (!refuse && isShow) &&
+        {!refuse && isShow && (
           <div
             className={style.mask}
             onClick={() => {
@@ -483,7 +480,7 @@ class Payment extends React.PureComponent {
           >
             <img src={imgs} alt="遮罩" />
           </div>
-        }
+        )}
         <PayTemp
           {...this.props}
           namespace="payment"
@@ -494,13 +491,13 @@ class Payment extends React.PureComponent {
           templateType={0}
           onQuerys={val => this.onQuery(val)}
           columns={columns}
-          onChangeStatus={(val) => this.onChangeStatus(val)}
+          onChangeStatus={val => this.onChangeStatus(val)}
           confirm={() => this.onConfirm()}
           selectedRowKeys={selectedRowKeys}
           selectedRows={selectedRows}
           operationSign={this.operationSign}
           recordList={recordList}
-          recordPage={{...recordPage, total: recordTotal}}
+          recordPage={{ ...recordPage, total: recordTotal }}
           onRecord={this.onRecord}
           officeList={officeListAndRole}
           onChangeSearch={this.onChangeSearch}

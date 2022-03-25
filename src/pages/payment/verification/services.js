@@ -3,7 +3,7 @@ import constants from '@/utils/constants';
 const { APP_API } = constants;
 
 export default {
-  list: `${APP_API}/cost/invoice/payment/payList`,
+  list: `${APP_API}/cost/invoice/payment/payList4Loan`,
   send: `${APP_API}/cost/invoice/payment/payment`,
   payingExport: `${APP_API}/cost/export/paying`, // 待发放
   payedExport: `${APP_API}/cost/export/payed`, // 已发放
@@ -11,5 +11,5 @@ export default {
   refuse: `${APP_API}/cost/invoice/payment/reject`, // 拒绝
   operationSign: `${APP_API}/cost/invoice/payment/operationSign`,
   record: `${APP_API}/cost/invoice/payment/operationSign/record`,
-  exportRefuse: `${APP_API}/cost/export/refusePay`,
+  exportRefuse: `${APP_API}/cost/export/refusePay`
 };

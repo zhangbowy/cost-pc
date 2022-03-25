@@ -1,18 +1,23 @@
 import React from 'react';
-import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
+import {
+  Modal,
+  Form,
+  Select,
+  DatePicker,
+  Button,
+  message,
+  Tooltip,
+  Table,
+  InputNumber
+} from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import { getArrayValue, signStatus } from '../../../../utils/constants';
+import cs from 'classnames';
 import UploadImg from '../../../../components/UploadImg';
+import styles from './index.scss';
+import { rowSelect } from '../../../../utils/common';
 
 const { Option } = Select;
-const accountType = [{
-  key: '1',
-  value: '标记已付'
-}, {
-  key: '2',
-  value: '线上支付'
-}];
 @Form.create()
 @connect(({ global, session, loading, costGlobal }) => ({
   payAccount: global.payAccount,
@@ -21,7 +26,10 @@ const accountType = [{
   batchDetails: global.batchDetails,
   alipayUrl: global.alipayUrl,
   paymentMethod: costGlobal.paymentMethod,
-  loading: loading.effects['global/addBatch'] || loading.effects['global/send'] || false,
+  loading:
+    loading.effects['global/addBatch'] ||
+    loading.effects['global/send'] ||
+    false
 }))
 class PayModal extends React.PureComponent {
   constructor(props) {
@@ -35,6 +43,8 @@ class PayModal extends React.PureComponent {
       status: '1',
       prod: '已选单据有非支付宝收款账户，不支持线上支付',
       imgUrl: [],
+      selectedRowKeys: [],
+      selectedRows: []
     };
   }
 
@@ -44,79 +54,87 @@ class PayModal extends React.PureComponent {
       type: 'global/getAliAccounts',
       payload: {}
     });
-    this.props.dispatch({
-      type: 'costGlobal/paymentMethod',
-      payload: {}
-    }).then(() => {
-      this.props.dispatch({
-        type: 'global/payAccount',
-        payload: {
-          companyId: userInfo.companyId,
-          pageNo: 1,
-          pageSize: 100,
-        }
-      }).then(() => {
-        const { payAccount, paymentMethod } = this.props;
-        const accountList = payAccount.filter(it => (Number(it.status) === 1));
-        const defaultAccount = accountList.filter(it => it.isDefault);
-        let acc = '';
-        let cout = 1;
-        let flags = false;
-        let amount = 0;
-        let prod = '已选单据有非支付宝收款账户，不支持线上支付';
-        if (defaultAccount && defaultAccount.length > 0) {
-          acc = defaultAccount[0].id;
-        }
-        if (selectKey) {
-          if(selectKey.length === 0) {
-            message.error('请至少选择一个发起支付');
-            return;
-          }
-          cout = selectKey.length;
-          selectKey.forEach(item => {
-            if (item.submitSum) amount+=item.submitSum;
-            if (item.accountType !== 1) {
-              flags = true;
+    this.props
+      .dispatch({
+        type: 'costGlobal/paymentMethod',
+        payload: {}
+      })
+      .then(() => {
+        this.props
+          .dispatch({
+            type: 'global/payAccount',
+            payload: {
+              companyId: userInfo.companyId,
+              pageNo: 1,
+              pageSize: 100
             }
+          })
+          .then(() => {
+            const { payAccount, paymentMethod } = this.props;
+            const accountList = payAccount.filter(
+              it => Number(it.status) === 1
+            );
+            const defaultAccount = accountList.filter(it => it.isDefault);
+            let acc = '';
+            let cout = 1;
+            let flags = false;
+            let amount = 0;
+            let prod = '已选单据有非支付宝收款账户，不支持线上支付';
+            if (defaultAccount && defaultAccount.length > 0) {
+              acc = defaultAccount[0].id;
+            }
+            if (selectKey) {
+              if (selectKey.length === 0) {
+                message.error('请至少选择一个发起收款');
+                return;
+              }
+              cout = selectKey.length;
+              selectKey.forEach(item => {
+                if (item.submitSum) amount += item.submitSum;
+                if (item.accountType !== 1) {
+                  flags = true;
+                }
+              });
+              // eslint-disable-next-line eqeqeq
+              if (Number(amount) < 100) {
+                flags = true;
+                prod = '已选单据付款金额小于1元，请线下支付并标记';
+              }
+            }
+            console.log(flags, paymentMethod);
+            this.setState(
+              {
+                visible: true,
+                defAcc: acc,
+                count: cout,
+                amount,
+                flag: flags,
+                prod,
+                status: !flags && paymentMethod ? '2' : '1'
+              },
+              () => {
+                if (acc) {
+                  this.props.form.setFieldsValue({
+                    account: acc
+                  });
+                }
+              }
+            );
           });
-          // eslint-disable-next-line eqeqeq
-          if (Number(amount) < 100) {
-            flags = true;
-            prod='已选单据付款金额小于1元，请线下支付并标记';
-          }
-        }
-        console.log(flags, paymentMethod);
-        this.setState({
-          visible: true,
-          defAcc: acc,
-          count: cout,
-          amount,
-          flag: flags,
-          prod,
-          status: !flags && paymentMethod ? '2' : '1',
-        }, () => {
-          if (acc) {
-            this.props.form.setFieldsValue({
-              account: acc,
-            });
-          }
-        });
       });
-    });
-
-  }
+  };
 
   onCancel = () => {
     this.props.form.resetFields();
     this.props.form.setFieldsValue({
-      account: '',
+      account: ''
     });
     this.setState({
       visible: false,
       status: '1',
       prod: '已选单据有非支付宝收款账户，不支持线上支付'
     });
-  }
+  };
 
   onSubmit = () => {
     const {
@@ -149,29 +167,29 @@ class PayModal extends React.PureComponent {
         const url = status !== '1' ? 'global/addBatch' : 'global/send';
         let params = {
           invoiceIds,
-          'payId': values.account,
-          'payJson': JSON.stringify(payList),
-          'payName': payList[0].name,
-          'payTime': moment(values.time).format('x'),
+          payId: values.account,
+          payJson: JSON.stringify(payList),
+          payName: payList[0].name,
+          payTime: moment(values.time).format('x'),
           templateType
         };
         if (status !== '1') {
           params = {
             invoiceIds,
-            'account': payList[0].account,
-            'payId': values.account,
+            account: payList[0].account,
+            payId: values.account,
             templateType
           };
         } else {
           params = {
             ...params,
-            payVoucherList: imgUrl.length ? imgUrl.map(it => it.imgUrl) : [],
+            payVoucherList: imgUrl.length ? imgUrl.map(it => it.imgUrl) : []
           };
         }
         dispatch({
           type: url,
           payload: {
-            ...params,
+            ...params
           }
         }).then(() => {
           if (status !== '1') {
@@ -183,198 +201,274 @@ class PayModal extends React.PureComponent {
           this.onCancel();
           onOk(true);
           this.setState({
-            visible: false,
+            visible: false
           });
         });
       }
     });
+  };
 
-  }
-
-  onChange = (e) => {
+  onChange = e => {
     const { payAccount, getAliAccounts } = this.props;
     this.props.form.setFieldsValue({
-      account: '',
+      account: ''
     });
     if (e.target.value === '1') {
-      const accountList = payAccount.filter(it => (Number(it.status) === 1));
+      const accountList = payAccount.filter(it => Number(it.status) === 1);
       const defaultAccount = accountList.filter(it => it.isDefault);
       if (defaultAccount && defaultAccount.length) {
         this.props.form.setFieldsValue({
-          account: defaultAccount[0].id,
+          account: defaultAccount[0].id
         });
       }
     } else {
       const defa = getAliAccounts.filter(it => it.isDefault);
       if (defa && defa.length) {
         this.props.form.setFieldsValue({
-          account: defa[0].payId,
+          account: defa[0].payId
         });
       }
     }
     this.setState({
-      status: e.target.value,
+      status: e.target.value
     });
-  }
+  };
 
   check = (rule, value, callback) => {
     if (value) {
       const { getAliAccounts } = this.props;
       const arr = getAliAccounts.filter(it => it.payId === value);
       if (arr && arr.length && arr[0].status !== 3) {
-        callback('请先对公司付款支付宝账户签约授权');
+        callback('请先对公司收款支付宝账户签约授权');
       }
       callback();
     } else {
-      callback('请选择付款账户');
+      callback('请选择收款账户');
     }
-  }
+  };
 
-  onChangeImg = (val) => {
+  onChangeImg = val => {
     this.setState({
-      imgUrl: val,
+      imgUrl: val
     });
-  }
+  };
+
+  onSelectAll = (selected, selectedRows, changeRows) => {
+    const result = rowSelect.onSelectAll(
+      this.state,
+      selected,
+      changeRows,
+      'key'
+    );
+    const _selectedRows = result.selectedRows;
+    const { selectedRowKeys } = result;
+    this.setState({
+      selectedRowKeys,
+      selectedRows: _selectedRows
+    });
+  };
+
+  onSelect = (record, selected) => {
+    const { selectedRows, selectedRowKeys } = rowSelect.onSelect(
+      this.state,
+      record,
+      selected,
+      'key'
+    );
+    this.setState({
+      selectedRowKeys,
+      selectedRows
+    });
+  };
 
   render() {
     const {
       children,
       payAccount,
       form: { getFieldDecorator },
-      getAliAccounts,
       loading,
       userInfo,
-      paymentMethod,
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status, prod, imgUrl } = this.state;
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 4 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 14 },
-      },
+    const {
+      visible,
+      defAcc,
+      count,
+      amount,
+      status,
+      imgUrl,
+      selectedRowKeys
+    } = this.state;
+    const rowSelection = {
+      type: 'checkbox',
+      selectedRowKeys,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
+      columnWidth: '24px'
     };
+
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: 'invoiceNo',
+        width: 60,
+        render: () => <span style={{ display: 'flex' }} />
+      },
+      {
+        title: '单号',
+        dataIndex: 'invoiceNo',
+        width: 130,
+        render: (_, record) => (
+          <span style={{ display: 'flex' }}>
+            <Tooltip placement="topLeft" title={record.invoiceNo || ''}>
+              <span className="eslips-2 m-r-8">{record.invoiceNo}</span>
+            </Tooltip>
+          </span>
+        )
+      },
+      {
+        title: '业务员',
+        dataIndex: 'invoiceNo',
+        width: 100
+      },
+      {
+        title: '部门',
+        dataIndex: 'invoiceNo',
+        width: 100
+      },
+      {
+        title: '应收金额(元)',
+        dataIndex: 'submitSum',
+        render: text => <span>{text / 100}</span>,
+        width: 100
+      },
+      {
+        title: '已收金额(元)',
+        dataIndex: '2',
+        render: text => <span>{text / 100}</span>,
+        width: 100
+      },
+      {
+        title: '本次核销(元)',
+        dataIndex: '3',
+        render: (_, record) => {
+          return (
+            <Form>
+              <Form.Item className={styles.verifyMoney}>
+                {getFieldDecorator(`shareAmount[${record.key}]`, {
+                  initialValue: record.shareAmount,
+                  rules: [{ validator: this.check }]
+                })(
+                  <InputNumber
+                    className={styles.verifyMoneyInput}
+                    placeholder="请输入核销金额"
+                    min={0}
+                    onChange={val => this.onInputAmount(val, record.key)}
+                  />
+                )}
+              </Form.Item>
+            </Form>
+          );
+        },
+        width: 120
+      }
+    ];
+
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title={null}
+          title="发起收款"
           maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
-          footer={null}
-          width="680px"
+          footer={
+            <div style={{ marginLeft: '12.5%' }}>
+              <span
+                className={cs(styles.chooseRowCount, 'fs-14 m-b-47 m-l-16')}
+              >
+                已选<span className="c-black-85 m-r-3 m-l-4">{count}</span>
+                张单据，核销总计{' '}
+                <span className={cs(styles.totalAmount, 'm-r-7')}>
+                  ¥{amount / 100}
+                </span>
+              </span>
+              <Button
+                key="cancel"
+                onClick={() => this.onCancel()}
+                className="m-l-8"
+              >
+                取消
+              </Button>
+              <Button
+                key="save"
+                onClick={() => this.onSubmit()}
+                loading={loading}
+                disabled={loading}
+                type="primary"
+              >
+                确认核销
+              </Button>
+            </div>
+          }
+          width="936px"
           bodyStyle={{
-            height: '500px',
+            height: '612px'
           }}
+          className={styles.verifyPopWrap}
         >
-          <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1>
+          {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起收款</h1> */}
           <Form className="formItem">
-            <p
-              className="c-black-85 fs-14 m-b-47 m-l-16"
-            >
-              已选 {count}张单据，共计 <span className="fw-500 fs-20">¥{amount/100}</span>
-            </p>
-            <Form.Item label="付款方式" {...formItemLayout}>
-              {
-                getFieldDecorator('accountType', {
-                  initialValue: !flag && paymentMethod ? '2' : '1',
+            {status === '1' && (
+              <Form.Item
+                label="收款账户"
+                style={{ width: 306, display: 'inline-block', marginRight: 84 }}
+              >
+                {getFieldDecorator('account', {
+                  initialValue: defAcc || '',
+                  rules: [{ required: true, message: '请选择收款账户' }]
                 })(
-                  <Radio.Group onChange={e => this.onChange(e)}>
-                    {
-                      accountType.map(it => (
-                        <Radio key={it.key} value={it.key} disabled={flag && it.key === '2'}>{it.value}</Radio>
-                      ))
-                    }
-                  </Radio.Group>
-                )
-              }
-              {
-                flag &&
-                <Tooltip title={prod}>
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45" style={{ marginLeft: '-5px' }} />
-                </Tooltip>
-              }
-            </Form.Item>
-            {
-              status === '1' &&
-              <Form.Item label="付款账户" {...formItemLayout}>
-                {
-                  getFieldDecorator('account', {
-                    initialValue: defAcc || '',
-                    rules: [{ required: true, message: '请选择付款账户' }]
-                  })(
-                    <Select placeholder="请选择" showSearch optionFilterProp="label">
-                      {
-                        payAccount.map(item => (
-                          <Option key={item.id} label={item.name}>{item.name}</Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
+                  <Select
+                    placeholder="请选择"
+                    showSearch
+                    optionFilterProp="label"
+                  >
+                    {payAccount.map(item => (
+                      <Option key={item.id} label={item.name}>
+                        {item.name}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
               </Form.Item>
-            }
-            {
-              status === '2' &&
-              <Form.Item label="付款账户" {...formItemLayout}>
-                {
-                  getFieldDecorator('account', {
-                    initialValue: defAcc || '',
-                    rules: [
-                      { validator: this.check }
-                    ]
-                  })(
-                    <Select
-                      notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
-                      placeholder="请选择"
-                      showSearch
-                      optionFilterProp="label"
-                    >
-                      {
-                        getAliAccounts.map(item => (
-                          <Option key={item.payId} label={item.account}>
-                            {item.account}
-                            (<span>{getArrayValue(item.status, signStatus)}</span>)
-                          </Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
+            )}
+            {status === '1' && (
+              <Form.Item
+                label="收款时间"
+                style={{ width: 306, display: 'inline-block' }}
+              >
+                {getFieldDecorator('time', {
+                  initialValue: moment(new Date(), 'YYYY-MM-DD'),
+                  rules: [{ required: true, message: '请选择收款时间' }]
+                })(<DatePicker />)}
               </Form.Item>
-            }
-            {
-              status === '1' &&
-              <Form.Item label="付款时间" {...formItemLayout}>
-                {
-                  getFieldDecorator('time', {
-                    initialValue: moment(new Date(), 'YYYY-MM-DD'),
-                    rules: [{ required: true, message: '请选择付款时间' }]
-                  })(
-                    <DatePicker />
-                  )
-                }
-              </Form.Item>
-            }
-            {
-              status === '1' &&
-              <Form.Item label="付款凭证" {...formItemLayout}>
+            )}
+            {status === '1' && (
+              <Form.Item label="收款凭证">
                 <UploadImg
-                  onChange={(val) => this.onChangeImg(val)}
+                  onChange={val => this.onChangeImg(val)}
                   imgUrl={imgUrl}
                   userInfo={userInfo}
                 />
               </Form.Item>
-            }
+            )}
           </Form>
-          <div style={{ marginLeft: '12.5%' }}>
-            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
-            <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
-          </div>
+          <Table
+            columns={columns}
+            dataSource={[{}]}
+            pagination={false}
+            rowSelection={rowSelection}
+            rowKey="key"
+          />
         </Modal>
       </span>
     );
