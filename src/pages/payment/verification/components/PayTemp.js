@@ -374,9 +374,6 @@ class PayTemp extends React.PureComponent {
             mode="horizontal"
           >
             <Menu.Item key={2}>待收款</Menu.Item>
-            {/* <Menu.Item key={1}> */}
-            {/*  已{signName[templateType]} */}
-            {/* </Menu.Item> */}
             <Menu.Item key={3}>已收款</Menu.Item>
             <Menu.Item key={5}>已拒绝</Menu.Item>
           </Menu>

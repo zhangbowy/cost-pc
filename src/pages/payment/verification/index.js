@@ -2,7 +2,7 @@ import React from 'react';
 import { message, Modal, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
-import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/PayModal';
 import { JsonParse } from '../../../utils/common';
@@ -289,7 +289,7 @@ class Payment extends React.PureComponent {
         render: (_, record) => (
           <span style={{ display: 'flex' }}>
             <Tooltip placement="topLeft" title={record.invoiceNo || ''}>
-              <span className="eslips-2 m-r-8">{1 || record.invoiceNo}</span>
+              <span className="eslips-2 m-r-8">{record.invoiceNo}</span>
             </Tooltip>
           </span>
         )
@@ -360,7 +360,7 @@ class Payment extends React.PureComponent {
               </PayModal>
             )}
             {Number(record.status) === 2 && <Divider type="vertical" />}
-            <InvoiceDetail
+            <IncomeInvoiceDetail
               id={record.invoiceId}
               refuse={this.handleRefuse}
               templateId={record.invoiceTemplateId}
@@ -371,7 +371,7 @@ class Payment extends React.PureComponent {
               title="收款单详情"
             >
               <a>查看</a>
-            </InvoiceDetail>
+            </IncomeInvoiceDetail>
           </span>
         ),
         width: 135,
