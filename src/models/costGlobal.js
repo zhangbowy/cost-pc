@@ -168,11 +168,36 @@ export default {
     *addDraft({ payload }, { call }) {
       yield call(post, api.addDraft, payload);
     },
+    *addIncomeDraft({ payload }, { call }) {
+      yield call(post, api.addIncomeDraft, payload);
+    },
     *editDraft({ payload }, { call }) {
       yield call(post, api.editDraft, payload);
     },
+    *editIncomeDraft({ payload }, { call }) {
+      yield call(post, api.editIncomeDraft, payload);
+    },
     *delDraft({ payload }, { call }) {
       yield call(post, api.delDraft, payload);
+    },
+    *delIncomeDraft({ payload }, { call }) {
+      yield call(post, api.delIncomeDraft, payload);
+    },
+    *listIncomeDraft({ payload }, { call, put }) {
+      const response = yield call(get, api.listIncomeDraft, payload);
+      const lists = response.draftBoxPageResult.list || [];
+      yield put({
+        type: 'save',
+        payload: {
+          draftList: lists || [],
+          total: response.draftBoxPageResult.page.total || 1,
+          draftTotal: response,
+          page: {
+            pageNo: payload.pageNo,
+            pageSize: payload.pageSize
+          }
+        },
+      });
     },
     *listDraft({ payload }, { call, put }) {
       const response = yield call(get, api.listDraft, payload);
@@ -187,6 +212,15 @@ export default {
             pageNo: payload.pageNo,
             pageSize: payload.pageSize
           }
+        },
+      });
+    },
+    *detailIncomeDraft({ payload }, { call, put }) {
+      const response = yield call(get, api.detailIncomeDraft, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          detailDraft: response || {},
         },
       });
     },

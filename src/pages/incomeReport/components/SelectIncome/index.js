@@ -9,7 +9,7 @@ import withRouter from 'umi/withRouter';
 import Search from 'antd/lib/input/Search';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
-import NoData from '../NoData';
+import NoData from '@/components/NoData';
 // import AddInvoice from './AddInvoice';
 // import Tags from '../Tags';
 
@@ -18,7 +18,7 @@ import NoData from '../NoData';
   currencyList: global.currencyList,
   queryTemplateIds: costGlobal.queryTemplateIds,
 }))
-class SelectInvoice extends Component {
+class SelectIncome extends Component {
   static propTypes = {
 
   }
@@ -454,4 +454,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(SelectInvoice);
+export default connect(mapStateToProps)(SelectIncome);

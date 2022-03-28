@@ -294,6 +294,7 @@ class CostCategory extends React.PureComponent {
               title="copy"
               list={list}
               onOk={() => _this.onOk()}
+              type={type}
             >
               <span className="m-l-8 pd-20-9 c-black-65">复制</span>
             </AddGroup>
@@ -348,6 +349,7 @@ class CostCategory extends React.PureComponent {
                   onOk={() => _this.onOk()}
                   title="edit"
                   list={list}
+                  type={type}
                 >
                   <a>编辑组</a>
                 </AddGroup>

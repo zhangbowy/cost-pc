@@ -107,8 +107,14 @@ export default {
         },
       });
     },
+    // 可用的类别的列表
     *expenseList({ payload }, { call, put }) {
-      const response = yield call(get, api.expenseList, payload);
+      const param = { id: payload.id };
+      let url = api.expenseList;
+      if (payload.templateType > 10) {
+        url = api.incomeExpenseList;
+      }
+      const response = yield call(get, url, param);
       yield put({
         type: 'save',
         payload: {
@@ -158,7 +164,11 @@ export default {
       });
     },
     *djDetail({ payload }, { call, put }) {
-      const response = yield call(get, api.invoiceDet, payload);
+      let url = api.invoiceDet;
+      if (payload.templateType > 10) {
+        url = api.incomeDet;
+      }
+      const response = yield call(get, url, payload);
       let expandField = response.expandField || [];
       if (response.selfField) {
         expandField=[...expandField, ...response.selfField];
@@ -212,7 +222,14 @@ export default {
       });
     },
     *lbDetail({ payload }, { call, put }) {
-      const response = yield call(get, api.cateDet, payload);
+      let url = api.cateDet;
+      const params = {
+        id: payload.id,
+        isDisplay: payload.isDisplay};
+      if (payload.templateType > 10) {
+        url = api.incomeCateDet;
+      }
+      const response = yield call(get, url, params);
       const expandField = [...response.expandField, ...response.selfFields];
       let arts = [];
       if (expandField && expandField.length) {
@@ -243,6 +260,9 @@ export default {
     },
     *addInvoice({ payload }, { call }) {
       yield call(post, api.addInvoice, payload);
+    },
+    *addIncome({ payload }, { call }) {
+      yield call(post, api.addIncome, payload);
     },
     *addAcc({ payload }, { call }) {
       yield call(post, api.addReceipt, payload);
