@@ -775,12 +775,12 @@ renderTreeNodes = data =>
                           )   
                         }
                         {
-                          <Capitalization isMoney={this.state.money || ''}/>
+                          <Capitalization isMoney={this.state.money || details.loanSum||''}/>
                         }
                         {
                           itw.itemExplain && !!(itw.itemExplain.length) &&
                           itw.itemExplain.map(item => (
-                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                            <p className="fs-12 c-black-45 li-1" style={{ marginBottom: 0,marginTop:this.state.money||details.loanSum?'25px':'8px'}} key={item.note}>
                               {item.note}
                             </p>
                           ))
@@ -812,9 +812,12 @@ renderTreeNodes = data =>
                           )
                         }
                         {
+                          <Capitalization isMoney={this.state.money || details.applicationSum||''}/>
+                        }
+                        {
                           itw.itemExplain && !!(itw.itemExplain.length) &&
                           itw.itemExplain.map(item => (
-                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0,marginTop:this.state.money||details.applicationSum?'25px':'8px'}} key={item.note}>
                               {item.note}
                             </p>
                           ))

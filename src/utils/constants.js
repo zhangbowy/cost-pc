@@ -490,7 +490,7 @@ export const costClassify = [{
   note: '',
 }];
 
-export const changeOrder = ['userJson', 'deptId', 'receiptId', 'supplier', 'costCategory', 'project'];
+export const changeOrder = ['userJson', 'deptId', 'receiptId', 'supplier', 'costCategory', 'project','office'];
 
 export const changeDefaultStr = {
   0: ['reason', 'note', 'imgUrl', 'fileUrl', 'ossFileUrl'],
