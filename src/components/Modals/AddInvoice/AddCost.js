@@ -144,7 +144,7 @@ class AddCost extends Component {
   }
 
   onShow = async() => {
-    const { costType, isDelete4Category, officeId, isShowToast } = this.props;
+    const { costType, isDelete4Category, officeId, isShowToast, templateType } = this.props;
     console.log('AddCost -> onShow -> officeId', officeId);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
@@ -301,7 +301,8 @@ class AddCost extends Component {
       await this.props.dispatch({
         type: 'global/expenseList',
         payload: {
-          id: this.props.invoiceId
+          id: this.props.invoiceId,
+          templateType,
         }
       }).then(async() => {
         const { index, detail, expandField } = this.props;
@@ -688,6 +689,7 @@ class AddCost extends Component {
       type: 'global/lbDetail',
       payload: {
         id: val,
+        templateType,
         isDisplay: !templateType,
       }
     }).then(() => {
@@ -948,7 +950,7 @@ class AddCost extends Component {
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title="添加支出"
+          title={templateType > 10 ? '添加收入' : '添加支出'}
           visible={visible}
           width="880px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
@@ -971,11 +973,11 @@ class AddCost extends Component {
             <Form className="formItem">
               <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Col span={12}>
-                  <Form.Item label={labelInfo.costName} {...formItemLayout}>
+                  <Form.Item label={templateType === 20 ? '收入类别' : labelInfo.costName} {...formItemLayout}>
                     {
                       getFieldDecorator('categoryId', {
                         initialValue: details.categoryId || undefined,
-                        rules: [{ required: true, message: '请选择支出类别' }]
+                        rules: [{ required: true, message: `请选择${templateType === 20 ? '收入' : '支出'}类别` }]
                       })(
                         <TreeSelect
                           placeholder="请选择"

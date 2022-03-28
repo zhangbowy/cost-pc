@@ -34,12 +34,17 @@ export default {
   grantUpload: `${APP_API}/cost/space/grantUpload4Approval`,
   userInfo: `${APP_API}/cost/user/userInfo`,
   expenseList: `${APP_API}/cost/invoice/submit/expense/list`,
+  incomeExpenseList: `${APP_API}/cost/income/invoice/income/allExpense/list`,
   invoiceDet: `${APP_API}/cost/invoice/template/detail`,
+  incomeDet: `${APP_API}/cost/income/template/detail`,
+  incomeCateDet: `${APP_API}/cost/income/category/detail`,
+
   cateDet: `${APP_API}/cost/category/detail`,
   receitAccount: `${APP_API}/cost/account/receipt/list/on`, // 收款账户
   approveList: `${APP_API}/cost/approve/apProcessPerson/getApproveNodeInfo`,
   // 新增报销单单据
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
+  addIncome: `${APP_API}/cost/income/invoice/income/add`,
   send: `${APP_API}/cost/invoice/payment/payment`,
   // 新增借款单单据
   addLoan: `${APP_API}/cost/invoice/loan/add`,
@@ -101,6 +106,11 @@ export default {
    delDraft: `${APP_API}/cost/draft/del`, // 删除账本
    detailDraft: `${APP_API}/cost/draft/detail`, // 账本详情
    listDraft: `${APP_API}/cost/draft/list`, // 账本列表
+   addIncomeDraft: `${APP_API}/cost/income/draft/add`, // 新增账本
+   editIncomeDraft: `${APP_API}/cost/income/draft/edit`, // 编辑账本
+   delIncomeDraft: `${APP_API}/cost/income/draft/del`, // 删除账本
+   detailIncomeDraft: `${APP_API}/cost/income/draft/detail`, // 账本详情
+   listIncomeDraft: `${APP_API}/cost/income/draft/list`, // 账本列表
    loanList: `${APP_API}/cost/invoice/base/loanList`,
    applyDetail: `${APP_API}/cost/invoice/application/detail`, // 申请单详情
    salaryDetail: `${APP_API}/cost/invoice/salary/detail`, // 薪资单详情

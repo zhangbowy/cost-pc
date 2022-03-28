@@ -11,7 +11,7 @@ export default{
   addIncomeGroup: `${APP_API}/cost/income/category/add`,
   edit: `${APP_API}/cost/category/edit`,
   copy: `${APP_API}/cost/category/copy`,
-  copyIncomeGroup: `${APP_API}/cost/category/copy`,
+  copyIncomeGroup: `${APP_API}/cost/income/category/copy`,
   detailCost: `${APP_API}/cost/category/detail`,
   detailIncome: `${APP_API}/cost/income/category/detail`,
   delCostGroup: `${APP_API}/cost/category/del`,

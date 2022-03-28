@@ -14,7 +14,7 @@ const cost = [{
   }]
 }, {
   key: 'add_1',
-  name: '报销单',
+  name: '借款单',
   styleName: 'borrowType',
   children: [{
     key: '0',
@@ -26,7 +26,7 @@ const cost = [{
 }, {
   key: 'add_2',
   styleName: 'applyType',
-  name: '报销单',
+  name: '申请单',
   children: [{
     key: '0',
     title: '· 适用于出差、采购事前申请',
@@ -34,7 +34,7 @@ const cost = [{
 }, {
   styleName: 'salaryType',
   key: 'add_3',
-  name: '报销单',
+  name: '薪资单',
   children: [{
     key: '0',
     title: '· 适用于工资、奖金、社保等保密性支出',

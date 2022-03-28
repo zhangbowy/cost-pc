@@ -203,7 +203,7 @@ class Invoice extends React.PureComponent {
       dataIndex: 'templateType',
       render: (_, record) => (
         <span>
-          {invoiceType[record.templateType].name}
+          {invoiceType[record.templateType] ? invoiceType[record.templateType].name : ''}
         </span>
       ),
     },{

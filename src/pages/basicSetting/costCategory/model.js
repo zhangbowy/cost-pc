@@ -72,7 +72,7 @@ export default {
         url = api.copyIncomeGroup;
       }
       delete param.costItem;
-      yield call(get, url, param);
+      yield call(post, url, param);
     },
     *del({ payload }, { call }) {
       yield call(post, api.delCostGroup, payload);
@@ -80,7 +80,7 @@ export default {
     *sort({ payload }, { call }) {
       yield call(post, api.sorts, payload);
     },
-    *sortIncome({ payload }, { call }) {
+    *incomeSort({ payload }, { call }) {
       yield call(post, api.sortIncome, payload);
     },
     *delCheck({ payload }, { call, put }) {
