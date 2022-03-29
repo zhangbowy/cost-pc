@@ -57,6 +57,7 @@ export default {
     detailJson: [],
     detailType: 0,
     getCondition: [], // 获取条件分支的条件
+    incomeDetail: {}, // 收入单详情
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -197,6 +198,16 @@ export default {
         type: 'save',
         payload: {
           loanDetail: response || {},
+        },
+      });
+    },
+    // 借款单详情
+    *incomeDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.incomeDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          incomeDetail: response || {},
         },
       });
     },

@@ -175,7 +175,7 @@ class AddCostTable extends Component {
 
   onInputAmount = (val, key) => {
     const { costSum } = this.state;
-    const amm = this.props.form.getFieldValue('shareAmount');
+    const amm = this.props.form.getFieldValue('amount');
     let amount = 0;
     if (Object.keys(amm)) {
       Object.keys(amm).forEach(it => {
@@ -185,7 +185,7 @@ class AddCostTable extends Component {
       });
     }
     amount = numAdd(val, amount);
-    this.props.onChange('shareAmount', amount.toFixed(2));
+    this.props.onChange('amount', amount.toFixed(2));
     this.setState({
       shareAmount: amount.toFixed(2),
     });

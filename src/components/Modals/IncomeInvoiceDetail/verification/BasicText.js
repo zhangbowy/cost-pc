@@ -29,7 +29,7 @@ const BasicText = ({
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           单据类型：
         </span>
-        <span className="fs-14 c-black-65">{details.invoiceTemplateName}</span>
+        <span className="fs-14 c-black-65">{details.incomeTemplateName}</span>
       </Col>
       <Col span={8} className={cs('m-t-16', style.nameIcon)}>
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>单号：</span>
@@ -52,8 +52,8 @@ const BasicText = ({
         )}
       </Col>
       <Col span={8} className="m-t-16">
-        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目</span>
-        <span className="fs-14 c-black-65">a项目</span>
+        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目:</span>
+        <span className="fs-14 c-black-65">{details.projectName || '-'}</span>
       </Col>
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
@@ -68,14 +68,14 @@ const BasicText = ({
           业务员：
         </span>
         <span className="fs-14 c-black-65">
-          ¥{details.assessSum ? details.assessSum / 100 : 0}
+          ¥{details.userName ? details.userName  : '-'}
         </span>
       </Col>
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           收入部门：
         </span>
-        <span className="fs-14 c-black-65">部门</span>
+        <span className="fs-14 c-black-65">{details.deptName || '-'}</span>
       </Col>
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
@@ -106,29 +106,29 @@ const BasicText = ({
           )}
         </span>
       </Col>
-      <Col span={8} className="m-t-16">
-        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
-          发生日期：
-        </span>
-        <span className="fs-14 c-black-65">{details.createName}</span>
-      </Col>
+      {/* <Col span={8} className="m-t-16"> */}
+      {/*  <span className={cs('fs-14', 'c-black-85', style.nameTil)}> */}
+      {/*    发生日期： */}
+      {/*  </span> */}
+      {/*  <span className="fs-14 c-black-65">{details.createName}</span> */}
+      {/* </Col> */}
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           提交人：
         </span>
-        <span className="fs-14 c-black-65">{details.userName}</span>
+        <span className="fs-14 c-black-65">{details.createName || '-'}</span>
       </Col>
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           提交人部门：
         </span>
-        <span className="fs-14 c-black-65">{details.createDeptName}</span>
+        <span className="fs-14 c-black-65">{details.createDeptName || '-'}</span>
       </Col>
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           所在公司：
         </span>
-        <span className="fs-14 c-black-65">{details.deptName}</span>
+        <span className="fs-14 c-black-65">{details.officeName || '-'}</span>
       </Col>
       <Col span={24} className="m-t-16">
         <div style={{ display: 'flex' }}>
@@ -136,7 +136,7 @@ const BasicText = ({
             事由:
           </span>
           <span className="fs-14 c-black-65" style={{ flex: 1 }}>
-            {details.reason}
+            {details.reason || '-'}
           </span>
         </div>
       </Col>

@@ -23,7 +23,8 @@ export default {
       pageSize: 10,
       total: 0,
     },
-    statisticsDimension:''
+    statisticsDimension:'',
+    incomeList:[]
   },
   effects: {
     *submitList({ payload }, { call, put }) {
@@ -90,6 +91,22 @@ export default {
         },
       });
     },
+      *incomeList({ payload }, { call, put }) {
+        const response = yield call(post, api.incomeList, payload);
+        const newArr = response.list && response.list.map(it => { return { ...it}; });
+        yield put({
+          type: 'save',
+          payload: {
+            incomeList: newArr || [],
+            query: {
+              pageSize: payload.pageSize,
+              pageNo: payload.pageNo,
+            },
+            total: response.page ? response.page.total : 0,
+            sum: response.sum || 0
+          },
+        });
+      },
     *del({ payload }, { call }) {
       yield call(get, api.del, payload);
     },

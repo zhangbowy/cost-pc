@@ -48,16 +48,17 @@ class RefuseModal extends Component {
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title={(<span className="isRequired">拒绝理由</span>)}
+          title={(<span className="isRequired">拒绝核销</span>)}
           visible={visible}
           onCancel={this.onCancel}
+          centered
           footer={[
             <Button key="cancel" onClick={() => this.onCancel()}>取消</Button>,
             <Button key="save" onClick={() => this.onConfirm()} type="primary">确认</Button>
           ]}
         >
           <Form>
-            <Form.Item>
+            <Form.Item >
               {
                 getFieldDecorator('rejectNote', {
                   rules: [
@@ -66,6 +67,7 @@ class RefuseModal extends Component {
                   ]
                 })(
                   <TextArea
+                    style={{height:76}}
                     placeholder="请输入拒绝理由"
                   />
                 )

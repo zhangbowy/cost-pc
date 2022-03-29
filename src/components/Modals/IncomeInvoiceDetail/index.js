@@ -4,30 +4,26 @@ import {
   Modal,
   message,
   Button,
-  Divider,
   Tooltip,
 } from 'antd';
 import cs from 'classnames';
 import { connect } from 'dva';
-import moment from 'moment';
 import { withRouter } from 'react-router';
 import { ddOpenSlidePanel, ddPreviewImage, previewFile } from '@/utils/ddApi';
 import { JsonParse } from '@/utils/common';
-import fields from '@/utils/fields';
 import style from './index.scss';
 import constants from '../../../utils/constants';
 import RefuseModal from './RefuseModal';
-import { ddOpenLink, ddComplexPicker } from '../../../utils/ddApi';
+import { ddOpenLink } from '../../../utils/ddApi';
 import { numAdd } from '../../../utils/float';
 import {
   handleProduction,
   compare,
 } from '../../../utils/common';
 import VerificationBasicText from './verification/BasicText';
-import IncomeDetailTable from './verification/incomeDetailTable';
 // import { DownloadFile } from '../../../utils/ddApi';
+import CostDetailTable from './CostDetailTable';
 
-const { aliTraffic, signName } = fields;
 const { APP_API } = constants;
 @withRouter
 @connect(({ global, costGlobal, session }) => ({
@@ -44,7 +40,8 @@ const { APP_API } = constants;
   userInfo: session.userInfo,
   aliTripLink: costGlobal.aliTripLink,
   cityInfo: costGlobal.cityInfo,
-  deptAndUser: costGlobal.deptAndUser
+  deptAndUser: costGlobal.deptAndUser,
+  incomeDetail: global.incomeDetail
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -55,13 +52,8 @@ class InvoiceDetail extends Component {
       receipt: {},
       showFields: {},
       details: {},
-      productSum: 0,
       totalCost: 0,
-      expandSubmitFieldVos: [],
       selfSubmitFieldVos: [],
-      aliTrip: {},
-      isSign: false,
-      list: []
     };
   }
 
@@ -69,23 +61,10 @@ class InvoiceDetail extends Component {
     this.onInit(true);
   };
 
-  onInit = flag => {
-    const { id, templateType } = this.props;
-    let url = 'global/invoiceDetail';
-    let params = { id };
-    if (Number(templateType) === 1) {
-      url = 'global/loanDetail';
-      params = { loanId: id };
-    } else if (Number(templateType) === 2) {
-      url = 'global/applyDetail';
-      params = { applicationId: id };
-    } else if (Number(templateType) === 3) {
-      url = 'global/salaryDetail';
-      params = { id };
-    } else if (Number(templateType) === 4) {
-      url = 'global/loanDetail';
-      params = { loanId: id };
-    }
+  onInit = () => {
+    const { id } = this.props;
+    const url = 'global/incomeDetail';
+    const params = { id };
     this.props
       .dispatch({
         type: url,
@@ -93,86 +72,23 @@ class InvoiceDetail extends Component {
       })
       .then(async () => {
         const {
-          invoiceDetail,
-          loanDetail,
-          applyDetail,
-          salaryDetail
+          incomeDetail,
         } = this.props;
-        let details = invoiceDetail;
+        const details = incomeDetail;
         let productSum = 0;
-        if (Number(templateType) === 1) {
-          details = loanDetail;
-        } else if (Number(templateType) === 2) {
-          details = applyDetail;
-        } else if (Number(templateType) === 3) {
-          details = salaryDetail;
-        } else if (Number(templateType) === 4) {
-          details = loanDetail;
-        }
-        if (details.costDetailsVo) {
+        let totalCost = 0;
+        if (details.incomeDetailVo) {
           this.setState({
-            category: details.costDetailsVo
+            category: details.incomeDetailVo
+          });
+          details.incomeDetailVo.forEach(it => {
+            totalCost += Number(it.incomeSum);
           });
         }
         if (details.receiptNameJson) {
           const receipts = JsonParse(details.receiptNameJson);
           this.setState({
             receipt: receipts[0] || {}
-          });
-        }
-        if (details.invoiceLoanRepayRecords) {
-          this.setState({
-            invoiceLoanRepayRecords: details.invoiceLoanRepayRecords
-          });
-        }
-        if (details.invoiceLoanAssessVos) {
-          this.setState({
-            invoiceLoanAssessVos: details.invoiceLoanAssessVos
-          });
-        }
-        if (details.applicationAssociageVOS) {
-          this.setState({
-            applicationAssociageVOS: details.applicationAssociageVOS
-          });
-        }
-        if (details.supplierAccountVo) {
-          this.setState({
-            supplierAccountVo: details.supplierAccountVo || {}
-          });
-        }
-        if (details.applicationAssociageVOS) {
-          details = {
-            ...details,
-            applicationIds: details.applicationAssociageVOS.map(
-              it => it.applicationId
-            )
-          };
-        }
-        if (details.trip) {
-          const {
-            alitripCostCenterJson,
-            alitripInvoiceTitleJson
-          } = details.trip;
-          console.log(
-            'InvoiceDetail -> onShow -> alitripCostCenterJson',
-            alitripCostCenterJson
-          );
-          this.setState({
-            aliTrip: {
-              ...details.trip,
-              alitripCostCenterJson: alitripCostCenterJson
-                ? JSON.parse(alitripCostCenterJson)
-                : {},
-              alitripInvoiceTitleJson: alitripInvoiceTitleJson
-                ? JSON.parse(alitripInvoiceTitleJson)
-                : {}
-            }
-          });
-        }
-        let totalCost = 0;
-        if (details.costDetailsVo) {
-          details.costDetailsVo.forEach(it => {
-            totalCost += Number(it.costSum);
           });
         }
         if (details.detailList) {
@@ -214,56 +130,14 @@ class InvoiceDetail extends Component {
               showObj[it.field] = { ...it };
             });
         }
-        let cityInfo = {};
-        const { costDetailsVo } = details;
-        if (costDetailsVo && costDetailsVo.length > 0) {
-          const cityArr = costDetailsVo
-            .map(it => it.belongCity)
-            .filter(item => item);
-          if (Array.from(new Set(cityArr)).length > 0) {
-            cityInfo = await this.cityInfo(Array.from(new Set(cityArr)));
-          }
-        }
         this.setState({
           details,
-          isModify: details.isModify,
-          productSum,
           totalCost,
           showFields: showObj,
+          // eslint-disable-next-line react/no-unused-state
           expandSubmitFieldVos,
           selfSubmitFieldVos,
-          isSign: details.isSign,
-          cityInfo
         });
-        this.props
-          .dispatch({
-            type: !Number(templateType)
-              ? 'costGlobal/recordDetailInvoice'
-              : 'costGlobal/recordDetailLoan',
-            payload: {
-              isMobile: false,
-              id
-            }
-          })
-          .then(() => {
-            console.log(this.props.recordDetailLoan);
-            const { recordDetailLoan, recordDetailInvoice } = this.props;
-            const recordList = Number(templateType)
-              ? recordDetailLoan
-              : recordDetailInvoice;
-            this.setState({
-              recordList
-            });
-            if (flag) {
-              this.setState({
-                visible: true,
-                list:
-                  details.invoiceLoanShare && details.invoiceLoanShare.list
-                    ? details.invoiceLoanShare.list
-                    : []
-              });
-            }
-          });
       });
   };
 
@@ -275,16 +149,9 @@ class InvoiceDetail extends Component {
 
   // 审批详情跳转
   onLinkDetail = () => {
-    const { templateType } = this.props;
-    const { invoiceDetail, loanDetail, applyDetail, salaryDetail } = this.props;
-    let details = invoiceDetail;
-    if (Number(templateType) === 1) {
-      details = loanDetail;
-    } else if (Number(templateType) === 2) {
-      details = applyDetail;
-    } else if (Number(templateType) === 3) {
-      details = salaryDetail;
-    }
+    const { incomeDetail  } = this.props;
+    const details = incomeDetail;
+
     if (details.proInsId) {
       this.props
         .dispatch({
@@ -294,6 +161,7 @@ class InvoiceDetail extends Component {
           }
         })
         .then(() => {
+          console.log(this.props);
           const url = this.props.approvedUrl;
           if (!url) {
             message.error('钉钉处理中，请稍后再试');
@@ -317,20 +185,8 @@ class InvoiceDetail extends Component {
 
   handelOk = () => {
     const { id, templateType } = this.props;
-    if (Number(templateType) === 1) {
-      window.location.href = `${APP_API}/cost/export/pdfDetail4Loan?token=${localStorage.getItem(
-        'token'
-      )}&id=${id}`;
-    } else if (Number(templateType) === 0) {
-      window.location.href = `${APP_API}/cost/export/pdfDetail?token=${localStorage.getItem(
-        'token'
-      )}&id=${id}`;
-    } else if (Number(templateType) === 3) {
-      window.location.href = `${APP_API}/cost/export/pdfDetail4Salary?token=${localStorage.getItem(
-        'token'
-      )}&id=${id}`;
-    } else {
-      window.location.href = `${APP_API}/cost/export/pdfDetail4Application?token=${localStorage.getItem(
+    if (Number(templateType) === 20) {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Income?token=${localStorage.getItem(
         'token'
       )}&id=${id}`;
     }
@@ -338,27 +194,9 @@ class InvoiceDetail extends Component {
 
   handelOkPrint = () => {
     const { id, templateType } = this.props;
-    if (Number(templateType) === 1) {
+    if (Number(templateType) === 20) {
       ddOpenLink(
-        `${APP_API}/cost/pdf/batch/loan?token=${localStorage.getItem(
-          'token'
-        )}&ids=${id}`
-      );
-    } else if (Number(templateType) === 0) {
-      ddOpenLink(
-        `${APP_API}/cost/pdf/batch/submit?token=${localStorage.getItem(
-          'token'
-        )}&ids=${id}`
-      );
-    } else if (Number(templateType) === 2) {
-      ddOpenLink(
-        `${APP_API}/cost/pdf/batch/application?token=${localStorage.getItem(
-          'token'
-        )}&ids=${id}`
-      );
-    } else {
-      ddOpenLink(
-        `${APP_API}/cost/pdf/batch/salary?token=${localStorage.getItem(
+        `${APP_API}/cost/pdf/batch/income?token=${localStorage.getItem(
           'token'
         )}&ids=${id}`
       );
@@ -463,42 +301,29 @@ class InvoiceDetail extends Component {
       showFields,
       details,
       totalCost,
-      expandSubmitFieldVos,
       selfSubmitFieldVos,
-      aliTrip,
-      isSign,
-      list
     } = this.state;
     const {
       children,
       templateType,
-      userInfo,
       title
     } = this.props;
 
     const getFooter = () => {
+      const { refuse } = this.props;
       let footerDom;
       switch (templateType) {
         case 4:
-          footerDom = (
-            <div className={style.footerWrap}>
-              <div />
-              <div>
-                <RefuseModal refuse={val => this.handleRefuse(val)}>
-                  <Button key="refuse">拒绝核销</Button>
-                </RefuseModal>
-              </div>
-            </div>
-          );
           break;
         default:
           footerDom = (
             <div className={style.footerWrap}>
               <div />
               <div>
+                {(refuse && Number(details.status) === 2)  &&
                 <RefuseModal refuse={val => this.handleRefuse(val)}>
                   <Button key="refuse">拒绝核销</Button>
-                </RefuseModal>
+                </RefuseModal>}
               </div>
             </div>
           );
@@ -559,13 +384,10 @@ class InvoiceDetail extends Component {
             <div className={style.line} />
             <span>
               收入明细（共{category.length}项，合计¥
-              {Number(templateType)
-                    ? totalCost / 100
-                    : details.submitSum / 100}
-              ）
+              { totalCost / 100})
             </span>
           </div>
-          <IncomeDetailTable
+          <CostDetailTable
             list={category}
             previewImage={this.previewImage}
             previewFiles={this.previewFiles}
