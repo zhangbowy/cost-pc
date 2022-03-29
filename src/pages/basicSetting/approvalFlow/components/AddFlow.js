@@ -231,9 +231,9 @@ class AddFlow extends Component {
 
   render() {
     const { children, templateType, getCondition } = this.props;
-    console.log('AddFlow -> render -> getCondition', getCondition);
+    // console.log('AddFlow -> render -> getCondition', getCondition);
     const { visible, flag, ccPosition, nodes, repeatMethods, name, autoPass } = this.state;
-    console.log('AddFlow -> render -> ccPosition', ccPosition);
+    // console.log('AddFlow -> render -> ccPosition', ccPosition);
     return (
       <span>
         <span onClick={(e) => this.onShow(e)}>{children}</span>

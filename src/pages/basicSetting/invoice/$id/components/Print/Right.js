@@ -15,7 +15,8 @@ const tempObj = {
   0: '报销',
   1: '借款',
   2: '申请',
-  3: '提交'
+  3: '提交',
+  20: '收款单'
 };
 function Right({ templateType, templatePdfVo, corpName,
   isRelationLoan, invoiceName, categoryStatus, notes, supplier, isProject, isOpenProject }) {
@@ -163,6 +164,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
         {
           (!templateType ||
             templateType === 3 ||
+            templateType === 20 ||
           (templateType === 2 && !!Number(categoryStatus))) &&
           <div className={style.contents}>
             {/* {
@@ -174,13 +176,13 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
                 {
                   (Number(templateType) === 0 ||
                   Number(templateType) === 3) &&
-                  <th>承担人/部门</th>
+                  <th>{templateType === 20 ? '业务员/部门' : '承担人/部门'}</th>
                 }
                 {
                   isOpenProject && templatePdfVo.isProject &&
                   <th>项目</th>
                 }
-                <th>支出类别</th>
+                <th>{templateType === 20 ? '收入' : '支出'}类别</th>
                 <th>备注</th>
                 <th>发生日期</th>
                 <th>金额</th>

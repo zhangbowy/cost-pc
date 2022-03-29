@@ -402,8 +402,9 @@ class Basic extends React.PureComponent {
             }
             {
               (!templateType || (templateType === 3) ||
+              templateType === 20 ||
               ((templateType === 2) && costStatus !== '0')) &&
-              <Form.Item label={labelInfo.isAllCostCategory}>
+              <Form.Item label={templateType !== 20 ? labelInfo.isAllCostCategory : '可选收入类别'}>
                 {
                   getFieldDecorator('isAllCostCategory', {
                     initialValue: cost,
@@ -530,6 +531,7 @@ class Basic extends React.PureComponent {
             }
             {
               Number(templateType) !== 2 && (Number(templateType) !== 3) &&
+              Number(templateType) !== 20 &&
               <Form.Item label="申请单">
                 {
                   getFieldDecorator('relations', {

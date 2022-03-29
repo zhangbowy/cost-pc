@@ -14,7 +14,7 @@ import aliLogo from '@/assets/img/aliTrip/aliLogo.png';
 // import AddInvoice from './components/AddInvoice';
 import AddGroup from './components/AddGroup';
 import JudgeType from './components/JudgeType';
-import Tags from '../../../components/Tags';
+// import Tags from '../../../components/Tags';
 import Sort from '../../../components/TreeSort';
 import { invoiceType } from '../../../utils/constants';
 
@@ -193,18 +193,20 @@ class Invoice extends React.PureComponent {
           <span>{record.name}</span>
           { (record.status === 0) && <Tag color="red" className="m-l-8">已停用</Tag> }
           {
-            (record.type === 0 || (record.parentId === 0)) &&
-            <Tags color={invoiceType[record.templateType].color} className="m-l-8">
-              {invoiceType[record.templateType].name}
-            </Tags>
-          }
-          {
             record.isAlitrip &&
             <img src={aliLogo} alt="阿里商旅" style={{ width: '18px', height: '18px',marginLeft: '8px' }} />
           }
         </span>
       ),
     }, {
+      title: '类型',
+      dataIndex: 'templateType',
+      render: (_, record) => (
+        <span>
+          {invoiceType[record.templateType] ? invoiceType[record.templateType].name : ''}
+        </span>
+      ),
+    },{
       title: '描述',
       dataIndex: 'note',
       width: 460,
@@ -260,13 +262,18 @@ class Invoice extends React.PureComponent {
             ),
           }, {
             node: (
-              <QrCodeModal
-                userInfo={userInfo}
-                id={record.id}
-                name={record.name}
-              >
-                <span className="pd-20-9 c-black-65">下载提报二维码</span>
-              </QrCodeModal>
+              <>
+                {
+                  record.templateType !== 20 &&
+                  <QrCodeModal
+                    userInfo={userInfo}
+                    id={record.id}
+                    name={record.name}
+                  >
+                    <span className="pd-20-9 c-black-65">下载提报二维码</span>
+                  </QrCodeModal>
+                }
+              </>
             ),
           }, {
             node: (
@@ -317,15 +324,54 @@ class Invoice extends React.PureComponent {
       },
       className: 'fixCenter'
     }];
+    const btnList = [{
+      node: (
+        <JudgeType
+          title="add"
+          data={{}}
+          type={0}
+          onOk={this.onOk}
+          visible={typeVisible}
+          changeVisible={this.changeVisible}
+          linkInvoice={this.onAddCategory}
+        >
+          <span>支出类</span>
+        </JudgeType>
+      )
+    }, {
+      node: (
+        <JudgeType
+          title="add"
+          type={20}
+          data={{}}
+          onOk={this.onOk}
+          visible={typeVisible}
+          changeVisible={this.changeVisible}
+          linkInvoice={this.onAddCategory}
+        >
+          <span>收入类</span>
+        </JudgeType>
+      )
+    }];
+    const menuList = (
+      <Menu>
+        {
+          btnList.map((item, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Menu.Item key={`q_${index}`}>{item.node}</Menu.Item>
+          ))
+        }
+      </Menu>
+    );
     return (
       <div className="mainContainer">
         <PageHead title="单据模板设置" />
         <div className="content-dt">
           <div className="cnt-header">
             <div className="head_lf">
-              <JudgeType title="add" data={{}} onOk={this.onOk} visible={typeVisible} changeVisible={this.changeVisible} linkInvoice={this.onAddCategory}>
+              <Dropdown overlay={menuList}>
                 <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
-              </JudgeType>
+              </Dropdown>
               <AddGroup title="add" onOk={this.onOk}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>

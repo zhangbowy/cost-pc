@@ -46,7 +46,7 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
           details.thirdInvoiceType===20 && (
             <Tag color="orange">
               <span>智能薪酬</span>
-            </Tag>) 
+            </Tag>)
         }
       </Col>
       {
@@ -150,7 +150,7 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>审批状态：</span>
         <span className="fs-14 c-black-65">
-          {getArrayValue(details.approveStatus, approveStatus)}   
+          {getArrayValue(details.approveStatus, approveStatus)}
           {
             details.cantCopy ||details.thirdInvoiceType ?
               <DisabledTooltip
@@ -165,18 +165,16 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
         </span>
       </Col>
       {
-        Number(templateType) === 1 ?
+        Number(templateType) === 1 &&
           <Col span={8} className="m-t-16">
             <span className={cs('fs-14', 'c-black-85', style.nameTil)}>还款状态：</span>
             <span className="fs-14 c-black-65">
               {getArrayValue(details.loanStatus, loanStatus)}
             </span>
           </Col>
-          :
-          null
       }
       {
-        Number(templateType) === 1 ?
+        Number(templateType) === 1 &&
           <Col span={8} className="m-t-16">
             <div style={{display: 'flex'}}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>预计还款日期：</span>
@@ -197,11 +195,9 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
               </span>
             </div>
           </Col>
-          :
-          null
       }
       {
-        showFields.happenTime && showFields.happenTime.status ?
+        showFields.happenTime && showFields.happenTime.status &&
           <Col span={8} className="m-t-16">
             <div style={{display: 'flex'}}>
               <span className={cs('fs-14', 'c-black-85', style.nameTil)}>发生日期：</span>
@@ -222,8 +218,6 @@ const BasicText = ({ details, selfSubmitFieldVos, templateType,
               </span>
             </div>
           </Col>
-          :
-          null
       }
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>

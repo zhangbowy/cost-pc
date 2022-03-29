@@ -1,0 +1,30 @@
+.forms{
+  width: 100%;
+  :global{
+    .ant-form-item{
+      width: 320px!important;
+    }
+    .ant-form-item .ant-col .ant-form-item-control{
+      width: 320px!important;
+    }
+  }
+  .formItems{
+    display: flex;
+    height: 32px;
+    align-items: center;
+    :global{
+      .ant-form-item-label{
+        width: 98px;
+        height: 32px;
+        display: inline-block;
+        overflow: inherit;
+        padding: 0px;
+        line-height: 32px;
+      }
+      .ant-form-item-label label{
+        width: 98px;
+        display: inline-block;
+      }
+    }
+  }
+}

@@ -58,6 +58,7 @@ export default {
     detailType: 0,
     getCondition: [], // 获取条件分支的条件
     incomeDetail: {}, // 收入单详情
+    incomeCategoryList: [], // 收入支出类别
   },
   effects: {
     *costList({ payload }, { call, put }) {
@@ -66,6 +67,16 @@ export default {
         type: 'save',
         payload: {
           costCategoryList: response || [],
+        },
+      });
+    },
+    // 收入类别
+    *incomeCategoryList({ payload }, { call, put }) {
+      const response = yield call(get, api.incomeCategoryList, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          incomeCategoryList: response || [],
         },
       });
     },
@@ -97,8 +108,14 @@ export default {
         },
       });
     },
+    // 可用的类别的列表
     *expenseList({ payload }, { call, put }) {
-      const response = yield call(get, api.expenseList, payload);
+      const param = { id: payload.id };
+      let url = api.expenseList;
+      if (payload.templateType > 10) {
+        url = api.incomeExpenseList;
+      }
+      const response = yield call(get, url, param);
       yield put({
         type: 'save',
         payload: {
@@ -148,7 +165,11 @@ export default {
       });
     },
     *djDetail({ payload }, { call, put }) {
-      const response = yield call(get, api.invoiceDet, payload);
+      let url = api.invoiceDet;
+      if (payload.templateType > 10) {
+        url = api.incomeDet;
+      }
+      const response = yield call(get, url, payload);
       let expandField = response.expandField || [];
       if (response.selfField) {
         expandField=[...expandField, ...response.selfField];
@@ -212,7 +233,14 @@ export default {
       });
     },
     *lbDetail({ payload }, { call, put }) {
-      const response = yield call(get, api.cateDet, payload);
+      let url = api.cateDet;
+      const params = {
+        id: payload.id,
+        isDisplay: payload.isDisplay};
+      if (payload.templateType > 10) {
+        url = api.incomeCateDet;
+      }
+      const response = yield call(get, url, params);
       const expandField = [...response.expandField, ...response.selfFields];
       let arts = [];
       if (expandField && expandField.length) {
@@ -243,6 +271,9 @@ export default {
     },
     *addInvoice({ payload }, { call }) {
       yield call(post, api.addInvoice, payload);
+    },
+    *addIncome({ payload }, { call }) {
+      yield call(post, api.addIncome, payload);
     },
     *addAcc({ payload }, { call }) {
       yield call(post, api.addReceipt, payload);
@@ -429,6 +460,7 @@ export default {
     // 项目列表
     *projectList({ payload }, { call, put }) {
       const response = yield call(get, api.projectList, payload);
+      console.log(response,'项目列表99999999');
       yield put({
         type: 'save',
         payload: {

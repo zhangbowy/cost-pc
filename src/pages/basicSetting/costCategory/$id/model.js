@@ -13,7 +13,16 @@ export default {
   },
   effects: {
     *allList({ payload }, { call, put }) {
-      const response = yield call(get, api.list, payload);
+      let url = api.list;
+      const param = {};
+      if (payload.costType === '1') {
+        url = api.incomeList;
+      }else {
+        Object.assign(param, {
+          attribute: payload.attribute,
+        });
+      }
+      const response = yield call(get, url, param);
       yield put({
         type: 'save',
         payload: {
@@ -22,7 +31,12 @@ export default {
       });
     },
     *fieldList({ payload }, { call, put }) {
-      const response = yield call(get, api.fieldList, payload);
+      let url = api.fieldList;
+      const param = {categoryId: payload.categoryId};
+      if (payload.costType === '1') {
+        url = api.incomeFieldList;
+      }
+      const response = yield call(get, url, param);
       yield put({
         type: 'save',
         payload: {
@@ -40,7 +54,13 @@ export default {
       });
     },
     *add({ payload }, { call }) {
-      const res = yield call(post, api.addCost, payload);
+      let url = api.addCost;
+      const param = {...payload};
+      if (payload.costType === '1') {
+        url = api.addIncome;
+      }
+      delete param.costType;
+      const res = yield call(post, url, payload);
       console.log(res);
     },
     *del({ payload }, { call }) {
@@ -56,7 +76,13 @@ export default {
       });
     },
     *edit({ payload }, { call }) {
-      yield call(post, api.edit, payload);
+      let url = api.edit;
+      const param = {...payload};
+      if (payload.costType === '1') {
+        url = api.editIncome;
+      }
+      delete param.costType;
+      yield call(post, url, payload);
     },
     *delPer({ payload }, { call }) {
       yield call(post, api.delPer, payload);
@@ -65,7 +91,13 @@ export default {
       yield call(post, api.check, payload);
     },
     *detail({ payload }, { call, put }) {
-      const response = yield call(get, api.detailCost, payload);
+      let url = api.detailCost;
+      const param = {...payload};
+      if (payload.costType === '1') {
+        url = api.detailIncome;
+      }
+      delete param.costType;
+      const response = yield call(get, url, param);
       yield put({
         type: 'save',
         payload: {

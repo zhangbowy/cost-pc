@@ -33,7 +33,17 @@ export default {
       });
     },
     *fieldList({ payload }, { call, put }) {
-      const response = yield call(get, api.fieldList, payload);
+      let url = api.fieldList;
+      const params = { templateType: payload.templateType };
+      if (payload.templateType > 10) {
+        url = api.incomeFieldList;
+      }
+      if (payload.invoiceTemplateId) {
+        Object.assign(params, {
+          invoiceTemplateId: payload.invoiceTemplateId
+        });
+      }
+      const response = yield call(get, url, params);
       yield put({
         type: 'save',
         payload: {
@@ -51,7 +61,11 @@ export default {
       });
     },
     *add({ payload }, { call }) {
-      const res = yield call(post, api.addCost, payload);
+      let url = api.addCost;
+      if (payload.templateType > 10) {
+        url = api.addIncome;
+      }
+      const res = yield call(post, url, payload);
       console.log(res);
     },
     *del({ payload }, { call }) {
@@ -67,7 +81,11 @@ export default {
       });
     },
     *edit({ payload }, { call }) {
-      yield call(post, api.edit, payload);
+      let url = api.edit;
+      if (payload.templateType > 10) {
+        url = api.editIncome;
+      }
+      yield call(post, url, payload);
     },
     *delPer({ payload }, { call }) {
       yield call(post, api.delPer, payload);
@@ -76,7 +94,11 @@ export default {
       yield call(post, api.check, payload);
     },
     *detail({ payload }, { call, put }) {
-      const response = yield call(get, api.detailCost, payload);
+      let url = api.detailCost;
+      if (payload.templateType > 10) {
+        url = api.detailIncome;
+      }
+      const response = yield call(get, url, payload);
       yield put({
         type: 'save',
         payload: {
