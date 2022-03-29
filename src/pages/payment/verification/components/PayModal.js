@@ -50,11 +50,20 @@ class PayModal extends React.PureComponent {
 
   onShow = () => {
     const { userInfo, selectKey } = this.props;
-
     this.setState({
       selectedRowKeys:selectKey.map(({id}) => id),
       selectedRows:selectKey
+    }, () => {
     });
+    const fileds = {};
+    selectKey.forEach(it => {
+      fileds[`${it.invoiceId}_amount`] =  (it.receiptSum - it.assessSum) / 100;
+    });
+    setTimeout(() => {
+      this.props.form.setFieldsValue({
+        ...fileds
+      });
+    }, 300);
     this.props
       .dispatch({
         type: 'costGlobal/paymentMethod',
@@ -91,7 +100,7 @@ class PayModal extends React.PureComponent {
               }
               cout = selectKey.length;
               selectKey.forEach(item => {
-                if (item.submitSum) amount += item.submitSum;
+                if (item.receiptSum) amount += (item.receiptSum - item.assessSum) / 100;
                 if (item.accountType !== 1) {
                   flags = true;
                 }
@@ -114,11 +123,9 @@ class PayModal extends React.PureComponent {
                 status: !flags && paymentMethod ? '2' : '1'
               },
               () => {
-                if (acc) {
-                  this.props.form.setFieldsValue({
-                    account: acc
-                  });
-                }
+                this.props.form.setFieldsValue({
+                  account: acc,
+                });
               }
             );
           });
@@ -408,7 +415,7 @@ class PayModal extends React.PureComponent {
           className={styles.verifyPopWrap}
         >
           {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起收款</h1> */}
-          <Form className="formItem">
+          <Form className="formItem"  >
             {status === '1' && (
               <Form.Item
                 label="收款账户"

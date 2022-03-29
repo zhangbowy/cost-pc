@@ -14,7 +14,6 @@ const thirdInvoiceTig = {
   20: '智能薪酬自动导入单据',
   30: '历史导入单据'
 };
-
 const BasicText = ({
   details,
   onLinkDetail,
@@ -106,12 +105,16 @@ const BasicText = ({
           )}
         </span>
       </Col>
-      <Col span={8} className="m-t-16">
-        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
-          拒绝理由：
-        </span>
-        <span className="fs-14 c-black-65" style={{color: '#FF5A5F'}}>{details.createName}</span>
-      </Col>
+      {
+        details.status === 5 ? (
+          <Col span={8} className="m-t-16">
+            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+              拒绝理由：
+            </span>
+            <span className="fs-14 c-black-65" style={{color: '#FF5A5F'}}>{details.reasonForRejection || '-'}</span>
+          </Col>
+        ): ''
+       }
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           提交人：

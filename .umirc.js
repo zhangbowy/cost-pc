@@ -52,6 +52,7 @@ export default {
           /components\//,
         ],
       },
+      chunks: isInProd ? ['chunk-lib', 'echarts','React','antd', 'chunk-commons', 'umi']: ['umi'],
     }],
   ],
   theme: {

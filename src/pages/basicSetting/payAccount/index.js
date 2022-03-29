@@ -154,11 +154,21 @@ class Account extends Component {
               <span className={style.num}>{amountMap.amountSumStr}</span>
             </div>
             <div className="income">
-              <span className={style.text}>流入金额（元）</span>
+              <span className={style.text}>
+                流入金额（元）
+                <Tooltip title="财务确认收款的金额">
+                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                </Tooltip>
+              </span>
               <span className={style.num}>{amountMap.incomeSumStr}</span>
             </div>
             <div className="pay">
-              <span className={style.text}>流出金额（元）</span>
+              <span className={style.text}>
+                流出金额（元）
+                <Tooltip title="财务确认支出的金额（收款金额，不包含三方单据+薪资单）">
+                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                </Tooltip>
+              </span>
               <span className={style.num}>{amountMap.costSumStr}</span>
             </div>
           </div>

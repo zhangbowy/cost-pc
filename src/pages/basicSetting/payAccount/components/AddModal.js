@@ -10,7 +10,7 @@ import {
   Switch,
   Checkbox,
   Cascader,
-  DatePicker
+  DatePicker, Tooltip
 } from 'antd';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
@@ -287,7 +287,12 @@ class AddAccount extends React.PureComponent {
                 ]
               })(<Input placeholder="请输入" />)}
             </Form.Item>
-            <Form.Item label={labelInfo.initialAmount}>
+            <Form.Item label={
+              <Tooltip title="初始金额会计入系统初始余额，不允许修改">
+                {labelInfo.initialAmount}
+              </Tooltip>
+              }
+            >
               {getFieldDecorator('initialAmount', {
                 rules: [{ required: !record, message: '请输入初始金额' }],
                 initialValue: (data && data.initialAmount) || 0

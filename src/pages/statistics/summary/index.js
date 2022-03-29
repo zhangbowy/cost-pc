@@ -7,7 +7,7 @@ import treeConvert from '@/utils/treeConvert';
 import SummaryCmp from './components/SummaryCmp';
 import style from './index.scss';
 import TableTemplate from '../../../components/Modals/TableTemplate';
-import { borrowStatus, invoiceStatus } from '../../../utils/constants';
+import { borrowStatus, invoiceStatus, incomeInvoiceStatus } from '../../../utils/constants';
 import SearchBanner from '../overview/components/Search/Searchs';
 
 const listSearch = [
@@ -41,7 +41,7 @@ const listSearch = [
     placeholder: '请选择',
     key: 'statuses',
     id: 'statuses',
-    options: invoiceStatus.filter(it => it.key !== '6'),
+    options: incomeInvoiceStatus.filter(it => it.key !== '6'),
     fileName: {
       key: 'key',
       name: 'value'
