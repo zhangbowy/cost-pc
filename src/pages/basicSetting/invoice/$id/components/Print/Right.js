@@ -44,7 +44,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                 <div className={style['cont-cell-label']}>
-                  { tempObj[templateType] }
+                  { templateType !== 20 ? tempObj[templateType] : '' }
                   单号
                 </div>
               </div>

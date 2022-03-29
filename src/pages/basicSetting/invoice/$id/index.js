@@ -678,6 +678,7 @@ class CategoryAdd extends PureComponent {
                     middleRef={ref => {this.childRef = ref;}}
                     templateType={Number(templateType)}
                     spacialCenter={Number(templateType) >10 ? spacialString : defaultString}
+                    incomeNoModify={Number(templateType) >10}
                   />
                 </div>
               }

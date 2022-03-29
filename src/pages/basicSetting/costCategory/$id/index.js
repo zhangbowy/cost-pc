@@ -363,7 +363,7 @@ class CategoryAdd extends PureComponent {
       },
       {
         path: 'second',
-        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}支出类别`,
+        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}${costType === '1' ? '收入' : '支出'}类别`,
       },
     ];
 
@@ -453,6 +453,7 @@ class CategoryAdd extends PureComponent {
                   middleRef={ref => {this.childRef = ref;}}
                   selectId={costType === '0' ? 'costCategory' : 'incomeCategory'}
                   type="cost"
+                  incomeNoModify={costType === '1'}
                 />
               </div>
             }

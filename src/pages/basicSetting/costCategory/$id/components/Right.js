@@ -149,13 +149,13 @@ class Right extends PureComponent {
 
   onChangeMore = (e) => {
     const { details } = this.state;
-    const { selectList, changeDragId } = this.props;
+    const { selectList, changeDragId, incomeNoModify } = this.props;
     if (e.target.checked) {
       Modal.confirm({
         title: `确认要添加${details.name}到公用库吗`,
         content: (
           <p className="fs-14 c-black-65">
-            请确保添加到公用库的字段为通用字段，添加进公库后不可删除。保存后生效。
+            请确保添加到公用库的字段为通用字段，添加进{incomeNoModify ? '收入' : ''}公库后不可删除。保存后生效。
           </p>
         ),
         onOk: () => {
@@ -297,7 +297,7 @@ class Right extends PureComponent {
 
   render() {
     const { details, list } = this.state;
-    const { type, templateType, isModifyInvoice, operateType } = this.props;
+    const { type, templateType, isModifyInvoice, operateType, incomeNoModify } = this.props;
     console.log('Right -> render -> isModifyInvoice', details);
 
     const {
@@ -523,6 +523,7 @@ class Right extends PureComponent {
                isModifyInvoice &&
                Number(details.fieldType) !== 10 &&
               Number(details.fieldType) !== 9 &&
+              !incomeNoModify &&
                 <Form.Item
                   label={(
                     <>
