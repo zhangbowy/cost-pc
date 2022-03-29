@@ -37,13 +37,13 @@ class Sort extends Component {
 
   // 初始化
   showModal = () => {
-    const { list } = this.props;
+    const { list, otherKeys } = this.props;
     const lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
       tName: 'name',
       name: 'name',
-      otherKeys: ['sort']
+      otherKeys: otherKeys || ['sort']
     }, list);
     this.sortData(lists);
     this.resetSort(lists);
