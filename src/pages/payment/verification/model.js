@@ -24,7 +24,14 @@ export default {
     *list({ payload }, { call, put }) {
       const response = yield call(post, api.list, payload);
       // eslint-disable-next-line no-return-assign
-      const lists = response.list && response.list.map(it => { return {...it, id: it.invoiceId}; });
+      const lists = response.list && response.list.map(it => {
+        const userInfo = JSON.parse(it.userJson);
+        return {
+          ...it,
+          id: it.invoiceId,
+          userName: userInfo[0].userName
+        };
+      });
       yield put({
         type: 'save',
         payload: {

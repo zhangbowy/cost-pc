@@ -23,6 +23,7 @@ import {
 import VerificationBasicText from './verification/BasicText';
 // import { DownloadFile } from '../../../utils/ddApi';
 import CostDetailTable from './CostDetailTable';
+import RecordTable from './record';
 
 const { APP_API } = constants;
 @withRouter
@@ -77,6 +78,7 @@ class InvoiceDetail extends Component {
         const details = incomeDetail;
         let productSum = 0;
         let totalCost = 0;
+        const recordCount = details.incomeAssessVos.length;
         if (details.incomeDetailVo) {
           this.setState({
             category: details.incomeDetailVo
@@ -138,6 +140,7 @@ class InvoiceDetail extends Component {
           // eslint-disable-next-line react/no-unused-state
           expandSubmitFieldVos,
           selfSubmitFieldVos,
+          recordCount
         });
       });
   };
@@ -303,6 +306,7 @@ class InvoiceDetail extends Component {
       details,
       totalCost,
       selfSubmitFieldVos,
+      recordCount
     } = this.state;
     const {
       children,
@@ -379,6 +383,7 @@ class InvoiceDetail extends Component {
             showFields={showFields}
             receipt={receipt}
             previewImage={this.previewImage}
+            previewFiles={this.previewFiles}
           />
           {/* 收入明细 */}
           <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
@@ -393,6 +398,15 @@ class InvoiceDetail extends Component {
             previewImage={this.previewImage}
             previewFiles={this.previewFiles}
           />
+          {/* 收款记录 */}
+          <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+            <div className={style.line} />
+            <span>
+              收款记录（共{recordCount}项，合计¥
+              { details.assessSum / 100})
+            </span>
+          </div>
+          <RecordTable list={details.incomeAssessVos} />
         </Modal>
       </span>
     );
