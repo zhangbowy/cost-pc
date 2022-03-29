@@ -21,6 +21,14 @@ const conditionType = {
     type: 'selectTree',
     ruleType: 'category',
   },
+  'income_category': {
+    type: 'selectTree',
+    ruleType: 'income_category',
+  },
+  'receipt_amount': {
+    type: 'selectTree',
+    ruleType: 'receipt_amount',
+  },
   'invoice_submit_sum': {
     type: 'inputNumber',
     ruleType: 'submit_sum',

@@ -11,7 +11,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
 import { Popconfirm } from 'antd';
 import style from './index.scss';
-import { defaultString, dragDisabled, applyDefault } from '../../../../../utils/constants';
+import { dragDisabled, applyDefault } from '../../../../../utils/constants';
 import CountCmp from './CountCmp';
 import CountChild from './CountCmp/CountChild';
 
@@ -21,13 +21,13 @@ const Card = ({ name, isWrite, index,
   moveCard, field, findCard, dragId, id,
   fieldType, changeDragId, onDelete, disabled, data,
   expandFieldVos, cardList, changeCardList, parentId,
-  dragType, className}) => {
+  dragType, className, defaultList}) => {
     const ref = useRef(null);
   const [{ isDragging }, drag, preview] = useDrag({
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
     }),
-    canDrag: () => !defaultString.includes(field) && !dragDisabled.includes(field) && (Number(fieldType) !== 10),
+    canDrag: () => !defaultList.includes(field) && !dragDisabled.includes(field) && (Number(fieldType) !== 10),
     // item 中包含 index 属性，则在 drop 组件 hover 和 drop 是可以根据第一个参数获取到 index 值
     item: { ...data, type: dragType || 'parent', index, field,  },
     end: (dropResult, monitor) => {
@@ -46,7 +46,7 @@ const Card = ({ name, isWrite, index,
 
   const [, drop] = useDrop({
     accept: dragType === 'child' ? ['child', 'box'] : ['box', 'parent'],
-    canDrop: () => !defaultString.includes(field),
+    canDrop: () => !defaultList.includes(field),
     hover(item, monitor) {
       if (Number(item.fieldType) === 3) {
         return;
@@ -89,11 +89,11 @@ const Card = ({ name, isWrite, index,
         return;
       }
       if (dragType !== 'child') {
-        if (item.field !== field && !defaultString.includes(field)) {
+        if (item.field !== field && !defaultList.includes(field)) {
           const hoverIndexs = findCard(item.field);
           moveCard(hoverIndexs, index, { item, field });
         }
-      } else if (item.field !== field && !defaultString.includes(field)) {
+      } else if (item.field !== field && !defaultList.includes(field)) {
         if (!parentId || item.field.indexOf('expand_') > -1) {
           const hoverIndexs = findCard(item.field);
           moveCard(hoverIndexs, index, { item, field });
@@ -148,7 +148,7 @@ const Card = ({ name, isWrite, index,
           }
           style={{
             opacity,
-            cursor: defaultString.includes(field) ? 'default' : 'move',
+            cursor: defaultList.includes(field) ? 'default' : 'move',
             margin: dragType === 'child' ? '0 0 0 12px' : '0 24px'
           }}
           onClick={(e) => {
@@ -258,7 +258,7 @@ const Card = ({ name, isWrite, index,
               !dragDisabled.includes(field) &&
                 <p
                   className={
-                    defaultString.includes(field) ?
+                    defaultList.includes(field) ?
                     cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
                   }
                   style={{ display: dragId === field ? 'block' : '' }}
@@ -281,7 +281,7 @@ const Card = ({ name, isWrite, index,
                 >
                   <p
                     className={
-                      defaultString.includes(field) ?
+                      defaultList.includes(field) ?
                       cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
                     }
                     style={{ display: dragId === field ? 'block' : '' }}
@@ -291,7 +291,7 @@ const Card = ({ name, isWrite, index,
                 </Popconfirm>
             }
             <p
-              className={defaultString.includes(field) ||
+              className={defaultList.includes(field) ||
               types === 3 || field === 'detail_money' || (types === 10) ?
               cs(style.delete,style.opacity, style.drag) :
               cs(style.delete, style.drag)}

@@ -69,6 +69,42 @@
     margin-bottom: 0px;
   }
 }
+.incomeJudgeType{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  div{
+    height: 227px;
+    width: 208px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  p{
+    margin-bottom: 0px;
+  }
+}
+.incomeType{
+  background: url('../../../../assets/img/skd.png') no-repeat center / 100%;
+  box-shadow: 0 0 0 2px transparent inset;
+  transition:all .4s ease;
+  cursor: pointer;
+  margin-left: 12px;
+  &:hover{
+    background-size: 120%;
+    transform: translateY(-6px);
+  }
+}
+.futureType{
+  background: url('../../../../assets/img/srht.png') no-repeat center / 100%;
+  box-shadow: 0 0 0 2px transparent inset;
+  transition:all .4s ease;
+  cursor: pointer;
+  margin-left: 12px;
+  &:hover{
+    background-size: 120%;
+    transform: translateY(-6px);
+  }
+}
 .borrowType{
   background: url('../../../../assets/img/invoice.png') no-repeat center / 100%;
   box-shadow: 0 0 0 2px transparent inset;

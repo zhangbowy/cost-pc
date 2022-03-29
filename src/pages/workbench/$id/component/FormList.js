@@ -15,6 +15,7 @@ import defaultFunc from './utils';
 import style from './index.scss';
 import UploadImg from '../../../../components/UploadImg';
 import UploadFile from '../../../../components/UploadFile';
+import Capitalization from '@/components/Modals/Capitalization';
 
 const {Option} = Select;
 const { RangePicker, MonthPicker } = DatePicker;
@@ -201,6 +202,8 @@ class ChangeForm extends Component {
   inputMoney = (value) => {
     const { djDetail, onChangeData } = this.props;
     const { costDetailsVo } = this.props;
+    // eslint-disable-next-line react/no-unused-state
+    this.setState({ money: value });
     if (!djDetail.categoryStatus || (costDetailsVo.length === 0)) {
       let flag = true;
       if(!/((^[1-9]\d*)|^0)(\.\d{1,2}){0,1}$/.test(value)) {
@@ -766,10 +769,13 @@ renderTreeNodes = data =>
                               disabled={modify && !showField.loanSum.isModify}
                               onChange={val => this.inputMoney(val)}
                               placeholder={showField.loanSum && showField.loanSum.note ?
-                                showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
+                              showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
                               style={{width: '100%'}}
                             />
-                          )
+                          )   
+                        }
+                        {
+                          <Capitalization isMoney={this.state.money || ''}/>
                         }
                         {
                           itw.itemExplain && !!(itw.itemExplain.length) &&

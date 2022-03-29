@@ -8,10 +8,11 @@ import DropBtn from '@/components/DropBtn';
 import constants from '@/utils/constants';
 import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
-import PayModal from './PayModal';
+// import PayModal from './PayModal';
 import { ddOpenLink } from '../../../utils/ddApi';
-import SearchBanner from '../../statistics/overview/components/Search/Searchs';
+// import SearchBanner from '../../statistics/overview/components/Search/Searchs';
 import fields from '../../../utils/fields';
+import DraftList from './DraftList';
 
 const { APP_API } = constants;
 const { signName } = fields;
@@ -308,7 +309,7 @@ class PayTemp extends React.PureComponent {
       status,
       selectedRowKeys,
       sumAmount,
-      selectedRows,
+      // selectedRows,
       accountTypes,
       show,
     } = this.state;
@@ -319,11 +320,11 @@ class PayTemp extends React.PureComponent {
       loading,
       columns,
       templateType,
-      confirm,
+      // confirm,
       recordList,
       recordPage,
       onRecord,
-      searchList,
+      // searchList,
       isModifyInvoice
     } = this.props;
 
@@ -406,9 +407,12 @@ class PayTemp extends React.PureComponent {
                 {
                   (Number(status) === 2 || Number(status) === 1) &&
                   <>
-                    <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
+                    {/* <PayModal selectKey={selectedRows} onOk={(val) => this.onOk(val)} templateType={templateType} confirms={() => confirm()}>
                       <Button type="primary" style={{marginRight: '8px'}}>发起收款</Button>
-                    </PayModal>
+                    </PayModal> */}
+                    <DraftList>
+                      <Button>发起报销</Button>
+                    </DraftList>
                     <Button className="m-r-8" onClick={() => this.onMove()}>{Number(status) === 2 ? `移至已${signName[templateType]}` : '移回待发放'}</Button>
                   </>
                 }

@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, TreeSelect, Button, Select } from 'antd';
+import { Form, TreeSelect, Button, Select, Row, Col, Switch } from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
-import { formItemLayout, defaultTitle } from '@/utils/constants';
+import { defaultTitle } from '@/utils/constants';
 import Lines from '@/components/StyleCom/Lines';
+import ModalTemp from '../../../../../components/ModalTemp';
+import style from './index.scss';
 
 const { SHOW_PARENT } = TreeSelect;
 @Form.create()
 @connect(({ global, loading, approveRole, costGlobal, session }) => ({
   costCategoryList: global.costCategoryList,
+  incomeCategoryList: global.incomeCategoryList,
   loading: loading.effects['approveRole/add'] ||
            loading.effects['approveRole/edit'] || false,
   details: approveRole.details,
@@ -30,19 +33,50 @@ class AddRole extends Component {
     bearUser: [],
     makeDept: [],
     bearDept: [],
-    officeIds: []
+    officeIds: [],
+    openCost: null,
+    openIncome: null,
+    income: {
+      makeUser: [],
+      incomeUser: [],
+      makeDept: [],
+      incomeDept: [],
+      officeIds: [],
+      incomeCategory: [],
+    }
+  }
+
+  fetchList = (callback) => {
+    const { dispatch } = this.props;
+    const fetchList = [{
+      url: 'global/incomeCategoryList',
+      params: {}
+    }, {
+      url: 'global/costList',
+      params: {}
+    }, {
+      type: 'costGlobal/officeTree',
+      payload: {},
+    }];
+    const fetchs = fetchList.map(it => it.url);
+    const arr = fetchs.map((it, index) => {
+      return dispatch({
+        type: it,
+        payload: {
+          ...fetchList[index].params
+        },
+      });
+    });
+    Promise.all(arr).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
   }
 
   onShow = () => {
     const { title, detail } = this.props;
-    this.props.dispatch({
-      type: 'costGlobal/officeTree',
-      payload: {},
-    });
-    this.props.dispatch({
-      type: 'global/costList',
-      payload: {},
-    }).then(() => {
+    this.fetchList(() => {
       if (title === 'edit') {
         this.props.dispatch({
           type: 'approveRole/detail',
@@ -161,11 +195,18 @@ class AddRole extends Component {
     });
   }
 
+  onChangeS = (e, key) => {
+    this.setState({
+      [key]: e.target.checked,
+    });
+  }
+
   render() {
     const {
       children,
       form: { getFieldDecorator },
       costCategoryList,
+      incomeCategoryList,
       loading,
       title,
       officeTree
@@ -178,6 +219,14 @@ class AddRole extends Component {
       tId: 'value',
       otherKeys: ['type']
     }, costCategoryList);
+    const incomeList = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tName: 'title',
+      tId: 'value',
+      otherKeys: ['type']
+    }, incomeCategoryList);
     const {
       visible,
       category,
@@ -186,15 +235,19 @@ class AddRole extends Component {
       bearUser,
       makeDept,
       bearDept,
-      officeIds
+      officeIds,
+      openCost,
+      openIncome,
+      income,
     } = this.state;
     return (
       <span>
         <span onClick={this.onShow}>{children}</span>
-        <Modal
+        <ModalTemp
           visible={visible}
           title={`${defaultTitle[title]}人员`}
           onCancel={this.onCancel}
+          size="default"
           bodyStyle={{
             overflowY: 'scroll'
           }}
@@ -203,8 +256,8 @@ class AddRole extends Component {
             <Button key="save" onClick={this.handleOk} type="primary" disabled={loading}>保存</Button>
           ]}
         >
-          <Form>
-            <Form.Item label="人员" {...formItemLayout}>
+          <Form layout="vertical" className={style.forms}>
+            <Form.Item label="人员">
               <UserSelector
                 users={userVo || []}
                 placeholder='请选择'
@@ -213,75 +266,180 @@ class AddRole extends Component {
                 disabled={false}
                 flag="users"
                 multiple={false}
+                style={{width: '320px'}}
               />
             </Form.Item>
             <div className="m-b-16">
               <Lines name='管理范围' fontSize="fs-14" />
             </div>
-            <Form.Item label="承担人/部门" {...formItemLayout}>
-              <UserSelector
-                users={bearUser || []}
-                depts={bearDept || []}
-                placeholder='请选择'
-                onSelectPeople={(val) => this.selectPle(val, 'bear')}
-                invalid={false}
-                disabled={false}
-                flag="useApep"
-                multiple
-              />
-            </Form.Item>
-            <Form.Item label="提交人/部门" {...formItemLayout}>
-              <UserSelector
-                users={makeUser || []}
-                depts={makeDept || []}
-                placeholder='请选择'
-                onSelectPeople={(val) => this.selectPle(val, 'make')}
-                invalid={false}
-                disabled={false}
-                flag="useApep"
-                multiple
-              />
-            </Form.Item>
-            <Form.Item label="支出类别" {...formItemLayout}>
+            <Form.Item label="支出权限管理：" className={style.formItems}>
               {
-                getFieldDecorator('categoryVos', {
-                  initialValue: category,
+                getFieldDecorator('openCost', {
+                  valuePropName: 'checked'
                 })(
-                  <TreeSelect
-                    onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
-                    treeData={list}
-                    labelInValue
-                    treeCheckable
-                    placeholder="请选择"
-                    style={{width: '100%'}}
-                    showCheckedStrategy={SHOW_PARENT}
-                    dropdownStyle={{height: '300px'}}
-                  />
+                  <Switch onChange={e => this.onChangeS(e, 'openCost')} />
                 )
               }
             </Form.Item>
-            {
-              officeTree && officeTree.length > 0 &&
-              <Form.Item label="所在公司" {...formItemLayout}>
+            <Row>
+              <Col span="12">
+                <Form.Item label="承担人/部门">
+                  <UserSelector
+                    users={bearUser || []}
+                    depts={bearDept || []}
+                    placeholder='请选择'
+                    onSelectPeople={(val) => this.selectPle(val, 'bear')}
+                    invalid={false}
+                    flag="useApep"
+                    multiple
+                    style={{width: '320px'}}
+                    disabled={!openCost}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span="12">
+                <Form.Item label="提交人/部门">
+                  <UserSelector
+                    users={makeUser || []}
+                    depts={makeDept || []}
+                    placeholder='请选择'
+                    onSelectPeople={(val) => this.selectPle(val, 'make')}
+                    invalid={false}
+                    disabled={!openCost}
+                    flag="useApep"
+                    multiple
+                    style={{width: '320px'}}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span="12">
+                <Form.Item label="支出类别">
+                  {
+                    getFieldDecorator('categoryVos', {
+                      initialValue: category,
+                    })(
+                      <TreeSelect
+                        onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
+                        treeData={list}
+                        labelInValue
+                        treeCheckable
+                        disabled={!openCost}
+                        placeholder="请选择"
+                        showCheckedStrategy={SHOW_PARENT}
+                        dropdownStyle={{height: '300px'}}
+                      />
+                    )
+                  }
+                </Form.Item>
+              </Col>
+              <Col span="12">
                 {
-                  getFieldDecorator('officeIds', {
-                    initialValue: officeIds,
-                  })(
-                    <Select mode="multiple" placeholder="请选择">
-                      {
-                        officeTree.map(it => (
-                          <Select.Option key={it.id}>
-                            {it.officeName}
-                          </Select.Option>
-                        ))
-                      }
-                    </Select>
-                  )
+                  officeTree && officeTree.length > 0 &&
+                  <Form.Item label="所在公司">
+                    {
+                      getFieldDecorator('officeIds', {
+                        initialValue: officeIds,
+                      })(
+                        <Select mode="multiple" placeholder="请选择" disabled={!openCost}>
+                          {
+                            officeTree.map(it => (
+                              <Select.Option key={it.id}>
+                                {it.officeName}
+                              </Select.Option>
+                            ))
+                          }
+                        </Select>
+                      )
+                    }
+                  </Form.Item>
                 }
-              </Form.Item>
-            }
+              </Col>
+            </Row>
+            <Form.Item label="收入权限管理：" className={style.formItems}>
+              {
+                getFieldDecorator('openIncome', {
+                  valuePropName: 'checked'
+                })(
+                  <Switch onChange={e => this.onChangeS(e, 'openIncome')} />
+                )
+              }
+            </Form.Item>
+            <Row>
+              <Col span="12">
+                <Form.Item label="业务员/部门">
+                  <UserSelector
+                    users={income.incomeUser || []}
+                    depts={income.incomeDept || []}
+                    placeholder='请选择'
+                    onSelectPeople={(val) => this.selectPle(val, 'income', 'income')}
+                    invalid={false}
+                    disabled={!openIncome}
+                    flag="useApep"
+                    multiple
+                    style={{width: '320px'}}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span="12">
+                <Form.Item label="提交人/部门">
+                  <UserSelector
+                    users={income.makeUser || []}
+                    depts={income.makeDept || []}
+                    placeholder='请选择'
+                    onSelectPeople={(val) => this.selectPle(val, 'make', 'income')}
+                    invalid={false}
+                    disabled={!openIncome}
+                    flag="useApep"
+                    multiple
+                    style={{width: '320px'}}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span="12">
+                <Form.Item label="收入类别">
+                  {
+                    getFieldDecorator('income.incomeCategory', {
+                      initialValue: income.incomeCategory,
+                    })(
+                      <TreeSelect
+                        onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
+                        treeData={incomeList}
+                        labelInValue
+                        disabled={!openIncome}
+                        treeCheckable
+                        placeholder="请选择"
+                        showCheckedStrategy={SHOW_PARENT}
+                        dropdownStyle={{height: '300px'}}
+                      />
+                    )
+                  }
+                </Form.Item>
+              </Col>
+              <Col span="12">
+                {
+                  officeTree && officeTree.length > 0 &&
+                  <Form.Item label="所在公司">
+                    {
+                      getFieldDecorator('income.officeIds', {
+                        initialValue: income.officeIds,
+                      })(
+                        <Select mode="multiple" placeholder="请选择" disabled={!openIncome}>
+                          {
+                            officeTree.map(it => (
+                              <Select.Option key={it.id}>
+                                {it.officeName}
+                              </Select.Option>
+                            ))
+                          }
+                        </Select>
+                      )
+                    }
+                  </Form.Item>
+                }
+              </Col>
+            </Row>
           </Form>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

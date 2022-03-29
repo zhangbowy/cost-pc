@@ -7,12 +7,7 @@ import { NodeUtils } from '../FlowCard/util';
 import ApproveSend from './ApprovePay';
 import ModalTemp from '../../../../../../components/ModalTemp';
 
-const title = {
-  condition: '条件设置',
-  approver: '设置审批节点',
-  notifier: '设置抄送节点',
-  grant: '设置发放节点'
-};
+
 @Form.create()
 class PropPanel extends Component {
   constructor(props) {
@@ -106,6 +101,7 @@ class PropPanel extends Component {
       priority: cond.priority,
       bizData: cond.bizData,
     };
+    console.log(val,'条件节点');
     this.props.onConfirm(val, nodeContent || '请输入条件');
     this.setState({
       visible: false,
@@ -150,6 +146,12 @@ class PropPanel extends Component {
 render() {
     const { value, conditions, approveNode, templateType, getCondition } = this.props;
     const { visible, priorityLength } = this.state;
+    const title = {
+      condition: '条件设置',
+      approver: '设置审批节点',
+      notifier: '设置抄送节点',
+      grant: `设置${Number(templateType) === 20 ? '收款' : '发放'}节点`
+    };
     return (
       <ModalTemp
         visible={visible}
@@ -170,7 +172,7 @@ render() {
             details={value || {}}
             // wrapperComponentRef={form => {this.approver=form;}}
             viewShowModal={fn=> { this.approver = fn; }}
-            templateType={templateType}
+            templateType={Number(templateType)}
           />
         }
         {
@@ -181,7 +183,7 @@ render() {
             details={value || {}}
             conditions={conditions}
             viewShowModal={fn=> { this.condition = fn; }}
-            templateType={templateType}
+            templateType={Number(templateType)}
             getCondition={getCondition}
           />
         }
@@ -191,6 +193,7 @@ render() {
             nodeDetail={value || {}}
             nodeType={value.nodeType || ''}
             approveNode={approveNode || {}}
+            templateType={Number(templateType)}
             onChangeData={fn => {this.grand = fn;}}
           />
         }

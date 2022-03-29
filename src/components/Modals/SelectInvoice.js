@@ -160,6 +160,7 @@ class SelectInvoice extends Component {
     }
     localStorage.removeItem('contentJson');
     this.props.history.push(`/workbench/add~${activeObj.templateType}~${activeObj.id}`);
+    // this.props.history.push('/incomeReport/add~20~713812629653217280');
   }
 
   modalOk = (item) => {
@@ -168,16 +169,6 @@ class SelectInvoice extends Component {
     }, () => {
       this.handleOk();
     });
-    // this.setState({
-    //   invoiceVisible: true,
-    //   invoiceId: item.id,
-    //   templateType: item.templateType,
-    //   visible: false,
-    // }, () => {
-    //   if (this.props.onCancel) {
-    //     this.props.onCancel();
-    //   }
-    // });
   }
 
   scrollToAnchor = (anchorName) => {

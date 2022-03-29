@@ -20,6 +20,7 @@ import defaultFunc from './utils';
 import { fileUpload } from '../../../utils/ddApi';
 import UploadFile from '../../UploadFile';
 // import TreeCatogory from './TreeCatogory';
+import Capitalization from '../Capitalization';
 
 const { addCostValue } = defaultFunc;
 const uniqueId = guid();
@@ -33,6 +34,7 @@ const labelInfo = {
   costName: '支出类别',
   costSum: '金额(元)',
   costNote: '备注',
+  incomeNote: '收入备注',
   imgUrl: '图片',
   happenTime: '发生日期',
   flightLevel: '航班仓型',
@@ -143,7 +145,7 @@ class AddCost extends Component {
   }
 
   onShow = async() => {
-    const { costType, isDelete4Category, officeId, isShowToast } = this.props;
+    const { costType, isDelete4Category, officeId, isShowToast, templateType } = this.props;
     console.log('AddCost -> onShow -> officeId', officeId);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
@@ -300,7 +302,8 @@ class AddCost extends Component {
       await this.props.dispatch({
         type: 'global/expenseList',
         payload: {
-          id: this.props.invoiceId
+          id: this.props.invoiceId,
+          templateType,
         }
       }).then(async() => {
         const { index, detail, expandField } = this.props;
@@ -687,6 +690,7 @@ class AddCost extends Component {
       type: 'global/lbDetail',
       payload: {
         id: val,
+        templateType,
         isDisplay: !templateType,
       }
     }).then(() => {
@@ -947,7 +951,7 @@ class AddCost extends Component {
       <span className={cs('formItem', style.addCost)}>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title="添加支出"
+          title={templateType > 10 ? '添加收入' : '添加支出'}
           visible={visible}
           width="880px"
           bodyStyle={{height: '470px', overflowY: 'scroll'}}
@@ -964,16 +968,17 @@ class AddCost extends Component {
               <Button type="primary" onClick={() => this.handleOk()}>保存</Button>
             </>
           )}
+          className={this.state.costDetailShareVOS.length>=4?style.shadow:''}
         >
           <div className={style.addCosts}>
             <Form className="formItem">
               <Row style={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Col span={12}>
-                  <Form.Item label={labelInfo.costName} {...formItemLayout}>
+                  <Form.Item label={templateType === 20 ? '收入类别' : labelInfo.costName} {...formItemLayout}>
                     {
                       getFieldDecorator('categoryId', {
                         initialValue: details.categoryId || undefined,
-                        rules: [{ required: true, message: '请选择支出类别' }]
+                        rules: [{ required: true, message: `请选择${templateType === 20 ? '收入' : '支出'}类别` }]
                       })(
                         <TreeSelect
                           placeholder="请选择"
@@ -1205,6 +1210,9 @@ class AddCost extends Component {
                                     disabled={modify && showField.amount && !showField.amount.isModify}
                                   />
                                 )
+                                }
+                              {
+                                <Capitalization isMoney={`${this.state.costSum||''}`||''}/>
                               }
                               {
                                 it.itemExplain && it.itemExplain.length > 0 &&
@@ -1262,6 +1270,37 @@ class AddCost extends Component {
                                     <Input
                                       placeholder={showField.costNote.note ? showField.costNote.note : '请输入'}
                                       disabled={modify && !showField.costNote.isModify}
+                                    />
+                                  )
+                                }
+                                {
+                                  it.itemExplain && !!(it.itemExplain.length) &&
+                                  it.itemExplain.map(item => (
+                                    <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                      {item.note}
+                                    </p>
+                                  ))
+                                }
+                              </Form.Item>
+                            </Col>
+                          :
+                          null
+                        }
+                        {
+                          it.field === 'incomeNote' && showField.incomeNote.status ?
+                            <Col span={12}>
+                              <Form.Item label={showField.incomeNote.name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator('note', {
+                                    initialValue: details.note || '',
+                                    rules: [
+                                      { required: !!(showField.incomeNote.isWrite), message: '请输入备注' },
+                                      { max: 128, message: '备注最多128个字' },
+                                    ]
+                                  })(
+                                    <Input
+                                      placeholder={showField.incomeNote.note ? showField.incomeNote.note : '请输入'}
+                                      disabled={modify && !showField.incomeNote.isModify}
                                     />
                                   )
                                 }

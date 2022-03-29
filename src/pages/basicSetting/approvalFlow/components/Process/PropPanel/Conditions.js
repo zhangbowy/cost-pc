@@ -12,7 +12,7 @@ import style from './index.scss';
 import { getArrayValue } from '../../../../../../utils/constants';
 
 const { Option } = Select;
-const { SHOW_CHILD } = TreeSelect;
+const { SHOW_CHILD, SHOW_PARENT } = TreeSelect;
 let id = 0;
 const defaultList = {
   '0': [{
@@ -76,6 +76,7 @@ class Conditions extends Component {
    * @memberof Conditions
    */
   onChange = (val, index) => {
+    console.log(val,'是什么');
     const {lists} = this.state;
     const { getCondition } = this.props;
     const list = [...lists];
@@ -176,6 +177,7 @@ class Conditions extends Component {
   }
 
   selectPle = (val, index) => {
+    console.log(val,'val选择的值');
     const { lists } = this.state;
     const list = [...lists];
     const { form } = this.props;
@@ -222,12 +224,22 @@ class Conditions extends Component {
                 others: it.depts && it.depts.map(its => its.name).toString(),
               }];
             } else {
+              const projectValue = [];
+              // if (it.ruleType === 'project') {
+              //   val.value.a_0.map(selectValue => projectValue.push(selectValue.value)
+              //   );
+              //   console.log(projectValue,'projectValue');
+              //   console.log(it.id,val.value.a_0, it.ruleType, 'project类型中value的值');
+              // }
+              console.log(val.value.a_0,val.value[0], it.ruleType, '类型中value的值');
+              console.log(projectValue,val.value,'235');
               values = [{
                 type: it.ruleType,
                 value: val.value && it.type === 'inputNumber' ? (val.value[`${it.id}`] * 1000)/10 :  val.value[`${it.id}`].toString(),
                 categoryId: val.categoryId ? val.categoryId[`${it.id}`] : '',
               }];
             }
+            console.log(values,'values值');
             rules = {
               type: it.key.indexOf('other') > -1 ? 'other' : it.key,
               typeName: it.value,
@@ -249,6 +261,7 @@ class Conditions extends Component {
           vals = null;
           return vals;
         }
+        console.log(conditions,'conditions的值');
         vals = {
           bizData: {
             conditionNode: {
@@ -261,6 +274,7 @@ class Conditions extends Component {
         };
       }
     });
+    console.log(vals, 'vals参数');
     return vals;
   }
 
@@ -293,10 +307,12 @@ class Conditions extends Component {
       conditions,
       conditionNode,
       projectList,
-      templateType,
+      // templateType,
       supplierList,
       getCondition,
     } = this.props;
+    console.log(projectList, '原数据');
+    console.log(costCategoryList, '原数据');
     const PriArr = this.numToArr(priorityLength);
     const list = treeConvert({
       rootId: 0,
@@ -312,6 +328,7 @@ class Conditions extends Component {
       tName: 'title',
       tId: 'value'
     }, projectList);
+    console.log(projectLists,'树projectLists');
     const disList = this.onSelectTree();
     const { lists, method } = this.state;
     const formItemLayout = {
@@ -325,21 +342,20 @@ class Conditions extends Component {
       },
     };
     getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
-    console.log(conditions);
-    console.log('templateType', templateType);
-    console.log(defaultList[templateType]);
-    console.log(lists);
+    let SHOW = SHOW_CHILD;
     const keys = getFieldValue('keys');
-    console.log(keys);
     const formItems = keys.map((item, index) => {
       let valueList = [];
       if (item.key === 'project') {
+        console.log(item,'item.ruleValue');
         valueList = projectLists;
+        SHOW = SHOW_PARENT;
       } else if (item.key === 'supplier') {
         valueList = supplierList;
       } else {
         valueList = list;
       }
+      console.log(valueList,'34300000');
       return (
         <Form.Item
           key={item.id}
@@ -424,6 +440,7 @@ class Conditions extends Component {
               )
             }
             {
+              // [{label:'123',value:'1235689'},{label:'234',value:'123568'}]
               item && item.type === 'selectTree' &&
               getFieldDecorator(`value[${item.id}]`, {
                 initialValue: item.ruleValue ? item.ruleValue : [],
@@ -433,7 +450,7 @@ class Conditions extends Component {
                   treeData={valueList}
                   treeCheckable
                   style={{width: '100%'}}
-                  showCheckedStrategy={SHOW_CHILD}
+                  showCheckedStrategy={SHOW}
                   dropdownStyle={{height: '300px'}}
                   placeholder="请选择"
                 />

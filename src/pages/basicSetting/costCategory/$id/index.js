@@ -44,10 +44,13 @@ class CategoryAdd extends PureComponent {
     selectList: [],
     shareField: classifyShare,
     fieldList: [],
+    costType: '0',
+    basicList: basicStr,
   }
 
   componentDidMount(){
     const { id } = this.props.match.params;
+    const costType = localStorage.getItem('costItem');
     const title = id.split('_')[0];
     const costId = id.split('_')[1];
     this.props.dispatch({
@@ -58,6 +61,7 @@ class CategoryAdd extends PureComponent {
       type: 'addCategory/allList',
       payload: {
         attribute: title === 'add' ? costId : id.split('_')[2],
+        costType
       }
     }).then(() => {
       const _this = this;
@@ -74,6 +78,7 @@ class CategoryAdd extends PureComponent {
         this.props.dispatch({
           type: 'addCategory/detail',
           payload: {
+            costType,
             id: costId,
             companyId: userInfo.companyId || ''
           }
@@ -94,7 +99,7 @@ class CategoryAdd extends PureComponent {
           _this.setState({
             data: datas,
             selectList: this.changeList(showFiels.sort(this.compare('sort'))),
-            shareField: details.shareField,
+            shareField: details.shareField || [],
           });
         });
       } else if (title === 'child') {
@@ -110,6 +115,7 @@ class CategoryAdd extends PureComponent {
       type: 'addCategory/fieldList',
       payload: {
         categoryId: title !== 'add' && title !== 'child' ? costId : '',
+        costType,
       }
     }).then(() => {
       const { fieldList } = this.props;
@@ -119,8 +125,12 @@ class CategoryAdd extends PureComponent {
           selectList: this.changeList(newArr),
         });
       }
+      const newList = basicStr;
+      if (costType === '1') newList.splice(2,1);
       this.setState({
         fieldList: this.changeList(fieldList),
+        costType,
+        basicList: costType === '1' ? newList : basicStr,
       });
     });
   }
@@ -226,7 +236,7 @@ class CategoryAdd extends PureComponent {
   }
 
   onStep = (flag) => {
-    const { current, data, selectList, shareField } = this.state;
+    const { current, data, selectList, shareField, costType, basicList } = this.state;
     const newSelectList = [...selectList];
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
@@ -254,14 +264,16 @@ class CategoryAdd extends PureComponent {
       newSelectList.splice(indexs, 1, valStr);
     }
 
-    if ((current === 'three' || (title !== 'add' && title !== 'child')) && flag !== 'down') {
+    if ((current === 'three'
+      || (current === 'two' && costType === '1')
+    || (title !== 'add' && title !== 'child')) && flag !== 'down') {
       const url = title !== 'edit' ? 'addCategory/add' : 'addCategory/edit';
       const newArr = newSelectList.map((it, index) => { return { ...it, isSelect: true, sort: (index+1), status: 1 }; });
       const showField = newArr.filter(it => (it.field.indexOf('expand_field') === -1 && it.field.indexOf('self_') === -1));
       const params = {
         id: title !== 'edit' ? '' : costId,
         showField: showField.map(it => { return { ...it, status: 1 }; }),
-        shareField: shareField.map(it => { return { ...it, status: it.status ? 1 : 0 }; }),
+        shareField: costType === '1' ? null : shareField.map(it => { return { ...it, status: it.status ? 1 : 0 }; }),
         type: 1,
         ...datas,
         companyId: userInfo.companyId || '',
@@ -269,8 +281,13 @@ class CategoryAdd extends PureComponent {
         status: datas.status ? 1: 0,
         expandField: newArr.filter(it => it.field.indexOf('expand_field') > -1),
         selfFields: newArr.filter(it => it.field.indexOf('self_') > -1),
-        attribute: title === 'add' ? costId : id.split('_')[2],
+        costType,
       };
+      if (costType !== '1') {
+        Object.assign(params, {
+          attribute: title === 'add' ? costId : id.split('_')[2],
+        });
+      }
       this.props.dispatch({
         type: url,
         payload: {
@@ -280,10 +297,10 @@ class CategoryAdd extends PureComponent {
         this.props.history.push('/basicSetting/costCategory');
       });
     } else {
-      const index = basicStr.findIndex(it => it.key === current);
+      const index = basicList.findIndex(it => it.key === current);
       this.setState({
         data: datas,
-        current: flag === 'up' ? basicStr[index+1].key : basicStr[index-1].key,
+        current: flag === 'up' ? basicList[index+1].key : basicList[index-1].key,
       });
     }
   }
@@ -338,7 +355,7 @@ class CategoryAdd extends PureComponent {
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
     // const costId = id.split('_')[1];
-    const { current, shareField, selectList, fieldList, data } = this.state;
+    const { current, shareField, selectList, fieldList, data, basicList, costType } = this.state;
     const routes = [
       {
         path: '/basicSetting/costCategory',
@@ -353,13 +370,14 @@ class CategoryAdd extends PureComponent {
     return (
       <div style={{height: '100%'}}>
         <div style={{width: '100%'}}>
-          <PageHead title={
-            <PageHeader
-              title={null}
-              breadcrumb={{routes}}
-              style={{background: '#fff'}}
-            />
-          }
+          <PageHead
+            title={
+              <PageHeader
+                title={null}
+                breadcrumb={{routes}}
+                style={{background: '#fff'}}
+              />
+            }
           />
           <div style={{background: '#fff', width: '100%'}}>
             <Menu
@@ -369,7 +387,7 @@ class CategoryAdd extends PureComponent {
               onClick={(e) => this.onHandle(e)}
             >
               {
-                basicStr.map((it, index) => (
+                basicList.map((it, index) => (
                   <Menu.Item key={it.key}>
                     <span
                       className={it.key === current ?
@@ -410,6 +428,7 @@ class CategoryAdd extends PureComponent {
                   list={allList}
                   data={data}
                   title={title}
+                  costType={costType}
                 />
               </div>
             }
@@ -432,7 +451,7 @@ class CategoryAdd extends PureComponent {
                   isModifyInvoice={isModifyInvoice}
                   operateType={title}
                   middleRef={ref => {this.childRef = ref;}}
-                  selectId="costCategory"
+                  selectId={costType === '0' ? 'costCategory' : 'incomeCategory'}
                   type="cost"
                 />
               </div>
@@ -475,7 +494,7 @@ class CategoryAdd extends PureComponent {
                 onClick={() => this.onStep('up')}
               >
                 {
-                  current === 'three' ||
+                  current === 'three' || (current === 'two' && costType === '1') ||
                   (title !== 'add' && title !== 'child') ? '保存' : '下一步'
                 }
               </Button>

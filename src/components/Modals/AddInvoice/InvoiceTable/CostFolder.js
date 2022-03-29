@@ -270,7 +270,7 @@ class CostFolder extends Component {
           <i
             className={`iconfont icon${record.icon}`}
             style={{
-              color: getArrayColor(record.icon, classifyIcon),
+              color: getArrayColor(record.icon, classifyIcon[0]),
               fontSize: '24px',
               marginRight: '4px',
               verticalAlign: 'middle'

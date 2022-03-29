@@ -1,7 +1,8 @@
 import React from 'react';
-import { Modal, Form, Input, Button, message, Radio } from 'antd';
+import { Form, Input, Button, message, Radio } from 'antd';
 import { connect } from 'dva';
 import { formItemLayout, defaultTitle, invoiceStatus } from '@/utils/constants';
+import ModalTemp from '../../../../components/ModalTemp';
 
 const labelItem = {
   costName: '名称',
@@ -110,11 +111,12 @@ class AddGroup extends React.PureComponent {
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
-        <Modal
+        <ModalTemp
           title={title && `${defaultTitle[title]}分组`}
           visible={visible}
           onCancel={() => this.setState({ visible: false })}
           maskClosable={false}
+          size="small"
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="save" type="primary" onClick={this.handleOk} loading={loading}>保存</Button>
@@ -154,12 +156,14 @@ class AddGroup extends React.PureComponent {
                     <Radio value={0}>报销单</Radio>
                     <Radio value={1}>借款单</Radio>
                     <Radio value={2}>申请单</Radio>
+                    <Radio value={3}>薪资单</Radio>
+                    <Radio value={20}>收款单</Radio>
                   </Radio.Group>
                 )
               }
             </Form.Item>
           </Form>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

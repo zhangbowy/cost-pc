@@ -48,6 +48,7 @@ class AddGroup extends React.PureComponent {
       data,
       userInfo,
       title,
+      type,
     } = this.props;
     form.validateFieldsAndScroll((err, value) => {
       if (!err) {
@@ -55,6 +56,7 @@ class AddGroup extends React.PureComponent {
           ...value,
           companyId: userInfo.companyId || '',
           type: 0,
+          costItem: type,
         };
         if (value.parentId && (typeof value.parentId !== 'string')) {
           Object.assign(payload, {
@@ -90,40 +92,44 @@ class AddGroup extends React.PureComponent {
     });
   }
 
-  onShow = async() => {
-    await this.props.dispatch({
-      type: 'costCategory/allList',
+  onShow = () => {
+    const { type } = this.props;
+    console.log('🚀 ~ file: AddGroup.js ~ line 95 ~ AddGroup ~ onShow=async ~ type', type);
+    this.props.dispatch({
+      type: type === '0' ? 'costCategory/allList' : 'costCategory/allIncomeList',
       payload: {}
-    });
-    const {  data, title, allList } = this.props;
-    const listTree = (allList && allList.filter(it => Number(it.type) === 0)) || [];
-    const lists = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      tName: 'costName',
-      name: 'costName',
-      otherKeys: ['icon', 'note', 'type', 'parentId', 'attribute']
-    }, listTree);
-    const datas = {...data};
-    if (data && data.parentId) {
-      if (data && data.parentId !== '0') {
-        console.log(findIndexArray(lists, data.parentId, []));
-        Object.assign(datas, {
-           parentId: findIndexArray(lists, data.parentId, []),
-        });
+    }).then(() => {
+      const {  data, title, allList } = this.props;
+      const listTree = (allList && allList.filter(it => Number(it.type) === 0)) || [];
+      const lists = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        tName: 'costName',
+        name: 'costName',
+        otherKeys: ['icon', 'note', 'type', 'parentId', 'attribute']
+      }, listTree);
+      const datas = {...data};
+      if (data && data.parentId) {
+        if (data && data.parentId !== '0') {
+          console.log(findIndexArray(lists, data.parentId, []));
+          Object.assign(datas, {
+             parentId: findIndexArray(lists, data.parentId, []),
+          });
+        }
       }
-    }
 
-    if (title === 'copy') {
-      Object.assign(datas, {
-        costName: `${data.costName}的副本`,
-     });
-    }
-    this.setState({
-      visible: true,
-      data: datas,
-      lists,
+      if (title === 'copy') {
+        Object.assign(datas, {
+          costName: `${data.costName}的副本`,
+       });
+      }
+      this.setState({
+        visible: true,
+        data: datas,
+        lists,
+      });
     });
+
   }
 
   onCancel = () => {
@@ -134,7 +140,7 @@ class AddGroup extends React.PureComponent {
   }
 
   render() {
-    const { visible, data, lists } = this.state;
+    const { visible, data, lists, type } = this.state;
     const {
       children,
       title,
@@ -209,23 +215,26 @@ class AddGroup extends React.PureComponent {
                 }
               </Form.Item>
             }
-            <Form.Item label="类型选择" {...formItemLayout}>
-              {
-                getFieldDecorator('attribute', {
-                  initialValue: (data && data.attribute) || 0,
-                })(
-                  <Radio.Group
-                    disabled={title === 'edit' || title === 'copy'}
-                  >
-                    {
-                      costType.map(it => (
-                        <Radio key={it.key} value={it.key}>{it.value}</Radio>
-                      ))
-                    }
-                  </Radio.Group>
-                )
-              }
-            </Form.Item>
+            {
+              type === '0' &&
+              <Form.Item label="类型选择" {...formItemLayout}>
+                {
+                  getFieldDecorator('attribute', {
+                    initialValue: (data && data.attribute) || 0,
+                  })(
+                    <Radio.Group
+                      disabled={title === 'edit' || title === 'copy'}
+                    >
+                      {
+                        costType.map(it => (
+                          <Radio key={it.key} value={it.key}>{it.value}</Radio>
+                        ))
+                      }
+                    </Radio.Group>
+                  )
+                }
+              </Form.Item>
+            }
           </Form>
         </Modal>
       </span>

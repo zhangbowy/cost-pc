@@ -38,7 +38,8 @@ const basicSet = {
   3: [{
     key: 'isQrCode',
     value: '单据详情二维码',
-  }]
+  },],
+  20: []
 };
 @Form.create()
 class Left extends Component {
@@ -111,21 +112,24 @@ class Left extends Component {
               }
             </Select>
           </Form.Item>
-          <Form.Item label="基础设置" colon={false}>
-            <div className={style.checkbox}>
-              {
-                lists.map(it => (
-                  <Checkbox
-                    key={it.key}
-                    checked={templatePdfVo[it.key]}
-                    onChange={e => this.onChange(e, it.key)}
-                  >
-                    {it.value}
-                  </Checkbox>
-                ))
-              }
-            </div>
-          </Form.Item>
+          {
+            lists.length &&
+            <Form.Item label="基础设置" colon={false}>
+              <div className={style.checkbox}>
+                {
+                  lists.map(it => (
+                    <Checkbox
+                      key={it.key}
+                      checked={templatePdfVo[it.key]}
+                      onChange={e => this.onChange(e, it.key)}
+                    >
+                      {it.value}
+                    </Checkbox>
+                  ))
+                }
+              </div>
+            </Form.Item>
+          }
           <Divider type="horizontal" style={{ marginTop: '14px', marginBottom: '5px' }} />
           {
             expandList && expandList.length > 0 &&

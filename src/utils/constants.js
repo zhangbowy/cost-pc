@@ -129,7 +129,8 @@ export const isAllCostCategory = [{
   key: false,
   value: '部分类别'
 }];
-export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month'];
+export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory'];
+export const spacialString = ['userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory'];
 export const dragDisabled = ['detail_money', 'detail_sale', 'detail_account'];
 export const costCategoryJson = [{
   key: 'reason',
@@ -619,22 +620,55 @@ export const approveSet = [{
   value: '或签（一名审批人同意或拒绝）',
 }];
 
-export const classifyIcon = [{
-  key: 'morenleibietu1',
-  value: 'iconmorenleibietu1',
-  color: 'rgba(0, 199, 149, 1)',
+export const classifyIcon = {
+  0: [{
+    key: 'morenleibietu1',
+    value: 'iconmorenleibietu1',
+    color: 'rgba(0, 199, 149, 1)',
+  }, {
+    key: 'morenleibietu2',
+    value: 'iconmorenleibietu2',
+    color: 'rgba(103, 119, 255, 1)',
+  }, {
+    key: 'morenleibietu3',
+    value: 'iconmorenleibietu3',
+    color: 'rgba(50, 197, 255, 1)',
+  }, {
+    key: 'morenleibietu4',
+    value: 'iconmorenleibietu4',
+    color: 'rgba(247, 181, 0, 1)',
+  }],
+  1: [{
+    key: 'morenshourutu1',
+    value: 'iconmorenshourutu1',
+    color: '#32C5FF',
+  }, {
+    key: 'morenshourutu2',
+    value: 'iconmorenshourutu2',
+    color: '#FFBC17',
+  }, {
+    key: 'morenshourutu3',
+    value: 'iconmorenshourutu3',
+    color: '#00C795',
+  }, {
+    key: 'morenshourutu4',
+    value: 'iconmorenshourutu4',
+    color: '#6777FF',
+  }]
+};
+
+export const incomeIcon = [{
+  key: 'morenshourutu1',
+  value: 'morenshourutu1',
 }, {
-  key: 'morenleibietu2',
-  value: 'iconmorenleibietu2',
-  color: 'rgba(103, 119, 255, 1)',
+  key: 'morenshourutu2',
+  value: 'morenshourutu2',
 }, {
-  key: 'morenleibietu3',
-  value: 'iconmorenleibietu3',
-  color: 'rgba(50, 197, 255, 1)',
+  key: 'morenshourutu3',
+  value: 'morenshourutu3',
 }, {
-  key: 'morenleibietu4',
-  value: 'iconmorenleibietu4',
-  color: 'rgba(247, 181, 0, 1)',
+  key: 'morenshourutu4',
+  value: 'morenshourutu4',
 }];
 
 export const defaultStatus = [{
@@ -1257,6 +1291,11 @@ export const invoiceType = {
     type: 3,
     color: 'rgba(110, 0, 255, 0.06)',
     name: '薪资'
+  },
+  20: {
+    type: 20,
+    color: 'rgba(110, 0, 255, 0.06)',
+    name: '收款'
   },
 };
 
