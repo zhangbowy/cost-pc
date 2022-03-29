@@ -45,7 +45,7 @@ class DraftList extends Component {
   }
 
   onCancel = () => {
-    // this.props.onPerson();
+    this.props.onOk();
     this.setState({
       selectedRowKeys:[],
       selectedRows: [],

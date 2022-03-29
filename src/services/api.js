@@ -116,6 +116,7 @@ export default {
    salaryDetail: `${APP_API}/cost/invoice/salary/detail`, // 薪资单详情
    userDep:  `${APP_API}/cost/user/userInfo4UserIds`,
    queryTemplateIds: `${APP_API}/cost/category/queryTemplateIds`, // 单据模板
+   queryIncomeIds: `${APP_API}/cost/income/template/listForUser`, // 单据模板
    applyIds: `${APP_API}/cost/invoice/application/checkRelevance`,
    waitAssessIds: `${APP_API}/cost/invoice/loan/waitAssessListByIds`,
    folderIds: `${APP_API}/cost/cost/folder/listByIds`,
@@ -131,6 +132,7 @@ export default {
    waitList: `${APP_API}/cost/invoice/loan/waitAssessList`, // 我的待核销列表
    area: `${APP_API}/cost/aw/area`,
    checkTemplate: `${APP_API}/cost/invoice/template/checkTemplate`,
+   checkTemplates: `${APP_API}/cost/income/template/checkTemplate`,
    queryModify: `${APP_API}/cost/setting/detail`, // 查询改单
    delInvoice: `${APP_API}/cost/invoice/base/manageDel`, // 管理员删除单据
    recordList: `${APP_API}/cost/invoice/record/recordList`, // 操作单据的记录

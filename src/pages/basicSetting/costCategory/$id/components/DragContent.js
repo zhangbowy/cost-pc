@@ -7,6 +7,7 @@ import PreviewBox from './PreviewBox';
 
 function DragContent({ fieldList,
   selectList, onChangeData,
+  spacialCenter,
   isModifyInvoice, title, middleRef, type, selectId, templateType }) {
     const childRef = useRef();
     useImperativeHandle(middleRef, () => ({
@@ -29,6 +30,7 @@ function DragContent({ fieldList,
         operateType={title}
         childRef={childRef}
         templateType={templateType}
+        spacialCenter={spacialCenter}
       />
     </DndProvider>
   );

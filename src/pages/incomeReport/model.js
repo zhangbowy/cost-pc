@@ -24,13 +24,10 @@ export default {
     *list({ payload }, { call, put }) {
       const response = yield call(get, api.list, payload);
       // eslint-disable-next-line no-return-assign
-      const lists = response.list && response.list.map(it => { return {...it, id: it.invoiceId}; });
       yield put({
         type: 'save',
         payload: {
-          list: lists || [],
-          isViewVoucher: lists.length ? lists[0].viewVoucher : false,
-          // list: [{ id: 1 }, { id: 2 }],
+          list: response.list || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,

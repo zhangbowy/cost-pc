@@ -34,6 +34,7 @@ const labelInfo = {
   costName: '支出类别',
   costSum: '金额(元)',
   costNote: '备注',
+  incomeNote: '收入备注',
   imgUrl: '图片',
   happenTime: '发生日期',
   flightLevel: '航班仓型',
@@ -1269,6 +1270,37 @@ class AddCost extends Component {
                                     <Input
                                       placeholder={showField.costNote.note ? showField.costNote.note : '请输入'}
                                       disabled={modify && !showField.costNote.isModify}
+                                    />
+                                  )
+                                }
+                                {
+                                  it.itemExplain && !!(it.itemExplain.length) &&
+                                  it.itemExplain.map(item => (
+                                    <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                      {item.note}
+                                    </p>
+                                  ))
+                                }
+                              </Form.Item>
+                            </Col>
+                          :
+                          null
+                        }
+                        {
+                          it.field === 'incomeNote' && showField.incomeNote.status ?
+                            <Col span={12}>
+                              <Form.Item label={showField.incomeNote.name} {...formItemLayout}>
+                                {
+                                  getFieldDecorator('note', {
+                                    initialValue: details.note || '',
+                                    rules: [
+                                      { required: !!(showField.incomeNote.isWrite), message: '请输入备注' },
+                                      { max: 128, message: '备注最多128个字' },
+                                    ]
+                                  })(
+                                    <Input
+                                      placeholder={showField.incomeNote.note ? showField.incomeNote.note : '请输入'}
+                                      disabled={modify && !showField.incomeNote.isModify}
                                     />
                                   )
                                 }

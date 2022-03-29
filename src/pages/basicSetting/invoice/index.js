@@ -262,13 +262,18 @@ class Invoice extends React.PureComponent {
             ),
           }, {
             node: (
-              <QrCodeModal
-                userInfo={userInfo}
-                id={record.id}
-                name={record.name}
-              >
-                <span className="pd-20-9 c-black-65">下载提报二维码</span>
-              </QrCodeModal>
+              <>
+                {
+                  record.templateType !== 20 &&
+                  <QrCodeModal
+                    userInfo={userInfo}
+                    id={record.id}
+                    name={record.name}
+                  >
+                    <span className="pd-20-9 c-black-65">下载提报二维码</span>
+                  </QrCodeModal>
+                }
+              </>
             ),
           }, {
             node: (

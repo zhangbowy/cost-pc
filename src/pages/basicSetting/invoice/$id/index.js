@@ -15,6 +15,7 @@ import { JsonParse } from '../../../../utils/common';
 // import PreviewBox from '../../costCategory/$id/components/PreviewBox';
 import Print from './components/Print';
 import DragContent from '../../costCategory/$id/components/DragContent';
+import { defaultString, spacialString } from '../../../../utils/constants';
 
 const basicStr = [{
   key: 'one',
@@ -670,12 +671,13 @@ class CategoryAdd extends PureComponent {
                     fieldList={fieldList}
                     selectList={selectList}
                     onChangeData={this.onChangeData}
-                    selectId="reason"
+                    selectId={Number(templateType) >10 ? 'userJson' : 'reason'}
                     type="invoice"
                     isModifyInvoice={isModifyInvoice}
                     operateType={title}
                     middleRef={ref => {this.childRef = ref;}}
                     templateType={Number(templateType)}
+                    spacialCenter={Number(templateType) >10 ? spacialString : defaultString}
                   />
                 </div>
               }

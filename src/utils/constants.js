@@ -130,6 +130,7 @@ export const isAllCostCategory = [{
   value: '部分类别'
 }];
 export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory'];
+export const spacialString = ['userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory'];
 export const dragDisabled = ['detail_money', 'detail_sale', 'detail_account'];
 export const costCategoryJson = [{
   key: 'reason',

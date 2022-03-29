@@ -656,7 +656,7 @@ class addInvoice extends Component {
         officeId: details.officeId || '',
         incomeCategoryIds: details.categorySumEntities.map(it => it.categoryId) || [],
       };
-    if (operateType !== 'modify') {
+    if (operateType !== 'modify' && details.processPersonId) {
       this.props.dispatch({
         type: 'global/approveList',
         payload: {...objs},
@@ -724,10 +724,10 @@ class addInvoice extends Component {
   handelOkDraft = async() => {
     const val = (this.changeForm && this.changeForm.onGetVal()) || {};
     console.log('AddInvoice -> handelOkDraft -> val', val);
-    if (!val.reason) {
-      message.error('请输入事由');
-      return;
-    }
+    // if (!val.reason) {
+    //   message.error('请输入事由');
+    //   return;
+    // }
     const {
       imgUrl,
       ossFileUrl,

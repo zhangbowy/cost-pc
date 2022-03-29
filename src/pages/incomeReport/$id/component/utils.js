@@ -196,7 +196,7 @@ export default {
         ...item,
         key: (getTimeIdNo()+i),
         costSum: item.costSum/100,
-        shareTotal: item.costDetailShareVOS.length ? item.costSum/100 : 0,
+        shareTotal: item.costSum/100,
       };
       if (item.costDetailShareVOS) {
         const newShare = [];

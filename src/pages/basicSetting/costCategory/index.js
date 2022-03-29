@@ -138,7 +138,8 @@ class CostCategory extends React.PureComponent {
     this.props.dispatch({
       type: type === '0' ? 'costCategory/sort' : 'costCategory/incomeSort',
       payload: {
-        sortList: result
+        sortList: result,
+        type: 1,
       }
     }).then(() => {
       message.success('排序成功!');

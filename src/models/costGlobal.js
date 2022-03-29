@@ -67,6 +67,10 @@ export default {
     officeList: [], // 查询分公司列表
     officeListAndRole: [], // 查询分公司列表
     roleLists: [], // 审批角色
+    queryIncomeIds: {
+      UseTemplate: [],
+      OftenTemplate: [],
+    },
     // historyImportStatus: {},
   },
   effects: {
@@ -119,6 +123,18 @@ export default {
         type: 'save',
         payload: {
           queryTemplateIds: response || [],
+        },
+      });
+    },
+    *queryIncomeIds({ payload }, { call, put }) {
+      const response = yield call(get, api.queryIncomeIds, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          queryIncomeIds: response || {
+            UseTemplate: [],
+            OftenTemplate: [],
+          },
         },
       });
     },
@@ -309,7 +325,13 @@ export default {
       });
     },
     *checkTemplate({ payload }, { call, put }) {
-      const response = yield call(get, api.checkTemplate, payload);
+      let url = api.checkTemplate;
+      if (payload.templateType > 15) {
+        url = api.checkTemplates;
+      }
+      const param = { invoiceTemplateId: payload.invoiceTemplateId };
+      const response = yield call(get, url, param);
+
       yield put({
         type: 'save',
         payload: {

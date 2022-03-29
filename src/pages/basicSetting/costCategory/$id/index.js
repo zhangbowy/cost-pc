@@ -236,7 +236,7 @@ class CategoryAdd extends PureComponent {
   }
 
   onStep = (flag) => {
-    const { current, data, selectList, shareField, costType } = this.state;
+    const { current, data, selectList, shareField, costType, basicList } = this.state;
     const newSelectList = [...selectList];
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
@@ -297,10 +297,10 @@ class CategoryAdd extends PureComponent {
         this.props.history.push('/basicSetting/costCategory');
       });
     } else {
-      const index = basicStr.findIndex(it => it.key === current);
+      const index = basicList.findIndex(it => it.key === current);
       this.setState({
         data: datas,
-        current: flag === 'up' ? basicStr[index+1].key : basicStr[index-1].key,
+        current: flag === 'up' ? basicList[index+1].key : basicList[index-1].key,
       });
     }
   }

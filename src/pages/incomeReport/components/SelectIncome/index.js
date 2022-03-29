@@ -16,7 +16,7 @@ import NoData from '@/components/NoData';
 @withRouter
 @connect(({ global, costGlobal }) => ({
   currencyList: global.currencyList,
-  queryTemplateIds: costGlobal.queryTemplateIds,
+  queryIncomeIds: costGlobal.queryIncomeIds,
 }))
 class SelectIncome extends Component {
   static propTypes = {
@@ -56,46 +56,17 @@ class SelectIncome extends Component {
       type: 'global/getCurrency',
       payload: {},
     });
-    const { selectInvoice } = this.props;
     const arr = [];
-    console.log('SelectInvoice -> onShow -> selectInvoice', selectInvoice);
-    if (selectInvoice) {
-      const costCategoryIds = selectInvoice.map(it => it.categoryId);
-      await this.props.dispatch({
-        type: 'costGlobal/queryTemplateIds',
-        payload: {
-          costCategoryIds
-        }
-      });
-    }
     await this.props.dispatch({
-      type: 'global/oftenList',
+      type: 'costGlobal/queryIncomeIds',
       payload: {}
     }).then(() => {
-      const { useTemplate, oftenTemplate, currencyList, queryTemplateIds  } = this.props;
-      console.log('SelectInvoice -> onShow -> queryTemplateIds', queryTemplateIds);
-      const users = useTemplate.map(it => {
-        const obj = {
-          ...it,
-        };
-        if (selectInvoice && !queryTemplateIds.includes(it.id)) {
-          Object.assign(obj, {
-            disabled: true
-          });
-        }
-        return obj;
-      });
-      const often = oftenTemplate.map(it => {
-        const obj = {
-          ...it,
-        };
-        if (selectInvoice && !queryTemplateIds.includes(it.id)) {
-          Object.assign(obj, {
-            disabled: true
-          });
-        }
-        return obj;
-      });
+      const { queryIncomeIds } = this.props;
+      console.log('🚀 ~ file: index.js ~ line 65 ~ SelectIncome ~ onShow=async ~ queryIncomeIds', queryIncomeIds);
+      const { UseTemplate, OftenTemplate  } = queryIncomeIds;
+      console.log('🚀 ~ file: index.js ~ line 67 ~ SelectIncome ~ onShow=async ~ useTemplate', UseTemplate);
+      const users = UseTemplate;
+      const often = OftenTemplate;
       const others = users.filter(it => (it.type === 1 && it.parentId === 0));
       const sortUsers = users.sort();
       let lists = treeConvert({
@@ -110,39 +81,6 @@ class SelectIncome extends Component {
         { id: 'often', name: '常用单据', children: often },
         ...lists,
         { id: 'qita', name: '其他单据模板（未分组）', children: others }];
-      if (selectInvoice) {
-        selectInvoice.forEach(it => {
-          let currency = {};
-          const costDetailShareVOS = [];
-          if (it.currencyId && it.currencyId !== '-1') {
-            // eslint-disable-next-line prefer-destructuring
-            currency = currencyList.filter(its => its.id === it.currencyId)[0];
-          }
-          const obj = {
-            ...it,
-            key: it.id,
-            folderType: 'folder',
-            costSum: currency.id ? it.currencySum/100 : it.costSum/100,
-            detailFolderId: it.id,
-          };
-          if (it.costDetailShareVOS) {
-            it.costDetailShareVOS.forEach(item => {
-              costDetailShareVOS.push({
-                ...item,
-                shareAmount: currency.id ? item.currencySum/100 : item.shareAmount/100,
-              });
-            });
-          }
-          arr.push({
-            ...obj,
-            costDetailShareVOS,
-            currencyId: it.currencyId || '-1',
-            currencyName: currency.name || '',
-            exchangeRate: currency.exchangeRate || 1,
-            currencySymbol: currency.currencySymbol || '¥',
-          });
-        });
-      }
       this.setState({
         list: lists,
         visible: true,
@@ -153,14 +91,14 @@ class SelectIncome extends Component {
   }
 
   handleOk = () => {
-    // const { activeObj } = this.state;
+    const { activeObj } = this.state;
     const { selectCost } = this.state;
     if (selectCost) {
       localStorage.setItem('selectCost', JSON.stringify(selectCost));
     }
     localStorage.removeItem('contentJson');
-    // this.props.history.push(`/workbench/add~${activeObj.templateType}~${activeObj.id}`);
-    this.props.history.push('/incomeReport/add~20~713812629653217280');
+    this.props.history.push(`/incomeReport/add~${activeObj.templateType}~${activeObj.id}`);
+    // this.props.history.push('/incomeReport/add~20~713812629653217280');
   }
 
   modalOk = (item) => {
@@ -447,10 +385,10 @@ class SelectIncome extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = () => {
   return {
-    useTemplate: state.global.UseTemplate, // 普通列表
-    oftenTemplate: state.global.OftenTemplate, // 常用单据列表
+    // useTemplate: state.global.UseTemplate, // 普通列表
+    // oftenTemplate: state.global.OftenTemplate, // 常用单据列表
   };
 };
 
