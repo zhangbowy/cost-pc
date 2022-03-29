@@ -411,6 +411,19 @@
     }
   }
 }
+.shadow,.addTheCost{
+  :global{
+    .ant-modal-header{
+      border-bottom:unset;
+      padding: 24px 0 0 32px;
+     .ant-modal-title{
+      font-size: 20px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.85);
+     }
+    }
+  }
+}
 .shadow{
   :global{
     .ant-modal-footer{
