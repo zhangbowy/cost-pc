@@ -167,4 +167,7 @@ export default {
    officeListAndRole: `${APP_API}/cost/branch/office/list`, // 查询公司下面的人
    roleLists: `${APP_API}/cost/role/ding/role/list`, // 查询钉钉审批角色列表
    getNotifyUser: `${APP_API}/cost/assets/notifyUser`,
+
+  // 收款单详情
+  incomeDetail: `${APP_API}/cost/income/invoice/income/detail`
 };

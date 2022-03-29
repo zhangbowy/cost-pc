@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Badge, Divider, message, Popconfirm, Table, Tooltip } from 'antd';
 import moment from 'moment';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import {
   getArrayColor,
   getArrayValue,
@@ -180,11 +181,11 @@ class SummaryCmp extends Component {
         title: '单号',
         dataIndex: 'invoiceNo',
         render: (_, record) =>
-          record.thirdPlatformType === 2 || record.thirdPlatformType === 3 ? (
+          record?.thirdPlatformType === 2 || record?.thirdPlatformType === 3 ? (
             <>
               <span>{record.invoiceNo}</span>
               <img
-                src={record.thirdPlatformType === 2 ? xzcLogo : znxcLogo}
+                src={record?.thirdPlatformType === 2 ? xzcLogo : znxcLogo}
                 alt="鑫资产"
                 style={{
                   width: '16px',
@@ -197,8 +198,7 @@ class SummaryCmp extends Component {
           ) : (
             <span>{record.invoiceNo}</span>
           ),
-        width:
-          list.thirdPlatformType === 2 || list.thirdPlatformType === 3
+        width: list?.thirdPlatformType === 2 || list?.thirdPlatformType === 3
             ? 230
             : 160
       },
@@ -615,43 +615,44 @@ class SummaryCmp extends Component {
         title: '单号',
         dataIndex: 'invoiceNo',
         render: (_, record) => (
-          <InvoiceDetail id={record.id} templateType={record.templateType}>
+          <IncomeInvoiceDetail id={record.id} templateType={20}>
             <span className={style.reasonSpan} style={spanStyle}>
               <Tooltip placement="topLeft" title={_ || ''}>
                 <a className="eslips-2">{_}</a>
               </Tooltip>
             </span>
-          </InvoiceDetail>
+          </IncomeInvoiceDetail>
         ),
         width: 160
       },
       {
         title: '应收金额(元)',
-        dataIndex: 'submitSum',
+        dataIndex: 'receiptSum',
         render: text => <span>{text && text / 100}</span>,
         width: 140
       },
       {
         title: '实收金额(元)',
-        dataIndex: 'submitSum',
+        dataIndex: 'assessSum',
         render: text => <span>{text && text / 100}</span>,
         width: 140
       },
       {
         title: '待收金额(元)',
-        dataIndex: 'submitSum',
+        dataIndex: 'waitAssessSum',
         render: text => <span>{text && text / 100}</span>,
         width: 140
       },
       {
         title: '项目名称',
-        dataIndex: 'submitSum',
-        render: () => <span>项目1</span>,
+        dataIndex: 'projectName',
+        render: (projectName) => <span>{projectName || '-'}</span>,
         width: 140
       },
       {
         title: '业务员',
-        dataIndex: 'invoiceTemplateName',
+        dataIndex: 'userName',
+        render: (userName) => <span>{userName || '-'}</span>,
         width: 140
       },
       {
@@ -668,11 +669,11 @@ class SummaryCmp extends Component {
       },
       {
         title: '收款时间',
-        dataIndex: 'createTime',
+        dataIndex: '5',
         render: (_, record) => (
           <span>
-            {record.createTime
-              ? moment(record.createTime).format('YYYY-MM-DD')
+            {record.receiveTime
+              ? moment(record.receiveTime).format('YYYY-MM-DD')
               : '-'}
           </span>
         ),
@@ -680,8 +681,8 @@ class SummaryCmp extends Component {
       },
       {
         title: '收款核销人',
-        dataIndex: 'createTime',
-        render: () => <span>{1 || '-'}</span>,
+        dataIndex: 'receiptName',
+        render: (receiptName) => <span>{receiptName || '-'}</span>,
         width: 150
       },
       {
@@ -715,10 +716,11 @@ class SummaryCmp extends Component {
       newColumns = colmn;
     } else if (templateType === 4) {
       newColumns = third;
-    } else if (templateType === 5) {
+    } else if (templateType === 20) {
       newColumns = income;
     }
-    if (userInfo.isSupperAdmin && templateType !== 5) {
+    console.log(templateType, '---');
+    if (userInfo.isSupperAdmin && templateType !== 20) {
       newColumns.push({
         title: '操作',
         dataIndex: 'operate',

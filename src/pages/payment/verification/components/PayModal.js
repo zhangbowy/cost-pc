@@ -50,9 +50,10 @@ class PayModal extends React.PureComponent {
 
   onShow = () => {
     const { userInfo, selectKey } = this.props;
-    this.props.dispatch({
-      type: 'global/getAliAccounts',
-      payload: {}
+
+    this.setState({
+      selectedRowKeys:selectKey.map(({id}) => id),
+      selectedRows:selectKey
     });
     this.props
       .dispatch({
@@ -138,66 +139,43 @@ class PayModal extends React.PureComponent {
 
   onSubmit = () => {
     const {
-      data,
       dispatch,
-      selectKey,
       form,
       payAccount,
       onOk,
-      templateType,
-      getAliAccounts,
-      confirms
     } = this.props;
-    const { status, imgUrl } = this.state;
-    // const _this = this;
+    const {imgUrl,selectedRows} = this.state;
+    if (selectedRows.length === 0) {
+      return message.warn('请至少选择一个发起核销');
+    }
     form.validateFieldsAndScroll((err, values) => {
-      console.log(err);
       if (!err) {
-        console.log(moment(values.time).format('x'));
-        let invoiceIds = [];
-        if (selectKey) {
-          invoiceIds = selectKey.map(it => it.invoiceId);
-        } else {
-          invoiceIds = [data.invoiceId];
-        }
-        let payList = payAccount.filter(it => it.id === values.account);
-        if (status !== '1') {
-          payList = getAliAccounts.filter(it => it.payId === values.account);
-        }
-        const url = status !== '1' ? 'global/addBatch' : 'global/send';
-        let params = {
-          invoiceIds,
-          payId: values.account,
-          payJson: JSON.stringify(payList),
-          payName: payList[0].name,
-          payTime: moment(values.time).format('x'),
-          templateType
+        const accountInfo = payAccount.find(it => it.id === values.account);
+        const invoiceIdAndReceiveSumList = selectedRows.map(it => {
+          const key = `${it.invoiceId}_amount`;
+          return {
+            receiveSum: values[key] * 100 || 0,
+            invoiceId: it.invoiceId
+          };
+        });
+        const param = {
+          accountId: accountInfo.id,
+          accountJson: JSON.stringify(accountInfo),
+          accountName: accountInfo.name,
+          receiveTime: moment(values.time).format('x'),
+          accountType: accountInfo.type,
+          invoiceIdAndReceiveSumList,
+          voucherList: imgUrl.map(({imgUrl: url}) => url),
+          templateType: 20
         };
-        if (status !== '1') {
-          params = {
-            invoiceIds,
-            account: payList[0].account,
-            payId: values.account,
-            templateType
-          };
-        } else {
-          params = {
-            ...params,
-            payVoucherList: imgUrl.length ? imgUrl.map(it => it.imgUrl) : []
-          };
-        }
+        const url = 'verification/send';
         dispatch({
           type: url,
           payload: {
-            ...params
+            ...param
           }
         }).then(() => {
-          if (status !== '1') {
-            message.success('批量下单成功');
-            confirms();
-          } else {
-            message.success('标记已付成功');
-          }
+            message.success('核销成功');
           this.onCancel();
           onOk(true);
           this.setState({
@@ -236,14 +214,9 @@ class PayModal extends React.PureComponent {
 
   check = (rule, value, callback) => {
     if (value) {
-      const { getAliAccounts } = this.props;
-      const arr = getAliAccounts.filter(it => it.payId === value);
-      if (arr && arr.length && arr[0].status !== 3) {
-        callback('请先对公司收款支付宝账户签约授权');
-      }
       callback();
     } else {
-      callback('请选择收款账户');
+      callback('请输入核销金额');
     }
   };
 
@@ -258,7 +231,6 @@ class PayModal extends React.PureComponent {
       this.state,
       selected,
       changeRows,
-      'key'
     );
     const _selectedRows = result.selectedRows;
     const { selectedRowKeys } = result;
@@ -266,6 +238,7 @@ class PayModal extends React.PureComponent {
       selectedRowKeys,
       selectedRows: _selectedRows
     });
+    this.onInputAmount();
   };
 
   onSelect = (record, selected) => {
@@ -273,13 +246,29 @@ class PayModal extends React.PureComponent {
       this.state,
       record,
       selected,
-      'key'
     );
     this.setState({
       selectedRowKeys,
       selectedRows
     });
+
+    this.onInputAmount();
   };
+
+  onInputAmount = () => {
+    setTimeout(() => {
+      const { selectedRows = []} = this.state;
+      const values = this.props.form.getFieldsValue();
+      let amount = 0;
+      selectedRows.forEach(it => {
+        const key = `${it.invoiceId}_amount`;
+        amount += values[key] || 0;
+      });
+      this.setState({
+        amount
+      });
+    }, 300);
+  }
 
   render() {
     const {
@@ -288,6 +277,7 @@ class PayModal extends React.PureComponent {
       form: { getFieldDecorator },
       loading,
       userInfo,
+      selectKey
     } = this.props;
     const {
       visible,
@@ -309,9 +299,9 @@ class PayModal extends React.PureComponent {
     const columns = [
       {
         title: '序号',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'index',
         width: 60,
-        render: () => <span style={{ display: 'flex' }} />
+        render: (_, record, index) => <span style={{ display: 'flex' }} >{index+1}</span>
       },
       {
         title: '单号',
@@ -327,42 +317,43 @@ class PayModal extends React.PureComponent {
       },
       {
         title: '业务员',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'userName',
         width: 100
       },
       {
         title: '部门',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'deptName',
         width: 100
       },
       {
         title: '应收金额(元)',
-        dataIndex: 'submitSum',
-        render: text => <span>{text / 100}</span>,
+        dataIndex: 'receiptSum',
+        render: text => <span>{text / 100 || 0}</span>,
         width: 100
       },
       {
         title: '已收金额(元)',
-        dataIndex: '2',
-        render: text => <span>{text / 100}</span>,
+        dataIndex: 'assessSum',
+        render: text => <span>{text / 100 || 0}</span>,
         width: 100
       },
       {
         title: '本次核销(元)',
-        dataIndex: '3',
+        dataIndex: '',
         render: (_, record) => {
           return (
             <Form>
               <Form.Item className={styles.verifyMoney}>
-                {getFieldDecorator(`shareAmount[${record.key}]`, {
-                  initialValue: record.shareAmount,
+                {getFieldDecorator(`${record.invoiceId}_amount`, {
+                  initialValue: 0,
                   rules: [{ validator: this.check }]
                 })(
                   <InputNumber
                     className={styles.verifyMoneyInput}
                     placeholder="请输入核销金额"
-                    min={0}
-                    onChange={val => this.onInputAmount(val, record.key)}
+                    min={0.00}
+                    step={0.01}
+                    onChange={() => this.onInputAmount()}
                   />
                 )}
               </Form.Item>
@@ -389,7 +380,7 @@ class PayModal extends React.PureComponent {
                 已选<span className="c-black-85 m-r-3 m-l-4">{count}</span>
                 张单据，核销总计{' '}
                 <span className={cs(styles.totalAmount, 'm-r-7')}>
-                  ¥{amount / 100}
+                  ¥{amount}
                 </span>
               </span>
               <Button
@@ -464,10 +455,10 @@ class PayModal extends React.PureComponent {
           </Form>
           <Table
             columns={columns}
-            dataSource={[{}]}
+            dataSource={selectKey}
             pagination={false}
             rowSelection={rowSelection}
-            rowKey="key"
+            rowKey="id"
           />
         </Modal>
       </span>

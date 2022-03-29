@@ -4,7 +4,7 @@ import api from './services';
 
 const { PAGE_SIZE } = constants;
 export default {
-  namespace: 'payment',
+  namespace: 'verification',
   state: {
     list: [],
     query: {

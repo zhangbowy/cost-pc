@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
+import moment from 'moment';
 import {
   formItemLayout,
   accountType,
@@ -108,7 +109,9 @@ class AddAccount extends React.PureComponent {
                   bankName1:
                     isInput && detail.bankName !== '其他银行'
                       ? detail.bankName
-                      : ''
+                      : '',
+                  initialDate: detail.initialDate ? moment(detail.initialDate): null,
+                  initialAmount: detail.initialDate / 100
                 },
                 treeList
               });
@@ -155,7 +158,8 @@ class AddAccount extends React.PureComponent {
             : [],
           companyId: userInfo.companyId || '',
           type: Number(value.type),
-          status: value.status ? 1 : 0
+          status: value.status ? 1 : 0,
+          initialAmount: value.initialAmount * 100
         };
         let action = 'account/add';
         if (title === 'edit') {
@@ -223,7 +227,8 @@ class AddAccount extends React.PureComponent {
     const {
       children,
       form: { getFieldDecorator },
-      title
+      title,
+      record
     } = this.props;
     const { type, visible, loading, data, treeList, isShowInput } = this.state;
     return (
@@ -284,17 +289,17 @@ class AddAccount extends React.PureComponent {
             </Form.Item>
             <Form.Item label={labelInfo.initialAmount}>
               {getFieldDecorator('initialAmount', {
-                rules: [{ required: true, message: '请输入初始金额' }],
+                rules: [{ required: !record, message: '请输入初始金额' }],
                 initialValue: (data && data.initialAmount) || 0
               })(
-                <InputNumber min={0} step={0.01} placeholder="请输入初始金额" />
+                <InputNumber disabled={record} min={0} step={0.01} placeholder="请输入初始金额" />
               )}
             </Form.Item>
             <Form.Item label={labelInfo.initialDate}>
               {getFieldDecorator('initialDate', {
-                rules: [{ required: true, message: '请输入初始日期' }],
+                rules: [{ required: !record, message: '请输入初始日期' }],
                 initialValue: data && data.initialDate
-              })(<DatePicker placeholder="请输入初始日期" />)}
+              })(<DatePicker disabled={record} placeholder="请输入初始日期" />)}
             </Form.Item>
             {Number(type) !== 2 && Number(type) !== 4 && (
               <Form.Item

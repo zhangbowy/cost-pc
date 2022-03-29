@@ -1,10 +1,8 @@
 import React from 'react';
 import { Table, Menu, Button, Form, message } from 'antd';
-import moment from 'moment';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
 import constants from '@/utils/constants';
-import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
 import PayModal from './PayModal';
 import { ddOpenLink } from '../../../../utils/ddApi';
@@ -62,7 +60,7 @@ class PayTemp extends React.PureComponent {
     const { selectedRowKeys } = result;
     let amount = 0;
     _selectedRows.forEach(item => {
-      amount += item.submitSum;
+      amount += item.receiptSum;
     });
 
     this.setState({
@@ -70,6 +68,7 @@ class PayTemp extends React.PureComponent {
       selectedRowKeys,
       sumAmount: amount.toFixed(2)
     });
+    console.log(_selectedRows, selectedRowKeys, '-----');
   };
 
   onSelect = (record, selected) => {
@@ -78,10 +77,10 @@ class PayTemp extends React.PureComponent {
       record,
       selected
     );
-    console.log(selectedRowKeys);
+    console.log(selectedRows);
     let amount = 0;
     selectedRows.forEach(item => {
-      amount += item.submitSum;
+      amount += item.receiptSum;
     });
     this.setState({
       selectedRows,
@@ -330,33 +329,9 @@ class PayTemp extends React.PureComponent {
       columns,
       templateType,
       confirm,
-      recordList,
-      recordPage,
-      onRecord,
       searchList,
     } = this.props;
 
-    const recordColumns = [
-      {
-        title: '姓名',
-        dataIndex: 'createName'
-      },
-      {
-        title: '操作时间',
-        dataIndex: 'createTime',
-        render: text => (
-          <span>{text ? moment(Number(text)).format('YYYY-MM-DD') : '-'}</span>
-        )
-      },
-      {
-        title: '操作内容',
-        dataIndex: 'operationMsg'
-      },
-      {
-        title: '详情',
-        dataIndex: 'operationDetail'
-      }
-    ];
     const rowSelection = {
       type: 'checkbox',
       selectedRowKeys,
@@ -374,9 +349,6 @@ class PayTemp extends React.PureComponent {
             mode="horizontal"
           >
             <Menu.Item key={2}>待收款</Menu.Item>
-            {/* <Menu.Item key={1}> */}
-            {/*  已{signName[templateType]} */}
-            {/* </Menu.Item> */}
             <Menu.Item key={3}>已收款</Menu.Item>
             <Menu.Item key={5}>已拒绝</Menu.Item>
           </Menu>
@@ -437,6 +409,24 @@ class PayTemp extends React.PureComponent {
                   </>
                 )}
               </div>
+              <div className="head_rf">
+                {/* <TableTemplate */}
+                {/*  page={recordPage} */}
+                {/*  onQuery={onRecord} */}
+                {/*  columns={recordColumns} */}
+                {/*  list={recordList} */}
+                {/*  placeholder="输入详情内容搜索" */}
+                {/*  sWidth="800px" */}
+                {/* > */}
+                {/*  <div className="head_rf" style={{cursor: 'pointer'}}> */}
+                {/*    <i */}
+                {/*      className="iconfont iconcaozuojilu c-black-65" */}
+                {/*      style={{verticalAlign: 'middle', marginRight: '4px'}} */}
+                {/*    /> */}
+                {/*    <span className="fs-14 c-black-65">操作记录</span> */}
+                {/*  </div> */}
+                {/* </TableTemplate> */}
+              </div>
             </div>
             <div
               style={{
@@ -448,26 +438,6 @@ class PayTemp extends React.PureComponent {
               <p className="c-black-85 fw-500 fs-14">
                 已选{selectedRowKeys.length}张单据，共计¥{sumAmount / 100}
               </p>
-              {Number(status) === 1 && (
-                <div className="head_rf">
-                  <TableTemplate
-                    page={recordPage}
-                    onQuery={onRecord}
-                    columns={recordColumns}
-                    list={recordList}
-                    placeholder="输入详情内容搜索"
-                    sWidth="800px"
-                  >
-                    <div className="head_rf" style={{cursor: 'pointer'}}>
-                      <i
-                        className="iconfont iconcaozuojilu c-black-65"
-                        style={{verticalAlign: 'middle', marginRight: '4px'}}
-                      />
-                      <span className="fs-14 c-black-65">操作记录</span>
-                    </div>
-                  </TableTemplate>
-                </div>
-              )}
             </div>
             <Table
               columns={columns}

@@ -131,7 +131,8 @@ const salary = [
   projectList: costGlobal.projectList,
   supplierList: global.supplierList,
   thirdList: summary.thirdList,
-  statisticsDimension: summary.statisticsDimension
+  statisticsDimension: summary.statisticsDimension,
+  incomeList:summary.incomeList
 }))
 class Summary extends React.PureComponent {
   constructor(props) {
@@ -321,6 +322,8 @@ class Summary extends React.PureComponent {
       url = 'summary/salaryList';
     } else if (Number(current) === 4) {
       url = 'summary/thirdList';
+    } else if (Number(current) === 20) {
+      url = 'summary/incomeList';
     }
     searchList.forEach(it => {
       if (it.value) {
@@ -329,8 +332,7 @@ class Summary extends React.PureComponent {
         });
       }
     });
-    this.props
-      .dispatch({
+    this.props.dispatch({
         type: url,
         payload
       })
@@ -340,7 +342,8 @@ class Summary extends React.PureComponent {
           applicationList,
           loanList,
           salaryList,
-          thirdList
+          thirdList,
+          incomeList
         } = this.props;
         let lists = submitList;
         if (Number(current) === 1) {
@@ -351,6 +354,8 @@ class Summary extends React.PureComponent {
           lists = salaryList;
         } else if (Number(current) === 4) {
           lists = thirdList;
+        } else if (Number(current) === 20) {
+          lists = incomeList;
         }
         this.search();
         this.setState({
@@ -375,7 +380,7 @@ class Summary extends React.PureComponent {
       arr[2].options = salary;
     } else if (e.key === '4') {
       arr = arr.filter(it => it.key !== 'statuses');
-    } else if (e.key === '5') {
+    } else if (e.key === '20') {
       arr = arr.filter(it => it.key !== 'supplierIds');
     }
     console.log(arr, '搜索的内容');
@@ -610,7 +615,7 @@ class Summary extends React.PureComponent {
                 <span>薪资单</span>
               </Tooltip>
             </Menu.Item>
-            <Menu.Item key={5}>
+            <Menu.Item key={20}>
               <span>收款单</span>
             </Menu.Item>
             <Menu.Item key={4}>三方导入</Menu.Item>
@@ -621,7 +626,7 @@ class Summary extends React.PureComponent {
           <div className={style.payContent}>
             {/* 增加了收款单不需要显示这个 crated by zhangbo on 2020/03/23 */}
             {/* eslint-disable-next-line eqeqeq */}
-            {current != 5 && (
+            {current != 20 && (
               <>
                 <div className="cnt-header" style={{ display: 'flex' }}>
                   <div className="head_lf">

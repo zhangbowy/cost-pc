@@ -16,5 +16,6 @@ export default {
   historyList: `${APP_API}/cost/excel/list`,
   del: `${APP_API}/cost/excel/deleteImportExcel`,
   submit: `${APP_API}/cost/statistics/modifyMonth/submit`,
-  statisticsDimension:`${APP_API}/cost/setting/detail`
+  statisticsDimension:`${APP_API}/cost/setting/detail`,
+  incomeList: `${APP_API}/cost/income/statistics/detail/income`
 };

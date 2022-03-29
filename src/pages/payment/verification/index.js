@@ -2,10 +2,9 @@ import React from 'react';
 import { message, Modal, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
-import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/PayModal';
-import { JsonParse } from '../../../utils/common';
 import {
   getArrayValue,
   accountType,
@@ -13,21 +12,20 @@ import {
 } from '../../../utils/constants';
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
-import TableImg from '../../../components/LittleCmp/TableImg';
 import imgs from '../../../assets/img/refuse.png';
 import style from './index.scss';
 
 const { confirm } = Modal;
-@connect(({ loading, payment, global, costGlobal }) => ({
-  loading: loading.effects['payment/list'] || false,
-  list: payment.list,
-  query: payment.query,
-  total: payment.total,
-  isViewVoucher: payment.isViewVoucher,
-  batchDetails: global.batchDetails,
-  recordList: payment.recordList,
-  recordPage: payment.recordPage,
-  recordTotal: payment.recordTotal,
+@connect(({ loading,verification, costGlobal }) => ({
+  loading: loading.effects['verification/list'] || false,
+  list: verification.list,
+  query: verification.query,
+  total: verification.total,
+  isViewVoucher: verification.isViewVoucher,
+  batchDetails: verification.batchDetails,
+  recordList: verification.recordList,
+  recordPage: verification.recordPage,
+  recordTotal: verification.recordTotal,
   isModifyInvoice: costGlobal.isModifyInvoice,
   officeListAndRole: costGlobal.officeListAndRole
 }))
@@ -109,7 +107,7 @@ class Payment extends React.PureComponent {
     if (payload.status) {
       Object.assign(payload, {
         status: Number(payload.status) === 1 ? 2 : payload.status,
-        isSign: Number(payload.status) === 1
+        // isSign: Number(payload.status) === 1
       });
     }
     const { searchList } = this.state;
@@ -121,10 +119,9 @@ class Payment extends React.PureComponent {
       }
     });
     this.props.dispatch({
-      type: 'payment/list',
+      type: 'verification/list',
       payload: {
         ...payload,
-        accountTypes: payload.accountTypes || []
       }
     });
   };
@@ -136,11 +133,11 @@ class Payment extends React.PureComponent {
       onOk: () => {
         this.props
           .dispatch({
-            type: 'payment/refuse',
+            type: 'verification/refuse',
             payload: {
-              invoiceSubmitIds: [val.id],
+              invoiceIds: [val.id],
               rejectNote: val.rejectNote,
-              templateType: 0
+              templateType: 20
             }
           })
           .then(() => {
@@ -182,7 +179,7 @@ class Payment extends React.PureComponent {
   operationSign = (payload, callback) => {
     this.props
       .dispatch({
-        type: 'payment/operationSign',
+        type: 'verification/operationSign',
         payload
       })
       .then(() => {
@@ -199,7 +196,7 @@ class Payment extends React.PureComponent {
     });
     this.props
       .dispatch({
-        type: 'payment/record',
+        type: 'verification/record',
         payload
       })
       .then(() => {
@@ -266,7 +263,6 @@ class Payment extends React.PureComponent {
       loading,
       batchDetails,
       dispatch,
-      isViewVoucher,
       recordList,
       recordPage,
       recordTotal,
@@ -289,20 +285,20 @@ class Payment extends React.PureComponent {
         render: (_, record) => (
           <span style={{ display: 'flex' }}>
             <Tooltip placement="topLeft" title={record.invoiceNo || ''}>
-              <span className="eslips-2 m-r-8">{1 || record.invoiceNo}</span>
+              <span className="eslips-2 m-r-8">{record.invoiceNo}</span>
             </Tooltip>
           </span>
         )
       },
       {
         title: '收款单金额(元)',
-        dataIndex: 'submitSum',
+        dataIndex: 'receiptSum',
         render: text => <span>{text / 100}</span>,
         width: 100
       },
       {
         title: '业务员',
-        dataIndex: '1',
+        dataIndex: 'userName',
         width: 120
       },
       {
@@ -316,7 +312,7 @@ class Payment extends React.PureComponent {
       },
       {
         title: '单据类型',
-        dataIndex: 'invoiceTemplateName',
+        dataIndex: 'incomeTemplateName',
         width: 120,
         render: text => <span>{text || '-'}</span>
       },
@@ -360,18 +356,18 @@ class Payment extends React.PureComponent {
               </PayModal>
             )}
             {Number(record.status) === 2 && <Divider type="vertical" />}
-            <InvoiceDetail
+            <IncomeInvoiceDetail
               id={record.invoiceId}
               refuse={this.handleRefuse}
               templateId={record.invoiceTemplateId}
-              templateType={4}
+              templateType={20}
               allow="modify"
               onCallback={() => this.onOk()}
               signCallback={this.onSign}
               title="收款单详情"
             >
               <a>查看</a>
-            </InvoiceDetail>
+            </IncomeInvoiceDetail>
           </span>
         ),
         width: 135,
@@ -379,79 +375,10 @@ class Payment extends React.PureComponent {
         className: 'fixCenter'
       }
     ];
-    if (Number(status) === 3) {
-      columns.splice(
-        8,
-        0,
-        {
-          title: '发放人',
-          dataIndex: 'payUserName',
-          width: 80
-        },
-        {
-          title: '付款时间',
-          dataIndex: 'payTime',
-          render: text => (
-            <span>{text && moment(text).format('YYYY-MM-DD')}</span>
-          ),
-          width: 100
-        },
-        {
-          title: '付款账户',
-          dataIndex: 'payNameJson',
-          render: (_, record) => {
-            const account = record.payNameJson && JsonParse(record.payNameJson);
-            return (
-              <span>
-                {account && account[0] && account[0].type
-                  ? getArrayValue(account[0].type, accountType)
-                  : ''}
-                <span className="m-r-8">
-                  {account && account[0] && account[0].bankName}
-                </span>
-                {account && account[0] && account[0].account}
-              </span>
-            );
-          },
-          width: 140
-        },
-        {
-          title: '付款账户名称',
-          dataIndex: 'payName',
-          render: (_, record) => {
-            const account = record.payNameJson && JsonParse(record.payNameJson);
-            return <span>{account && account[0] && account[0].name}</span>;
-          },
-          width: 100
-        }
-      );
-    }
-    if (isViewVoucher) {
-      columns.splice(12, 0, {
-        title: '付款凭证',
-        dataIndex: 'payVoucher',
-        width: 100,
-        render: (_, record) => (
-          <>
-            {record.payVoucher && record.payVoucher.length ? (
-              <TableImg imgUrl={record.payVoucher} />
-            ) : (
-              '-'
-            )}
-          </>
-        )
-      });
-    }
-    if (Number(status) === 1) {
-      columns.splice(8, 0, {
-        title: '票审人',
-        dataIndex: 'signUserName',
-        width: 100
-      });
-    }
+
     if (Number(status) === 5) {
       columns.splice(
-        0,
+        1,
         0,
         {
           title: '拒绝理由',
