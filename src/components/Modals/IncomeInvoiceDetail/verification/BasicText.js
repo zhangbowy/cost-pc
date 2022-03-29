@@ -52,7 +52,7 @@ const BasicText = ({
         )}
       </Col>
       <Col span={8} className="m-t-16">
-        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目:</span>
+        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>项目： </span>
         <span className="fs-14 c-black-65">{details.projectName || '-'}</span>
       </Col>
       <Col span={8} className="m-t-16">
@@ -133,7 +133,7 @@ const BasicText = ({
       <Col span={24} className="m-t-16">
         <div style={{ display: 'flex' }}>
           <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
-            事由:
+            事由：
           </span>
           <span className="fs-14 c-black-65" style={{ flex: 1 }}>
             {details.reason || '-'}
