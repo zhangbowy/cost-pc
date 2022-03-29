@@ -292,13 +292,16 @@ class Payment extends React.PureComponent {
       },
       {
         title: '收款单金额(元)',
-        dataIndex: 'receiptSum',
+        dataIndex: 'originIncomeSum',
         render: text => <span>{text / 100}</span>,
         width: 100
       },
       {
         title: '业务员',
         dataIndex: 'userName',
+        render: text => (
+          <span>{ text || '-'}</span>
+        ),
         width: 120
       },
       {
