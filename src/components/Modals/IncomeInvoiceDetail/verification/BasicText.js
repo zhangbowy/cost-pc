@@ -60,7 +60,7 @@ const BasicText = ({
           收入金额：
         </span>
         <span className="fs-14 c-black-65">
-          ¥{details.salaryAmount ? details.salaryAmount / 100 : 0}
+          ¥{details.assessSum ? details.assessSum / 100 : 0}
         </span>
       </Col>
       <Col span={8} className="m-t-16">
@@ -68,7 +68,7 @@ const BasicText = ({
           业务员：
         </span>
         <span className="fs-14 c-black-65">
-          ¥{details.userName ? details.userName  : '-'}
+          {details.userName ? details.userName  : '-'}
         </span>
       </Col>
       <Col span={8} className="m-t-16">
