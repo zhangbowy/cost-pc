@@ -131,6 +131,7 @@ class InvoiceDetail extends Component {
             });
         }
         this.setState({
+          visible: true,
           details,
           totalCost,
           showFields: showObj,
