@@ -153,14 +153,14 @@ class SelectInvoice extends Component {
   }
 
   handleOk = () => {
-    // const { activeObj } = this.state;
+    const { activeObj } = this.state;
     const { selectCost } = this.state;
     if (selectCost) {
       localStorage.setItem('selectCost', JSON.stringify(selectCost));
     }
     localStorage.removeItem('contentJson');
-    // this.props.history.push(`/workbench/add~${activeObj.templateType}~${activeObj.id}`);
-    this.props.history.push('/incomeReport/add~20~713812629653217280');
+    this.props.history.push(`/workbench/add~${activeObj.templateType}~${activeObj.id}`);
+    // this.props.history.push('/incomeReport/add~20~713812629653217280');
   }
 
   modalOk = (item) => {
