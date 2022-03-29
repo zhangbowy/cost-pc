@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import cs from 'classnames';
 import Search from 'antd/lib/input/Search';
 import moment from 'moment';
+import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import SelectIncome from './components/SelectIncome';
 import style from './index.scss';
 import constants, { getArrayColor, invoiceStatus } from '../../utils/constants';
@@ -111,7 +112,19 @@ class incomeReport extends React.PureComponent {
       title: '单号',
       dataIndex: 'invoiceNo',
       render: (_, record) => (
-        <a>{record.invoiceNo}</a>
+        <IncomeInvoiceDetail
+          id={record.id}
+          // refuse={this.handleRefuse}
+          templateId={record.incomeTemplateId}
+          templateType={20}
+          // allow="modify"
+          // onCallback={() => this.onOk()}
+          // signCallback={this.onSign}
+          title="收款单详情"
+        >
+          <a>{record.invoiceNo}</a>
+        </IncomeInvoiceDetail>
+
       )
     }, {
       title: '金额（元）',
@@ -171,7 +184,7 @@ class incomeReport extends React.PureComponent {
             <Search
               placeholder="单号、事由、业务员"
               style={{width: '272px'}}
-              onChange={(val) => this.onComplete(val, 'reason')}
+              onSearch={(val) => this.onComplete(val, 'reason')}
             />
             <span style={{lineHeight: '32px'}} className="m-l-16">单据状态：</span>
             <Select

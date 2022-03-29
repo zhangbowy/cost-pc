@@ -478,6 +478,7 @@ class addInvoice extends Component {
       };
       arr.push({
         ...obj,
+        costSum: it.incomeSum || it.costSum,
         currencyId: it.currencyId || '-1',
         currencyName: currency.name || '',
         exchangeRate: currency.exchangeRate || 1,
@@ -847,7 +848,8 @@ class addInvoice extends Component {
         payload : {
           ...params,
           templateType,
-          draftId: draftId || ''
+          draftId: draftId || '',
+          assessSum: 0,
         }
       }).then(() => {
         this.onCancel();

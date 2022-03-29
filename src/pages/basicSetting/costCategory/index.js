@@ -72,10 +72,12 @@ class CostCategory extends React.PureComponent {
 
   handleVisibleChange = (id) => {
     const _this = this;
+    const { type } = this.state;
     this.props.dispatch({
       type: 'costCategory/delPer',
       payload: {
         id,
+        costType: type,
       }
     }).then(() => {
       confirm({
@@ -112,9 +114,11 @@ class CostCategory extends React.PureComponent {
 
   onDelete = (id) => {
     const { userInfo } = this.props;
+    const { type } = this.state;
     this.props.dispatch({
       type: 'costCategory/del',
       payload: {
+        costType: type,
         id,
         companyId: userInfo.companyId || ''
       }

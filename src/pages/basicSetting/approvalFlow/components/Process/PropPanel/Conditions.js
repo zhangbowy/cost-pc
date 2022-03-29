@@ -46,7 +46,15 @@ const defaultList = {
     type: 'people',
     id,
     ruleType: 'people',
-  }]
+  }],
+  '20': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    id,
+    ruleType: 'people',
+  }],
 };
 @Form.create()
 @connect(({ global }) => ({
@@ -342,9 +350,10 @@ class Conditions extends Component {
       },
     };
     getFieldDecorator('keys', { initialValue: conditions && conditions.length > 0 ? conditions : lists });
+    console.log('🚀 ~ file: Conditions.js ~ line 345 ~ Conditions ~ render ~ lists', lists);
     let SHOW = SHOW_CHILD;
     const keys = getFieldValue('keys');
-    const formItems = keys.map((item, index) => {
+    const formItems = keys && keys.map((item, index) => {
       let valueList = [];
       if (item.key === 'project') {
         console.log(item,'item.ruleValue');

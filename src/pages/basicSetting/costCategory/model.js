@@ -75,7 +75,12 @@ export default {
       yield call(post, url, param);
     },
     *del({ payload }, { call }) {
-      yield call(post, api.delCostGroup, payload);
+      let url = api.delCostGroup;
+      const param = {id: payload.id, companyId: payload.companyId};
+      if (payload.costType === '1') {
+        url = api.delIncomeGroup;
+      }
+      yield call(post, url, param);
     },
     *sort({ payload }, { call }) {
       yield call(post, api.sorts, payload);
@@ -102,7 +107,12 @@ export default {
       yield call(post, url, param);
     },
     *delPer({ payload }, { call }) {
-      yield call(post, api.delPer, payload);
+      let url = api.delPer;
+      const param = {id: payload.id};
+      if (payload.costType === '1') {
+        url = api.delPerIncome;
+      }
+      yield call(post, url, param);
     },
     *checkDel({ payload }, { call }) {
       yield call(post, api.check, payload);
