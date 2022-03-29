@@ -367,7 +367,7 @@ class InvoiceDetail extends Component {
             </div>
           }
           width="980px"
-          bodyStyle={{ height: '630px', overflowY: 'scroll' }}
+          bodyStyle={{ maxHeight: '630px', overflowY: 'scroll' }}
           footer={getFooter()}
         >
           <div className={cs(style.header)}>
