@@ -111,7 +111,7 @@ class AddAccount extends React.PureComponent {
                       ? detail.bankName
                       : '',
                   initialDate: detail.initialDate ? moment(detail.initialDate): null,
-                  initialAmount: detail.initialDate / 100
+                  initialAmount: detail.initialAmount / 100
                 },
                 treeList
               });

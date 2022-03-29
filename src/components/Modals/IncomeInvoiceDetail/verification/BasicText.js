@@ -106,12 +106,12 @@ const BasicText = ({
           )}
         </span>
       </Col>
-      {/* <Col span={8} className="m-t-16"> */}
-      {/*  <span className={cs('fs-14', 'c-black-85', style.nameTil)}> */}
-      {/*    发生日期： */}
-      {/*  </span> */}
-      {/*  <span className="fs-14 c-black-65">{details.createName}</span> */}
-      {/* </Col> */}
+      <Col span={8} className="m-t-16">
+        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+          拒绝理由：
+        </span>
+        <span className="fs-14 c-black-65" style={{color: '#FF5A5F'}}>{details.createName}</span>
+      </Col>
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           提交人：

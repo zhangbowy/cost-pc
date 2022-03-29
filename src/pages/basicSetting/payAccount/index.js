@@ -164,7 +164,7 @@ class Account extends Component {
           </div>
           <div className="head_lf">
             <AddAccount onOk={this.onOk} title="add">
-              <Button type="primary">新增付款账户</Button>
+              <Button type="primary">新增资金账户</Button>
             </AddAccount>
           </div>
         </div>

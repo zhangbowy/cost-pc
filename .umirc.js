@@ -113,6 +113,50 @@ export default {
       config
         .plugin('after-emit-webpack-plugin')
         .use(new AfterEmitWebpackPlugin());
+      //过滤掉momnet的那些不使用的国际化文件
+      config.plugin('replace').use(require('webpack').ContextReplacementPlugin).tap(() => {
+        return [/moment[/\\]locale$/, /zh-cn/];
+      });
+      config.performance.set('hints', false);
+      // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
+      config.optimization.runtimeChunk('single');
+      config.optimization.splitChunks({
+        chunks: 'all',
+        maxInitialRequests: 6,
+        maxAsyncRequests: 6,
+        cacheGroups: {
+          React: {
+            name: 'React',
+            test: /[\\/]node_modules[\\/]_?react/,
+            priority: 22
+          },
+          antd: {
+            name: 'antd',
+            priority: 22,
+            test: /[\\/]node_modules[\\/]_?(ant|@ant)(.*)/
+          },
+          echarts: {
+            name: 'echarts',
+            test: /[\\/]node_modules[\\/]_?(zrender|echarts(.*))/,
+            priority: 22
+          },
+          lib: {
+            name: 'chunk-lib',
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            // chunks: 'initial'
+          },
+          commons: {
+            name: 'chunk-commons',
+            test: path.join(__dirname, 'src'),
+            minChunks: 2,
+            priority: 5,
+            reuseExistingChunk: true
+          },
+        }
+      })
     }
+
+
   },
 }

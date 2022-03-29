@@ -640,7 +640,7 @@ class SummaryCmp extends Component {
       {
         title: '待收金额(元)',
         dataIndex: 'waitAssessSum',
-        render: text => <span>{text && text / 100}</span>,
+        render: (_, record) => <span>{(record.receiptSum - record.assessSum) / 100 || '0'}</span>,
         width: 140
       },
       {
@@ -673,15 +673,15 @@ class SummaryCmp extends Component {
         render: (_, record) => (
           <span>
             {record.receiveTime
-              ? moment(record.receiveTime).format('YYYY-MM-DD')
+              ? moment(record.receiveTime).format('YYYY-MM-DD HH:mm:ss')
               : '-'}
           </span>
         ),
-        width: 150
+        width: 170
       },
       {
         title: '收款核销人',
-        dataIndex: 'receiptName',
+        dataIndex: 'receiptUserName',
         render: (receiptName) => <span>{receiptName || '-'}</span>,
         width: 150
       },
