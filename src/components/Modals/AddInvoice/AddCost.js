@@ -1026,7 +1026,7 @@ class AddCost extends Component {
                       </Form.Item>
                       {
                         exchangeRate && exchangeRate !== '1' ?
-                          <span style={{float: 'left', margin: '-55px 24px 0 271px'}} className="c-black-36">汇率{exchangeRate}</span>
+                          <span style={{float: 'left', margin: '-45px 24px 0 290px'}} className="c-black-36">汇率{exchangeRate}</span>
                           :
                           null
                       }

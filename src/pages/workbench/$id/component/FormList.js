@@ -812,7 +812,7 @@ renderTreeNodes = data =>
                           )
                         }
                         {
-                          <Capitalization isMoney={this.state.money || details.applicationSum||''}/>
+                          <div style={{marginTop:'4px!important'}}><Capitalization isMoney={this.state.money || details.applicationSum||''}/></div>
                         }
                         {
                           itw.itemExplain && !!(itw.itemExplain.length) &&
