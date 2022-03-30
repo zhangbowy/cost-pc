@@ -41,7 +41,7 @@ const listSearch = [
     placeholder: '请选择',
     key: 'statuses',
     id: 'statuses',
-    options: incomeInvoiceStatus.filter(it => it.key !== '6'),
+    options: invoiceStatus.filter(it => it.key !== '6'),
     fileName: {
       key: 'key',
       name: 'value'
@@ -70,6 +70,61 @@ const listSearch = [
     id: 'supplierIds'
   }
 ];
+
+const incomeListSearch = [
+  {
+    type: 'search',
+    label: '外部选择',
+    placeholder: '搜索单号、事由、收款账户名称',
+    key: 'content',
+    id: 'content',
+    out: 1
+  },
+  {
+    type: 'deptAndUser',
+    label: '收款部门/人',
+    placeholder: '请选择',
+    key: ['createUserVOS', 'createDeptVOS'],
+    id: 'createUserVOS',
+    out: 1
+  },
+  {
+    type: 'rangeTime',
+    label: '提交时间',
+    placeholder: '请选择',
+    key: ['startTime', 'endTime'],
+    id: 'startTime',
+    out: 1
+  },
+  {
+    type: 'select',
+    label: '单据状态',
+    placeholder: '请选择',
+    key: 'statuses',
+    id: 'statuses',
+    options: incomeInvoiceStatus.filter(it => it.key !== '6'),
+    fileName: {
+      key: 'key',
+      name: 'value'
+    }
+  },
+  {
+    type: 'tree',
+    label: '单据类型',
+    placeholder: '请选择',
+    key: 'invoiceTemplateIds',
+    id: 'invoiceTemplateIds',
+    out: 1
+  },
+  {
+    type: 'tree',
+    label: '项目',
+    placeholder: '请选择',
+    key: 'projectIds',
+    id: 'projectIds'
+  },
+];
+
 const apply = [
   {
     key: '1',
@@ -381,7 +436,7 @@ class Summary extends React.PureComponent {
     } else if (e.key === '4') {
       arr = arr.filter(it => it.key !== 'statuses');
     } else if (e.key === '20') {
-      arr = arr.filter(it => it.key !== 'supplierIds');
+      arr = [...incomeListSearch];
     }
     console.log(arr, '搜索的内容');
     this.setState(
@@ -621,7 +676,7 @@ class Summary extends React.PureComponent {
             <Menu.Item key={4}>三方导入</Menu.Item>
           </Menu>
         </div>
-        <SearchBanner list={searchList || []} onChange={this.onChangeSearch} />
+        <SearchBanner list={Number(current) === 20 ? incomeListSearch:searchList} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ padding: 0, height: 'auto' }}>
           <div className={style.payContent}>
             {/* 增加了收款单不需要显示这个 crated by zhangbo on 2020/03/23 */}

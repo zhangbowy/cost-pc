@@ -325,10 +325,17 @@ class InvoiceDetail extends Component {
             <div className={style.footerWrap}>
               <div />
               <div>
-                {(refuse && Number(details.status) === 2)  &&
-                <RefuseModal refuse={val => this.handleRefuse(val)}>
-                  <Button key="refuse">拒绝核销</Button>
-                </RefuseModal>}
+                {(refuse && Number(details.status) === 2)  && (
+                  !details.assessSum ? (
+                    <RefuseModal refuse={val => this.handleRefuse(val)}>
+                      <Button key="refuse" >拒绝核销</Button>
+                    </RefuseModal>
+                  ): (
+                    <Tooltip title="该单据已部分核销，无法拒绝核销">
+                      <Button key="refuse" disabled>拒绝核销</Button>
+                    </Tooltip>
+                  )
+                )}
               </div>
             </div>
           );
@@ -367,6 +374,7 @@ class InvoiceDetail extends Component {
             </div>
           }
           width="980px"
+          className={style.incomeInvoiceWrap}
           bodyStyle={{ maxHeight: '630px', overflowY: 'scroll' }}
           footer={getFooter()}
         >

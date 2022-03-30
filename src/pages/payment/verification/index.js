@@ -7,8 +7,6 @@ import PayTemp from './components/PayTemp';
 import PayModal from './components/PayModal';
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
-import imgs from '../../../assets/img/refuse.png';
-import style from './index.scss';
 
 const { confirm } = Modal;
 @connect(({ loading,verification, costGlobal }) => ({
@@ -51,15 +49,13 @@ class Payment extends React.PureComponent {
         },
         {
           type: 'deptAndUser',
-
-          label: '提交部门/人',
+          label: '收款部门/人',
           placeholder: '请选择',
           key: ['users', 'depts'],
           id: 'userVOS',
           out: 1
         }
       ],
-      isShow: true
     };
   }
 
@@ -270,18 +266,16 @@ class Payment extends React.PureComponent {
       selectedRowKeys,
       selectedRows,
       searchList,
-      isShow
     } = this.state;
-    const refuse = localStorage.getItem('refuseShow');
     const columns = [
       {
         title: '单号',
         dataIndex: 'invoiceNo',
-        width: 140,
+        width: 130,
         render: (_, record) => (
           <span style={{ display: 'flex' }}>
             <Tooltip placement="topLeft" title={record.invoiceNo || ''}>
-              <span className="eslips-2 m-r-8">{record.invoiceNo}</span>
+              <span className="eslips-2">{record.invoiceNo}</span>
             </Tooltip>
           </span>
         )
@@ -290,7 +284,7 @@ class Payment extends React.PureComponent {
         title: '收款单金额(元)',
         dataIndex: 'originIncomeSum',
         render: text => <span>{text / 100}</span>,
-        width: 100
+        width: 110
       },
       {
         title: '业务员',
@@ -387,17 +381,6 @@ class Payment extends React.PureComponent {
     }
     return (
       <>
-        {!refuse && isShow && (
-          <div
-            className={style.mask}
-            onClick={() => {
-              localStorage.setItem('refuseShow', '1');
-              this.setState({ isShow: false });
-            }}
-          >
-            <img src={imgs} alt="遮罩" />
-          </div>
-        )}
         <PayTemp
           {...this.props}
           namespace="payment"
