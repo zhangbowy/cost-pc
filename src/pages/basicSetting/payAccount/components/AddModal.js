@@ -297,7 +297,7 @@ class AddAccount extends React.PureComponent {
                 rules: [{ required: !record, message: '请输入初始金额' }],
                 initialValue: (data && data.initialAmount) || 0
               })(
-                <InputNumber disabled={record} min={0} step={0.01} placeholder="请输入初始金额" />
+                <InputNumber disabled={record} max={10e8} min={0} step={0.01} placeholder="请输入初始金额" />
               )}
             </Form.Item>
             <Form.Item label={labelInfo.initialDate}>
