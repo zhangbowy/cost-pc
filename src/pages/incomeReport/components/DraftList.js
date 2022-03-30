@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Divider, Button, Popconfirm, message, Tooltip } from 'antd';
+import { Divider, Button, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { withRouter } from 'react-router';
@@ -164,17 +164,6 @@ class DraftList extends Component {
         <span>{index+1}</span>
       ),
       width: '40px'
-    }, {
-      title: '事由',
-      dataIndex: 'reason',
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
-      width: '100px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
