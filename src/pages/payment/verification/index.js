@@ -5,11 +5,6 @@ import { connect } from 'dva';
 import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import PayTemp from './components/PayTemp';
 import PayModal from './components/PayModal';
-import {
-  getArrayValue,
-  accountType,
-  filterAccount
-} from '../../../utils/constants';
 import ConfirmPay from './components/ConfirmPay';
 import { ddPreviewImage } from '../../../utils/ddApi';
 import imgs from '../../../assets/img/refuse.png';
@@ -303,15 +298,6 @@ class Payment extends React.PureComponent {
           <span>{ text || '-'}</span>
         ),
         width: 120
-      },
-      {
-        title: '账户类型',
-        dataIndex: 'accountType',
-        width: 120,
-        filters: filterAccount,
-        render: text => (
-          <span>{`${text}` ? getArrayValue(text, accountType) : '-'}</span>
-        )
       },
       {
         title: '单据类型',
