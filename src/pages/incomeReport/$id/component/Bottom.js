@@ -30,7 +30,7 @@ export default function Bottom({ total, onSave,
               onClick={onDraft}
               loading={draftLoading}
             >
-              保存
+              保存草稿
             </Button>
           }
           <Button
@@ -38,7 +38,7 @@ export default function Bottom({ total, onSave,
             onClick={onSave}
             loading={loading}
           >
-            确定
+            提交
           </Button>
         </div>
       )}

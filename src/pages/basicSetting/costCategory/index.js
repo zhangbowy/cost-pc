@@ -429,7 +429,10 @@ class CostCategory extends React.PureComponent {
             </div>
             <div>
               <Sort list={newArrs} callback={this.getSort} title={`${menuList[type].value}排序`}>
-                <Button type="default">排序</Button>
+                <div style={{display: 'flex', alignItems: 'center', height: '32px'}} className="head_rf sub-color">
+                  <i className="iconfont iconpaixu m-r-8" />
+                  <span>类别排序</span>
+                </div>
               </Sort>
             </div>
           </div>

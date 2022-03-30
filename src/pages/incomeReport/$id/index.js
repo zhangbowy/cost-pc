@@ -811,6 +811,7 @@ class addInvoice extends Component {
       payload: {
         contentJson: JSON.stringify(params),
         receiptSum: ((total * 1000)/10).toFixed(0),
+        costSum: ((total * 1000)/10).toFixed(0),
         templateType,
         reason: val.reason,
         incomeTemplateName: djDetail.name,

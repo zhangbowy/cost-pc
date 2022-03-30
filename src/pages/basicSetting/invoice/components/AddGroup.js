@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, message, Radio } from 'antd';
 import { connect } from 'dva';
-import { formItemLayout, defaultTitle, invoiceStatus } from '@/utils/constants';
+import { defaultTitle, invoiceStatus } from '@/utils/constants';
 import ModalTemp from '../../../../components/ModalTemp';
 
 const labelItem = {
@@ -116,17 +116,19 @@ class AddGroup extends React.PureComponent {
           visible={visible}
           onCancel={() => this.setState({ visible: false })}
           maskClosable={false}
+          newBodyStyle={{
+            height: '260px'
+          }}
           size="small"
           footer={[
             <Button key="cancel" onClick={this.onCancel}>取消</Button>,
             <Button key="save" type="primary" onClick={this.handleOk} loading={loading}>保存</Button>
           ]}
         >
-          <Form>
+          <Form layout="vertical">
             <Form.Item
               key="name"
               label={labelItem.costName}
-              {...formItemLayout}
             >
               {
                 getFieldDecorator('name', {
@@ -146,7 +148,6 @@ class AddGroup extends React.PureComponent {
             <Form.Item
               key="templateType"
               label={labelItem.type}
-              {...formItemLayout}
             >
               {
                 getFieldDecorator('templateType', {
