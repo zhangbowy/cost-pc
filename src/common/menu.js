@@ -202,7 +202,7 @@ const menuData = [
   {
     id: 'incomeReport',
     name: '收入提报',
-    myIcon: 'iconshenpi1',
+    myIcon: 'iconshourutibao',
     path: 'incomeReport',
   },
   {
