@@ -328,14 +328,14 @@ class PayTemp extends React.PureComponent {
       searchList,
     } = this.props;
 
-    const rowSelection = {
+    const rowSelection = Number(status) === 2 ? {
       type: 'checkbox',
       selectedRowKeys,
       onSelect: this.onSelect,
       onSelectAll: this.onSelectAll,
       columnWidth: '24px',
-      fixed: true
-    };
+      fixed: true,
+    }: null;
     return (
       <div style={{padding: 0}}>
         <div className={style.titleMenu}>
@@ -350,6 +350,7 @@ class PayTemp extends React.PureComponent {
           </Menu>
         </div>
         <SearchBanner
+          className={style.verificationHeader}
           list={searchList || []}
           onChange={val =>
             this.props.onChangeSearch(val, () => {
@@ -388,22 +389,21 @@ class PayTemp extends React.PureComponent {
                 : style.payContent
             }
           >
+            {(Number(status) === 2 || Number(status) === 1) && (
             <div className="cnt-header" style={{display: 'flex'}}>
               <div className="head_lf">
-                {(Number(status) === 2 || Number(status) === 1) && (
-                  <>
-                    <PayModal
-                      selectKey={selectedRows}
-                      onOk={val => this.onOk(val)}
-                      templateType={templateType}
-                      confirms={() => confirm()}
-                    >
-                      <Button type="primary" style={{marginRight: '8px'}}>
-                        发起收款
-                      </Button>
-                    </PayModal>
-                  </>
-                )}
+                <>
+                  <PayModal
+                    selectKey={selectedRows}
+                    onOk={val => this.onOk(val)}
+                    templateType={templateType}
+                    confirms={() => confirm()}
+                  >
+                    <Button type="primary" style={{marginRight: '8px'}}>
+                      发起收款
+                    </Button>
+                  </PayModal>
+                </>
               </div>
               <div className="head_rf">
                 {/* <TableTemplate */}
@@ -424,17 +424,20 @@ class PayTemp extends React.PureComponent {
                 {/* </TableTemplate> */}
               </div>
             </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '8px'
-              }}
-            >
-              <p className="c-black-85 fw-500 fs-14">
-                已选{selectedRowKeys.length}张单据，共计¥{sumAmount / 100}
-              </p>
-            </div>
+              )}
+            {(Number(status) === 2 || Number(status) === 1) && (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: '8px'
+                }}
+              >
+                <p className="c-black-85 fw-500 fs-14">
+                  已选{selectedRowKeys.length}张单据，共计¥{sumAmount / 100}
+                </p>
+              </div>
+            )}
             <Table
               columns={columns}
               dataSource={list}
