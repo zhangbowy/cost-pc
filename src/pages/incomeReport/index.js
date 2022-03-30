@@ -7,7 +7,7 @@ import moment from 'moment';
 import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import SelectIncome from './components/SelectIncome';
 import style from './index.scss';
-import constants, { getArrayColor, invoiceStatus } from '../../utils/constants';
+import constants, { getArrayColor, getArrayValue, incomeInvoiceStatus, invoiceStatus } from '../../utils/constants';
 import DraftList from './components/DraftList';
 import { ddOpenLink } from '../../utils/ddApi';
 
@@ -54,8 +54,8 @@ class incomeReport extends React.PureComponent {
         reason
       });
     }
-    if (type){
-      Object.assign(type, {
+    if (type !== null){
+      Object.assign(payload, {
         type
       });
     }
@@ -157,7 +157,8 @@ class incomeReport extends React.PureComponent {
                   ? 'rgba(255, 148, 62, 1)'
                   : getArrayColor(`${status}`, invoiceStatus)
               }
-              text={record.msg}
+              text={record.msg ||
+                getArrayValue(record.status, incomeInvoiceStatus)}
             />
           </span>
         );

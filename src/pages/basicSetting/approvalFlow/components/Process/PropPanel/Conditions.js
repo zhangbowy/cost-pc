@@ -59,6 +59,7 @@ const defaultList = {
 @Form.create()
 @connect(({ global }) => ({
   costCategoryList: global.costCategoryList,
+  incomeCategoryList: global.incomeCategoryList,
   projectList: global.projectList,
   supplierList: global.supplierList,
 }))
@@ -318,6 +319,7 @@ class Conditions extends Component {
       // templateType,
       supplierList,
       getCondition,
+      incomeCategoryList,
     } = this.props;
     console.log(projectList, '原数据');
     console.log(costCategoryList, '原数据');
@@ -329,6 +331,13 @@ class Conditions extends Component {
       tName: 'title',
       tId: 'value'
     }, costCategoryList);
+    const incomeList = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tName: 'title',
+      tId: 'value'
+    }, incomeCategoryList);
     const projectLists = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -361,10 +370,12 @@ class Conditions extends Component {
         SHOW = SHOW_PARENT;
       } else if (item.key === 'supplier') {
         valueList = supplierList;
+      } else if (item.key === 'income_category'){
+        valueList = incomeList;
       } else {
         valueList = list;
       }
-      console.log(valueList,'34300000');
+      console.log(item.key,'34300000');
       return (
         <Form.Item
           key={item.id}
