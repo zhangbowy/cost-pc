@@ -10,6 +10,7 @@ export default{
   addCostGroup: `${APP_API}/cost/category/add`,
   addIncomeGroup: `${APP_API}/cost/income/category/add`,
   edit: `${APP_API}/cost/category/edit`,
+  editIncomeGroup: `${APP_API}/cost/income/category/edit`,
   copy: `${APP_API}/cost/category/copy`,
   copyIncomeGroup: `${APP_API}/cost/income/category/copy`,
   detailCost: `${APP_API}/cost/category/detail`,
