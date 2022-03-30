@@ -228,12 +228,10 @@ class DraftList extends Component {
           size="big"
           onCancel={() => this.onCancel()}
           width="980px"
-          bodyStyle={{height: '470px', overflowY: 'scroll'}}
-          footer={(
-            <>
-              <Button type="default" key="cen" onClick={this.onCancel}>取消</Button>
-            </>
-          )}
+          newBodyStyle={{
+            padding: '24px 32px'
+          }}
+          footer={null}
         >
           <InvoiceTable
             list={draftList}

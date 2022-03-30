@@ -634,7 +634,7 @@ renderTreeNodes = data =>
                           getFieldDecorator('reason', {
                             initialValue: details.reason || '',
                             rules:[
-                              { required: true, message: '请输入事由' },
+                              { required: !!showField.reason.isWrite, message: '请输入事由' },
                               { max: 500, message: '最多500字' },
                             ]
                           })(

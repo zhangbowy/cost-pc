@@ -44,7 +44,7 @@ class CostCategory extends React.PureComponent {
     this.state = {
       costName: '',
       typeVisible: false,
-      type: '0',
+      type: localStorage.getItem('costItem') || '0',
     };
   }
 
@@ -267,7 +267,7 @@ class CostCategory extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
-      width: '160px',
+      width: '170px',
       render: (_, record) => {
         const _this = this;
         let btns = [{
@@ -357,12 +357,16 @@ class CostCategory extends React.PureComponent {
                   list={list}
                   type={type}
                 >
-                  <a>编辑组</a>
+                  <a style={{ width: '60px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}>编辑组</a>
                 </AddGroup>
             }
             {
               record.type === 1 &&
-                <a onClick={() => this.onAddCategory(`edit_${record.id}_${record.attribute}`)}>编辑类别</a>
+                <a
+                  style={{ width: '60px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}
+                  onClick={() => this.onAddCategory(`edit_${record.id}_${record.attribute}`)}
+                >编辑类别
+                </a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>
