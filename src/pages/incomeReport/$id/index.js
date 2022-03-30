@@ -598,9 +598,7 @@ class addInvoice extends Component {
     return new Promise((resolve) => {
       this.props.dispatch({
         type: 'global/users',
-        payload: {
-          userJson: val,
-        }
+        payload: val
       }).then(() => {
         const { deptInfo, userId } = this.props;
         resolve({ deptInfo, userId });

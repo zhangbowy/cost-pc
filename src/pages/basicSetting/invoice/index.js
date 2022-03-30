@@ -335,7 +335,7 @@ class Invoice extends React.PureComponent {
           changeVisible={this.changeVisible}
           linkInvoice={this.onAddCategory}
         >
-          <span>支出类</span>
+          <span className="pd-20-9 c-black-65">支出类</span>
         </JudgeType>
       )
     }, {
@@ -349,7 +349,7 @@ class Invoice extends React.PureComponent {
           changeVisible={this.changeVisible}
           linkInvoice={this.onAddCategory}
         >
-          <span>收入类</span>
+          <span className="pd-20-9 c-black-65">收入类</span>
         </JudgeType>
       )
     }];
@@ -358,7 +358,9 @@ class Invoice extends React.PureComponent {
         {
           btnList.map((item, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <Menu.Item key={`q_${index}`}>{item.node}</Menu.Item>
+            <Menu.Item key={`q_${index}`}>
+              {item.node}
+            </Menu.Item>
           ))
         }
       </Menu>

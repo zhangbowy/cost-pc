@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Tag } from 'antd';
+import { Modal } from 'antd';
 import style from './classify.scss';
 // import Tags from '../../../../components/Tags';
 // import AddInvoice from './AddInvoice';
@@ -89,11 +89,11 @@ export default function JudgeType(props) {
           {
             list.map(it => (
               <div className={style[it.styleName]} onClick={() => cancel(it.key)} key={it.key}>
-                <p className="fs-20 c-black-85 m-l-24 m-b-10" style={{paddingTop: '24px'}}>
-                  <span className="fs-20 c-black-85 m-l-24 m-b-10">{it.name}</span>
+                <p className={props.type ? 'fs-20 c-black-85 m-l-4 m-b-10' : 'fs-20 c-black-85 m-l-24 m-b-10'} style={{paddingTop: '24px'}}>
+                  <span className="fs-20 c-black-85 m-l-24 m-b-10" style={{verticalAlign: 'middle'}}>{it.name}</span>
                   {
                     it.disabled &&
-                    <Tag color="rgba(0, 0, 0, 0.65)">暂未开放</Tag>
+                    <div className={style.tags}>暂未开放</div>
                   }
                 </p>
                 {

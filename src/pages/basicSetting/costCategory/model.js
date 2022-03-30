@@ -66,13 +66,13 @@ export default {
       yield call(post, url, param);
     },
     *copy({ payload }, { call }) {
-      let url = api.addCostGroup;
+      let url = api.copy;
       const param = {...payload};
       if (payload.costItem === '1') {
         url = api.copyIncomeGroup;
       }
       delete param.costItem;
-      yield call(post, url, param);
+      yield call(get, url, param);
     },
     *del({ payload }, { call }) {
       let url = api.delCostGroup;

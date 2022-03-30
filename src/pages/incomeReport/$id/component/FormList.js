@@ -73,9 +73,9 @@ class ChangeForm extends Component {
       const userJson = val.users.length
                         ? val.users
                         : [{ userName: userInfo.name, userId: userInfo.dingUserId, avatar: userInfo.avatar }];
-      const flags = await this.props.checkOffice({ dingUserId: userJson[0].userId });
-      if (!flags) return;
-      const { deptInfo, userId } = await this.props.selectPle(JSON.stringify(userJson));
+      // const flags = await this.props.checkOffice({ dingUserId: userJson[0].userId });
+      // if (!flags) return;
+      const { deptInfo, userId } = await this.props.selectPle(val.users.length ? { userJson: JSON.stringify(userJson) } : {});
       onChangeData({
         users: val.users,
         depList: deptInfo,

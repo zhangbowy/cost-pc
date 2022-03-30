@@ -277,6 +277,7 @@ class CostCategory extends React.PureComponent {
               title="add"
               data={{parentId: record.id}}
               list={list}
+              type={type}
             >
               <span className="pd-20-9 c-black-65">添加子分组</span>
             </AddGroup>
