@@ -127,10 +127,6 @@ class PayTemp extends React.PureComponent {
   };
 
   onQuery = payload => {
-    const {isOnlyShowModify} = this.state;
-    Object.assign(payload, {
-      isOnlyShowModify
-    });
     this.props.onQuerys(payload);
   };
 

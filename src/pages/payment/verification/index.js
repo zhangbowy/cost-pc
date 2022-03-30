@@ -51,9 +51,10 @@ class Payment extends React.PureComponent {
         },
         {
           type: 'deptAndUser',
+
           label: '提交部门/人',
           placeholder: '请选择',
-          key: ['userVOS', 'deptVOS'],
+          key: ['users', 'depts'],
           id: 'userVOS',
           out: 1
         }
