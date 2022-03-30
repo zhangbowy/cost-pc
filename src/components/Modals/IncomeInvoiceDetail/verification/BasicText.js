@@ -59,7 +59,7 @@ const BasicText = ({
           收入金额：
         </span>
         <span className="fs-14 c-black-65">
-          ¥{details.assessSum ? details.assessSum / 100 : 0}
+          ¥{details.receiptSum ? details.receiptSum / 100 : 0}
         </span>
       </Col>
       <Col span={8} className="m-t-16">
