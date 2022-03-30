@@ -108,7 +108,7 @@ class Account extends Component {
       <div>
         <PageHead title="个人收款账户设置" />
         <div className="content-dt content-add" style={{backgroundColor: '#F7F8FA'}}>
-          <div className="cnt-header">
+          <div className="cnt-header m-b-20">
             <div className="head_lf">
               <AddAccount onOk={this.onOk} title="add">
                 <Button type="primary">新增收款账户</Button>
@@ -116,10 +116,21 @@ class Account extends Component {
             </div>
           </div>
           {/* 放置卡片 */}
-          <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {list.map((item) => {
              return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()}/>;
             })}
+            {list.length % 3 === 2 && (
+            <AccountCart
+              personal='true'
+              hidden
+              item={list[0]}
+              key={list[0].id}
+              style={{ display: 'none', visibility: 'hidden' }}
+              delCart={c => this.delchange(c)}
+              onOk={() => this.onOk()}
+            />
+             )}
           </div>
           {/* 内容为空时 */}
           {list.length?null:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无收款账户" style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}}/>}

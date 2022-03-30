@@ -195,6 +195,7 @@ class Account extends Component {
                 />
               );
             })}
+            {/* list.length % 3 === 2 说明最后一行是两个 这里补一个占位置 */}
             {list.length % 3 === 2 && (
               <AccountCart
                 hidden

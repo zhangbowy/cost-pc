@@ -17,7 +17,8 @@ export default function Account(props) {
     account,
     bankNameBranch,
     signStatus,
-    amountStr = '0.00' // 账户余额字段 created by zhangbo on 2022/3/24
+    amountStr = '0.00', // 账户余额字段 created by zhangbo on 2022/3/24
+    note,
   } = item;
   // 账户类型
   const accountType = aType => {
@@ -196,16 +197,23 @@ export default function Account(props) {
           empty()
         )}
       </div>
-      {/* 备注 */}
-      {/* <div style={{display: 'flex', alignItems: 'center'}}> */}
-      {/*  <i className="iconfont iconbeizhu c-black-016"/> */}
-      {/*  {note ? */}
-      {/*    <Tooltip placement="topLeft" title={note}><span className={styles.note}>{note}</span></Tooltip> : empty()} */}
-      {/* </div> */}
-      <div className={styles.balance}>
-        <span className={styles.balanceText}>账户余额</span>
-        <span className={styles.balanceNum}>{amountStr}</span>
-      </div>
+      {
+        personal  && (
+          <div style={{display: 'flex', alignItems: 'center', marginBottom: 17}}>
+            <i className="iconfont iconbeizhu c-black-016"/>
+            {note ?
+              <Tooltip placement="topLeft" title={note}><span className={styles.note}>{note}</span></Tooltip> : empty()}
+          </div>
+        )
+      }
+      {
+        !personal && (
+          <div className={styles.balance}>
+            <span className={styles.balanceText}>账户余额</span>
+            <span className={styles.balanceNum}>{amountStr}</span>
+          </div>
+        )
+      }
     </Card>
   );
 }
