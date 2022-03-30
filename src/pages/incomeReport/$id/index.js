@@ -690,6 +690,7 @@ class addInvoice extends Component {
       incomeTemplateId: id,
       userId: details.userId || '',
       receiptSum: ((total * 1000)/10).toFixed(0),
+      costSum: ((total * 1000)/10).toFixed(0),
       showField: JSON.stringify(showField),
       assessSum: 0,
     };
@@ -795,6 +796,7 @@ class addInvoice extends Component {
       fileUrl,
       ossFileUrl,
       receiptSum: ((total * 1000)/10).toFixed(0),
+      costSum: ((total * 1000)/10).toFixed(0),
       expandSubmitFieldVos,
       selfSubmitFieldVos
     };
