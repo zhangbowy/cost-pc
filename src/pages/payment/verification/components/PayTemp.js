@@ -350,7 +350,7 @@ class PayTemp extends React.PureComponent {
           </Menu>
         </div>
         <SearchBanner
-          className={style.verificationHeader}
+          className="verificationHeader"
           list={searchList || []}
           onChange={val =>
             this.props.onChangeSearch(val, () => {
