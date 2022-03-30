@@ -1214,7 +1214,7 @@ class AddCost extends Component {
                                 )
                                 }
                               {
-                                <div style={{lineHeight:'0',marginTop:'4px',marginBottom: 0}}><Capitalization isMoney={`${this.state.costSum||''}`||''}/></div>
+                                <div style={{lineHeight:'0',marginBottom: 0}}><Capitalization isMoney={`${this.state.costSum||''}`||''}/></div>
                               }
                               {
                                 it.itemExplain && it.itemExplain.length > 0 &&
