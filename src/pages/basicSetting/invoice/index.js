@@ -388,7 +388,7 @@ class Invoice extends React.PureComponent {
               </Form>
             </div>
             <div>
-              <Sort list={list} callback={this.getSort} otherKeys={['templateType', 'sort']}>
+              <Sort list={list} callback={this.getSort} otherKeys={['templateType', 'sort']} title="单据模版">
                 <Button type="default">排序</Button>
               </Sort>
             </div>

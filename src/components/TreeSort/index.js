@@ -223,13 +223,13 @@ class Sort extends Component {
 
   render() {
     const { visible, data, isLoading } = this.state;
-
+    const { title } = this.props;
     return (
       <span>
         <span onClick={() => this.showModal()}>{this.props.children}</span>
         <Spin spinning={isLoading}>
           <Modal
-            title="项目排序"
+            title={title || '项目排序'}
             visible={visible}
             key="sort"
             maskClosable={false}

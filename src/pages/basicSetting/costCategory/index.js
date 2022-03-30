@@ -424,7 +424,7 @@ class CostCategory extends React.PureComponent {
               </Form>
             </div>
             <div>
-              <Sort list={newArrs} callback={this.getSort}>
+              <Sort list={newArrs} callback={this.getSort} title={`${menuList[type].value}排序`}>
                 <Button type="default">排序</Button>
               </Sort>
             </div>
