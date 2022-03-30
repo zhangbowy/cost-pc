@@ -272,7 +272,8 @@ class PayModal extends React.PureComponent {
         amount += values[key] || 0;
       });
       this.setState({
-        amount
+        amount,
+        count: selectedRows.length
       });
     }, 300);
   }
@@ -317,7 +318,7 @@ class PayModal extends React.PureComponent {
         render: (_, record) => (
           <span style={{ display: 'flex' }}>
             <Tooltip placement="topLeft" title={record.invoiceNo || ''}>
-              <span className="eslips-2 m-r-8">{record.invoiceNo}</span>
+              <span className="eslips-1 m-r-8">{record.invoiceNo}</span>
             </Tooltip>
           </span>
         )
@@ -325,24 +326,38 @@ class PayModal extends React.PureComponent {
       {
         title: '业务员',
         dataIndex: 'userName',
+        render: (_, record) => (
+          <span style={{ display: 'flex' }}>
+            <Tooltip placement="top" title={record.userName || ''}>
+              <span className="eslips-1 m-r-8">{record.userName}</span>
+            </Tooltip>
+          </span>
+        ),
         width: 100
       },
       {
         title: '部门',
         dataIndex: 'deptName',
+        render: (_, record) => (
+          <span style={{ display: 'flex' }}>
+            <Tooltip placement="top" title={record.deptName || ''}>
+              <span className="eslips-1 m-r-8">{record.deptName}</span>
+            </Tooltip>
+          </span>
+        ),
         width: 100
       },
       {
         title: '应收金额(元)',
         dataIndex: 'receiptSum',
         render: text => <span>{text / 100 || 0}</span>,
-        width: 100
+        width: 120
       },
       {
         title: '已收金额(元)',
         dataIndex: 'assessSum',
         render: text => <span>{text / 100 || 0}</span>,
-        width: 100
+        width: 120
       },
       {
         title: '本次核销(元)',
@@ -375,7 +390,7 @@ class PayModal extends React.PureComponent {
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title="发起收款"
+          title=""
           maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
@@ -415,6 +430,7 @@ class PayModal extends React.PureComponent {
           className={styles.verifyPopWrap}
         >
           {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起收款</h1> */}
+          <p className="fs-20 fw-500 m-b-16 c-black-85">发起收款</p>
           <Form className="formItem"  >
             {status === '1' && (
               <Form.Item

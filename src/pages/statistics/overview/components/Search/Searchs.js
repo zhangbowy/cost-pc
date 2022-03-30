@@ -49,10 +49,10 @@ class SearchBanner extends PureComponent {
   }
 
   render () {
-    const { list, children } = this.props;
+    const { list, children, className } = this.props;
     const showStr = list.filter(it => it.valueStr);
     return (
-      <div className={style.search}>
+      <div className={cs(style.search,className)}>
         <div className={style.top}>
           <FormStyle type="out" fields={list} onChangeSearch={this.props.onChange} node={children} />
           {
