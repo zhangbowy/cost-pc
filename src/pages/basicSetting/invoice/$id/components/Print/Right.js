@@ -55,8 +55,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                 <div className={style['cont-cell-label']}>
-                  { tempObj[templateType] }
-                  人
+                  { templateType !== 20 ? `${tempObj[templateType]}人` : '业务员' }
                 </div>
               </div>
               {
@@ -87,7 +86,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
               </div>
             </div>
             {
-              templateType !== 2 &&
+              templateType !== 2 && templateType !== 20 &&
               <div className={style['cont-info-line']}>
                 <div className={style['cont-cell']}>
                   <div className={style['cont-cell-label']}>{supplier && supplier.length ? '供应商账户' : '收款账户'}</div>
@@ -112,7 +111,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
             }
           </div>
           {
-            templatePdfVo.isQrCode &&
+            templatePdfVo.isQrCode && templateType !== 20 &&
               <div className={style['cont-info-qr']}>
                 <span>二维码</span>
               </div>
