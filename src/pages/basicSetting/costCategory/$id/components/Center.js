@@ -17,6 +17,7 @@ import { defaultString } from '../../../../../utils/constants';
 const StrCenter = ({cardList, changeCardList, dragId, changeDragId, spacialCenter}) => {
   const scrollNode = useRef(null);
   const defaultList =  spacialCenter || defaultString;
+  console.log('🚀 ~ file: Center.js ~ line 20 ~ StrCenter ~ defaultList', defaultList);
   const moveCard = useCallback((dragIndex, hoverIndex, { item, field }) => {
     /**
      * 1、如果此时拖拽的组件是 Box 组件，则 dragIndex 为 undefined，则此时修改，则此时修改 cardList 中的占位元素的位置即可

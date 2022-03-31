@@ -148,7 +148,7 @@ const Card = ({ name, isWrite, index,
           }
           style={{
             opacity,
-            cursor: defaultList.includes(field) ? 'default' : 'move',
+            cursor: defaultList && defaultList.includes(field) ? 'default' : 'move',
             margin: dragType === 'child' ? '0 0 0 12px' : '0 24px'
           }}
           onClick={(e) => {
@@ -258,7 +258,7 @@ const Card = ({ name, isWrite, index,
               !dragDisabled.includes(field) &&
                 <p
                   className={
-                    defaultList.includes(field) ?
+                    defaultList && defaultList.includes(field) ?
                     cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
                   }
                   style={{ display: dragId === field ? 'block' : '' }}
@@ -281,7 +281,7 @@ const Card = ({ name, isWrite, index,
                 >
                   <p
                     className={
-                      defaultList.includes(field) ?
+                      defaultList && defaultList.includes(field) ?
                       cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
                     }
                     style={{ display: dragId === field ? 'block' : '' }}
@@ -291,7 +291,7 @@ const Card = ({ name, isWrite, index,
                 </Popconfirm>
             }
             <p
-              className={defaultList.includes(field) ||
+              className={defaultList && defaultList.includes(field) ||
               types === 3 || field === 'detail_money' || (types === 10) ?
               cs(style.delete,style.opacity, style.drag) :
               cs(style.delete, style.drag)}

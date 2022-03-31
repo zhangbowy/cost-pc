@@ -64,6 +64,7 @@ const selfStr = [{
 ];
 
 const StrSetting = ({ fieldList,
+  incomeNoModify,
   selectList, onChangeData, selectId, childRef,
   type, templateType, isModifyInvoice, operateType, spacialCenter }) => {
   console.log(fieldList,'fieldList9999');
@@ -235,6 +236,7 @@ const StrSetting = ({ fieldList,
         isModifyInvoice={isModifyInvoice}
         operateType={operateType}
         changeDragId={changeDragId}
+        incomeNoModify={incomeNoModify}
       />
     </div>
   );

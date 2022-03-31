@@ -300,7 +300,7 @@ class Invoice extends React.PureComponent {
           <span>
             {
               record.type === 0 &&
-                <AddGroup data={record} onOk={() => _this.onOk()} title="edit">
+                <AddGroup data={record} onOk={() => _this.onOk()} title="edit" userInfo={userInfo}>
                   <a style={{ width: '90px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}>编辑组</a>
                 </AddGroup>
             }
@@ -335,7 +335,7 @@ class Invoice extends React.PureComponent {
           changeVisible={this.changeVisible}
           linkInvoice={this.onAddCategory}
         >
-          <span>支出类</span>
+          <span className="pd-20-9 c-black-65">支出类</span>
         </JudgeType>
       )
     }, {
@@ -349,7 +349,7 @@ class Invoice extends React.PureComponent {
           changeVisible={this.changeVisible}
           linkInvoice={this.onAddCategory}
         >
-          <span>收入类</span>
+          <span className="pd-20-9 c-black-65">收入类</span>
         </JudgeType>
       )
     }];
@@ -358,7 +358,9 @@ class Invoice extends React.PureComponent {
         {
           btnList.map((item, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <Menu.Item key={`q_${index}`}>{item.node}</Menu.Item>
+            <Menu.Item key={`q_${index}`}>
+              {item.node}
+            </Menu.Item>
           ))
         }
       </Menu>
@@ -369,10 +371,25 @@ class Invoice extends React.PureComponent {
         <div className="content-dt">
           <div className="cnt-header">
             <div className="head_lf">
-              <Dropdown overlay={menuList}>
-                <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
-              </Dropdown>
-              <AddGroup title="add" onOk={this.onOk}>
+              {
+                userInfo.orderItemLevel ?
+                  <Dropdown overlay={menuList}>
+                    <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
+                  </Dropdown>
+                  :
+                  <JudgeType
+                    title="add"
+                    data={{}}
+                    type={0}
+                    onOk={this.onOk}
+                    visible={typeVisible}
+                    changeVisible={this.changeVisible}
+                    linkInvoice={this.onAddCategory}
+                  >
+                    <span className="pd-20-9 c-black-65">新增单据模板</span>
+                  </JudgeType>
+              }
+              <AddGroup title="add" onOk={this.onOk} userInfo={userInfo}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>
               <Form style={{display: 'inline-block'}}>
@@ -386,7 +403,7 @@ class Invoice extends React.PureComponent {
               </Form>
             </div>
             <div>
-              <Sort list={list} callback={this.getSort}>
+              <Sort list={list} callback={this.getSort} otherKeys={['templateType', 'sort']} title="单据模版">
                 <Button type="default">排序</Button>
               </Sort>
             </div>

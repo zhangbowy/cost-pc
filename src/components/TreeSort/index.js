@@ -37,13 +37,13 @@ class Sort extends Component {
 
   // 初始化
   showModal = () => {
-    const { list } = this.props;
+    const { list, otherKeys } = this.props;
     const lists = treeConvert({
       rootId: 0,
       pId: 'parentId',
       tName: 'name',
       name: 'name',
-      otherKeys: ['sort']
+      otherKeys: otherKeys || ['sort']
     }, list);
     this.sortData(lists);
     this.resetSort(lists);
@@ -223,13 +223,13 @@ class Sort extends Component {
 
   render() {
     const { visible, data, isLoading } = this.state;
-
+    const { title } = this.props;
     return (
       <span>
         <span onClick={() => this.showModal()}>{this.props.children}</span>
         <Spin spinning={isLoading}>
           <Modal
-            title="项目排序"
+            title={title || '项目排序'}
             visible={visible}
             key="sort"
             maskClosable={false}

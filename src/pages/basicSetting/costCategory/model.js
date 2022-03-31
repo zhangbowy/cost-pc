@@ -66,16 +66,21 @@ export default {
       yield call(post, url, param);
     },
     *copy({ payload }, { call }) {
-      let url = api.addCostGroup;
+      let url = api.copy;
       const param = {...payload};
       if (payload.costItem === '1') {
         url = api.copyIncomeGroup;
       }
       delete param.costItem;
-      yield call(post, url, param);
+      yield call(get, url, param);
     },
     *del({ payload }, { call }) {
-      yield call(post, api.delCostGroup, payload);
+      let url = api.delCostGroup;
+      const param = {id: payload.id, companyId: payload.companyId};
+      if (payload.costType === '1') {
+        url = api.delIncomeGroup;
+      }
+      yield call(post, url, param);
     },
     *sort({ payload }, { call }) {
       yield call(post, api.sorts, payload);
@@ -93,7 +98,7 @@ export default {
       });
     },
     *edit({ payload }, { call }) {
-      let url = api.addCostGroup;
+      let url = api.edit;
       const param = {...payload};
       if (payload.costItem === '1') {
         url = api.editIncomeGroup;
@@ -102,7 +107,12 @@ export default {
       yield call(post, url, param);
     },
     *delPer({ payload }, { call }) {
-      yield call(post, api.delPer, payload);
+      let url = api.delPer;
+      const param = {id: payload.id};
+      if (payload.costType === '1') {
+        url = api.delPerIncome;
+      }
+      yield call(post, url, param);
     },
     *checkDel({ payload }, { call }) {
       yield call(post, api.check, payload);

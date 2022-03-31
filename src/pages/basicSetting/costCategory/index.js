@@ -44,11 +44,12 @@ class CostCategory extends React.PureComponent {
     this.state = {
       costName: '',
       typeVisible: false,
-      type: '0',
+      type: localStorage.getItem('costItem') || '0',
     };
   }
 
   componentDidMount() {
+    localStorage.removeItem('costItem');
     this.onQuery({});
   }
 
@@ -72,10 +73,12 @@ class CostCategory extends React.PureComponent {
 
   handleVisibleChange = (id) => {
     const _this = this;
+    const { type } = this.state;
     this.props.dispatch({
       type: 'costCategory/delPer',
       payload: {
         id,
+        costType: type,
       }
     }).then(() => {
       confirm({
@@ -112,9 +115,11 @@ class CostCategory extends React.PureComponent {
 
   onDelete = (id) => {
     const { userInfo } = this.props;
+    const { type } = this.state;
     this.props.dispatch({
       type: 'costCategory/del',
       payload: {
+        costType: type,
         id,
         companyId: userInfo.companyId || ''
       }
@@ -190,7 +195,8 @@ class CostCategory extends React.PureComponent {
   render() {
     const {
       list,
-      loading
+      loading,
+      userInfo,
     } = this.props;
     const newArrs = list.map(it => ({ ...it, name: it.costName}));
     const { typeVisible , type} = this.state;
@@ -263,7 +269,7 @@ class CostCategory extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
-      width: '160px',
+      width: '170px',
       render: (_, record) => {
         const _this = this;
         let btns = [{
@@ -273,6 +279,7 @@ class CostCategory extends React.PureComponent {
               title="add"
               data={{parentId: record.id}}
               list={list}
+              type={type}
             >
               <span className="pd-20-9 c-black-65">添加子分组</span>
             </AddGroup>
@@ -352,12 +359,16 @@ class CostCategory extends React.PureComponent {
                   list={list}
                   type={type}
                 >
-                  <a>编辑组</a>
+                  <a style={{ width: '60px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}>编辑组</a>
                 </AddGroup>
             }
             {
               record.type === 1 &&
-                <a onClick={() => this.onAddCategory(`edit_${record.id}_${record.attribute}`)}>编辑类别</a>
+                <a
+                  style={{ width: '60px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}
+                  onClick={() => this.onAddCategory(`edit_${record.id}_${record.attribute}`)}
+                >编辑类别
+                </a>
             }
             <Divider type="vertical" />
             <Dropdown overlay={menu}>
@@ -374,18 +385,21 @@ class CostCategory extends React.PureComponent {
     return (
       <div className="mainContainer">
         <PageHead title="支出类别设置" />
-        <div style={{width: '100%', marginTop: '-8px'}}>
-          <MenuItems
-            lists={menuList || []}
-            onHandle={(val) => this.onHandle(val)}
-            params={{
-              key: 'key',
-              value:'value'
-            }}
-            className="p-l-32 titleMenu"
-            status={type}
-          />
-        </div>
+        {
+          !!(userInfo.orderItemLevel) &&
+          <div style={{width: '100%', marginTop: '-8px'}}>
+            <MenuItems
+              lists={menuList || []}
+              onHandle={(val) => this.onHandle(val)}
+              params={{
+                key: 'key',
+                value:'value'
+              }}
+              className="p-l-32 titleMenu"
+              status={type}
+            />
+          </div>
+        }
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">
@@ -419,8 +433,11 @@ class CostCategory extends React.PureComponent {
               </Form>
             </div>
             <div>
-              <Sort list={newArrs} callback={this.getSort}>
-                <Button type="default">排序</Button>
+              <Sort list={newArrs} callback={this.getSort} title={`${menuList[type].value}排序`}>
+                <div style={{display: 'flex', alignItems: 'center', height: '32px'}} className="head_rf sub-color">
+                  <i className="iconfont iconpaixu m-r-8" />
+                  <span>类别排序</span>
+                </div>
               </Sort>
             </div>
           </div>

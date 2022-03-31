@@ -68,14 +68,14 @@ class ChangeForm extends Component {
 
   selectPle = async(val) => {
     let detail = this.props.details;
-    const { onChangeData, userInfo } = this.props;
+    const { onChangeData } = this.props;
     if (val.users) {
       const userJson = val.users.length
                         ? val.users
-                        : [{ userName: userInfo.name, userId: userInfo.dingUserId, avatar: userInfo.avatar }];
-      const flags = await this.props.checkOffice({ dingUserId: userJson[0].userId });
+                        : null;
+      const flags = await this.props.checkOffice({ dingUserId: userJson ? userJson[0].userId : '' });
       if (!flags) return;
-      const { deptInfo, userId } = await this.props.selectPle(JSON.stringify(userJson));
+      const { deptInfo, userId } = await this.props.selectPle(val.users.length ? { userJson: JSON.stringify(userJson) } : {type: -1});
       onChangeData({
         users: val.users,
         depList: deptInfo,
@@ -102,10 +102,10 @@ class ChangeForm extends Component {
         users: val.users,
         details: {
           ...detail,
-          userName: userJson[0].userName,
-          loanUserId: userJson[0].userId,
+          userName: userJson ? userJson[0].userName : '',
+          loanUserId: userJson ? userJson[0].userId : '',
         },
-        loanUserId: userJson[0].userId,
+        loanUserId: userJson ? userJson[0].userId : '',
       }, true);
     }
   }
@@ -634,7 +634,7 @@ renderTreeNodes = data =>
                           getFieldDecorator('reason', {
                             initialValue: details.reason || '',
                             rules:[
-                              { required: true, message: '请输入事由' },
+                              { required: !!showField.reason.isWrite, message: '请输入事由' },
                               { max: 500, message: '最多500字' },
                             ]
                           })(

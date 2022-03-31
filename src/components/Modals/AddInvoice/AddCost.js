@@ -953,8 +953,8 @@ class AddCost extends Component {
         <Modal
           title={templateType > 10 ? '添加收入' : '添加支出'}
           visible={visible}
-          width="880px"
-          bodyStyle={{height: '470px', overflowY: 'scroll'}}
+          width="980px"
+          bodyStyle={{height: '530px', overflowY: 'scroll'}}
           onCancel={() => this.onCancel()}
           maskClosable={false}
           footer={(
@@ -968,7 +968,12 @@ class AddCost extends Component {
               <Button type="primary" onClick={() => this.handleOk()}>保存</Button>
             </>
           )}
-          className={this.state.costDetailShareVOS.length>=4?style.shadow:''}
+          className={this.state.costDetailShareVOS.length >= 5 ? style.shadow : style.addTheCost}
+          closeIcon={(
+            <div className="modalIcon">
+              <i className="iconfont icona-guanbi3x1" />
+            </div>
+          )}
         >
           <div className={style.addCosts}>
             <Form className="formItem">
@@ -1024,7 +1029,7 @@ class AddCost extends Component {
                       </Form.Item>
                       {
                         exchangeRate && exchangeRate !== '1' ?
-                          <span style={{float: 'left', margin: '-55px 24px 0 271px'}} className="c-black-36">汇率{exchangeRate}</span>
+                          <span style={{float: 'left', margin: '-45px 24px 0 290px'}} className="c-black-36">汇率{exchangeRate}</span>
                           :
                           null
                       }
@@ -1212,12 +1217,12 @@ class AddCost extends Component {
                                 )
                                 }
                               {
-                                <Capitalization isMoney={`${this.state.costSum||''}`||''}/>
+                                <div style={{lineHeight:'0',marginBottom: 0}}><Capitalization isMoney={`${this.state.costSum||''}`||''}/></div>
                               }
                               {
                                 it.itemExplain && it.itemExplain.length > 0 &&
                                 it.itemExplain.map(item => (
-                                  <p className="fs-12 c-black-45 li-1 m-t-0" style={{marginBottom: 0}}>
+                                  <p className="fs-12 c-black-45 li-1 m-t-6" style={{marginBottom: 0}}>
                                     {item.note}
                                   </p>
                                 ))

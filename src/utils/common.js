@@ -17,6 +17,10 @@ const conditionType = {
     type: 'people',
     ruleType: 'people',
   },
+  'condition_income_user_dept': {
+    type: 'people',
+    ruleType: 'people',
+  },
   'cost_category': {
     type: 'selectTree',
     ruleType: 'category',
@@ -26,7 +30,7 @@ const conditionType = {
     ruleType: 'income_category',
   },
   'receipt_amount': {
-    type: 'selectTree',
+    type: 'inputNumber',
     ruleType: 'receipt_amount',
   },
   'invoice_submit_sum': {

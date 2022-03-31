@@ -13,12 +13,15 @@ const labelInfo = {
   icon: '图标',
   status: '启用'
 };
+
 @Form.create()
 class Basic extends Component {
   constructor(props) {
     super(props);
+    console.log('🚀 ~ file: Basic.js ~ line 21 ~ Basic ~ constructor ~ props', props);
     this.state = {
-      active: (props.data && props.data.icon) || 'morenleibietu1',
+      active: (props.data && props.data.icon)
+        || props.initialIcon,
       data: props.data || {},
     };
   }
@@ -28,7 +31,8 @@ class Basic extends Component {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         data: this.props.data,
-        active: (this.props.data && this.props.data.icon) || 'morenleibietu1',
+        active: (this.props.data && this.props.data.icon) ||
+          this.props.initialIcon,
       });
     }
   }
@@ -41,7 +45,7 @@ class Basic extends Component {
 
   onRest() {
     this.setState({
-      active: 'morenleibietu1',
+      active: this.props.initialIcon,
     });
     this.props.form.resetFields();
   }
@@ -102,7 +106,10 @@ class Basic extends Component {
             {
               getFieldDecorator('costName', {
                 initialValue: data && data.costName,
-                rules: [{ required: true, message: '请输入' }]
+                rules: [
+                  { required: true, message: '请输入' },
+                  { max: 20, message: '不能超过20字' }
+                ]
               })(
                 <Input placeholder="请输入" />
               )

@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
-import { message, PageHeader, Button, Modal, Spin } from 'antd';
+import { message, PageHeader, Button, Spin } from 'antd';
 import { connect } from 'dva';
 import moment  from 'moment';
 import PageHead from '@/components/pageHead';
@@ -20,8 +20,6 @@ import { fileUpload } from '@/utils/ddApi';
 import treeConvert from '@/utils/treeConvert';
 import { adjustApprove } from '@/utils/approve';
 
-
-const { confirm } = Modal;
 @connect(({ session, global, loading, costGlobal }) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
@@ -478,6 +476,7 @@ class addInvoice extends Component {
       };
       arr.push({
         ...obj,
+        costSum: it.incomeSum || it.costSum,
         currencyId: it.currencyId || '-1',
         currencyName: currency.name || '',
         exchangeRate: currency.exchangeRate || 1,
@@ -597,9 +596,7 @@ class addInvoice extends Component {
     return new Promise((resolve) => {
       this.props.dispatch({
         type: 'global/users',
-        payload: {
-          userJson: val,
-        }
+        payload: val
       }).then(() => {
         const { deptInfo, userId } = this.props;
         resolve({ deptInfo, userId });
@@ -691,6 +688,7 @@ class addInvoice extends Component {
       incomeTemplateId: id,
       userId: details.userId || '',
       receiptSum: ((total * 1000)/10).toFixed(0),
+      costSum: ((total * 1000)/10).toFixed(0),
       showField: JSON.stringify(showField),
       assessSum: 0,
     };
@@ -796,6 +794,7 @@ class addInvoice extends Component {
       fileUrl,
       ossFileUrl,
       receiptSum: ((total * 1000)/10).toFixed(0),
+      costSum: ((total * 1000)/10).toFixed(0),
       expandSubmitFieldVos,
       selfSubmitFieldVos
     };
@@ -810,6 +809,7 @@ class addInvoice extends Component {
       payload: {
         contentJson: JSON.stringify(params),
         receiptSum: ((total * 1000)/10).toFixed(0),
+        costSum: ((total * 1000)/10).toFixed(0),
         templateType,
         reason: val.reason,
         incomeTemplateName: djDetail.name,
@@ -847,7 +847,8 @@ class addInvoice extends Component {
         payload : {
           ...params,
           templateType,
-          draftId: draftId || ''
+          draftId: draftId || '',
+          assessSum: 0,
         }
       }).then(() => {
         this.onCancel();
@@ -973,78 +974,29 @@ class addInvoice extends Component {
     return list;
   }
 
-  onChangeOffice = (val, callback) => {
-    const { details, costDetailsVo } = this.state;
-    const { djDetail } = this.props;
-    const arr = [];
-    let newArr = [];
-    if (costDetailsVo.length) {
-      newArr = costDetailsVo.filter(it => it.costDetailShareVOS && it.costDetailShareVOS.length === 0 && !it.detailFolderId);
-    };
-    if (newArr.length !== costDetailsVo.length) {
-      arr.push('收入明细');
-    }
-    if(arr.length && (djDetail.templateType !== 2)) {
-      confirm({
-        title: `切换所在公司将会清空${arr.join(',')}`,
-        onOk: () => {
-          this.setState({
-            details: { ...details, officeId: val },
-            costDetailsVo: newArr,
-          }, () => {
-            this.getNode({});
-          });
-        },
-        onCancel: () => {
-          if (callback) callback();
-        }
-      });
-    } else {
-      this.setState({
-        details: { ...details, officeId: val }
-      }, () => {
-        this.getNode({});
-      });
-    }
+  onChangeOffice = (val) => {
+    const { details } = this.state;
+    this.setState({
+      details: { ...details, officeId: val }
+    }, () => {
+      this.getNode({});
+    });
   }
 
   checkOffice = (payload) => {
-    const { djDetail } = this.props;
+    const { details } = this.state;
     return new Promise(resolve => {
       this.props.dispatch({
         type: 'costGlobal/officeList',
         payload,
       }).then(() => {
-        const { officeList } = this.props;
-        const { details, costDetailsVo } = this.state;
-        if (officeList.findIndex(it => it.id === details.officeId) === -1 && (djDetail.templateType !== 2)) {
-          const arr = [];
-          let newArr = [];
-          if (costDetailsVo.length) {
-            newArr = costDetailsVo.filter(it => it.costDetailShareVOS && it.costDetailShareVOS.length === 0 && !it.detailFolderId);
-          };
-          if (newArr.length !== costDetailsVo.length) {
-            arr.push('收入明细');
+        resolve(true);
+        this.setState({
+          details: {
+            ...details,
+            officeId: '',
           }
-          if(arr.length) {
-            confirm({
-              title: `切换所在公司将会清空${arr.join(',')}`,
-              onOk: () => {
-                this.setState({
-                  costDetailsVo: newArr,
-                });
-                resolve(true);
-              },
-              onCancel: () => {
-                resolve(false);
-              }
-            });
-          } else {
-            resolve(true);
-          }
-        } else {
-          resolve(true);
-        }
+        });
       });
     });
   }

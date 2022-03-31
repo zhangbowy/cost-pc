@@ -26,6 +26,10 @@ const basicStr = [{
   key: 'three',
   value: '分摊设置',
 }];
+const iconName = {
+  0: 'morenleibietu1',
+  1: 'morenshourutu2'
+};
 @connect(({ loading, session, addCategory, costGlobal }) => ({
   loading: loading.effects['addCategory/add'] || loading.effects['addCategory/edit'],
   userInfo: session.userInfo,
@@ -109,6 +113,12 @@ class CategoryAdd extends PureComponent {
         _this.setState({
           data: newData,
         });
+      } else {
+        _this.setState({
+          data: {
+            icon: iconName[costType] || 'morenleibietu1'
+          },
+        });
       }
     });
     this.props.dispatch({
@@ -131,6 +141,7 @@ class CategoryAdd extends PureComponent {
         fieldList: this.changeList(fieldList),
         costType,
         basicList: costType === '1' ? newList : basicStr,
+        initialIcon: iconName[costType] || 'morenleibietu1',
       });
     });
   }
@@ -355,7 +366,7 @@ class CategoryAdd extends PureComponent {
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
     // const costId = id.split('_')[1];
-    const { current, shareField, selectList, fieldList, data, basicList, costType } = this.state;
+    const { current, shareField, selectList, fieldList, data, basicList, costType, initialIcon } = this.state;
     const routes = [
       {
         path: '/basicSetting/costCategory',
@@ -363,7 +374,7 @@ class CategoryAdd extends PureComponent {
       },
       {
         path: 'second',
-        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}支出类别`,
+        breadcrumbName: `${title !== 'edit' ? '新建' : '编辑'}${costType === '1' ? '收入' : '支出'}类别`,
       },
     ];
 
@@ -429,6 +440,7 @@ class CategoryAdd extends PureComponent {
                   data={data}
                   title={title}
                   costType={costType}
+                  initialIcon={initialIcon}
                 />
               </div>
             }
@@ -453,6 +465,7 @@ class CategoryAdd extends PureComponent {
                   middleRef={ref => {this.childRef = ref;}}
                   selectId={costType === '0' ? 'costCategory' : 'incomeCategory'}
                   type="cost"
+                  incomeNoModify={costType === '1'}
                 />
               </div>
             }

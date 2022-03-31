@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import moment from 'moment';
 import cs from 'classnames';
 import InvoiceDetail from '@/components/Modals/InvoiceDetail';
+import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import treeConvert from '@/utils/treeConvert';
 import style from './index.scss';
 import { getArrayColor, getArrayValue, invoiceStatus } from '../../utils/constants';
@@ -248,22 +249,39 @@ class Summary extends React.PureComponent {
       width: 150,
       render: (_, record) => (
         <span>
-          <InvoiceDetail
-            id={record.invoiceId}
-            templateId={record.invoiceTemplateId}
-            templateType={record.templateType}
-            allow="copy"
-            onCallback={() => this.onPersonal()}
-          >
-            <Tooltip placement="topLeft" title={record.reason || ''}>
-              <a
-                className="eslips-2"
-                style={{ cursor: 'pointer' }}
+          {
+            record.templateType === 20 ?
+              <IncomeInvoiceDetail
+                id={record.invoiceId}
+                templateId={record.invoiceTemplateId}
+                templateType={record.templateType}
               >
-                {record.reason}
-              </a>
-            </Tooltip>
-          </InvoiceDetail>
+                <Tooltip placement="topLeft" title={record.reason || ''}>
+                  <a
+                    className="eslips-2"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {record.reason || record.invoiceTemplateName}
+                  </a>
+                </Tooltip>
+              </IncomeInvoiceDetail>
+              :
+              <InvoiceDetail
+                id={record.invoiceId}
+                templateId={record.invoiceTemplateId}
+                templateType={record.templateType}
+              >
+                <Tooltip placement="topLeft" title={record.reason || ''}>
+                  <a
+                    className="eslips-2"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {record.reason}
+                  </a>
+                </Tooltip>
+              </InvoiceDetail>
+          }
+
         </span>
       ),
     }, {

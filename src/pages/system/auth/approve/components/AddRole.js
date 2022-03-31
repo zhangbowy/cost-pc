@@ -55,8 +55,8 @@ class AddRole extends Component {
       url: 'global/costList',
       params: {}
     }, {
-      type: 'costGlobal/officeTree',
-      payload: {},
+      url: 'costGlobal/officeTree',
+      params: {},
     }];
     const fetchs = fetchList.map(it => it.url);
     const arr = fetchs.map((it, index) => {
@@ -100,6 +100,19 @@ class AddRole extends Component {
             }) : [],
             officeIds: details.officeVOS ? details.officeVOS.map(it => it.id) : [],
             visible: true,
+            openCost: details.inCost,
+            openIncome: details.inIncome,
+            income: {
+              ...details.income,
+              incomeCategory: details.income.incomeCategory ? details.income.incomeCategory.map(it => {
+                return {
+                  label: it.costName,
+                  value: it.id,
+                };
+              }) : [],
+              officeVOS: [],
+              officeIds: details.income.officeVOS ? details.income.officeVOS.map(it => it.id) : [],
+            }
           });
         });
       }
@@ -133,6 +146,7 @@ class AddRole extends Component {
       onOk,
       detail,
       costCategoryList,
+      incomeCategoryList,
     } = this.props;
     const {
       userVo,
@@ -140,6 +154,9 @@ class AddRole extends Component {
       bearUser,
       makeDept,
       bearDept,
+      income,
+      openCost,
+    openIncome,
     } = this.state;
 
     if (loading) return;
@@ -147,6 +164,8 @@ class AddRole extends Component {
       if (!err) {
         const group = costCategoryList.filter(it => !it.type);
         const groupArr = group && group.length ? group.map(it => it.id) : [];
+        const incomeGroup = incomeCategoryList.filter(it => !it.type);
+        const incomeGroupArr = incomeGroup && incomeGroup.length ? incomeGroup.map(it => it.id) : [];
         dispatch({
           type: `approveRole/${title}`,
           payload: {
@@ -165,6 +184,19 @@ class AddRole extends Component {
             approveRoleId: id,
             officeIds: values.officeIds || [],
             id: detail && detail.id ? detail.id : '',
+            openCost,
+            openIncome,
+            income: {
+              ...income,
+              incomeCategory: values.incomeCategory.map(it => {
+                return {
+                  costName: it.label,
+                  id: it.value,
+                  isGroup: incomeGroupArr.includes(it.value),
+                };
+              }),
+              officeIds: values.incomeOfficeIds || [],
+            }
           }
         }).then(() => {
           this.onCancel();
@@ -174,30 +206,60 @@ class AddRole extends Component {
     });
   }
 
-  selectPle = (val, type) => {
-    if (type !== 'userVo') {
+  selectPle = (val, type, flag) => {
+    const { income } = this.state;
+    if (flag) {
+      if (type !== 'userVo') {
+        this.setState({
+          income: {
+            ...income,
+            [`${type}User`]: val.users,
+            [`${type}Dept`]: val.depts,
+          }
+        });
+      } else {
+        this.setState({
+          income: {
+            ...income,
+            userVo: val.users,
+          }
+        });
+      }
+    } else if (type !== 'userVo') {
+        this.setState({
+          [`${type}User`]: val.users,
+          [`${type}Dept`]: val.depts,
+        });
+      } else {
+        this.setState({
+          userVo: val.users,
+        });
+      }
+
+  }
+
+  onChangeTree = (value, label, extra, flag) => {
+    console.log(extra);
+    console.log(value);
+    const { income } = this.state;
+    if (flag) {
       this.setState({
-        [`${type}User`]: val.users,
-        [`${type}Dept`]: val.depts,
+        income: {
+          ...income,
+          incomeCategory: value,
+        }
       });
     } else {
       this.setState({
-        userVo: val.users,
+        category: value,
       });
     }
-  }
 
-  onChangeTree = (value, label, extra) => {
-    console.log(extra);
-    console.log(value);
-    this.setState({
-      category: value,
-    });
   }
 
   onChangeS = (e, key) => {
     this.setState({
-      [key]: e.target.checked,
+      [key]: e,
     });
   }
 
@@ -275,6 +337,7 @@ class AddRole extends Component {
             <Form.Item label="支出权限管理：" className={style.formItems}>
               {
                 getFieldDecorator('openCost', {
+                  initialValue: openCost,
                   valuePropName: 'checked'
                 })(
                   <Switch onChange={e => this.onChangeS(e, 'openCost')} />
@@ -358,6 +421,7 @@ class AddRole extends Component {
             <Form.Item label="收入权限管理：" className={style.formItems}>
               {
                 getFieldDecorator('openIncome', {
+                  initialValue: openIncome,
                   valuePropName: 'checked'
                 })(
                   <Switch onChange={e => this.onChangeS(e, 'openIncome')} />
@@ -398,11 +462,11 @@ class AddRole extends Component {
               <Col span="12">
                 <Form.Item label="收入类别">
                   {
-                    getFieldDecorator('income.incomeCategory', {
+                    getFieldDecorator('incomeCategory', {
                       initialValue: income.incomeCategory,
                     })(
                       <TreeSelect
-                        onChange={(value, label, extra) => this.onChangeTree(value, label, extra)}
+                        onChange={(value, label, extra) => this.onChangeTree(value, label, extra, 'income')}
                         treeData={incomeList}
                         labelInValue
                         disabled={!openIncome}
@@ -420,7 +484,7 @@ class AddRole extends Component {
                   officeTree && officeTree.length > 0 &&
                   <Form.Item label="所在公司">
                     {
-                      getFieldDecorator('income.officeIds', {
+                      getFieldDecorator('incomeOfficeIds', {
                         initialValue: income.officeIds,
                       })(
                         <Select mode="multiple" placeholder="请选择" disabled={!openIncome}>

@@ -64,7 +64,7 @@ class AddGroup extends React.PureComponent {
           });
         } else {
           Object.assign(payload, {
-            parentId: 0,
+            parentId: data.parentId || 0,
           });
         }
         if (title !== 'add') {

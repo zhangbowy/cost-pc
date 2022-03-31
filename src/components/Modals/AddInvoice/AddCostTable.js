@@ -175,9 +175,10 @@ class AddCostTable extends Component {
 
   onInputAmount = (val, key) => {
     const { costSum } = this.state;
-    const amm = this.props.form.getFieldValue('amount');
+    const amm = this.props.form.getFieldValue('shareAmount');
+    console.log('🚀 ~ file: AddCostTable.js ~ line 179 ~ AddCostTable ~ amm', amm);
     let amount = 0;
-    if (Object.keys(amm)) {
+    if (amm && Object.keys(amm)) {
       Object.keys(amm).forEach(it => {
         if (it !== key) {
           amount=numAdd(amm[it], amount);
@@ -213,6 +214,7 @@ class AddCostTable extends Component {
     }
     if (costSum && (val || val === 0)) {
       // const amounts = ((val * costSum * 10000).toFixed(0) / 100);
+      console.log('shareScale', this.props.form.getFieldValue('shareScale'));
       const amounts = (numMulti(val, costSum)/100).toFixed(2);
       this.props.form.setFieldsValue({
         [`shareAmount[${key}]`]: amounts,

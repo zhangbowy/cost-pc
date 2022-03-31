@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Divider, Button, Popconfirm, message, Tooltip } from 'antd';
+import { Divider, Button, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { withRouter } from 'react-router';
@@ -163,18 +163,7 @@ class DraftList extends Component {
       render: (_, record, index) => (
         <span>{index+1}</span>
       ),
-      width: '40px'
-    }, {
-      title: '事由',
-      dataIndex: 'reason',
-      render: (text) => (
-        <span>
-          <Tooltip placement="topLeft" title={text || ''}>
-            <span className="eslips-2">{text}</span>
-          </Tooltip>
-        </span>
-      ),
-      width: '100px'
+      width: '80px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
@@ -184,23 +173,23 @@ class DraftList extends Component {
         </span>
       ),
       className: 'moneyCol',
-      width: '100px'
+      width: '140px'
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
       render: (_, record) => (
         <span>{record.invoiceTemplateName}</span>
       ),
-      width: '120px'
+      width: '160px'
     }, {
       title: '提交时间',
-      dataIndex: 'createTime',
+      dataIndex: 'updateTime',
       render: (_, record) => (
         <span>
-          <span>{record.createTime ? moment(Number(record.createTime)).format('YYYY-MM-DD') : '-'}</span>
+          <span>{record.updateTime ? moment(Number(record.updateTime)).format('YYYY-MM-DD') : '-'}</span>
         </span>
       ),
-      width: '100px'
+      width: '160px'
     }, {
       title: '操作',
       dataIndex: 'opea',
@@ -239,12 +228,10 @@ class DraftList extends Component {
           size="big"
           onCancel={() => this.onCancel()}
           width="980px"
-          bodyStyle={{height: '470px', overflowY: 'scroll'}}
-          footer={(
-            <>
-              <Button type="default" key="cen" onClick={this.onCancel}>取消</Button>
-            </>
-          )}
+          newBodyStyle={{
+            padding: '24px 32px'
+          }}
+          footer={null}
         >
           <InvoiceTable
             list={draftList}

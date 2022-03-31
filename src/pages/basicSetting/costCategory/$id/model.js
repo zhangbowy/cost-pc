@@ -64,6 +64,7 @@ export default {
       console.log(res);
     },
     *del({ payload }, { call }) {
+
       yield call(post, api.delCostGroup, payload);
     },
     *delCheck({ payload }, { call, put }) {
@@ -85,7 +86,12 @@ export default {
       yield call(post, url, payload);
     },
     *delPer({ payload }, { call }) {
-      yield call(post, api.delPer, payload);
+      let url = api.delPer;
+      const param = {id: payload.id};
+      if (payload.costType === '1') {
+        url = api.delPerIncome;
+      }
+      yield call(post, url, param);
     },
     *checkDel({ payload }, { call }) {
       yield call(post, api.check, payload);

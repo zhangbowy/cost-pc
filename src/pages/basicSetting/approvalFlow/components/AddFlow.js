@@ -46,6 +46,10 @@ class AddFlow extends Component {
       payload: {}
     });
     this.props.dispatch({
+      type: 'global/incomeCategoryList',
+      payload: {}
+    });
+    this.props.dispatch({
       type: 'global/getCondition',
       payload: {
         templateType,
