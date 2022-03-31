@@ -676,7 +676,7 @@ class Summary extends React.PureComponent {
             <Menu.Item key={4}>三方导入</Menu.Item>
           </Menu>
         </div>
-        <SearchBanner list={Number(current) === 20 ? incomeListSearch:searchList} onChange={this.onChangeSearch} />
+        <SearchBanner list={searchList} onChange={this.onChangeSearch} />
         <div className="content-dt" style={{ padding: 0, height: 'auto' }}>
           <div className={style.payContent}>
             {/* 增加了收款单不需要显示这个 crated by zhangbo on 2020/03/23 */}
