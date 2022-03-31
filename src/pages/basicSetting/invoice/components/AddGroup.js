@@ -104,6 +104,7 @@ class AddGroup extends React.PureComponent {
       children,
       title,
       loading,
+      userInfo,
       form: { getFieldDecorator }
     } = this.props;
     const { data } = this.state;
@@ -158,7 +159,10 @@ class AddGroup extends React.PureComponent {
                     <Radio value={1}>借款单</Radio>
                     <Radio value={2}>申请单</Radio>
                     <Radio value={3}>薪资单</Radio>
-                    <Radio value={20}>收款单</Radio>
+                    {
+                      !!(userInfo.orderItemLevel) &&
+                      <Radio value={20}>收款单</Radio>
+                    }
                   </Radio.Group>
                 )
               }

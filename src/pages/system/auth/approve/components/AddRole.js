@@ -110,6 +110,7 @@ class AddRole extends Component {
                   value: it.id,
                 };
               }) : [],
+              officeVOS: [],
               officeIds: details.income.officeVOS ? details.income.officeVOS.map(it => it.id) : [],
             }
           });
@@ -194,7 +195,7 @@ class AddRole extends Component {
                   isGroup: incomeGroupArr.includes(it.value),
                 };
               }),
-              officeIds: values.incomeOfficeIds,
+              officeIds: values.incomeOfficeIds || [],
             }
           }
         }).then(() => {

@@ -49,6 +49,7 @@ class CostCategory extends React.PureComponent {
   }
 
   componentDidMount() {
+    localStorage.removeItem('costItem');
     this.onQuery({});
   }
 
@@ -194,7 +195,8 @@ class CostCategory extends React.PureComponent {
   render() {
     const {
       list,
-      loading
+      loading,
+      userInfo,
     } = this.props;
     const newArrs = list.map(it => ({ ...it, name: it.costName}));
     const { typeVisible , type} = this.state;
@@ -383,18 +385,21 @@ class CostCategory extends React.PureComponent {
     return (
       <div className="mainContainer">
         <PageHead title="支出类别设置" />
-        <div style={{width: '100%', marginTop: '-8px'}}>
-          <MenuItems
-            lists={menuList || []}
-            onHandle={(val) => this.onHandle(val)}
-            params={{
-              key: 'key',
-              value:'value'
-            }}
-            className="p-l-32 titleMenu"
-            status={type}
-          />
-        </div>
+        {
+          !!(userInfo.orderItemLevel) &&
+          <div style={{width: '100%', marginTop: '-8px'}}>
+            <MenuItems
+              lists={menuList || []}
+              onHandle={(val) => this.onHandle(val)}
+              params={{
+                key: 'key',
+                value:'value'
+              }}
+              className="p-l-32 titleMenu"
+              status={type}
+            />
+          </div>
+        }
         <div className="content-dt ">
           <div className="cnt-header">
             <div className="head_lf">

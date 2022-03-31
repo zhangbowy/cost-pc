@@ -59,7 +59,7 @@ class CostTable extends Component {
       dataIndex: 'categoryName',
       render: (_, record) => (
         <span className={style.cateNames}>
-          <i className={`iconfont icon${record.icon}`} style={{color: getArrayColor(record.icon, classifyIcon[0])}} />
+          <i className={`iconfont icon${record.icon} m-r-8`} style={{color: getArrayColor(record.icon, classifyIcon[0])}} />
           <span>{record.categoryName}</span>
         </span>
       )

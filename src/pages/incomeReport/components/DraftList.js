@@ -163,7 +163,7 @@ class DraftList extends Component {
       render: (_, record, index) => (
         <span>{index+1}</span>
       ),
-      width: '40px'
+      width: '80px'
     }, {
       title: '金额（元）',
       dataIndex: 'costSum',
@@ -173,23 +173,23 @@ class DraftList extends Component {
         </span>
       ),
       className: 'moneyCol',
-      width: '100px'
+      width: '140px'
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
       render: (_, record) => (
         <span>{record.invoiceTemplateName}</span>
       ),
-      width: '120px'
+      width: '160px'
     }, {
       title: '提交时间',
-      dataIndex: 'createTime',
+      dataIndex: 'updateTime',
       render: (_, record) => (
         <span>
-          <span>{record.createTime ? moment(Number(record.createTime)).format('YYYY-MM-DD') : '-'}</span>
+          <span>{record.updateTime ? moment(Number(record.updateTime)).format('YYYY-MM-DD') : '-'}</span>
         </span>
       ),
-      width: '100px'
+      width: '160px'
     }, {
       title: '操作',
       dataIndex: 'opea',

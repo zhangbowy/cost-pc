@@ -300,7 +300,7 @@ class Invoice extends React.PureComponent {
           <span>
             {
               record.type === 0 &&
-                <AddGroup data={record} onOk={() => _this.onOk()} title="edit">
+                <AddGroup data={record} onOk={() => _this.onOk()} title="edit" userInfo={userInfo}>
                   <a style={{ width: '90px', display: 'inline-block', textAlign: 'right', marginRight: '8px' }}>编辑组</a>
                 </AddGroup>
             }
@@ -371,10 +371,25 @@ class Invoice extends React.PureComponent {
         <div className="content-dt">
           <div className="cnt-header">
             <div className="head_lf">
-              <Dropdown overlay={menuList}>
-                <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
-              </Dropdown>
-              <AddGroup title="add" onOk={this.onOk}>
+              {
+                userInfo.orderItemLevel ?
+                  <Dropdown overlay={menuList}>
+                    <Button type="primary" style={{marginRight: '8px'}}>新增单据模板</Button>
+                  </Dropdown>
+                  :
+                  <JudgeType
+                    title="add"
+                    data={{}}
+                    type={0}
+                    onOk={this.onOk}
+                    visible={typeVisible}
+                    changeVisible={this.changeVisible}
+                    linkInvoice={this.onAddCategory}
+                  >
+                    <span className="pd-20-9 c-black-65">新增单据模板</span>
+                  </JudgeType>
+              }
+              <AddGroup title="add" onOk={this.onOk} userInfo={userInfo}>
                 <Button style={{marginRight: '8px'}}>新增分组</Button>
               </AddGroup>
               <Form style={{display: 'inline-block'}}>
