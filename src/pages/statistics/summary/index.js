@@ -262,7 +262,7 @@ class Summary extends React.PureComponent {
       const keys = [
         'costIds',
         'projectIds',
-        'invoiceTemplateIds',
+        'incomeTemplateIds',
         'supplierIds'
       ];
       const obj = {};
