@@ -82,11 +82,19 @@ const incomeListSearch = [
   },
   {
     type: 'deptAndUser',
-    label: '收款部门/人',
+    label: '提交部门/人',
     placeholder: '请选择',
     key: ['createUserVOS', 'createDeptVOS'],
     id: 'createUserVOS',
-    out: 1
+    out: 1,
+    isOnlyOut: true
+  },
+  {
+    type: 'deptAndUser',
+    label: '收款部门/人',
+    placeholder: '请选择',
+    key: ['userVOS', 'deptVOS'],
+    id: 'userVOS',
   },
   {
     type: 'rangeTime',

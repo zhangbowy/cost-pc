@@ -539,6 +539,7 @@ class FormStyle extends Component {
 
   onField = (item, index) => {
     let node = null;
+    if(item.isOnlyOut) return;
     switch(item.type){
       case 'tree':
         node = (
