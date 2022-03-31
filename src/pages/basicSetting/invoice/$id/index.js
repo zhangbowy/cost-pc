@@ -34,6 +34,7 @@ const basicStr = [{
   userInfo: session.userInfo,
   allList: addInvoice.allList,
   costCategoryList: global.costCategoryList,
+  incomeCategoryList: global.incomeCategoryList,
   detail: addInvoice.detail,
   approveList: addInvoice.approveList,
   expandLists: addInvoice.expandLists,
@@ -73,8 +74,8 @@ class CategoryAdd extends PureComponent {
     const title = id.split('_')[0];
     const titleType = params[2];
     this.fetchList(() => {
-        const { costCategoryList } = this.props;
-        const lists = costCategoryList;
+        const { costCategoryList, incomeCategoryList } = this.props;
+        const lists = Number(templateType) === 20 ? incomeCategoryList : costCategoryList;
         const list = treeConvert({
           rootId: 0,
           pId: 'parentId',
@@ -150,7 +151,8 @@ class CategoryAdd extends PureComponent {
               if (detail.isWriteByRelationApply) {
                 relations.push('isWriteByRelationApply');
               }
-              const ids = costCategoryList.map(it => it.id);
+              const newCostList = Number(templateType) === 20 ? incomeCategoryList : costCategoryList;
+              const ids = newCostList.map(it => it.id);
               console.log('CategoryAdd -> componentDidMount -> costCategoryList', costCategoryList);
               const newArrs = [];
               costCategory.forEach(it => {
