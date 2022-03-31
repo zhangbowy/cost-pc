@@ -51,8 +51,8 @@ const listSearch = [
     type: 'tree',
     label: '单据类型',
     placeholder: '请选择',
-    key: 'invoiceTemplateIds',
-    id: 'invoiceTemplateIds',
+    key: 'incomeTemplateIds',
+    id: 'incomeTemplateIds',
     out: 1
   },
   {
@@ -120,8 +120,8 @@ const incomeListSearch = [
     type: 'tree',
     label: '单据类型',
     placeholder: '请选择',
-    key: 'invoiceTemplateIds',
-    id: 'invoiceTemplateIds',
+    key: 'incomeTemplateIds',
+    id: 'incomeTemplateIds',
     out: 1
   },
   {

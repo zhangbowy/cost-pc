@@ -381,9 +381,7 @@ class CostDetailTable extends PureComponent {
             render: (_, itField) => {
               console.log('InvoiceDetail -> render -> records', itField);
               let texts = itField[`${item.field}msg`];
-              if (itField[`${item.field}dateType`]) {
-                texts = '';
-              } else if (itField[`${item.field}startTime`]) {
+              if (itField[`${item.field}startTime`]) {
                 texts = itField[`${item.field}endTime`] ?
                 `${moment(Number(itField[`${item.field}startTime`])).format('YYYY-MM-DD')}-${moment(Number(itField[`${item.field}endTime`])).format('YYYY-MM-DD')}`
                 :
