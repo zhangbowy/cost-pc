@@ -34,7 +34,7 @@ export default {
   grantUpload: `${APP_API}/cost/space/grantUpload4Approval`,
   userInfo: `${APP_API}/cost/user/userInfo`,
   expenseList: `${APP_API}/cost/invoice/submit/expense/list`,
-  incomeExpenseList: `${APP_API}/cost/income/invoice/income/allExpense/list`,
+  incomeExpenseList: `${APP_API}/cost/income/invoice/income/expense/list`,
   invoiceDet: `${APP_API}/cost/invoice/template/detail`,
   incomeDet: `${APP_API}/cost/income/template/detail`,
   incomeCateDet: `${APP_API}/cost/income/category/detail`,
