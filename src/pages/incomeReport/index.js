@@ -193,8 +193,8 @@ class incomeReport extends React.PureComponent {
               onChange={(val) => this.onComplete(val, 'type')}
               placeholder="请选择"
             >
-              <Select.Option value={1}>未完成</Select.Option>
-              <Select.Option value={0}>已完成</Select.Option>
+              <Select.Option value={0}>未完成</Select.Option>
+              <Select.Option value={1}>已完成</Select.Option>
               <Select.Option value="all">全部</Select.Option>
             </Select>
           </div>

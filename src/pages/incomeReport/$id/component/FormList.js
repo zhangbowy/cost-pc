@@ -68,14 +68,14 @@ class ChangeForm extends Component {
 
   selectPle = async(val) => {
     let detail = this.props.details;
-    const { onChangeData, userInfo } = this.props;
+    const { onChangeData } = this.props;
     if (val.users) {
       const userJson = val.users.length
                         ? val.users
-                        : [{ userName: userInfo.name, userId: userInfo.dingUserId, avatar: userInfo.avatar }];
-      // const flags = await this.props.checkOffice({ dingUserId: userJson[0].userId });
-      // if (!flags) return;
-      const { deptInfo, userId } = await this.props.selectPle(val.users.length ? { userJson: JSON.stringify(userJson) } : {});
+                        : null;
+      const flags = await this.props.checkOffice({ userId: userJson ? userJson[0].userId : '-1' });
+      if (!flags) return;
+      const { deptInfo, userId } = await this.props.selectPle(val.users.length ? { userJson: JSON.stringify(userJson) } : {type: -1});
       onChangeData({
         users: val.users,
         depList: deptInfo,
@@ -102,10 +102,10 @@ class ChangeForm extends Component {
         users: val.users,
         details: {
           ...detail,
-          userName: userJson[0].userName,
-          loanUserId: userJson[0].userId,
+          userName: userJson ? userJson[0].userName : '',
+          loanUserId: userJson ? userJson[0].userId : '',
         },
-        loanUserId: userJson[0].userId,
+        loanUserId: userJson ? userJson[0].userId : '',
       }, true);
     }
   }

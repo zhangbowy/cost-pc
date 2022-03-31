@@ -98,7 +98,7 @@ export default {
       });
     },
     *edit({ payload }, { call }) {
-      let url = api.addCostGroup;
+      let url = api.edit;
       const param = {...payload};
       if (payload.costItem === '1') {
         url = api.editIncomeGroup;

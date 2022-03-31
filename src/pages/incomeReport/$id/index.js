@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
-import { message, PageHeader, Button, Modal, Spin } from 'antd';
+import { message, PageHeader, Button, Spin } from 'antd';
 import { connect } from 'dva';
 import moment  from 'moment';
 import PageHead from '@/components/pageHead';
@@ -20,8 +20,6 @@ import { fileUpload } from '@/utils/ddApi';
 import treeConvert from '@/utils/treeConvert';
 import { adjustApprove } from '@/utils/approve';
 
-
-const { confirm } = Modal;
 @connect(({ session, global, loading, costGlobal }) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
@@ -331,7 +329,7 @@ class addInvoice extends Component {
           const contents = JsonParse(contentJson);
           console.log('🚀 ~ file: index.js ~ line 229 ~ addInvoice ~ onShowHandle=async ~ contents', contents);
           const officeLists = await this.fetchOfficeList({
-            dingUserId: contents.userJson && contents.userJson.length ? contents.userJson[0].userId : '' });
+            userId: contents.userJson && contents.userJson.length ? contents.userJson[0].userId : '-1' });
           if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
             Object.assign(contents, {
               officeId: officeLists.length === 1 ? officeLists[0].id : undefined,
@@ -976,78 +974,29 @@ class addInvoice extends Component {
     return list;
   }
 
-  onChangeOffice = (val, callback) => {
-    const { details, costDetailsVo } = this.state;
-    const { djDetail } = this.props;
-    const arr = [];
-    let newArr = [];
-    if (costDetailsVo.length) {
-      newArr = costDetailsVo.filter(it => it.costDetailShareVOS && it.costDetailShareVOS.length === 0 && !it.detailFolderId);
-    };
-    if (newArr.length !== costDetailsVo.length) {
-      arr.push('收入明细');
-    }
-    if(arr.length && (djDetail.templateType !== 2)) {
-      confirm({
-        title: `切换所在公司将会清空${arr.join(',')}`,
-        onOk: () => {
-          this.setState({
-            details: { ...details, officeId: val },
-            costDetailsVo: newArr,
-          }, () => {
-            this.getNode({});
-          });
-        },
-        onCancel: () => {
-          if (callback) callback();
-        }
-      });
-    } else {
-      this.setState({
-        details: { ...details, officeId: val }
-      }, () => {
-        this.getNode({});
-      });
-    }
+  onChangeOffice = (val) => {
+    const { details } = this.state;
+    this.setState({
+      details: { ...details, officeId: val }
+    }, () => {
+      this.getNode({});
+    });
   }
 
   checkOffice = (payload) => {
-    const { djDetail } = this.props;
+    const { details } = this.state;
     return new Promise(resolve => {
       this.props.dispatch({
         type: 'costGlobal/officeList',
         payload,
       }).then(() => {
-        const { officeList } = this.props;
-        const { details, costDetailsVo } = this.state;
-        if (officeList.findIndex(it => it.id === details.officeId) === -1 && (djDetail.templateType !== 2)) {
-          const arr = [];
-          let newArr = [];
-          if (costDetailsVo.length) {
-            newArr = costDetailsVo.filter(it => it.costDetailShareVOS && it.costDetailShareVOS.length === 0 && !it.detailFolderId);
-          };
-          if (newArr.length !== costDetailsVo.length) {
-            arr.push('收入明细');
+        resolve(true);
+        this.setState({
+          details: {
+            ...details,
+            officeId: '',
           }
-          if(arr.length) {
-            confirm({
-              title: `切换所在公司将会清空${arr.join(',')}`,
-              onOk: () => {
-                this.setState({
-                  costDetailsVo: newArr,
-                });
-                resolve(true);
-              },
-              onCancel: () => {
-                resolve(false);
-              }
-            });
-          } else {
-            resolve(true);
-          }
-        } else {
-          resolve(true);
-        }
+        });
       });
     });
   }
