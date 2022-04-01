@@ -217,7 +217,7 @@ class DraftList extends Component {
         </span>
       ),
       className: 'fixCenter',
-      width: '80px'
+      width: '100px'
     }];
     return (
       <div>
