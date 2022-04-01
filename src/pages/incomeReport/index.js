@@ -107,6 +107,13 @@ class incomeReport extends React.PureComponent {
     ddOpenLink(`${APP_API}/cost/pdf/batch/income?token=${localStorage.getItem('token')}&ids=${id}`);
   }
 
+  handleTableChange = (pagination) => {
+    this.onQuery({
+      pageNo: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+  };
+
   render() {
     const columns = [{
       title: '单号',
