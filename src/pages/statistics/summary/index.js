@@ -235,6 +235,22 @@ class Summary extends React.PureComponent {
     const { current } = this.state;
     const _this = this;
     const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
+
+    let searchList = [...listSearch];
+    if (current === '0') {
+      searchList[2].options = invoiceStatus.filter(it => it.key !== '6');
+    } else if (current === '1') {
+      searchList[2].options = borrowStatus;
+    } else if (current === '2') {
+      searchList[2].options = apply;
+    } else if (current === '3') {
+      searchList[2].options = salary;
+    } else if (current === '4') {
+      searchList = searchList.filter(it => it.key !== 'statuses');
+    } else if (current === '20') {
+      searchList = [...incomeListSearch];
+    }
+
     let arr = [];
     arr = fetchs.map(it => {
       const params = {};
@@ -248,7 +264,7 @@ class Summary extends React.PureComponent {
         payload: params
       });
     });
-    const { searchList } = this.state;
+    // const { searchList } = this.state;
 
     Promise.all(arr).then(() => {
       const {
@@ -432,27 +448,11 @@ class Summary extends React.PureComponent {
   };
 
   handleClick = (e, callback) => {
-    let arr = [...listSearch];
-    if (e.key === '0') {
-      arr[2].options = invoiceStatus.filter(it => it.key !== '6');
-    } else if (e.key === '1') {
-      arr[2].options = borrowStatus;
-    } else if (e.key === '2') {
-      arr[2].options = apply;
-    } else if (e.key === '3') {
-      arr[2].options = salary;
-    } else if (e.key === '4') {
-      arr = arr.filter(it => it.key !== 'statuses');
-    } else if (e.key === '20') {
-      arr = [...incomeListSearch];
-    }
-    console.log(arr, '搜索的内容');
     this.setState(
       {
         current: e.key,
         selectedRowKeys: [],
         selectedRows: [],
-        searchList: arr
       },
       () => {
         if (callback) {
