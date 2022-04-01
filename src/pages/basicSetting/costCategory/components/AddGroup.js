@@ -142,10 +142,11 @@ class AddGroup extends React.PureComponent {
   }
 
   render() {
-    const { visible, data, lists, type } = this.state;
+    const { visible, data, lists } = this.state;
     const {
       children,
       title,
+      type,
       form: { getFieldDecorator },
     } = this.props;
     const { costType } = fields;
@@ -218,7 +219,7 @@ class AddGroup extends React.PureComponent {
               </Form.Item>
             }
             {
-              type === '0' &&
+              Number(type) === 0 &&
               <Form.Item label="类型选择" {...formItemLayout}>
                 {
                   getFieldDecorator('attribute', {

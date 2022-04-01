@@ -249,11 +249,12 @@ class CostCategory extends React.PureComponent {
           }}
         />) :
         (<span>-</span>)
-      )
+      ),
+      width: 100
     }, {
       title: '描述',
       dataIndex: 'note',
-      width: 360,
+      width: 460,
       render: (text) => (
         <span>
           {
