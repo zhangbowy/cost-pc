@@ -142,9 +142,9 @@ class Account extends Component {
     return (
       <div className={style.payAccountWarp}>
         <PageHead title="公司资金账户设置" />
-        {
-          !!(userInfo.orderItemLevel) && (
-            <div className={style.accountStatsWarp}>
+        <div className={style.accountStatsWarp}>
+          {
+            userInfo.orderItemLevel ? (
               <div className={style.accountStat}>
                 <div className="total-amount">
                   <span className={style.text}>
@@ -174,14 +174,14 @@ class Account extends Component {
                   <span className={style.num}>¥{amountMap.costSum / 100}</span>
                 </div>
               </div>
-              <div className="head_lf">
-                <AddAccount onOk={this.onOk} title="add">
-                  <Button type="primary">新增资金账户</Button>
-                </AddAccount>
-              </div>
-            </div>
-          )
-        }
+            ):<div />
+         }
+          <div className="head_lf">
+            <AddAccount onOk={this.onOk} title="add">
+              <Button type="primary">新增资金账户</Button>
+            </AddAccount>
+          </div>
+        </div>
         <div
           className="content-dt content-add"
           style={{ backgroundColor: '#F7F8FA' }}
