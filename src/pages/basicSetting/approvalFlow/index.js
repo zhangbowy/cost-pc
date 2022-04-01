@@ -26,6 +26,19 @@ const approvePersonList = [{
   key: '20',
   value: '收款单审批流'
 }];
+const oldApprovePersonList = [{
+  key: '0',
+  value: '报销单审批流'
+}, {
+  key: '1',
+  value: '借款单审批流'
+}, {
+  key: '2',
+  value: '申请单审批流'
+}, {
+  key: '3',
+  value: '薪资单审批流'
+}];
 function ApprovalFlow(props) {
 
   const [status, setStatus] = useState('0');
@@ -142,7 +155,7 @@ function ApprovalFlow(props) {
       />
       <div style={{width: '100%', marginTop: '-8px'}}>
         <MenuItems
-          lists={approvePersonList || []}
+          lists={props.userInfo.orderItemLevel ? approvePersonList : oldApprovePersonList}
           onHandle={(val) => onHandle(val)}
           params={{
             key: 'key',

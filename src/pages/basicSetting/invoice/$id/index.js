@@ -241,9 +241,17 @@ class CategoryAdd extends PureComponent {
       });
     });
     Promise.all(arr).then(() => {
-      if (callback) {
-        callback();
-      }
+      const { templatePdfVo } = this.state;
+      this.setState({
+        templatePdfVo: {
+          ...templatePdfVo,
+          paperType: Number(templateType) === 20 ? 0 : 2,
+        }
+      }, () => {
+        if (callback) {
+          callback();
+        }
+      });
     });
   }
 

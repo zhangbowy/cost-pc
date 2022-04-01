@@ -104,7 +104,11 @@ class Left extends Component {
       <div className={style.left}>
         <Form style={{ padding: '1px 0px' }}>
           <Form.Item label="打印模板" colon={false} style={{ marginBottom: '10px' }}>
-            <Select onChange={e => this.onChanges(e)} value={templatePdfVo.paperType || templatePdfVo.paperType === 0 ? `${templatePdfVo.paperType}` : '2'}>
+            <Select
+              onChange={e => this.onChanges(e)}
+              value={templatePdfVo.paperType || templatePdfVo.paperType === 0 ? `${templatePdfVo.paperType}` : '2'}
+              disabled={Number(templateType) === 20}
+            >
               {
                 printType.map(it => (
                   <Select.Option key={it.key}>{it.value}</Select.Option>
@@ -113,7 +117,7 @@ class Left extends Component {
             </Select>
           </Form.Item>
           {
-            lists.length &&
+            lists.length > 0 &&
             <Form.Item label="基础设置" colon={false}>
               <div className={style.checkbox}>
                 {

@@ -289,6 +289,7 @@ class addInvoice extends Component {
             if (costSelect) {
               costSelect = JSON.parse(costSelect);
               const { expenseList } = this.props;
+              console.log('🚀 ~ file: index.js ~ line 292 ~ addInvoice ~ Promise.all ~ expenseList', expenseList);
               const arrs = [];
               const categoryIds = expenseList.map(it => it.id);
               const category = [];
@@ -450,7 +451,25 @@ class addInvoice extends Component {
   }
 
   onInitFolder = (arrs) => {
-    const newArr = this.onInitCategory(arrs);
+    const { expenseList } = this.props;
+    console.log('🚀 ~ file: index.js ~ line 292 ~ addInvoice ~ Promise.all ~ expenseList', expenseList);
+    const newArrs = [];
+    const categoryIds = expenseList.map(it => it.id);
+    const category = [];
+    arrs.forEach(it => {
+      if (categoryIds.includes(it.categoryId)) {
+        newArrs.push(it);
+      } else {
+        category.push(it.categoryName);
+      }
+    });
+    console.log('🚀 ~ file: index.js ~ line 467 ~ addInvoice ~ category', category);
+
+    if (category && category.length) {
+      const msg = Array.from(new Set(category)).join('、');
+      message.error(`${msg}收入类别被删除，请重新选择`);
+    }
+    const newArr = this.onInitCategory(newArrs);
     console.log('🚀 ~ file: index.js ~ line 625 ~ addInvoice ~ newArr', arrs);
     const newArrKey = defaultFunc.onInitKey([...newArr]);
     console.log('🚀 ~ file: index.js ~ line 627 ~ addInvoice ~ newArrKey', newArrKey);

@@ -34,8 +34,8 @@ class AddRole extends Component {
     makeDept: [],
     bearDept: [],
     officeIds: [],
-    openCost: null,
-    openIncome: null,
+    openCost: true,
+    openIncome: true,
     income: {
       makeUser: [],
       incomeUser: [],
