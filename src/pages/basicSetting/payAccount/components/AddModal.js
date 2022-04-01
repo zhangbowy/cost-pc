@@ -236,7 +236,7 @@ class AddAccount extends React.PureComponent {
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title={title && `${defaultTitle[title]}付款账户`}
+          title={title && `${defaultTitle[title]}资金账户`}
           visible={visible}
           bodyStyle={{ height: '470px', overflowY: 'scroll' }}
           onCancel={() => {
