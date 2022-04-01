@@ -211,7 +211,7 @@ export default function Account(props) {
         !personal && isShowBalance && (
           <div className={styles.balance}>
             <span className={styles.balanceText}>账户余额</span>
-            <span className={styles.balanceNum}>{amount / 100}</span>
+            <span className={styles.balanceNum}>¥{amount / 100}</span>
           </div>
         )
       }
