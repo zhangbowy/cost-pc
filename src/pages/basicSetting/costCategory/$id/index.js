@@ -361,7 +361,8 @@ class CategoryAdd extends PureComponent {
   render () {
     const {
       allList,
-      isModifyInvoice
+      isModifyInvoice,
+      userInfo,
     } = this.props;
     const { id } = this.props.match.params;
     const title = id.split('_')[0];
@@ -370,7 +371,7 @@ class CategoryAdd extends PureComponent {
     const routes = [
       {
         path: '/basicSetting/costCategory',
-        breadcrumbName: '支出类别设置',
+        breadcrumbName: `${userInfo.orderItemLevel === 1 ? '收支类别设置' : '支出类别设置'}`,
       },
       {
         path: 'second',
