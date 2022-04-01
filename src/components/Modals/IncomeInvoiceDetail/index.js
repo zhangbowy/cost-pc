@@ -353,7 +353,7 @@ class InvoiceDetail extends Component {
           closable={false}
           title={
             <div className={style.modalBtn}>
-              <span>{title || '单据详情'}</span>
+              <span className={style.titleText}>{title || '单据详情'}</span>
               <div className={style.btnIcon}>
                 <Tooltip title="打印">
                   <i
@@ -376,7 +376,7 @@ class InvoiceDetail extends Component {
           }
           width="980px"
           className={style.incomeInvoiceWrap}
-          bodyStyle={{ maxHeight: '630px', overflowY: 'scroll' }}
+          bodyStyle={{ maxHeight: '501px', overflowY: 'scroll' }}
           footer={getFooter()}
         >
           <div className={cs(style.header)}>
