@@ -1009,14 +1009,23 @@ class addInvoice extends Component {
         type: 'costGlobal/officeList',
         payload,
       }).then(() => {
-        resolve(true);
         const { officeList } = this.props;
+        console.log('🚀 ~ file: index.js ~ line 1014 ~ addInvoice ~ officeList', officeList);
         this.setState({
           details: {
             ...details,
             officeId: officeList.length === 1 ? officeList[0].id : '',
           }
+        }, () => {
+          resolve({
+            flags: true,
+            details: {
+              ...details,
+              officeId: officeList.length === 1 ? officeList[0].id : '',
+            }
+          });
         });
+
       });
     });
   }
