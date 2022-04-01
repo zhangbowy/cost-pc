@@ -629,7 +629,7 @@ renderTreeNodes = data =>
                 <>
                   {
                     itw.field === 'reason' && !!(itw.status) &&
-                      <Form.Item label={showField.reason && showField.reason.name} style={{width: '936px', marginTop: '24px'}}>
+                      <Form.Item label={showField.reason && showField.reason.name} style={{width: '936px'}}>
                         {
                           getFieldDecorator('reason', {
                             initialValue: details.reason || '',

@@ -131,6 +131,8 @@ class AddOldRole extends Component {
             approveRoleId: id,
             officeIds: values.officeIds || [],
             id: detail && detail.id ? detail.id : '',
+            openCost: true,
+            openIncome: false,
           }
         }).then(() => {
           this.onCancel();

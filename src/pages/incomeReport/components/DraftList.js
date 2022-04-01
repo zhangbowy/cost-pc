@@ -173,7 +173,7 @@ class DraftList extends Component {
         </span>
       ),
       className: 'moneyCol',
-      width: '140px'
+      width: '160px'
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',

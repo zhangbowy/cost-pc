@@ -1074,7 +1074,9 @@ class addInvoice extends Component {
         </div>
         <Spin spinning={this.props.initLoading}>
           <div className="content-dt" style={{height: 'calc(100vh - 200px)'}}>
-            <Lines name="基本信息" />
+            <div className="m-b-24">
+              <Lines name="基本信息" />
+            </div>
             <ChangeForm
               userInfo={userInfo}
               showField={showField}
