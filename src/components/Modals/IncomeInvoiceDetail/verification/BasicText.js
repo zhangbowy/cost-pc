@@ -214,7 +214,7 @@ const BasicText = ({
           );
         })
       }
-      {details.reason && (
+      {showFields.reason && showFields.reason.status && (
         <Col span={24} className="m-t-16">
           <div style={{ display: 'flex' }}>
             <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
