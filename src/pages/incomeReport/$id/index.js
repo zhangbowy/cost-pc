@@ -1010,10 +1010,11 @@ class addInvoice extends Component {
         payload,
       }).then(() => {
         resolve(true);
+        const { officeList } = this.props;
         this.setState({
           details: {
             ...details,
-            officeId: '',
+            officeId: officeList.length === 1 ? officeList[0].id : '',
           }
         });
       });
