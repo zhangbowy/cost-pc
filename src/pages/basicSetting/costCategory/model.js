@@ -57,12 +57,15 @@ export default {
       });
     },
     *add({ payload }, { call }) {
+      console.log('🚀 ~ file: model.js ~ line 60 ~ *add ~ payload', payload);
       let url = api.addCostGroup;
       const param = {...payload};
       if (payload.costItem === '1') {
         url = api.addIncomeGroup;
       }
-      delete param.costItem;
+      if (param.costItem) {
+        delete param.costItem;
+      }
       yield call(post, url, param);
     },
     *copy({ payload }, { call }) {
