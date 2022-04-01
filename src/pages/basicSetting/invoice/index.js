@@ -25,7 +25,7 @@ const { confirm } = Modal;
   loading: loading.models[namespace],
   list: invoice.list,
   check: invoice.check,
-  userInfo: session.userInfo
+  userInfo: session.userInfo,
 }))
 
 class Invoice extends React.PureComponent {

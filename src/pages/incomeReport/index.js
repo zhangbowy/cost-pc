@@ -12,13 +12,14 @@ import DraftList from './components/DraftList';
 import { ddOpenLink } from '../../utils/ddApi';
 
 const { APP_API } = constants;
-@connect(({ loading, incomeReport, costGlobal }) => ({
+@connect(({ loading, incomeReport, costGlobal, global }) => ({
   loading: loading.effects['incomeReport/list'] || false,
   list: incomeReport.list,
   query: incomeReport.query,
   total: incomeReport.total,
   checkTemp: costGlobal.checkTemp,
   draftTotal: costGlobal.draftTotal,
+  incomeDetail: global.incomeDetail
 }))
 class incomeReport extends React.PureComponent {
   constructor(props) {
@@ -84,11 +85,21 @@ class incomeReport extends React.PureComponent {
           message.error('不可使用该单据，请联系管理员“超管”');
           return;
         }
-        localStorage.setItem('contentJson', JSON.stringify(details));
-        localStorage.removeItem('selectCost');
-        this.props.history.push(
-          `/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
-        );
+        this.props.dispatch({
+          type: 'global/incomeDetail',
+          payload: {
+            id: details.id,
+          }
+        }).then(() => {
+          const { incomeDetail } = this.props;
+          console.log('🚀 ~ file: index.js ~ line 95 ~ incomeReport ~ .then ~ incomeDetail', incomeDetail);
+          localStorage.setItem('contentJson', JSON.stringify(incomeDetail));
+          localStorage.removeItem('selectCost');
+          this.props.history.push(
+            `/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
+          );
+        });
+
       });
   };
 
