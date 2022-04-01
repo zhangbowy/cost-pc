@@ -2,6 +2,7 @@
 import React from 'react';
 import { Col, Row, Tag } from 'antd';
 import cs from 'classnames';
+import moment from '_moment@2.29.1@moment';
 import style from '../index.scss';
 import { approveStatus, getArrayValue } from '../../../../utils/constants';
 import DisabledTooltip from '../DisabledTooltip';
@@ -20,7 +21,9 @@ const BasicText = ({
   showFields,
   previewImage,
   previewFiles,
-  previewFileOss
+  previewFileOss,
+                     expandSubmitFieldVos,
+   selfSubmitFieldVos
 }) => {
   return (
     <Row className="fs-14 m-l-10" style={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -137,6 +140,80 @@ const BasicText = ({
         </span>
         <span className="fs-14 c-black-65">{details.officeName || '-'}</span>
       </Col>
+
+      {
+        expandSubmitFieldVos &&
+        (expandSubmitFieldVos.length > 0) &&
+        expandSubmitFieldVos.filter(
+          it => (Number(it.fieldType) !== 3 && it.name !== '明细' && Number(it.fieldType) !== 9)
+        ).map(itField => {
+          let texts = itField.msg;
+          if (itField.startTime) {
+            texts = itField.endTime ?
+              `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
+              :
+              `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}`;
+          }
+          return (
+            <Col span={8} className="m-t-16" key={itField.field}>
+              <div style={{display: 'flex'}}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{itField.name}：</span>
+                <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                  <p style={{marginBottom: 0}}>{texts}</p>
+                  {
+                    itField.itemExplain && itField.itemExplain.map((its, i) => {
+                      return(
+                        <p className="c-black-45 fs-12 m-b-0">
+                          {i===0 ? '(' : ''}
+                          {its.msg}
+                          {(i+1) === itField.itemExplain.length ? ')' : ''}
+                        </p>
+                      );
+                    })
+                  }
+                </span>
+              </div>
+            </Col>
+          );
+        })
+      }
+      {
+        selfSubmitFieldVos &&
+        (selfSubmitFieldVos.length > 0) &&
+        selfSubmitFieldVos.filter(it =>
+          (Number(it.fieldType) !== 3 && Number(it.fieldType) !== 10
+            && it.name !== '明细' && it.fieldType !== 9)
+        ).map(itField => {
+          let texts = itField.msg;
+          if (itField.startTime) {
+            texts = itField.endTime ?
+              `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}-${moment(Number(itField.endTime)).format('YYYY-MM-DD')}`
+              :
+              `${moment(Number(itField.startTime)).format('YYYY-MM-DD')}`;
+          }
+          return (
+            <Col span={8} className="m-t-16" key={itField.field}>
+              <div style={{display: 'flex'}}>
+                <span className={cs('fs-14', 'c-black-85', style.nameTil)}>{itField.name}：</span>
+                <span className={cs('fs-14','c-black-65', style.rightFlex)}>
+                  <p style={{marginBottom: 0}}>{texts}</p>
+                  {
+                    itField.itemExplain && itField.itemExplain.map((its, i) => {
+                      return(
+                        <p className="c-black-45 fs-12 m-b-0">
+                          {i===0 ? '(' : ''}
+                          {its.msg}
+                          {(i+1) === itField.itemExplain.length ? ')' : ''}
+                        </p>
+                      );
+                    })
+                  }
+                </span>
+              </div>
+            </Col>
+          );
+        })
+      }
       {details.reason && (
         <Col span={24} className="m-t-16">
           <div style={{ display: 'flex' }}>
