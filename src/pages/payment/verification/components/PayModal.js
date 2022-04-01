@@ -16,6 +16,7 @@ import cs from 'classnames';
 import UploadImg from '../../../../components/UploadImg';
 import styles from './index.scss';
 import { rowSelect } from '../../../../utils/common';
+import style from '../../../../components/Modals/IncomeInvoiceDetail/index.scss';
 
 const { Option } = Select;
 @Form.create()
@@ -390,12 +391,24 @@ class PayModal extends React.PureComponent {
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <Modal
-          title=""
+          title={
+            <div className={style.modalBtn}>
+              <span className={style.titleText}>发起收款</span>
+              <div className={style.btnIcon}>
+                <i
+                  className="iconfont icona-guanbi3x"
+                  onClick={() => this.onCancel()}
+                />
+              </div>
+            </div>
+
+          }
           maskClosable={false}
           visible={visible}
-          onCancel={() => this.onCancel()}
+          closable={false}
+          // onCancel={() => this.onCancel()}
           footer={
-            <div style={{ marginLeft: '12.5%' }}>
+            <div className={styles.footer}>
               <span
                 className={cs(styles.chooseRowCount, 'fs-14 m-b-47 m-l-16')}
               >
@@ -408,7 +421,7 @@ class PayModal extends React.PureComponent {
               <Button
                 key="cancel"
                 onClick={() => this.onCancel()}
-                className="m-l-8"
+                className="m-l-15"
               >
                 取消
               </Button>
@@ -430,11 +443,12 @@ class PayModal extends React.PureComponent {
           className={styles.verifyPopWrap}
         >
           {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起收款</h1> */}
-          <p className="fs-20 fw-500 m-b-16 c-black-85">发起收款</p>
+          {/* <p className="fs-20 fw-500 m-b-16 c-black-85">发起收款</p> */}
           <Form className="formItem"  >
             {status === '1' && (
               <Form.Item
                 label="收款账户"
+                colon={false}
                 style={{ width: 306, display: 'inline-block', marginRight: 84 }}
               >
                 {getFieldDecorator('account', {
@@ -458,6 +472,7 @@ class PayModal extends React.PureComponent {
             {status === '1' && (
               <Form.Item
                 label="收款时间"
+                colon={false}
                 style={{ width: 306, display: 'inline-block' }}
               >
                 {getFieldDecorator('time', {
@@ -467,7 +482,10 @@ class PayModal extends React.PureComponent {
               </Form.Item>
             )}
             {status === '1' && (
-              <Form.Item label="收款凭证">
+              <Form.Item
+                label="收款凭证"
+                colon={false}
+              >
                 <UploadImg
                   onChange={val => this.onChangeImg(val)}
                   imgUrl={imgUrl}
@@ -476,13 +494,15 @@ class PayModal extends React.PureComponent {
               </Form.Item>
             )}
           </Form>
-          <Table
-            columns={columns}
-            dataSource={selectKey}
-            pagination={false}
-            rowSelection={rowSelection}
-            rowKey="id"
-          />
+          <div style={{ height: 390,overflow:'auto'}}>
+            <Table
+              columns={columns}
+              dataSource={selectKey}
+              pagination={false}
+              rowSelection={rowSelection}
+              rowKey="id"
+            />
+          </div>
         </Modal>
       </span>
     );

@@ -17,6 +17,79 @@
 }
 
 .verifyPopWrap {
+  .footer {
+    padding: 8px 31px 0 0!important;
+    margin-left: 12.5%;
+  }
+  :global {
+
+    .ant-form-item-label>label:after {
+      content: none!important;
+    }
+
+    .ant-modal-header {
+      padding: 23px 31px!important;
+      border-bottom: none;
+    }
+
+    .ant-modal-body {
+      padding: 0px 31px;
+    }
+
+    .ant-modal-footer {
+      background: #FFFFFF;
+      padding: 0!important;
+      box-shadow: 0px -1px 19px 0px rgba(0,0,0,0.05);
+      border-radius: 0px 0px 4px 4px;
+      height: 61px;
+    }
+
+    .ant-form-item-label {
+      height: 21px;
+      font-size: 13px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 21px;
+      margin-bottom: 10px;
+    }
+    .ant-form-item-control {
+      line-height: 1;
+    }
+    .ant-form-item {
+      margin-bottom: 23px;
+    }
+    .ant-calendar-picker {
+      width: 100%;
+    }
+
+  }
+
+  .modalBtn{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .btnIcon{
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 500;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+    }
+    .btnIcon i{
+      margin-left: 28px;
+      cursor: pointer;
+      font-size: 24px;
+    }
+
+    .titleText {
+      font-size: 20px;
+    }
+    // .btnIcon i:hover{
+    //   color: rgba(0, 0, 0, 0.65);
+    // }
+  }
+
   .chooseRowCount {
     height: 21px;
     font-size: 13px;
@@ -34,30 +107,6 @@
     line-height: 21px;
   }
   .formItem {
-    :global {
-      .ant-modal-body {
-        padding: 22px 31px;
-      }
-      .ant-form-item-label {
-        height: 21px;
-        font-size: 13px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: rgba(0, 0, 0, 0.85);
-        line-height: 21px;
-        margin-bottom: 10px;
-      }
-      .ant-form-item-control {
-        line-height: 1;
-      }
-      .ant-form-item {
-        margin-bottom: 23px;
-      }
-      .ant-calendar-picker {
-        width: 100%;
-      }
-
-    }
   }
 }
 

@@ -1,5 +1,3 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-expressions */
 import React, { PureComponent } from 'react';
 import { Table, Tooltip, Popover } from 'antd';
 import moment from 'moment';
@@ -430,7 +428,7 @@ class CostDetailTable extends PureComponent {
           {
             record.categoryName.length > 3 ?
               <Tooltip title={record.categoryName || ''}>
-                <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
+                <span className="m-l-4 eslips-1" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
               </Tooltip>
               :
               <span>{record.categoryName}</span>
