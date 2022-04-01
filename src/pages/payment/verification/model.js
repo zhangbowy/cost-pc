@@ -25,11 +25,16 @@ export default {
       const response = yield call(post, api.list, payload);
       // eslint-disable-next-line no-return-assign
       const lists = response.list && response.list.map(it => {
-        const userInfo = JSON.parse(it.userJson);
+        let userInfo = null;
+        try {
+          userInfo = JSON.parse(it.userJson);
+        } catch (e) {
+
+        }
         return {
           ...it,
           id: it.invoiceId,
-          userName: userInfo[0].userName
+          userName: userInfo && userInfo[0].userName
         };
       });
       yield put({
