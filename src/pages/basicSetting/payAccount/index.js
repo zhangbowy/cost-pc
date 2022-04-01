@@ -167,7 +167,7 @@ class Account extends Component {
                 <div className="pay">
                   <span className={style.text}>
                     流出金额
-                    <Tooltip title="财务确认支出的金额（收款金额，不包含三方单据+薪资单）">
+                    <Tooltip title="目前仅包含报销单">
                       <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
                     </Tooltip>
                   </span>
