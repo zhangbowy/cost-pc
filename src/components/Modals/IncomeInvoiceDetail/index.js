@@ -306,6 +306,7 @@ class InvoiceDetail extends Component {
       details,
       totalCost,
       selfSubmitFieldVos,
+      expandSubmitFieldVos,
       recordCount
     } = this.state;
     const {
@@ -392,6 +393,7 @@ class InvoiceDetail extends Component {
             receipt={receipt}
             previewImage={this.previewImage}
             previewFiles={this.previewFiles}
+            expandSubmitFieldVos={expandSubmitFieldVos}
           />
           {/* 收入明细 */}
           <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
