@@ -44,25 +44,9 @@
       height: 61px;
     }
 
-    .ant-form-item-label {
-      height: 21px;
-      font-size: 13px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: rgba(0, 0, 0, 0.85);
-      line-height: 21px;
-      margin-bottom: 10px;
-    }
-    .ant-form-item-control {
-      line-height: 1;
-    }
-    .ant-form-item {
-      margin-bottom: 23px;
-    }
     .ant-calendar-picker {
       width: 100%;
     }
-
   }
 
   .modalBtn{
@@ -107,6 +91,24 @@
     line-height: 21px;
   }
   .formItem {
+    :global {
+
+      .ant-form-item-label {
+        height: 21px;
+        font-size: 13px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 21px;
+        margin-bottom: 10px;
+      }
+      .ant-form-item-control {
+        line-height: 1;
+      }
+      .ant-form-item {
+        margin-bottom: 23px;
+      }
+    }
   }
 }
 
