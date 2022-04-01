@@ -425,12 +425,12 @@ class CostDetailTable extends PureComponent {
       title: '收入类别',
       dataIndex: 'categoryName',
       render: (_, record) => (
-        <span className={cs('eslips-2', style.icons)}>
+        <span className={cs('eslips-1', style.icons)}>
           <i className={`iconfont icon${record.icon}`} style={{ fontSize: '24px', verticalAlign: 'middle' }} />
           {
             record.categoryName.length > 3 ?
               <Tooltip title={record.categoryName || ''}>
-                <span className="m-l-4 eslips-1" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
+                <span className="m-l-4" style={{ verticalAlign: 'middle' }}>{record.categoryName}</span>
               </Tooltip>
               :
               <span>{record.categoryName}</span>
