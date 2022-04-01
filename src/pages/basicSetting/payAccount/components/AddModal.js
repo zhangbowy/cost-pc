@@ -228,7 +228,8 @@ class AddAccount extends React.PureComponent {
       children,
       form: { getFieldDecorator },
       title,
-      record
+      record,
+      userInfo
     } = this.props;
     const { type, visible, loading, data, treeList, isShowInput } = this.state;
     return (
@@ -287,25 +288,32 @@ class AddAccount extends React.PureComponent {
                 ]
               })(<Input placeholder="请输入" />)}
             </Form.Item>
-            <Form.Item label={
-              <Tooltip title="初始金额会计入系统初始余额，不允许修改">
-                {labelInfo.initialAmount}
-              </Tooltip>
-              }
-            >
-              {getFieldDecorator('initialAmount', {
-                rules: [{ required: !record, message: '请输入初始金额' }],
-                initialValue: (data && data.initialAmount) || 0
-              })(
-                <InputNumber disabled={record} max={10e8} min={0} step={0.01} placeholder="请输入初始金额" />
-              )}
-            </Form.Item>
-            <Form.Item label={labelInfo.initialDate}>
-              {getFieldDecorator('initialDate', {
-                rules: [{ required: !record, message: '请输入初始日期' }],
-                initialValue: data && data.initialDate
-              })(<DatePicker disabled={record} placeholder="请输入初始日期" />)}
-            </Form.Item>
+            {
+              !!(userInfo.orderItemLevel) && (
+                <>
+                  <Form.Item label={
+                    <Tooltip title="初始金额会计入系统初始余额，不允许修改">
+                      {labelInfo.initialAmount}
+                    </Tooltip>
+                  }
+                  >
+                    {getFieldDecorator('initialAmount', {
+                      rules: [{ required: !record, message: '请输入初始金额' }],
+                      initialValue: (data && data.initialAmount) || 0
+                    })(
+                      <InputNumber disabled={record} max={10e8} min={0} step={0.01} placeholder="请输入初始金额" />
+                    )}
+                  </Form.Item>
+                  <Form.Item label={labelInfo.initialDate}>
+                    {getFieldDecorator('initialDate', {
+                      rules: [{ required: !record, message: '请输入初始日期' }],
+                      initialValue: data && data.initialDate
+                    })(<DatePicker disabled={record} placeholder="请输入初始日期" />)}
+                  </Form.Item>
+                </>
+              )
+
+            }
             {Number(type) !== 2 && Number(type) !== 4 && (
               <Form.Item
                 label={Number(type) === 0 ? labelInfo.account : '账号'}

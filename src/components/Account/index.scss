@@ -167,11 +167,11 @@
 
 @media screen and (min-width: 1600px){
   .cardContent {
-    margin: 0px 0px calc(3%/ 3) 0;
-    width: 24%;
+    margin: 0px 0px 16px 0;
+    width: calc(100% / 4 - 16px);
   }
 
   .cardContent:nth-child(1n) {
-    margin: 0px 16px calc(3% / 3) 0 !important;
+    margin: 0px 16px 16px 0 !important;
   }
 }

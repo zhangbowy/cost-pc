@@ -125,7 +125,7 @@ class Account extends Component {
   };
 
   render() {
-    const { list, query, total, loading, amountMap } = this.props;
+    const { list, query, total, loading, amountMap, userInfo } = this.props;
     console.log(list, query, total, loading, '666666');
     const onChange = pageNumber => {
       this.onQuery({
@@ -142,42 +142,46 @@ class Account extends Component {
     return (
       <div className={style.payAccountWarp}>
         <PageHead title="公司资金账户设置" />
-        <div className={style.accountStatsWarp}>
-          <div className={style.accountStat}>
-            <div className="total-amount">
-              <span className={style.text}>
-                账户余额
-                <Tooltip title="账户余额 = 所有账户初始金额 + 流入 - 流出">
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-                </Tooltip>
-              </span>
-              <span className={style.num}>¥{amountMap.amountSum / 100}</span>
+        {
+          !!(userInfo.orderItemLevel) && (
+            <div className={style.accountStatsWarp}>
+              <div className={style.accountStat}>
+                <div className="total-amount">
+                  <span className={style.text}>
+                    账户余额
+                    <Tooltip title="账户余额 = 所有账户初始金额 + 流入 - 流出">
+                      <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                    </Tooltip>
+                  </span>
+                  <span className={style.num}>¥{amountMap.amountSum / 100}</span>
+                </div>
+                <div className="income">
+                  <span className={style.text}>
+                    流入金额
+                    <Tooltip title="财务确认收款的金额">
+                      <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                    </Tooltip>
+                  </span>
+                  <span className={style.num}>¥{amountMap.incomeSum / 100}</span>
+                </div>
+                <div className="pay">
+                  <span className={style.text}>
+                    流出金额
+                    <Tooltip title="财务确认支出的金额（收款金额，不包含三方单据+薪资单）">
+                      <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                    </Tooltip>
+                  </span>
+                  <span className={style.num}>¥{amountMap.costSum / 100}</span>
+                </div>
+              </div>
+              <div className="head_lf">
+                <AddAccount onOk={this.onOk} title="add">
+                  <Button type="primary">新增资金账户</Button>
+                </AddAccount>
+              </div>
             </div>
-            <div className="income">
-              <span className={style.text}>
-                流入金额
-                <Tooltip title="财务确认收款的金额">
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-                </Tooltip>
-              </span>
-              <span className={style.num}>¥{amountMap.incomeSum / 100}</span>
-            </div>
-            <div className="pay">
-              <span className={style.text}>
-                流出金额
-                <Tooltip title="财务确认支出的金额（收款金额，不包含三方单据+薪资单）">
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-                </Tooltip>
-              </span>
-              <span className={style.num}>¥{amountMap.costSum / 100}</span>
-            </div>
-          </div>
-          <div className="head_lf">
-            <AddAccount onOk={this.onOk} title="add">
-              <Button type="primary">新增资金账户</Button>
-            </AddAccount>
-          </div>
-        </div>
+          )
+        }
         <div
           className="content-dt content-add"
           style={{ backgroundColor: '#F7F8FA' }}
@@ -188,6 +192,7 @@ class Account extends Component {
               return (
                 <AccountCart
                   key={item.id}
+                  isShowBalance={!!userInfo.orderItemLevel}
                   item={item}
                   delCart={c => this.delchange(c)}
                   signChange={c => this.signChange(c)}

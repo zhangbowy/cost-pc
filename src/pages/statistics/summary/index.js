@@ -678,9 +678,13 @@ class Summary extends React.PureComponent {
                 <span>薪资单</span>
               </Tooltip>
             </Menu.Item>
-            <Menu.Item key={20}>
-              <span>收款单</span>
-            </Menu.Item>
+            {
+              !!(userInfo.orderItemLevel) && (
+                <Menu.Item key={20}>
+                  <span>收款单</span>
+                </Menu.Item>
+              )
+            }
             <Menu.Item key={4}>三方导入</Menu.Item>
           </Menu>
         </div>

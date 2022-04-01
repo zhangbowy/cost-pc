@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import {
   Modal,
@@ -107,22 +106,22 @@ class InvoiceDetail extends Component {
           const selfs = details.selfSubmitFieldVos;
           const newArr = [...arr, ...newEx, ...selfs];
           const sortNew = newArr.sort(compare('sort'));
-          let newArrs = [];
+          let newArras = [];
           if (
             newArr.filter(it => it.fieldType === 9) &&
             newArr.filter(it => it.fieldType === 9).length
           ) {
-            newArrs = handleProduction(sortNew);
+            newArras = handleProduction(sortNew);
           } else {
-            newArrs = [...sortNew];
+            newArras = [...sortNew];
           }
-          expandSubmitFieldVos = newArrs.filter(
+          expandSubmitFieldVos = newArras.filter(
             it => it.field.indexOf('expand_') > -1
           );
-          selfSubmitFieldVos = newArrs.filter(
+          selfSubmitFieldVos = newArras.filter(
             it => it.field.indexOf('self_') > -1
           );
-          newArrs
+          newArras
             .filter(
               it =>
                 it.field.indexOf('expand_') === -1 &&
@@ -312,21 +311,22 @@ class InvoiceDetail extends Component {
     const {
       children,
       templateType,
-      title
+      title,
+      refuse
     } = this.props;
 
     const getFooter = () => {
-      const { refuse } = this.props;
       let footerDom;
       switch (templateType) {
         case 4:
           break;
         default:
-          footerDom = (
-            <div className={style.footerWrap}>
-              <div />
-              <div>
-                {(refuse && Number(details.status) === 2)  && (
+          footerDom =
+            (refuse && Number(details.status) === 2)?
+              (<div className={style.footerWrap}>
+                <div />
+                <div>
+                  {(refuse && Number(details.status) === 2)  && (
                   !details.assessSum ? (
                     <RefuseModal refuse={val => this.handleRefuse(val)}>
                       <Button key="refuse" >拒绝核销</Button>
@@ -337,9 +337,8 @@ class InvoiceDetail extends Component {
                     </Tooltip>
                   )
                 )}
-              </div>
-            </div>
-          );
+                </div>
+              </div>): null;
           break;
       }
       return footerDom;
@@ -376,7 +375,7 @@ class InvoiceDetail extends Component {
           }
           width="980px"
           className={style.incomeInvoiceWrap}
-          bodyStyle={{ maxHeight: '501px', overflowY: 'scroll' }}
+          bodyStyle={{ height:refuse && Number(details.status) === 2 ? 501: 560, overflowY: 'scroll' }}
           footer={getFooter()}
         >
           <div className={cs(style.header)}>

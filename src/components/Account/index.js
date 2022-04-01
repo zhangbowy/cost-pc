@@ -5,7 +5,7 @@ import EditPayAccount from '@/pages/basicSetting/payAccount/components/AddModal.
 import EditReceiptAccount from '@/pages/basicSetting/receiptAccount/components/AddModal.js';
 
 export default function Account(props) {
-  const { item, delCart, signChange, onOk, personal, hidden } = props;
+  const { item, delCart, signChange, onOk, personal, hidden, isShowBalance } = props;
   const {
     id,
     awAreas,
@@ -17,7 +17,8 @@ export default function Account(props) {
     account,
     bankNameBranch,
     signStatus,
-    amountStr = '0.00', // 账户余额字段 created by zhangbo on 2022/3/24
+    // amountStr = '0.00', // 账户余额字段 created by zhangbo on 2022/3/24
+    amount,
     note,
   } = item;
   // 账户类型
@@ -207,10 +208,10 @@ export default function Account(props) {
         )
       }
       {
-        !personal && (
+        !personal && isShowBalance && (
           <div className={styles.balance}>
             <span className={styles.balanceText}>账户余额</span>
-            <span className={styles.balanceNum}>{amountStr}</span>
+            <span className={styles.balanceNum}>{amount / 100}</span>
           </div>
         )
       }
