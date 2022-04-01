@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-unused-expressions */
 import React, { PureComponent } from 'react';
 import { Table, Tooltip, Popover } from 'antd';
 import moment from 'moment';
