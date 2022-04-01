@@ -2,7 +2,7 @@
 import React from 'react';
 import { Col, Row, Tag } from 'antd';
 import cs from 'classnames';
-import moment from '_moment@2.29.1@moment';
+import moment from 'moment';
 import style from '../index.scss';
 import { approveStatus, getArrayValue } from '../../../../utils/constants';
 import DisabledTooltip from '../DisabledTooltip';
