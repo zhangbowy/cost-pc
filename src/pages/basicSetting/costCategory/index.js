@@ -384,7 +384,7 @@ class CostCategory extends React.PureComponent {
     }];
     return (
       <div className="mainContainer">
-        <PageHead title="支出类别设置" />
+        <PageHead title="收支类别设置" />
         {
           !!(userInfo.orderItemLevel) &&
           <div style={{width: '100%', marginTop: '-8px'}}>
