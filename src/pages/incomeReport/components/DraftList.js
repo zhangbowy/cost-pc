@@ -173,14 +173,14 @@ class DraftList extends Component {
         </span>
       ),
       className: 'moneyCol',
-      width: '160px'
+      width: '140px'
     }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
       render: (_, record) => (
         <span>{record.invoiceTemplateName}</span>
       ),
-      width: '160px'
+      width: '140px'
     }, {
       title: '提交时间',
       dataIndex: 'updateTime',
@@ -189,7 +189,7 @@ class DraftList extends Component {
           <span>{record.updateTime ? moment(Number(record.updateTime)).format('YYYY-MM-DD') : '-'}</span>
         </span>
       ),
-      width: '160px'
+      width: '140px'
     }, {
       title: '操作',
       dataIndex: 'opea',
@@ -217,7 +217,7 @@ class DraftList extends Component {
         </span>
       ),
       className: 'fixCenter',
-      width: '80px'
+      width: '100px'
     }];
     return (
       <div>
@@ -232,6 +232,7 @@ class DraftList extends Component {
             padding: '24px 32px'
           }}
           footer={null}
+          unset='true'
         >
           <InvoiceTable
             list={draftList}
