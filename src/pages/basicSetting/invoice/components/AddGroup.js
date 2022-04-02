@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, message, Radio } from 'antd';
 import { connect } from 'dva';
-import { defaultTitle, invoiceStatus } from '@/utils/constants';
+import { defaultTitle } from '@/utils/constants';
 import ModalTemp from '../../../../components/ModalTemp';
 
 const labelItem = {
@@ -15,11 +15,12 @@ const urlObj = {
   copy: 'invoice/copyGroup'
 };
 @Form.create()
-@connect(({ loading }) => ({
+@connect(({ loading, session, invoice }) => ({
   loading: loading.effects['invoice/addGroup'] ||
   loading.effects['invoice/editGroup'] ||
   loading.effects['invoice/copyGroup'] || false,
-  allList: invoiceStatus.allList,
+  userInfo: session.userInfo,
+  allList: invoice.allList,
 }))
 class AddGroup extends React.PureComponent {
   constructor(props) {
