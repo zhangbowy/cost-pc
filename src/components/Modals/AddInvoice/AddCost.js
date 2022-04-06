@@ -505,6 +505,8 @@ class AddCost extends Component {
       if (!err) {
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
+          console.log('🚀 ~ file: AddCost.js ~ line 508 ~ AddCost ~ this.props.form.validateFieldsAndScroll ~ shareAmount != val.costSum', shareAmount);
+          console.log('🚀 ~ file: AddCost.js ~ line 508 ~ AddCost ~ this.props.form.validateFieldsAndScroll ~ shareAmount != val.costSum', val);
           message.error('分摊明细金额合计不等于支出金额，请修改');
           return;
         }
