@@ -309,8 +309,8 @@ class PayModal extends React.PureComponent {
       {
         title: '序号',
         dataIndex: 'index',
-        width: 60,
-        render: (_, record, index) => <span style={{ display: 'flex' }} >{index+1}</span>
+        width: 70,
+        render: (_, record, index) => <span className="eslips-1" style={{ display: 'flex' }} >{index+1}</span>
       },
       {
         title: '单号',
@@ -342,7 +342,7 @@ class PayModal extends React.PureComponent {
         render: (_, record) => (
           <span style={{ display: 'flex' }}>
             <Tooltip placement="top" title={record.deptName || ''}>
-              <span className="eslips-1 m-r-8">{record.deptName}</span>
+              <span className="m-r-8">{record.deptName}</span>
             </Tooltip>
           </span>
         ),
@@ -438,7 +438,7 @@ class PayModal extends React.PureComponent {
           }
           width="936px"
           bodyStyle={{
-            height: '612px'
+            height: '511px'
           }}
           className={styles.verifyPopWrap}
         >
@@ -494,7 +494,7 @@ class PayModal extends React.PureComponent {
               </Form.Item>
             )}
           </Form>
-          <div style={{ height: 390,overflow:'auto'}}>
+          <div style={{ height: 276,overflow:'auto'}}>
             <Table
               columns={columns}
               dataSource={selectKey}
