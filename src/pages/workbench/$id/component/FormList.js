@@ -772,7 +772,7 @@ renderTreeNodes = data =>
                               showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
                               style={{width: '100%'}}
                             />
-                          )   
+                          )
                         }
                         {
                           <Capitalization isMoney={this.state.money || details.loanSum||''}/>
@@ -954,6 +954,7 @@ renderTreeNodes = data =>
                               imgUrl={imgUrl}
                               userInfo={userInfo}
                               disabled={modify && !showField.imgUrl.isModify}
+                              maxLen={15}
                             />
                           )
                         }
