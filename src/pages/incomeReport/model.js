@@ -79,6 +79,9 @@ export default {
     },
     *refuse({ payload }, { call }) {
       yield call(post, api.refuse, payload);
+    },
+    *del({ payload }, { call }) {
+      yield call(get, api.del, payload);
     }
   },
   reducers: {

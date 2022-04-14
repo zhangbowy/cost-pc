@@ -1,9 +1,11 @@
 import React from 'react';
-import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
+import { Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
 import UploadImg from '../../../../components/UploadImg';
+import ModalTemp from '../../../../components/ModalTemp';
+import style from './payModal.scss';
 
 const { Option } = Select;
 const accountType = [{
@@ -33,6 +35,7 @@ class PayModal extends React.PureComponent {
       amount: 0,
       flag: false,
       status: '1',
+      fee: 0,
       prod: '已选单据有非支付宝收款账户，不支持线上支付',
       imgUrl: [],
     };
@@ -63,7 +66,9 @@ class PayModal extends React.PureComponent {
         let cout = 1;
         let flags = false;
         let amount = 0;
-        let prod = '已选单据有非支付宝收款账户，不支持线上支付';
+        let prod = '已选单据有非支付宝/银行卡收款账户，不支持线上支付';
+        let fee = 0;
+        // const feeArr = [];
         if (defaultAccount && defaultAccount.length > 0) {
           acc = defaultAccount[0].id;
         }
@@ -75,9 +80,14 @@ class PayModal extends React.PureComponent {
           cout = selectKey.length;
           selectKey.forEach(item => {
             if (item.submitSum) amount+=item.submitSum;
-            if (item.accountType !== 1) {
+            if (item.accountType !== 1 && item.accountType !== 0) {
               flags = true;
             }
+            if (item.accountType === 0 && item.submitSum >= 100) {
+              let feeAmount = item.submitSum/1000 > 10 ? Number((item.submitSum/1000).toFixed(0)) : 10;
+              if (feeAmount > 2500) feeAmount = 2500;
+              fee += feeAmount;
+            };
           });
           // eslint-disable-next-line eqeqeq
           if (Number(amount) < 100) {
@@ -93,6 +103,7 @@ class PayModal extends React.PureComponent {
           amount,
           flag: flags,
           prod,
+          fee,
           status: !flags && paymentMethod ? '2' : '1',
         }, () => {
           if (acc) {
@@ -114,7 +125,7 @@ class PayModal extends React.PureComponent {
     this.setState({
       visible: false,
       status: '1',
-      prod: '已选单据有非支付宝收款账户，不支持线上支付'
+      prod: '已选单据有非支付宝/银行卡收款账户，不支持线上支付'
     });
   }
 
@@ -246,7 +257,7 @@ class PayModal extends React.PureComponent {
       userInfo,
       paymentMethod,
     } = this.props;
-    const { visible, defAcc, count, amount, flag, status, prod, imgUrl } = this.state;
+    const { visible, defAcc, count, amount, flag, status, prod, imgUrl, fee } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -260,24 +271,32 @@ class PayModal extends React.PureComponent {
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
-        <Modal
-          title={null}
+        <ModalTemp
+          title='发起支付'
           maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
-          footer={null}
-          width="680px"
+          footer={[<Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>,
+            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
+          ]}
+          size="small"
           bodyStyle={{
             height: '500px',
           }}
         >
-          <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1>
+          <p className="c-black-45 fs-14 m-b-30">
+            <span>已选
+              <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">{count}</span>张单据，共计
+              <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">¥{amount/100}</span>
+            </span>
+            {
+              fee > 0 &&
+              <span className="errorColor fs-14">(付款成功时扣除手续费{fee/100}元）</span>
+            }
+          </p>
+          {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1> */}
           <Form className="formItem">
-            <p
-              className="c-black-85 fs-14 m-b-47 m-l-16"
-            >
-              已选 {count}张单据，共计 <span className="fw-500 fs-20">¥{amount/100}</span>
-            </p>
+
             <Form.Item label="付款方式" {...formItemLayout}>
               {
                 getFieldDecorator('accountType', {
@@ -320,7 +339,7 @@ class PayModal extends React.PureComponent {
             }
             {
               status === '2' &&
-              <Form.Item label="付款账户" {...formItemLayout}>
+              <Form.Item label={(<span className="isRequired">付款账户</span>)} {...formItemLayout}>
                 {
                   getFieldDecorator('account', {
                     initialValue: defAcc || '',
@@ -371,11 +390,12 @@ class PayModal extends React.PureComponent {
               </Form.Item>
             }
           </Form>
-          <div style={{ marginLeft: '12.5%' }}>
-            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
-            <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
+          <div className={style.pro}>
+            <p>1. 线上支付仅支持收款账户为支付宝和银行卡的单据；</p>
+            <p>2. 线上支付到支付宝，免收手续费；</p>
+            <p>3. 线上支付到卡，支付宝将按笔收费，每笔代发金额0.1%收费，每笔封顶25元。</p>
           </div>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

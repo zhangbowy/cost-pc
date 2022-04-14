@@ -169,5 +169,7 @@ export default {
    getNotifyUser: `${APP_API}/cost/assets/notifyUser`,
 
   // 收款单详情
-  incomeDetail: `${APP_API}/cost/income/invoice/income/detail`
+  incomeDetail: `${APP_API}/cost/income/invoice/income/detail`,
+  // 日志
+  actionLogs: `${APP_API}/cost/actionLog/add`,
 };

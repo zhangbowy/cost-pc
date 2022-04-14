@@ -607,6 +607,9 @@ export default {
         },
       });
     },
+    *actionLogs({ payload }, { call }) {
+      yield call(get, api.actionLogs, payload);
+    },
   },
   reducers: {
     save(state, { payload }) {

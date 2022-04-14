@@ -1,11 +1,12 @@
 import React from 'react';
-import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
+import { Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
 import ConfirmPay from '../../invoicePay/components/ConfirmPay';
 import UploadImg from '../../../../components/UploadImg';
 import costGlobal from '../../../../models/costGlobal';
+import ModalTemp from '../../../../components/ModalTemp';
 
 const { Option } = Select;
 const accountType = [{
@@ -201,17 +202,20 @@ class PayModal extends React.PureComponent {
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
-        <Modal
+        <ModalTemp
           title={null}
           maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
-          footer={null}
-          width="680px"
+          size="default"
           bodyStyle={{
             height: '500px',
             padding: '40px'
           }}
+          footer={[
+            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>,
+            <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
+          ]}
         >
           <h1 className="fs-24 c-black-85 m-b-16">发起支付</h1>
           <Form className="formItem">
@@ -306,11 +310,7 @@ class PayModal extends React.PureComponent {
               />
             </Form.Item>
           }
-          <div style={{ marginLeft: '12.5%' }}>
-            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
-            <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
-          </div>
-        </Modal>
+        </ModalTemp>
         <ConfirmPay
           visible={visibleConfirm}
           batchDetails={this.props.batchDetails}

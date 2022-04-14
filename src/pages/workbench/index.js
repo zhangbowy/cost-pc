@@ -132,6 +132,13 @@ class Workbench extends PureComponent {
         ...dateToTime('6_cm'),
         dateType: 0,
       }
+    }, {
+      url: 'costGlobal/actionLogs',
+      params: {
+        actionPart: 0,
+        actionContext: '查看boss看板',
+        port: 0,
+      }
     }];
     const fetchs = fetchList.map(it => it.url);
     const arr = fetchs.map((it, index) => {
