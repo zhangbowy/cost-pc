@@ -50,7 +50,7 @@ const labelInfo = {
   currencyList: global.currencyList,
   currencyShow: global.currencyShow,
   uploadSpace: global.uploadSpace,
-  costCategoryList: global.costCategoryList,
+  costCategory: costGlobal.costCategory,
   detailFolder: costGlobal.detailFolder,
   userInfo: session.userInfo,
   userDeps: costGlobal.userDeps,
@@ -146,7 +146,7 @@ class AddCost extends Component {
 
   onShow = async() => {
     const { costType, isDelete4Category, officeId, isShowToast, templateType } = this.props;
-    console.log('AddCost -> onShow -> officeId', officeId);
+    console.log('AddCost -> onShow -> officeId', costType);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
@@ -161,7 +161,7 @@ class AddCost extends Component {
       const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
-        type: 'global/costList',
+        type: 'costGlobal/costCategory',
         payload: {},
       }).then(() => {
         if (id) {
@@ -436,8 +436,8 @@ class AddCost extends Component {
   }
 
   onSelectTree = () => {
-    const { expenseList, costCategoryList, costType } = this.props;
-    const newList = costType ? costCategoryList : expenseList;
+    const { expenseList, costCategory, costType } = this.props;
+    const newList = costType ? costCategory : expenseList;
     const list = treeConvert({
       rootId: 0,
       pId: 'parentId',

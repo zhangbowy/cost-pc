@@ -100,6 +100,7 @@ export default {
   detailFolder: `${APP_API}/cost/cost/folder/detail`, // 账本详情
   listFolder: `${APP_API}/cost/cost/folder/list`, // 账本列表
   useExpense: `${APP_API}/cost/invoice/submit/allExpense/list`, // 获取可用的账本的费用
+  costCategory: `${APP_API}/cost/category/onList`,
    /* ------------------------------ 草稿 ---------------------------------*/
    addDraft: `${APP_API}/cost/draft/add`, // 新增账本
    editDraft: `${APP_API}/cost/draft/edit`, // 编辑账本

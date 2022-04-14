@@ -5,6 +5,7 @@ export default {
   namespace: 'costGlobal',
   state: {
     costCategoryList: [], // 可用的支出类别
+    costCategory: [],
     folderList: [], // 账本列表
     detailFolder: {}, // 账本详情
     page: {
@@ -178,6 +179,15 @@ export default {
         type: 'save',
         payload: {
           costCategoryList: response || [],
+        },
+      });
+    },
+    *costCategory({ payload }, { call, put }) {
+      const response = yield call(get, api.costCategory, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          costCategory: response || [],
         },
       });
     },
@@ -608,7 +618,7 @@ export default {
       });
     },
     *actionLogs({ payload }, { call }) {
-      yield call(get, api.actionLogs, payload);
+      yield call(post, api.actionLogs, payload);
     },
   },
   reducers: {
