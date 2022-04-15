@@ -18,7 +18,7 @@ const APP_API = {
   // dev: 'http://cost-pc.forwe.work',
   // dev: '/api',
   // dev: 'http://127.0.0.1:8083/api', // debug
-  dev: 'http://cost-pc.forwe.work',
+  dev: 'https://pretest.forwe.store',
   // test: 'http://172.17.9.211',
   test: 'http://cost-pc.forwe.work',
   // test: 'https://pretest.forwe.store',
