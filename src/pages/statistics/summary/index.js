@@ -395,6 +395,10 @@ class Summary extends React.PureComponent {
         });
       }
     });
+    // 非收入单据时把incomeTemplateIds替换为invoiceTemplateIds
+    if (payload.incomeTemplateIds) {
+      Object.assign(payload, { invoiceTemplateIds: payload.incomeTemplateIds });
+    }
     this.props.dispatch({
       type: url,
       payload
