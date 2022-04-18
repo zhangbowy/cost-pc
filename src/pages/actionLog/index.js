@@ -7,6 +7,7 @@ import moment from 'moment';
 import style from './index.scss';
 import SearchBanner from '../statistics/overview/components/Search/Searchs';
 import fields from '../../utils/fields';
+import { mapToOps } from '../../utils/util';
 
 const { actionPart } = fields;
 const Port = {0: 'PC端', 1: '手机'};
@@ -38,13 +39,13 @@ class Summary extends React.PureComponent {
           type: 'select',
           label: '操作内容',
           placeholder: '请选择',
-          key: 'invoiceTemplateIds',
-          id: 'invoiceTemplateIds',
+          key: 'actionPart',
+          id: 'actionPart',
           out: 1,
-          options: [],
+          options: mapToOps(actionPart, false, false),
           fileName: {
-            key: 'id',
-            name: 'name'
+            key: 'value',
+            name: 'label'
           }
         }],
     };
@@ -114,7 +115,9 @@ class Summary extends React.PureComponent {
       title: '操作时间',
       dataIndex: 'actionCreateTime',
       render: (_, record) => (
-        <span>{record.actionCreateTime ? moment(record.actionCreateTime).format('YYYY-MM-DD') : '-'}</span>
+        <span>{record.actionCreateTime ?
+          moment(record.actionCreateTime).format('YYYY-MM-DD hh:mm:ss') : '-'}
+        </span>
       ),
       width: 150,
     }, {

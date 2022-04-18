@@ -500,7 +500,6 @@ class Summary extends React.PureComponent {
   };
 
   onHistory = (payload, callback) => {
-    console.log('走了嘛onHistory', payload);
     this.props
       .dispatch({
         type: 'summary/historyList',

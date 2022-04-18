@@ -212,7 +212,7 @@ class Statistics extends React.PureComponent {
     this.props.dispatch({
       type: 'costGlobal/actionLogs',
       payload: {
-        actionPart: 1,
+        actionPart: 3,
         actionContext: '查看支出明细',
         port: 0,
       }

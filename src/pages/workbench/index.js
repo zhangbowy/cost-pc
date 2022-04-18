@@ -132,13 +132,6 @@ class Workbench extends PureComponent {
         ...dateToTime('6_cm'),
         dateType: 0,
       }
-    }, {
-      url: 'costGlobal/actionLogs',
-      params: {
-        actionPart: 0,
-        actionContext: '查看boss看板',
-        port: 0,
-      }
     }];
     const fetchs = fetchList.map(it => it.url);
     const arr = fetchs.map((it, index) => {
@@ -171,8 +164,23 @@ class Workbench extends PureComponent {
         ...dateToTime('0_m'),
         dateType: 0,
       });
+      const { isBoss } = this.state;
+      if (isBoss) {
+        this.onData();
+      }
     });
 
+  }
+
+  onData = () => {
+    this.props.dispatch({
+      type: 'costGlobal/actionLogs',
+      payload: {
+        actionPart: 0,
+        actionContext: '查看boss看板',
+        port: 0,
+      }
+    });
   }
 
   onQueryChart = (payload) => {
