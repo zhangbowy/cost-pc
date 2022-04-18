@@ -8,7 +8,8 @@ import React, { PureComponent } from 'react';
 import { Table, Divider, Modal, Button, Message, Icon } from 'antd';
 import { connect } from 'dva';
 import Search from 'antd/lib/input/Search';
-import getDateUtil from '@/utils/tool';
+// import getDateUtil from '@/utils/tool';
+import moment from 'moment';
 import MenuItems from '@/components/AntdComp/MenuItems';
 import { batchStatus, invoiceStatus } from '@/utils/constants';
 import style from './index.scss';
@@ -210,7 +211,7 @@ class Batch extends PureComponent {
       title: '提交时间',
       dataIndex: 'createTime',
       render: (_, record) => (
-        <span>{record.createTime ? getDateUtil(record.createTime,'yyyy-MM-dd hh:mm:ss') : '-'}</span>
+        <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD HH:MM:SS') : '-'}</span>
       ),
       width: 200,
     }];

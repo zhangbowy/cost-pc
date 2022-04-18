@@ -1,8 +1,9 @@
-import { Modal, Button } from 'antd';
+import { Button } from 'antd';
 import { connect } from 'dva';
 import React, { Component } from 'react';
 import { ddOpenLink } from '@/utils/ddApi';
 import style from './index.scss';
+import ModalTemp from '../../../../components/ModalTemp';
 
 @connect(({ global, loading }) => ({
   batchDetails: global.batchDetails,
@@ -60,10 +61,12 @@ class ConfirmPay extends Component {
     const { visible } = this.state;
     return (
       <span>
-        <Modal
-          title={null}
-          footer={null}
-          width="680px"
+        <ModalTemp
+          title="确认支付"
+          footer={[
+            <Button key="save" onClick={() => this.onSave()} loading={loading} disabled={loading} type="primary">去支付</Button>
+          ]}
+          size="small"
           visible={visible}
           onCancel={() => this.onCancel()}
           bodyStyle={{
@@ -71,7 +74,6 @@ class ConfirmPay extends Component {
             padding: '40px'
           }}
         >
-          <h1 className="fs-24 c-black-85 m-b-16">确认支付</h1>
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
@@ -95,9 +97,8 @@ class ConfirmPay extends Component {
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
-            <Button key="save" onClick={() => this.onSave()} loading={loading} disabled={loading} type="primary">去支付</Button>
           </div>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

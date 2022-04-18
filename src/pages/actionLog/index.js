@@ -24,7 +24,7 @@ class Summary extends React.PureComponent {
       searchList: [{
         type: 'search',
         label: '外部选择',
-        placeholder: '搜索单号、事由、收款账户名称',
+        placeholder: '搜索操作人、操作内容',
         key: 'content',
         id: 'content',
         out: 1
@@ -116,7 +116,7 @@ class Summary extends React.PureComponent {
       dataIndex: 'actionCreateTime',
       render: (_, record) => (
         <span>{record.actionCreateTime ?
-          moment(record.actionCreateTime).format('YYYY-MM-DD hh:mm:ss') : '-'}
+          moment(record.actionCreateTime).format('YYYY-MM-DD HH:MM:SS') : '-'}
         </span>
       ),
       width: 150,
