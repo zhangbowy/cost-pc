@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
+import ModalTemp from '../../../../components/ModalTemp';
 
 @connect(({ global, loading }) => ({
   serviceTime: global.serviceTime,
@@ -77,12 +78,14 @@ class ComfirmPay extends React.PureComponent {
     return (
       <div style={{display:'inline-block'}}>
         <span onClick={() => this.onShow()} >{this.props.children}</span>
-        <Modal
-          title={null}
-          footer={null}
+        <ModalTemp
+          title="确认支付"
+          footer={[
+            <Button key="save" onClick={() => this.onSave()} loading={this.props.loading} disabled={this.props.loading} type="primary">去支付</Button>
+          ]}
           visible={this.state.visible}
           onCancel={this.close}
-          width="680px"
+          size="small"
           bodyStyle={{
             height: '450px',
             padding: '40px'
@@ -111,7 +114,6 @@ class ComfirmPay extends React.PureComponent {
             </div>
             <Button key="save" onClick={() => this.onSave()}>去支付</Button>
           </div> */}
-          <h1 className="fs-24 c-black-85 m-b-16">确认支付</h1>
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
@@ -128,16 +130,15 @@ class ComfirmPay extends React.PureComponent {
                 <p className="c-black-65 m-b-24">金额共计：
                   <span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span>
                   {
-                    this.props.selectKey && this.props.selectKey.commission &&
+                    this.props.selectKey && this.props.selectKey.commission > 0 &&
                     <span>，手续费{this.props.selectKey.commission/100}元</span>
                   }
                 </p>
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
-            <Button key="save" onClick={() => this.onSave()} loading={this.props.loading} disabled={this.props.loading} type="primary">去支付</Button>
           </div>
-        </Modal>
+        </ModalTemp>
       </div>
     );
   }

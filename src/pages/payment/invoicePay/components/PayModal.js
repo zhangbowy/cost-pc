@@ -280,121 +280,130 @@ class PayModal extends React.PureComponent {
             <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
           ]}
           size="small"
-          bodyStyle={{
-            height: '500px',
+          newBodyStyle={{
+            minHeight: '274px',
+            maxHeight: '454px',
+            height: 'auto'
+          }}
+          newDivStyle={{
+            minHeight: '274px',
+            maxHeight: '454px',
+            height: 'auto'
           }}
         >
-          <p className="c-black-45 fs-14 m-b-30">
-            <span>已选
-              <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">{count}</span>张单据，共计
-              <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">¥{amount/100}</span>
-            </span>
-            {
-              fee > 0 &&
-              <span className="errorColor fs-14">(付款成功时扣除手续费{fee/100}元）</span>
-            }
-          </p>
-          {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1> */}
-          <Form className="formItem">
+          <>
+            <p className="c-black-45 fs-14 m-b-30">
+              <span>已选
+                <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">{count}</span>张单据，共计
+                <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">¥{amount/100}</span>
+              </span>
+              {
+                fee > 0 && status !== '1' &&
+                <span className="errorColor fs-12">(付款成功时扣除手续费{fee/100}元）</span>
+              }
+            </p>
+            {/* <h1 className="fs-24 c-black-85 m-b-16 m-l-16">发起支付</h1> */}
+            <Form className="formItem">
 
-            <Form.Item label="付款方式" {...formItemLayout}>
-              {
-                getFieldDecorator('accountType', {
-                  initialValue: !flag && paymentMethod ? '2' : '1',
-                })(
-                  <Radio.Group onChange={e => this.onChange(e)}>
-                    {
-                      accountType.map(it => (
-                        <Radio key={it.key} value={it.key} disabled={flag && it.key === '2'}>{it.value}</Radio>
-                      ))
-                    }
-                  </Radio.Group>
-                )
-              }
-              {
-                flag &&
-                <Tooltip title={prod}>
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45" style={{ marginLeft: '-5px' }} />
-                </Tooltip>
-              }
-            </Form.Item>
-            {
-              status === '1' &&
-              <Form.Item label="付款账户" {...formItemLayout}>
+              <Form.Item label="付款方式" {...formItemLayout}>
                 {
-                  getFieldDecorator('account', {
-                    initialValue: defAcc || '',
-                    rules: [{ required: true, message: '请选择付款账户' }]
+                  getFieldDecorator('accountType', {
+                    initialValue: !flag && paymentMethod ? '2' : '1',
                   })(
-                    <Select placeholder="请选择" showSearch optionFilterProp="label">
+                    <Radio.Group onChange={e => this.onChange(e)}>
                       {
-                        payAccount.map(item => (
-                          <Option key={item.id} label={item.name}>{item.name}</Option>
+                        accountType.map(it => (
+                          <Radio key={it.key} value={it.key} disabled={flag && it.key === '2'}>{it.value}</Radio>
                         ))
                       }
-                    </Select>
+                    </Radio.Group>
                   )
                 }
-              </Form.Item>
-            }
-            {
-              status === '2' &&
-              <Form.Item label={(<span className="isRequired">付款账户</span>)} {...formItemLayout}>
                 {
-                  getFieldDecorator('account', {
-                    initialValue: defAcc || '',
-                    rules: [
-                      { validator: this.check }
-                    ]
-                  })(
-                    <Select
-                      notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
-                      placeholder="请选择"
-                      showSearch
-                      optionFilterProp="label"
-                    >
-                      {
-                        getAliAccounts.map(item => (
-                          <Option key={item.payId} label={item.account}>
-                            {item.account}
-                            (<span>{getArrayValue(item.status, signStatus)}</span>)
-                          </Option>
-                        ))
-                      }
-                    </Select>
-                  )
+                  flag &&
+                  <Tooltip title={prod}>
+                    <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45" style={{ marginLeft: '-5px' }} />
+                  </Tooltip>
                 }
               </Form.Item>
-            }
-            {
-              status === '1' &&
-              <Form.Item label="付款时间" {...formItemLayout}>
-                {
-                  getFieldDecorator('time', {
-                    initialValue: moment(new Date(), 'YYYY-MM-DD'),
-                    rules: [{ required: true, message: '请选择付款时间' }]
-                  })(
-                    <DatePicker />
-                  )
-                }
-              </Form.Item>
-            }
-            {
-              status === '1' &&
-              <Form.Item label="付款凭证" {...formItemLayout}>
-                <UploadImg
-                  onChange={(val) => this.onChangeImg(val)}
-                  imgUrl={imgUrl}
-                  userInfo={userInfo}
-                />
-              </Form.Item>
-            }
-          </Form>
-          <div className={style.pro}>
-            <p>1. 线上支付仅支持收款账户为支付宝和银行卡的单据；</p>
-            <p>2. 线上支付到支付宝，免收手续费；</p>
-            <p>3. 线上支付到卡，支付宝将按笔收费，每笔代发金额0.1%收费，每笔封顶25元。</p>
-          </div>
+              {
+                status === '1' &&
+                <Form.Item label="付款账户" {...formItemLayout}>
+                  {
+                    getFieldDecorator('account', {
+                      initialValue: defAcc || '',
+                      rules: [{ required: true, message: '请选择付款账户' }]
+                    })(
+                      <Select placeholder="请选择" showSearch optionFilterProp="label">
+                        {
+                          payAccount.map(item => (
+                            <Option key={item.id} label={item.name}>{item.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </Form.Item>
+              }
+              {
+                status === '2' &&
+                <Form.Item label={(<span className="isRequired">付款账户</span>)} {...formItemLayout}>
+                  {
+                    getFieldDecorator('account', {
+                      initialValue: defAcc || '',
+                      rules: [
+                        { validator: this.check }
+                      ]
+                    })(
+                      <Select
+                        notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
+                        placeholder="请选择"
+                        showSearch
+                        optionFilterProp="label"
+                      >
+                        {
+                          getAliAccounts.map(item => (
+                            <Option key={item.payId} label={item.account}>
+                              {item.account}
+                              (<span>{getArrayValue(item.status, signStatus)}</span>)
+                            </Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </Form.Item>
+              }
+              {
+                status === '1' &&
+                <Form.Item label="付款时间" {...formItemLayout}>
+                  {
+                    getFieldDecorator('time', {
+                      initialValue: moment(new Date(), 'YYYY-MM-DD'),
+                      rules: [{ required: true, message: '请选择付款时间' }]
+                    })(
+                      <DatePicker />
+                    )
+                  }
+                </Form.Item>
+              }
+              {
+                status === '1' &&
+                <Form.Item label="付款凭证" {...formItemLayout}>
+                  <UploadImg
+                    onChange={(val) => this.onChangeImg(val)}
+                    imgUrl={imgUrl}
+                    userInfo={userInfo}
+                  />
+                </Form.Item>
+              }
+            </Form>
+            <div className={style.pro}>
+              <p>1. 线上支付仅支持收款账户为支付宝和银行卡的单据；</p>
+              <p>2. 线上支付到支付宝，免收手续费；</p>
+              <p>3. 线上支付到卡，支付宝将按笔收费，每笔代发金额0.1%收费，每笔封顶25元。</p>
+            </div>
+          </>
         </ModalTemp>
       </span>
     );
