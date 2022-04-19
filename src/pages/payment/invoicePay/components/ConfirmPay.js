@@ -90,7 +90,7 @@ class ConfirmPay extends Component {
                 <p className="c-black-65 m-b-24">金额共计：
                   <span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{batchDetails && batchDetails.totalAmount/100}</span>
                   {
-                    batchDetails && batchDetails.commission &&
+                    batchDetails && batchDetails.commission > 0 &&
                     <span>，手续费{batchDetails.commission/100}元</span>
                   }
                 </p>
