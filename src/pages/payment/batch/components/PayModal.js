@@ -232,7 +232,7 @@ class PayModal extends React.PureComponent {
             <p className="c-black-45 fs-14 m-b-30">
               <span>已选
                 <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">{count}</span>张单据，共计
-                <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">¥{amount/100}</span>
+                <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">¥{Number(status) !== 1 ? (amount + fee)/100 : amount/100}</span>
               </span>
               {
                 fee > 0 && Number(status) !== 1 &&
