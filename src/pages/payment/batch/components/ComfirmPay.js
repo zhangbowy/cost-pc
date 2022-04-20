@@ -86,9 +86,9 @@ class ComfirmPay extends React.PureComponent {
           visible={this.state.visible}
           onCancel={this.close}
           size="small"
-          bodyStyle={{
+          newBodyStyle={{
             height: '450px',
-            padding: '40px'
+            padding: '16px 32px 0px'
           }}
         >
           {/* <h1>确认支付</h1>

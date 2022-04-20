@@ -197,7 +197,7 @@ class PayModal extends React.PureComponent {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 3 },
+        sm: { span: 4 },
       },
       wrapperCol: {
         xs: { span: 24 },
@@ -215,12 +215,12 @@ class PayModal extends React.PureComponent {
           size="small"
           newBodyStyle={{
             minHeight: '274px',
-            maxHeight: '454px',
+            maxHeight: '470px',
             height: 'auto'
           }}
           newDivStyle={{
             minHeight: '274px',
-            maxHeight: '454px',
+            maxHeight: '470px',
             height: 'auto'
           }}
           footer={[

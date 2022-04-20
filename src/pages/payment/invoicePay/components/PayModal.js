@@ -282,12 +282,12 @@ class PayModal extends React.PureComponent {
           size="small"
           newBodyStyle={{
             minHeight: '274px',
-            maxHeight: '454px',
+            maxHeight: '470px',
             height: 'auto'
           }}
           newDivStyle={{
             minHeight: '274px',
-            maxHeight: '454px',
+            maxHeight: '470px',
             height: 'auto'
           }}
         >

@@ -69,9 +69,9 @@ class ConfirmPay extends Component {
           size="small"
           visible={visible}
           onCancel={() => this.onCancel()}
-          bodyStyle={{
+          newBodyStyle={{
             height: '450px',
-            padding: '40px'
+            padding: '16px 32px 0'
           }}
         >
           <div className={style.confirm}>
