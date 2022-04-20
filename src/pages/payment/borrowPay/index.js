@@ -329,7 +329,9 @@ class BorrowPay extends React.PureComponent {
           name = record.supplierAccountVo.supplierAccountName;
         }
         return (
-          <span>{name || '-'}</span>
+          <Tooltip title={name || '-'}>
+            <span className="eslips-2">{name || '-'}</span>
+          </Tooltip>
         );
       }
     }, {
