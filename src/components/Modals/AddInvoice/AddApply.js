@@ -221,12 +221,14 @@ class AddApply extends Component {
   };
 
   onSearch = (e) => {
+    const { officeId } = this.props;
     this.props.dispatch({
       type: 'invoiceHandle/associateLists',
       payload: {
         pageSize: 100,
         pageNo: 1,
         search: e,
+        officeId: officeId || '',
       }
     });
   }

@@ -126,12 +126,14 @@ class AddBorrow extends Component {
   };
 
   onSearch = (e) => {
+    const { officeId } = this.props;
     this.props.dispatch({
       type: 'invoiceHandle/waitList',
       payload: {
         pageSize: 100,
         pageNo: 1,
         searchContent: e,
+        officeId: officeId || ''
       }
     });
   }
