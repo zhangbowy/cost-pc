@@ -61,6 +61,7 @@ export default {
   1: {
     query: 'dept',
     actionName: '部门支出',
+    actionNum: 2001,
     columns: [{
       title: '部门',
       dataIndex: 'deptName',
@@ -121,6 +122,7 @@ export default {
   2: {
     query: 'classify',
     actionName: '类别支出',
+    actionNum: 2002,
     columns: [{
       title: '支出类别',
       dataIndex: 'categoryName',
@@ -182,6 +184,7 @@ export default {
   3: {
     query: 'project',
     actionName: '项目支出',
+    actionNum: 2003,
     columns: [{
       title: '项目',
       dataIndex: 'projectName',
@@ -275,6 +278,7 @@ export default {
   4: {
     query: 'people',
     actionName: '员工支出',
+    actionNum: 2004,
     columns: [{
       title: '姓名',
       dataIndex: 'userName',
@@ -330,6 +334,7 @@ export default {
   5: {
     query: 'supplier',
     actionName: '供应商支出',
+    actionNum: 2005,
     columns: [{
       title: '供应商',
       dataIndex: 'supplierName',
@@ -390,6 +395,7 @@ export default {
   6: {
     query: 'office',
     actionName: '分公司支出',
+    actionNum: 2006,
     columns: [{
       title: '分公司',
       dataIndex: 'officeName',

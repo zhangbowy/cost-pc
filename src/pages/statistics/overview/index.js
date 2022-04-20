@@ -148,7 +148,7 @@ class EchartsTest extends Component {
     const { detailList, listQuery, listTotal,
       pieChartVos, chartLoading } = this.props;
     const col = defaultData[params];
-    const { columns, query, chartName, searchList, type, actionName } = col;
+    const { columns, query, chartName, searchList, type, actionName, actionNum } = col;
     let cols = [...columns];
     const linkStatus = localStorage.getItem('linkStatus');
     localStorage.removeItem('linkStatus');
@@ -303,7 +303,7 @@ class EchartsTest extends Component {
         this.props.dispatch({
           type: 'costGlobal/actionLogs',
           payload: {
-            actionPart: 2,
+            actionPart: actionNum,
             actionContext: `查看维度分析，${actionName}`,
             port: 0,
           }

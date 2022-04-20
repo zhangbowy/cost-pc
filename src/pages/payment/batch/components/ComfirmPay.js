@@ -91,29 +91,6 @@ class ComfirmPay extends React.PureComponent {
             padding: '16px 32px 0px'
           }}
         >
-          {/* <h1>确认支付</h1>
-          <div className={style.confirm}>
-            <Alert
-              type="success"
-              message={(
-                <span className="c-black-65">
-                  剩余支付时间：
-                  <span style={{color: '#F25643'}}>{this.state.tiemStr}</span>
-                  ，超时未支付批次将自动关闭
-                </span>
-              )}
-              icon={(
-                <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" />
-              )}
-            />
-            <div className="m-l-32 m-t-18 m-b-47">
-              <p className="c-black-65 m-b-24">付款批次：{ this.props.selectKey.batchTransId }</p>
-              <p className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</p>
-              <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span></p>
-              <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
-            </div>
-            <Button key="save" onClick={() => this.onSave()}>去支付</Button>
-          </div> */}
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
