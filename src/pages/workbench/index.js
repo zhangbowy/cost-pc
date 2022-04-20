@@ -164,8 +164,23 @@ class Workbench extends PureComponent {
         ...dateToTime('0_m'),
         dateType: 0,
       });
+      const { isBoss } = this.state;
+      if (isBoss) {
+        this.onData();
+      }
     });
 
+  }
+
+  onData = () => {
+    this.props.dispatch({
+      type: 'costGlobal/actionLogs',
+      payload: {
+        actionPart: 0,
+        actionContext: '查看boss看板',
+        port: 0,
+      }
+    });
   }
 
   onQueryChart = (payload) => {

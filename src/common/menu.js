@@ -282,6 +282,12 @@ const menuData = [
       path: 'supplier'
     }]
   },
+  {
+    id: 'actionLog',
+    name: '日志',
+    myIcon: 'iconrizhi',
+    path: 'actionLog',
+  }
 ];
 
 // 菜单访问路径解析

@@ -316,7 +316,7 @@ class Right extends PureComponent {
             getFieldDecorator(`${it.id}`, {
               initialValue: it.name,
               rules: [
-                { max: 15, message: '限制15个字' },
+                { max: 30, message: '限制30个字' },
                 { required: true, message: '请输入' }
               ]
             })(

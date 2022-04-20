@@ -22,8 +22,8 @@ const Card = ({ name, isWrite, index,
   fieldType, changeDragId, onDelete, disabled, data,
   expandFieldVos, cardList, changeCardList, parentId,
   dragType, className, defaultList}) => {
-    const defaultLists = defaultList || defaultString;
     const ref = useRef(null);
+    const defaultLists = defaultList || defaultString;
   const [{ isDragging }, drag, preview] = useDrag({
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -90,11 +90,11 @@ const Card = ({ name, isWrite, index,
         return;
       }
       if (dragType !== 'child') {
-        if (item.field !== field && !defaultLists.includes(field)) {
+        if (item.field !== field && defaultLists && !defaultLists.includes(field)) {
           const hoverIndexs = findCard(item.field);
           moveCard(hoverIndexs, index, { item, field });
         }
-      } else if (item.field !== field && !defaultLists.includes(field)) {
+      } else if (item.field !== field && defaultLists && !defaultLists.includes(field)) {
         if (!parentId || item.field.indexOf('expand_') > -1) {
           const hoverIndexs = findCard(item.field);
           moveCard(hoverIndexs, index, { item, field });

@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import style from './index.scss';
+import ModalTemp from '../../../../components/ModalTemp';
 
 @connect(({ global, loading }) => ({
   serviceTime: global.serviceTime,
@@ -21,7 +22,7 @@ class ComfirmPay extends React.PureComponent {
       tiemStr: ''
     };
   }
-  
+
   componentWillUnmount(){
     clearInterval(this.timer);
   }
@@ -77,41 +78,19 @@ class ComfirmPay extends React.PureComponent {
     return (
       <div style={{display:'inline-block'}}>
         <span onClick={() => this.onShow()} >{this.props.children}</span>
-        <Modal
-          title={null}
-          footer={null}
+        <ModalTemp
+          title="确认支付"
+          footer={[
+            <Button key="save" onClick={() => this.onSave()} loading={this.props.loading} disabled={this.props.loading} type="primary">去支付</Button>
+          ]}
           visible={this.state.visible}
           onCancel={this.close}
-          width="680px"
-          bodyStyle={{
+          size="small"
+          newBodyStyle={{
             height: '450px',
-            padding: '40px'
+            padding: '16px 32px 0px'
           }}
         >
-          {/* <h1>确认支付</h1>
-          <div className={style.confirm}>
-            <Alert
-              type="success"
-              message={(
-                <span className="c-black-65">
-                  剩余支付时间：
-                  <span style={{color: '#F25643'}}>{this.state.tiemStr}</span>
-                  ，超时未支付批次将自动关闭
-                </span>
-              )}
-              icon={(
-                <i className="iconfont iconinfo-cirlce fs-20 sub-color m-r-8 m-l-16" />
-              )}
-            />
-            <div className="m-l-32 m-t-18 m-b-47">
-              <p className="c-black-65 m-b-24">付款批次：{ this.props.selectKey.batchTransId }</p>
-              <p className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</p>
-              <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span></p>
-              <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
-            </div>
-            <Button key="save" onClick={() => this.onSave()}>去支付</Button>
-          </div> */}
-          <h1 className="fs-24 c-black-85 m-b-16">确认支付</h1>
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
@@ -125,13 +104,18 @@ class ComfirmPay extends React.PureComponent {
               <div className="m-l-32 m-t-18 m-b-47">
                 <p className="c-black-65 m-b-24">付款批次：{ this.props.selectKey.batchTransId }</p>
                 <p className="c-black-65 m-b-24">单据条数：{ this.props.selectKey.totalCount }</p>
-                <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span></p>
+                <p className="c-black-65 m-b-24">金额共计：
+                  <span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{this.props.selectKey.totalTransAmount/100}</span>
+                  {
+                    this.props.selectKey && this.props.selectKey.commission > 0 &&
+                    <span>，手续费{this.props.selectKey.commission/100}元</span>
+                  }
+                </p>
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
-            <Button key="save" onClick={() => this.onSave()} loading={this.props.loading} disabled={this.props.loading} type="primary">去支付</Button>
           </div>
-        </Modal>
+        </ModalTemp>
       </div>
     );
   }

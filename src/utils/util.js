@@ -134,3 +134,26 @@ export const dateToTime = str => {
   };
 };
 
+
+/**
+ * @description: 讲eumMap->option
+ * @param {obj:map数据}
+ * @param {isAll:是否包含全部下拉选项}
+ * @return:
+ */
+ export const mapToOps = function(obj, isAll = true, keyToNumber = false) {
+  const res = Object.keys(obj).reduce((cur, key) => {
+    cur.push({
+      label: obj[key],
+      value: keyToNumber ? Number(key) : key
+    });
+    return cur;
+  }, []);
+  if (isAll) {
+    res.unshift({
+      label: '全部',
+      value: ''
+    });
+  }
+  return res;
+};

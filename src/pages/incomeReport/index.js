@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Divider, message, Badge, Select } from 'antd';
+import { Table, Button, Divider, message, Badge, Select, Popconfirm, Dropdown, Icon, Menu } from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import Search from 'antd/lib/input/Search';
@@ -118,12 +118,38 @@ class incomeReport extends React.PureComponent {
     ddOpenLink(`${APP_API}/cost/pdf/batch/income?token=${localStorage.getItem('token')}&ids=${id}`);
   }
 
+  onDelete = (id) => {
+    this.props.dispatch({
+      type: 'incomeReport/del',
+      payload: {
+        id,
+      }
+    }).then(() => {
+      message.success('删除成功');
+      const { query } = this.props;
+      this.onQuery({
+        ...query
+      });
+    });
+  }
+
   handleTableChange = (pagination) => {
     this.onQuery({
       pageNo: pagination.current,
       pageSize: pagination.pageSize,
     });
   };
+
+  handleClick = (type, record) => {
+    switch(type) {
+      case 'copy':
+        this.onChangeType('copy', record);
+      break;
+      default:
+        this.print(record.id);
+      break;
+    }
+  }
 
   render() {
     const columns = [{
@@ -184,13 +210,69 @@ class incomeReport extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'operate',
-      render: (_, record) => (
-        <>
-          <a onClick={() => this.onChangeType('copy', record)}>复制</a>
-          <Divider type="vertical" />
-          <a onClick={() => this.print(record.id)}>打印</a>
-        </>
-      )
+      render: (_, record) =>
+      {
+        const btns = [{
+          node: (
+            <span className="pd-20-9 c-black-65">
+              复制
+            </span>
+          ),
+          key: 'copy'
+        }, {
+          node: (
+            <span className="pd-20-9">
+              打印
+            </span>
+          ),
+          key: 'print'
+        }];
+        const menu = (
+          <Menu>
+            {
+              btns.map((item) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Menu.Item
+                  key={item.key}
+                  onClick={() => this.handleClick(item.key, record)}
+                >{item.node}
+                </Menu.Item>
+              ))
+            }
+          </Menu>
+        );
+        return (
+          <span>
+            {
+              ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) ?
+                <>
+                  <Popconfirm
+                    title="是否确认删除？"
+                    onConfirm={() => this.onDelete(record.id)}
+                  >
+                    <span className="deleteColor">删除</span>
+                  </Popconfirm>
+                  <Divider type="vertical" />
+                  <Dropdown overlay={menu}>
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      更多 <Icon type="down" />
+                    </a>
+                  </Dropdown>
+                </>
+                :
+                <>
+                  <a onClick={() => this.onChangeType('copy', record)}>复制</a>
+                  <Divider type="vertical" />
+                  <a onClick={() => this.print(record.id)}>打印</a>
+                </>
+            }
+
+          </span>
+        );
+      },
+      width: 130,
+      fixed: 'right',
+      className: 'fixCenter'
     }];
     const { list, loading, total, query, draftTotal } = this.props;
     return (
