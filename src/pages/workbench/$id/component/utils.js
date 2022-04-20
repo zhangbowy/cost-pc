@@ -212,8 +212,8 @@ export default {
           arr[index].costDetailShareVOS.push({
             id: it.id || '',
             key: it.key || getTimeIdNo(),
-            'shareAmount': (it.shareAmount * 1000)/10,
-            'shareScale': (it.shareScale * 1000)/10,
+            'shareAmount': Number(((it.shareAmount * 1000)/10).toFixed(0)),
+            'shareScale': Number(((it.shareScale * 1000)/10).toFixed(0)),
             'deptId': it.deptId,
             'userId': it.userId,
             dingUserId: it.users && it.users.length ?
