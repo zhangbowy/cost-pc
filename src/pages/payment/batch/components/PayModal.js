@@ -330,11 +330,14 @@ class PayModal extends React.PureComponent {
                 </Form.Item>
               }
             </Form>
-            <div className={style.pro}>
-              <p>1. 线上支付仅支持收款账户为支付宝和银行卡的单据；</p>
-              <p>2. 线上支付到支付宝，免收手续费；</p>
-              <p>3. 线上支付到卡，支付宝将按笔收费，每笔代发金额0.1%收费，每笔封顶25元。</p>
-            </div>
+            {
+              status !== '1' &&
+              <div className={style.pro}>
+                <p>1. 线上支付仅支持收款账户为支付宝和银行卡的单据；</p>
+                <p>2. 线上支付到支付宝，免收手续费；</p>
+                <p>3. 线上支付到卡，支付宝将按笔收费，每笔代发金额0.1%收费，每笔封顶25元。</p>
+              </div>
+            }
           </div>
         </ModalTemp>
         <ConfirmPay
