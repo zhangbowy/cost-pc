@@ -116,7 +116,7 @@ class Summary extends React.PureComponent {
       dataIndex: 'actionCreateTime',
       render: (_, record) => (
         <span>{record.actionCreateTime ?
-          moment(record.actionCreateTime).format('YYYY-MM-DD HH:MM:SS') : '-'}
+          moment(record.actionCreateTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
         </span>
       ),
       width: 150,

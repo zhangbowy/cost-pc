@@ -211,7 +211,7 @@ class Batch extends PureComponent {
       title: '提交时间',
       dataIndex: 'createTime',
       render: (_, record) => (
-        <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD HH:MM:SS') : '-'}</span>
+        <span>{record.createTime ? moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'}</span>
       ),
       width: 200,
     }];
