@@ -1231,8 +1231,8 @@ class addInvoice extends Component {
       templateType,
       operateType,
     } = this.state;
-    if (params.imgUrl && params.imgUrl.length > 15) {
-      message.error('图片不能超过15张');
+    if (params.imgUrl && params.imgUrl.length > 9) {
+      message.error('图片不能超过9张');
       return;
     }
     if (operateType !== 'modify') {

@@ -522,8 +522,8 @@ class AddCost extends Component {
         if (val.ossFileUrl) {
           ossFileUrls = ossFileUrl;
         }
-        if (imgUrl && imgUrl.length > 15) {
-          message.error('图片不能超过15张');
+        if (imgUrl && imgUrl.length > 9) {
+          message.error('图片不能超过9张');
           return;
         }
         const detail = addCostValue({
@@ -1459,7 +1459,7 @@ class AddCost extends Component {
                                     imgUrl={imgUrl}
                                     userInfo={userInfo}
                                     disabled={modify && !showField.imgUrl.isModify}
-                                    maxLen={15}
+                                    maxLen={9}
                                   />
                                 )
                               }

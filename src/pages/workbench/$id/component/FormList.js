@@ -954,7 +954,7 @@ renderTreeNodes = data =>
                               imgUrl={imgUrl}
                               userInfo={userInfo}
                               disabled={modify && !showField.imgUrl.isModify}
-                              maxLen={15}
+                              maxLen={9}
                             />
                           )
                         }
