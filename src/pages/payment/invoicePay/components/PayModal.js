@@ -106,7 +106,10 @@ class PayModal extends React.PureComponent {
           fee,
           status: !flags && paymentMethod ? '2' : '1',
         }, () => {
-          if (acc) {
+          const { status } = this.state;
+          const { getAliAccounts } = this.props;
+          const newLists = status === '1' ? payAccount : getAliAccounts;
+          if (newLists.findIndex(it => it.id === acc || it.payId === acc) > -1) {
             this.props.form.setFieldsValue({
               account: acc,
             });
@@ -350,7 +353,7 @@ class PayModal extends React.PureComponent {
                 <Form.Item label={(<span className="isRequired">付款账户</span>)} {...formItemLayout}>
                   {
                     getFieldDecorator('account', {
-                      initialValue: defAcc || '',
+                      initialValue: getAliAccounts.findIndex(it => it.payId === defAcc) > -1 ? defAcc : '',
                       rules: [
                         { validator: this.check }
                       ]
