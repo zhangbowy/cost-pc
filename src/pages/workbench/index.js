@@ -686,6 +686,13 @@ class Workbench extends PureComponent {
 
     return (
       <div style={{minWidth: '1090px'}}>
+        <div className={style.notice}>
+          <i className="iconfont icontongzhi1" />
+          <p>涨价通知：因服务运营成本的增加，并能更好的为您提供长期服务，经过多方面的慎重考虑，决定从
+            <span style={{color: '#ff5a5f'}}>2022年5月15日</span>
+            开始调整产品售卖价格，具体详情请移步服务群咨询。
+          </p>
+        </div>
         {
           userInfo.isSupperAdmin && (localStorage.getItem('initShow') !== 'true') ?
             <StepShow {...this.props} userInfo={userInfo} />

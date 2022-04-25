@@ -162,3 +162,24 @@ p{
   width: 40%;
   min-width: 444px;
 }
+.notice{
+  width: 100%;
+  height: 44px;
+  background: #FFFBE6;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  i{
+    margin-left: 16px;
+    color: #FF7A20;
+  }
+  p{
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 22px;
+    margin-left: 11px;
+  }
+}
