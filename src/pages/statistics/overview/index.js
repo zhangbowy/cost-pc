@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
-import { Menu, Divider } from 'antd';
+import { Menu, Divider,Tooltip } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import update from 'immutability-helper';
@@ -199,7 +199,15 @@ class EchartsTest extends Component {
       // const lists = e.key === '3' || e.key === '5' ? chartList : pieChartVos;
       cols = update(cols, {
         $splice: [[1, 0, {
-          title: '金额（元）',
+          title: (
+            params==='3'?
+              <span span className="icons" >
+                <span>金额（元）</span>
+                <Tooltip title="包含项目立项至今的所有费用">
+                  <i className="iconfont iconIcon-yuangongshouce fs-16" />
+                </Tooltip>
+              </span>:'金额（元）'
+          ),
           dataIndex: 'submitSumAll',
           render: (_, record) => {
             let newId = record[type] || record.userId || '-1';

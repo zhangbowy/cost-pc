@@ -65,6 +65,7 @@ class UploadFile extends Component {
           disabled={disabled}
           showUploadList={false}
           // loading={loading}
+          accept=".pdf,.ofd"
           action={filePath}
           beforeUpload={this.beforeUpload}
           onSuccess={this.handleChange}
