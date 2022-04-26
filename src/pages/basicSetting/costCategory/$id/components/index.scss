@@ -1,12 +1,13 @@
-.left{
+.left {
   width: 240px;
   background: #ffffff;
   height: 100%;
   overflow: hidden;
-  .header{
+
+  .header {
     width: inherit;
     height: 56px;
-    background: rgb(248,248,248);
+    background: rgb(248, 248, 248);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,12 +15,14 @@
     color: rgba(0, 0, 0, 0.5);
     position: absolute;
     z-index: 100;
-    div{
+
+    div {
       width: 120px;
       text-align: center;
       height: 56px;
       line-height: 56px;
       cursor: pointer;
+
       :global(.iconfont) {
         color: rgba(0, 0, 0, 0.45);
         font-size: 14px;
@@ -27,16 +30,19 @@
       }
     }
   }
-  .active{
+
+  .active {
     background: #ffffff;
     font-weight: bold;
     color: rgba(0, 0, 0, 0.85);
+
     :global(.iconfont) {
       color: rgba(0, 0, 0, 0.45);
       font-size: 14px;
     }
   }
-  .leftCntDrag{
+
+  .leftCntDrag {
     position: relative;
     top: 56px;
     margin-top: 18px;
@@ -44,11 +50,13 @@
     height: 100%;
     padding-left: 16px;
     padding-bottom: 94px;
+
     &::-webkit-scrollbar {
       display: none;
     }
   }
-  .dragLabel{
+
+  .dragLabel {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -58,17 +66,20 @@
     padding: 0 8px 0 16px;
     margin-bottom: 8px;
     cursor: move;
-    &:hover{
+
+    &:hover {
       border: 1px solid #E9E9E9;
       border-radius: 4px;
     }
   }
-  .dragActive{
+
+  .dragActive {
     border: 1px solid #E9E9E9;
     border-radius: 4px;
     cursor: unset;
   }
-  .selfStr{
+
+  .selfStr {
     width: 192px;
     height: 44px;
     border-radius: 4px;
@@ -78,25 +89,29 @@
     font-size: 16px;
     margin-left: 8px;
     cursor: move;
-    &:hover{
+
+    &:hover {
       background: #FAFAFA;
       color: rgba(0, 199, 149, 1);
+
       :global(.iconfont) {
         color: rgba(0, 199, 149, 1);
       }
     }
   }
-  .selfActive{
+
+  .selfActive {
     background: #FAFAFA;
     color: rgba(0, 199, 149, 1);
   }
+
   &::-webkit-scrollbar {
     display: none;
   }
 }
 
 // 模板
-.StrTemplates{
+.StrTemplates {
   min-height: 56px;
   // width: 100%;
   margin: 0 24px;
@@ -105,7 +120,8 @@
   display: flex;
   position: relative;
   cursor: move;
-  .inputs{
+
+  .inputs {
     // width: 100%;
     height: 32px;
     background: #FFFFFF;
@@ -119,7 +135,8 @@
     min-width: 280px;
     margin-bottom: 30px;
   }
-  .dateType{
+
+  .dateType {
     max-width: 480px;
     min-width: 280px;
     height: 32px;
@@ -132,7 +149,8 @@
     line-height: 30px;
     margin-bottom: 30px;
   }
-  .images{
+
+  .images {
     width: 48px;
     border-radius: 2px;
     height: 48px;
@@ -142,47 +160,55 @@
     justify-content: center;
     margin-bottom: 30px;
   }
-  .lines{
+
+  .lines {
     width: 4px;
     height: inherit;
     margin-bottom: 0;
     background: #00C795;
   }
-  .linesD{
+
+  .linesD {
     width: 4px;
     height: inherit;
     margin-bottom: 0;
   }
-  .tmpCnt{
+
+  .tmpCnt {
     padding-top: 16px;
     margin-right: 24px;
     flex: 1;
     margin-left: 6px;
   }
-  .required{
+
+  .required {
     padding: 16px 0 16px 6px;
     display: block;
     color: rgba(255, 90, 95, 1);
     line-height: 22px;
   }
-  .requireds{
+
+  .requireds {
     padding: 16px 0 16px 6px;
     display: block;
     color: #fff;
     line-height: 22px;
   }
-  .production{
+
+  .production {
     color: rgba(0, 0, 0, 0.45);
     padding-bottom: 16px;
     padding-right: 56px;
     // line-height: 56px;
   }
-  .operator{
+
+  .operator {
     position: absolute;
     top: 12px;
     right: 12px;
     display: flex;
-    .delete{
+
+    .delete {
       width: 24px;
       height: 24px;
       display: none;
@@ -191,31 +217,38 @@
       line-height: 24px;
       text-align: center;
       cursor: pointer;
-      :global(.iconfont){
+
+      :global(.iconfont) {
         color: #ffffff;
       }
     }
-    .drag{
+
+    .drag {
       background: rgba(0, 199, 149, 1);
       cursor: move;
     }
   }
-  &:hover{
+
+  &:hover {
     background: #FAFBFB;
+
     // opacity: 0.3;
-    .linesD{
+    .linesD {
       display: inline-block;
       // background: #00C795;
     }
-    .delete{
+
+    .delete {
       display: block;
     }
   }
-  .opacity{
+
+  .opacity {
     opacity: 0.3;
-    cursor: default!important;
+    cursor: default !important;
   }
 }
+
 .activeStr {
   background: #FAFBFB;
 }
@@ -228,14 +261,16 @@
   position: relative;
   height: 100%;
   overflow: hidden;
-  .header{
+
+  .header {
     height: 56px;
     position: absolute;
     display: flex;
     line-height: 56px;
     padding-left: 24px;
     align-items: center;
-    .pro{
+
+    .pro {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -248,18 +283,21 @@
       border-radius: 20px 20px 20px 0px;
       // opacity: 0.08;
       color: rgba(0, 199, 149, 1);
+
       :global(.iconfont) {
         color: rgba(0, 199, 149, 1);
         font-size: 22px;
         vertical-align: middle;
       }
-      span{
+
+      span {
         color: rgba(0, 199, 149, 1);
         vertical-align: middle;
       }
     }
   }
-  .contents{
+
+  .contents {
     top: 56px;
     position: relative;
     overflow-y: scroll;
@@ -268,20 +306,22 @@
   }
 }
 
-.strRight{
+.strRight {
   background: #ffffff;
   width: 298px;
   height: 100%;
   overflow: hidden;
   position: relative;
-  .header{
+
+  .header {
     height: 56px;
     display: flex;
     padding: 20px 0 16px 24px;
     position: absolute;
     width: 100%;
     background: #fff;
-    .tags{
+
+    .tags {
       // width: 24px;
       height: 22px;
       background: #F5F5F5;
@@ -294,7 +334,8 @@
       margin-left: 16px;
     }
   }
-  .contents{
+
+  .contents {
     top: 56px;
     position: relative;
     overflow-y: scroll;
@@ -303,19 +344,20 @@
   }
 }
 
-.addForm{
+.addForm {
   // width: 60%;
   // background: #FAFAFB;
   padding: 0px;
   display: flex;
   margin-bottom: 8px;
   align-items: center;
-  :global(.ant-form-item){
+
+  :global(.ant-form-item) {
     margin-bottom: 0;
   }
 }
 
-.checkT{
+.checkT {
   width: 70px;
   margin-bottom: 28px;
   text-align: left;
@@ -324,29 +366,38 @@
   display: block;
   white-space: nowrap;
 }
-.idDisabled{
+
+.idDisabled {
   opacity: 0.5;
-  &:hover{
+
+  &:hover {
     color: rgba(0, 0, 0, 0.36);
   }
 }
-.addNames{
+
+.addNames {
   height: 46px;
   line-height: 46px;
   text-align: center;
   width: 100%;
-  color: rgba(0,0,0,0.25);
+  color: rgba(0, 0, 0, 0.25);
   font-size: 14px;
 }
-.xcName{
+
+.xcName {
   display: flex;
   align-items: center;
   height: 22px;
   margin: 16px 0;
   line-height: 22px;
-  .required{
+
+  .required {
     padding: 16px 0;
     margin-left: -10px;
     margin-right: 6px;
   }
+}
+
+.customize {
+  display: flex;
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import codes from '@/assets/img/qrCodes.png';
+import openService from '@/assets/img/openService.png';
 import style from './index.scss';
 
 class InitModal extends Component {
@@ -42,7 +43,7 @@ class InitModal extends Component {
           width="449px"
         >
           <div className={style.imgs}>
-            <img src={codes} alt="二维码" />
+            <img src={this.props.isOpen==='true'?openService:codes} alt="二维码" />
           </div>
         </Modal>
       </div>

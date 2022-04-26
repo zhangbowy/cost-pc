@@ -2,7 +2,7 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message } from 'antd';
+import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
@@ -466,16 +466,40 @@ class Right extends PureComponent {
               (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
               <div className={style.moveForm}>
                 <p>选项</p>
-                {formItems}
-                <Button
-                  icon="plus"
-                  style={{marginLeft: '44px', width: '160px'}}
-                  type="dashed"
-                  className={style.addSelect}
-                  onClick={() => this.onAdd()}
-                >
-                  添加选项
-                </Button>
+                  {formItems}
+                  {
+                    details.field.indexOf('self_') > -1 ?
+                      <div className={style.customize}>
+                        <Button
+                          icon="plus"
+                          style={{ marginRight: '8px', width: '121px',flex:1 }}
+                          type="dashed"
+                          className={style.addSelect}
+                          onClick={() => this.onAdd()}
+                        >
+                          添加选项
+                        </Button>
+                        <Button
+                          style={{  width: '121px',flex:1 }}
+                          type="dashed"
+                          className={style.addSelect}
+                          onClick={() => this.onAdd()}
+                        >
+                          <i className='iconfont iconguanlian' style={{ marginRight: '8px',fontWeight:700,verticalAlign:'baseline'}}/>
+                          选择关联
+                        </Button>
+                      </div>
+                      :
+                      <Button
+                        icon="plus"
+                        style={{ marginLeft: '44px', width: '160px' }}
+                        type="dashed"
+                        className={style.addSelect}
+                        onClick={() => this.onAdd()}
+                      >
+                        添加选项
+                      </Button>
+                  }
               </div>
             }
             {
