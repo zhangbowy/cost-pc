@@ -15,6 +15,10 @@ const widthSize = {
     width: '980px',
     height: 618
   },
+  'middle': {
+    width: '780px',
+    height: 505
+  },
 };
 class ModalTemp extends PureComponent {
   constructor(props) {
