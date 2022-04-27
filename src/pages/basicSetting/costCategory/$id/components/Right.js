@@ -43,7 +43,7 @@ class Right extends PureComponent {
         details = arr[i];
       }
       if (details.options) {
-        list = details.options.map((it, index) => { return { name: it, id: `aa_${timeStampToHex()+index}` }; });
+        list = details.options.map((it, index) => { return { name: it, id: `aa_${timeStampToHex()+index}`}; });
       } else {
         this.props.form.setFieldsValue({
           keys: []
@@ -298,7 +298,8 @@ class Right extends PureComponent {
 
   render() {
     const { details, list } = this.state;
-    const { type, templateType, isModifyInvoice, operateType, incomeNoModify } = this.props;
+    console.log(list,'listlistlistlist');
+    const { type, templateType, isModifyInvoice, operateType, incomeNoModify,selectList } = this.props;
     console.log('Right -> render -> isModifyInvoice', details);
 
     const {
@@ -306,7 +307,7 @@ class Right extends PureComponent {
     } = this.props;
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
-
+console.log(keys,'keyskeys');
     const formItems = (Number(details.fieldType) === 2
     || Number(details.fieldType) === 8) ? keys.map(it=> (
       <div className={style.addForm} key={it.id}>
@@ -480,7 +481,7 @@ class Right extends PureComponent {
                         >
                           添加选项
                         </Button>
-                        <AssociateModal>
+                        <AssociateModal valueList={list} associateList={selectList} getIds={this.getIds} >
                           <Button
                             style={{  width: '121px',flex:1 }}
                             type="dashed"
