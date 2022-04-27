@@ -9,6 +9,7 @@ import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../
 import { timeStampToHex, intToChinese } from '../../../../../utils/common';
 import ThirdSet from './RightCheck/ThirdSet';
 import { aliTrip, aliTripStr, aliTripHasTrip } from './ItemTypes';
+import AssociateModal from './AssociateModal';
 
 let id = 1000;
 const disabledDefault = ['costCategory', 3, 10];
@@ -479,15 +480,16 @@ class Right extends PureComponent {
                         >
                           添加选项
                         </Button>
-                        <Button
-                          style={{  width: '121px',flex:1 }}
-                          type="dashed"
-                          className={style.addSelect}
-                          onClick={() => this.onAdd()}
-                        >
-                          <i className='iconfont iconguanlian' style={{ marginRight: '8px',fontWeight:700,verticalAlign:'baseline'}}/>
-                          选择关联
-                        </Button>
+                        <AssociateModal>
+                          <Button
+                            style={{  width: '121px',flex:1 }}
+                            type="dashed"
+                            className={style.addSelect}
+                          >
+                            <i className='iconfont iconguanlian' style={{ marginRight: '8px',fontWeight:700,verticalAlign:'baseline'}}/>
+                            选择关联
+                          </Button>
+                        </AssociateModal>
                       </div>
                       :
                       <Button
