@@ -5,20 +5,26 @@ import AssociatePop from '@/components/AssociatePop/';
 import style from './AssociateModal.scss';
 
 let newAssociateList = [];
+@Form.create()
+
 class AssociateModal extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
+      // eslint-disable-next-line react/no-unused-state
+      optionsRelevance : []
     };
-    };
-    
-  onShow = () => {
-        this.setState({visible: true});
-    };
+  };
 
+  // 显示弹窗
+  onShow = () => {
+    this.setState({ visible: true });
+  };
+
+  // 关闭/取消等
   onCancel = () => {
-    // this.props.form.resetFields();
+    this.props.form.resetFields();
     // this.props.form.setFieldsValue({
     // });
     this.setState({
@@ -26,29 +32,28 @@ class AssociateModal extends React.PureComponent {
     });
   }
 
+  // 确定
   onSubmit = () => {
-    this.setState({
-        visible: false,
+    const { changeDetails, form, selectField } = this.props;
+    console.log(form.getFieldsValue());
+    const obj = form.getFieldsValue().ids;
+    const optionsRelevance = [];
+    selectField.options.forEach(item => {
+      optionsRelevance.push({
+        name: item,
+        ids: obj[item],
       });
-  }
-
-  onChange = (e) => {
-    this.props.form.setFieldsValue({
     });
-    // this.setState({
-    //   status: e.target.value,
-    // });
-    console.log(e);
+    changeDetails({
+      ...selectField,
+      optionsRelevance
+    });
+    this.setState({
+      visible: false,
+    });
+    this.props.form.resetFields();
   }
 
-//   check = (rule, value, callback) => {
-//   }
-
-  onChangeItem = (val) => {
-      console.log(val, 'onChangeItem666');
-      this.state({ selectVal: val });
-  }
-  
   render() {
     const {
       children,
@@ -56,18 +61,19 @@ class AssociateModal extends React.PureComponent {
       loading,
       valueList, // 每一项
       associateList,
-      selectField
+      selectField, // 当前单选
+      form: { getFieldDecorator }
     } = this.props;
+    console.log(associateList,'associateList');
     newAssociateList = associateList.filter(item => {// 关联的选项
-      return item.type === 'box';
+      return item.isFixed !==true;
     });
-    console.log(newAssociateList,'associateList');
-    console.log(this.props.selectField,'当前单选的field');
+    console.log(newAssociateList,'新的newAssociateList');
     const { Option } = Select;
-    console.log(valueList,'valueList');
+    console.log(valueList,'选项valueList');// 选项一，选项一
     const { visible } = this.state;
     const columns = [ {
-      title: '选择关联',
+      title: '选项关联',
       dataIndex: 'name',
       width: 200,
     }, {
@@ -76,36 +82,38 @@ class AssociateModal extends React.PureComponent {
       width: 513,
       // 
       render: (_, record) => ( 
-        <Form.Item
-          key={record.id}
-          style={{marginBottom: '0'}}
-        >
-          {
-        //   getFieldDecorator('456', {
-        //   initialValue:'456',
-        //   rules: [{ required: true, message: '请选择' }]
-        // })(
-            <Select
-              placeholder="请选择"
-              onChange={this.onChangeItem}
-              style={{ width: '100%' }}
-              mode="multiple"
-            //   value={{ key: 'lucy' }}
-            >
-              {newAssociateList.map(item => (
-                 item.field===selectField?<Option key={item.field} disabled value={item.field}>{item.name}</Option>:<Option key={item.field} value={item.field}>{item.name}</Option>  
-          ))}
-            </Select>
-        // )
-      }
-        </Form.Item>
+        <Form>
+          <Form.Item
+            key={record.id}
+            style={{marginBottom: '0'}}
+          >
+            {
+              getFieldDecorator(`ids[${record.name}]`)(
+                <Select
+                  placeholder="请选择"
+                  // onChange={(e)=>this.onChangeItem(record,e)}
+                  style={{ width: '100%' }}
+                  mode="multiple"
+                  allowClear
+                  showArrow
+                >
+                  {newAssociateList.map(item => (
+                    item.field===selectField.field?<Option key={item.field} disabled value={item.field}>{item.name}</Option>:<Option key={item.field} value={item.field}>{item.name}</Option>  
+              ))}
+                </Select>
+              )
+              
+          // )
+        }
+          </Form.Item>
+        </Form>
       ),
     }];
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
         <AssociatePop
-          title='选择关联'
+          title={`${selectField.name}_选项关联`}
           maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
@@ -123,9 +131,8 @@ class AssociateModal extends React.PureComponent {
                 bordered
                 align='center'
                 dataSource={valueList}
-                onChange={this.onChange}
                 pagination={false}
-                // rowKey="id"
+                rowKey={row => row.id}
               />
             </div>
           </>

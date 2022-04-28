@@ -101,7 +101,7 @@ class Right extends PureComponent {
       details: {
         ...details,
         [key]: e.target.value
-      }
+      },
     });
     this.props.onChange(arr);
   }
@@ -296,6 +296,25 @@ class Right extends PureComponent {
     this.props.onChange(arr);
   }
 
+  // 改变 details
+  changeDetails = (val) => {
+    const { details } = this.state;
+    const { selectList } = this.props;
+    const arr = this.onChangeChild(selectList, details.field, {
+      ...details,
+      ...val
+    });
+    this.setState({
+      details: {
+        ...details,
+        ...val
+      },
+    });
+    this.props.onChange(arr);
+    
+    console.log(this.state.details, '最新的details');
+  }
+
   render() {
     const { details, list } = this.state;
     console.log(list,'listlistlistlist');
@@ -470,7 +489,7 @@ console.log(keys,'keyskeys');
                 <p>选项</p>
                   {formItems}
                   {
-                    details.field.indexOf('self_') > -1 ?
+                    (details.field.indexOf('self_') > -1&&!details.parentId) ?
                       <div className={style.customize}>
                         <Button
                           icon="plus"
@@ -484,7 +503,8 @@ console.log(keys,'keyskeys');
                         <AssociateModal
                           valueList={list}
                           associateList={selectList}
-                          selectField={details.field}
+                          selectField={details}
+                          changeDetails={this.changeDetails}
                         >
                           <Button
                             style={{  width: '121px',flex:1 }}
