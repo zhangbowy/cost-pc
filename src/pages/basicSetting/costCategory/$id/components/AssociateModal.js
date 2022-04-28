@@ -11,8 +11,8 @@ class AssociateModal extends React.PureComponent {
     this.state = {
       visible: false,
     };
-  }
-
+    };
+    
   onShow = () => {
         this.setState({visible: true});
     };
@@ -45,7 +45,8 @@ class AssociateModal extends React.PureComponent {
 //   }
 
   onChangeItem = (val) => {
-  console.log(val,'onChangeItem666');
+      console.log(val, 'onChangeItem666');
+      this.state({ selectVal: val });
   }
   
   render() {
@@ -54,14 +55,16 @@ class AssociateModal extends React.PureComponent {
       // form: { getFieldDecorator },
       loading,
       valueList, // 每一项
-      associateList
+      associateList,
+      selectField
     } = this.props;
-    newAssociateList = associateList.filter(item => {
+    newAssociateList = associateList.filter(item => {// 关联的选项
       return item.type === 'box';
     });
-    console.log(newAssociateList,'associateListassociateList');
+    console.log(newAssociateList,'associateList');
+    console.log(this.props.selectField,'当前单选的field');
     const { Option } = Select;
-    console.log(valueList,'valueListvalueListvalueList');
+    console.log(valueList,'valueList');
     const { visible } = this.state;
     const columns = [ {
       title: '选择关联',
@@ -87,10 +90,10 @@ class AssociateModal extends React.PureComponent {
               onChange={this.onChangeItem}
               style={{ width: '100%' }}
               mode="multiple"
-              // defaultValue={{ key: 'lucy' }}
+            //   value={{ key: 'lucy' }}
             >
               {newAssociateList.map(item => (
-                <Option key={item.field} value={item.field}>{item.name}</Option>
+                 item.field===selectField?<Option key={item.field} disabled value={item.field}>{item.name}</Option>:<Option key={item.field} value={item.field}>{item.name}</Option>  
           ))}
             </Select>
         // )
@@ -122,7 +125,7 @@ class AssociateModal extends React.PureComponent {
                 dataSource={valueList}
                 onChange={this.onChange}
                 pagination={false}
-                rowKey="invoiceId"
+                // rowKey="id"
               />
             </div>
           </>

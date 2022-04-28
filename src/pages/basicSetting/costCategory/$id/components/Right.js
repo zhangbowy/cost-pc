@@ -481,7 +481,11 @@ console.log(keys,'keyskeys');
                         >
                           添加选项
                         </Button>
-                        <AssociateModal valueList={list} associateList={selectList} getIds={this.getIds} >
+                        <AssociateModal
+                          valueList={list}
+                          associateList={selectList}
+                          selectField={details.field}
+                        >
                           <Button
                             style={{  width: '121px',flex:1 }}
                             type="dashed"
