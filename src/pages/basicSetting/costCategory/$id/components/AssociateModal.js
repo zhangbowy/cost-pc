@@ -3,10 +3,10 @@ import { Form,  Button,Table,Select} from 'antd';
 // import { connect } from 'dva';
 import AssociatePop from '@/components/AssociatePop/';
 import style from './AssociateModal.scss';
+import { defaultString } from '@/utils/constants';
 
 let newAssociateList = [];
 @Form.create()
-
 class AssociateModal extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -35,7 +35,7 @@ class AssociateModal extends React.PureComponent {
   // 确定
   onSubmit = () => {
     const { changeDetails, form, selectField } = this.props;
-    console.log(form.getFieldsValue());
+    console.log(form.getFieldsValue(),'form.getFieldsValue');
     const obj = form.getFieldsValue().ids;
     const optionsRelevance = [];
     selectField.options.forEach(item => {
@@ -62,15 +62,17 @@ class AssociateModal extends React.PureComponent {
       valueList, // 每一项
       associateList,
       selectField, // 当前单选
-      form: { getFieldDecorator }
+      form: { getFieldDecorator },
+      spacialCenter
     } = this.props;
-    console.log(associateList,'associateList');
-    newAssociateList = associateList.filter(item => {// 关联的选项
-      return item.isFixed !==true;
+    const defaultList =  spacialCenter || defaultString;// 不能被关联的
+    newAssociateList = associateList.filter(item => { // 关联的选项
+          return !defaultList.includes(item.field);
     });
-    console.log(newAssociateList,'新的newAssociateList');
+      
+    console.log(newAssociateList,'关联的选项 newAssociateList');
     const { Option } = Select;
-    console.log(valueList,'选项valueList');// 选项一，选项一
+    console.log(valueList,'选项一，选项一valueList');// 选项一，选项一
     const { visible } = this.state;
     const columns = [ {
       title: '选项关联',
@@ -88,7 +90,10 @@ class AssociateModal extends React.PureComponent {
             style={{marginBottom: '0'}}
           >
             {
-              getFieldDecorator(`ids[${record.name}]`)(
+              getFieldDecorator(`ids[${record.name}]`,{
+                // initialValue:  || '',
+                // rules: [{ required: true, message: '' }]
+              })(
                 <Select
                   placeholder="请选择"
                   // onChange={(e)=>this.onChangeItem(record,e)}

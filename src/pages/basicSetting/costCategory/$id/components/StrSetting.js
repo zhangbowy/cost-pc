@@ -237,6 +237,7 @@ const StrSetting = ({ fieldList,
         operateType={operateType}
         changeDragId={changeDragId}
         incomeNoModify={incomeNoModify}
+        spacialCenter={spacialCenter}
       />
     </div>
   );

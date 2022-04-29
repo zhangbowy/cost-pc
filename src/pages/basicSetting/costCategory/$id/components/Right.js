@@ -323,6 +323,7 @@ class Right extends PureComponent {
 
     const {
       form: { getFieldDecorator, getFieldValue },
+      spacialCenter
     } = this.props;
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
@@ -505,6 +506,7 @@ console.log(keys,'keyskeys');
                           associateList={selectList}
                           selectField={details}
                           changeDetails={this.changeDetails}
+                          spacialCenter={spacialCenter}
                         >
                           <Button
                             style={{  width: '121px',flex:1 }}
