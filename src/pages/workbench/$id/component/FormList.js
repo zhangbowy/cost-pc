@@ -497,7 +497,8 @@ renderTreeNodes = data =>
       depList,
       officeList,
       ossFileUrl,
-      allDeptList
+      allDeptList,
+      // associatedIds
     } = this.props;
     const projectList = treeConvert({
       rootId: 0,
@@ -543,7 +544,7 @@ renderTreeNodes = data =>
                   />
                 );
                 rule = [{ max: 128, message: '限制128个字' }];
-              } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
+              } else if((Number(itw.fieldType) === 2&&itw.field.indexOf('expand_') > -1)|| Number(itw.fieldType) === 8) {
                 if (Number(itw.fieldType) === 8) {
                   console.log('render -> itw.msg', itw.msg);
                   initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
@@ -559,6 +560,25 @@ renderTreeNodes = data =>
                     {
                       itw.options && itw.options.map(iteems => (
                         <Select.Option key={iteems}>{iteems}</Select.Option>
+                      ))
+                    }
+                  </Select>
+                );
+              }else if((Number(itw.fieldType) === 2&&itw.field.indexOf('self_') > -1)) {
+                if (Number(itw.fieldType) === 8) {
+                  console.log('render -> itw.msg', itw.msg);
+                  initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
+                }
+                renderForm = (
+                  <Select
+                    placeholder={itw.note ? itw.note : '请选择'}
+                    disabled={modify && !itw.isModify}
+                    onChange={val => this.onChangeSelect(val, {
+                      fieldType: itw.fieldType, field: itw.field })}
+                  >
+                    {
+                      itw.optionsRelevance && itw.optionsRelevance.map(iteems => (
+                        <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
                       ))
                     }
                   </Select>
@@ -591,7 +611,7 @@ renderTreeNodes = data =>
                   );
                 }
               }
-              return (
+              return ( 
                 <>
                   {
                     itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9

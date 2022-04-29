@@ -186,6 +186,7 @@ class CategoryAdd extends PureComponent {
   }
 
   compare = (property) => {
+    // eslint-disable-next-line func-names
     return function(a,b){
         const value1 = a[property];
         const value2 = b[property];
@@ -294,6 +295,8 @@ class CategoryAdd extends PureComponent {
         selfFields: newArr.filter(it => it.field.indexOf('self_') > -1),
         costType,
       };
+      // "isRelevanced":false //是否被关联
+      console.log(params, 'costCategory params');
       if (costType !== '1') {
         Object.assign(params, {
           attribute: title === 'add' ? costId : id.split('_')[2],

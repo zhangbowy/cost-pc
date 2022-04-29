@@ -99,6 +99,7 @@ class addInvoice extends Component {
       submitParams: {},
       id: '',
       operateType: '', // 操作类型，add: 新增
+      associatedIds: [] // 所有被关联项的集合
     };
   }
 
@@ -248,7 +249,18 @@ class addInvoice extends Component {
       let aliCostAndI = {costArr: [], invoiceArr: []};
       let deptTree = {};
       const { djDetail, dispatch } = this.props;
-      console.log('AddInvoice -> onShowHandle -> djDetail', djDetail);
+      console.log('AddInvoice -> onShowHandle -> djDetail666', djDetail);
+      const optionsRelevance = []; // 所有关联项
+      const optionsRelevanceIds = []; // 所有关联项的ids集合
+      djDetail.selfField.forEach(item => {
+        optionsRelevance.push(...item.optionsRelevance);
+      });
+      optionsRelevance.forEach(item => {
+        optionsRelevanceIds.push(...item.ids);
+      });
+      const associatedIds = [...new Set(optionsRelevanceIds)];
+      console.log(associatedIds, 'associatedIds');
+      this.setState({ associatedIds });
       const arrUrl = [{
         url: 'global/users',
         payload: {}
@@ -1220,6 +1232,7 @@ class addInvoice extends Component {
     });
   }
 
+  // 提交
   onSubmit = (params) => {
     const { dispatch } = this.props;
     const {
@@ -1564,7 +1577,8 @@ class addInvoice extends Component {
       aliTripAuth,
       hisAliTrip,
       exceedVisible,
-      id
+      id,
+      associatedIds
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1617,6 +1631,7 @@ class addInvoice extends Component {
               officeList={officeList}
               onChangeOffice={this.onChangeOffice}
               checkOffice={this.checkOffice}
+              associatedIds={associatedIds}
             />
             {
                 (!templateType ||

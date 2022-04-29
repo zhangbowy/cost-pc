@@ -67,7 +67,7 @@ class AssociateModal extends React.PureComponent {
     } = this.props;
     const defaultList =  spacialCenter || defaultString;// 不能被关联的
     newAssociateList = associateList.filter(item => { // 关联的选项
-          return !defaultList.includes(item.field);
+          return !defaultList.includes(item.field)&&item.fieldType!=='9'&&item.fieldType!==9;
     });
       
     console.log(newAssociateList,'关联的选项 newAssociateList');
