@@ -103,7 +103,7 @@ class AssociateModal extends React.PureComponent {
                   showArrow
                 >
                   {newAssociateList.map(item => (
-                    item.field===selectField.field?<Option key={item.field} disabled value={item.field}>{item.name}</Option>:<Option key={item.field} value={item.field}>{item.name}</Option>  
+                    <Option key={item.field} disabled={item.field===selectField.field} value={item.field}>{item.name}</Option>
               ))}
                 </Select>
               )
