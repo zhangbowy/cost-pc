@@ -429,10 +429,22 @@ class ChangeForm extends Component {
     return getFieldValue(key);
   }
 
+  flat=(arr)=> {
+    let arrResult = [];
+    arr.forEach((item) => {
+      if (Array.isArray(item)) {
+        arrResult = arrResult.concat(this.flat(item)); // 递归
+      } else {
+        arrResult.push(item);
+      }
+    });
+    return arrResult;
+  }
+
     // 要显示的项
     showItems=(showIds,field)=>{
       const { associatedIds } = this.props;
-      const showItems = Object.values(showIds).flat();// 要显示的项
+      const showItems = this.flat(Object.values(showIds));// 要显示的项
       // 要隐藏的项 需要判断当关联的有单选项时的情况，当unShowItems中不存在’self‘时，让要显示的项‘
       let unShowItems = associatedIds;
       const newUnShowItems = associatedIds.filter(it => {
@@ -501,7 +513,7 @@ onShowItems = (newForm,associatedIds) => {
       });
     }
   });
-  showItems = [...new Set(showItems.flat())];
+  showItems = this.flat(showItems);
   const newUnShowItems = associatedIds.filter(it => {
     return !showItems.includes(it);
   });

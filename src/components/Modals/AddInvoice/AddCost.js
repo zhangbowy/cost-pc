@@ -893,11 +893,22 @@ class AddCost extends Component {
     });
   }
 
-
+  flat=(arr)=> {
+    let arrResult = [];
+    arr.forEach((item) => {
+      if (Array.isArray(item)) {
+        arrResult = arrResult.concat(this.flat(item)); // 递归
+      } else {
+        arrResult.push(item);
+      }
+    });
+    return arrResult;
+  }
+  
     // 要显示的项
     showItems=(showIds,field)=>{
       const associatedIds = this.getAssociatedIds();
-      const showItems = Object.values(showIds).flat();// 要显示的项
+      const showItems = this.flat(Object.values(showIds));// 要显示的项
       // 要隐藏的项 需要判断当关联的有单选项时的情况，当unShowItems中不存在’self‘时，让要显示的项‘
       let unShowItems = associatedIds;
       const newUnShowItems = associatedIds.filter(it => {
@@ -926,6 +937,7 @@ class AddCost extends Component {
   // 回显
     onShowItems = (newForm,associatedIds) => {
       let showItems = [];
+      console.log(newForm,'newForm');
       newForm.forEach(item => {
         if (item.optionsRelevance) {
           item.optionsRelevance.forEach(it => {
@@ -935,12 +947,12 @@ class AddCost extends Component {
           });
         }
       });
-      showItems = [...new Set(showItems.flat())];
+      showItems = this.flat(showItems);
       const newUnShowItems = associatedIds.filter(it => {
         return !showItems.includes(it);
       });
       return newUnShowItems;
-    }; 
+    }
 
   // 获取 associatedIds
   getAssociatedIds = () => {
