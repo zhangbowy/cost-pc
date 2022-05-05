@@ -18,8 +18,22 @@ class AssociateModal extends React.PureComponent {
   };
 
   // 显示弹窗
-  onShow = () => {
-    this.setState({ visible: true });
+  // eslint-disable-next-line no-shadow
+  onShow = (selectField, newAssociateList) => {
+    const obj = {};
+    if (selectField.optionsRelevance) {
+       selectField.optionsRelevance.forEach(item => {
+      const arr = [];
+      newAssociateList.forEach(it => {
+        if (item.ids.includes(it.field)) {
+          arr.push(it);
+        }
+        obj[item.name] = arr.map(its => its.field);
+      });
+    });
+    }
+    console.log(obj,'obj');
+    this.setState({ visible: true,obj});
   };
 
   // 关闭/取消等
@@ -67,14 +81,13 @@ class AssociateModal extends React.PureComponent {
       spacialCenter
     } = this.props;
     const defaultList =  spacialCenter || defaultString;// 不能被关联的
-    newAssociateList = associateList.filter(item => { // 关联的选项
+    newAssociateList = associateList.filter(item => {
           return !defaultList.includes(item.field)&&item.fieldType!=='9'&&item.fieldType!==9;
     });
-      
-    console.log(newAssociateList,'关联的选项 newAssociateList');
+    console.log(newAssociateList,'可被关联的选项 newAssociateList');
     const { Option } = Select;
-    console.log(valueList,'选项一，选项一valueList');// 选项一，选项一
-    const { visible } = this.state;
+    const { visible,obj} = this.state;
+    // const { visible} = this.state;
     const columns = [ {
       title: '选项关联',
       dataIndex: 'name',
@@ -92,7 +105,7 @@ class AssociateModal extends React.PureComponent {
           >
             {
               getFieldDecorator(`ids[${record.name}]`,{
-                // initialValue:  || '',
+                initialValue:  obj[record.name] || undefined,
                 // rules: [{ required: true, message: '' }]
               })(
                 <Select
@@ -117,7 +130,7 @@ class AssociateModal extends React.PureComponent {
     }];
     return (
       <span>
-        <span onClick={() => this.onShow()}>{children}</span>
+        <span onClick={() => this.onShow(selectField,newAssociateList)}>{children}</span>
         <AssociatePop
           title={`${selectField.name}_选项关联`}
           maskClosable={false}
