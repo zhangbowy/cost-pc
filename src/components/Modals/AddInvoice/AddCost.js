@@ -82,6 +82,7 @@ class AddCost extends Component {
       fileUrl: [],
       officeId: '',
       ossFileUrl: [],
+      showIds: {},
       // treeExpandedKeys: [],
     };
   }
@@ -892,6 +893,78 @@ class AddCost extends Component {
     });
   }
 
+
+    // 要显示的项
+    showItems=(showIds,field)=>{
+      const associatedIds = this.getAssociatedIds();
+      const showItems = Object.values(showIds).flat();// 要显示的项
+      // 要隐藏的项 需要判断当关联的有单选项时的情况，当unShowItems中不存在’self‘时，让要显示的项‘
+      let unShowItems = associatedIds;
+      const newUnShowItems = associatedIds.filter(it => {
+        return !showItems.includes(it);
+      });
+      unShowItems = newUnShowItems;
+      this.setState({ unShowItems });
+      console.log('单选几:', field);
+      // console.log('要显示的对象:', showIds);
+      console.log('要隐藏的:unShowItems', unShowItems);
+    }
+    
+    onChangeSelect = (val, obj) => {
+      console.log(val, obj.optionsRelevance, '怎么回事');
+      console.log(this.state.details,'66666');
+      const { showIds } = this.state;
+      // const { onChangeData, expandVos } = this.props;
+      // const list = [...expandVos];
+      const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
+      // 保存要显示的 showIds
+      this.setState({ showIds: { ...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
+        this.showItems(this.state.showIds,obj.field);
+      });
+    }
+  
+  // 回显
+    onShowItems = (newForm,associatedIds) => {
+      let showItems = [];
+      newForm.forEach(item => {
+        if (item.optionsRelevance) {
+          item.optionsRelevance.forEach(it => {
+            if (it.name === item.msg) {
+              showItems.push(it.ids);
+            }
+          });
+        }
+      });
+      showItems = [...new Set(showItems.flat())];
+      const newUnShowItems = associatedIds.filter(it => {
+        return !showItems.includes(it);
+      });
+      return newUnShowItems;
+    }; 
+
+  // 获取 associatedIds
+  getAssociatedIds = () => {
+    const {
+      newShowField,
+      expandField,
+    } = this.state;
+    const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
+    const newRenderField = handleProduction(oldRenderField);
+    const optionsRelevance = []; // 所有关联项
+    const optionsRelevanceIds = []; // 所有关联项的ids集合
+    newRenderField.forEach(item => {
+      if (item.optionsRelevance) {
+        optionsRelevance.push(...item.optionsRelevance);
+      }
+    });
+    optionsRelevance.forEach(item => {
+      optionsRelevanceIds.push(...item.ids);
+    });
+    const associatedIds = [...new Set(optionsRelevanceIds)];
+    console.log(associatedIds, 'associatedIds');
+    return associatedIds;
+    }
+  
   render() {
     const {
       children,
@@ -927,8 +1000,24 @@ class AddCost extends Component {
       officeId,
       ossFileUrl,
     } = this.state;
+    const { unShowItems } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
+    
+    const optionsRelevance = []; // 所有关联项
+    const optionsRelevanceIds = []; // 所有关联项的ids集合
+    newRenderField.forEach(item => {
+      if (item.optionsRelevance) {
+        optionsRelevance.push(...item.optionsRelevance);
+      }
+    });
+    optionsRelevance.forEach(item => {
+      optionsRelevanceIds.push(...item.ids);
+    });
+    const associatedIds = [...new Set(optionsRelevanceIds)];
+    // 回显时
+    const showItem= this.onShowItems(newRenderField,associatedIds);
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -1042,6 +1131,15 @@ class AddCost extends Component {
                 {
                   newRenderField && (newRenderField.length > 0) &&
                   newRenderField.filter(it => it.fieldType !== 9).map(it => {
+                    let isShow = '';
+                    if (unShowItems) {
+                      isShow = !unShowItems.includes(it.field);
+                    } else if(showItem){
+                      isShow = !showItem.includes(it.field);
+                    } else {
+                      isShow = !associatedIds.includes(it.field);
+                    }
+                    // console.log(isShow);
                     if (it.field && (it.field.indexOf('expand_') > -1 || it.field.indexOf('self_') > -1)) {
                       let renderForm = null;
                       let rule = [];
@@ -1058,7 +1156,7 @@ class AddCost extends Component {
                           disabled={modify && !it.isModify}
                         />);
                         rule = [{ max: 128, message: '限制128个字' }];
-                      } else if(Number(it.fieldType) === 2 || Number(it.fieldType) === 8) {
+                      } else if((Number(it.fieldType) === 2&&it.field.indexOf('expand_') > -1)|| Number(it.fieldType) === 8) {
                         if (Number(it.fieldType) === 8) {
                           initMsg = it.msg ? it.msg.split(',') : [];
                         }
@@ -1102,11 +1200,27 @@ class AddCost extends Component {
                             />
                           );
                         }
-                      }
+                      }else if((Number(it.fieldType) === 2&&it.field.indexOf('self_') > -1|| Number(it.fieldType) !==8)) {
+                        renderForm = (
+                          <Select
+                            placeholder={it.note ? it.note : '请选择'}
+                            disabled={modify && !it.isModify}
+                            allowClear
+                            onChange={val => this.onChangeSelect(val, {
+                              fieldType: it.fieldType, field: it.field,optionsRelevance:it.optionsRelevance })}
+                          >
+                            {
+                              it.optionsRelevance && it.optionsRelevance.map(iteems => (
+                                <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
+                              ))
+                            }
+                          </Select>
+                        );
+                      } 
                         return (
                           <>
                             {
-                              it.status ?
+                              isShow&&it.status ?
                                 <Col span={12}>
                                   <Form.Item label={it.name} {...formItemLayout}>
                                     {
@@ -1139,7 +1253,7 @@ class AddCost extends Component {
                     return (
                       <>
                         {
-                          it.fieldType === 7 && it.field === 'fileUrl' &&
+                          isShow&&it.fieldType === 7 && it.field === 'fileUrl' &&
                           <Col span={12}>
                             <Form.Item
                               label={it.name}
@@ -1198,7 +1312,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'amount' && !!(showField.amount.status) &&
+                          isShow&&it.field === 'amount' && !!(showField.amount.status) &&
                           <Col span={12}>
                             <Form.Item label={labelInfo.costSum} {...formItemLayout}>
                               {
@@ -1233,7 +1347,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'amount' && officeList && officeList.length > 0 && templateType === undefined &&
+                          isShow&&it.field === 'amount' && officeList && officeList.length > 0 && templateType === undefined &&
                             <Col span={12}>
                               <Form.Item label={labelInfo.officeId} {...formItemLayout}>
                                 {
@@ -1263,7 +1377,7 @@ class AddCost extends Component {
                             </Col>
                         }
                         {
-                          it.field === 'costNote' && showField.costNote.status ?
+                          isShow&&it.field === 'costNote' && showField.costNote.status ?
                             <Col span={12}>
                               <Form.Item label={labelInfo.costNote} {...formItemLayout}>
                                 {
@@ -1294,7 +1408,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          it.field === 'incomeNote' && showField.incomeNote.status ?
+                          isShow&&it.field === 'incomeNote' && showField.incomeNote.status ?
                             <Col span={12}>
                               <Form.Item label={showField.incomeNote.name} {...formItemLayout}>
                                 {
@@ -1325,7 +1439,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          (it.field === 'flightLevel' || it.field === 'trainLevel') && showField[it.field].status ?
+                          isShow&&(it.field === 'flightLevel' || it.field === 'trainLevel') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
@@ -1349,7 +1463,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          (it.field === 'userCount') && showField[it.field].status ?
+                          isShow&&(it.field === 'userCount') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
@@ -1366,7 +1480,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          (it.field === 'belongCity') && showField[it.field].status ?
+                          isShow&&(it.field === 'belongCity') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
@@ -1389,7 +1503,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          it.field === 'happenTime' && showField.happenTime.status &&
+                          isShow&&it.field === 'happenTime' && showField.happenTime.status &&
                           <Col span={12}>
                             <Form.Item label={labelInfo.happenTime} {...formItemLayout}>
                               {
@@ -1441,7 +1555,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'imgUrl' && showField.imgUrl.status &&
+                          isShow&&it.field === 'imgUrl' && showField.imgUrl.status &&
                           <Col span={12}>
                             <Form.Item
                               label={labelInfo.imgUrl}
@@ -1475,7 +1589,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'ossFileUrl' && showField.ossFileUrl.status &&
+                          isShow&&it.field === 'ossFileUrl' && showField.ossFileUrl.status &&
                           <Col span={12}>
                             <Form.Item
                               label={showField.ossFileUrl.name}

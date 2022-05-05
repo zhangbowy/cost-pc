@@ -174,6 +174,7 @@ export default {
         ossFileUrl: item.ossFileUrl || [],
         officeId: item.officeId || '',
       };
+      console.log(obj,'obj');
       if (item.flightLevel || (item.flightLevel === 0)) {
         Object.assign(obj, {
           flightLevel: item.flightLevel
@@ -344,6 +345,17 @@ export default {
           expandCostDetailFieldVos.push(obj);
         } else if (it.status) {
           selfCostDetailFieldVos.push(obj);
+          selfCostDetailFieldVos.forEach(itm => {
+            if (itm.optionsRelevance && itm.msg) {
+              itm.optionsRelevance.forEach(i => {
+                if (i.name === itm.msg) {
+                  // eslint-disable-next-line no-param-reassign
+                  itm.relevantMsg = i;
+                }
+              });
+            }
+          });
+          // console.log(selfCostDetailFieldVos,'selfCostDetailFieldVos');
         }
       });
     }

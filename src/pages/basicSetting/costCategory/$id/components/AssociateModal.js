@@ -41,9 +41,10 @@ class AssociateModal extends React.PureComponent {
     selectField.options.forEach(item => {
       optionsRelevance.push({
         name: item,
-        ids: obj[item],
+        ids: obj[item]?obj[item]:[],
       });
     });
+    console.log(optionsRelevance,'optionsRelevance');
     changeDetails({
       ...selectField,
       optionsRelevance
