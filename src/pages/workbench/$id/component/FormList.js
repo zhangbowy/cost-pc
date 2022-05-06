@@ -465,7 +465,7 @@ class ChangeForm extends Component {
     const list = [...expandVos];
     const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
     // 保存要显示的 showIds
-    this.setState({ showIds: { ...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
+    this.setState({ showIds: {...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
       this.showItems(this.state.showIds,obj.field);
     });
     const index = list.findIndex(it => it.field === obj.field);
@@ -502,7 +502,8 @@ class ChangeForm extends Component {
   }
   // 回显时
 
-  onShowItems = (newForm,associatedIds) => {
+  onShowItems = (newForm, associatedIds) => {
+    console.log(newForm,'newForm888');
     let showItems = [];
     newForm.forEach(item => {
       if (item.optionsRelevance) {
@@ -674,7 +675,7 @@ renderTreeNodes = data =>
                     />
                   );
                 }
-              }else if((Number(itw.fieldType) === 2&&itw.field.indexOf('self_') > -1|| Number(itw.fieldType) !==8)) {
+              }else if((Number(itw.fieldType) === 2&&itw.field.indexOf('self_') > -1)|| Number(itw.fieldType) !==8) {
                 renderForm = (
                   itw.optionsRelevance.length?
                     <Select
@@ -693,7 +694,7 @@ renderTreeNodes = data =>
                       placeholder={itw.note ? itw.note : '请选择'}
                       disabled={modify && !itw.isModify}
                       onChange={val => this.onChangeSelect(val, {
-                      fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
+                      fieldType: itw.fieldType, field: itw.field})}
                     >
                       {
                       itw.options && itw.options.map(iteems => (
