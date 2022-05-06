@@ -110,11 +110,12 @@ class AssociateModal extends React.PureComponent {
               })(
                 <Select
                   placeholder="请选择"
-                  // onChange={(e)=>this.onChangeItem(record,e)}
                   style={{ width: '100%' }}
                   mode="multiple"
                   allowClear
                   showArrow
+                //   menuItemSelectedIcon={<Icon type="check-square" theme="filled" />}
+                //   dropdownClassName='opt-content'    
                 >
                   {newAssociateList.map(item => (
                     <Option key={item.field} disabled={item.field===selectField.field} value={item.field}>{item.name}</Option>
