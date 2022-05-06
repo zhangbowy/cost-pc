@@ -1217,7 +1217,7 @@ class AddCost extends Component {
                           <Select
                             placeholder={it.note ? it.note : '请选择'}
                             disabled={modify && !it.isModify}
-                            allowClear
+                            // allowClear
                             onChange={val => this.onChangeSelect(val, {
                               fieldType: it.fieldType, field: it.field,optionsRelevance:it.optionsRelevance })}
                           >
@@ -1239,7 +1239,7 @@ class AddCost extends Component {
                                       getFieldDecorator(it.field, {
                                         initialValue: initMsg || undefined,
                                         rules: [
-                                          { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
+                                          { required: !!(it.isWrite)||isShow, message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
                                           ...rule,
                                         ]
                                       })(

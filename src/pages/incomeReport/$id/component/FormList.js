@@ -675,7 +675,7 @@ renderTreeNodes = data =>
                   <Select
                     placeholder={itw.note ? itw.note : '请选择'}
                     disabled={modify && !itw.isModify}
-                    allowClear
+                    // allowClear
                     onChange={val => this.onChangeSelect(val, {
                       fieldType: itw.fieldType, field: itw.field, optionsRelevance: itw.optionsRelevance
                     })}
