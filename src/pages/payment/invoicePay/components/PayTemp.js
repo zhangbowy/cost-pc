@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Menu, Button, Form, message, Checkbox } from 'antd';
+import { Table, Menu, Button, Form, message, Checkbox, Modal } from 'antd';
 import moment from 'moment';
 import cs from 'classnames';
 import { rowSelect } from '@/utils/common';
@@ -267,16 +267,35 @@ class PayTemp extends React.PureComponent {
       accountTypes,
       status,
     };
-    this.props.operationSign({
-      invoiceIds: selectedRowKeys,
-      templateType,
-      isSign: Number(status) === 2,
-    }, () => {
-      this.setState({
-        selectedRowKeys: [],
+    if (Number(status) !== 2) {
+      Modal.confirm({
+        title: '确认移回待发放吗？',
+        onOk: () => {
+          this.props.operationSign({
+            invoiceIds: selectedRowKeys,
+            templateType,
+            isSign: Number(status) === 2,
+          }, () => {
+            this.setState({
+              selectedRowKeys: [],
+            });
+            this.onQuery(params);
+          });
+        }
       });
-      this.onQuery(params);
-    });
+    } else {
+      this.props.operationSign({
+        invoiceIds: selectedRowKeys,
+        templateType,
+        isSign: Number(status) === 2,
+      }, () => {
+        this.setState({
+          selectedRowKeys: [],
+        });
+        this.onQuery(params);
+      });
+    }
+
   }
 
   handle = () => {

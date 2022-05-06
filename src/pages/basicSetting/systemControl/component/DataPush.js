@@ -17,6 +17,28 @@ const time = [ {
   key: '10',
   name: '10:00'
 }];
+const weekLists = [ {
+  key: 'Mon',
+  name: '周一'
+}, {
+  key: 'Tue',
+  name: '周二'
+}, {
+  key: 'Wed',
+  name: '周三'
+}, {
+  key: 'Thu',
+  name: '周四'
+}, {
+  key: 'Fri',
+  name: '周五'
+}, {
+  key: 'Sat',
+  name: '周六'
+}, {
+  key: 'Sun',
+  name: '周日'
+}];
 @Form.create()
 class DataPush extends PureComponent {
 
@@ -284,7 +306,23 @@ class DataPush extends PureComponent {
           },
           children: (
             <div className={style.tableForm}>
-              <span>每周一早上</span>
+              <span style={{display: 'flex', height: '32px', alignItems: 'center'}}>每
+                <Form.Item>
+                  <Select
+                    style={{ width: '80px' }}
+                    className="m-l-8 m-r-8"
+                    onChange={val => this.onChange(val, record, 'pushWeek')}
+                    value={record.pushWeek ? `${record.pushWeek}` : 'Mon'}
+                  >
+                    {
+                      weekLists.map(it => (
+                        <Select.Option key={it.key}>{it.name}</Select.Option>
+                      ))
+                    }
+                  </Select>
+                </Form.Item>
+                早上
+              </span>
               <Form.Item>
                 <Select
                   style={{ width: '80px' }}
