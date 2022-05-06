@@ -48,17 +48,20 @@ class AssociateModal extends React.PureComponent {
 
   // 确定
   onSubmit = () => {
-    const { changeDetails, form, selectField } = this.props;
-    console.log(form.getFieldsValue(),'form.getFieldsValue');
+    const { changeDetails, form, selectField, valueList } = this.props;
+    // 注意：valueList 要拿到最新的
+    const arr = [];
+    valueList.forEach(item => {
+      arr.push(item.name);
+    });
     const obj = form.getFieldsValue().ids;
     const optionsRelevance = [];
-    selectField.options.forEach(item => {
+    arr.forEach(item => {
       optionsRelevance.push({
         name: item,
         ids: obj[item]?obj[item]:[],
       });
     });
-    console.log(optionsRelevance,'optionsRelevance');
     changeDetails({
       ...selectField,
       optionsRelevance
@@ -80,6 +83,7 @@ class AssociateModal extends React.PureComponent {
       form: { getFieldDecorator },
       spacialCenter
     } = this.props;
+    console.log(valueList,'要拿到最新的 valueList');
     const defaultList =  spacialCenter || defaultString;// 不能被关联的
     newAssociateList = associateList.filter(item => {
           return !defaultList.includes(item.field)&&item.fieldType!=='9'&&item.fieldType!==9;
