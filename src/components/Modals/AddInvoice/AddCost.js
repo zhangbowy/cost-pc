@@ -1027,9 +1027,10 @@ class AddCost extends Component {
       optionsRelevanceIds.push(...item.ids);
     });
     const associatedIds = [...new Set(optionsRelevanceIds)];
+    console.log(associatedIds,'associatedIds支出');
     // 回显时
     const showItem= this.onShowItems(newRenderField,associatedIds);
-
+    console.log(showItem,'showItem');
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -1214,19 +1215,33 @@ class AddCost extends Component {
                         }
                       }else if((Number(it.fieldType) === 2&&it.field.indexOf('self_') > -1|| Number(it.fieldType) !==8)) {
                         renderForm = (
-                          <Select
-                            placeholder={it.note ? it.note : '请选择'}
-                            disabled={modify && !it.isModify}
-                            // allowClear
-                            onChange={val => this.onChangeSelect(val, {
+                          it.optionsRelevance.length ?
+                            <Select
+                              placeholder={it.note ? it.note : '请选择'}
+                              disabled={modify && !it.isModify}
+                              // allowClear
+                              onChange={val => this.onChangeSelect(val, {
+                                fieldType: it.fieldType, field: it.field, optionsRelevance: it.optionsRelevance
+                              })}
+                            >
+                              {
+                                it.optionsRelevance && it.optionsRelevance.map(iteems => (
+                                  <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
+                                ))
+                              }
+                            </Select>:
+                            <Select
+                              placeholder={it.note ? it.note : '请选择'}
+                              disabled={modify && !it.isModify}
+                              onChange={val => this.onChangeSelect(val, {
                               fieldType: it.fieldType, field: it.field,optionsRelevance:it.optionsRelevance })}
-                          >
-                            {
-                              it.optionsRelevance && it.optionsRelevance.map(iteems => (
-                                <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
+                            >
+                              {
+                                it.options && it.options.map(iteems => (
+                                  <Select.Option key={iteems}>{iteems}</Select.Option>
                               ))
-                            }
-                          </Select>
+                              }
+                            </Select>
                         );
                       } 
                         return (

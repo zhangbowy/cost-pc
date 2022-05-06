@@ -454,6 +454,7 @@ class ChangeForm extends Component {
     console.log('单选几:', field);
     // console.log('要显示的对象:', showIds);
     console.log('要隐藏的:unShowItems', unShowItems);
+    console.log(associatedIds,'所有associatedIds');
 }
 
   onChangeSelect = (val, obj) => {
@@ -675,19 +676,31 @@ renderTreeNodes = data =>
                 }
               }else if((Number(itw.fieldType) === 2&&itw.field.indexOf('self_') > -1|| Number(itw.fieldType) !==8)) {
                 renderForm = (
-                  <Select
-                    placeholder={itw.note ? itw.note : '请选择'}
-                    disabled={modify && !itw.isModify}
-                    // allowClear
-                    onChange={val => this.onChangeSelect(val, {
-                      fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
-                  >
-                    {
+                  itw.optionsRelevance.length?
+                    <Select
+                      placeholder={itw.note ? itw.note : '请选择'}
+                      disabled={modify && !itw.isModify}
+                      onChange={val => this.onChangeSelect(val, {
+                       fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
+                    >
+                      {
                       itw.optionsRelevance && itw.optionsRelevance.map(iteems => (
                         <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
                       ))
                     }
-                  </Select>
+                    </Select> :
+                    <Select
+                      placeholder={itw.note ? itw.note : '请选择'}
+                      disabled={modify && !itw.isModify}
+                      onChange={val => this.onChangeSelect(val, {
+                      fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
+                    >
+                      {
+                      itw.options && itw.options.map(iteems => (
+                        <Select.Option key={iteems}>{iteems}</Select.Option>
+                      ))
+                    }
+                    </Select>
                 );
               } 
               return ( 

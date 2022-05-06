@@ -594,10 +594,13 @@ renderTreeNodes = data =>
           newForm.filter(it => it.fieldType !== 9).map(itw => {
             let isShow = '';
             if (unShowItems) {
+              console.log(unShowItems,'unShowItems1');
               isShow = !unShowItems.includes(itw.field);
-            } else if(showItem){
+            } else if (showItem) {
+              console.log(showItem,'showItem1');
               isShow = !showItem.includes(itw.field);
             } else {
+              console.log(associatedIds,'associatedIds1');
               isShow = !associatedIds.includes(itw.field);
             }
             // console.log(isShow);
@@ -672,26 +675,39 @@ renderTreeNodes = data =>
                 }
               } else if ((Number(itw.fieldType) === 2 && itw.field.indexOf('self_') > -1 || Number(itw.fieldType) !== 8)) {
                 renderForm = (
-                  <Select
-                    placeholder={itw.note ? itw.note : '请选择'}
-                    disabled={modify && !itw.isModify}
-                    // allowClear
-                    onChange={val => this.onChangeSelect(val, {
-                      fieldType: itw.fieldType, field: itw.field, optionsRelevance: itw.optionsRelevance
-                    })}
-                  >
-                    {
+                  itw.optionsRelevance.length?
+                    <Select
+                      placeholder={itw.note ? itw.note : '请选择'}
+                      disabled={modify && !itw.isModify}
+                      // allowClear
+                      onChange={val => this.onChangeSelect(val, {
+                        fieldType: itw.fieldType, field: itw.field, optionsRelevance: itw.optionsRelevance
+                      })}
+                    >
+                      {
                       itw.optionsRelevance && itw.optionsRelevance.map(iteems => (
                         <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
                       ))
                     }
-                  </Select>
+                    </Select>:
+                    <Select
+                      placeholder={itw.note ? itw.note : '请选择'}
+                      disabled={modify && !itw.isModify}
+                      onChange={val => this.onChangeSelect(val, {
+                      fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
+                    >
+                      {
+                        itw.options && itw.options.map(iteems => (
+                          <Select.Option key={iteems}>{iteems}</Select.Option>
+                        ))
+                      }
+                    </Select>
                 );
               }
               return (
                 <>
                   {
-                    itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
+                    isShow&&itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
                     && itw.fieldType !== 10 ?
                       <Form.Item label={itw.name} >
                         {
