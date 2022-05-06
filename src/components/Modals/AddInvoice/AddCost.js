@@ -1239,7 +1239,7 @@ class AddCost extends Component {
                                       getFieldDecorator(it.field, {
                                         initialValue: initMsg || undefined,
                                         rules: [
-                                          { required: !!(it.isWrite)||isShow, message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
+                                          { required: !!(it.isWrite), message: `请${Number(it.fieldType === 2) ? '选择' : '输入'}${it.name}` },
                                           ...rule,
                                         ]
                                       })(
