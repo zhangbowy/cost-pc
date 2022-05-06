@@ -536,8 +536,10 @@ renderTreeNodes = data =>
     }
     return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
   });
+ 
+  // 选项隐藏时，把此选项的选中置空
 
-
+  
   render () {
     const {
       showField,
@@ -593,10 +595,13 @@ renderTreeNodes = data =>
           newForm.filter(it => it.fieldType !== 9).map(itw => {
             let isShow = '';
             if (unShowItems) {
+              console.log(unShowItems,'unShowItems1');
               isShow = !unShowItems.includes(itw.field);
-            } else if(showItem){
+            } else if (showItem) {
+              console.log(showItem,'showItem1');
               isShow = !showItem.includes(itw.field);
             } else {
+              console.log(associatedIds,'associatedIds1');
               isShow = !associatedIds.includes(itw.field);
             }
             // console.log(isShow);
