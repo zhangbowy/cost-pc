@@ -490,7 +490,7 @@ console.log(keys,'keyskeys');
                 <p>选项</p>
                   {formItems}
                   {
-                    (details.field.indexOf('self_') > -1&&!details.parentId) ?
+                    (details.field.indexOf('self_') > -1&&!details.parentId&&Number(details.fieldType) === 2) ?
                       <div className={style.customize}>
                         <Button
                           icon="plus"

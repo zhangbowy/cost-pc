@@ -44,7 +44,7 @@ class ChangeForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showIds: {},
+      // showIds: {},
     };
   }
 
@@ -441,33 +441,75 @@ class ChangeForm extends Component {
     return arrResult;
   }
 
-    // 要显示的项
-    showItems=(showIds,field)=>{
-      const { associatedIds } = this.props;
-      const showItems = this.flat(Object.values(showIds));// 要显示的项
-      // 要隐藏的项 需要判断当关联的有单选项时的情况，当unShowItems中不存在’self‘时，让要显示的项‘
-      let unShowItems = associatedIds;
-      const newUnShowItems = associatedIds.filter(it => {
-        return !showItems.includes(it);
-      });
-      unShowItems = newUnShowItems;
-      this.setState({ unShowItems });
-      console.log('单选几:', field);
-      // console.log('要显示的对象:', showIds);
-      console.log('要隐藏的:unShowItems', unShowItems);
-  }
+  //   // 要显示的项
+  //   showItems=(showIds,field)=>{
+  //     const { associatedIds } = this.props;
+  //     const showItems = this.flat(Object.values(showIds));// 要显示的项
+  //     // 要隐藏的项 需要判断当关联的有单选项时的情况，当unShowItems中不存在’self‘时，让要显示的项‘
+  //     let unShowItems = associatedIds;
+  //     const newUnShowItems = associatedIds.filter(it => {
+  //       return !showItems.includes(it);
+  //     });
+  //     unShowItems = newUnShowItems;
+  //     this.setState({ unShowItems });
+  //     console.log('单选几:', field);
+  //     // console.log('要显示的对象:', showIds);
+  //     console.log('要隐藏的:unShowItems', unShowItems);
+  // }
   
   onChangeSelect = (val, obj) => {
-    console.log(val,obj.optionsRelevance,'怎么回事');
-    const { showIds } = this.state;
-    // console.log('val:',val, 'field:',obj.field);
+    console.log(val, obj.optionsRelevance, '怎么回事');
+    // 获取新的showIdsObj
+    const { showIdsObj,changeShowIdsObj } = this.props;
+    const keyList = Object.keys(showIdsObj);
+    const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
+    let newAddObj = [];
+    if (newArrObj && newArrObj.length && newArrObj[0].ids && newArrObj[0].ids.length) {
+      newAddObj = newArrObj[0].ids;
+    }
+    function sortFun(newObj, keyField, keys) {
+      for (let i=0; i<keys.length; i++) {
+        const it = keys[i];
+        const arr = newObj[it] ? newObj[it] : showIdsObj[it];
+        const is = arr.filter(im => im !== keyField);
+        
+        if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+            && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
+          Object.assign(newObj, {
+            [it]: [],
+          });
+          sortFun(newObj, it, keys);
+        } else {
+          Object.assign(newObj, {
+            [it]: is
+          });
+        } 
+      }
+      return newObj;
+    }
+  const newObjs = sortFun({}, obj.field, keyList);
+    console.log('新的值', newObjs);
+    if (newAddObj && newAddObj.length) {
+      newAddObj.forEach(it => {
+        if (it) {
+          Object.assign(newObjs, {
+            [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
+          });
+        }
+        
+      });
+    }
+    console.log('最新的数据', newObjs);
+    // 改变showIdsObj
+    changeShowIdsObj(newObjs);
+
     const { onChangeData, expandVos } = this.props;
     const list = [...expandVos];
-    const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
-    // 保存要显示的 showIds
-    this.setState({ showIds: {...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
-      this.showItems(this.state.showIds,obj.field);
-    });
+    // const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
+    // // 保存要显示的 showIds
+    // this.setState({ showIds: {...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
+    //   this.showItems(this.state.showIds,obj.field);
+    // });
     const index = list.findIndex(it => it.field === obj.field);
     let flag = false;
     if (obj.field.indexOf('expand_') > -1 && obj.fieldType !== 8) {
@@ -477,7 +519,6 @@ class ChangeForm extends Component {
       list.splice(index, 1,obj.optionsRelevance? {
         field: obj.field,
         msg: val?val.toString():'',
-        relevantMsg
       }:{
         field: obj.field,
         msg: val?val.toString():'',
@@ -486,7 +527,6 @@ class ChangeForm extends Component {
       list.push(obj.optionsRelevance?{
         field: obj.field,
         msg: val?val.toString():'',
-        relevantMsg
       }:{
         field: obj.field,
         msg: val?val.toString():'',
@@ -500,25 +540,25 @@ class ChangeForm extends Component {
   onRest = () => {
     this.props.form.resetFields();
   }
-// 回显时
+// // 回显时
 
-onShowItems = (newForm,associatedIds) => {
-  let showItems = [];
-  newForm.forEach(item => {
-    if (item.optionsRelevance) {
-      item.optionsRelevance.forEach(it => {
-        if (it.name === item.msg) {
-          showItems.push(it.ids);
-        }
-      });
-    }
-  });
-  showItems = this.flat(showItems);
-  const newUnShowItems = associatedIds.filter(it => {
-    return !showItems.includes(it);
-  });
-  return newUnShowItems;
-};
+// onShowItems = (newForm,associatedIds) => {
+//   let showItems = [];
+//   newForm.forEach(item => {
+//     if (item.optionsRelevance) {
+//       item.optionsRelevance.forEach(it => {
+//         if (it.name === item.msg) {
+//           showItems.push(it.ids);
+//         }
+//       });
+//     }
+//   });
+//   showItems = this.flat(showItems);
+//   const newUnShowItems = associatedIds.filter(it => {
+//     return !showItems.includes(it);
+//   });
+//   return newUnShowItems;
+// };
 
 
 renderTreeNodes = data =>
@@ -563,7 +603,8 @@ renderTreeNodes = data =>
       officeList,
       ossFileUrl,
       allDeptList,
-      associatedIds
+      // associatedIds,
+      showIdsObj
     } = this.props;
     const projectList = treeConvert({
       rootId: 0,
@@ -574,13 +615,14 @@ renderTreeNodes = data =>
       tId: 'value',
       otherKeys: ['type']
     }, usableProject.sort(compare('sort')));
-    const { unShowItems } = this.state;
+    // const { unShowItems } = this.state;
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
     // console.log(associatedIds, unShowItems, newForm, '要隐藏的');
     // 回显时
-    const showItem= this.onShowItems(newForm,associatedIds);
+    // const showItem= this.onShowItems(newForm,associatedIds);
     // console.log(this.onShowItems(newForm,associatedIds),'888888');
+    
     const deptList = modify ? allDeptList : depList;
     const createDeptList = modify ? allDeptList : createDepList;
     return (
@@ -592,16 +634,15 @@ renderTreeNodes = data =>
         {
           newForm && (newForm.length > 0) &&
           newForm.filter(it => it.fieldType !== 9).map(itw => {
-            let isShow = '';
-            if (unShowItems) {
-              console.log(unShowItems,'unShowItems1');
-              isShow = !unShowItems.includes(itw.field);
-            } else if (showItem) {
-              console.log(showItem,'showItem1');
-              isShow = !showItem.includes(itw.field);
+            let isShow =true;
+            if (showIdsObj[itw.field]) {
+              if (showIdsObj[itw.field].length) {
+                isShow = true;
+              } else {
+                isShow = false;
+              }
             } else {
-              console.log(associatedIds,'associatedIds1');
-              isShow = !associatedIds.includes(itw.field);
+             isShow = true;
             }
             // console.log(isShow);
             if (itw.field.indexOf('expand_') > -1 || itw.field.indexOf('self_') > -1) {
@@ -625,7 +666,7 @@ renderTreeNodes = data =>
                   />
                 );
                 rule = [{ max: 128, message: '限制128个字' }];
-              } else if ((Number(itw.fieldType) === 2 && itw.field.indexOf('expand_') > -1) || Number(itw.fieldType) === 8) {
+              } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
                 if (Number(itw.fieldType) === 8) {
                   console.log('render -> itw.msg', itw.msg);
                   initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
@@ -636,8 +677,7 @@ renderTreeNodes = data =>
                     disabled={modify && !itw.isModify}
                     mode={Number(itw.fieldType) === 8 ? 'multiple' : ''}
                     onChange={val => this.onChangeSelect(val, {
-                      fieldType: itw.fieldType, field: itw.field
-                    })}
+                      fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
                   >
                     {
                       itw.options && itw.options.map(iteems => (
@@ -673,37 +713,7 @@ renderTreeNodes = data =>
                     />
                   );
                 }
-              } else if ((Number(itw.fieldType) === 2 && itw.field.indexOf('self_') > -1) || Number(itw.fieldType) !== 8) {
-                renderForm = (
-                  itw.optionsRelevance.length?
-                    <Select
-                      placeholder={itw.note ? itw.note : '请选择'}
-                      disabled={modify && !itw.isModify}
-                      // allowClear
-                      onChange={val => this.onChangeSelect(val, {
-                        fieldType: itw.fieldType, field: itw.field, optionsRelevance: itw.optionsRelevance
-                      })}
-                    >
-                      {
-                      itw.optionsRelevance && itw.optionsRelevance.map(iteems => (
-                        <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
-                      ))
-                    }
-                    </Select>:
-                    <Select
-                      placeholder={itw.note ? itw.note : '请选择'}
-                      disabled={modify && !itw.isModify}
-                      onChange={val => this.onChangeSelect(val, {
-                      fieldType: itw.fieldType, field: itw.field })}
-                    >
-                      {
-                        itw.options && itw.options.map(iteems => (
-                          <Select.Option key={iteems}>{iteems}</Select.Option>
-                        ))
-                      }
-                    </Select>
-                );
-              }
+              } 
               return (
                 <>
                   {

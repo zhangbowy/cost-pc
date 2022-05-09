@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form,  Button,Table,Select} from 'antd';
+import { Form,  Button,Table,Select,Tooltip} from 'antd';
 // import { connect } from 'dva';
 import AssociatePop from '@/components/AssociatePop/';
 import style from './AssociateModal.scss';
@@ -96,6 +96,19 @@ class AssociateModal extends React.PureComponent {
       title: '选项关联',
       dataIndex: 'name',
       width: 200,
+      // 第一列
+      onCell: () => {
+        return {
+          style: {
+            maxWidth: 200,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            lineClamp: 2
+          }
+        };
+      },
+      render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     }, {
       title: '关联组件',
       dataIndex: 'component',

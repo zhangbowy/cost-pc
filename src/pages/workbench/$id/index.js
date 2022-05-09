@@ -99,7 +99,8 @@ class addInvoice extends Component {
       submitParams: {},
       id: '',
       operateType: '', // 操作类型，add: 新增
-      associatedIds: [] // 所有被关联项的集合
+      associatedIds: [],// 所有被关联项的集合
+      showIdsObj: {}, // 是否显示的对象
     };
   }
 
@@ -119,7 +120,14 @@ class addInvoice extends Component {
     }
     this.onShowHandle(params);
   }
-
+// 改变showIdsObj
+  
+  changeShowIdsObj = (val) => {
+    const { showIdsObj } = this.state;
+    this.setState({showIdsObj:Object.assign(showIdsObj, val)});
+    console.log(showIdsObj, '父级最新的showIdsObj');
+  }
+  
   fetchList = ({ templateType, id, operateType, draftId },callback) => {
     const {
       userInfo,
@@ -223,6 +231,38 @@ class addInvoice extends Component {
     });
   }
 
+  // 处理选项关联获取 ShowIdsObj
+  getShowIdsObj=(selfField)=> {
+    const showObj = {};
+    if (selfField && selfField.length) {
+      selfField.forEach(item => {
+        // 处理选项关联
+        if (item.optionsRelevance && item.optionsRelevance.length) {
+          item.optionsRelevance.forEach(i => {
+            if (i.ids && i.ids.length) {
+              const {ids} = i;
+              for (let j = 0; j < ids.length; j++) {
+                if (showObj[ids[j]]) {
+                  Object.assign(showObj, {
+                    [ids[j]]: item.msg !== i.name ? [...showObj[ids[j]]] : [...showObj[ids[j]], item.field],
+                  });
+                } else {
+                  Object.assign(showObj, {
+                    [ids[j]]: item.msg !== i.name ? [] : [item.field],
+                  });
+                }
+              }
+            }
+          });
+        }
+      });
+    } 
+    this.setState({ showIdsObj: showObj }, () => {
+      console.log(this.state.showIdsObj,'showIdsObj999');
+    });
+  }
+
+  // console.log(this.state.details,'最新的details吗');
   onShowHandle = async({ templateType,id, operateType, draftId }) => {
     let detail = this.state.details;
     const {
@@ -250,17 +290,19 @@ class addInvoice extends Component {
       let deptTree = {};
       const { djDetail, dispatch } = this.props;
       console.log('AddInvoice -> onShowHandle -> djDetail666', djDetail);
-      const optionsRelevance = []; // 所有关联项
-      const optionsRelevanceIds = []; // 所有关联项的ids集合
-      djDetail.selfField.forEach(item => {
-        optionsRelevance.push(...item.optionsRelevance);
-      });
-      optionsRelevance.forEach(item => {
-        optionsRelevanceIds.push(...item.ids);
-      });
-      const associatedIds = [...new Set(optionsRelevanceIds)];
-      console.log(associatedIds, 'associatedIds');
-      this.setState({ associatedIds });
+
+      // const optionsRelevance = []; // 所有关联项
+      // const optionsRelevanceIds = []; // 所有关联项的ids集合
+      // djDetail.selfField.forEach(item => {
+      //   optionsRelevance.push(...item.optionsRelevance);
+      // });
+      // optionsRelevance.forEach(item => {
+      //   optionsRelevanceIds.push(...item.ids);
+      // });
+      // const associatedIds = [...new Set(optionsRelevanceIds)];
+      // console.log(associatedIds, 'associatedIds');
+      // this.setState({ associatedIds });
+
       const arrUrl = [{
         url: 'global/users',
         payload: {}
@@ -332,6 +374,8 @@ class addInvoice extends Component {
           }
         }
         if (!contentJson) {
+          // 处理选项关联
+          this.getShowIdsObj(djDetail.selfField);
           let costSelect = localStorage.getItem('selectCost') || '';
           // localStorage.removeItem('selectCost');
           this.setState({
@@ -396,6 +440,8 @@ class addInvoice extends Component {
             });
           }
           this.onInit(contents, djDetails);
+          // 处理选项关联 (编辑时)
+          this.getShowIdsObj(contents.expandSubmitFieldVos);
           await this.setState({
             showField: obj,
             newshowField: djDetails.showField,
@@ -423,7 +469,7 @@ class addInvoice extends Component {
   }
 
   // 编辑初始化数据
-  onInit = async(detail, djDetails) => {
+  onInit = async (detail, djDetails) => {
     // const { templateType } = detail;
     const expandField = [];
     const { userInfo } = this.props;
@@ -1578,7 +1624,8 @@ class addInvoice extends Component {
       hisAliTrip,
       exceedVisible,
       id,
-      associatedIds
+      associatedIds,
+      showIdsObj
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1632,6 +1679,8 @@ class addInvoice extends Component {
               onChangeOffice={this.onChangeOffice}
               checkOffice={this.checkOffice}
               associatedIds={associatedIds}
+              showIdsObj={showIdsObj}
+              changeShowIdsObj={this.changeShowIdsObj}
             />
             {
                 (!templateType ||

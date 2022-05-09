@@ -82,8 +82,9 @@ class AddCost extends Component {
       fileUrl: [],
       officeId: '',
       ossFileUrl: [],
-      showIds: {},
+      // showIds: {},
       // treeExpandedKeys: [],
+      showIdsObj: {}, // 是否显示的对象
     };
   }
 
@@ -145,7 +146,7 @@ class AddCost extends Component {
     });
   }
 
-  onShow = async() => {
+  onShow = async () => {
     const { costType, isDelete4Category, officeId, isShowToast, templateType } = this.props;
     console.log('AddCost -> onShow -> officeId', costType);
     // let newOfficeId = officeId;
@@ -685,6 +686,7 @@ class AddCost extends Component {
   onChange = (val, types, expand) => {
     console.log('AddCost -> onChange -> expand', expand);
     let detail = this.state.details;
+    const showObj = {};
     const showFields = {};
     let costDate = 0;
     let project = {};
@@ -754,6 +756,34 @@ class AddCost extends Component {
           expandField: newArr,
         });
       }
+      const { expandField } = this.state;
+      console.log(this.state.expandField, 'expandField');
+      if (expandField&&expandField.length) {
+        expandField.forEach(item => {
+          // 处理选项关联
+          if (item.optionsRelevance && item.optionsRelevance.length) {
+            item.optionsRelevance.forEach(i => {
+              if (i.ids && i.ids.length) {
+                const {ids} = i;
+                for (let j = 0; j < ids.length; j++) {
+                  if (showObj[ids[j]]) {
+                    Object.assign(showObj, {
+                      [ids[j]]: item.msg !== i.name ? [...showObj[ids[j]]] : [...showObj[ids[j]], item.field],
+                    });
+                  } else {
+                    Object.assign(showObj, {
+                      [ids[j]]: item.msg !== i.name ? [] : [item.field],
+                    });
+                  }
+                }
+              }
+            });
+          }
+        });
+      }
+      this.setState({ showIdsObj: showObj }, () => {
+        console.log(this.state.showIdsObj,'showIdsObj999');
+      });
       this.setState({
         showField: showFields,
         newShowField: lbDetail.showField,
@@ -905,77 +935,62 @@ class AddCost extends Component {
     return arrResult;
   }
   
-    // 要显示的项
-    showItems=(showIds,field)=>{
-      const associatedIds = this.getAssociatedIds();
-      const showItems = this.flat(Object.values(showIds));// 要显示的项
-      // 要隐藏的项 需要判断当关联的有单选项时的情况，当unShowItems中不存在’self‘时，让要显示的项‘
-      let unShowItems = associatedIds;
-      const newUnShowItems = associatedIds.filter(it => {
-        return !showItems.includes(it);
-      });
-      unShowItems = newUnShowItems;
-      this.setState({ unShowItems });
-      console.log('单选几:', field);
-      // console.log('要显示的对象:', showIds);
-      console.log('要隐藏的:unShowItems', unShowItems);
-    }
     
     onChangeSelect = (val, obj) => {
       console.log(val, obj.optionsRelevance, '怎么回事');
-      console.log(this.state.details,'66666');
-      const { showIds } = this.state;
+      // const { showIds } = this.state;
       // const { onChangeData, expandVos } = this.props;
       // const list = [...expandVos];
-      const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
-      // 保存要显示的 showIds
-      this.setState({ showIds: { ...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
-        this.showItems(this.state.showIds,obj.field);
-      });
+      // const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
+      // // 保存要显示的 showIds
+      // this.setState({ showIds: { ...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
+      //   this.showItems(this.state.showIds,obj.field);
+      // });
+ // 获取新的showIdsObj
+ const { showIdsObj } = this.state;
+ const keyList = Object.keys(showIdsObj);
+ const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
+ let newAddObj = [];
+ if (newArrObj && newArrObj.length && newArrObj[0].ids && newArrObj[0].ids.length) {
+   newAddObj = newArrObj[0].ids;
+ }
+ function sortFun(newObj, keyField, keys) {
+   for (let i=0; i<keys.length; i++) {
+     const it = keys[i];
+     const arr = newObj[it] ? newObj[it] : showIdsObj[it];
+     const is = arr.filter(im => im !== keyField);
+     
+     if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+         && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
+       Object.assign(newObj, {
+         [it]: [],
+       });
+       sortFun(newObj, it, keys);
+     } else {
+       Object.assign(newObj, {
+         [it]: is
+       });
+     } 
+   }
+   return newObj;
+ }
+ const newObjs = sortFun({}, obj.field, keyList);
+ console.log('新的值', newObjs);
+ if (newAddObj && newAddObj.length) {
+   newAddObj.forEach(it => {
+     if (it) {
+       Object.assign(newObjs, {
+         [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
+       });
+     }
+     
+   });
+ }
+ console.log('最新的数据', newObjs);
+ // 改变showIdsObj
+ this.setState({showIdsObj:Object.assign(showIdsObj, newObjs)});
     }
   
-  // 回显
-    onShowItems = (newForm,associatedIds) => {
-      let showItems = [];
-      console.log(newForm,'newForm');
-      newForm.forEach(item => {
-        if (item.optionsRelevance) {
-          item.optionsRelevance.forEach(it => {
-            if (it.name === item.msg) {
-              showItems.push(it.ids);
-            }
-          });
-        }
-      });
-      showItems = this.flat(showItems);
-      const newUnShowItems = associatedIds.filter(it => {
-        return !showItems.includes(it);
-      });
-      return newUnShowItems;
-    }
-
-  // 获取 associatedIds
-  getAssociatedIds = () => {
-    const {
-      newShowField,
-      expandField,
-    } = this.state;
-    const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
-    const newRenderField = handleProduction(oldRenderField);
-    const optionsRelevance = []; // 所有关联项
-    const optionsRelevanceIds = []; // 所有关联项的ids集合
-    newRenderField.forEach(item => {
-      if (item.optionsRelevance) {
-        optionsRelevance.push(...item.optionsRelevance);
-      }
-    });
-    optionsRelevance.forEach(item => {
-      optionsRelevanceIds.push(...item.ids);
-    });
-    const associatedIds = [...new Set(optionsRelevanceIds)];
-    console.log(associatedIds, 'associatedIds');
-    return associatedIds;
-    }
   
   render() {
     const {
@@ -1011,26 +1026,27 @@ class AddCost extends Component {
       fileUrl,
       officeId,
       ossFileUrl,
+      showIdsObj
     } = this.state;
-    const { unShowItems } = this.state;
+    // const { unShowItems } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
     
-    const optionsRelevance = []; // 所有关联项
-    const optionsRelevanceIds = []; // 所有关联项的ids集合
-    newRenderField.forEach(item => {
-      if (item.optionsRelevance) {
-        optionsRelevance.push(...item.optionsRelevance);
-      }
-    });
-    optionsRelevance.forEach(item => {
-      optionsRelevanceIds.push(...item.ids);
-    });
-    const associatedIds = [...new Set(optionsRelevanceIds)];
-    console.log(associatedIds,'associatedIds支出');
+    // const optionsRelevance = []; // 所有关联项
+    // const optionsRelevanceIds = []; // 所有关联项的ids集合
+    // newRenderField.forEach(item => {
+    //   if (item.optionsRelevance) {
+    //     optionsRelevance.push(...item.optionsRelevance);
+    //   }
+    // });
+    // optionsRelevance.forEach(item => {
+    //   optionsRelevanceIds.push(...item.ids);
+    // });
+    // const associatedIds = [...new Set(optionsRelevanceIds)];
+    // console.log(associatedIds,'associatedIds支出');
     // 回显时
-    const showItem= this.onShowItems(newRenderField,associatedIds);
-    console.log(showItem,'showItem');
+    // const showItem= this.onShowItems(newRenderField,associatedIds);
+    // console.log(showItem,'showItem');
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -1144,15 +1160,17 @@ class AddCost extends Component {
                 {
                   newRenderField && (newRenderField.length > 0) &&
                   newRenderField.filter(it => it.fieldType !== 9).map(it => {
-                    let isShow = '';
-                    if (unShowItems) {
-                      isShow = !unShowItems.includes(it.field);
-                    } else if(showItem){
-                      isShow = !showItem.includes(it.field);
+                    let isShow =true;
+                    if (showIdsObj[it.field]) {
+                      if (showIdsObj[it.field].length) {
+                        isShow = true;
+                      } else {
+                        isShow = false;
+                      }
                     } else {
-                      isShow = !associatedIds.includes(it.field);
+                     isShow = true;
                     }
-                    // console.log(isShow);
+                    // console.log(isShow,'999');
                     if (it.field && (it.field.indexOf('expand_') > -1 || it.field.indexOf('self_') > -1)) {
                       let renderForm = null;
                       let rule = [];
@@ -1169,15 +1187,18 @@ class AddCost extends Component {
                           disabled={modify && !it.isModify}
                         />);
                         rule = [{ max: 128, message: '限制128个字' }];
-                      } else if((Number(it.fieldType) === 2&&it.field.indexOf('expand_') > -1)|| Number(it.fieldType) === 8) {
+                      } else if(Number(it.fieldType) === 2 || Number(it.fieldType) === 8) {
                         if (Number(it.fieldType) === 8) {
-                          initMsg = it.msg ? it.msg.split(',') : [];
+                          console.log('render -> itw.msg', it.msg);
+                          initMsg = it.msg && !(it.msg instanceof Array) ? it.msg.split(',') : [];
                         }
                         renderForm = (
                           <Select
                             placeholder={it.note ? it.note : '请选择'}
                             disabled={modify && !it.isModify}
                             mode={Number(it.fieldType) === 8 ? 'multiple' : ''}
+                            onChange={val => this.onChangeSelect(val, {
+                              fieldType: it.fieldType, field: it.field,optionsRelevance:it.optionsRelevance })}
                           >
                             {
                               it.options && it.options.map(iteems => (
@@ -1213,43 +1234,13 @@ class AddCost extends Component {
                             />
                           );
                         }
-                      }else if((Number(it.fieldType) === 2&&it.field.indexOf('self_') > -1)|| Number(it.fieldType) !==8) {
-                        renderForm = (
-                          it.optionsRelevance.length ?
-                            <Select
-                              placeholder={it.note ? it.note : '请选择'}
-                              disabled={modify && !it.isModify}
-                              // allowClear
-                              onChange={val => this.onChangeSelect(val, {
-                                fieldType: it.fieldType, field: it.field, optionsRelevance: it.optionsRelevance
-                              })}
-                            >
-                              {
-                                it.optionsRelevance && it.optionsRelevance.map(iteems => (
-                                  <Select.Option key={iteems.name}>{iteems.name}</Select.Option>
-                                ))
-                              }
-                            </Select>:
-                            <Select
-                              placeholder={it.note ? it.note : '请选择'}
-                              disabled={modify && !it.isModify}
-                              onChange={val => this.onChangeSelect(val, {
-                              fieldType: it.fieldType, field: it.field })}
-                            >
-                              {
-                                it.options && it.options.map(iteems => (
-                                  <Select.Option key={iteems}>{iteems}</Select.Option>
-                              ))
-                              }
-                            </Select>
-                        );
-                      } 
+                      }
                         return (
                           <>
                             {
                               isShow&&it.status ?
                                 <Col span={12}>
-                                  <Form.Item label={it.name} {...formItemLayout}>
+                                  <Form.Item label={(it.name.length>8)&&(Number(it.fieldType) === 2 || Number(it.fieldType) === 8)?<Tooltip placement="top" title={it.name}>{it.name.replace(it.name.substr(7,it.name.length-7),'···')}</Tooltip>:it.name} {...formItemLayout}>
                                     {
                                       getFieldDecorator(it.field, {
                                         initialValue: initMsg || undefined,
