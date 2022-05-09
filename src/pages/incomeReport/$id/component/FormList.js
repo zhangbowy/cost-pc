@@ -500,8 +500,31 @@ class ChangeForm extends Component {
       });
     }
     console.log('最新的数据', newObjs);
-    // 改变showIdsObj
-    changeShowIdsObj(newObjs);
+    // 如果之前的选项选择了东西，切换后就清除
+    // console.log(Object.keys(newObjs),'666');
+    const clearArr = [];
+    Object.keys(newObjs).forEach(key => {
+      if (!newObjs[key].length) {
+        if (key==='imgUrl'||key==='fileUrl'||key==='ossFileUrl') {
+          this.props.onChangeData({
+            [key]:[],
+          });
+        }
+        console.log(key, 'key888');
+        clearArr.push(`['${key}']`);
+      }
+    });
+    const clearObj = {};
+    clearArr.forEach(its => {
+      clearObj[its] = undefined;
+    });
+    console.log(clearObj, '666');
+    this.props.form.setFieldsValue({
+      ...clearObj
+    }, () => { 
+      // 改变showIdsObj
+      changeShowIdsObj(newObjs);
+    });  
 
     const { onChangeData, expandVos } = this.props;
     const list = [...expandVos];

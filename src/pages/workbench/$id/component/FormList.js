@@ -491,8 +491,13 @@ class ChangeForm extends Component {
     const clearArr = [];
     Object.keys(newObjs).forEach(key => {
       if (!newObjs[key].length) {
+        if (key==='imgUrl'||key==='fileUrl'||key==='ossFileUrl') {
+          this.props.onChangeData({
+            [key]:[],
+          });
+        }
         console.log(key, 'key888');
-        clearArr.push(key);
+        clearArr.push(`['${key}']`);
       }
     });
     const clearObj = {};
@@ -500,15 +505,12 @@ class ChangeForm extends Component {
       clearObj[its] = undefined;
     });
     console.log(clearObj, '666');
-    console.log(this.props.form.setFieldsValue);
     this.props.form.setFieldsValue({
-      'self_Ib2l2uak66e1': undefined
+         ...clearObj
     }, () => { 
+      // 改变showIdsObj
       changeShowIdsObj(newObjs);
-    });
-    
-    // 改变showIdsObj
-   
+    });  
     const { onChangeData, expandVos} = this.props;
     const list = [...expandVos];
     const index = list.findIndex(it => it.field === obj.field);

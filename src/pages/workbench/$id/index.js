@@ -441,7 +441,7 @@ class addInvoice extends Component {
           }
           this.onInit(contents, djDetails);
           // 处理选项关联 (编辑时)
-          this.getShowIdsObj(contents.expandSubmitFieldVos);
+          this.getShowIdsObj(contents.selfSubmitFieldVos);
           await this.setState({
             showField: obj,
             newshowField: djDetails.showField,

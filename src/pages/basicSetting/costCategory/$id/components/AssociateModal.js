@@ -86,7 +86,7 @@ class AssociateModal extends React.PureComponent {
     console.log(valueList,'要拿到最新的 valueList');
     const defaultList =  spacialCenter || defaultString;// 不能被关联的
     newAssociateList = associateList.filter(item => {
-          return !defaultList.includes(item.field)&&item.fieldType!=='9'&&item.fieldType!==9;
+          return !defaultList.includes(item.field)&&item.fieldType!==3&&item.fieldType!=='3'&&item.fieldType!=='10'&&item.fieldType!==10;
     });
     console.log(newAssociateList,'可被关联的选项 newAssociateList');
     const { Option } = Select;

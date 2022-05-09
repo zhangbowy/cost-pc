@@ -935,17 +935,8 @@ class AddCost extends Component {
     return arrResult;
   }
   
-    
     onChangeSelect = (val, obj) => {
-      console.log(val, obj.optionsRelevance, '怎么回事');
-      // const { showIds } = this.state;
-      // const { onChangeData, expandVos } = this.props;
-      // const list = [...expandVos];
-      // const relevantMsg =obj.optionsRelevance&&obj.fieldType!==8? obj.optionsRelevance.filter(it => it.name === val)[0]:{};
-      // // 保存要显示的 showIds
-      // this.setState({ showIds: { ...Object.assign(showIds, { [obj.field]:relevantMsg&&obj.fieldType!==8?relevantMsg.ids:[] }) } }, () => {
-      //   this.showItems(this.state.showIds,obj.field);
-      // });
+  console.log(val, obj.optionsRelevance, '怎么回事');
  // 获取新的showIdsObj
  const { showIdsObj } = this.state;
  const keyList = Object.keys(showIdsObj);
@@ -987,8 +978,33 @@ class AddCost extends Component {
    });
  }
  console.log('最新的数据', newObjs);
- // 改变showIdsObj
- this.setState({showIdsObj:Object.assign(showIdsObj, newObjs)});
+  // 如果之前的选项选择了东西，切换后就清除
+    // console.log(Object.keys(newObjs),'666');
+    const clearArr = [];
+    Object.keys(newObjs).forEach(key => {
+      if (!newObjs[key].length) {
+        if (key === 'imgUrl' || key === 'fileUrl' || key === 'ossFileUrl' || key === 'happenTime') {
+          this.setState({
+            [key]: [],
+          });
+          this.props.form.setFieldsValue({
+            '[time]':undefined,
+          });
+        }
+        clearArr.push(`['${key}']`);
+      }
+    });
+    const clearObj = {};
+      clearArr.forEach(its => {
+      clearObj[its] = undefined;
+    });
+    console.log(clearObj, '666');
+    this.props.form.setFieldsValue({
+         ...clearObj
+    }, () => { 
+    // 改变showIdsObj
+   this.setState({showIdsObj:Object.assign(showIdsObj, newObjs)});
+    });  
     }
   
   
