@@ -20,4 +20,10 @@
   margin: 24px 0 44px;
 }
 
-.opt-content {}
+.optContent {
+  :global {
+    .ant-table {
+      margin-top: 12px;
+    }
+  }
+}

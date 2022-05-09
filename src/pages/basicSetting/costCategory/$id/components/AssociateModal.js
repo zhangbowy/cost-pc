@@ -131,8 +131,6 @@ class AssociateModal extends React.PureComponent {
                   mode="multiple"
                   allowClear
                   showArrow
-                //   menuItemSelectedIcon={<Icon type="check-square" theme="filled" />}
-                //   dropdownClassName='opt-content'    
                 >
                   {newAssociateList.map(item => (
                     <Option key={item.field} disabled={item.field===selectField.field} value={item.field}>{item.name}</Option>
@@ -170,6 +168,7 @@ class AssociateModal extends React.PureComponent {
                 dataSource={valueList}
                 pagination={false}
                 rowKey={row => row.id}
+                className={style.optContent}
               />
             </div>
           </>
