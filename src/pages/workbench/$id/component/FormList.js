@@ -442,7 +442,7 @@ class ChangeForm extends Component {
 
   onChangeSelect = (val, obj) => {
     // this.props.form.setFieldsValue({ 'projectId': null })
-    console.log(val,obj.optionsRelevance,'怎么回事');
+    console.log(val,obj,'怎么回事');
   // 获取新的showIdsObj
     const { showIdsObj,changeShowIdsObj } = this.props;
     const keyList = Object.keys(showIdsObj);
@@ -485,8 +485,29 @@ class ChangeForm extends Component {
     }
   
     console.log('最新的数据', newObjs);
+
+    // 如果之前的选项选择了东西，切换后就清除
+    // console.log(Object.keys(newObjs),'666');
+    const clearArr = [];
+    Object.keys(newObjs).forEach(key => {
+      if (!newObjs[key].length) {
+        console.log(key, 'key888');
+        clearArr.push(key);
+      }
+    });
+    const clearObj = {};
+    clearArr.forEach(its => {
+      clearObj[its] = undefined;
+    });
+    console.log(clearObj, '666');
+    console.log(this.props.form.setFieldsValue);
+    this.props.form.setFieldsValue({
+      'self_Ib2l2uak66e1': undefined
+    }, () => { 
+      changeShowIdsObj(newObjs);
+    });
+    
     // 改变showIdsObj
-    changeShowIdsObj(newObjs);
    
     const { onChangeData, expandVos} = this.props;
     const list = [...expandVos];
@@ -579,7 +600,7 @@ renderTreeNodes = data =>
     }, usableProject.sort(compare('sort')));
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
-    // console.log( details,showField,expandField,newshowField, newForm,'details,showField,expandField,newshowField,newForm');
+    console.log( newForm,'details,showField,expandField,newshowField,newForm');
     const deptList = modify ? allDeptList : depList;
     const createDeptList = modify ? allDeptList : createDepList;
     return (

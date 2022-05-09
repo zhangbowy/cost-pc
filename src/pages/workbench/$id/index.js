@@ -908,6 +908,11 @@ class addInvoice extends Component {
   checkStandard = (costDetailsVo, flag) => {
     const { id } = this.props;
     const { users, details } = this.state;
+    console.log('改单了吗');// getShowIdsObj
+    if (details.selfSubmitFieldVos && details.selfSubmitFieldVos.length) {
+      console.log('调用了吗');
+      this.getShowIdsObj(details.selfSubmitFieldVos);
+    };
     const newCostDetailsVo = flag ? costDetailsVo : defaultFunc.handleCost(costDetailsVo, id);
     return new Promise((resolve) => {
       this.props.dispatch({
@@ -919,12 +924,12 @@ class addInvoice extends Component {
           deptId: details.deptId,
         }
       }).then(() => {
-        const { checkStandard, checkStandMsg } = this.props;
+        const { checkStandard, checkStandMsg} = this.props;
         let newArr = [];
         let error = '';
         if (!flag) {
           if (checkStandard && checkStandard.second) {
-            newArr = defaultFunc.handleExceed(newCostDetailsVo,checkStandard);
+            newArr = defaultFunc.handleExceed(newCostDetailsVo, checkStandard);
           } else if (checkStandMsg) {
             newArr = newCostDetailsVo;
             error = true;
