@@ -306,23 +306,29 @@ class DataPush extends PureComponent {
           },
           children: (
             <div className={style.tableForm}>
-              <span style={{display: 'flex', height: '32px', alignItems: 'center'}}>每
-                <Form.Item>
-                  <Select
-                    style={{ width: '80px' }}
-                    className="m-l-8 m-r-8"
-                    onChange={val => this.onChange(val, record, 'pushWeek')}
-                    value={record.pushWeek ? `${record.pushWeek}` : 'Mon'}
-                  >
-                    {
-                      weekLists.map(it => (
-                        <Select.Option key={it.key}>{it.name}</Select.Option>
-                      ))
-                    }
-                  </Select>
-                </Form.Item>
-                早上
-              </span>
+              {
+                record.id === 'weeklyReportSetting' ?
+                  <span style={{display: 'flex', height: '32px', alignItems: 'center'}}>每
+                    <Form.Item>
+                      <Select
+                        style={{ width: '80px' }}
+                        className="m-l-8 m-r-8"
+                        onChange={val => this.onChange(val, record, 'pushWeek')}
+                        value={record.pushWeek ? `${record.pushWeek}` : 'Mon'}
+                      >
+                        {
+                          weekLists.map(it => (
+                            <Select.Option key={it.key}>{it.name}</Select.Option>
+                          ))
+                        }
+                      </Select>
+                    </Form.Item>
+                    早上
+                  </span>
+                  :
+                  <span>每月1号</span>
+              }
+
               <Form.Item>
                 <Select
                   style={{ width: '80px' }}
