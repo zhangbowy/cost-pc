@@ -5,7 +5,7 @@ import AssociatePop from '@/components/AssociatePop/';
 import style from './AssociateModal.scss';
 import { defaultString } from '@/utils/constants';
 
-let newAssociateList = [];
+// let newAssociateList = [];
 @Form.create()
 class AssociateModal extends React.PureComponent {
   constructor(props) {
@@ -14,13 +14,16 @@ class AssociateModal extends React.PureComponent {
       visible: false,
       // eslint-disable-next-line react/no-unused-state
       optionsRelevance: [],
+      newAssociateList: [],
+      disabledArr: [],
     };
   };
 
   // 显示弹窗
   // eslint-disable-next-line no-shadow
-  onShow = (selectField, newAssociateList) => {
-    const { getValueList, valueList } = this.props;
+  onShow = (selectField) => {
+    console.log('🚀 ~ file: AssociateModal.js ~ line 23 ~ AssociateModal ~ selectField', selectField);
+    const { getValueList, valueList ,associateList, spacialCenter } = this.props;
     const arrs = [];
     getValueList().forEach(item => {
      if (item.name !== '') {
@@ -29,6 +32,14 @@ class AssociateModal extends React.PureComponent {
     });
     // 选项 name为空就返回
     if (arrs.length&&arrs.length !== valueList.length) return;
+    const defaultList =  spacialCenter || defaultString;// 不能被关联的
+    const newAssociateList = associateList.filter(item => {
+      return !defaultList.includes(item.field)&&item.fieldType!==3&&item.fieldType!=='3'&&item.fieldType!==9&&item.fieldType!=='9'&&item.fieldType!=='10'&&item.fieldType!==10;
+    });
+    // 所有的循环的禁止字段
+    const newDisabled = this.getNewList([], newAssociateList, selectField.field) || [];
+    console.log('🚀 ~ file: AssociateModal.js ~ line 40 ~ AssociateModal ~ newArrList', newDisabled);
+
     const obj = {};
     if (selectField.optionsRelevance) {
        selectField.optionsRelevance.forEach(item => {
@@ -43,8 +54,27 @@ class AssociateModal extends React.PureComponent {
     }
     // 调用父级 更改valueList
     getValueList();
-    this.setState({ visible: true, obj });
+    // 把自己加上去
+    newDisabled.push(selectField.field);
+    this.setState({ visible: true, obj, newAssociateList, disabledArr: newDisabled });
   };
+
+  getNewList = (arrs, list, s) => {
+    for (let j =0; j< list.length; j++) {
+      const item = list[j];
+      if (item.optionsRelevance && item.optionsRelevance.length) {
+        for(let i=0; i< item.optionsRelevance.length; i++) {
+          const { ids } = item.optionsRelevance[i];
+          if (ids && ids.length && ids.includes(s)) {
+            arrs.push(item.field);
+            console.log('🚀 ~ file: AssociateModal.js ~ line 68 ~ AssociateModal ~ newArr', arrs);
+            this.getNewList(arrs, list, item.field);
+          }
+        }
+      }
+    }
+    return arrs;
+  }
 
   // 关闭/取消等
   onCancel = () => {
@@ -87,17 +117,13 @@ class AssociateModal extends React.PureComponent {
       children,
       // form: { getFieldDecorator },
       loading,
-      associateList,
       selectField, // 当前单选
       form: { getFieldDecorator },
-      spacialCenter,
       valueList
     } = this.props;
+    const { newAssociateList, disabledArr } = this.state;
     console.log(valueList,'要拿到最新的 valueList');
-    const defaultList =  spacialCenter || defaultString;// 不能被关联的
-    newAssociateList = associateList.filter(item => {
-          return !defaultList.includes(item.field)&&item.fieldType!==3&&item.fieldType!=='3'&&item.fieldType!==9&&item.fieldType!=='9'&&item.fieldType!=='10'&&item.fieldType!==10;
-    });
+
     console.log(newAssociateList,'可被关联的选项 newAssociateList');
     const { Option } = Select;
     const { visible,obj} = this.state;
@@ -123,8 +149,8 @@ class AssociateModal extends React.PureComponent {
       title: '关联组件',
       dataIndex: 'component',
       width: 513,
-      // 
-      render: (_, record) => ( 
+      //
+      render: (_, record) => (
         <Form>
           <Form.Item
             key={record.id}
@@ -143,11 +169,11 @@ class AssociateModal extends React.PureComponent {
                   showArrow
                 >
                   {newAssociateList.map(item => (
-                    <Option key={item.field} disabled={item.field===selectField.field} value={item.field}>{item.name}</Option>
+                    <Option key={item.field} disabled={disabledArr.includes(item.field)} value={item.field}>{item.name}</Option>
               ))}
                 </Select>
               )
-              
+
           // )
         }
           </Form.Item>
