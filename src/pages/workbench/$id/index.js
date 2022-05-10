@@ -926,14 +926,14 @@ class addInvoice extends Component {
   }
 
   checkStandard = (costDetailsVo, flag) => {
-    const { id,djDetails } = this.props;
+    const { id} = this.props;
     const { users, details } = this.state;
-    console.log('改单了吗');// getShowIdsObj
-    if (details.selfSubmitFieldVos && details.selfSubmitFieldVos.length) {
-      console.log('调用了吗');
-      // 改单时
-      this.getShowIdsObj(details.selfSubmitFieldVo,djDetails.selfField);
-    };
+    // console.log('改单了吗');// getShowIdsObj
+    // if (details.selfSubmitFieldVos && details.selfSubmitFieldVos.length) {
+    //   console.log('调用了吗');
+    //   // 改单时
+    //   this.getShowIdsObj(details.selfSubmitFieldVo,djDetails.selfField);
+    // };
     const newCostDetailsVo = flag ? costDetailsVo : defaultFunc.handleCost(costDetailsVo, id);
     return new Promise((resolve) => {
       this.props.dispatch({
