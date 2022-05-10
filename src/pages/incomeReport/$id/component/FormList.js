@@ -460,7 +460,7 @@ class ChangeForm extends Component {
   onChangeSelect = (val, obj) => {
     console.log(val, obj.optionsRelevance, '怎么回事');
     // 获取新的showIdsObj
-    const { showIdsObj,changeShowIdsObj } = this.props;
+    const { showIdsObj,changeShowIdsObj,expandField,changeExpandField } = this.props;
     const keyList = Object.keys(showIdsObj);
     const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
     let newAddObj = [];
@@ -503,6 +503,7 @@ class ChangeForm extends Component {
     // 如果之前的选项选择了东西，切换后就清除
     // console.log(Object.keys(newObjs),'666');
     const clearArr = [];
+    const clearShowArr = [];
     Object.keys(newObjs).forEach(key => {
       if (!newObjs[key].length) {
         if (key==='imgUrl'||key==='fileUrl'||key==='ossFileUrl') {
@@ -512,8 +513,17 @@ class ChangeForm extends Component {
         }
         console.log(key, 'key888');
         clearArr.push(`['${key}']`);
+        clearShowArr.push(key);
       }
     });
+      // 回显编辑时让单选项msg置空
+      expandField.forEach(items => {
+        if (clearShowArr.length && clearShowArr.includes(items.field)) {
+          // eslint-disable-next-line no-param-reassign
+          items.msg = '';
+        }
+      });
+        // 清除选项
     const clearObj = {};
     clearArr.forEach(its => {
       clearObj[its] = undefined;
@@ -524,6 +534,7 @@ class ChangeForm extends Component {
     }, () => { 
       // 改变showIdsObj
       changeShowIdsObj(newObjs);
+      changeExpandField(expandField);
     });  
 
     const { onChangeData, expandVos } = this.props;

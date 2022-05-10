@@ -935,10 +935,10 @@ class AddCost extends Component {
     return arrResult;
   }
   
-    onChangeSelect = (val, obj) => {
+  onChangeSelect = (val, obj) => {
   console.log(val, obj.optionsRelevance, '怎么回事');
  // 获取新的showIdsObj
- const { showIdsObj } = this.state;
+ const { showIdsObj, expandField } = this.state;
  const keyList = Object.keys(showIdsObj);
  const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
  let newAddObj = [];
@@ -981,9 +981,10 @@ class AddCost extends Component {
   // 如果之前的选项选择了东西，切换后就清除
     // console.log(Object.keys(newObjs),'666');
     const clearArr = [];
+    const clearShowArr = [];
     Object.keys(newObjs).forEach(key => {
       if (!newObjs[key].length) {
-        if (key === 'imgUrl' || key === 'fileUrl' || key === 'ossFileUrl' || key === 'happenTime') {
+        if (key === 'imgUrl' || key === 'fileUrl' || key === 'ossFileUrl') {
           this.setState({
             [key]: [],
           });
@@ -992,8 +993,16 @@ class AddCost extends Component {
           });
         }
         clearArr.push(`['${key}']`);
+        clearShowArr.push(key);
       }
     });
+    // 回显编辑时让单选项msg置空
+    expandField.forEach(item => {
+      if (clearShowArr.length && clearShowArr.includes(item.field)) {
+        item.msg = '';
+      }
+    });
+    // 清除选项
     const clearObj = {};
       clearArr.forEach(its => {
       clearObj[its] = undefined;
@@ -1002,8 +1011,9 @@ class AddCost extends Component {
     this.props.form.setFieldsValue({
          ...clearObj
     }, () => { 
-    // 改变showIdsObj
-   this.setState({showIdsObj:Object.assign(showIdsObj, newObjs)});
+      this.setState({ showIdsObj: Object.assign(showIdsObj, newObjs), expandField }, () => {
+        console.log(expandField, 'expandField9999');
+   });
     });  
     }
   

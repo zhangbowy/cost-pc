@@ -149,6 +149,7 @@ class Right extends PureComponent {
   }
 
   onChangeMore = (e) => {
+    console.log(e,'e是什么');
     const { details } = this.state;
     const { selectList, changeDragId, incomeNoModify } = this.props;
     if (e.target.checked) {
@@ -166,7 +167,8 @@ class Right extends PureComponent {
           const arr = this.onChangeChild(selectList, details.field, {
             ...details,
             ...items,
-            field: newField
+            field: newField,
+            isCanAssociate:false
           });
           this.setState({
             details: {
@@ -234,6 +236,18 @@ class Right extends PureComponent {
       }
     });
     this.props.onChange(arr);
+  }
+
+  getValueList = () => {
+    // const valLists = this.props.form.getFieldsValue();
+    const valueObj = this.props.form.getFieldsValue();
+    const valueList = this.props.form.getFieldsValue().keys;
+    valueList.forEach(item => {
+      // eslint-disable-next-line no-param-reassign
+      item.name = valueObj[item.id];
+    });
+    this.setState({ list: valueList });
+    return valueList;
   }
 
   onChangeChild = (oldList, field, newVal) => {
@@ -317,7 +331,7 @@ class Right extends PureComponent {
 
   render() {
     const { details, list } = this.state;
-    console.log(list,'listlistlistlist');
+    console.log(list, 'listlistlistlist');
     const { type, templateType, isModifyInvoice, operateType, incomeNoModify,selectList } = this.props;
     console.log('Right -> render -> isModifyInvoice', details);
 
@@ -507,6 +521,7 @@ console.log(keys,'keyskeys');
                           selectField={details}
                           changeDetails={this.changeDetails}
                           spacialCenter={spacialCenter}
+                          getValueList={this.getValueList}
                         >
                           <Button
                             style={{  width: '121px',flex:1 }}

@@ -13,13 +13,22 @@ class AssociateModal extends React.PureComponent {
     this.state = {
       visible: false,
       // eslint-disable-next-line react/no-unused-state
-      optionsRelevance : []
+      optionsRelevance: [],
     };
   };
 
   // 显示弹窗
   // eslint-disable-next-line no-shadow
   onShow = (selectField, newAssociateList) => {
+    const { getValueList, valueList } = this.props;
+    const arrs = [];
+    getValueList().forEach(item => {
+     if (item.name !== '') {
+       arrs.push(item);
+       }
+    });
+    // 选项 name为空就返回
+    if (arrs.length&&arrs.length !== valueList.length) return;
     const obj = {};
     if (selectField.optionsRelevance) {
        selectField.optionsRelevance.forEach(item => {
@@ -32,8 +41,9 @@ class AssociateModal extends React.PureComponent {
       });
     });
     }
-    console.log(obj,'obj');
-    this.setState({ visible: true,obj});
+    // 调用父级 更改valueList
+    getValueList();
+    this.setState({ visible: true, obj });
   };
 
   // 关闭/取消等
@@ -77,11 +87,11 @@ class AssociateModal extends React.PureComponent {
       children,
       // form: { getFieldDecorator },
       loading,
-      valueList, // 每一项
       associateList,
       selectField, // 当前单选
       form: { getFieldDecorator },
-      spacialCenter
+      spacialCenter,
+      valueList
     } = this.props;
     console.log(valueList,'要拿到最新的 valueList');
     const defaultList =  spacialCenter || defaultString;// 不能被关联的

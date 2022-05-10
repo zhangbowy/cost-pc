@@ -96,6 +96,12 @@ class addInvoice extends Component {
     }
     this.onShowHandle(params);
   }
+
+  // 子改expandField
+  changeExpandField = (val) => {
+    this.setState({ expandField: val });
+  }
+
 // 改变showIdsObj
   
 changeShowIdsObj = (val) => {
@@ -380,7 +386,7 @@ changeShowIdsObj = (val) => {
             });
           }
           this.onInit(contents, djDetails);
-          // 处理选项关联 (编辑时)
+          // 处理选项关联 (编辑时) 
           // this.getShowIdsObj(contents.expandSubmitFieldVos);
           this.getShowIdsObj(contents.selfSubmitFieldVos);
           await this.setState({
@@ -832,7 +838,7 @@ changeShowIdsObj = (val) => {
             endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
           });
         }
-        if (it.status) {
+        if (it.status&& it.field.indexOf('expand_') > -1) {
           expandSubmitFieldVos.push(obj);
         } else if (it.status && it.field.indexOf('self_') > -1){
           selfSubmitFieldVos.push(obj);
@@ -1151,6 +1157,7 @@ changeShowIdsObj = (val) => {
               users={users}
               depList={depList}
               expandField={expandField}
+              changeExpandField={this.changeExpandField}
               details={details}
               createDepList={createDepList}
               djDetail={djDetail}
