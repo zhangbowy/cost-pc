@@ -214,7 +214,17 @@ changeShowIdsObj = (val) => {
   }
   // 处理选项关联获取 ShowIdsObj
 
-  getShowIdsObj=(selfField)=> {
+  getShowIdsObj = (selfSubmitFieldVos, selfField) => {
+    if (selfSubmitFieldVos.length) {
+      selfField.forEach(item => {
+        selfSubmitFieldVos.forEach(it => {
+          if (item.field === it.field) {
+            item.msg = it.msg;
+           }
+        });
+      });
+    };
+  console.log(selfSubmitFieldVos,selfField,'最新的selfField吗');
     const showObj = {};
     if (selfField && selfField.length) {
       selfField.forEach(item => {
@@ -322,7 +332,7 @@ changeShowIdsObj = (val) => {
         }
         if (!contentJson) {
         // 处理选项关联
-         this.getShowIdsObj(djDetail.selfField);
+        this.getShowIdsObj([],djDetails.selfField);
           let costSelect = localStorage.getItem('selectCost') || '';
           // localStorage.removeItem('selectCost');
           this.setState({
@@ -388,7 +398,7 @@ changeShowIdsObj = (val) => {
           this.onInit(contents, djDetails);
           // 处理选项关联 (编辑时) 
           // this.getShowIdsObj(contents.expandSubmitFieldVos);
-          this.getShowIdsObj(contents.selfSubmitFieldVos);
+          this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
           await this.setState({
             showField: obj,
             newshowField: djDetails.showField,

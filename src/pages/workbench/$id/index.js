@@ -238,7 +238,17 @@ class addInvoice extends Component {
   }
 
   // 处理选项关联获取 ShowIdsObj
-  getShowIdsObj=(selfField)=> {
+  getShowIdsObj = (selfSubmitFieldVos,selfField) => {
+    if (selfSubmitFieldVos.length) {
+      selfField.forEach(item => {
+        selfSubmitFieldVos.forEach(it => {
+          if (item.field === it.field) {
+            item.msg = it.msg;
+           }
+        });
+      });
+    };
+  console.log(selfSubmitFieldVos,selfField,'最新的selfField吗');
     const showObj = {};
     if (selfField && selfField.length) {
       selfField.forEach(item => {
@@ -381,7 +391,7 @@ class addInvoice extends Component {
         }
         if (!contentJson) {
           // 处理选项关联
-          this.getShowIdsObj(djDetail.selfField);
+          this.getShowIdsObj([],djDetails.selfField);
           let costSelect = localStorage.getItem('selectCost') || '';
           // localStorage.removeItem('selectCost');
           this.setState({
@@ -449,7 +459,9 @@ class addInvoice extends Component {
           // 处理选项关联 (编辑时)
           console.log(contents, 'contents999');
           // 影响到草稿箱 改单 复制等 
-          this.getShowIdsObj(contents.selfSubmitFieldVos);
+          console.log('selfSubmitFieldVos selfField 99999', contents.selfSubmitFieldVos, djDetails.selfField);
+          this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
+         
           await this.setState({
             showField: obj,
             newshowField: djDetails.showField,
@@ -914,13 +926,13 @@ class addInvoice extends Component {
   }
 
   checkStandard = (costDetailsVo, flag) => {
-    const { id } = this.props;
+    const { id,djDetails } = this.props;
     const { users, details } = this.state;
     console.log('改单了吗');// getShowIdsObj
     if (details.selfSubmitFieldVos && details.selfSubmitFieldVos.length) {
       console.log('调用了吗');
       // 改单时
-      this.getShowIdsObj(details.selfSubmitFieldVos);
+      this.getShowIdsObj(details.selfSubmitFieldVo,djDetails.selfField);
     };
     const newCostDetailsVo = flag ? costDetailsVo : defaultFunc.handleCost(costDetailsVo, id);
     return new Promise((resolve) => {
