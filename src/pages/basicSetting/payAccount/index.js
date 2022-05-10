@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, message, Modal, Pagination, Empty, Tooltip } from 'antd';
+import { Button, message, Modal, Empty, Tooltip } from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
@@ -127,18 +127,18 @@ class Account extends Component {
   render() {
     const { list, query, total, loading, amountMap, userInfo } = this.props;
     console.log(list, query, total, loading, '666666');
-    const onChange = pageNumber => {
-      this.onQuery({
-        pageNo: pageNumber,
-        pageSize: query.pageSize
-      });
-    };
-    const onShowSizeChange = (cur, size) => {
-      this.onQuery({
-        pageNo: cur,
-        pageSize: size
-      });
-    };
+    // const onChange = pageNumber => {
+    //   this.onQuery({
+    //     pageNo: pageNumber,
+    //     pageSize: query.pageSize
+    //   });
+    // };
+    // const onShowSizeChange = (cur, size) => {
+    //   this.onQuery({
+    //     pageNo: cur,
+    //     pageSize: size
+    //   });
+    // };
     return (
       <div className={style.payAccountWarp}>
         <PageHead title="公司资金账户设置" />
@@ -225,7 +225,7 @@ class Account extends Component {
               }}
             />
           )}
-          <Pagination
+          {/* <Pagination
             style={{ margin: '16px 0', position: 'absolute', right: '32px' }}
             loading={loading}
             size="small"
@@ -238,7 +238,7 @@ class Account extends Component {
             onChange={onChange}
             onShowSizeChange={onShowSizeChange}
             showTotal={() => `共${total}条数据`}
-          />
+          /> */}
         </div>
       </div>
     );

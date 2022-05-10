@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button,  message, Modal,Pagination,Empty} from 'antd';
+import { Button,  message, Modal,Empty} from 'antd';
 import { connect } from 'dva';
 import PageHead from '@/components/pageHead';
 import AddAccount from './components/AddModal';
@@ -90,20 +90,20 @@ class Account extends Component {
   }
 
   render() {
-    const { list,query, total, loading } = this.props;
+    const { list } = this.props;
     console.log(list,'个人收款账户list');
-    const onChange = (pageNumber) => {
-      this.onQuery({
-        pageNo: pageNumber,
-        pageSize: query.pageSize
-      });
-    };
-    const onShowSizeChange = (cur, size) => {
-      this.onQuery({
-        pageNo: cur,
-        pageSize: size
-      });
-    };
+    // const onChange = (pageNumber) => {
+    //   this.onQuery({
+    //     pageNo: pageNumber,
+    //     pageSize: query.pageSize
+    //   });
+    // };
+    // const onShowSizeChange = (cur, size) => {
+    //   this.onQuery({
+    //     pageNo: cur,
+    //     pageSize: size
+    //   });
+    // };
     return (
       <div>
         <PageHead title="个人收款账户设置" />
@@ -116,7 +116,7 @@ class Account extends Component {
             </div>
           </div>
           {/* 放置卡片 */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap'}}>
             {list.map((item) => {
              return <AccountCart personal='true' key={item.id} item={item} delCart={(c) => this.delchange(c)} onOk={() => this.onOk()}/>;
             })}
@@ -134,7 +134,7 @@ class Account extends Component {
           </div>
           {/* 内容为空时 */}
           {list.length?null:<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无收款账户" style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}}/>}
-          <Pagination
+          {/* <Pagination
             style={{margin:'16px 0',position:'absolute',right:'32px'}}
             loading={loading}
             size="small"
@@ -147,7 +147,7 @@ class Account extends Component {
             onChange={onChange}
             onShowSizeChange={onShowSizeChange}
             showTotal={() => (`共${total}条数据`)}
-          />
+          /> */}
         </div>
       </div>
     );

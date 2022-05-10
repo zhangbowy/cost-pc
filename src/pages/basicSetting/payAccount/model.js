@@ -1,15 +1,15 @@
 import { post, get } from '@/utils/request';
-import constants from '@/utils/constants';
+// import constants from '@/utils/constants';
 import api from './services';
 
-const { PAGE_SIZE } = constants;
+// const { PAGE_SIZE } = constants;
 export default {
   namespace: 'account',
   state: {
     list: [],
     query: {
       pageNo: 1,
-      pageSize: PAGE_SIZE
+      pageSize: 999
     },
     total: 0,
     detail: {
