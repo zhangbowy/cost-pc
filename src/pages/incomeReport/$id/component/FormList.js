@@ -510,6 +510,8 @@ class ChangeForm extends Component {
           this.props.onChangeData({
             [key]:[],
           });
+        }else if (key === 'supplier'||key === 'project') {
+          this.onChangePro('',key);
         }
         console.log(key, 'key888');
         clearArr.push(`['${key}']`);

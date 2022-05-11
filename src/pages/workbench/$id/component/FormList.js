@@ -444,7 +444,7 @@ class ChangeForm extends Component {
     // this.props.form.setFieldsValue({ 'projectId': null })
     console.log(val,obj,'怎么回事');
   // 获取新的showIdsObj
-    const { showIdsObj,changeShowIdsObj,expandField,changeExpandField} = this.props;
+    const { showIdsObj,changeShowIdsObj,expandField,changeExpandField,onChangeData} = this.props;
     const keyList = Object.keys(showIdsObj);
     const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
     let newAddObj = [];
@@ -493,11 +493,14 @@ class ChangeForm extends Component {
     Object.keys(newObjs).forEach(key => {
       if (!newObjs[key].length) {
         if (key==='imgUrl'||key==='fileUrl'||key==='ossFileUrl') {
-          this.props.onChangeData({
+          onChangeData({
             [key]:[],
           });
+        } else if (key === 'supplier'||key === 'project') {
+          this.onChangePro('',key);
+        } else if (key === 'applicationSum') {
+          this.inputMoney('');
         }
-        console.log(key, 'key888');
         clearArr.push(`['${key}']`);
         clearShowArr.push(key);
       }
@@ -521,7 +524,7 @@ class ChangeForm extends Component {
       changeShowIdsObj(newObjs);
       changeExpandField(expandField);
     });  
-    const { onChangeData, expandVos} = this.props;
+    const { expandVos} = this.props;
     const list = [...expandVos];
     const index = list.findIndex(it => it.field === obj.field);
     let flag = false;
