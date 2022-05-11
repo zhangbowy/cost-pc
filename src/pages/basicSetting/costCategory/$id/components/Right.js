@@ -45,11 +45,12 @@ class Right extends PureComponent {
       if (details.options) {
         list = details.options.map((it, index) => { return { name: it, id: `aa_${timeStampToHex()+index}`}; });
       } else {
-        this.props.form.setFieldsValue({
-          keys: []
-        });
+        // this.props.form.setFieldsValue({
+        //   keys: []
+        // });
       }
       console.log('details', details);
+      console.log('details-list', list);
       this.setState({
         details,
         list: [...list],
@@ -325,7 +326,7 @@ class Right extends PureComponent {
       },
     });
     this.props.onChange(arr);
-    
+
     console.log(this.state.details, '最新的details');
   }
 
@@ -341,7 +342,7 @@ class Right extends PureComponent {
     } = this.props;
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
-console.log(keys,'keyskeys');
+    console.log(keys,'keyskeys');
     const formItems = (Number(details.fieldType) === 2
     || Number(details.fieldType) === 8) ? keys.map(it=> (
       <div className={style.addForm} key={it.id}>
@@ -367,7 +368,7 @@ console.log(keys,'keyskeys');
       </div>
     )) : null;
     return (
-      <div className={style.strRight}>
+      <div className={style.strRight} key={details.field}>
         <div className={style.header}>
           {
             dragDisabled.includes(details.field) ?
