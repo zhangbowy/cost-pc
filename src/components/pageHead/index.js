@@ -44,9 +44,11 @@ class App extends React.PureComponent {
           <Breadcrumb>
             <Breadcrumb.Item>
               <a onClick={()=>{
-                if(this.props.history){
+                if(this.props.history && title !== '收支类别设置' && title !== '支出类别设置'){
                   console.log(9999999999999999,this.props.history);
                   this.props.history.goBack();
+                } else {
+                  this.props.history.push('/basicSettings');
                 }
               }}
               >返回上一页
