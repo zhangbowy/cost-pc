@@ -50,7 +50,7 @@ class AddAccount extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      type: '0',
+      type: '2',
       visible: false,
       treeList: [],
       isShowInput: ''
@@ -59,7 +59,7 @@ class AddAccount extends React.PureComponent {
 
   onShow = () => {
     const { record } = this.props;
-    let type = '0';
+    // let type = '2';
     this.props
       .dispatch({
         type: 'costGlobal/area',
@@ -80,7 +80,7 @@ class AddAccount extends React.PureComponent {
           areaCode
         );
         if (record) {
-          ({ type } = record);
+          // ({ type } = record);
           this.props
             .dispatch({
               type: 'account/detail',
@@ -119,7 +119,7 @@ class AddAccount extends React.PureComponent {
         } else {
           this.setState({
             visible: true,
-            type,
+            type: '0',
             treeList
           });
         }
@@ -129,7 +129,7 @@ class AddAccount extends React.PureComponent {
   onRest = () => {
     this.props.form.resetFields();
     this.setState({
-      type: '0',
+      type: '2',
       isShowInput: false
     });
   };
@@ -145,7 +145,7 @@ class AddAccount extends React.PureComponent {
       title,
       areaCode
     } = this.props;
-
+    console.log(form.getFieldsValue());
     form.validateFieldsAndScroll((err, value) => {
       if (!err) {
         const payload = {
@@ -384,28 +384,28 @@ class AddAccount extends React.PureComponent {
                 })(<Input placeholder="请输入开户行" />)}
               </Form.Item>
             )}
-            {Number(type) === 0 && (
-              <Form.Item label={labelInfo.awAreas}>
-                {getFieldDecorator('awAreas', {
-                  initialValue: (data && data.awAreas) || [],
-                  rules: [{ required: !!(Number(type) === 0), message: '请选择' }]
-                })(
-                  <Cascader
-                    options={treeList}
-                    placeholder={`请选择${labelInfo.awAreas}`}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                  />
-                )}
-              </Form.Item>
-            )}
             {
               Number(type) === 0 ?
-                <Form.Item label={labelInfo.bankNameBranch}>
-                  {getFieldDecorator('bankNameBranch', {
-                    initialValue: data && data.bankNameBranch,
-                    rules: [{ required: !!(Number(type) === 0), message: '请输入' }]
-                  })(<Input placeholder={`请输入${labelInfo.bankNameBranch}`} />)}
-                </Form.Item>
+                <>
+                  <Form.Item label={labelInfo.awAreas} required={Number(type) === 0}>
+                    {getFieldDecorator('awAreas', {
+                      initialValue: (data && data.awAreas) || [],
+                      rules: [{ required: !!(Number(type) === 0), message: '请选择' }]
+                    })(
+                      <Cascader
+                        options={treeList}
+                        placeholder={`请选择${labelInfo.awAreas}`}
+                        getPopupContainer={triggerNode => triggerNode.parentNode}
+                      />
+                    )}
+                  </Form.Item>
+                  <Form.Item label={labelInfo.bankNameBranch} required={Number(type) === 0}>
+                    {getFieldDecorator('bankNameBranch', {
+                      initialValue: data && data.bankNameBranch,
+                      rules: [{ required: !!(Number(type) === 0), message: '请输入' }]
+                    })(<Input placeholder={`请输入${labelInfo.bankNameBranch}`} />)}
+                  </Form.Item>
+                </>
                 :
                 null
             }
