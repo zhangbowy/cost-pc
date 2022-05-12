@@ -15,6 +15,10 @@ const widthSize = {
     width: '980px',
     height: 618
   },
+  'middle': {
+    width: '780px',
+    height: 505
+  },
 };
 class ModalTemp extends PureComponent {
   constructor(props) {
@@ -31,7 +35,7 @@ class ModalTemp extends PureComponent {
   }
 
   render() {
-    const { children, size, footer, newBodyStyle,unset } = this.props;
+    const { children, size, footer, newBodyStyle,unset, newDivStyle } = this.props;
     const { isScroll } = this.state;
     return (
       <Modal
@@ -46,14 +50,15 @@ class ModalTemp extends PureComponent {
         width={widthSize[size].width}
         bodyStyle={{
           maxHeight: `${widthSize[size].height - (footer ? 40 : 0)}px`,
-          padding: '24px 0px 0px 32px',
+          padding: '16px 0px 0px 32px',
           ...newBodyStyle,
         }}
       >
         <div
           style={{
             overflowY:unset==='true'?'':'scroll',
-            height: `${widthSize[size].height - (footer ? 64 : 0)}px`
+            height: `${widthSize[size].height - (footer ? 96 : 32)}px`,
+            ...newDivStyle,
           }}
           onScroll={({target}) => this.handleScroll(target)}
         >

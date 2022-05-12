@@ -2,13 +2,14 @@
 /* eslint-disable react/no-did-update-set-state */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
-import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message } from 'antd';
+import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
 import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
 import { timeStampToHex, intToChinese } from '../../../../../utils/common';
 import ThirdSet from './RightCheck/ThirdSet';
 import { aliTrip, aliTripStr, aliTripHasTrip } from './ItemTypes';
+import AssociateModal from './AssociateModal';
 
 let id = 1000;
 const disabledDefault = ['costCategory', 3, 10];
@@ -42,13 +43,14 @@ class Right extends PureComponent {
         details = arr[i];
       }
       if (details.options) {
-        list = details.options.map((it, index) => { return { name: it, id: `aa_${timeStampToHex()+index}` }; });
+        list = details.options.map((it, index) => { return { name: it, id: `aa_${timeStampToHex()+index}`}; });
       } else {
-        this.props.form.setFieldsValue({
-          keys: []
-        });
+        // this.props.form.setFieldsValue({
+        //   keys: []
+        // });
       }
       console.log('details', details);
+      console.log('details-list', list);
       this.setState({
         details,
         list: [...list],
@@ -100,7 +102,7 @@ class Right extends PureComponent {
       details: {
         ...details,
         [key]: e.target.value
-      }
+      },
     });
     this.props.onChange(arr);
   }
@@ -148,6 +150,7 @@ class Right extends PureComponent {
   }
 
   onChangeMore = (e) => {
+    console.log(e,'e是什么');
     const { details } = this.state;
     const { selectList, changeDragId, incomeNoModify } = this.props;
     if (e.target.checked) {
@@ -165,7 +168,8 @@ class Right extends PureComponent {
           const arr = this.onChangeChild(selectList, details.field, {
             ...details,
             ...items,
-            field: newField
+            field: newField,
+            isCanAssociate:false
           });
           this.setState({
             details: {
@@ -235,6 +239,18 @@ class Right extends PureComponent {
     this.props.onChange(arr);
   }
 
+  getValueList = () => {
+    // const valLists = this.props.form.getFieldsValue();
+    const valueObj = this.props.form.getFieldsValue();
+    const valueList = this.props.form.getFieldsValue().keys;
+    valueList.forEach(item => {
+      // eslint-disable-next-line no-param-reassign
+      item.name = valueObj[item.id];
+    });
+    this.setState({ list: valueList });
+    return valueList;
+  }
+
   onChangeChild = (oldList, field, newVal) => {
     const arr = [...oldList];
     const i = oldList.findIndex(it => it.field === field);
@@ -295,17 +311,38 @@ class Right extends PureComponent {
     this.props.onChange(arr);
   }
 
+  // 改变 details
+  changeDetails = (val) => {
+    const { details } = this.state;
+    const { selectList } = this.props;
+    const arr = this.onChangeChild(selectList, details.field, {
+      ...details,
+      ...val
+    });
+    this.setState({
+      details: {
+        ...details,
+        ...val
+      },
+    });
+    this.props.onChange(arr);
+
+    console.log(this.state.details, '最新的details');
+  }
+
   render() {
     const { details, list } = this.state;
-    const { type, templateType, isModifyInvoice, operateType, incomeNoModify } = this.props;
+    console.log(list, 'listlistlistlist');
+    const { type, templateType, isModifyInvoice, operateType, incomeNoModify,selectList } = this.props;
     console.log('Right -> render -> isModifyInvoice', details);
 
     const {
       form: { getFieldDecorator, getFieldValue },
+      spacialCenter
     } = this.props;
     getFieldDecorator('keys', { initialValue: list || [] });
     const keys = getFieldValue('keys');
-
+    console.log(keys,'keyskeys');
     const formItems = (Number(details.fieldType) === 2
     || Number(details.fieldType) === 8) ? keys.map(it=> (
       <div className={style.addForm} key={it.id}>
@@ -316,7 +353,7 @@ class Right extends PureComponent {
             getFieldDecorator(`${it.id}`, {
               initialValue: it.name,
               rules: [
-                { max: 15, message: '限制15个字' },
+                { max: 30, message: '限制30个字' },
                 { required: true, message: '请输入' }
               ]
             })(
@@ -331,7 +368,7 @@ class Right extends PureComponent {
       </div>
     )) : null;
     return (
-      <div className={style.strRight}>
+      <div className={style.strRight} key={details.field}>
         <div className={style.header}>
           {
             dragDisabled.includes(details.field) ?
@@ -466,16 +503,48 @@ class Right extends PureComponent {
               (details.field && (details.field.indexOf('self_') > -1 || details.field.indexOf('expand_') > -1)) &&
               <div className={style.moveForm}>
                 <p>选项</p>
-                {formItems}
-                <Button
-                  icon="plus"
-                  style={{marginLeft: '44px', width: '160px'}}
-                  type="dashed"
-                  className={style.addSelect}
-                  onClick={() => this.onAdd()}
-                >
-                  添加选项
-                </Button>
+                  {formItems}
+                  {
+                    (details.field.indexOf('self_') > -1&&!details.parentId&&Number(details.fieldType) === 2) ?
+                      <div className={style.customize}>
+                        <Button
+                          icon="plus"
+                          style={{ marginRight: '8px', width: '121px',flex:1 }}
+                          type="dashed"
+                          className={style.addSelect}
+                          onClick={() => this.onAdd()}
+                        >
+                          添加选项
+                        </Button>
+                        <AssociateModal
+                          valueList={list}
+                          associateList={selectList}
+                          selectField={details}
+                          changeDetails={this.changeDetails}
+                          spacialCenter={spacialCenter}
+                          getValueList={this.getValueList}
+                        >
+                          <Button
+                            style={{  width: '121px',flex:1 }}
+                            type="dashed"
+                            className={style.addSelect}
+                          >
+                            <i className='iconfont iconguanlian' style={{ marginRight: '8px',fontWeight:700,verticalAlign:'baseline'}}/>
+                            选择关联
+                          </Button>
+                        </AssociateModal>
+                      </div>
+                      :
+                      <Button
+                        icon="plus"
+                        style={{ marginLeft: '44px', width: '160px' }}
+                        type="dashed"
+                        className={style.addSelect}
+                        onClick={() => this.onAdd()}
+                      >
+                        添加选项
+                      </Button>
+                  }
               </div>
             }
             {

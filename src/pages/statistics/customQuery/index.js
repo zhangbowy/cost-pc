@@ -98,6 +98,14 @@ class customQuery extends Component {
       type: 'customQuery/deptList',
       payload: {},
     });
+    this.props.dispatch({
+      type: 'costGlobal/actionLogs',
+      payload: {
+        actionPart: 1,
+        actionContext: '经营责任报表',
+        port: 0,
+      }
+    });
     this.onQuery({
       ...submitTime,
     });

@@ -1,8 +1,9 @@
-import { Modal, Button } from 'antd';
+import { Button } from 'antd';
 import { connect } from 'dva';
 import React, { Component } from 'react';
 import { ddOpenLink } from '@/utils/ddApi';
 import style from './index.scss';
+import ModalTemp from '../../../../components/ModalTemp';
 
 @connect(({ global, loading }) => ({
   batchDetails: global.batchDetails,
@@ -60,18 +61,19 @@ class ConfirmPay extends Component {
     const { visible } = this.state;
     return (
       <span>
-        <Modal
-          title={null}
-          footer={null}
-          width="680px"
+        <ModalTemp
+          title="确认支付"
+          footer={[
+            <Button key="save" onClick={() => this.onSave()} loading={loading} disabled={loading} type="primary">去支付</Button>
+          ]}
+          size="small"
           visible={visible}
           onCancel={() => this.onCancel()}
-          bodyStyle={{
+          newBodyStyle={{
             height: '450px',
-            padding: '40px'
+            padding: '16px 32px 0'
           }}
         >
-          <h1 className="fs-24 c-black-85 m-b-16">确认支付</h1>
           <div className={style.confirm}>
             <div className={style.content}>
               <div className={style.alert}>
@@ -85,13 +87,18 @@ class ConfirmPay extends Component {
               <div className="m-l-32 m-t-18 m-b-47">
                 <p className="c-black-65 m-b-24">付款批次：{batchDetails && batchDetails.batchOrderId}</p>
                 <p className="c-black-65 m-b-24">单据条数：{batchDetails && batchDetails.availableOrderCount}</p>
-                <p className="c-black-65 m-b-24">金额共计：<span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{batchDetails && batchDetails.totalAmount/100}</span></p>
+                <p className="c-black-65 m-b-24">金额共计：
+                  <span className="c-black-85 fs-20" style={{fontWeight: 'bold'}}>¥{batchDetails && batchDetails.totalAmount/100}</span>
+                  {
+                    batchDetails && batchDetails.commission > 0 &&
+                    <span>，手续费{batchDetails.commission/100}元</span>
+                  }
+                </p>
                 <p className="c-black-65 m-b-24">支付状态：<span style={{color: 'rgba(255, 204, 12, 1)'}}>待支付</span></p>
               </div>
             </div>
-            <Button key="save" onClick={() => this.onSave()} loading={loading} disabled={loading} type="primary">去支付</Button>
           </div>
-        </Modal>
+        </ModalTemp>
       </span>
     );
   }

@@ -63,7 +63,7 @@ const staticsObj = {
   }
 };
 @Form.create()
-@connect(({ loading, costDetail, costGlobal, global, session }) => ({  
+@connect(({ loading, costDetail, costGlobal, global, session }) => ({
   loading: loading.effects['costDetail/list'] || false,
   list: costDetail.list,
   query: costDetail.query,
@@ -208,6 +208,14 @@ class Statistics extends React.PureComponent {
     this.props.dispatch({
       type: 'costGlobal/historyImportStatus',
       payload: {},
+    });
+    this.props.dispatch({
+      type: 'costGlobal/actionLogs',
+      payload: {
+        actionPart: 3,
+        actionContext: '查看支出明细',
+        port: 0,
+      }
     });
     this.onInit();
   }
@@ -847,7 +855,7 @@ class Statistics extends React.PureComponent {
                   alt="鑫资产"
                   style={{ width: '16px', height: '16px', marginLeft: '8px', verticalAlign: 'text-bottom' }}
                 />
-               )        
+               )
             }
             {
               record.thirdPlatformType===3 && (
@@ -857,7 +865,7 @@ class Statistics extends React.PureComponent {
                   style={{ width: '16px', height: '16px', marginLeft: '8px', verticalAlign: 'text-bottom' }}
                 />
                )
-                   
+
             }
           </span>
         )

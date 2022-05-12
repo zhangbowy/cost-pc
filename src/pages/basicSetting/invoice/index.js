@@ -25,7 +25,7 @@ const { confirm } = Modal;
   loading: loading.models[namespace],
   list: invoice.list,
   check: invoice.check,
-  userInfo: session.userInfo
+  userInfo: session.userInfo,
 }))
 
 class Invoice extends React.PureComponent {
@@ -386,7 +386,7 @@ class Invoice extends React.PureComponent {
                     changeVisible={this.changeVisible}
                     linkInvoice={this.onAddCategory}
                   >
-                    <span className="pd-20-9 c-black-65">新增单据模板</span>
+                    <Button type="primary" className="m-r-8">新增单据模板</Button>
                   </JudgeType>
               }
               <AddGroup title="add" onOk={this.onOk} userInfo={userInfo}>
@@ -404,7 +404,10 @@ class Invoice extends React.PureComponent {
             </div>
             <div>
               <Sort list={list} callback={this.getSort} otherKeys={['templateType', 'sort']} title="单据模版">
-                <Button type="default">排序</Button>
+                <div style={{display: 'flex', alignItems: 'center', height: '32px'}} className="head_rf sub-color">
+                  <i className="iconfont iconpaixu m-r-8" />
+                  <span>模版排序</span>
+                </div>
               </Sort>
             </div>
           </div>

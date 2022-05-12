@@ -50,7 +50,7 @@ const labelInfo = {
   currencyList: global.currencyList,
   currencyShow: global.currencyShow,
   uploadSpace: global.uploadSpace,
-  costCategoryList: global.costCategoryList,
+  costCategory: costGlobal.costCategory,
   detailFolder: costGlobal.detailFolder,
   userInfo: session.userInfo,
   userDeps: costGlobal.userDeps,
@@ -82,7 +82,9 @@ class AddCost extends Component {
       fileUrl: [],
       officeId: '',
       ossFileUrl: [],
+      // showIds: {},
       // treeExpandedKeys: [],
+      showIdsObj: {}, // 是否显示的对象
     };
   }
 
@@ -144,9 +146,9 @@ class AddCost extends Component {
     });
   }
 
-  onShow = async() => {
+  onShow = async () => {
     const { costType, isDelete4Category, officeId, isShowToast, templateType } = this.props;
-    console.log('AddCost -> onShow -> officeId', officeId);
+    console.log('AddCost -> onShow -> officeId', costType);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
@@ -161,7 +163,7 @@ class AddCost extends Component {
       const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
-        type: 'global/costList',
+        type: 'costGlobal/costCategory',
         payload: {},
       }).then(() => {
         if (id) {
@@ -436,8 +438,8 @@ class AddCost extends Component {
   }
 
   onSelectTree = () => {
-    const { expenseList, costCategoryList, costType } = this.props;
-    const newList = costType ? costCategoryList : expenseList;
+    const { expenseList, costCategory, costType } = this.props;
+    const newList = costType ? costCategory : expenseList;
     const list = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -505,6 +507,8 @@ class AddCost extends Component {
       if (!err) {
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
+          console.log('🚀 ~ file: AddCost.js ~ line 508 ~ AddCost ~ this.props.form.validateFieldsAndScroll ~ shareAmount != val.costSum', shareAmount);
+          console.log('🚀 ~ file: AddCost.js ~ line 508 ~ AddCost ~ this.props.form.validateFieldsAndScroll ~ shareAmount != val.costSum', val);
           message.error('分摊明细金额合计不等于支出金额，请修改');
           return;
         }
@@ -682,6 +686,7 @@ class AddCost extends Component {
   onChange = (val, types, expand) => {
     console.log('AddCost -> onChange -> expand', expand);
     let detail = this.state.details;
+    const showObj = {};
     const showFields = {};
     let costDate = 0;
     let project = {};
@@ -751,6 +756,34 @@ class AddCost extends Component {
           expandField: newArr,
         });
       }
+      const { expandField } = this.state;
+      console.log(this.state.expandField, 'expandField');
+      if (expandField&&expandField.length) {
+        expandField.forEach(item => {
+          // 处理选项关联
+          if (item.optionsRelevance && item.optionsRelevance.length) {
+            item.optionsRelevance.forEach(i => {
+              if (i.ids && i.ids.length) {
+                const {ids} = i;
+                for (let j = 0; j < ids.length; j++) {
+                  if (showObj[ids[j]]) {
+                    Object.assign(showObj, {
+                      [ids[j]]: item.msg !== i.name ? [...showObj[ids[j]]] : [...showObj[ids[j]], item.field],
+                    });
+                  } else {
+                    Object.assign(showObj, {
+                      [ids[j]]: item.msg !== i.name ? [] : [item.field],
+                    });
+                  }
+                }
+              }
+            });
+          }
+        });
+      }
+      this.setState({ showIdsObj: showObj }, () => {
+        console.log(this.state.showIdsObj,'showIdsObj999');
+      });
       this.setState({
         showField: showFields,
         newShowField: lbDetail.showField,
@@ -890,6 +923,101 @@ class AddCost extends Component {
     });
   }
 
+  flat=(arr)=> {
+    let arrResult = [];
+    arr.forEach((item) => {
+      if (Array.isArray(item)) {
+        arrResult = arrResult.concat(this.flat(item)); // 递归
+      } else {
+        arrResult.push(item);
+      }
+    });
+    return arrResult;
+  }
+  
+  onChangeSelect = (val, obj) => {
+  console.log(val, obj.optionsRelevance, '怎么回事');
+ // 获取新的showIdsObj
+ const { showIdsObj, expandField } = this.state;
+ const keyList = Object.keys(showIdsObj);
+ const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
+ let newAddObj = [];
+ if (newArrObj && newArrObj.length && newArrObj[0].ids && newArrObj[0].ids.length) {
+   newAddObj = newArrObj[0].ids;
+ }
+ function sortFun(newObj, keyField, keys) {
+   for (let i=0; i<keys.length; i++) {
+     const it = keys[i];
+     const arr = newObj[it] ? newObj[it] : showIdsObj[it];
+     const is = arr.filter(im => im !== keyField);
+     
+     if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+         && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
+       Object.assign(newObj, {
+         [it]: [],
+       });
+       sortFun(newObj, it, keys);
+     } else {
+       Object.assign(newObj, {
+         [it]: is
+       });
+     } 
+   }
+   return newObj;
+ }
+ const newObjs = sortFun({}, obj.field, keyList);
+ console.log('新的值', newObjs);
+ if (newAddObj && newAddObj.length) {
+   newAddObj.forEach(it => {
+     if (it) {
+       Object.assign(newObjs, {
+         [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
+       });
+     }
+     
+   });
+ }
+ console.log('最新的数据', newObjs);
+  // 如果之前的选项选择了东西，切换后就清除
+    // console.log(Object.keys(newObjs),'666');
+    const clearArr = [];
+    const clearShowArr = [];
+    Object.keys(newObjs).forEach(key => {
+      if (!newObjs[key].length) {
+        if (key === 'imgUrl' || key === 'fileUrl' || key === 'ossFileUrl') {
+          this.setState({
+            [key]: [],
+          });
+          this.props.form.setFieldsValue({
+            '[time]':undefined,
+          });
+        }
+        clearArr.push(`['${key}']`);
+        clearShowArr.push(key);
+      }
+    });
+    // 回显编辑时让单选项msg置空
+    expandField.forEach(item => {
+      if (clearShowArr.length && clearShowArr.includes(item.field)) {
+        item.msg = '';
+      }
+    });
+    // 清除选项
+    const clearObj = {};
+      clearArr.forEach(its => {
+      clearObj[its] = undefined;
+    });
+    console.log(clearObj, '666');
+    this.props.form.setFieldsValue({
+         ...clearObj
+    }, () => { 
+      this.setState({ showIdsObj: Object.assign(showIdsObj, newObjs), expandField }, () => {
+        console.log(expandField, 'expandField9999');
+   });
+    });  
+    }
+  
+  
   render() {
     const {
       children,
@@ -924,9 +1052,27 @@ class AddCost extends Component {
       fileUrl,
       officeId,
       ossFileUrl,
+      showIdsObj
     } = this.state;
+    // const { unShowItems } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
+    
+    // const optionsRelevance = []; // 所有关联项
+    // const optionsRelevanceIds = []; // 所有关联项的ids集合
+    // newRenderField.forEach(item => {
+    //   if (item.optionsRelevance) {
+    //     optionsRelevance.push(...item.optionsRelevance);
+    //   }
+    // });
+    // optionsRelevance.forEach(item => {
+    //   optionsRelevanceIds.push(...item.ids);
+    // });
+    // const associatedIds = [...new Set(optionsRelevanceIds)];
+    // console.log(associatedIds,'associatedIds支出');
+    // 回显时
+    // const showItem= this.onShowItems(newRenderField,associatedIds);
+    // console.log(showItem,'showItem');
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -1040,6 +1186,17 @@ class AddCost extends Component {
                 {
                   newRenderField && (newRenderField.length > 0) &&
                   newRenderField.filter(it => it.fieldType !== 9).map(it => {
+                    let isShow =true;
+                    if (showIdsObj[it.field]) {
+                      if (showIdsObj[it.field].length) {
+                        isShow = true;
+                      } else {
+                        isShow = false;
+                      }
+                    } else {
+                     isShow = true;
+                    }
+                    // console.log(isShow,'999');
                     if (it.field && (it.field.indexOf('expand_') > -1 || it.field.indexOf('self_') > -1)) {
                       let renderForm = null;
                       let rule = [];
@@ -1058,13 +1215,16 @@ class AddCost extends Component {
                         rule = [{ max: 128, message: '限制128个字' }];
                       } else if(Number(it.fieldType) === 2 || Number(it.fieldType) === 8) {
                         if (Number(it.fieldType) === 8) {
-                          initMsg = it.msg ? it.msg.split(',') : [];
+                          console.log('render -> itw.msg', it.msg);
+                          initMsg = it.msg && !(it.msg instanceof Array) ? it.msg.split(',') : [];
                         }
                         renderForm = (
                           <Select
                             placeholder={it.note ? it.note : '请选择'}
                             disabled={modify && !it.isModify}
                             mode={Number(it.fieldType) === 8 ? 'multiple' : ''}
+                            onChange={val => this.onChangeSelect(val, {
+                              fieldType: it.fieldType, field: it.field,optionsRelevance:it.optionsRelevance })}
                           >
                             {
                               it.options && it.options.map(iteems => (
@@ -1104,9 +1264,9 @@ class AddCost extends Component {
                         return (
                           <>
                             {
-                              it.status ?
+                              isShow&&it.status ?
                                 <Col span={12}>
-                                  <Form.Item label={it.name} {...formItemLayout}>
+                                  <Form.Item label={(it.name.length>8)&&(Number(it.fieldType) === 2 || Number(it.fieldType) === 8)?<Tooltip placement="top" title={it.name}>{it.name.replace(it.name.substr(7,it.name.length-7),'···')}</Tooltip>:it.name} {...formItemLayout}>
                                     {
                                       getFieldDecorator(it.field, {
                                         initialValue: initMsg || undefined,
@@ -1137,7 +1297,7 @@ class AddCost extends Component {
                     return (
                       <>
                         {
-                          it.fieldType === 7 && it.field === 'fileUrl' &&
+                          isShow&&it.fieldType === 7 && it.field === 'fileUrl' &&
                           <Col span={12}>
                             <Form.Item
                               label={it.name}
@@ -1196,7 +1356,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'amount' && !!(showField.amount.status) &&
+                          isShow&&it.field === 'amount' && !!(showField.amount.status) &&
                           <Col span={12}>
                             <Form.Item label={labelInfo.costSum} {...formItemLayout}>
                               {
@@ -1231,7 +1391,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'amount' && officeList && officeList.length > 0 && templateType === undefined &&
+                          isShow&&it.field === 'amount' && officeList && officeList.length > 0 && templateType === undefined &&
                             <Col span={12}>
                               <Form.Item label={labelInfo.officeId} {...formItemLayout}>
                                 {
@@ -1261,7 +1421,7 @@ class AddCost extends Component {
                             </Col>
                         }
                         {
-                          it.field === 'costNote' && showField.costNote.status ?
+                          isShow&&it.field === 'costNote' && showField.costNote.status ?
                             <Col span={12}>
                               <Form.Item label={labelInfo.costNote} {...formItemLayout}>
                                 {
@@ -1292,7 +1452,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          it.field === 'incomeNote' && showField.incomeNote.status ?
+                          isShow&&it.field === 'incomeNote' && showField.incomeNote.status ?
                             <Col span={12}>
                               <Form.Item label={showField.incomeNote.name} {...formItemLayout}>
                                 {
@@ -1323,7 +1483,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          (it.field === 'flightLevel' || it.field === 'trainLevel') && showField[it.field].status ?
+                          isShow&&(it.field === 'flightLevel' || it.field === 'trainLevel') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
@@ -1347,7 +1507,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          (it.field === 'userCount') && showField[it.field].status ?
+                          isShow&&(it.field === 'userCount') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
@@ -1364,7 +1524,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          (it.field === 'belongCity') && showField[it.field].status ?
+                          isShow&&(it.field === 'belongCity') && showField[it.field].status ?
                             <Col span={12}>
                               <Form.Item label={showField[it.field].name} {...formItemLayout}>
                                 {
@@ -1387,7 +1547,7 @@ class AddCost extends Component {
                           null
                         }
                         {
-                          it.field === 'happenTime' && showField.happenTime.status &&
+                          isShow&&it.field === 'happenTime' && showField.happenTime.status &&
                           <Col span={12}>
                             <Form.Item label={labelInfo.happenTime} {...formItemLayout}>
                               {
@@ -1439,7 +1599,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'imgUrl' && showField.imgUrl.status &&
+                          isShow&&it.field === 'imgUrl' && showField.imgUrl.status &&
                           <Col span={12}>
                             <Form.Item
                               label={labelInfo.imgUrl}
@@ -1457,6 +1617,7 @@ class AddCost extends Component {
                                     imgUrl={imgUrl}
                                     userInfo={userInfo}
                                     disabled={modify && !showField.imgUrl.isModify}
+                                    maxLen={9}
                                   />
                                 )
                               }
@@ -1472,7 +1633,7 @@ class AddCost extends Component {
                           </Col>
                         }
                         {
-                          it.field === 'ossFileUrl' && showField.ossFileUrl.status &&
+                          isShow&&it.field === 'ossFileUrl' && showField.ossFileUrl.status &&
                           <Col span={12}>
                             <Form.Item
                               label={showField.ossFileUrl.name}

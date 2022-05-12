@@ -1,11 +1,13 @@
 import React from 'react';
-import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
+import { Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { getArrayValue, signStatus } from '../../../../utils/constants';
 import ConfirmPay from '../../invoicePay/components/ConfirmPay';
 import UploadImg from '../../../../components/UploadImg';
 import costGlobal from '../../../../models/costGlobal';
+import ModalTemp from '../../../../components/ModalTemp';
+import style from './index.scss';
 
 const { Option } = Select;
 const accountType = [{
@@ -37,6 +39,7 @@ class PayModal extends React.PureComponent {
       status: '1',
       visibleConfirm: false,
       imgUrl: [],
+      fee: 0,
     };
   }
 
@@ -49,10 +52,12 @@ class PayModal extends React.PureComponent {
 
     let count = 1;
     let amount = 0;
+    let fee = 0;
     console.log('selectKey======',selectKey);
     if(selectKey && selectKey[0]){
       count = selectKey[0].failCount;
       amount = selectKey[0].failTransAmount;
+      fee = selectKey[0].commission;
     }
     this.props.dispatch({
       type: 'global/payAccount',
@@ -91,6 +96,7 @@ class PayModal extends React.PureComponent {
         count,
         amount,
         flag: true,
+        fee,
       });
     });
   }
@@ -187,11 +193,11 @@ class PayModal extends React.PureComponent {
       userInfo
     } = this.props;
     const { visible, defAcc, count, amount,
-      flag, status, visibleConfirm, imgUrl } = this.state;
+      flag, status, visibleConfirm, imgUrl, fee } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 3 },
+        sm: { span: 4 },
       },
       wrapperCol: {
         xs: { span: 24 },
@@ -201,116 +207,139 @@ class PayModal extends React.PureComponent {
     return (
       <span>
         <span onClick={() => this.onShow()}>{children}</span>
-        <Modal
-          title={null}
+        <ModalTemp
+          title="发起支付"
           maskClosable={false}
           visible={visible}
           onCancel={() => this.onCancel()}
-          footer={null}
-          width="680px"
-          bodyStyle={{
-            height: '500px',
-            padding: '40px'
+          size="small"
+          newBodyStyle={{
+            minHeight: '274px',
+            maxHeight: '470px',
+            height: 'auto'
           }}
-        >
-          <h1 className="fs-24 c-black-85 m-b-16">发起支付</h1>
-          <Form className="formItem">
-            <p className="c-black-85 fs-14 m-b-47">已选 {count}张单据，共计 <span className="fw-500 fs-20">¥{amount/100}</span></p>
-            <Form.Item label="付款方式" {...formItemLayout}>
-              {
-                getFieldDecorator('accountType', {
-                  initialValue: '1',
-                })(
-                  <Radio.Group onChange={e => this.onChange(e)}>
-                    {
-                      accountType.map(it => (
-                        <Radio key={it.key} value={it.key} disabled={(flag && it.key === '2')}>{it.value}</Radio>
-                      ))
-                    }
-                  </Radio.Group>
-                )
-              }
-              {
-                flag &&
-                <Tooltip title={`已失败的${count}条单据收款账户有误，请线下支付`} >
-                  <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
-                </Tooltip>
-              }
-            </Form.Item>
-            {
-              status === '1' &&
-              <Form.Item label="付款账户" {...formItemLayout}>
-                {
-                  getFieldDecorator('account', {
-                    initialValue: defAcc || '',
-                    rules: [{ required: true, message: '请选择付款账户' }]
-                  })(
-                    <Select showSearch optionFilterProp="label">
-                      {
-                        payAccount.map(item => (
-                          <Option key={item.id} label={item.name}>{item.name}</Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
-              </Form.Item>
-            }
-            {
-              status === '2' &&
-              <Form.Item label="付款账户" {...formItemLayout}>
-                {
-                  getFieldDecorator('account', {
-                    initialValue: defAcc || '',
-                    rules: [{ required: true, message: '请选择付款账户' }]
-                  })(
-                    <Select
-                      notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
-                      showSearch
-                      optionFilterProp="label"
-                    >
-                      {
-                        getAliAccounts.map(item => (
-                          <Option key={item.account} label={item.account}>
-                            {item.account}
-                            (<span>{getArrayValue(item.status, signStatus)}</span>)
-                          </Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
-              </Form.Item>
-            }
-            {
-              status === '1' &&
-              <Form.Item label="付款时间" {...formItemLayout}>
-                {
-                  getFieldDecorator('time', {
-                    initialValue: moment(new Date(), 'YYYY-MM-DD'),
-                    rules: [{ required: true, message: '请选择付款时间' }]
-                  })(
-                    <DatePicker />
-                  )
-                }
-              </Form.Item>
-            }
-          </Form>
-          {
-            status === '1' &&
-            <Form.Item label="付款凭证" {...formItemLayout}>
-              <UploadImg
-                onChange={(val) => this.onChangeImg(val)}
-                imgUrl={imgUrl}
-                userInfo={userInfo}
-              />
-            </Form.Item>
-          }
-          <div style={{ marginLeft: '12.5%' }}>
-            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>
+          newDivStyle={{
+            minHeight: '274px',
+            maxHeight: '470px',
+            height: 'auto'
+          }}
+          footer={[
+            <Button key="save" onClick={() => this.onSubmit()} loading={loading} disabled={loading} type="primary">确认</Button>,
             <Button key="cancel" onClick={() => this.onCancel()} className="m-l-8">取消</Button>
+          ]}
+        >
+          <div>
+            <p className="c-black-45 fs-14 m-b-30">
+              <span>已选
+                <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">{count}</span>张单据，共计
+                <span className="fw-500 fs-14 c-black-85 m-l-6 m-r-6">¥{Number(status) !== 1 ? (amount + fee)/100 : amount/100}</span>
+              </span>
+              {
+                fee > 0 && Number(status) !== 1 &&
+                <span className="errorColor fs-12">(付款成功时扣除手续费{fee/100}元）</span>
+              }
+            </p>
+            <Form className="formItem">
+              <Form.Item label="付款方式" {...formItemLayout}>
+                {
+                  getFieldDecorator('accountType', {
+                    initialValue: '1',
+                  })(
+                    <Radio.Group onChange={e => this.onChange(e)}>
+                      {
+                        accountType.map(it => (
+                          <Radio key={it.key} value={it.key} disabled={(flag && it.key === '2')}>{it.value}</Radio>
+                        ))
+                      }
+                    </Radio.Group>
+                  )
+                }
+                {
+                  flag &&
+                  <Tooltip title={`已失败的${count}条单据收款账户有误，请线下支付`} >
+                    <i className="iconfont iconIcon-yuangongshouce fs-14 c-black-45 m-l-8" />
+                  </Tooltip>
+                }
+              </Form.Item>
+              {
+                status === '1' &&
+                <Form.Item label="付款账户" {...formItemLayout}>
+                  {
+                    getFieldDecorator('account', {
+                      initialValue: defAcc || '',
+                      rules: [{ required: true, message: '请选择付款账户' }]
+                    })(
+                      <Select showSearch optionFilterProp="label">
+                        {
+                          payAccount.map(item => (
+                            <Option key={item.id} label={item.name}>{item.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </Form.Item>
+              }
+              {
+                status === '2' &&
+                <Form.Item label="付款账户" {...formItemLayout}>
+                  {
+                    getFieldDecorator('account', {
+                      initialValue: defAcc || '',
+                      rules: [{ required: true, message: '请选择付款账户' }]
+                    })(
+                      <Select
+                        notFoundContent={(<span>请先添加公司付款支付宝账户，并签约授权</span>)}
+                        showSearch
+                        optionFilterProp="label"
+                      >
+                        {
+                          getAliAccounts.map(item => (
+                            <Option key={item.account} label={item.account}>
+                              {item.account}
+                              (<span>{getArrayValue(item.status, signStatus)}</span>)
+                            </Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </Form.Item>
+              }
+              {
+                status === '1' &&
+                <Form.Item label="付款时间" {...formItemLayout}>
+                  {
+                    getFieldDecorator('time', {
+                      initialValue: moment(new Date(), 'YYYY-MM-DD'),
+                      rules: [{ required: true, message: '请选择付款时间' }]
+                    })(
+                      <DatePicker />
+                    )
+                  }
+                </Form.Item>
+              }
+              {
+                status === '1' &&
+                <Form.Item label="付款凭证" {...formItemLayout}>
+                  <UploadImg
+                    onChange={(val) => this.onChangeImg(val)}
+                    imgUrl={imgUrl}
+                    userInfo={userInfo}
+                  />
+                </Form.Item>
+              }
+            </Form>
+            {
+              status !== '1' &&
+              <div className={style.pro}>
+                <p>1. 线上支付仅支持收款账户为支付宝和银行卡的单据；</p>
+                <p>2. 线上支付到支付宝，免收手续费；</p>
+                <p>3. 线上支付到卡，支付宝将按笔收费，每笔代发金额0.1%收费，每笔封顶25元。</p>
+              </div>
+            }
           </div>
-        </Modal>
+        </ModalTemp>
         <ConfirmPay
           visible={visibleConfirm}
           batchDetails={this.props.batchDetails}

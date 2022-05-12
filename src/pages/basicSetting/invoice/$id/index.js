@@ -241,9 +241,17 @@ class CategoryAdd extends PureComponent {
       });
     });
     Promise.all(arr).then(() => {
-      if (callback) {
-        callback();
-      }
+      const { templatePdfVo } = this.state;
+      this.setState({
+        templatePdfVo: {
+          ...templatePdfVo,
+          paperType: Number(templateType) === 20 ? 0 : 2,
+        }
+      }, () => {
+        if (callback) {
+          callback();
+        }
+      });
     });
   }
 
@@ -299,6 +307,7 @@ class CategoryAdd extends PureComponent {
   }
 
   compare = (property) => {
+    // eslint-disable-next-line func-names
     return function(a,b){
         const value1 = a[property];
         const value2 = b[property];
@@ -466,6 +475,13 @@ class CategoryAdd extends PureComponent {
           templatePdfExpandVos: templatePdfVo.templatePdfExpandVos.map(it => { return{ ...it, isSelect: true }; })
         },
       };
+      // "isRelevanced":false //是否被关联
+      console.log(params, 'invoice params');
+      // let ids = [];
+      // params.selfField.forEach(item => {
+      //   item.optionsRelevance.
+      // })
+      
       if (params.relations) delete params.relations;
       if (params.relation) delete params.relation;
       this.props.dispatch({

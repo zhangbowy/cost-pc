@@ -249,11 +249,12 @@ class CostCategory extends React.PureComponent {
           }}
         />) :
         (<span>-</span>)
-      )
+      ),
+      width: 100
     }, {
       title: '描述',
       dataIndex: 'note',
-      width: 360,
+      width: 460,
       render: (text) => (
         <span>
           {
@@ -384,7 +385,7 @@ class CostCategory extends React.PureComponent {
     }];
     return (
       <div className="mainContainer">
-        <PageHead title="支出类别设置" />
+        <PageHead title={userInfo.orderItemLevel === 1 ? '收支类别设置' : '支出类别设置'} />
         {
           !!(userInfo.orderItemLevel) &&
           <div style={{width: '100%', marginTop: '-8px'}}>

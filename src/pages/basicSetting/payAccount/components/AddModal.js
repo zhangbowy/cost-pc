@@ -284,7 +284,7 @@ class AddAccount extends React.PureComponent {
                 initialValue: data && data.name,
                 rules: [
                   { required: true, message: '请输入名称' },
-                  { max: 20, message: '不超过20个字' }
+                  { max: 50, message: '不超过50个字' }
                 ]
               })(<Input placeholder="请输入" />)}
             </Form.Item>

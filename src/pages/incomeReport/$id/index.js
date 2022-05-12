@@ -75,6 +75,8 @@ class addInvoice extends Component {
       // submitParams: {},
       id: '',
       operateType: '', // 操作类型，add: 新增
+      // associatedIds: [], // 所有被关联项的集合
+      showIdsObj: {}, // 是否显示的对象
     };
   }
 
@@ -94,6 +96,19 @@ class addInvoice extends Component {
     }
     this.onShowHandle(params);
   }
+
+  // 子改expandField
+  changeExpandField = (val) => {
+    this.setState({ expandField: val });
+  }
+
+// 改变showIdsObj
+  
+changeShowIdsObj = (val) => {
+  const { showIdsObj } = this.state;
+  this.setState({showIdsObj:Object.assign(showIdsObj, val)});
+  console.log(showIdsObj,'父级最新的showIdsObj');
+}
 
   fetchList = ({ templateType, id, operateType, draftId },callback) => {
     const {
@@ -197,6 +212,48 @@ class addInvoice extends Component {
       });
     });
   }
+  // 处理选项关联获取 ShowIdsObj
+
+  getShowIdsObj = (selfSubmitFieldVos, selfField) => {
+    if (selfSubmitFieldVos.length) {
+      selfField.forEach(item => {
+        selfSubmitFieldVos.forEach(it => {
+          if (item.field === it.field) {
+            item.msg = it.msg;
+           }
+        });
+      });
+    };
+  console.log(selfSubmitFieldVos,selfField,'最新的selfField吗');
+    const showObj = {};
+    if (selfField && selfField.length) {
+      selfField.forEach(item => {
+        // 处理选项关联
+        if (item.optionsRelevance && item.optionsRelevance.length) {
+          item.optionsRelevance.forEach(i => {
+            if (i.ids && i.ids.length) {
+              const {ids} = i;
+              for (let j = 0; j < ids.length; j++) {
+                if (showObj[ids[j]]) {
+                  Object.assign(showObj, {
+                    [ids[j]]: item.msg !== i.name ? [...showObj[ids[j]]] : [...showObj[ids[j]], item.field],
+                  });
+                } else {
+                  Object.assign(showObj, {
+                    [ids[j]]: item.msg !== i.name ? [] : [item.field],
+                  });
+                }
+              }
+            }
+          });
+        }
+      });
+    } 
+    this.setState({ showIdsObj: showObj }, () => {
+      console.log(this.state.showIdsObj,'showIdsObj999');
+    });
+  }
+
 
   onShowHandle = async({ templateType,id, operateType, draftId }) => {
     let detail = this.state.details;
@@ -222,7 +279,7 @@ class addInvoice extends Component {
         message.error('部门无法同步，请联系管理员检查应用可见范围设置');
       }
       const { djDetail, dispatch } = this.props;
-      console.log('AddInvoice -> onShowHandle -> djDetail', djDetail);
+      console.log('AddInvoice -> onShowHandle -> djDetail999', djDetail);
       const arrUrl = [{
         url: 'global/users',
         payload: {}
@@ -274,6 +331,8 @@ class addInvoice extends Component {
           }
         }
         if (!contentJson) {
+        // 处理选项关联
+        this.getShowIdsObj([],djDetails.selfField);
           let costSelect = localStorage.getItem('selectCost') || '';
           // localStorage.removeItem('selectCost');
           this.setState({
@@ -289,6 +348,7 @@ class addInvoice extends Component {
             if (costSelect) {
               costSelect = JSON.parse(costSelect);
               const { expenseList } = this.props;
+              console.log('🚀 ~ file: index.js ~ line 292 ~ addInvoice ~ Promise.all ~ expenseList', expenseList);
               const arrs = [];
               const categoryIds = expenseList.map(it => it.id);
               const category = [];
@@ -336,6 +396,9 @@ class addInvoice extends Component {
             });
           }
           this.onInit(contents, djDetails);
+          // 处理选项关联 (编辑时) 
+          // this.getShowIdsObj(contents.expandSubmitFieldVos);
+          this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
           await this.setState({
             showField: obj,
             newshowField: djDetails.showField,
@@ -450,7 +513,25 @@ class addInvoice extends Component {
   }
 
   onInitFolder = (arrs) => {
-    const newArr = this.onInitCategory(arrs);
+    const { expenseList } = this.props;
+    console.log('🚀 ~ file: index.js ~ line 292 ~ addInvoice ~ Promise.all ~ expenseList', expenseList);
+    const newArrs = [];
+    const categoryIds = expenseList.map(it => it.id);
+    const category = [];
+    arrs.forEach(it => {
+      if (categoryIds.includes(it.categoryId)) {
+        newArrs.push(it);
+      } else {
+        category.push(it.categoryName);
+      }
+    });
+    console.log('🚀 ~ file: index.js ~ line 467 ~ addInvoice ~ category', category);
+
+    if (category && category.length) {
+      const msg = Array.from(new Set(category)).join('、');
+      message.error(`${msg}收入类别被删除，请重新选择`);
+    }
+    const newArr = this.onInitCategory(newArrs);
     console.log('🚀 ~ file: index.js ~ line 625 ~ addInvoice ~ newArr', arrs);
     const newArrKey = defaultFunc.onInitKey([...newArr]);
     console.log('🚀 ~ file: index.js ~ line 627 ~ addInvoice ~ newArrKey', newArrKey);
@@ -767,7 +848,7 @@ class addInvoice extends Component {
             endTime: Number(it.dateType) === 2 ? moment(val[it.field][1]).format('x') : '',
           });
         }
-        if (it.status) {
+        if (it.status&& it.field.indexOf('expand_') > -1) {
           expandSubmitFieldVos.push(obj);
         } else if (it.status && it.field.indexOf('self_') > -1){
           selfSubmitFieldVos.push(obj);
@@ -990,13 +1071,23 @@ class addInvoice extends Component {
         type: 'costGlobal/officeList',
         payload,
       }).then(() => {
-        resolve(true);
+        const { officeList } = this.props;
+        console.log('🚀 ~ file: index.js ~ line 1014 ~ addInvoice ~ officeList', officeList);
         this.setState({
           details: {
             ...details,
-            officeId: '',
+            officeId: officeList.length === 1 ? officeList[0].id : '',
           }
+        }, () => {
+          resolve({
+            flags: true,
+            details: {
+              ...details,
+              officeId: officeList.length === 1 ? officeList[0].id : '',
+            }
+          });
         });
+
       });
     });
   }
@@ -1032,7 +1123,9 @@ class addInvoice extends Component {
       newshowField,
       operateType,
       expandVos,
-      id
+      id,
+      associatedIds,
+      showIdsObj
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1055,7 +1148,9 @@ class addInvoice extends Component {
         </div>
         <Spin spinning={this.props.initLoading}>
           <div className="content-dt" style={{height: 'calc(100vh - 200px)'}}>
-            <Lines name="基本信息" />
+            <div className="m-b-24">
+              <Lines name="基本信息" />
+            </div>
             <ChangeForm
               userInfo={userInfo}
               showField={showField}
@@ -1072,6 +1167,7 @@ class addInvoice extends Component {
               users={users}
               depList={depList}
               expandField={expandField}
+              changeExpandField={this.changeExpandField}
               details={details}
               createDepList={createDepList}
               djDetail={djDetail}
@@ -1085,6 +1181,9 @@ class addInvoice extends Component {
               officeList={officeList}
               onChangeOffice={this.onChangeOffice}
               checkOffice={this.checkOffice}
+              associatedIds={associatedIds}
+              showIdsObj={showIdsObj}
+              changeShowIdsObj={this.changeShowIdsObj}
             />
             <div style={{paddingTop: '24px', paddingBottom: '30px',
               width: this.state.costDetailsVo.length ? '100%' : '936px'}}

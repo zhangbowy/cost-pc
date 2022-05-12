@@ -186,7 +186,9 @@ class AddCostTable extends Component {
       });
     }
     amount = numAdd(val, amount);
+    console.log('🚀 ~ file: AddCostTable.js ~ line 189 ~ AddCostTable ~ amount', amount);
     this.props.onChange('amount', amount.toFixed(2));
+    this.props.onChange('shareAmount', amount.toFixed(2));
     this.setState({
       shareAmount: amount.toFixed(2),
     });

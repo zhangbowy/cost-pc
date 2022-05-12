@@ -44,8 +44,10 @@ class ChangeForm extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
-  }
+    this.state = {
+      // showIds: {},
+    };
+  };
 
   checkMoney = (rule, value, callback) => {
     if (value) {
@@ -426,8 +428,103 @@ class ChangeForm extends Component {
     return getFieldValue(key);
   }
 
+  flat=(arr)=> {
+    let arrResult = [];
+    arr.forEach((item) => {
+      if (Array.isArray(item)) {
+        arrResult = arrResult.concat(this.flat(item)); // 递归
+      } else {
+        arrResult.push(item);
+      }
+    });
+    return arrResult;
+  }
+
   onChangeSelect = (val, obj) => {
-    const { onChangeData, expandVos } = this.props;
+    // this.props.form.setFieldsValue({ 'projectId': null })
+    console.log(val,obj,'怎么回事');
+  // 获取新的showIdsObj
+    const { showIdsObj,changeShowIdsObj,expandField,changeExpandField,onChangeData} = this.props;
+    const keyList = Object.keys(showIdsObj);
+    const newArrObj = obj.optionsRelevance && obj.optionsRelevance.filter(it => it.name === val);
+    let newAddObj = [];
+    if (newArrObj && newArrObj.length && newArrObj[0].ids && newArrObj[0].ids.length) {
+      newAddObj = newArrObj[0].ids;
+    }
+    function sortFun(newObj, keyField, keys) {
+      for (let i=0; i<keys.length; i++) {
+        const it = keys[i];
+        const arr = newObj[it] ? newObj[it] : showIdsObj[it];
+        const is = arr.filter(im => im !== keyField);
+        
+        if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+            && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
+          Object.assign(newObj, {
+            [it]: [],
+          });
+          sortFun(newObj, it, keys);
+        } else {
+          Object.assign(newObj, {
+            [it]: is
+          });
+        } 
+      }
+      return newObj;
+    }
+  const newObjs = sortFun({}, obj.field, keyList);
+    console.log('新的值', newObjs);
+    if (newAddObj && newAddObj.length) {
+      newAddObj.forEach(it => {
+        if (it) {
+          Object.assign(newObjs, {
+            [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
+          });
+        }
+        
+      });
+    }
+  
+    console.log('最新的数据', newObjs);
+
+    // 如果之前的选项选择了东西，切换后就清除
+    // console.log(Object.keys(newObjs),'666');
+    const clearArr = [];
+    const clearShowArr = [];
+    Object.keys(newObjs).forEach(key => {
+      if (!newObjs[key].length) {
+        if (key==='imgUrl'||key==='fileUrl'||key==='ossFileUrl') {
+          onChangeData({
+            [key]:[],
+          });
+        } else if (key === 'supplier'||key === 'project') {
+          this.onChangePro('',key);
+        } else if (key === 'applicationSum') {
+          this.inputMoney('');
+        }
+        clearArr.push(`['${key}']`);
+        clearShowArr.push(key);
+      }
+    });
+      // 回显编辑时让单选项msg置空
+      expandField.forEach(items => {
+        if (clearShowArr.length && clearShowArr.includes(items.field)) {
+          // eslint-disable-next-line no-param-reassign
+          items.msg = '';
+        }
+      });
+        // 清除选项
+    const clearObj = {};
+    clearArr.forEach(its => {
+      clearObj[its] = undefined;
+    });
+    console.log(clearObj, '666');
+    this.props.form.setFieldsValue({
+         ...clearObj
+    }, () => { 
+      changeShowIdsObj(newObjs);
+      changeExpandField(expandField);
+    });  
+    const { expandVos} = this.props;
     const list = [...expandVos];
     const index = list.findIndex(it => it.field === obj.field);
     let flag = false;
@@ -435,14 +532,20 @@ class ChangeForm extends Component {
       flag = true;
     }
     if (index > -1) {
-      list.splice(index, 1, {
+      list.splice(index, 1,obj.optionsRelevance? {
         field: obj.field,
-        msg: val.toString(),
+        msg: val?val.toString():'',
+      }:{
+        field: obj.field,
+        msg: val?val.toString():'',
       });
     } else {
-      list.push({
+      list.push(obj.optionsRelevance?{
         field: obj.field,
-        msg: val.toString(),
+        msg: val?val.toString():'',
+      }:{
+        field: obj.field,
+        msg: val?val.toString():'',
       });
     }
     onChangeData({
@@ -453,7 +556,6 @@ class ChangeForm extends Component {
   onRest = () => {
     this.props.form.resetFields();
   }
-
 
 renderTreeNodes = data =>
   data.map(item => {
@@ -472,7 +574,8 @@ renderTreeNodes = data =>
     }
     return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
   });
-
+ 
+  // 选项隐藏时，把此选项的选中置空
 
   render () {
     const {
@@ -497,7 +600,9 @@ renderTreeNodes = data =>
       depList,
       officeList,
       ossFileUrl,
-      allDeptList
+      allDeptList,
+      // associatedIds
+      showIdsObj
     } = this.props;
     const projectList = treeConvert({
       rootId: 0,
@@ -508,9 +613,9 @@ renderTreeNodes = data =>
       tId: 'value',
       otherKeys: ['type']
     }, usableProject.sort(compare('sort')));
-
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
+    console.log( newForm,'details,showField,expandField,newshowField,newForm');
     const deptList = modify ? allDeptList : depList;
     const createDeptList = modify ? allDeptList : createDepList;
     return (
@@ -522,6 +627,17 @@ renderTreeNodes = data =>
         {
           newForm && (newForm.length > 0) &&
           newForm.filter(it => it.fieldType !== 9).map(itw => {
+            let isShow =true;
+            if (showIdsObj[itw.field]) {
+              if (showIdsObj[itw.field].length) {
+                isShow = true;
+              } else {
+                isShow = false;
+              }
+            } else {
+             isShow = true;
+            }
+            // console.log(isShow,'999');
             if (itw.field.indexOf('expand_') > -1 || itw.field.indexOf('self_') > -1) {
               let renderForm = null;
               let rule = [];
@@ -554,7 +670,7 @@ renderTreeNodes = data =>
                     disabled={modify && !itw.isModify}
                     mode={Number(itw.fieldType) === 8 ? 'multiple' : ''}
                     onChange={val => this.onChangeSelect(val, {
-                      fieldType: itw.fieldType, field: itw.field })}
+                      fieldType: itw.fieldType, field: itw.field,optionsRelevance:itw.optionsRelevance })}
                   >
                     {
                       itw.options && itw.options.map(iteems => (
@@ -591,10 +707,10 @@ renderTreeNodes = data =>
                   );
                 }
               }
-              return (
+              return ( 
                 <>
                   {
-                    itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
+                    isShow&&itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
                     && itw.fieldType !== 10 ?
                       <Form.Item label={itw.name} >
                         {
@@ -629,7 +745,7 @@ renderTreeNodes = data =>
               return (
                 <>
                   {
-                    itw.field === 'reason' && !!(itw.status) &&
+                    isShow&&itw.field === 'reason' && !!(itw.status) &&
                       <Form.Item label={showField.reason && showField.reason.name} style={{width: '936px', marginTop: '24px'}}>
                         {
                           getFieldDecorator('reason', {
@@ -648,7 +764,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    itw.field === 'userJson' && !!(itw.status) &&
+                    isShow&&itw.field === 'userJson' && !!(itw.status) &&
                     <Form.Item label={showField.userJson && showField.userJson.name} >
                       <SelectPeople
                         users={users}
@@ -664,7 +780,7 @@ renderTreeNodes = data =>
                     </Form.Item>
                   }
                   {
-                    itw.field === 'deptId' && !!(itw.status) &&
+                    isShow&&itw.field === 'deptId' && !!(itw.status) &&
                     <Form.Item label={showField.deptId && showField.deptId.name} >
                       {
                         getFieldDecorator('deptId', {
@@ -698,7 +814,7 @@ renderTreeNodes = data =>
                     </Form.Item>
                   }
                   {
-                    itw.field === 'deptId' && !modify &&
+                    isShow&&itw.field === 'deptId' && !modify &&
                       <Form.Item label={labelInfo.createDeptId} >
                         {
                           getFieldDecorator('createDeptId', {
@@ -725,7 +841,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    itw.field === 'deptId' && officeList.length > 0 && !modify &&
+                    isShow&&itw.field === 'deptId' && officeList.length > 0 && !modify &&
                       <Form.Item label={labelInfo.officeId} >
                         {
                           getFieldDecorator('officeId', {
@@ -753,7 +869,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    itw.field === 'loanSum' && itw.status ?
+                    isShow&&itw.field === 'loanSum' && itw.status ?
                       <Form.Item label={showField.loanSum && showField.loanSum.name} >
                         {
                           getFieldDecorator('loanSum', {
@@ -772,7 +888,7 @@ renderTreeNodes = data =>
                               showField.loanSum.note : `请输入${showField.loanSum && showField.loanSum.name}`}
                               style={{width: '100%'}}
                             />
-                          )   
+                          )
                         }
                         {
                           <Capitalization isMoney={this.state.money || details.loanSum||''}/>
@@ -790,7 +906,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'applicationSum' && itw.status ?
+                    isShow&&itw.field === 'applicationSum' && itw.status ?
                       <Form.Item label={showField.applicationSum && showField.applicationSum.name} >
                         {
                           getFieldDecorator('applicationSum', {
@@ -827,7 +943,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'repaymentTime' && itw.status ?
+                    isShow&&itw.field === 'repaymentTime' && itw.status ?
                       <Form.Item label={showField.repaymentTime && showField.repaymentTime.name} >
                         {
                           getFieldDecorator('repaymentTime', {
@@ -858,7 +974,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'month' && itw.status ?
+                    isShow&&itw.field === 'month' && itw.status ?
                       <Form.Item label={showField.month && showField.month.name} >
                         {
                           getFieldDecorator('month', {
@@ -885,7 +1001,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'happenTime' && itw.status ?
+                    isShow&&itw.field === 'happenTime' && itw.status ?
                       <Form.Item label={showField.happenTime && showField.happenTime.name} >
                         {
                           Number(showField.happenTime.dateType) === 1 &&
@@ -936,7 +1052,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'imgUrl' && showField.imgUrl.status ?
+                    isShow&&itw.field === 'imgUrl' && showField.imgUrl.status ?
                       <Form.Item
                         label={labelInfo.imgUrl}
 
@@ -954,6 +1070,7 @@ renderTreeNodes = data =>
                               imgUrl={imgUrl}
                               userInfo={userInfo}
                               disabled={modify && !showField.imgUrl.isModify}
+                              maxLen={9}
                             />
                           )
                         }
@@ -970,7 +1087,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'ossFileUrl' && showField.ossFileUrl.status ?
+                    isShow&&itw.field === 'ossFileUrl' && showField.ossFileUrl.status ?
                       <Form.Item
                         label={showField.ossFileUrl.name}
                       >
@@ -1003,7 +1120,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'fileUrl' && showField.fileUrl.status ?
+                    isShow&&itw.field === 'fileUrl' && showField.fileUrl.status ?
                       <Form.Item
                         label={labelInfo.fileUrl}
 
@@ -1062,7 +1179,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'project' && showField.project.status ?
+                    isShow&&itw.field === 'project' && showField.project.status ?
                       <Form.Item label={labelInfo.project} >
                         {
                           getFieldDecorator('projectId', {
@@ -1097,7 +1214,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'supplier' && showField.supplier.status ?
+                    isShow&&itw.field === 'supplier' && showField.supplier.status ?
                       <Form.Item label={labelInfo.supplier} >
                         {
                           getFieldDecorator('supplier', {
@@ -1134,7 +1251,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'note' && showField.note.status ?
+                    isShow&&itw.field === 'note' && showField.note.status ?
                       <Form.Item label={labelInfo.note} >
                         {
                           getFieldDecorator('note',{
@@ -1163,7 +1280,7 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    itw.field === 'receiptId' && showField.receiptId.status ?
+                    isShow&&itw.field === 'receiptId' && showField.receiptId.status ?
                       <Form.Item label={labelInfo.receiptId}>
                         {
                           getFieldDecorator('receiptId', {

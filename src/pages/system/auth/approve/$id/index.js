@@ -8,12 +8,14 @@ import { connect } from 'dva';
 // import SubHeader from '@/components/SubHeader';
 import PageHead from '@/components/pageHead';
 import AddRole from '../components/AddRole';
+import AddOldRole from '../components/AddOld';
 
-@connect(({ approveRole, loading }) => ({
+@connect(({ approveRole, loading, session }) => ({
   list: approveRole.list,
   detail: approveRole.detail,
   query: approveRole.query,
   total: approveRole.total,
+  userInfo: session.userInfo,
   loading: loading.effects['approveRole/list'] || false,
 }))
 class SettingPeople extends Component {
@@ -72,7 +74,7 @@ class SettingPeople extends Component {
 
   render() {
     const {id} = this.props.match.params;
-    const { detail, query, total } = this.props;
+    const { detail, query, total, userInfo } = this.props;
     const columns = [{
       title: '人员',
       dataIndex: 'userName',
@@ -103,9 +105,16 @@ class SettingPeople extends Component {
             !record.isSupperAdmin &&
             <Divider type="vertical" />
           }
-          <AddRole title="edit" isSupperAdmin={record.isSupperAdmin} onOk={this.handleOk} detail={record} id={id}>
-            <a>编辑</a>
-          </AddRole>
+          {
+            userInfo.orderItemLevel ?
+              <AddRole title="edit" isSupperAdmin={record.isSupperAdmin} onOk={this.handleOk} detail={record} id={id}>
+                <a>编辑</a>
+              </AddRole>
+              :
+              <AddOldRole title="edit" isSupperAdmin={record.isSupperAdmin} onOk={this.handleOk} detail={record} id={id}>
+                <a>编辑</a>
+              </AddOldRole>
+          }
         </span>
       ),
     }];
@@ -123,9 +132,17 @@ class SettingPeople extends Component {
         /> */}
         <PageHead title={detail.approveRoleName} note={detail.note} />
         <div className="content-dt">
-          <AddRole detail={{}} title="add" onOk={this.handleOk} id={id}>
-            <Button type="primary" className="m-b-16">新增人员</Button>
-          </AddRole>
+          {
+            userInfo.orderItemLevel ?
+              <AddRole detail={{}} title="add" onOk={this.handleOk} id={id}>
+                <Button type="primary" className="m-b-16">新增人员</Button>
+              </AddRole>
+              :
+              <AddOldRole detail={{}} title="add" onOk={this.handleOk} id={id}>
+                <Button type="primary" className="m-b-16">新增人员</Button>
+              </AddOldRole>
+          }
+
           <Table
             rowKey="id"
             columns={columns}
