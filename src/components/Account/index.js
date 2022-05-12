@@ -146,7 +146,7 @@ export default function Account(props) {
             </dt>
             {(!signStatus && signStatus != null && type === 1) ||
             (!personal && personal != null) ? (
-              <dt onClick={() => sign(account)}>签约</dt>
+              <dt onClick={() => sign(item)}>签约</dt>
             ) : null}
             <dt onClick={() => del(id)}>删除</dt>
           </dl>

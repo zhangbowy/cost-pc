@@ -98,12 +98,13 @@ class Account extends Component {
     this.onQuery({ ...query });
   };
 
-  sign = alipayAccount => {
+  sign = val => {
     this.props
       .dispatch({
         type: 'account/sign',
         payload: {
-          alipayAccount
+          alipayAccount: val.account,
+          type: val.alipayAccountType || 0
         }
       })
       .then(() => {

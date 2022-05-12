@@ -10,7 +10,7 @@ import {
   Switch,
   Checkbox,
   Cascader,
-  DatePicker, Tooltip
+  DatePicker, Tooltip, Radio
 } from 'antd';
 import { connect } from 'dva';
 import TextArea from 'antd/lib/input/TextArea';
@@ -96,7 +96,7 @@ class AddAccount extends React.PureComponent {
                   detail.bankName === '其他银行');
               this.setState({
                 visible: true,
-                type,
+                type: detail.type,
                 isShowInput: isInput,
                 data: {
                   ...detail,
@@ -265,12 +265,12 @@ class AddAccount extends React.PureComponent {
             </Button>
           ]}
         >
-          <Form {...formItemLayout} className="formItem">
+          <Form {...formItemLayout} className="formItem" key="addForm">
             <Form.Item label={labelInfo.type}>
               {getFieldDecorator('type', {
                 initialValue: Number(type)
               })(
-                <Select onChange={this.onChange}>
+                <Select onChange={this.onChange} disabled={data && data.signStatus === 3}>
                   {accountType.map(item => (
                     <Option key={item.key} value={item.key}>
                       {item.value}
@@ -288,6 +288,21 @@ class AddAccount extends React.PureComponent {
                 ]
               })(<Input placeholder="请输入" />)}
             </Form.Item>
+            {
+              Number(type) === 1 &&
+              <Form.Item label="账户类型">
+                {
+                  getFieldDecorator('alipayAccountType', {
+                    initialValue: (data && data.alipayAccountType) || 0
+                  })(
+                    <Radio.Group>
+                      <Radio value={0}>个人支付宝</Radio>
+                      <Radio value={1}>企业支付宝</Radio>
+                    </Radio.Group>
+                  )
+                }
+              </Form.Item>
+            }
             {
               !!(userInfo.orderItemLevel) && (
                 <>
@@ -328,7 +343,7 @@ class AddAccount extends React.PureComponent {
                       }`
                     }
                   ]
-                })(<Input placeholder="请输入" />)}
+                })(<Input placeholder="请输入" disabled={data && data.signStatus === 3} />)}
               </Form.Item>
             )}
             {Number(type) === 0 && (
@@ -337,7 +352,7 @@ class AddAccount extends React.PureComponent {
                   initialValue: (data && data.bankName) || undefined,
                   rules: [
                     {
-                      required: Number(type) === 0,
+                      required: !!(Number(type) === 0),
                       message: '请选择开户行'
                     }
                   ]
@@ -373,7 +388,7 @@ class AddAccount extends React.PureComponent {
               <Form.Item label={labelInfo.awAreas}>
                 {getFieldDecorator('awAreas', {
                   initialValue: (data && data.awAreas) || [],
-                  rules: [{ required: Number(type) === 0, message: '请选择' }]
+                  rules: [{ required: !!(Number(type) === 0), message: '请选择' }]
                 })(
                   <Cascader
                     options={treeList}
@@ -383,14 +398,17 @@ class AddAccount extends React.PureComponent {
                 )}
               </Form.Item>
             )}
-            {Number(type) === 0 && (
-              <Form.Item label={labelInfo.bankNameBranch}>
-                {getFieldDecorator('bankNameBranch', {
-                  initialValue: data && data.bankNameBranch,
-                  rules: [{ required: Number(type) === 0, message: '请输入' }]
-                })(<Input placeholder={`请输入${labelInfo.bankNameBranch}`} />)}
-              </Form.Item>
-            )}
+            {
+              Number(type) === 0 ?
+                <Form.Item label={labelInfo.bankNameBranch}>
+                  {getFieldDecorator('bankNameBranch', {
+                    initialValue: data && data.bankNameBranch,
+                    rules: [{ required: !!(Number(type) === 0), message: '请输入' }]
+                  })(<Input placeholder={`请输入${labelInfo.bankNameBranch}`} />)}
+                </Form.Item>
+                :
+                null
+            }
             <Form.Item label={labelInfo.note}>
               {getFieldDecorator('note', {
                 initialValue: data && data.note
