@@ -62,12 +62,12 @@ const income = [{
     key: '0',
     title: '· 用于合同签订后的收款计划申请',
   }],
-  disabled: true,
+  disabled: false,
 }];
 export default function JudgeType(props) {
   const [visible, setVisible] = useState(props.visible);
   const cancel = (val) => {
-    if (val === 'add_30') return;
+    // if (val === 'add_30') return;
     props.linkInvoice(val);
     setVisible(false);
   };

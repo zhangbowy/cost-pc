@@ -7,9 +7,9 @@ import moment from 'moment';
 import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import SelectIncome from './components/SelectIncome';
 import style from './index.scss';
-import constants, { getArrayColor, getArrayValue, incomeInvoiceStatus, invoiceStatus } from '../../utils/constants';
+import constants, { getArrayColor, getArrayValue, incomeInvoiceStatus, invoiceStatus } from '../../../utils/constants';
 import DraftList from './components/DraftList';
-import { ddOpenLink } from '../../utils/ddApi';
+import { ddOpenLink } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
 @connect(({ loading, incomeReport, costGlobal, global }) => ({

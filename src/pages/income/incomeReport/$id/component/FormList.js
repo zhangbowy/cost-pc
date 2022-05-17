@@ -13,8 +13,8 @@ import { placeholderType } from '@/utils/constants';
 import { compare, setTime, handleProduction } from '@/utils/common';
 import defaultFunc from './utils';
 import style from './index.scss';
-import UploadImg from '../../../../components/UploadImg';
-import UploadFile from '../../../../components/UploadFile';
+import UploadImg from '../../../../../components/UploadImg';
+import UploadFile from '../../../../../components/UploadFile';
 
 const {Option} = Select;
 const { RangePicker } = DatePicker;
@@ -456,7 +456,7 @@ class ChangeForm extends Component {
   //     // console.log('要显示的对象:', showIds);
   //     console.log('要隐藏的:unShowItems', unShowItems);
   // }
-  
+
   onChangeSelect = (val, obj) => {
     console.log(val, obj.optionsRelevance, '怎么回事');
     // 获取新的showIdsObj
@@ -472,8 +472,8 @@ class ChangeForm extends Component {
         const it = keys[i];
         const arr = newObj[it] ? newObj[it] : showIdsObj[it];
         const is = arr.filter(im => im !== keyField);
-        
-        if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+
+        if (is.length === 0 && showIdsObj[it] && arr.length > 0
             && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
           Object.assign(newObj, {
             [it]: [],
@@ -483,7 +483,7 @@ class ChangeForm extends Component {
           Object.assign(newObj, {
             [it]: is
           });
-        } 
+        }
       }
       return newObj;
     }
@@ -496,7 +496,7 @@ class ChangeForm extends Component {
             [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
           });
         }
-        
+
       });
     }
     console.log('最新的数据', newObjs);
@@ -533,11 +533,11 @@ class ChangeForm extends Component {
     console.log(clearObj, '666');
     this.props.form.setFieldsValue({
       ...clearObj
-    }, () => { 
+    }, () => {
       // 改变showIdsObj
       changeShowIdsObj(newObjs);
       changeExpandField(expandField);
-    });  
+    });
 
     const { onChangeData, expandVos } = this.props;
     const list = [...expandVos];
@@ -622,7 +622,7 @@ renderTreeNodes = data =>
       newshowField,
       expandField,
       form: { getFieldDecorator },
-      usableProject,
+      usableProject = [],
       imgUrl,
       // depList,
       createDepList,
@@ -642,6 +642,7 @@ renderTreeNodes = data =>
       // associatedIds,
       showIdsObj
     } = this.props;
+    debugger
     const projectList = treeConvert({
       rootId: 0,
       pId: 'parentId',
@@ -658,7 +659,7 @@ renderTreeNodes = data =>
     // 回显时
     // const showItem= this.onShowItems(newForm,associatedIds);
     // console.log(this.onShowItems(newForm,associatedIds),'888888');
-    
+
     const deptList = modify ? allDeptList : depList;
     const createDeptList = modify ? allDeptList : createDepList;
     return (
@@ -749,7 +750,7 @@ renderTreeNodes = data =>
                     />
                   );
                 }
-              } 
+              }
               return (
                 <>
                   {

@@ -5,6 +5,7 @@ import React from 'react';
 import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import RadioGroup from 'antd/lib/radio/group';
+import CheckboxGroup from 'antd/lib/Checkbox/group';
 import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
@@ -33,6 +34,17 @@ const categoryStatus = [{
   key: '2',
   value: '启用必填'
 }];
+const CONTRACT_OPTIONS = [
+  {
+    key: '0',
+    value: '允许关联'
+  },
+  {
+    key: '0',
+    value: '允许关联1'
+  },
+]
+
 @Form.create()
 class Basic extends React.PureComponent {
   constructor(props) {
@@ -353,13 +365,13 @@ class Basic extends React.PureComponent {
                 getFieldDecorator('isAllUse', {
                   initialValue: user,
                 })(
-                  <RadioGroup onChange={e => this.onChange(e, 'user')}>
+                  <CheckboxGroup onChange={e => this.onChange(e, 'user')}>
                     {
                       isAllUse.map(item => (
                         <Radio key={item.key} value={item.key}>{item.value}</Radio>
                       ))
                     }
-                  </RadioGroup>
+                  </CheckboxGroup>
                 )
               }
               {
@@ -548,6 +560,21 @@ class Basic extends React.PureComponent {
                 }
               </Form.Item>
             }
+            <Form.Item label={'收入合同'}>
+              {
+                getFieldDecorator('contract', {
+                  initialValue: CONTRACT_OPTIONS,
+                })(
+                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reApply')}>
+                    <Checkbox value="isRelationApply">允许关联合同</Checkbox>
+                    {
+                      reApply.includes('isRelationApply') &&
+                      <Checkbox value="isWriteByRelationApply">必填</Checkbox>
+                    }
+                  </Checkbox.Group>                )
+              }
+            </Form.Item>
+
             <Form.Item label={labelInfo.status}>
               {
                 getFieldDecorator('status', {

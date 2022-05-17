@@ -9,9 +9,9 @@ import constants from '@/utils/constants';
 import TableTemplate from '@/components/Modals/TableTemplate';
 import style from '../index.scss';
 // import PayModal from './PayModal';
-import { ddOpenLink } from '../../../utils/ddApi';
+import { ddOpenLink } from '../../../../utils/ddApi';
 // import SearchBanner from '../../statistics/overview/components/Search/Searchs';
-import fields from '../../../utils/fields';
+import fields from '../../../../utils/fields';
 import DraftList from './DraftList';
 
 const { APP_API } = constants;
