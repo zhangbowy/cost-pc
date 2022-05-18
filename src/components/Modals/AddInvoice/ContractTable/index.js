@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Table } from 'antd';
 import Search from 'antd/lib/input/Search';
 import style from './index.scss';
-import moment from "_moment@2.29.1@moment";
+import moment from "moment";
 
 function InvoiceTable(props) {
 
