@@ -10,17 +10,20 @@ import style from './index.scss';
 import Lines from '@/components/StyleCom/Lines';
 import Bottom from './component/Bottom';
 import ChangeForm from './component/FormList';
-import { JsonParse, sortBy } from '@/utils/common';
+import {JsonParse, sortBy} from '@/utils/common';
 import AddCost from '@/components/Modals/AddInvoice/AddCost';
 import CostTable from '@/components/Modals/AddInvoice/CostTable';
 import ApproveNode from '@/components/Modals/ApproveNode';
+import ChooseContract from './component/chooseContract';
+import ContractTable from '@/components/Modals/AddInvoice/ContractTable';
 // import { invoiceJson } from '@/utils/constants';
-import { numAdd, numMulti } from '@/utils/float';
-import { fileUpload } from '@/utils/ddApi';
+import {numAdd, numMulti} from '@/utils/float';
+import {fileUpload} from '@/utils/ddApi';
 import treeConvert from '@/utils/treeConvert';
-import { adjustApprove } from '@/utils/approve';
+import {adjustApprove} from '@/utils/approve';
+import SelectIncome from "../components/SelectIncome";
 
-@connect(({ session, global, loading, costGlobal }) => ({
+@connect(({session, global, loading, costGlobal}) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
@@ -76,7 +79,8 @@ class addInvoice extends Component {
       id: '',
       operateType: '', // 操作类型，add: 新增
       // associatedIds: [], // 所有被关联项的集合
-      showIdsObj: {}, // 是否显示的对象
+      showIdsObj: {}, // 是否显示的对象,
+      contractDetail: [],
     };
   }
 
@@ -103,7 +107,7 @@ class addInvoice extends Component {
   }
 
 // 改变showIdsObj
-  
+
 changeShowIdsObj = (val) => {
   const { showIdsObj } = this.state;
   this.setState({showIdsObj:Object.assign(showIdsObj, val)});
@@ -248,7 +252,7 @@ changeShowIdsObj = (val) => {
           });
         }
       });
-    } 
+    }
     this.setState({ showIdsObj: showObj }, () => {
       console.log(this.state.showIdsObj,'showIdsObj999');
     });
@@ -396,7 +400,7 @@ changeShowIdsObj = (val) => {
             });
           }
           this.onInit(contents, djDetails);
-          // 处理选项关联 (编辑时) 
+          // 处理选项关联 (编辑时)
           // this.getShowIdsObj(contents.expandSubmitFieldVos);
           this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
           await this.setState({
@@ -968,6 +972,14 @@ changeShowIdsObj = (val) => {
     });
   }
 
+  onChangeContract = (val) => {
+    this.setState({
+      contractDetail: val,
+    }, () => {
+      // this.onAddCost(val, 0, true);
+    });
+  }
+
   // 子组件改变父组件的state
   changeSetData = (val, flag) => {
     this.setState({
@@ -1125,7 +1137,8 @@ changeShowIdsObj = (val) => {
       expandVos,
       id,
       associatedIds,
-      showIdsObj
+      showIdsObj,
+      contractDetail
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1226,10 +1239,21 @@ changeShowIdsObj = (val) => {
                 }
               </div>
             </div>
+            <div>
+              <Lines name={`关联收入合同${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`}/>
+              <ChooseContract onOk={(val) => this.onChangeContract(val)}>
+                <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
+              </ChooseContract>
+              {
+                contractDetail.length > 0 && (
+                  <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} isShowDel></ContractTable>
+                )
+              }
+            </div>
             {
               !modify &&
               <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-                <Lines name="审批流程" />
+                <Lines name="审批流程"/>
                 <ApproveNode
                   approveNodes={nodes}
                   onChangeForm={(val) => this.onChangeNode(val)}
