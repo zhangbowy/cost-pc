@@ -5,7 +5,7 @@ import React from 'react';
 import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import RadioGroup from 'antd/lib/radio/group';
-import CheckboxGroup from 'antd/lib/checkbox/group';
+import CheckboxGroup from 'antd/lib/checkbox/Group';
 import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
