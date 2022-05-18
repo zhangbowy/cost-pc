@@ -456,8 +456,8 @@ class ChangeForm extends Component {
         const it = keys[i];
         const arr = newObj[it] ? newObj[it] : showIdsObj[it];
         const is = arr.filter(im => im !== keyField);
-        
-        if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+
+        if (is.length === 0 && showIdsObj[it] && arr.length > 0
             && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
           Object.assign(newObj, {
             [it]: [],
@@ -467,7 +467,7 @@ class ChangeForm extends Component {
           Object.assign(newObj, {
             [it]: is
           });
-        } 
+        }
       }
       return newObj;
     }
@@ -480,10 +480,10 @@ class ChangeForm extends Component {
             [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
           });
         }
-        
+
       });
     }
-  
+
     console.log('最新的数据', newObjs);
 
     // 如果之前的选项选择了东西，切换后就清除
@@ -520,10 +520,10 @@ class ChangeForm extends Component {
     console.log(clearObj, '666');
     this.props.form.setFieldsValue({
          ...clearObj
-    }, () => { 
+    }, () => {
       changeShowIdsObj(newObjs);
       changeExpandField(expandField);
-    });  
+    });
     const { expandVos} = this.props;
     const list = [...expandVos];
     const index = list.findIndex(it => it.field === obj.field);
@@ -574,7 +574,7 @@ renderTreeNodes = data =>
     }
     return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
   });
- 
+
   // 选项隐藏时，把此选项的选中置空
 
   render () {
@@ -707,7 +707,7 @@ renderTreeNodes = data =>
                   );
                 }
               }
-              return ( 
+              return (
                 <>
                   {
                     isShow&&itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
@@ -841,7 +841,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    isShow&&itw.field === 'deptId' && officeList.length > 0 && !modify &&
+                    isShow && itw.field === 'office' && officeList.length > 0 && !modify &&
                       <Form.Item label={labelInfo.officeId} >
                         {
                           getFieldDecorator('officeId', {
@@ -865,6 +865,14 @@ renderTreeNodes = data =>
                               }
                             </Select>
                           )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-6" style={{ marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
                         }
                       </Form.Item>
                   }
