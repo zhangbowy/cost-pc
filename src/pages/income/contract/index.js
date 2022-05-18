@@ -159,7 +159,7 @@ class incomeReport extends React.PureComponent {
           localStorage.setItem('contentJson', JSON.stringify(incomeDetail));
           localStorage.removeItem('selectCost');
           this.props.history.push(
-            `/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
+            `/income/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
           );
         });
 

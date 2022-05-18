@@ -642,16 +642,21 @@ renderTreeNodes = data =>
       // associatedIds,
       showIdsObj
     } = this.props;
-    debugger
-    const projectList = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'name',
-      id: 'id',
-      tName: 'label',
-      tId: 'value',
-      otherKeys: ['type']
-    }, usableProject.sort(compare('sort')));
+    // debugger;
+    let projectList = []
+    try {
+      projectList = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'name',
+        id: 'id',
+        tName: 'label',
+        tId: 'value',
+        otherKeys: ['type']
+      }, usableProject.sort(compare('sort')));
+    } catch (e) {
+
+    }
     // const { unShowItems } = this.state;
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);

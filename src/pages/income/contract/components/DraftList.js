@@ -151,7 +151,7 @@ class DraftList extends Component {
     }
     localStorage.setItem('contentJson', details);
     localStorage.removeItem('selectCost');
-    this.props.history.push(`/incomeReport/${str}~${templateType}~${invoiceId}~${id}`);
+    this.props.history.push(`/income/incomeReport/${str}~${templateType}~${invoiceId}~${id}`);
   }
 
   render() {
