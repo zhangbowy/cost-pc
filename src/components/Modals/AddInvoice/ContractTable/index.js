@@ -4,6 +4,7 @@ import { Table } from 'antd';
 import Search from 'antd/lib/input/Search';
 import style from './index.scss';
 import moment from "moment";
+import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 
 function InvoiceTable(props) {
 
@@ -23,6 +24,7 @@ function InvoiceTable(props) {
     searchContent,
     scroll,
     isShowDel,
+    hiddenRadio,
     onOk
   } = props;
   console.log('InvoiceTable -> total', total);
@@ -37,8 +39,20 @@ function InvoiceTable(props) {
   const columns = [{
     title: '合同单号',
     dataIndex: 'index',
-    render: (_, record, index) => (
-      <span>{index+1}</span>
+    render: (_, record) => (
+      <IncomeInvoiceDetail
+        id={'733747721623359488'}
+        // refuse={this.handleRefuse}
+        templateId={713812629653217280}
+        templateType={20}
+        // allow="modify"
+        // onCallback={() => this.onOk()}
+        // signCallback={this.onSign}
+        title="收款单详情"
+      >
+        <a>111tet12222222</a>
+      </IncomeInvoiceDetail>
+
     ),
     width: '80px'
   }, {
@@ -119,7 +133,7 @@ function InvoiceTable(props) {
         <div className={style.addTable}>
           <Table
             columns={columns}
-            rowSelection={rowSelection}
+            rowSelection={hiddenRadio ? null : rowSelection}
             dataSource={list}
             rowKey="id"
             loading={loading}

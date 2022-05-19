@@ -23,6 +23,7 @@ import VerificationBasicText from './verification/BasicText';
 // import { DownloadFile } from '../../../utils/ddApi';
 import CostDetailTable from './CostDetailTable';
 import RecordTable from './record';
+import ContractTable from '@/components/Modals/AddInvoice/ContractTable';
 
 const { APP_API } = constants;
 @withRouter
@@ -407,6 +408,15 @@ class InvoiceDetail extends Component {
             previewImage={this.previewImage}
             previewFiles={this.previewFiles}
           />
+          {/* 关联收入合同 */}
+          <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+            <div className={style.line} />
+            <span>
+              关联收入合同
+            </span>
+          </div>
+          <ContractTable page={1} list={category} onOk={(val) => this.onChangeContract([])} hiddenRadio></ContractTable>
+
           {/* 收款记录 */}
           <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
             <div className={style.line} />

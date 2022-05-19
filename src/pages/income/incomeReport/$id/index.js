@@ -1246,7 +1246,7 @@ changeShowIdsObj = (val) => {
               </ChooseContract>
               {
                 contractDetail.length > 0 && (
-                  <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} isShowDel></ContractTable>
+                  <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
                 )
               }
             </div>
