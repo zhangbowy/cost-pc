@@ -166,7 +166,8 @@ class CategoryAdd extends PureComponent {
                 ...detail,
                 costCategory: newArrs.length ? newArrs : null,
                 userJson,
-                deptJson,
+                deptJson: deptJson && deptJson.length ?
+                 deptJson.map(it => { return { ...it, deptId: `${it.deptId}` }; }) : [],
                 relation,
                 relations,
               });
@@ -481,7 +482,7 @@ class CategoryAdd extends PureComponent {
       // params.selfField.forEach(item => {
       //   item.optionsRelevance.
       // })
-      
+
       if (params.relations) delete params.relations;
       if (params.relation) delete params.relation;
       this.props.dispatch({
