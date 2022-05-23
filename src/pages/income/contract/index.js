@@ -356,8 +356,6 @@ class incomeReport extends React.PureComponent {
         );
         return (
           <span>
-            {
-              ((Number(record.approveStatus) === 4) || (Number(record.status) === 5)) ?
                 <>
                   <Popconfirm
                     title="是否确认删除？"
@@ -372,14 +370,6 @@ class incomeReport extends React.PureComponent {
                     </a>
                   </Dropdown>
                 </>
-                :
-                <>
-                  <a onClick={() => this.onChangeType('copy', record)}>复制</a>
-                  <Divider type="vertical" />
-                  <a onClick={() => this.print(record.id)}>打印</a>
-                </>
-            }
-
           </span>
         );
       },

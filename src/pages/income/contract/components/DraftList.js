@@ -36,6 +36,7 @@ class DraftList extends Component {
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 30
       }
     }).then(() => {
       this.setState({
@@ -93,6 +94,7 @@ class DraftList extends Component {
       type: 'costGlobal/listIncomeDraft',
       payload: {
         ...page,
+        type: 30,
         searchContent: e,
       }
     });

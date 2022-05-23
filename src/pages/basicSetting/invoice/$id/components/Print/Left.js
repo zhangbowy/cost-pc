@@ -39,7 +39,8 @@ const basicSet = {
     key: 'isQrCode',
     value: '单据详情二维码',
   },],
-  20: []
+  20: [],
+  30: []
 };
 @Form.create()
 class Left extends Component {

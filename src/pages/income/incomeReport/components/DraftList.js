@@ -36,6 +36,7 @@ class DraftList extends Component {
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 20
       }
     }).then(() => {
       this.setState({

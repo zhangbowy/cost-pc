@@ -59,7 +59,9 @@ class SelectIncome extends Component {
     const arr = [];
     await this.props.dispatch({
       type: 'costGlobal/queryIncomeIds',
-      payload: {}
+      payload: {
+        type: 30
+      }
     }).then(() => {
       const { queryIncomeIds } = this.props;
       console.log('🚀 ~ file: index.js ~ line 65 ~ SelectIncome ~ onShow=async ~ queryIncomeIds', queryIncomeIds);

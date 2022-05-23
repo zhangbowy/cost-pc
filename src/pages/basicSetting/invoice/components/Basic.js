@@ -146,6 +146,15 @@ class Basic extends React.PureComponent {
           values.relations.forEach(its => {
             obbj[its] = true;
           });
+        }
+        if (values.contract) {
+          const obbj = {
+            isRelevanceContract: false,
+            isMust: false,
+          };
+          values.contract.forEach(its => {
+            obbj[its] = true;
+          });
           Object.assign(values, {
             ...obbj,
           });
@@ -288,6 +297,7 @@ class Basic extends React.PureComponent {
   }
 
   onChangeRelation = (e, key) => {
+    console.log(e)
     this.props.onChanges(key, e);
   }
 
@@ -301,6 +311,7 @@ class Basic extends React.PureComponent {
       dispatch,
       reApply,
       reLoan,
+      contract
     } = this.props;
     const { cost, user, category, users,
       deptJson, flowId, approveList,
@@ -365,13 +376,13 @@ class Basic extends React.PureComponent {
                 getFieldDecorator('isAllUse', {
                   initialValue: user,
                 })(
-                  <CheckboxGroup onChange={e => this.onChange(e, 'user')}>
+                  <RadioGroup onChange={e => this.onChange(e, 'user')}>
                     {
                       isAllUse.map(item => (
                         <Radio key={item.key} value={item.key}>{item.value}</Radio>
                       ))
                     }
-                  </CheckboxGroup>
+                  </RadioGroup>
                 )
               }
               {
@@ -563,13 +574,13 @@ class Basic extends React.PureComponent {
             <Form.Item label={'收入合同'}>
               {
                 getFieldDecorator('contract', {
-                  initialValue: CONTRACT_OPTIONS,
+                  initialValue: data && data.contract ? data.contract : [],
                 })(
-                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'reApply')}>
-                    <Checkbox value="isRelationApply">允许关联合同</Checkbox>
+                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'contract')}>
+                    <Checkbox value="isRelevanceContract">允许关联合同</Checkbox>
                     {
-                      reApply.includes('isRelationApply') &&
-                      <Checkbox value="isWriteByRelationApply">必填</Checkbox>
+                      contract.includes('isRelevanceContract') &&
+                      <Checkbox value="isMust">必填</Checkbox>
                     }
                   </Checkbox.Group>                )
               }
