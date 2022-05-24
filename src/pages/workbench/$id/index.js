@@ -127,13 +127,13 @@ class addInvoice extends Component {
   }
 
 // 改变showIdsObj
-  
+
   changeShowIdsObj = (val) => {
     const { showIdsObj } = this.state;
     this.setState({showIdsObj:Object.assign(showIdsObj, val)});
     console.log(showIdsObj, '父级最新的showIdsObj');
   }
-  
+
   fetchList = ({ templateType, id, operateType, draftId },callback) => {
     const {
       userInfo,
@@ -272,7 +272,7 @@ class addInvoice extends Component {
           });
         }
       });
-    } 
+    }
     this.setState({ showIdsObj: showObj }, () => {
       console.log(this.state.showIdsObj,'showIdsObj999');
     });
@@ -458,10 +458,10 @@ class addInvoice extends Component {
           this.onInit(contents, djDetails);
           // 处理选项关联 (编辑时)
           console.log(contents, 'contents999');
-          // 影响到草稿箱 改单 复制等 
+          // 影响到草稿箱 改单 复制等
           console.log('selfSubmitFieldVos selfField 99999', contents.selfSubmitFieldVos, djDetails.selfField);
           this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
-         
+
           await this.setState({
             showField: obj,
             newshowField: djDetails.showField,
@@ -992,24 +992,25 @@ class addInvoice extends Component {
     const detailList = [...val];
     const newArr = detailList.sort(sortBy('createTime', true));
     let money = Number(this.state.total);
+    money = Number(((money*1000)/10).toFixed(0));
     let assessSum = 0;
     if (money || (money === 0)) {
       newArr.forEach(it => {
         console.log(money);
-        if(Number(money) < (it.waitAssessSum/100)) {
-          it.money = money;
+        if(Number(money) < it.waitAssessSum) {
+          it.money = money/100;
           assessSum+=money;
           money = 0;
         } else {
-          money-=it.waitAssessSum/100;
+          money-=it.waitAssessSum;
           it.money = it.waitAssessSum/100;
-          assessSum+=it.waitAssessSum/100;
+          assessSum+=it.waitAssessSum;
         }
       });
     }
     this.setState({
       borrowArr: newArr.map((it, index) => { return { ...it, sort: index }; }),
-      assessSum: Number(assessSum.toFixed(2)),
+      assessSum: assessSum/100,
     });
   }
 
