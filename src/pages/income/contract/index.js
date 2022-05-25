@@ -7,25 +7,26 @@ import moment from 'moment';
 import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import SelectIncome from './components/SelectIncome';
 import style from './index.scss';
-import constants, { getArrayColor, getArrayValue, incomeInvoiceStatus, invoiceStatus } from '../../../utils/constants';
+import constants, { getArrayColor, getArrayValue, contractInvoiceStatus as incomeInvoiceStatus, invoiceStatus } from '../../../utils/constants';
 import DraftList from './components/DraftList';
 import { ddOpenLink } from '../../../utils/ddApi';
 import SearchBanner from '../../statistics/overview/components/Search/Searchs';
+import treeConvert from '@/utils/treeConvert';
 
 const ListSearch = [
   {
     type: 'search',
-    label: '外部选择',
+    label: '合同名称',
     placeholder: '搜索单号、事由、合同名称',
-    key: 'content',
-    id: 'content',
+    key: 'str',
+    id: 'str',
     out: 1
   },
   {
     type: 'deptAndUser',
     label: '提交部门/人',
     placeholder: '请选择',
-    key: ['createUserVOS', 'createDeptVOS'],
+    key: ['createIds', 'createDeptIds'],
     id: 'createUserVOS',
     out: 1,
   },
@@ -33,7 +34,7 @@ const ListSearch = [
     type: 'rangeTime',
     label: '提交时间',
     placeholder: '请选择',
-    key: ['startTime', 'endTime'],
+    key: ['start', 'end'],
     id: 'startTime',
     out: 1
   },
@@ -41,16 +42,16 @@ const ListSearch = [
     type: 'tree',
     label: '合同类型',
     placeholder: '请选择',
-    key: 'incomeTemplateIds',
+    key: 'templateId',
     id: 'incomeTemplateIds',
   },
   {
     type: 'select',
     label: '合同状态',
     placeholder: '请选择',
-    key: 'statuses',
-    id: 'statuses',
-    options: invoiceStatus.filter(it => it.key !== '6'),
+    key: 'status',
+    id: 'status',
+    options: incomeInvoiceStatus,
     fileName: {
       key: 'key',
       name: 'value'
@@ -64,17 +65,28 @@ const ListSearch = [
     key: 'projectIds',
     id: 'projectIds'
   },
+  // {
+  //   type: 'search',
+  //   // label: '外部选择',
+  //   placeholder: '搜索单号、事由、合同名称',
+  //   key: 'str',
+  //   id: 'str',
+  // },
 ];
 
 const { APP_API } = constants;
-@connect(({ loading, incomeReport, costGlobal, global }) => ({
+@connect(({ loading, contract: incomeReport, costGlobal, global }) => ({
   loading: loading.effects['incomeReport/list'] || false,
   list: incomeReport.list,
   query: incomeReport.query,
   total: incomeReport.total,
   checkTemp: costGlobal.checkTemp,
   draftTotal: costGlobal.draftTotal,
-  incomeDetail: global.incomeDetail
+  incomeDetail: global.incomeDetail,
+  costCategoryList: global.costCategoryList,
+  invoiceList: global.invoiceList,
+  projectList: costGlobal.projectList,
+
 }))
 class incomeReport extends React.PureComponent {
   constructor(props) {
@@ -88,6 +100,7 @@ class incomeReport extends React.PureComponent {
 
   componentDidMount() {
     this.getDraft();
+    this.search();
     this.onQuery({
       pageNo: 1,
       pageSize: 10,
@@ -124,10 +137,86 @@ class incomeReport extends React.PureComponent {
       });
     }
     this.props.dispatch({
-      type: 'incomeReport/list',
+      type: 'contract/list',
       payload,
     });
+    // this.search();
   }
+
+  search = () => {
+    const { dispatch } = this.props;
+    const { current } = this.state;
+    const _this = this;
+    const fetchs = ['projectList', 'supplierList', 'costList', 'invoiceList'];
+    let arr = [];
+    arr = fetchs.map(it => {
+      const params = {};
+      if (it === 'invoiceList') {
+        Object.assign(params, {
+          templateType: 30
+        });
+      }
+      return dispatch({
+        type: it === 'projectList' ? `costGlobal/${it}` : `global/${it}`,
+        payload: params
+      });
+    });
+    const { searchList } = this.state;
+
+    Promise.all(arr).then(() => {
+      const {
+        costCategoryList,
+        invoiceList,
+        projectList,
+      } = _this.props;
+      const treeList = [costCategoryList, projectList, invoiceList];
+      console.log('search -> treeList', treeList);
+      const keys = [
+        'costIds',
+        'projectIds',
+        'templateId',
+      ];
+      const obj = {};
+      const newTree = treeList.map((it, i) => {
+        return treeConvert(
+          {
+            rootId: 0,
+            pId: 'parentId',
+            name: i === 0 ? 'costName' : 'name',
+            tName: 'title',
+            tId: 'value'
+          },
+          it
+        );
+      });
+
+      newTree.forEach((it, index) => {
+        Object.assign(obj, {
+          [keys[index]]: it
+        });
+      });
+      console.log('newSearch', obj);
+
+      const newSearch = searchList.map(it => {
+        if (keys.includes(it.key)) {
+          return {
+            ...it,
+            options: obj[it.key],
+            fileName: {
+              key: 'id',
+              name: 'name'
+            }
+          };
+        }
+        return { ...it };
+      });
+      console.log('newSearch', newSearch);
+      this.setState({
+        searchList: newSearch
+      });
+    });
+  };
+
 
   onChangeType = (operateType, details) => {
     this.props
@@ -135,7 +224,7 @@ class incomeReport extends React.PureComponent {
         type: 'costGlobal/checkTemplate',
         payload: {
           invoiceTemplateId: details.incomeTemplateId,
-          templateType: 20,
+          templateType: 30,
         }
       })
       .then(() => {
@@ -253,7 +342,7 @@ class incomeReport extends React.PureComponent {
     }, {
       title: '合同名称',
       width: 130,
-      dataIndex: 'incomeTemplateName'
+      dataIndex: 'name'
     }, {
       title: '合同金额（元）',
       width: 130,
@@ -267,52 +356,52 @@ class incomeReport extends React.PureComponent {
     }, {
       title: '已收款（元）',
       width: 130,
-      dataIndex: 'receiptSum2',
+      dataIndex: 'waitAssessSum',
       render: (_, record) => (
         <span>
-          <span>{record.receiptSum ? record.receiptSum/100 : 0}</span>
+          <span>{record.waitAssessSum ? record.waitAssessSum/100 : 0}</span>
         </span>
       ),
       className: 'moneyCol',
     }, {
       title: '未收款（元）',
       width: 130,
-      dataIndex: 'receiptSum3',
+      dataIndex: 'loanSum',
       render: (_, record) => (
         <span>
-          <span>{record.receiptSum ? record.receiptSum/100 : 0}</span>
+          <span>{record.loanSum ? record.loanSum/100 : 0}</span>
         </span>
       ),
       className: 'moneyCol',
     }, {
       title: '业务员',
       width: 130,
-      dataIndex: '2'
+      dataIndex: 'userName'
     }, {
       title: '签订日期',
       width: 130,
-      dataIndex: 'createTime',
+      dataIndex: 'repaymentTime',
       render: (_, record) => (
-        <span>{moment(record.createTime).format('YYYY-MM-DD')}</span>
+        <span>{moment(record.repaymentTime).format('YYYY-MM-DD')}</span>
       )
     }, {
       title: '项目名称',
       width: 130,
-      dataIndex: '3'
+      dataIndex: 'projectName'
     }, {
       fixed: 'right',
       title: '合同状态',
       width: 130,
-      dataIndex: 'msg',
+      dataIndex: 'status',
       render: (_, record) => {
         const { status } = record;
         return (
           <span>
             <Badge
               color={
-                getArrayColor(`${status}`, invoiceStatus) === '-'
+                getArrayColor(`${status}`, incomeInvoiceStatus) === '-'
                   ? 'rgba(255, 148, 62, 1)'
-                  : getArrayColor(`${status}`, invoiceStatus)
+                  : getArrayColor(`${status}`, incomeInvoiceStatus)
               }
               text={record.msg ||
                 getArrayValue(record.status, incomeInvoiceStatus)}

@@ -440,14 +440,20 @@ class AddCost extends Component {
   onSelectTree = () => {
     const { expenseList, costCategory, costType } = this.props;
     const newList = costType ? costCategory : expenseList;
-    const list = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'costName',
-      tId: 'value',
-      tName: 'title',
-      otherKeys: ['type','showField', 'icon', 'note']
-    }, newList.sort(compare('sort')));
+    let list = [];
+    try {
+      list = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'costName',
+        tId: 'value',
+        tName: 'title',
+        otherKeys: ['type','showField', 'icon', 'note']
+      }, newList.sort(compare('sort')));
+    } catch (error) {
+      
+    }
+
     function addParams(lists){
       lists.forEach(it => {
         if (it.type === 0) {

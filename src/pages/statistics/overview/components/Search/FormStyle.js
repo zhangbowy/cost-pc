@@ -691,7 +691,10 @@ class FormStyle extends Component {
               mode="multiple"
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={(val) => this.onChangeSelect(val, index)}
-              value={item.value ? item.value[item.key].map(it => { return { key: it }; }) : undefined}
+              value={item.value && Array.isArray(item.value)
+                  ? item.value[item.key].map(it => { return { key: it }; })
+                  : item.value ? { key: item.value[item.key] }
+                    : undefined}
             >
               {
                 item.options && item.options.map(it => (
@@ -702,6 +705,19 @@ class FormStyle extends Component {
           </div>
         );
       break;
+      case 'search':
+        node = (
+          <div className={style.formItem} key={item.id}>
+            <span className={style.label}>{item.label}</span>
+            <Input
+              key={item.id}
+              placeholder={item.placeholder}
+              style={{ width: '204px',marginRight:'16px' }}
+              onInput={e => this.onChangeIn(e, index)}
+            />
+          </div>
+        );
+        break;
       default:
         break;
     }

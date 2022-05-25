@@ -754,6 +754,42 @@ export const incomeInvoiceStatus = [
     value: '已拒绝',
     color: 'rgba(255, 90, 95, 1)'
   }];
+
+export const contractInvoiceStatus = [
+//   {
+//   key: '0',
+//   value: '草稿'
+// },
+  {
+    key: '1',
+    value: '审批中',
+    color: 'rgba(255, 148, 62, 1)'
+  },
+  {
+    key: '2',
+    value: '待收款',
+    color: 'rgba(3, 122, 254, 1)'
+  }, {
+    key: '3',
+    value: '部分已收款',
+    color: 'rgba(0, 199, 149, 1)',
+  },
+  {
+    key: '6',
+    value: '全部已收款',
+    color: 'rgba(0, 199, 149, 1)',
+  },
+  // {
+  //   key: '4',
+  //   value: '已撤销',
+  //   color: 'rgba(255, 90, 95, 1)'
+  // },
+  {
+    key: '5',
+    value: '已拒绝',
+    color: 'rgba(255, 90, 95, 1)'
+  }];
+
 export const borrowStatus = [
   //   {
   //   key: '0',
