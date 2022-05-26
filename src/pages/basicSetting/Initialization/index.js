@@ -9,11 +9,17 @@ import Lines from '../../../components/StyleCom/Lines';
 
 function Controller(props) {
 
-  const { dispatch, userInfo, removeDataTime } = props;
+  const { dispatch, userInfo, removeDataTime, removeDataTimeC } = props;
 
   useEffect(() => {
     dispatch({
       type: 'controller/getTime',
+      payload: {
+        companyId: userInfo.companyId,
+      }
+    });
+    dispatch({
+      type: 'controller/getTimeC',
       payload: {
         companyId: userInfo.companyId,
       }
@@ -48,6 +54,23 @@ function Controller(props) {
     });
   };
 
+  const clearsModal1 = () => {
+    Modal.confirm({
+      title: '一键清空',
+      content: '清空数据后不可撤销',
+      onOk(){
+        dispatch({
+          type: 'controller/delC',
+          payload: {
+            companyId: userInfo.companyId,
+          }
+        }).then(() => {
+          message.success('清空数据成功');
+        });
+      }
+    });
+  };
+
   // const synCompany = () => {
   //   Modal.confirm({
   //     title: '人员同步',
@@ -76,8 +99,8 @@ function Controller(props) {
             userInfo.orderItemLevel === 1 &&
             <>
               <p>收入类单据数据：</p>
-              <Button className="m-t-13 m-b-8" onClick={clearsModal}>一键清空</Button>
-              <p className="fs-14 c-black-45 p-b-15">上次操作时间：{removeDataTime ? moment(Number(removeDataTime)).format('YYYY-MM-DD HH:mm:ss') : '无'}</p>
+              <Button className="m-t-13 m-b-8" onClick={clearsModal1}>一键清空</Button>
+              <p className="fs-14 c-black-45 p-b-15">上次操作时间：{removeDataTimeC ? moment(Number(removeDataTimeC)).format('YYYY-MM-DD HH:mm:ss') : '无'}</p>
             </>
           }
         </div>
@@ -88,6 +111,7 @@ function Controller(props) {
 const mapStateToProps = (state) => {
   return {
     removeDataTime: state.controller.removeDataTime,
+    removeDataTimeC: state.controller.removeDataTimeC,
     userInfo: state.session.userInfo,
     synCompanyTime: state.controller.synCompanyTime,
     queryUsers: state.controller.queryUsers,
