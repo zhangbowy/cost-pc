@@ -8,6 +8,7 @@ export default {
   state: {
     removeDataTime: null,
     modifyGrant: null,
+    removeDataTimeC: null
   },
   effects: {
     *getTime({ payload }, { call, put }) {
@@ -21,12 +22,30 @@ export default {
         },
       });
     },
+    *getTimeC({ payload }, { call, put }) {
+      const response = yield call(get, api.getTimeC, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          removeDataTimeC: response ? response[1] : null,
+        },
+      });
+    },
     *del({ payload }, { call, put }) {
       const response = yield call(get, api.del, payload);
       yield put({
         type: 'save',
         payload: {
           removeDataTime: response || null,
+        },
+      });
+    },
+    *delC({ payload }, { call, put }) {
+      const response = yield call(get, api.delC, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          removeDataTimeC: response || null,
         },
       });
     },
