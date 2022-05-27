@@ -215,7 +215,7 @@ changeShowIdsObj = (val) => {
   // 处理选项关联获取 ShowIdsObj
 
   getShowIdsObj = (selfSubmitFieldVos, selfField) => {
-    if (selfSubmitFieldVos.length) {
+    if (selfSubmitFieldVos && selfSubmitFieldVos.length) {
       selfField.forEach(item => {
         selfSubmitFieldVos.forEach(it => {
           if (item.field === it.field) {
@@ -265,6 +265,7 @@ changeShowIdsObj = (val) => {
     const _this = this;
     this.fetchList({ templateType, id, operateType, draftId }, async() => {
       const create = this.state.depList;
+      debugger
       if (create && create.length > 0) {
         detail = {
           ...detail,
