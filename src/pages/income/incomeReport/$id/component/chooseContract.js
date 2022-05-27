@@ -10,12 +10,12 @@ import InvoiceTable from '@/components/Modals/AddInvoice/ContractTable';
 import { rowSelect } from '@/utils/common';
 
 @withRouter
-@connect(({ costGlobal, loading }) => ({
-  draftList: costGlobal.draftList,
+@connect(({ costGlobal,global, contract, loading }) => ({
+  contractList: global.contractList,
   total: costGlobal.total,
   page: costGlobal.page,
   draftTotal: costGlobal.draftTotal,
-  loading: loading.effects['costGlobal/listIncomeDraft'] || false,
+  loading: loading.effects['global/contractList'] || false,
 }))
 class ChooseContract extends Component {
   static propTypes = {
@@ -32,10 +32,11 @@ class ChooseContract extends Component {
 
   onShow = () => {
     this.props.dispatch({
-      type: 'costGlobal/listIncomeDraft',
+      type: 'global/contractList',
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 0
       }
     }).then(() => {
       this.setState({
@@ -115,7 +116,7 @@ class ChooseContract extends Component {
   }
 
   render() {
-    const { draftList, total, loading, page, draftTotal } = this.props;
+    const { contractList, total, loading, page, draftTotal } = this.props;
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     return (
       <div>
@@ -135,7 +136,7 @@ class ChooseContract extends Component {
           ]}
         >
           <InvoiceTable
-            list={draftList}
+            list={contractList}
             selectedRowKeys={selectedRowKeys}
             selectedRows={selectedRows}
             onSelect={this.onSelect}

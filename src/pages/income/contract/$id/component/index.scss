@@ -405,3 +405,14 @@
     }
   }
 }
+
+
+.contract_money {
+  :global {
+    .ant-form-item {
+      margin-bottom: 4px;
+    }
+  }
+  display: flex;
+  flex-direction: column;
+}

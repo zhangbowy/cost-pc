@@ -45,6 +45,7 @@ export default {
   // 新增报销单单据
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
   addIncome: `${APP_API}/cost/income/invoice/income/add`,
+  addContract: `${APP_API}/cost/contract/example/add`,
   send: `${APP_API}/cost/invoice/payment/payment`,
   // 新增借款单单据
   addLoan: `${APP_API}/cost/invoice/loan/add`,
@@ -173,4 +174,8 @@ export default {
   incomeDetail: `${APP_API}/cost/income/invoice/income/detail`,
   // 日志
   actionLogs: `${APP_API}/cost/actionLog/add`,
+  // 合同列表
+  contractList: `${APP_API}/cost/contract/example/list`,
+  contractDetail: `${APP_API}/cost/contract/example/detail`,
+
 };

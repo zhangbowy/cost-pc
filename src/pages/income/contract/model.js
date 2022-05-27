@@ -19,6 +19,9 @@ export default {
     },
     recordList: [],
     recordTotal: 0,
+    originLoanSum: 0,
+    waitAssessSum: 0,
+    loanSum: 0
   },
   effects: {
     *list({ payload }, { call, put }) {
@@ -27,12 +30,15 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          list: response.list || [],
+          list: response.contractInvoiceLoanPageResult.list || [],
           query: {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
           total: response.page ? response.page.total : 0,
+          originLoanSum: response.originLoanSum,
+          waitAssessSum: response.waitAssessSum,
+          loanSum: response.loanSum
         },
       });
     },

@@ -41,50 +41,49 @@ function InvoiceTable(props) {
     dataIndex: 'index',
     render: (_, record) => (
       <IncomeInvoiceDetail
-        id={'733747721623359488'}
+        id={record.id}
         // refuse={this.handleRefuse}
-        templateId={713812629653217280}
-        templateType={20}
+        templateId={record.invoiceTemplateId}
+        templateType={30}
         // allow="modify"
         // onCallback={() => this.onOk()}
         // signCallback={this.onSign}
         title="收款单详情"
       >
-        <a>111tet12222222</a>
+        <a>{record.invoiceNo}</a>
       </IncomeInvoiceDetail>
-
     ),
-    width: '80px'
+    // width: '80px'
   }, {
     title: '合同名称',
-    dataIndex: 'costSum2',
+    dataIndex: 'name',
     render: (_, record) => (
       <span>
-          <span>{record.costSum ? record.costSum/100 : 0}</span>
+          <span>{record.name || '-'}</span>
         </span>
     ),
     className: 'moneyCol',
-    width: '140px'
+    // width: '140px'
   }, {
     title: '合同金额（元）',
-    dataIndex: 'costSum',
+    dataIndex: 'originLoanSum',
     render: (_, record) => (
       <span>
-          <span>{record.costSum ? record.costSum/100 : 0}</span>
+          <span>{record.originLoanSum ? record.originLoanSum/100 : 0}</span>
         </span>
     ),
     className: 'moneyCol',
-    width: '140px'
+    // width: '140px'
   }, {
     title: '未收金额（元）',
-    dataIndex: 'costSum',
+    dataIndex: 'loanSum',
     render: (_, record) => (
       <span>
-          <span>{record.costSum ? record.costSum/100 : 0}</span>
+          <span>{record.loanSum ? record.loanSum/100 : 0}</span>
         </span>
     ),
     className: 'moneyCol',
-    width: '140px'
+    // width: '140px'
   }, {
     title: '提交时间',
     dataIndex: 'updateTime',
@@ -93,7 +92,7 @@ function InvoiceTable(props) {
           <span>{record.updateTime ? moment(Number(record.updateTime)).format('YYYY-MM-DD') : '-'}</span>
         </span>
     ),
-    width: '140px'
+    // width: '140px'
   }];
 
   if (isShowDel) {

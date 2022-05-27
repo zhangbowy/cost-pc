@@ -99,7 +99,7 @@ class SelectIncome extends Component {
       localStorage.setItem('selectCost', JSON.stringify(selectCost));
     }
     localStorage.removeItem('contentJson');
-    this.props.history.push(`/income/incomeReport/add~${activeObj.templateType}~${activeObj.id}`);
+    this.props.history.push(`/income/contract/add~${activeObj.templateType}~${activeObj.id}`);
     // this.props.history.push('/incomeReport/add~20~713812629653217280');
   }
 

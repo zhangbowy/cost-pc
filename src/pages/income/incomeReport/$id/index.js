@@ -80,7 +80,7 @@ class addInvoice extends Component {
       operateType: '', // 操作类型，add: 新增
       // associatedIds: [], // 所有被关联项的集合
       showIdsObj: {}, // 是否显示的对象,
-      contractDetail: [],
+      contraccontractDetailtDetail: [],
     };
   }
 
@@ -766,6 +766,7 @@ changeShowIdsObj = (val) => {
       showField,
       // newshowField,
       id,
+      contractDetail
     } = this.state;
     const { userInfo } = this.props;
     let params = {
@@ -777,6 +778,11 @@ changeShowIdsObj = (val) => {
       showField: JSON.stringify(showField),
       assessSum: 0,
     };
+    debugger
+    // 关联收入合同
+    if (contractDetail && contractDetail.length) {
+      params.contractId = contractDetail[0].id;
+    }
     if (this.changeForm &&
       this.changeForm.onSaveForm &&
       this.changeForm.onSaveForm()) {
@@ -1240,12 +1246,12 @@ changeShowIdsObj = (val) => {
               </div>
             </div>
             <div>
-              <Lines name={`关联收入合同${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`}/>
+              <Lines name={`关联收入合同`}/>
               <ChooseContract onOk={(val) => this.onChangeContract(val)}>
                 <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
               </ChooseContract>
               {
-                contractDetail.length > 0 && (
+                contractDetail && contractDetail.length > 0 && (
                   <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
                 )
               }

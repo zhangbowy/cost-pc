@@ -451,7 +451,7 @@ class AddCost extends Component {
         otherKeys: ['type','showField', 'icon', 'note']
       }, newList.sort(compare('sort')));
     } catch (error) {
-      
+
     }
 
     function addParams(lists){
@@ -940,7 +940,7 @@ class AddCost extends Component {
     });
     return arrResult;
   }
-  
+
   onChangeSelect = (val, obj) => {
   console.log(val, obj.optionsRelevance, '怎么回事');
  // 获取新的showIdsObj
@@ -956,8 +956,8 @@ class AddCost extends Component {
      const it = keys[i];
      const arr = newObj[it] ? newObj[it] : showIdsObj[it];
      const is = arr.filter(im => im !== keyField);
-     
-     if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+
+     if (is.length === 0 && showIdsObj[it] && arr.length > 0
          && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
        Object.assign(newObj, {
          [it]: [],
@@ -967,7 +967,7 @@ class AddCost extends Component {
        Object.assign(newObj, {
          [it]: is
        });
-     } 
+     }
    }
    return newObj;
  }
@@ -980,7 +980,7 @@ class AddCost extends Component {
          [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
        });
      }
-     
+
    });
  }
  console.log('最新的数据', newObjs);
@@ -1016,14 +1016,14 @@ class AddCost extends Component {
     console.log(clearObj, '666');
     this.props.form.setFieldsValue({
          ...clearObj
-    }, () => { 
+    }, () => {
       this.setState({ showIdsObj: Object.assign(showIdsObj, newObjs), expandField }, () => {
         console.log(expandField, 'expandField9999');
    });
-    });  
+    });
     }
-  
-  
+
+
   render() {
     const {
       children,
@@ -1063,7 +1063,7 @@ class AddCost extends Component {
     // const { unShowItems } = this.state;
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
-    
+
     // const optionsRelevance = []; // 所有关联项
     // const optionsRelevanceIds = []; // 所有关联项的ids集合
     // newRenderField.forEach(item => {
@@ -1179,12 +1179,6 @@ class AddCost extends Component {
                           )
                         }
                       </Form.Item>
-                      {
-                        exchangeRate && exchangeRate !== '1' ?
-                          <span style={{float: 'left', margin: '-45px 24px 0 290px'}} className="c-black-36">汇率{exchangeRate}</span>
-                          :
-                          null
-                      }
                     </Col>
                     :
                     null

@@ -42,7 +42,7 @@ import { adjustApprove } from '@/utils/approve';
   officeList: costGlobal.officeList,
   deptTree: costGlobal.deptTree,
   checkStandMsg: costGlobal.checkStandMsg,
-  loading: loading.effects['global/addIncome'] || false,
+  loading: loading.effects['global/addContract'] || false,
   draftLoading: loading.effects['costGlobal/addIncomeDraft'] || false,
   initLoading: loading.effects['global/djDetail'] || false,
 }))
@@ -103,7 +103,7 @@ class addInvoice extends Component {
   }
 
 // 改变showIdsObj
-  
+
 changeShowIdsObj = (val) => {
   const { showIdsObj } = this.state;
   this.setState({showIdsObj:Object.assign(showIdsObj, val)});
@@ -248,7 +248,7 @@ changeShowIdsObj = (val) => {
           });
         }
       });
-    } 
+    }
     this.setState({ showIdsObj: showObj }, () => {
       console.log(this.state.showIdsObj,'showIdsObj999');
     });
@@ -396,7 +396,7 @@ changeShowIdsObj = (val) => {
             });
           }
           this.onInit(contents, djDetails);
-          // 处理选项关联 (编辑时) 
+          // 处理选项关联 (编辑时)
           // this.getShowIdsObj(contents.expandSubmitFieldVos);
           this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
           await this.setState({
@@ -764,9 +764,11 @@ changeShowIdsObj = (val) => {
       id,
     } = this.state;
     const { userInfo } = this.props;
+    console.log(details, '--------')
     let params = {
       ...details,
-      incomeTemplateId: id,
+      // incomeTemplateId: id,
+      invoiceTemplateId: id,
       userId: details.userId || '',
       receiptSum: ((total * 1000)/10).toFixed(0),
       costSum: ((total * 1000)/10).toFixed(0),
@@ -899,7 +901,8 @@ changeShowIdsObj = (val) => {
         supplierAccountId: val.supplier ? val.supplier.split('_')[0] : '',
         supplierId: val.supplier ? val.supplier.split('_')[1] : '',
         receiptId: details.receiptId || '',
-        receiptName: details.receiptName || ''
+        receiptName: details.receiptName || '',
+        type: 30
       }
     }).then(() => {
       message.success('保存草稿成功');
@@ -924,7 +927,7 @@ changeShowIdsObj = (val) => {
     }
     if (operateType !== 'modify') {
       dispatch({
-        type: 'global/addIncome',
+        type: 'global/addContract',
         payload : {
           ...params,
           templateType,
@@ -1102,6 +1105,7 @@ changeShowIdsObj = (val) => {
       usableProject,
       officeList, // 所在公司列表,
       userDeps,
+      currencyList
     } = this.props;
     const supplierList = this.onSelectTree();
     const {
@@ -1152,6 +1156,7 @@ changeShowIdsObj = (val) => {
               <Lines name="基本信息" />
             </div>
             <ChangeForm
+              currencyList={currencyList}
               userInfo={userInfo}
               showField={showField}
               newshowField={newshowField}
@@ -1188,43 +1193,43 @@ changeShowIdsObj = (val) => {
             <div style={{paddingTop: '24px', paddingBottom: '30px',
               width: this.state.costDetailsVo.length ? '100%' : '936px'}}
             >
-              <Lines name={`收入明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />
-              <div className={costDetailsVo && costDetailsVo.length > 0 ? style.addBtns : style.addbtn}>
-                {
-                  !modify &&
-                  <AddCost
-                    userInfo={userInfo}
-                    invoiceId={id}
-                    onAddCost={this.onAddCost}
-                    key="handle"
-                    modify={modify}
-                    templateType={Number(templateType)}
-                    officeId={details.officeId}
-                    isShowToast={officeList.length}
-                  >
-                    <Button
-                      icon={costDetailsVo && costDetailsVo.length > 0 ? 'none' : 'plus'}
-                      className={style.addHandle}
-                      key="handle"
-                      type={costDetailsVo && costDetailsVo.length > 0 ? 'primary' : 'default'}
-                    >手动添加
-                    </Button>
-                  </AddCost>
-                }
-                {
-                  costDetailsVo && costDetailsVo.length > 0 &&
-                  <CostTable
-                    list={costDetailsVo}
-                    userInfo={userInfo}
-                    invoiceId={id}
-                    onChangeData={(val) => this.onChangeData(val)}
-                    addCost={this.onAddCost}
-                    modify={modify}
-                    templateType={Number(templateType)}
-                    officeId={details.officeId}
-                  />
-                }
-              </div>
+              {/*<Lines name={`收入明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />*/}
+              {/*<div className={costDetailsVo && costDetailsVo.length > 0 ? style.addBtns : style.addbtn}>*/}
+              {/*  {*/}
+              {/*    !modify &&*/}
+              {/*    <AddCost*/}
+              {/*      userInfo={userInfo}*/}
+              {/*      invoiceId={id}*/}
+              {/*      onAddCost={this.onAddCost}*/}
+              {/*      key="handle"*/}
+              {/*      modify={modify}*/}
+              {/*      templateType={Number(templateType)}*/}
+              {/*      officeId={details.officeId}*/}
+              {/*      isShowToast={officeList.length}*/}
+              {/*    >*/}
+              {/*      <Button*/}
+              {/*        icon={costDetailsVo && costDetailsVo.length > 0 ? 'none' : 'plus'}*/}
+              {/*        className={style.addHandle}*/}
+              {/*        key="handle"*/}
+              {/*        type={costDetailsVo && costDetailsVo.length > 0 ? 'primary' : 'default'}*/}
+              {/*      >手动添加*/}
+              {/*      </Button>*/}
+              {/*    </AddCost>*/}
+              {/*  }*/}
+              {/*  {*/}
+              {/*    costDetailsVo && costDetailsVo.length > 0 &&*/}
+              {/*    <CostTable*/}
+              {/*      list={costDetailsVo}*/}
+              {/*      userInfo={userInfo}*/}
+              {/*      invoiceId={id}*/}
+              {/*      onChangeData={(val) => this.onChangeData(val)}*/}
+              {/*      addCost={this.onAddCost}*/}
+              {/*      modify={modify}*/}
+              {/*      templateType={Number(templateType)}*/}
+              {/*      officeId={details.officeId}*/}
+              {/*    />*/}
+              {/*  }*/}
+              {/*</div>*/}
             </div>
             {
               !modify &&

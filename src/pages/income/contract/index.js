@@ -78,6 +78,9 @@ const { APP_API } = constants;
 @connect(({ loading, contract: incomeReport, costGlobal, global }) => ({
   loading: loading.effects['incomeReport/list'] || false,
   list: incomeReport.list,
+  originLoanSum: incomeReport.originLoanSum,
+  waitAssessSum: incomeReport.waitAssessSum,
+  loanSum: incomeReport.loanSum,
   query: incomeReport.query,
   total: incomeReport.total,
   checkTemp: costGlobal.checkTemp,
@@ -138,7 +141,10 @@ class incomeReport extends React.PureComponent {
     }
     this.props.dispatch({
       type: 'contract/list',
-      payload,
+      payload: {
+        ...payload,
+        type: 1
+      },
     });
     // this.search();
   }
@@ -223,7 +229,7 @@ class incomeReport extends React.PureComponent {
       .dispatch({
         type: 'costGlobal/checkTemplate',
         payload: {
-          invoiceTemplateId: details.incomeTemplateId,
+          invoiceTemplateId: details.invoiceTemplateId,
           templateType: 30,
         }
       })
@@ -238,17 +244,17 @@ class incomeReport extends React.PureComponent {
           return;
         }
         this.props.dispatch({
-          type: 'global/incomeDetail',
+          type: 'global/contractDetail',
           payload: {
-            id: details.id,
+            loanId: details.id,
           }
         }).then(() => {
-          const { incomeDetail } = this.props;
-          console.log('🚀 ~ file: index.js ~ line 95 ~ incomeReport ~ .then ~ incomeDetail', incomeDetail);
-          localStorage.setItem('contentJson', JSON.stringify(incomeDetail));
+          const { incomeDetail, contractDetail } = this.props;
+          console.log('🚀 ~ file: index.js ~ line 95 ~ incomeReport ~ .then ~ incomeDetail', contractDetail);
+          localStorage.setItem('contentJson', JSON.stringify(contractDetail));
           localStorage.removeItem('selectCost');
           this.props.history.push(
-            `/income/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
+            `/income/contract/${operateType}~30~${details.invoiceTemplateId}~${details.id}`
           );
         });
 
@@ -267,7 +273,7 @@ class incomeReport extends React.PureComponent {
   }
 
   print = (id) => {
-    ddOpenLink(`${APP_API}/cost/pdf/batch/income?token=${localStorage.getItem('token')}&ids=${id}`);
+    ddOpenLink(`${APP_API}/cost/pdf/batch/contract?token=${localStorage.getItem('token')}&ids=${id}`);
   }
 
   onDelete = (id) => {
@@ -312,7 +318,7 @@ class incomeReport extends React.PureComponent {
       () => {
         this.onQuery({
           pageNo: 1,
-          pageSize: 10
+          pageSize: 10,
         });
       }
     );
@@ -329,11 +335,11 @@ class incomeReport extends React.PureComponent {
           id={record.id}
           // refuse={this.handleRefuse}
           templateId={record.incomeTemplateId}
-          templateType={20}
+          templateType={30}
           // allow="modify"
           // onCallback={() => this.onOk()}
           // signCallback={this.onSign}
-          title="收款单详情"
+          title="合同详情"
         >
           <a>{record.invoiceNo}</a>
         </IncomeInvoiceDetail>
@@ -346,10 +352,10 @@ class incomeReport extends React.PureComponent {
     }, {
       title: '合同金额（元）',
       width: 130,
-      dataIndex: 'receiptSum',
+      dataIndex: 'originLoanSum',
       render: (_, record) => (
         <span>
-          <span>{record.receiptSum ? record.receiptSum/100 : 0}</span>
+          <span>{record.originLoanSum ? record.originLoanSum/100 : 0}</span>
         </span>
       ),
       className: 'moneyCol',
@@ -466,7 +472,7 @@ class incomeReport extends React.PureComponent {
       fixed: 'right',
       className: 'fixCenter'
     }];
-    const { list, loading, total, query, draftTotal } = this.props;
+    const { list, loading, total, query, draftTotal, originLoanSum, waitAssessSum, loanSum} = this.props;
     const { searchList } = this.state;
 
     return (
@@ -509,9 +515,9 @@ class incomeReport extends React.PureComponent {
             </div>
           </div>
           <div className={style.contract_stat}>
-            <span>合同总金额¥1112.00</span>
-            <span>已收金额¥1112.00</span>
-            <span>未收金额¥1112.00</span>
+            <span>合同总金额¥ {originLoanSum}</span>
+            <span>已收金额¥{waitAssessSum}</span>
+            <span>未收金额¥{loanSum}</span>
           </div>
           <Table
             columns={columns}

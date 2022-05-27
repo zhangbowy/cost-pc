@@ -164,7 +164,7 @@ class incomeReport extends React.PureComponent {
           // allow="modify"
           // onCallback={() => this.onOk()}
           // signCallback={this.onSign}
-          title="收款单详情"
+          title="合同详情"
         >
           <a>{record.invoiceNo}</a>
         </IncomeInvoiceDetail>
