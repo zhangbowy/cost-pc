@@ -381,12 +381,12 @@ class ChangeForm extends Component {
         if(Number(templateType) === 1) {
           console.log('时间',setTime({ time: val.repaymentTime }));
           Object.assign(params, {
-            loanSum: (val.loanSum*1000)/10,
+            loanSum: Number(((val.loanSum*1000)/10).toFixed(0)),
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
         } else if (Number(templateType) === 2) {
           Object.assign(params, {
-            applicationSum: (val.applicationSum*1000)/10,
+            applicationSum: Number(((val.applicationSum*1000)/10).toFixed(0)),
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
           if (showField.happenTime &&
