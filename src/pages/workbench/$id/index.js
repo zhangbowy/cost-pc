@@ -1230,12 +1230,12 @@ class addInvoice extends Component {
     };
     if(Number(templateType) === 1) {
       Object.assign(params, {
-        loanSum: (val.loanSum*1000)/10,
+        loanSum: Number(((val.loanSum*1000)/10).toFixed(0)),
         repaymentTime: val.repaymentTime ? moment(val.repaymentTime).format('x') : '',
       });
     } else if (Number(templateType) === 2) {
       Object.assign(params, {
-        applicationSum: (val.applicationSum*1000)/10,
+        applicationSum: Number(((val.applicationSum*1000)/10).toFixed(0)),
       });
       if (
         showField.happenTime &&
