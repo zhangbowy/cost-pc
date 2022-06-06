@@ -98,6 +98,15 @@ export default {
         },
       });
     },
+    *delPerIncome({ payload }, { call, put }) {
+      const response = yield call(get, api.delPerIncome, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          check: response || {},
+        },
+      });
+    },
     *approveList({ payload }, { call, put }) {
       const response = yield call(get, api.approve, payload);
       yield put({

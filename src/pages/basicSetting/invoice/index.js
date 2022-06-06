@@ -54,10 +54,10 @@ class Invoice extends React.PureComponent {
     this.onQuery({name});
   }
 
-  handleVisibleChange = (id) => {
+  handleVisibleChange = (id, tep) => {
     const _this = this;
     this.props.dispatch({
-      type: 'invoice/delPer',
+      type: tep > 10 ? 'invoice/delPerIncome' : 'invoice/delPer',
       payload: {
         id,
       }
@@ -70,7 +70,7 @@ class Invoice extends React.PureComponent {
           okType: 'danger',
           cancelText: '取消',
           onOk() {
-            _this.onDelete(id);
+            _this.onDelete(id, tep);
           },
           onCancel() {
             console.log('Cancel');
@@ -91,11 +91,12 @@ class Invoice extends React.PureComponent {
     });
   }
 
-  onDelete = (id) => {
+  onDelete = (id, tep) => {
     this.props.dispatch({
       type: 'invoice/del',
       payload: {
         id,
+        templateType: tep,
       }
     }).then(() => {
       message.success('删除成功');
@@ -244,7 +245,7 @@ class Invoice extends React.PureComponent {
           node: (
             <span
               className="deleteColor pd-20-9"
-              onClick={() => _this.handleVisibleChange(record.id)}
+              onClick={() => _this.handleVisibleChange(record.id, record.templateType)}
             >
               删除
             </span>
@@ -278,7 +279,7 @@ class Invoice extends React.PureComponent {
           }, {
             node: (
               <span
-                onClick={() => _this.handleVisibleChange(record.id)}
+                onClick={() => _this.handleVisibleChange(record.id, record.templateType)}
                 className="deleteColor pd-20-9"
               >
                 删除
