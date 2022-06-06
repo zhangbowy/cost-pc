@@ -223,6 +223,11 @@ class InvoiceDetail extends Component {
         'token'
       )}&id=${id}`;
     }
+    if (Number(templateType) === 30) {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Contract?token=${localStorage.getItem(
+        'token'
+      )}&id=${id}`;
+    }
   };
 
   handelOkPrint = () => {
