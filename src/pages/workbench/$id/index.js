@@ -1912,6 +1912,7 @@ class addInvoice extends Component {
           djDetail={djDetail}
           assessSum={assessSum}
           modify={modify}
+          templateType={Number(templateType)}
         />
         <StandardModal
           visible={exceedVisible}
