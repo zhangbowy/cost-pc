@@ -49,6 +49,17 @@ class UploadFile extends Component {
     window.open(it);
   }
 
+  beforeUpload = file => {
+    return new Promise((resolve, reject) => {
+      if(file.type !=='ofd' && file.type !=='pdf'){
+        message.error('仅支持上传ofd/pdf格式的文件');
+        return reject();
+      }
+      return resolve(file.type ==='ofd' || file.type ==='pdf');
+    });
+
+  }
+
   render() {
     const { userInfo, disabled, maxLen } = this.props;
     const { fileUrl } = this.state;
