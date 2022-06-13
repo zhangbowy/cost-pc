@@ -33,10 +33,11 @@ class DdPeople extends PureComponent {
 
   onOk = () => {
     const { value } = this.state;
+    console.log('🚀 ~ file: DdPeople.js ~ line 36 ~ DdPeople ~ value', value);
     const { roleId, pageType } = this.props;
     const params = { dingRoleIds: pageType !== 'role'
       ? value.map(it => { return { id: it.key, name: it.label }; })
-      : value.map(it => it.id) };
+      : value.map(it => it.key) };
     if (pageType === 'role') {
       Object.assign(params, {
         roleId,
