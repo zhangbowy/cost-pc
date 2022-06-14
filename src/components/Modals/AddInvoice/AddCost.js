@@ -336,6 +336,7 @@ class AddCost extends Component {
             };
           });
         }
+        if (!newArray) return;
         console.log('🚀 ~ file: AddCost.js ~ line 350 ~ AddCost ~ this.fetchInit ~ newArray', newArray);
         if (index === 0 || index) {
           if (detail.belongCity) {
@@ -415,7 +416,6 @@ class AddCost extends Component {
         });
         resolve(arr);
       });
-
      });
   }
 
