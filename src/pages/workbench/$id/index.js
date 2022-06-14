@@ -106,7 +106,6 @@ class addInvoice extends Component {
 
   componentDidMount() {
     const { id } = this.props.match.params;
-    console.log(id);
     const idArr = id.split('~');
     const params = {
       templateType: Number(idArr[1]),
@@ -131,7 +130,6 @@ class addInvoice extends Component {
   changeShowIdsObj = (val) => {
     const { showIdsObj } = this.state;
     this.setState({showIdsObj:Object.assign(showIdsObj, val)});
-    console.log(showIdsObj, '父级最新的showIdsObj');
   }
 
   fetchList = ({ templateType, id, operateType, draftId },callback) => {
@@ -211,7 +209,6 @@ class addInvoice extends Component {
     });
     Promise.all(newArr).then(() => {
       const create = this.props.deptInfo;
-      console.log('🚀 ~ file: index.js ~ line 198 ~ addInvoice ~ Promise.all ~ create', create);
       this.setState({
         depList: create,
         users: userJson,
@@ -248,7 +245,6 @@ class addInvoice extends Component {
         });
       });
     };
-  console.log(selfSubmitFieldVos,selfField,'最新的selfField吗');
     const showObj = {};
     if (selfField && selfField.length) {
       selfField.forEach(item => {
@@ -380,7 +376,6 @@ class addInvoice extends Component {
           });
         }
         const { officeList } = this.props;
-        console.log('🚀 ~ file: index.js ~ line 318 ~ AddInvoice ~ Promise.all ~ officeList', officeList);
         if (officeList.length > 0 && officeList.length === 1) {
           if (!detail.officeId || officeList.findIndex(it => it.id === detail.officeId) === -1) {
             detail={
@@ -447,7 +442,6 @@ class addInvoice extends Component {
           }
         } else {
           const contents = JsonParse(contentJson);
-          console.log('🚀 ~ file: index.js ~ line 229 ~ addInvoice ~ onShowHandle=async ~ contents', contents);
           const officeLists = await this.fetchOfficeList({
             dingUserId: contents.userJson && contents.userJson.length ? contents.userJson[0].userId : '' });
           if (contents.officeId && (officeLists.findIndex(it => it.id === contents.officeId) === -1)) {
@@ -457,9 +451,7 @@ class addInvoice extends Component {
           }
           this.onInit(contents, djDetails);
           // 处理选项关联 (编辑时)
-          console.log(contents, 'contents999');
           // 影响到草稿箱 改单 复制等
-          console.log('selfSubmitFieldVos selfField 99999', contents.selfSubmitFieldVos, djDetails.selfField);
           this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
 
           await this.setState({
@@ -494,7 +486,6 @@ class addInvoice extends Component {
     const expandField = [];
     const { userInfo } = this.props;
     const { operateType } = this.state;
-    console.log('AddInvoice -> onInit -> detail', detail);
     let applyArr = detail.applicationIds && detail.applicationIds.length &&
       operateType !== 'modify' && operateType !== 'copy' ?
       this.onInitApply(detail.applicationIds) : [];
@@ -628,8 +619,6 @@ class addInvoice extends Component {
   }
 
   onInitBorrow = (arrs, costDetails) => {
-    console.log('AddInvoice -> onInitBorrow -> arrs', arrs);
-    console.log('AddInvoice -> onInitBorrow -> arrs', costDetails);
     const { operateType } = this.state;
     const ids = arrs.map(it => it.loanId);
     const arr = operateType === 'modify' ? arrs : [];
@@ -703,11 +692,8 @@ class addInvoice extends Component {
       if (isShowMsg && (operateType === 'copy')) {
         message.error('部分支出类别不可用，已自动删除');
       }
-      console.log('🚀 ~ file: index.js ~ line 625 ~ addInvoice ~ newArr', arr);
       const newArr = this.onInitCategory(banArr);
-      console.log('🚀 ~ file: index.js ~ line 625 ~ addInvoice ~ newArr', newArr);
       const newArrKey = defaultFunc.onInitKey([...arr, ...newArr]);
-      console.log('🚀 ~ file: index.js ~ line 627 ~ addInvoice ~ newArrKey', newArrKey);
       // 初始化的数据存储后续比较
       this.setState({
         hisCostDetailsVo: newArrKey,
@@ -1023,8 +1009,6 @@ class addInvoice extends Component {
 
   getNode = (payload) => {
     const { details, loanUserId, total, expandVos, id, operateType } = this.state;
-    console.log('🚀 ~ file: index.js ~ line 939 ~ AddInvoice ~ total', total);
-      console.log('AddInvoice -> getNode -> details', details);
       const objs = {
         ...payload,
         deepQueryFlag: true,
@@ -1143,7 +1127,6 @@ class addInvoice extends Component {
   // 保存草稿
   handelOkDraft = async() => {
     const val = (this.changeForm && this.changeForm.onGetVal()) || {};
-    console.log('AddInvoice -> handelOkDraft -> val', val);
     if (!val.reason) {
       message.error('请输入事由');
       return;
@@ -1178,7 +1161,6 @@ class addInvoice extends Component {
         let obj = {
           ...it,
         };
-        console.log(val[it.field]);
         if (Number(it.fieldType) !== 9) {
           obj = {
             ...obj,
@@ -1432,7 +1414,6 @@ class addInvoice extends Component {
 
   // 子组件改变父组件的state
   changeSetData = (val, flag) => {
-  console.log('🚀 ~ file: index.js ~ line 1344 ~ addInvoice ~ val', val);
     this.setState({
       ...val,
     }, () => {

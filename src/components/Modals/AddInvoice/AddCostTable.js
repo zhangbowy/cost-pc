@@ -176,7 +176,6 @@ class AddCostTable extends Component {
   onInputAmount = (val, key) => {
     const { costSum } = this.state;
     const amm = this.props.form.getFieldValue('shareAmount');
-    console.log('🚀 ~ file: AddCostTable.js ~ line 179 ~ AddCostTable ~ amm', amm);
     let amount = 0;
     if (amm && Object.keys(amm)) {
       Object.keys(amm).forEach(it => {
@@ -186,7 +185,6 @@ class AddCostTable extends Component {
       });
     }
     amount = numAdd(val, amount);
-    console.log('🚀 ~ file: AddCostTable.js ~ line 189 ~ AddCostTable ~ amount', amount);
     this.props.onChange('amount', amount.toFixed(2));
     this.props.onChange('shareAmount', amount.toFixed(2));
     this.setState({
@@ -216,7 +214,6 @@ class AddCostTable extends Component {
     }
     if (costSum && (val || val === 0)) {
       // const amounts = ((val * costSum * 10000).toFixed(0) / 100);
-      console.log('shareScale', this.props.form.getFieldValue('shareScale'));
       const amounts = (numMulti(val, costSum)/100).toFixed(2);
       this.props.form.setFieldsValue({
         [`shareAmount[${key}]`]: amounts,
@@ -251,10 +248,8 @@ class AddCostTable extends Component {
     //   detail.splice(count, 1);
     // }
     const newArr = detail.filter(it => !key.includes(it.key));
-    console.log('onDelete -> newArr', newArr);
     let shareMount = 0;
     const amm = this.props.form.getFieldValue('shareAmount');
-    console.log('onDelete -> amm', amm);
     // eslint-disable-next-line no-restricted-syntax
     for(const keys in amm) {
       if (!key.includes(keys)) {
@@ -344,7 +339,6 @@ class AddCostTable extends Component {
         }
       });
     }
-    console.log('测试分摊的数组', arr);
     return arr;
   }
 
@@ -353,7 +347,6 @@ class AddCostTable extends Component {
     const arrs = [];
     const { costDetailShareVOS, costSum, shareAmount } = this.state;
     const { initDep } = this.props;
-    console.log('onAdds -> costSum', costSum);
     const { modify } = this.props;
     const details = [...costDetailShareVOS];
     if (modify) {
@@ -364,7 +357,6 @@ class AddCostTable extends Component {
     let amount = old;
     list.forEach((it, index) => {
       amount+=it.costAmount;
-      console.log('onAdds -> amount', amount);
       arrs.push({
         ...it,
         key: `export_${getTimeId()}_${index}`,
@@ -375,7 +367,6 @@ class AddCostTable extends Component {
         users: it.userId ? [{ userId: it.userId, name: it.userName, userName: it.userName }] : [],
       });
     });
-    console.log(shareAmount, shareAmount*100 + amount);
     const newArr = [...details, ...arrs];
     this.props.onChange('costDetailShareVOS', newArr);
     this.props.onChange('shareAmount', amount/100);
@@ -411,8 +402,6 @@ class AddCostTable extends Component {
         [`shareScale[${it.key}]`]: index === (len-1) ? scale : scale/100,
       });
     });
-    console.log('平均分摊', arr);
-    console.log('平均分摊', costSum);
     this.props.onChange('costDetailShareVOS', arr);
     this.props.onChange('shareAmount', costSum);
     this.setState({

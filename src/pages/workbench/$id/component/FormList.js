@@ -111,7 +111,6 @@ class ChangeForm extends Component {
   }
 
   onChangeDept = (val) => {
-    console.log('onChangeDept -> val', val);
     const { details, onChangeData } = this.props;
     onChangeData({
       details: {
@@ -242,7 +241,6 @@ class ChangeForm extends Component {
     }
     const files = this.props.fileUrl;
     files.splice(index, 1);
-    console.log('🚀 ~ file: FormList.js ~ line 240 ~ ChangeForm ~ files', files);
     onChangeData({
       fileUrl: files,
     });
@@ -321,7 +319,6 @@ class ChangeForm extends Component {
             let obj = {
               ...it,
             };
-            console.log(val[it.field]);
             if (Number(it.fieldType) !== 9) {
               obj = {
                 ...obj,
@@ -379,7 +376,6 @@ class ChangeForm extends Component {
           });
         }
         if(Number(templateType) === 1) {
-          console.log('时间',setTime({ time: val.repaymentTime }));
           Object.assign(params, {
             loanSum: Number(((val.loanSum*1000)/10).toFixed(0)),
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
@@ -442,7 +438,6 @@ class ChangeForm extends Component {
 
   onChangeSelect = (val, obj) => {
     // this.props.form.setFieldsValue({ 'projectId': null })
-    console.log(val,obj,'怎么回事');
   // 获取新的showIdsObj
     const { showIdsObj,changeShowIdsObj,expandField,changeExpandField,onChangeData} = this.props;
     const keyList = Object.keys(showIdsObj);
@@ -472,7 +467,6 @@ class ChangeForm extends Component {
       return newObj;
     }
   const newObjs = sortFun({}, obj.field, keyList);
-    console.log('新的值', newObjs);
     if (newAddObj && newAddObj.length) {
       newAddObj.forEach(it => {
         if (it) {
@@ -484,7 +478,6 @@ class ChangeForm extends Component {
       });
     }
 
-    console.log('最新的数据', newObjs);
 
     // 如果之前的选项选择了东西，切换后就清除
     // console.log(Object.keys(newObjs),'666');
@@ -517,7 +510,6 @@ class ChangeForm extends Component {
     clearArr.forEach(its => {
       clearObj[its] = undefined;
     });
-    console.log(clearObj, '666');
     this.props.form.setFieldsValue({
          ...clearObj
     }, () => {
@@ -615,7 +607,6 @@ renderTreeNodes = data =>
     }, usableProject.sort(compare('sort')));
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
-    console.log( newForm,'details,showField,expandField,newshowField,newForm');
     const deptList = modify ? allDeptList : depList;
     const createDeptList = modify ? allDeptList : createDepList;
     return (
@@ -661,7 +652,6 @@ renderTreeNodes = data =>
                 rule = [{ max: 128, message: '限制128个字' }];
               } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
                 if (Number(itw.fieldType) === 8) {
-                  console.log('render -> itw.msg', itw.msg);
                   initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
                 }
                 renderForm = (
