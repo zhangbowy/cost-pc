@@ -89,17 +89,25 @@ class AddCost extends Component {
   }
 
   fetchInit = (callback) => {
-    const { dispatch, templateType, userInfo } = this.props;
+    const { dispatch, templateType, userInfo, officeId } = this.props;
     const arrs = [{
       url: 'global/getCurrency',
       params: {  }
     }, {
       url: 'global/usableProject',
       params: { type: 1 }
-    }, {
+    },
+    {
       url: 'costGlobal/provinceAndCity',
       params: {  }
-    }];
+    },
+    {
+      url: 'global/users',
+      params: {
+        type: 1, officeId: officeId || ''
+      }
+    }
+  ];
     if (templateType === undefined) {
       arrs.push({
         url: 'costGlobal/officeList',
@@ -127,7 +135,7 @@ class AddCost extends Component {
           tId: 'value'
         }, provinceAndCity.normalList),
       }, () => {
-        callback();
+        callback({ deptInfo });
       });
     });
   }
@@ -156,8 +164,8 @@ class AddCost extends Component {
       message.error('请先填写所在公司');
       return;
     }
-    this.fetchInit(async() => {
-      let initDep = await this.getDeptInfo({ type: 1, officeId: officeId || '' });
+    this.fetchInit(async({ deptInfo }) => {
+      let initDep = deptInfo;
       const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
@@ -214,6 +222,8 @@ class AddCost extends Component {
                     belongCity: [valCity.pid, valCity.areaCode]
                   });
                 }
+                console.log('🚀 ~ file: AddCost.js ~ line 233 ~ AddCost ~ this.fetchInit ~ arr', arr);
+
                 this.setState({
                   details: {
                     ...detailFolder,
@@ -261,6 +271,8 @@ class AddCost extends Component {
                   belongCity: [valCity.pid, valCity.areaCode]
                 });
               }
+              console.log('🚀 ~ file: AddCost.js ~ line 283 ~ AddCost ~ this.fetchInit ~ arr', arr);
+
               this.setState({
                 initDep,
                 details: {
@@ -298,7 +310,7 @@ class AddCost extends Component {
         }
       });
     } else {
-      await this.props.dispatch({
+      this.props.dispatch({
         type: 'global/expenseList',
         payload: {
           id: this.props.invoiceId,
@@ -313,16 +325,18 @@ class AddCost extends Component {
         if (userIdArr && userIdArr.length) {
           newArray = await this.handleDept(listArr, userIdArr, officeId, initDep);
         } else {
-          newArray = newArray.map(it => {
+          newArray = newArray.map((it, i) => {
             const isShowDep = initDep.findIndex(item => item.deptId == it.deptId) > -1;
             return {
               ...it,
+              key: `${i}_aaaabb`,
               deptId: isShowDep ? it.deptId : '',
               deptName: isShowDep ? it.deptName : '',
               depList: initDep,
             };
           });
         }
+        console.log('🚀 ~ file: AddCost.js ~ line 350 ~ AddCost ~ this.fetchInit ~ newArray', newArray);
         if (index === 0 || index) {
           if (detail.belongCity) {
             const valCity = normalList.filter(it => it.areaCode === detail.belongCity)[0];
@@ -330,6 +344,7 @@ class AddCost extends Component {
               belongCity: [valCity.pid, valCity.areaCode]
             });
           }
+
           this.setState({
             details: detail,
             fileUrl: detail.fileUrl || [],
@@ -376,7 +391,7 @@ class AddCost extends Component {
           userIds: [...new Set(userIds)],
           officeId: officeId || '',
         }
-      }).then(async() => {
+      }).then(() => {
         lists.forEach((it, index) => {
           const { userDeps } = this.props;
           const obj = {
@@ -398,8 +413,9 @@ class AddCost extends Component {
           }
           arr.push(obj);
         });
-        });
         resolve(arr);
+      });
+
      });
   }
 
@@ -1037,21 +1053,6 @@ class AddCost extends Component {
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
 
-    // const optionsRelevance = []; // 所有关联项
-    // const optionsRelevanceIds = []; // 所有关联项的ids集合
-    // newRenderField.forEach(item => {
-    //   if (item.optionsRelevance) {
-    //     optionsRelevance.push(...item.optionsRelevance);
-    //   }
-    // });
-    // optionsRelevance.forEach(item => {
-    //   optionsRelevanceIds.push(...item.ids);
-    // });
-    // const associatedIds = [...new Set(optionsRelevanceIds)];
-    // console.log(associatedIds,'associatedIds支出');
-    // 回显时
-    // const showItem= this.onShowItems(newRenderField,associatedIds);
-    // console.log(showItem,'showItem');
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

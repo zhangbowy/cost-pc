@@ -261,7 +261,6 @@ export default {
     },
     *userDep({ payload }, { call, put }) {
       const response = yield call(post, api.userDep, payload);
-      console.log(response);
       yield put({
         type: 'save',
         payload: {

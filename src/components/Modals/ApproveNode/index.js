@@ -172,7 +172,6 @@ class ApproveNode extends Component {
           <div className={style.approve_box}>
             {
               approveNodesList.map((item, index) => {
-                console.log('审批人', item);
                 return (
                   <div className={style.approve_item_box} key={item.nodeId}>
                     <div className={cs(style.approve_item, `${ (index === 0 || index === approveNodesList.length - 1) ? style.relative : '' }`)}>
