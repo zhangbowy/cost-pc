@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 // import { func } from "prop-types";
 import moment from 'moment';
 import { debounce } from 'lodash-decorators';
@@ -156,4 +157,15 @@ export const dateToTime = str => {
     });
   }
   return res;
+};
+
+// 树结构删节点
+export const filterData = (data) => {
+  const newData =  data.filter(it => it.submitSumAll > 0);
+  newData.forEach(item => {
+    if (item.children && item.children.length) {
+      item.children=filterData(item.children);
+    }
+  });
+  return newData;
 };

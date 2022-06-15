@@ -4,6 +4,7 @@ import { message } from 'antd';
 import { post, get } from '@/utils/request';
 import constants from '@/utils/constants';
 import api from './services';
+import { filterData } from '@/utils/util';
 
 const { PAGE_SIZE } = constants;
 const exportObj = {
@@ -75,11 +76,10 @@ export default {
     },
     *dept({ payload }, { call, put }) {
       const responses = yield call(post, api.dept, payload, { withCode: true });
-      console.log('*list -> response', responses);
       let response = [];
       let isNoRole = false;
       if (responses.code === 200) {
-        response = responses.result;
+        response = filterData(responses.result);
         if (response && response.length > 1) {
           const submitSum = response && response.length ?
           response.reduce((prev, next) => {
@@ -213,7 +213,6 @@ export default {
         children: [],
         childrens: [...response],
       });
-      console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {
@@ -223,7 +222,6 @@ export default {
     },
     *project({ payload }, { call, put }) {
       const response = yield call(post, api.project, payload);
-      console.log('*list -> response', response);
       if (response) {
         response.unshift({
           projectName: '合计',
@@ -295,7 +293,6 @@ export default {
     },
     *people({ payload }, { call, put }) {
       const response = yield call(post, api.people, payload);
-      console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {
@@ -310,7 +307,6 @@ export default {
     },
     *supplier({ payload }, { call, put }) {
       const response = yield call(post, api.supplier, payload);
-      console.log('*list -> response', response);
       response.unshift({
         supplierName: '合计',
         id: -1,
@@ -380,7 +376,6 @@ export default {
     },
     *office({ payload }, { call, put }) {
       const responses = yield call(post, api.office, payload, { withCode: true });
-      console.log('*list -> response', responses);
       let response = [];
       let isNoRole = false;
       if (responses.code === 200) {
@@ -497,7 +492,6 @@ export default {
     },
     *pageDetail({ payload }, { call, put }) {
       const response = yield call(post, api.deptDetail, payload);
-      console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {
@@ -522,7 +516,6 @@ export default {
         delete payload.chartTypes;
       }
       const response = yield call(post, url, payload);
-      console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {
@@ -532,7 +525,6 @@ export default {
     },
     *setDetail({ payload }, { call, put }) {
       const response = yield call(get, api.setDetail, payload);
-      console.log('*list -> response', response);
       yield put({
         type: 'save',
         payload: {

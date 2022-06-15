@@ -150,6 +150,7 @@ export default {
    provinceAndCity: `${APP_API}/cost/aw/proviceAndCity`,
    aliTripLink: `${APP_API}/cost/alitrip/reserve`,
    deptTree: `${APP_API}/cost/dept/listWithUser`, // 部门树
+   newDeptTree: `${APP_API}/cost/dept/list`, // 部门树没有权限
    onlyDeptList: `${APP_API}/cost/dept/userManageDept`, // 部门树
    checkLinkCost: `${APP_API}/cost/cost/folder/countUnassociated`,
    checkFolderList: `${APP_API}/cost/invoice/application/folder`, // 申请单关联
