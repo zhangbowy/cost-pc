@@ -239,6 +239,13 @@ class InvoiceDetail extends Component {
         )}&ids=${id}`
       );
     }
+    if (Number(templateType) === 30) {
+      ddOpenLink(
+        `${APP_API}/cost/pdf/batch/contract?token=${localStorage.getItem(
+          'token'
+        )}&ids=${id}`
+      );
+    }
   };
 
   // 拒绝

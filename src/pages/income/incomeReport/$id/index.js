@@ -778,9 +778,14 @@ changeShowIdsObj = (val) => {
       showField: JSON.stringify(showField),
       assessSum: 0,
     };
-    debugger
     // 关联收入合同
     if (contractDetail && contractDetail.length) {
+      const loanSum = contractDetail.reduce((pre, {loanSum, freezeSum}) => pre + loanSum - freezeSum, 0);
+      // 如果收款金额大于合同的未收金额
+      if (total * 100 > loanSum) {
+        message.error('收款总金额不能大于合同未收金额！');
+        return;
+      }
       params.contractId = contractDetail[0].id;
     }
     if (this.changeForm &&
@@ -979,6 +984,7 @@ changeShowIdsObj = (val) => {
   }
 
   onChangeContract = (val) => {
+
     this.setState({
       contractDetail: val,
     }, () => {

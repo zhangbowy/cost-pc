@@ -265,7 +265,7 @@ changeShowIdsObj = (val) => {
     const _this = this;
     this.fetchList({ templateType, id, operateType, draftId }, async() => {
       const create = this.state.depList;
-      debugger
+      console.log(detail, '-----')
       if (create && create.length > 0) {
         detail = {
           ...detail,
@@ -427,8 +427,8 @@ changeShowIdsObj = (val) => {
   onInit = async(detail, djDetails) => {
     // const { templateType } = detail;
     const expandField = [];
-    const { userInfo } = this.props;
-
+    const { userInfo, currencyList } = this.props;
+    console.log(detail, 'init------------')
     const newDetail = {
       ...detail,
       receiptId: detail.receiptId ? detail.receiptId : '',
@@ -436,7 +436,16 @@ changeShowIdsObj = (val) => {
       repaymentTime: detail.repaymentTime,
       startTime: detail.startTime,
       endTime: detail.endTime,
+      // originLoanSum: detail.originLoanSum / 100
     };
+
+    const moneyType =  currencyList.find(item => item.id == detail.moneyType);
+    // debugger
+    if (moneyType && moneyType.exchangeRate) {
+      newDetail.originLoanSum = detail.originLoanSum / moneyType.exchangeRate / 100
+    } else {
+      newDetail.originLoanSum = detail.originLoanSum / 100
+    }
     const userIds = detail.userId ? [detail.userId] : [];
     if (djDetails.expandField) {
       let newExpand =  detail.expandSubmitFieldVos || [];
@@ -765,7 +774,6 @@ changeShowIdsObj = (val) => {
       id,
     } = this.state;
     const { userInfo } = this.props;
-    console.log(details, '--------')
     let params = {
       ...details,
       // incomeTemplateId: id,
@@ -966,7 +974,7 @@ changeShowIdsObj = (val) => {
 
   onChangeData = (val) => {
     this.setState({
-      costDetailsVo: val,
+      details: val,
     }, () => {
       this.onAddCost(val, 0, true);
     });

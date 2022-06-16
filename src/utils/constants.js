@@ -592,6 +592,14 @@ export const approveCreate = [{
   value: '承担人/部门'
 }];
 
+export const approveCreateContract = [{
+  key: 'make_user',
+  value: '提交人'
+}, {
+  key: 'salesman_user_or_dept',
+  value: '业务员/主管'
+}];
+
 export const approveCreateObj = {
   'make_user': '提交人',
   'bear_user_or_dept': '承担人/部门',
@@ -600,6 +608,7 @@ export const approveCreateObj = {
   'third_leader': '三级主管',
   'forth_leader': '四级主管',
   'fifth_leader': '五级主管',
+  'salesman_user_or_dept': '业务员/主管'
 };
 
 

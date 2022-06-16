@@ -34,8 +34,8 @@ class ChooseContract extends Component {
     this.props.dispatch({
       type: 'global/contractList',
       payload: {
-        pageNo: 1,
-        pageSize: 10,
+        // pageNo: 1,
+        // pageSize: 10,
         type: 0
       }
     }).then(() => {
@@ -55,18 +55,18 @@ class ChooseContract extends Component {
   }
 
   onSelectAll = (selected, selectedRows, changeRows) => {
-    const result = rowSelect.onSelectAll(this.state, selected, changeRows);
-    const _selectedRows = result.selectedRows;
-    const { selectedRowKeys } = result;
-    const money = _selectedRows.reduce((acc, cur) => {
-      return acc+cur.costSum/100;
-    }, 0);
-    this.setState({
-      selectedRows: _selectedRows,
-      selectedRowKeys,
-      details: _selectedRows,
-      money,
-    });
+    // const result = rowSelect.onSelectAll(this.state, selected, changeRows);
+    // const _selectedRows = result.selectedRows;
+    // const { selectedRowKeys } = result;
+    // const money = _selectedRows.reduce((acc, cur) => {
+    //   return acc+cur.costSum/100;
+    // }, 0);
+    // this.setState({
+    //   selectedRows: _selectedRows,
+    //   selectedRowKeys,
+    //   details: _selectedRows,
+    //   money,
+    // });
   };
 
   onSelect = (record, selected) => {
@@ -75,11 +75,11 @@ class ChooseContract extends Component {
       selectedRowKeys,
     } = rowSelect.onSelect(this.state, record, selected);
     const money = selectedRows.reduce((acc, cur) => {
-      return acc+cur.costSum/100;
+      return acc+cur.costSum / 100;
     }, 0);
-   console.log(selectedRows, '-')
+   // console.log(selectedRows, '-')
     this.setState({
-      selectedRows,
+      selectedRows: [record],
       selectedRowKeys,
       details: selectedRows,
       money,
@@ -92,18 +92,22 @@ class ChooseContract extends Component {
       searchContent: e,
     });
     this.props.dispatch({
-      type: 'costGlobal/listIncomeDraft',
+      type: 'global/contractList',
       payload: {
         ...page,
-        searchContent: e,
+        str: e,
+        type: 0
       }
     });
   }
 
   onQuery = (payload) => {
     this.props.dispatch({
-      type: 'costGlobal/listIncomeDraft',
-      payload,
+      type: 'global/contractList',
+      payload: {
+        ...payload,
+        type: 0
+      },
     });
   }
 

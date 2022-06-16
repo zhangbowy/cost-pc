@@ -61,14 +61,30 @@ const BasicText = ({
           </Col>
         )
       }
-      <Col span={8} className="m-t-16">
-        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
-          收入金额：
-        </span>
-        <span className="fs-14 c-black-65">
-          ¥{details.receiptSum ? details.receiptSum / 100 : 0}
-        </span>
-      </Col>
+      {
+        details.receiptSum && (
+          <Col span={8} className="m-t-16">
+            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+              收入金额：
+            </span>
+            <span className="fs-14 c-black-65">
+              ¥ {details.receiptSum ? details.receiptSum / 100 : 0}
+            </span>
+          </Col>
+        )
+      }
+      {
+        details.originLoanSum && (
+          <Col span={8} className="m-t-16">
+            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+              收入金额：
+            </span>
+            <span className="fs-14 c-black-65">
+              ¥ {details.originLoanSum ? details.originLoanSum / 100 : 0}
+            </span>
+          </Col>
+        )
+      }
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           业务员：

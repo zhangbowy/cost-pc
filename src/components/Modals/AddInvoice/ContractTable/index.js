@@ -31,7 +31,7 @@ function InvoiceTable(props) {
 
   const rowSelection = {
     type: 'radio',
-    selectedRowKeys: props.selectedRowKeys,
+    // selectedRowKeys: props.selectedRowKeys,
     onSelect,
     onSelectAll,
   };
@@ -53,7 +53,7 @@ function InvoiceTable(props) {
         <a>{record.invoiceNo}</a>
       </IncomeInvoiceDetail>
     ),
-    // width: '80px'
+    width: '200px'
   }, {
     title: '合同名称',
     dataIndex: 'name',
@@ -79,7 +79,7 @@ function InvoiceTable(props) {
     dataIndex: 'loanSum',
     render: (_, record) => (
       <span>
-          <span>{record.loanSum ? record.loanSum/100 : 0}</span>
+          <span>{record.loanSum ? record.loanSum / 100 - record.freezeSum / 100  : 0}</span>
         </span>
     ),
     className: 'moneyCol',

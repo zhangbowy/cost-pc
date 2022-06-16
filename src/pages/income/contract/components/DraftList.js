@@ -129,7 +129,7 @@ class DraftList extends Component {
       const { searchContent } = this.state;
       this.onQuery({
         ...page,
-        searchContent,
+        str: searchContent,
       });
     });
   }
@@ -153,7 +153,7 @@ class DraftList extends Component {
     }
     localStorage.setItem('contentJson', details);
     localStorage.removeItem('selectCost');
-    this.props.history.push(`/income/incomeReport/${str}~${templateType}~${invoiceId}~${id}`);
+    this.props.history.push(`/income/contract/${str}~${templateType}~${invoiceId}~${id}`);
   }
 
   render() {
@@ -175,9 +175,9 @@ class DraftList extends Component {
       width: '140px'
     }, {
       title: '金额（元）',
-      dataIndex: 'costSum',
+      dataIndex: 'originLoanSum',
       render: (_, record) => (
-          <span>{record.costSum ? record.costSum/100 : 0}</span>
+          <span>{record.originLoanSum ? record.originLoanSum/100 : 0}</span>
       ),
       className: 'moneyCol',
       width: '140px'

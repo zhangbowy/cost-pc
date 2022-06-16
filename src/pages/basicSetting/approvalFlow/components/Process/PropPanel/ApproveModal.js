@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Radio, Button, Checkbox, Select, Divider, Row, Col, message, Tooltip } from 'antd';
 import { connect } from 'dva';
-import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser } from '@/utils/constants';
+import { formItemLayout, approveSet, approveLeader, approveCreate, approveUser, approveCreateContract } from '@/utils/constants';
 import { getArrayValue, approveCreateObj } from '../../../../../../utils/constants';
 import { choosePeople } from '../../../../../../utils/ddApi';
 import style from './index.scss';
@@ -165,7 +165,10 @@ class ApproveModal extends Component {
       radioList = radioList.filter(it => it.key !== 'bearUser');
     }
     const newArr = [...approveCreate];
-    const approveArr = Number(templateType) ? newArr.filter(it => it.key==='make_user') : approveCreate;
+    let approveArr = Number(templateType) ? newArr.filter(it => it.key==='make_user') : approveCreate;
+    if (templateType == 30) {
+      approveArr = approveCreateContract
+    }
     return (
       <Form>
         <Form.Item label={`${nodeTypes[nodeType]}名称`} {...formItemLayout}>

@@ -89,7 +89,7 @@ const { APP_API } = constants;
   costCategoryList: global.costCategoryList,
   invoiceList: global.invoiceList,
   projectList: costGlobal.projectList,
-
+  contractDetail: global.contractDetail
 }))
 class incomeReport extends React.PureComponent {
   constructor(props) {
@@ -328,7 +328,7 @@ class incomeReport extends React.PureComponent {
     const columns = [{
       title: '单号',
       dataIndex: 'invoiceNo',
-      width: 160,
+      width: 180,
       fixed: 'left',
       render: (_, record) => (
         <IncomeInvoiceDetail
@@ -392,7 +392,7 @@ class incomeReport extends React.PureComponent {
       )
     }, {
       title: '项目名称',
-      width: 130,
+      width: 120,
       dataIndex: 'projectName'
     }, {
       fixed: 'right',
@@ -515,9 +515,9 @@ class incomeReport extends React.PureComponent {
             </div>
           </div>
           <div className={style.contract_stat}>
-            <span>合同总金额¥ {originLoanSum}</span>
-            <span>已收金额¥{waitAssessSum}</span>
-            <span>未收金额¥{loanSum}</span>
+            <span>合同总金额 ¥ {originLoanSum / 100}</span>
+            <span>已收金额 ¥{waitAssessSum / 100}</span>
+            <span>未收金额 ¥{loanSum / 100}</span>
           </div>
           <Table
             columns={columns}

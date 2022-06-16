@@ -11,16 +11,11 @@ export default function Bottom({ total, onSave,
       right={(
         <div className={style.right}>
           {
-            !templateType ?
               <>
                 <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
-                  收款金额：<span className="fs-20 fw-500 c-black-85">¥{total}</span>
+                      <span className="fs-20 fw-500 c-black-85"></span>
                 </span>
               </>
-            :
-              <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
-                合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span>
-              </span>
           }
           {
             !modify &&

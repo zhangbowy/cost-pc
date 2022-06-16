@@ -17,6 +17,7 @@ import defaultFunc from './utils';
 import style from './index.scss';
 import UploadImg from '../../../../../components/UploadImg';
 import UploadFile from '../../../../../components/UploadFile';
+import { numAdd, numMulti } from '../../../../../utils/float';
 
 const {Option} = Select;
 const { RangePicker } = DatePicker;
@@ -47,7 +48,11 @@ class ChangeForm extends Component {
     super(props);
     this.state = {
       // showIds: {},
+      exchangeRate: 1
     };
+    if (props.details.moneyType && props.currencyList.length) {
+      this.onChangeCurr(props.details.moneyType || -1)
+    }
   }
 
   checkMoney = (rule, value, callback) => {
@@ -236,6 +241,54 @@ class ChangeForm extends Component {
     });
   }
 
+
+  onChangeMoney = (val) => {
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        originLoanSum: val * 100,
+      },
+    }, true);
+  }
+
+  onChangeDate = (val) => {
+    console.log(val, 'date')
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        repaymentTime: moment(val).format('x'),
+      },
+    }, true);
+  }
+
+  onChangRealRepaymentTime = (val) => {
+    console.log(val, 'date')
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        repaymentTime: moment(val).format('x'),
+      },
+    }, true);
+  }
+
+  onChangeName = (val) => {
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        name: val,
+      },
+    }, true);
+  }
+
+
   onDelFile = (index, e, flag) => {
     const { onChangeData } = this.props;
     e.stopPropagation();
@@ -312,6 +365,8 @@ class ChangeForm extends Component {
       newshowField,
       ossFileUrl,
     } = this.props;
+
+    const { exchangeRate } = this.state
     let params = {};
     form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -354,7 +409,7 @@ class ChangeForm extends Component {
             }
           });
         }
-
+        console.log(val, 'vas')
         params = {
           ...details,
           reason: val.reason,
@@ -376,7 +431,8 @@ class ChangeForm extends Component {
           ossFileUrl,
           showField: JSON.stringify(newshowField),
           name: val.name,
-          originLoanSum: val.money
+          originLoanSum: val.money * exchangeRate  * 100,
+          moneyType: val.moneyType
         };
         if (val.month) {
           Object.assign(params, {
@@ -387,6 +443,11 @@ class ChangeForm extends Component {
         if (val.signingDate) {
           Object.assign(params, {
             repaymentTime: moment(val.signingDate).format('x'),
+          });
+        }
+        if (val.stopDate) {
+          Object.assign(params, {
+            realRepaymentTime: moment(val.stopDate).format('x'),
           });
         }
         if (Number(templateType) === 1) {
@@ -688,10 +749,10 @@ renderTreeNodes = data =>
     } catch (e) {
 
     }
-
     // const { unShowItems } = this.state;
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
+    console.log(details, '----detailsssssss')
     // console.log(associatedIds, unShowItems, newForm, '要隐藏的');
     // 回显时
     // const showItem= this.onShowItems(newForm,associatedIds);
@@ -1314,13 +1375,33 @@ renderTreeNodes = data =>
                       <Form.Item label={showField.signingDate && showField.signingDate.name}>
                         {
                           getFieldDecorator('signingDate', {
-                            initialValue: details.startTime ?
-                              moment(moment(Number(details.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                            initialValue: details.repaymentTime ?
+                              moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
                             rules: [{required: !!(showField.signingDate.isWrite), message: '请选择时间'}]
                           })(
                             <DatePicker
+                              onChange={this.onChangeDate}
                               style={{width: '100%'}}
                               disabled={modify && !showField.signingDate.isModify}
+                            />
+                          )
+                        }
+                      </Form.Item>
+                    )
+                  }
+                  {
+                    isShow && itw.field === 'stopDate' && (
+                      <Form.Item label={showField.stopDate && showField.stopDate.name}>
+                        {
+                          getFieldDecorator('stopDate', {
+                            initialValue: details.realRepaymentTime ?
+                              moment(moment(Number(details.realRepaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                            rules: [{required: !!(showField.stopDate.isWrite), message: '请选择时间'}]
+                          })(
+                            <DatePicker
+                              onChange={this.onChangRealRepaymentTime}
+                              style={{width: '100%'}}
+                              disabled={modify && !showField.stopDate.isModify}
                             />
                           )
                         }
@@ -1331,37 +1412,40 @@ renderTreeNodes = data =>
                   {
                     isShow && itw.field === 'money' && (
                       <div className={style.contract_money}>
-                        <Form.Item label={showField.money && showField.money.name}>
-                          {
-                            getFieldDecorator('symbol', {
-                              initialValue: '-1',
-                              rules: [{required: true, message: '请输入金额'}]
-                            })(
-                              <Select
-                                placeholder="请选择"
-                                style={{width: '113px'}}
-                                onChange={this.onChangeCurr}
-                              >
-                                <Option key="-1">CNY 人民币</Option>
-                                {
-                                  currencyList && currencyList.map(it => (
-                                    <Option key={it.id}>{it.currencyCode} {it.name}</Option>
-                                  ))
-                                }
-                              </Select>
-                            )
-                          }
-                          {
-                            getFieldDecorator('money', {
-                              initialValue: '',
-                              rules: [{required: !!(showField.money.isWrite), message: '请输入金额'}]
-                            })(
-                              <InputNumber
-                                style={{width: '167px'}}
-                                disabled={modify && !showField.money.isModify}
-                              />
-                            )
-                          }
+                        <Form.Item  className={style.contract_money}>
+                          <Form.Item label={showField.money && showField.money.name}>
+                            {
+                              getFieldDecorator('moneyType', {
+                                initialValue: details.moneyType || 'CNY 人民币',
+                                rules: [{required: true, message: '请输入金额'}]
+                              })(
+                                <Select
+                                  placeholder="请选择"
+                                  style={{width: '113px'}}
+                                  onChange={this.onChangeCurr}
+                                >
+                                  <Option key="-1">CNY 人民币</Option>
+                                  {
+                                    currencyList && currencyList.map(it => (
+                                      <Option key={it.id}>{it.currencyCode}</Option>
+                                    ))
+                                  }
+                                </Select>
+                              )
+                            }
+                            {
+                              getFieldDecorator('money', {
+                                initialValue: details.originLoanSum || '',
+                                rules: [{required: true, message: '请输入金额'}]
+                              })(
+                                <InputNumber
+                                  style={{width: '167px'}}
+                                  onChange={this.onChangeMoney}
+                                  disabled={modify && !showField.money.isModify}
+                                />
+                              )
+                            }
+                          </Form.Item>
                         </Form.Item>
                         {
                           exchangeRate && exchangeRate !== '1' ?
@@ -1378,10 +1462,11 @@ renderTreeNodes = data =>
                       <Form.Item label={showField.name && showField.name.name}>
                         {
                           getFieldDecorator('name', {
-                            initialValue: '',
+                            initialValue: details.name || '',
                             rules: [{required: !!(showField.name.isWrite), max: 20, message: '限制20个字'}]
                           })(
                             <Input
+                              onChange={this.onChangeName}
                               placeholder={itw.note ? itw.note : '请输入'}
                               disabled={modify && !itw.isModify}
                             />
