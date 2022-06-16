@@ -111,7 +111,6 @@ class ChangeForm extends Component {
   }
 
   onChangeDept = (val) => {
-    console.log('onChangeDept -> val', val);
     const { details, onChangeData } = this.props;
     onChangeData({
       details: {
@@ -242,7 +241,6 @@ class ChangeForm extends Component {
     }
     const files = this.props.fileUrl;
     files.splice(index, 1);
-    console.log('🚀 ~ file: FormList.js ~ line 240 ~ ChangeForm ~ files', files);
     onChangeData({
       fileUrl: files,
     });
@@ -321,7 +319,6 @@ class ChangeForm extends Component {
             let obj = {
               ...it,
             };
-            console.log(val[it.field]);
             if (Number(it.fieldType) !== 9) {
               obj = {
                 ...obj,
@@ -379,14 +376,13 @@ class ChangeForm extends Component {
           });
         }
         if(Number(templateType) === 1) {
-          console.log('时间',setTime({ time: val.repaymentTime }));
           Object.assign(params, {
-            loanSum: (val.loanSum*1000)/10,
+            loanSum: Number(((val.loanSum*1000)/10).toFixed(0)),
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
         } else if (Number(templateType) === 2) {
           Object.assign(params, {
-            applicationSum: (val.applicationSum*1000)/10,
+            applicationSum: Number(((val.applicationSum*1000)/10).toFixed(0)),
             repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
           });
           if (showField.happenTime &&
@@ -442,7 +438,6 @@ class ChangeForm extends Component {
 
   onChangeSelect = (val, obj) => {
     // this.props.form.setFieldsValue({ 'projectId': null })
-    console.log(val,obj,'怎么回事');
   // 获取新的showIdsObj
     const { showIdsObj,changeShowIdsObj,expandField,changeExpandField,onChangeData} = this.props;
     const keyList = Object.keys(showIdsObj);
@@ -456,8 +451,8 @@ class ChangeForm extends Component {
         const it = keys[i];
         const arr = newObj[it] ? newObj[it] : showIdsObj[it];
         const is = arr.filter(im => im !== keyField);
-        
-        if (is.length === 0 && showIdsObj[it] && arr.length > 0 
+
+        if (is.length === 0 && showIdsObj[it] && arr.length > 0
             && ((newAddObj.length && !newAddObj.includes(keyField)) || !newAddObj.length)) {
           Object.assign(newObj, {
             [it]: [],
@@ -467,12 +462,11 @@ class ChangeForm extends Component {
           Object.assign(newObj, {
             [it]: is
           });
-        } 
+        }
       }
       return newObj;
     }
   const newObjs = sortFun({}, obj.field, keyList);
-    console.log('新的值', newObjs);
     if (newAddObj && newAddObj.length) {
       newAddObj.forEach(it => {
         if (it) {
@@ -480,11 +474,10 @@ class ChangeForm extends Component {
             [it]: newObjs[it] ? [...newObjs[it], obj.field] : [obj.field]
           });
         }
-        
+
       });
     }
-  
-    console.log('最新的数据', newObjs);
+
 
     // 如果之前的选项选择了东西，切换后就清除
     // console.log(Object.keys(newObjs),'666');
@@ -517,13 +510,12 @@ class ChangeForm extends Component {
     clearArr.forEach(its => {
       clearObj[its] = undefined;
     });
-    console.log(clearObj, '666');
     this.props.form.setFieldsValue({
          ...clearObj
-    }, () => { 
+    }, () => {
       changeShowIdsObj(newObjs);
       changeExpandField(expandField);
-    });  
+    });
     const { expandVos} = this.props;
     const list = [...expandVos];
     const index = list.findIndex(it => it.field === obj.field);
@@ -574,7 +566,7 @@ renderTreeNodes = data =>
     }
     return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
   });
- 
+
   // 选项隐藏时，把此选项的选中置空
 
   render () {
@@ -615,7 +607,6 @@ renderTreeNodes = data =>
     }, usableProject.sort(compare('sort')));
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
-    console.log( newForm,'details,showField,expandField,newshowField,newForm');
     const deptList = modify ? allDeptList : depList;
     const createDeptList = modify ? allDeptList : createDepList;
     return (
@@ -661,7 +652,6 @@ renderTreeNodes = data =>
                 rule = [{ max: 128, message: '限制128个字' }];
               } else if(Number(itw.fieldType) === 2 || Number(itw.fieldType) === 8) {
                 if (Number(itw.fieldType) === 8) {
-                  console.log('render -> itw.msg', itw.msg);
                   initMsg = itw.msg && !(itw.msg instanceof Array) ? itw.msg.split(',') : [];
                 }
                 renderForm = (
@@ -707,7 +697,7 @@ renderTreeNodes = data =>
                   );
                 }
               }
-              return ( 
+              return (
                 <>
                   {
                     isShow&&itw.status && (itw.fieldType !== 3) && itw.fieldType !== 9
@@ -841,7 +831,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    isShow&&itw.field === 'deptId' && officeList.length > 0 && !modify &&
+                    isShow && itw.field === 'office' && officeList.length > 0 && !modify &&
                       <Form.Item label={labelInfo.officeId} >
                         {
                           getFieldDecorator('officeId', {
@@ -865,6 +855,14 @@ renderTreeNodes = data =>
                               }
                             </Select>
                           )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-6" style={{ marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
                         }
                       </Form.Item>
                   }

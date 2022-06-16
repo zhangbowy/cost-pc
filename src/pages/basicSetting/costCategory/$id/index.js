@@ -135,12 +135,26 @@ class CategoryAdd extends PureComponent {
           selectList: this.changeList(newArr),
         });
       }
-      const newList = basicStr;
-      if (costType === '1') newList.splice(2,1);
+      console.log('🚀 ~ file: index.js ~ line 140 ~ CategoryAdd ~ componentDidMount ~ costType', costType);
+
+      const newList = [{
+        key: 'one',
+        value: '基础设置',
+      }, {
+        key: 'two',
+        value: '字段设置',
+      }, {
+        key: 'three',
+        value: '分摊设置',
+      }];
+      if (Number(costType) === 1) {
+        newList.splice(2,1);
+        console.log('🚀 ~ file: index.js ~ line 141 ~ CategoryAdd ~ componentDidMount ~ newList', newList);
+      };
       this.setState({
         fieldList: this.changeList(fieldList),
         costType,
-        basicList: costType === '1' ? newList : basicStr,
+        basicList: Number(costType) === 1 ? newList : basicStr,
         initialIcon: iconName[costType] || 'morenleibietu1',
       });
     });

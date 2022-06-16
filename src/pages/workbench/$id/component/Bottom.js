@@ -5,6 +5,11 @@ import style from './index.scss';
 import FooterBar from '../../../../components/FooterBar';
 import { numSub } from '../../../../utils/float';
 
+const moneyObj = {
+  1: '借款金额',
+  2: '申请金额',
+  3: '薪资金额'
+};
 export default function Bottom({ total, onSave,
   templateType, djDetail, assessSum, onDraft, draftLoading, loading, modify }) {
   return (
@@ -36,7 +41,7 @@ export default function Bottom({ total, onSave,
               </>
             :
               <span className={cs('fs-15', 'c-black-50', style.moneyList)}>
-                合计：¥<span className="fs-20 fw-500 c-black-85">{total}</span>
+                {moneyObj[templateType]}：¥<span className="fs-20 fw-500 c-black-85">{total}</span>
               </span>
           }
           {

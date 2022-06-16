@@ -89,17 +89,25 @@ class AddCost extends Component {
   }
 
   fetchInit = (callback) => {
-    const { dispatch, templateType, userInfo } = this.props;
+    const { dispatch, templateType, userInfo, officeId } = this.props;
     const arrs = [{
       url: 'global/getCurrency',
       params: {  }
     }, {
       url: 'global/usableProject',
       params: { type: 1 }
-    }, {
+    },
+    {
       url: 'costGlobal/provinceAndCity',
       params: {  }
-    }];
+    },
+    {
+      url: 'global/users',
+      params: {
+        type: 1, officeId: officeId || ''
+      }
+    }
+  ];
     if (templateType === undefined) {
       arrs.push({
         url: 'costGlobal/officeList',
@@ -116,7 +124,6 @@ class AddCost extends Component {
     });
     Promise.all(arr).then(() => {
       const { deptInfo, provinceAndCity } = this.props;
-      console.log('AddCost -> fetchInit -> deptInfo', deptInfo);
       this.setState({
         initDep: deptInfo,
         treeList: treeConvert({
@@ -128,7 +135,7 @@ class AddCost extends Component {
           tId: 'value'
         }, provinceAndCity.normalList),
       }, () => {
-        callback();
+        callback({ deptInfo });
       });
     });
   }
@@ -148,7 +155,6 @@ class AddCost extends Component {
 
   onShow = async () => {
     const { costType, isDelete4Category, officeId, isShowToast, templateType } = this.props;
-    console.log('AddCost -> onShow -> officeId', costType);
     // let newOfficeId = officeId;
     if (isDelete4Category) {
       message.error('该支出类别已被管理员删除');
@@ -158,8 +164,8 @@ class AddCost extends Component {
       message.error('请先填写所在公司');
       return;
     }
-    this.fetchInit(async() => {
-      let initDep = await this.getDeptInfo({ type: 1, officeId: officeId || '' });
+    this.fetchInit(async({ deptInfo }) => {
+      let initDep = deptInfo;
       const { id, provinceAndCity: { normalList } } = this.props;
     if (costType) {
       await this.props.dispatch({
@@ -192,7 +198,6 @@ class AddCost extends Component {
               }).then(async() => {
                 detailFolder.costDetailShareVOS.forEach((it) => {
                   const { userDeps } = this.props;
-                  console.log('AddCost -> onShow -> userDeps', userDeps);
                   const obj = {
                     ...it,
                     key: it.id,
@@ -217,6 +222,8 @@ class AddCost extends Component {
                     belongCity: [valCity.pid, valCity.areaCode]
                   });
                 }
+                console.log('🚀 ~ file: AddCost.js ~ line 233 ~ AddCost ~ this.fetchInit ~ arr', arr);
+
                 this.setState({
                   details: {
                     ...detailFolder,
@@ -264,6 +271,8 @@ class AddCost extends Component {
                   belongCity: [valCity.pid, valCity.areaCode]
                 });
               }
+              console.log('🚀 ~ file: AddCost.js ~ line 283 ~ AddCost ~ this.fetchInit ~ arr', arr);
+
               this.setState({
                 initDep,
                 details: {
@@ -301,7 +310,7 @@ class AddCost extends Component {
         }
       });
     } else {
-      await this.props.dispatch({
+      this.props.dispatch({
         type: 'global/expenseList',
         payload: {
           id: this.props.invoiceId,
@@ -316,17 +325,19 @@ class AddCost extends Component {
         if (userIdArr && userIdArr.length) {
           newArray = await this.handleDept(listArr, userIdArr, officeId, initDep);
         } else {
-          newArray = newArray.map(it => {
+          newArray = newArray.map((it, i) => {
             const isShowDep = initDep.findIndex(item => item.deptId == it.deptId) > -1;
             return {
               ...it,
+              key: `${i}_aaaabb`,
               deptId: isShowDep ? it.deptId : '',
               deptName: isShowDep ? it.deptName : '',
               depList: initDep,
             };
           });
         }
-        console.log('AddCost -> onShow -> newArray', newArray);
+        if (!newArray) return;
+        console.log('🚀 ~ file: AddCost.js ~ line 350 ~ AddCost ~ this.fetchInit ~ newArray', newArray);
         if (index === 0 || index) {
           if (detail.belongCity) {
             const valCity = normalList.filter(it => it.areaCode === detail.belongCity)[0];
@@ -334,6 +345,7 @@ class AddCost extends Component {
               belongCity: [valCity.pid, valCity.areaCode]
             });
           }
+
           this.setState({
             details: detail,
             fileUrl: detail.fileUrl || [],
@@ -372,7 +384,6 @@ class AddCost extends Component {
   }
 
   handleDept = (lists, userIds, officeId, initDep) => {
-    console.log('AddCost -> handleDept -> officeId', officeId);
     const arr = [];
      return new Promise(resolve => {
       this.props.dispatch({
@@ -381,10 +392,9 @@ class AddCost extends Component {
           userIds: [...new Set(userIds)],
           officeId: officeId || '',
         }
-      }).then(async() => {
+      }).then(() => {
         lists.forEach((it, index) => {
           const { userDeps } = this.props;
-          console.log('AddCost -> onShow -> userDeps', userDeps);
           const obj = {
             ...it,
             key: it.id || it.key || `${getTimeIdNo()+index}`,
@@ -404,8 +414,8 @@ class AddCost extends Component {
           }
           arr.push(obj);
         });
-        });
         resolve(arr);
+      });
      });
   }
 
@@ -440,20 +450,14 @@ class AddCost extends Component {
   onSelectTree = () => {
     const { expenseList, costCategory, costType } = this.props;
     const newList = costType ? costCategory : expenseList;
-    let list = [];
-    try {
-      list = treeConvert({
-        rootId: 0,
-        pId: 'parentId',
-        name: 'costName',
-        tId: 'value',
-        tName: 'title',
-        otherKeys: ['type','showField', 'icon', 'note']
-      }, newList.sort(compare('sort')));
-    } catch (error) {
-
-    }
-
+    const list = treeConvert({
+      rootId: 0,
+      pId: 'parentId',
+      name: 'costName',
+      tId: 'value',
+      tName: 'title',
+      otherKeys: ['type','showField', 'icon', 'note']
+    }, newList.sort(compare('sort')));
     function addParams(lists){
       lists.forEach(it => {
         if (it.type === 0) {
@@ -513,8 +517,6 @@ class AddCost extends Component {
       if (!err) {
         // eslint-disable-next-line eqeqeq
         if (costDetailShareVOS.length !== 0 && shareAmount != val.costSum) {
-          console.log('🚀 ~ file: AddCost.js ~ line 508 ~ AddCost ~ this.props.form.validateFieldsAndScroll ~ shareAmount != val.costSum', shareAmount);
-          console.log('🚀 ~ file: AddCost.js ~ line 508 ~ AddCost ~ this.props.form.validateFieldsAndScroll ~ shareAmount != val.costSum', val);
           message.error('分摊明细金额合计不等于支出金额，请修改');
           return;
         }
@@ -690,7 +692,6 @@ class AddCost extends Component {
 
   // 选择支出类别
   onChange = (val, types, expand) => {
-    console.log('AddCost -> onChange -> expand', expand);
     let detail = this.state.details;
     const showObj = {};
     const showFields = {};
@@ -715,7 +716,6 @@ class AddCost extends Component {
       this.props.form.setFieldsValue({
         time: null
       });
-      console.log('AddCost -> onChange -> detail', detail);
       if (lbDetail.showField) {
         const str = lbDetail.showField;
         str.forEach(it => {
@@ -738,7 +738,6 @@ class AddCost extends Component {
         if (lbDetail.expandField) {
           lbDetail.expandField.forEach(it => {
             const index = expand.findIndex(its => its.field === it.field);
-            console.log('AddCost -> onChange -> index', lbDetail.expandField);
             if (index > -1 && it.status) {
               expands.push({
                 ...it,
@@ -751,7 +750,6 @@ class AddCost extends Component {
             }
           });
         }
-        console.log('AddCost -> onChange -> expands', expands);
         this.setState({
           expandField: expands,
         });
@@ -763,7 +761,6 @@ class AddCost extends Component {
         });
       }
       const { expandField } = this.state;
-      console.log(this.state.expandField, 'expandField');
       if (expandField&&expandField.length) {
         expandField.forEach(item => {
           // 处理选项关联
@@ -787,9 +784,7 @@ class AddCost extends Component {
           }
         });
       }
-      this.setState({ showIdsObj: showObj }, () => {
-        console.log(this.state.showIdsObj,'showIdsObj999');
-      });
+      this.setState({ showIdsObj: showObj });
       this.setState({
         showField: showFields,
         newShowField: lbDetail.showField,
@@ -942,7 +937,6 @@ class AddCost extends Component {
   }
 
   onChangeSelect = (val, obj) => {
-  console.log(val, obj.optionsRelevance, '怎么回事');
  // 获取新的showIdsObj
  const { showIdsObj, expandField } = this.state;
  const keyList = Object.keys(showIdsObj);
@@ -972,7 +966,6 @@ class AddCost extends Component {
    return newObj;
  }
  const newObjs = sortFun({}, obj.field, keyList);
- console.log('新的值', newObjs);
  if (newAddObj && newAddObj.length) {
    newAddObj.forEach(it => {
      if (it) {
@@ -983,7 +976,6 @@ class AddCost extends Component {
 
    });
  }
- console.log('最新的数据', newObjs);
   // 如果之前的选项选择了东西，切换后就清除
     // console.log(Object.keys(newObjs),'666');
     const clearArr = [];
@@ -1013,13 +1005,10 @@ class AddCost extends Component {
       clearArr.forEach(its => {
       clearObj[its] = undefined;
     });
-    console.log(clearObj, '666');
     this.props.form.setFieldsValue({
          ...clearObj
     }, () => {
-      this.setState({ showIdsObj: Object.assign(showIdsObj, newObjs), expandField }, () => {
-        console.log(expandField, 'expandField9999');
-   });
+      this.setState({ showIdsObj: Object.assign(showIdsObj, newObjs), expandField });
     });
     }
 
@@ -1064,21 +1053,6 @@ class AddCost extends Component {
     const oldRenderField = [...newShowField, ...expandField].sort(compare('sort'));
     const newRenderField = handleProduction(oldRenderField);
 
-    // const optionsRelevance = []; // 所有关联项
-    // const optionsRelevanceIds = []; // 所有关联项的ids集合
-    // newRenderField.forEach(item => {
-    //   if (item.optionsRelevance) {
-    //     optionsRelevance.push(...item.optionsRelevance);
-    //   }
-    // });
-    // optionsRelevance.forEach(item => {
-    //   optionsRelevanceIds.push(...item.ids);
-    // });
-    // const associatedIds = [...new Set(optionsRelevanceIds)];
-    // console.log(associatedIds,'associatedIds支出');
-    // 回显时
-    // const showItem= this.onShowItems(newRenderField,associatedIds);
-    // console.log(showItem,'showItem');
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -1179,6 +1153,12 @@ class AddCost extends Component {
                           )
                         }
                       </Form.Item>
+                      {
+                        exchangeRate && exchangeRate !== '1' ?
+                          <span style={{float: 'left', margin: '-45px 24px 0 290px'}} className="c-black-36">汇率{exchangeRate}</span>
+                          :
+                          null
+                      }
                     </Col>
                     :
                     null
@@ -1215,7 +1195,6 @@ class AddCost extends Component {
                         rule = [{ max: 128, message: '限制128个字' }];
                       } else if(Number(it.fieldType) === 2 || Number(it.fieldType) === 8) {
                         if (Number(it.fieldType) === 8) {
-                          console.log('render -> itw.msg', it.msg);
                           initMsg = it.msg && !(it.msg instanceof Array) ? it.msg.split(',') : [];
                         }
                         renderForm = (

@@ -5,7 +5,7 @@ const { APP_API } = constants;
 export default {
   list: `${APP_API}/cost/statistics/v3/pc/customQuery/list`,
   detailList: `${APP_API}/cost/statistics/v3/pc/customQuery/detail`,
-  deptList: `${APP_API}/cost/dept/userManageDept`,
+  deptList: `${APP_API}/cost/dept/list`,
   export: `${APP_API}/cost/export/supplier/pc`,
   chart: `${APP_API}/cost/statistics/v3/pc/customQuery/detail`,
 };

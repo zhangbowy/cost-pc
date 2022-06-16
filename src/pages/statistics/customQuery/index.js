@@ -211,7 +211,6 @@ class customQuery extends Component {
   }
 
   onVisibleChange = (val, { deptId, sid, isDeptSelf, parentId }) => {
-    console.log('显示与隐藏', val);
     const { submitTime } = this.state;
     const obj = {
       ...submitTime,
@@ -245,7 +244,6 @@ class customQuery extends Component {
   }
 
   onChange = (value) => {
-    console.log('onChange ', value);
     this.setState({ deptIds: value }, () => {
       this.onQuery({});
     });
@@ -305,9 +303,7 @@ class customQuery extends Component {
       // total,
       childLoading,
       deptList,
-      height,
     } = this.props;
-    console.log('render -> height', height);
     const lists = treeConvert({
       rootId: 0,
       pId: 'parentId',

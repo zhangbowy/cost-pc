@@ -174,7 +174,8 @@ class CategoryAdd extends PureComponent {
                 ...detail,
                 costCategory: newArrs.length ? newArrs : null,
                 userJson,
-                deptJson,
+                deptJson: deptJson && deptJson.length ?
+                 deptJson.map(it => { return { ...it, deptId: `${it.deptId}` }; }) : [],
                 relation,
                 relations,
                 contract

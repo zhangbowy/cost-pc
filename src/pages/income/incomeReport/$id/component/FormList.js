@@ -888,7 +888,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    isShow&&itw.field === 'deptId' && officeList.length > 0 && !modify &&
+                    isShow&&itw.field === 'office' && officeList.length > 0 && !modify &&
                       <Form.Item label={labelInfo.officeId} >
                         {
                           getFieldDecorator('officeId', {
@@ -912,6 +912,14 @@ renderTreeNodes = data =>
                               }
                             </Select>
                           )
+                        }
+                        {
+                          itw.itemExplain && !!(itw.itemExplain.length) &&
+                          itw.itemExplain.map(item => (
+                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
+                              {item.note}
+                            </p>
+                          ))
                         }
                       </Form.Item>
                   }

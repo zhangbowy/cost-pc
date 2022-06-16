@@ -47,7 +47,7 @@ class AddModal extends Component {
       if (!err) {
         Object.assign(values, {
           loanId: detail.loanId,
-          repaySum: values.repaySum*100
+          repaySum: Number((values.repaySum*100).toFixed(0))
         });
         if(values.repaySum*1>detail.waitAssessSum){
           message.error('还款金额需小于核销金额');
@@ -103,7 +103,7 @@ class AddModal extends Component {
                 getFieldDecorator('repaySum', {
                   initialValue: detail.repaySum,
                   rules: [
-                    { required: true, message: '请输入正确的还款金额', 
+                    { required: true, message: '请输入正确的还款金额',
                     pattern: new RegExp(/^\d*\.{0,1}\d{0,2}$/, 'g'),
                   }]
                 })(

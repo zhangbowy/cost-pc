@@ -41,7 +41,7 @@ class ApplyTable extends Component {
         </span>
       ),
     }, {
-      title: '借款单号',
+      title: '申请单号',
       dataIndex: 'invoiceNo',
     }, {
       title: '金额（元）',

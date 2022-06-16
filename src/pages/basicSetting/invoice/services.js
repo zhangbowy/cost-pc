@@ -15,6 +15,7 @@ export default {
   copyIncomeGroup: `${APP_API}/cost/income/template/copy`,
   edit: `${APP_API}/cost/invoice/template/edit`,
   delPer: `${APP_API}/cost/invoice/template/checkDel`,
+  delPerIncome: `${APP_API}/cost/income/template/checkDel`,
   approve: `${APP_API}/cost/approve/apProcessPerson/getApproveProcessPersonList`,
   delCheck: `${APP_API}/cost/invoice/template/checkDelExpand`,
   expandLists: `${APP_API}/cost/invoice/template/queryExpand`,
