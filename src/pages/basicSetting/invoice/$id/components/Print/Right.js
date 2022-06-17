@@ -16,7 +16,8 @@ const tempObj = {
   1: '借款',
   2: '申请',
   3: '提交',
-  20: '收款单'
+  20: '收款单',
+  30: '合同'
 };
 function Right({ templateType, templatePdfVo, corpName,
   isRelationLoan, invoiceName, categoryStatus, notes, supplier, isProject, isOpenProject }) {
