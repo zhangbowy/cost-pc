@@ -456,7 +456,7 @@ class incomeReport extends React.PureComponent {
                     title="是否确认删除？"
                     onConfirm={() => this.onDelete(record.id)}
                   >
-                    <span className="deleteColor">删除</span>
+                    <span className="deleteColor" disabled={record.status == 3 || record.status == 6}>删除</span>
                   </Popconfirm>
                   <Divider type="vertical" />
                   <Dropdown overlay={menu}>

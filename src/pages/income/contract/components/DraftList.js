@@ -130,6 +130,7 @@ class DraftList extends Component {
       this.onQuery({
         ...page,
         str: searchContent,
+        type: 30
       });
     });
   }

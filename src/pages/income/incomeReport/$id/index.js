@@ -1253,14 +1253,29 @@ changeShowIdsObj = (val) => {
             </div>
             <div>
               <Lines name={`关联收入合同`}/>
-              <ChooseContract onOk={(val) => this.onChangeContract(val)}>
-                <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
-              </ChooseContract>
-              {
-                contractDetail && contractDetail.length > 0 && (
-                  <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
-                )
-              }
+              <div>
+                <ChooseContract contractDetail={contractDetail} onOk={(val) => this.onChangeContract(val)}>
+                  {
+                    contractDetail && contractDetail.length > 0 ? (
+                        <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
+                      ): (
+                      <Button
+                        icon={'plus'}
+                        className={style.addHandle}
+                        key="handle"
+                        type={ 'default'}
+                        style={{width: 231}}
+                      >手动添加
+                      </Button>
+                      )
+                  }
+                </ChooseContract>
+                {
+                  contractDetail && contractDetail.length > 0 && (
+                    <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
+                  )
+                }
+              </div>
             </div>
             {
               !modify &&

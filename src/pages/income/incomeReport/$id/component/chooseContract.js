@@ -120,11 +120,11 @@ class ChooseContract extends Component {
   }
 
   render() {
-    const { contractList, total, loading, page, draftTotal } = this.props;
+    const { contractList, total, loading, page, draftTotal, contractDetail = [] } = this.props;
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     return (
       <div>
-        <div onClick={() => this.onShow()}>{this.props.children}</div>
+        <div onClick={() => this.onShow()} style={{textAlign: contractDetail.length ? 'left' : 'center', width: 936}}>{this.props.children}</div>
         <ModalTemp
           title="选择收入合同"
           visible={visible}

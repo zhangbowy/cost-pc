@@ -554,7 +554,7 @@ class Basic extends React.PureComponent {
             }
             {
               Number(templateType) !== 2 && (Number(templateType) !== 3) &&
-              Number(templateType) !== 20 &&
+              Number(templateType) !== 20 && Number(templateType) !== 30 &&
               <Form.Item label="申请单">
                 {
                   getFieldDecorator('relations', {
@@ -571,20 +571,25 @@ class Basic extends React.PureComponent {
                 }
               </Form.Item>
             }
-            <Form.Item label={'收入合同'}>
-              {
-                getFieldDecorator('contract', {
-                  initialValue: data && data.contract ? data.contract : [],
-                })(
-                  <Checkbox.Group onChange={e => this.onChangeRelation(e, 'contract')}>
-                    <Checkbox value="isRelevanceContract">允许关联合同</Checkbox>
-                    {
-                      contract.includes('isRelevanceContract') &&
-                      <Checkbox value="isMust">必填</Checkbox>
-                    }
-                  </Checkbox.Group>                )
-              }
-            </Form.Item>
+
+            {
+              Number(templateType) == 20 && (
+                <Form.Item label={'收入合同'}>
+                  {
+                    getFieldDecorator('contract', {
+                      initialValue: data && data.contract ? data.contract : [],
+                    })(
+                      <Checkbox.Group onChange={e => this.onChangeRelation(e, 'contract')}>
+                        <Checkbox value="isRelevanceContract">允许关联合同</Checkbox>
+                        {
+                          contract.includes('isRelevanceContract') &&
+                          <Checkbox value="isMust">必填</Checkbox>
+                        }
+                      </Checkbox.Group>                )
+                  }
+                </Form.Item>
+              )
+            }
 
             <Form.Item label={labelInfo.status}>
               {
