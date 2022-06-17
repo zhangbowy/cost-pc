@@ -104,7 +104,7 @@ class Workbench extends PureComponent {
     if (document.querySelector('#svg-area')) {
       wave.init();
     }
-    const { dispatch } = this.props;
+    const { dispatch, userInfo } = this.props;
     const fetchList = [{
       url: 'workbench/personal',
       params: {}
@@ -126,13 +126,16 @@ class Workbench extends PureComponent {
     }, {
       url: 'costGlobal/onlyDeptList',
       params: {}
-    }, {
-      url: 'workbench/chartTrend',
-      params: {
-        ...dateToTime('6_cm'),
-        dateType: 0,
-      }
     }];
+    if (userInfo.isBoss) {
+      fetchList.push({
+        url: 'workbench/chartTrend',
+        params: {
+          ...dateToTime('6_cm'),
+          dateType: 0,
+        }
+      });
+    }
     const fetchs = fetchList.map(it => it.url);
     const arr = fetchs.map((it, index) => {
       return dispatch({
@@ -159,13 +162,14 @@ class Workbench extends PureComponent {
         pageNo: 1,
         pageSize: 10,
       });
-      // 支出简报
-      _this.onQueryChart({
-        ...dateToTime('0_m'),
-        dateType: 0,
-      });
+
       const { isBoss } = this.state;
       if (isBoss) {
+        // 支出简报
+        _this.onQueryChart({
+          ...dateToTime('0_m'),
+          dateType: 0,
+        });
         this.onData();
       }
     });
