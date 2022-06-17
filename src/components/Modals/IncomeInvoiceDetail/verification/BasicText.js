@@ -103,8 +103,28 @@ const BasicText = ({
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           提交日期：
         </span>
-        <span className="fs-14 c-black-65">{details.createName}</span>
+        <span className="fs-14 c-black-65">{moment(details.createTime).format('YYYY-MM-DD')}</span>
       </Col>
+      {
+        details.repaymentTime && (
+          <Col span={8} className="m-t-16">
+        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+        签订日期：
+        </span>
+            <span className="fs-14 c-black-65">{moment(details.repaymentTime).format('YYYY-MM-DD')}</span>
+          </Col>
+        )
+      }
+      {
+        details.realRepaymentTime && (
+          <Col span={8} className="m-t-16">
+          <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+            到期日期：
+          </span>
+            <span className="fs-14 c-black-65">{moment(details.realRepaymentTime).format('YYYY-MM-DD')}</span>
+          </Col>
+        )
+      }
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           审批状态：

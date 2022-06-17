@@ -1372,6 +1372,11 @@ export const invoiceType = {
     color: 'rgba(110, 0, 255, 0.06)',
     name: '收款'
   },
+  30: {
+    type: 30,
+    color: 'rgba(110, 0, 255, 0.06)',
+    name: '合同'
+  },
 };
 
 export const defaultColor = ['#3BA0FF', '#36CBCB', '#4DCB73', '#FAD337', '#F2637B', '#975FE4',

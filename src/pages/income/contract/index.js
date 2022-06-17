@@ -278,7 +278,7 @@ class incomeReport extends React.PureComponent {
 
   onDelete = (id) => {
     this.props.dispatch({
-      type: 'incomeReport/del',
+      type: 'contract/del',
       payload: {
         id,
       }
@@ -457,7 +457,7 @@ class incomeReport extends React.PureComponent {
                     onConfirm={() => this.onDelete(record.id)}
                     disabled={record.status == 3 || record.status == 6}
                   >
-                    <span className="deleteColor" style={{color: record.status == 3 || record.status == 6? '#7F7F7F' : ''}}>删除</span>
+                    <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? '#7F7F7F' : '#00c795'}}>删除</span>
                   </Popconfirm>
                   <Divider type="vertical" />
                   <Dropdown overlay={menu}>

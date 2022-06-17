@@ -12,6 +12,6 @@ export default {
   operationSign: `${APP_API}/cost/invoice/payment/operationSign`,
   record: `${APP_API}/cost/invoice/payment/operationSign/record`,
   exportRefuse: `${APP_API}/cost/export/refusePay`,
-  del: `${APP_API}/cost/income/invoice/income/del`,
+  del: `${APP_API}/cost/contract/example/del`,
 
 };
