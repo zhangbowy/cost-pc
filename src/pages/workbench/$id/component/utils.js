@@ -166,7 +166,7 @@ export default {
         'categoryId': item.categoryId,
         'icon': item.icon,
         'categoryName': item.categoryName,
-        'costSum': (((item.costSum) * 1000)/10).toFixed(0)/100,
+        'costSum': (((item.costSum) * 1000)/10).toFixed(0),
         'note': item.note,
         'costDate':item.costDate,
         'startTime':item.startTime || '',

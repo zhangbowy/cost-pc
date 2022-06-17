@@ -938,7 +938,23 @@ class addInvoice extends Component {
           if (checkStandard && checkStandard.second) {
             newArr = defaultFunc.handleExceed(newCostDetailsVo, checkStandard);
           } else if (checkStandMsg) {
-            newArr = newCostDetailsVo;
+            newArr = newCostDetailsVo.map(it => {
+              const arr = [];
+              if (it.costDetailShareVOS) {
+                it.costDetailShareVOS.forEach(item => {
+                  arr.push({
+                    ...item,
+                    'shareAmount': Number(((it.shareAmount * 1000)/10).toFixed(0))/100,
+                    'shareScale': Number(((it.shareScale * 1000)/10).toFixed(0))/100,
+                  });
+                });
+              }
+              return {
+                ...it,
+                costSum: it.costSum/100,
+                costDetailShareVOS: arr,
+              };
+            });
             error = true;
             message.error(checkStandMsg);
           }
