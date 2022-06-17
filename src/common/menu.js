@@ -207,12 +207,12 @@ const menuData = [
     children: [{
       id: 'income_contract',
       name: '合同',
-      myIcon: 'iconshourutibao',
+      myIcon: '',
       path: 'contract',
     }, {
       id: 'incomeReport',
       name: '收入提报',
-      myIcon: 'iconshourutibao',
+      myIcon: '',
       path: 'incomeReport',
     }],
   },
