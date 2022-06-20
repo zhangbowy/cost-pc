@@ -44,6 +44,7 @@ class incomeReport extends React.PureComponent {
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 20
       }
     });
   }

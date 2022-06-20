@@ -132,14 +132,15 @@ class ChangeForm extends Component {
   }
 
   onChangePro = (val, name) => {
-    const { onChangeData, details } = this.props;
+    const { onChangeData, details, usableProject } = this.props;
     let data = {...details};
     if (name === 'project') {
-      console.log(val, 'project')
+      console.log(val,usableProject, 'project')
+      const projectInfo = usableProject.find(item => item.id == val);
       data = {
         ...data,
         projectId: val,
-
+        projectName: projectInfo ? projectInfo.projectName : ''
       };
     } else {
       data = {

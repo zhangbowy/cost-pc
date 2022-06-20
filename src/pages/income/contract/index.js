@@ -62,7 +62,7 @@ const ListSearch = [
     type: 'tree',
     label: '项目',
     placeholder: '请选择',
-    key: 'projectId',
+    key: 'projectIds',
     id: 'projectIds'
   },
   // {
@@ -404,7 +404,10 @@ class incomeReport extends React.PureComponent {
     }, {
       title: '项目名称',
       width: 120,
-      dataIndex: 'projectName'
+      dataIndex: 'projectName',
+      render: (_, record) => (
+        <span>{record.projectName || '-'}</span>
+      )
     }, {
       fixed: 'right',
       title: '合同状态',
