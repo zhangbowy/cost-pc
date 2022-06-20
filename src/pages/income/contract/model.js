@@ -35,7 +35,7 @@ export default {
             pageSize: payload.pageSize,
             pageNo: payload.pageNo,
           },
-          total: response.page ? response.page.total : 0,
+          total: response.contractInvoiceLoanPageResult.page.currentPage ? response.contractInvoiceLoanPageResult.page.total : 0,
           originLoanSum: response.originLoanSum,
           waitAssessSum: response.waitAssessSum,
           loanSum: response.loanSum

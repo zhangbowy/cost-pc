@@ -77,7 +77,7 @@ const BasicText = ({
         details.originLoanSum && (
           <Col span={8} className="m-t-16">
             <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
-              收入金额：
+              合同金额：
             </span>
             <span className="fs-14 c-black-65">
               ¥ {details.originLoanSum ? details.originLoanSum / 100 : 0}
@@ -93,12 +93,27 @@ const BasicText = ({
           {details.userName ? details.userName  : '-'}
         </span>
       </Col>
-      <Col span={8} className="m-t-16">
-        <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
-          收入部门：
-        </span>
-        <span className="fs-14 c-black-65">{details.deptName || '-'}</span>
-      </Col>
+      {
+        details.templateType == 20 && (
+          <Col span={8} className="m-t-16">
+            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+              收入部门：
+            </span>
+            <span className="fs-14 c-black-65">{details.deptName || '-'}</span>
+          </Col>
+        )
+      }
+      {
+        details.originLoanSum && (
+          <Col span={8} className="m-t-16">
+            <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
+              业务员部门：
+            </span>
+            <span className="fs-14 c-black-65">{details.deptName || '-'}</span>
+          </Col>
+        )
+      }
+
       <Col span={8} className="m-t-16">
         <span className={cs('fs-14', 'c-black-85', style.nameTil)}>
           提交日期：

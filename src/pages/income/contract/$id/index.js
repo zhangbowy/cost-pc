@@ -218,7 +218,7 @@ changeShowIdsObj = (val) => {
     if (selfSubmitFieldVos && selfSubmitFieldVos.length) {
       selfField.forEach(item => {
         selfSubmitFieldVos.forEach(it => {
-          if (item.field === it.field) {
+          if (item.field === it.field && item.msg && it.msg) {
             item.msg = it.msg;
            }
         });
@@ -452,7 +452,6 @@ changeShowIdsObj = (val) => {
       if (detail.selfSubmitFieldVos) {
         newExpand = [...newExpand, ...detail.selfSubmitFieldVos];
       }
-
       djDetails.expandField.forEach(it => {
         const index = newExpand && newExpand.findIndex(its => its.field === it.field);
         if (index > -1 && it.status) {
@@ -870,6 +869,8 @@ changeShowIdsObj = (val) => {
       ...details,
       incomeTemplateId: djDetail.id,
       reason: val.reason,
+      name: val.name,
+      money: val.money,
       note: val.note || '',
       userId: details.userId || '',
       deptId: val.deptId,
@@ -895,6 +896,8 @@ changeShowIdsObj = (val) => {
       ...params,
       incomeDetailVo: arr,
     };
+    debugger
+
     const url = draftId ? 'costGlobal/editIncomeDraft' : 'costGlobal/addIncomeDraft';
     this.props.dispatch({
       type: url,
@@ -933,6 +936,13 @@ changeShowIdsObj = (val) => {
     if (params.imgUrl && params.imgUrl.length > 9) {
       message.error('图片不能超过9张');
       return;
+    }
+    if (params.realRepaymentTime) {
+      const repaymentTime = params.repaymentTime
+      const realRepaymentTime = params.realRepaymentTime
+      if (repaymentTime >= realRepaymentTime) {
+        return message.error('到期日期要大于签订日期');
+      }
     }
     if (operateType !== 'modify') {
       dispatch({

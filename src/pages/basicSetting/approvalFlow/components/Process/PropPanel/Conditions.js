@@ -55,6 +55,14 @@ const defaultList = {
     id,
     ruleType: 'people',
   }],
+  '30': [{
+    key: 'condition_creator_user_dept',
+    value: '提交人/部门',
+    sel: condExclude,
+    type: 'people',
+    id,
+    ruleType: 'people',
+  }],
 };
 @Form.create()
 @connect(({ global }) => ({
@@ -345,7 +353,7 @@ class Conditions extends Component {
       tName: 'title',
       tId: 'value'
     }, projectList);
-    console.log(projectLists,'树projectLists');
+    console.log(projectLists, '树projectLists');
     const disList = this.onSelectTree();
     const { lists, method } = this.state;
     const formItemLayout = {
@@ -552,7 +560,7 @@ class Conditions extends Component {
           style={{marginLeft: '12.7%'}}
           key="add"
           onClick={this.onAdd}
-          disabled={lists.length > 4}
+          disabled={lists?.length > 4}
         >
           添加条件
         </Button>

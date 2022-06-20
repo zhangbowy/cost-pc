@@ -17,7 +17,7 @@ const tempObj = {
   2: '申请',
   3: '提交',
   20: '收款单',
-  30: '合同'
+  30: '收入合同'
 };
 function Right({ templateType, templatePdfVo, corpName,
   isRelationLoan, invoiceName, categoryStatus, notes, supplier, isProject, isOpenProject }) {
@@ -50,13 +50,17 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
                 </div>
               </div>
               <div className={style['cont-cell']} style={{ flex: 2 }}>
-                <div className={style['cont-cell-label']}>事由</div>
+                <div className={style['cont-cell-label']}>
+                  {templateType === 30 ? '业务员' : '事由'}
+                </div>
               </div>
             </div>
             <div className={style['cont-info-line']}>
               <div className={cs(style['cont-cell'], style['cont-line-r'])}>
                 <div className={style['cont-cell-label']}>
-                  { templateType !== 20 ? `${tempObj[templateType]}人` : '业务员' }
+                  {
+                    templateType === 30 ? '部门' :  templateType !== 20 ? `${tempObj[templateType]}人` : '业务员'
+                  }
                 </div>
               </div>
               {
@@ -82,6 +86,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
                   { templateType === 0 && '提交' }
                   { templateType === 1 && '借款' }
                   { (templateType === 2 || templateType === 3) && '申请' }
+                  { (templateType === 30 && '签订') }
                   日期
                 </div>
               </div>
@@ -90,7 +95,9 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
               templateType !== 2 && templateType !== 20 &&
               <div className={style['cont-info-line']}>
                 <div className={style['cont-cell']}>
-                  <div className={style['cont-cell-label']}>{supplier && supplier.length ? '供应商账户' : '收款账户'}</div>
+                  <div className={style['cont-cell-label']}>
+                    {(templateType === 30 ? '提交人' : supplier && supplier.length ? '供应商账户' : '收款账户')}
+                  </div>
                 </div>
               </div>
             }
@@ -276,6 +283,31 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
             </table>
           </div>
         }
+        {
+          templateType === 30 && (
+            <table style={{ marginTop: 10 }}>
+              <tr>
+                <td className={style['cont-line-r']}>收款单时间</td>
+                <td className={style['cont-line-r']}>收款单号</td>
+                <td>收款单金额）</td>
+                <td>已收金额</td>
+              </tr>
+              <tr>
+                <td className={style['cont-line-r']} colSpan="4"></td>
+              </tr>
+              <tr>
+                <td className={style['cont-line-r']}>合同金额（元）</td>
+                <td className={style['cont-line-r']}>已收金额（元）</td>
+                <td>未收金额（元）</td>
+                <td></td>
+              </tr>
+              <tr>
+                {/*<td className={style['cont-line-r']} colSpan="3">{tempObj[templateType]}金额（元）</td>*/}
+              </tr>
+            </table>
+          )
+        }
+
         <div className={style.contents}>
           {/* {
             !Number(templatePdfVo.paperType) &&
@@ -300,9 +332,10 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
                 </tr>
               </table>
           }
-
         </div>
-      </div>
+        </div>
+
+
     </div>
   );
 }

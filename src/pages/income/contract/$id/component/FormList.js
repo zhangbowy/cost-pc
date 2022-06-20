@@ -442,12 +442,12 @@ class ChangeForm extends Component {
         console.log(val, '222')
         if (val.signingDate) {
           Object.assign(params, {
-            repaymentTime: moment(val.signingDate).format('x'),
+            repaymentTime: moment(val.signingDate).startOf('day').format('x'),
           });
         }
         if (val.stopDate) {
           Object.assign(params, {
-            realRepaymentTime: moment(val.stopDate).format('x'),
+            realRepaymentTime: moment(val.stopDate).startOf('day').format('x'),
           });
         }
         if (Number(templateType) === 1) {

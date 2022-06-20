@@ -256,7 +256,7 @@ class CategoryAdd extends PureComponent {
       this.setState({
         templatePdfVo: {
           ...templatePdfVo,
-          paperType: Number(templateType) === 20 ? 0 : 2,
+          paperType: Number(templateType) === 20 || Number(templateType) === 30 ? 0 : 2,
         }
       }, () => {
         if (callback) {

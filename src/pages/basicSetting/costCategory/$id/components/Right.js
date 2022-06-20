@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { Form, Input, Checkbox, Divider, Select, Modal, Button, Tooltip, message} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import style from './index.scss';
-import { dataType, defaultString, changeOrder, dragDisabled } from '../../../../../utils/constants';
+import { dataType, defaultString, changeOrder, dragDisabled, contractDisabled } from '../../../../../utils/constants';
 import { timeStampToHex, intToChinese } from '../../../../../utils/common';
 import ThirdSet from './RightCheck/ThirdSet';
 import { aliTrip, aliTripStr, aliTripHasTrip } from './ItemTypes';

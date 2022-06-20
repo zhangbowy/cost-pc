@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Divider, message, Badge, Select, Popconfirm, Dropdown, Icon, Menu } from 'antd';
+import {Table, Button, Divider, message, Badge, Select, Popconfirm, Dropdown, Icon, Menu, Tooltip} from 'antd';
 import { connect } from 'dva';
 import cs from 'classnames';
 import Search from 'antd/lib/input/Search';
@@ -26,7 +26,7 @@ const ListSearch = [
     type: 'deptAndUser',
     label: '提交部门/人',
     placeholder: '请选择',
-    key: ['createIds', 'createDeptIds'],
+    key: ['userIds', 'createDeptIds'],
     id: 'createUserVOS',
     out: 1,
   },
@@ -116,6 +116,7 @@ class incomeReport extends React.PureComponent {
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 30
       }
     });
   }
@@ -137,6 +138,16 @@ class incomeReport extends React.PureComponent {
     if (type !== null){
       Object.assign(payload, {
         type: type === 'all' ? '' : type
+      });
+    }
+    if(payload.userIds) {
+      Object.assign(payload, {
+        createIds: payload.userIds.map(({userId}) => userId)
+      });
+    }
+    if(payload.createDeptIds) {
+      Object.assign(payload, {
+        createDeptIds: payload.createDeptIds.map(({deptId}) => deptId)
       });
     }
     this.props.dispatch({
@@ -452,13 +463,26 @@ class incomeReport extends React.PureComponent {
         return (
           <span>
                 <>
-                  <Popconfirm
-                    title="是否确认删除？"
-                    onConfirm={() => this.onDelete(record.id)}
-                    disabled={record.status == 3 || record.status == 6}
-                  >
-                    <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? '#7F7F7F' : '#00c795'}}>删除</span>
-                  </Popconfirm>
+                  {
+                    (record.status !== 3 && record.status !== 6) && (
+                      <Popconfirm
+                        title="是否确认删除？"
+                        onConfirm={() => this.onDelete(record.id)}
+                        disabled={record.status == 3 || record.status == 6}
+                      >
+                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? '#7F7F7F' : '#00c795'}}>删除</span>
+                      </Popconfirm>
+                    )
+                  }
+                  {
+                    (record.status == 3 || record.status == 4) && (
+                      <Tooltip
+                        title="该合同已收款，撤销收款后重试"
+                      >
+                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? '#7F7F7F' : '#00c795'}}>删除</span>
+                      </Tooltip>
+                    )
+                  }
                   <Divider type="vertical" />
                   <Dropdown overlay={menu}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>

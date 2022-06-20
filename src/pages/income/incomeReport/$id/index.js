@@ -223,7 +223,9 @@ changeShowIdsObj = (val) => {
       selfField.forEach(item => {
         selfSubmitFieldVos.forEach(it => {
           if (item.field === it.field) {
-            item.msg = it.msg;
+            if (item.msg && it.msg) {
+              item.msg = it.msg;
+            }
            }
         });
       });
@@ -467,6 +469,7 @@ changeShowIdsObj = (val) => {
       fileUrl: detail.fileUrl || [], // 附件
       imgUrl: detail.imgUrl ? detail.imgUrl  : [],
       ossFileUrl: detail.ossFileUrl ? detail.ossFileUrl : [],
+      contractDetail: detail.contractDetail ||  []
     });
     await this.props.dispatch({
       type: 'costGlobal/userDep',
@@ -836,7 +839,8 @@ changeShowIdsObj = (val) => {
       expandField,
       draftId,
       id,
-      templateType
+      templateType,
+      contractDetail
     } = this.state;
     const { djDetail } = this.props;
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -892,7 +896,8 @@ changeShowIdsObj = (val) => {
       receiptSum: ((total * 1000)/10).toFixed(0),
       costSum: ((total * 1000)/10).toFixed(0),
       expandSubmitFieldVos,
-      selfSubmitFieldVos
+      selfSubmitFieldVos,
+      contractDetail
     };
     const arr = defaultFunc.handleCost(costDetailsVo, id);
     params = {

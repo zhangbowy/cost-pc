@@ -108,7 +108,7 @@ class Left extends Component {
             <Select
               onChange={e => this.onChanges(e)}
               value={templatePdfVo.paperType || templatePdfVo.paperType === 0 ? `${templatePdfVo.paperType}` : '2'}
-              disabled={Number(templateType) === 20}
+              disabled={Number(templateType) === 20 || Number(templateType) === 30}
             >
               {
                 printType.map(it => (

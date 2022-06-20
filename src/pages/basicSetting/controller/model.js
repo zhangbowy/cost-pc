@@ -21,6 +21,17 @@ export default {
         },
       });
     },
+    *getClearTime({ payload }, { call, put }) {
+      const response = yield call(get, api.getClearTime, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          removeDataTime: response ? response.removeDataTime : null,
+          synCompanyTime: response ? response.synCompanyTime : null,
+          status: response ? response.status : 0,
+        },
+      });
+    },
     *del({ payload }, { call, put }) {
       const response = yield call(get, api.del, payload);
       yield put({
@@ -59,6 +70,8 @@ export default {
           modifyGrant: response,
         },
       });
+
+
     },
   },
   reducers: {
