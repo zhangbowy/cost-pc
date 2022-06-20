@@ -50,9 +50,11 @@ class ChangeForm extends Component {
       // showIds: {},
       exchangeRate: 1
     };
-    if (props.details.moneyType && props.currencyList.length) {
-      this.onChangeCurr(props.details.moneyType || -1)
-    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    const {moneyType = -1} = newProps.details
+    this.onChangeCurr(moneyType)
   }
 
   checkMoney = (rule, value, callback) => {
@@ -247,11 +249,13 @@ class ChangeForm extends Component {
 
   onChangeMoney = (val) => {
     const detail = this.props.details;
+    const {exchangeRate} = this.state
     const { onChangeData } = this.props;
     onChangeData({
       details: {
         ...detail,
         originLoanSum: val * 100,
+        exchangeRate
       },
     }, true);
   }
@@ -692,6 +696,7 @@ renderTreeNodes = data =>
   onChangeCurr = (option) => {
     if (option !== '-1') {
       const lists = this.props.currencyList.filter(it => it.id === option);
+      if (!lists.length) return
       this.setState({
         currencyId: option,
         currencyName: lists[0].name,
@@ -1419,7 +1424,7 @@ renderTreeNodes = data =>
                           <Form.Item label={showField.money && showField.money.name}>
                             {
                               getFieldDecorator('moneyType', {
-                                initialValue: details.moneyType || 'CNY 人民币',
+                                initialValue: details.moneyType || '-1',
                                 rules: [{required: true, message: '请输入金额'}]
                               })(
                                 <Select
@@ -1451,7 +1456,7 @@ renderTreeNodes = data =>
                           </Form.Item>
                         </Form.Item>
                         {
-                          exchangeRate && exchangeRate !== '1' ?
+                          exchangeRate && exchangeRate != '1' ?
                             <span style={{ margin: ''}}
                                   className="c-black-36">汇率{exchangeRate}</span>
                             :

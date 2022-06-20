@@ -428,7 +428,6 @@ changeShowIdsObj = (val) => {
     // const { templateType } = detail;
     const expandField = [];
     const { userInfo, currencyList } = this.props;
-    console.log(detail, 'init------------')
     const newDetail = {
       ...detail,
       receiptId: detail.receiptId ? detail.receiptId : '',
@@ -867,10 +866,12 @@ changeShowIdsObj = (val) => {
     }
     let params = {
       ...details,
+      money: val.money * details.exchangeRate  * 100,
+      originLoanSum: val.money * details.exchangeRate  * 100,
+      // moneyType: val.moneyType,
       incomeTemplateId: djDetail.id,
       reason: val.reason,
       name: val.name,
-      money: val.money,
       note: val.note || '',
       userId: details.userId || '',
       deptId: val.deptId,
