@@ -137,6 +137,7 @@ export default {
    checkTemplates: `${APP_API}/cost/income/template/checkTemplate`,
    queryModify: `${APP_API}/cost/setting/detail`, // 查询改单
    delInvoice: `${APP_API}/cost/invoice/base/manageDel`, // 管理员删除单据
+   delIncome: `${APP_API}/cost/income/invoice/income/del`, // 管理员删除单据
    recordList: `${APP_API}/cost/invoice/record/recordList`, // 操作单据的记录
    getCondition: `${APP_API}/cost/approve/apProcessPerson/getCondition`, // 获取审批条件
    officeList: `${APP_API}/cost/branch/office/officeList`,

@@ -275,6 +275,10 @@ export default {
     *delInvoice({ payload }, { call }) {
       yield call(get, api.delInvoice, payload);
     },
+    *delIncome({ payload }, { call }) {
+      yield call(get, api.delIncome, payload);
+    },
+
     *loanEdit({ payload }, { call }) {
       yield call(post, api.loanEdit, payload);
     },
