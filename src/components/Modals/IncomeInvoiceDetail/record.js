@@ -29,14 +29,14 @@ function Apply(props) {
     },
   {
     title: '收款单金额（元）',
-    dataIndex: 'receivedMoney',
+    dataIndex: 'repaySum',
     render: (repaySum) => (
       <span>{repaySum ? repaySum / 100 : '-'}</span>
     )
   },
     {
       title: '已收金额（元）',
-      dataIndex: 'repaySum',
+      dataIndex: 'receivedMoney',
       render: (receivedMoney) => (
         <span>{receivedMoney ?  receivedMoney / 100 : '-'}</span>
       )

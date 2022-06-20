@@ -477,7 +477,7 @@ class InvoiceDetail extends Component {
             </span>
                 :
                 <span>
-              收款记录（共{recordCount / 100}项，合计收款单金额 {totalRecordAmount / 100 }，合计已收金额 ¥{receivedCost / 100 }）
+              收款记录（共{recordCount}项，合计收款单金额 {totalRecordAmount / 100 }，合计已收金额 ¥{receivedCost / 100 }）
             </span>
             }
           </div>
