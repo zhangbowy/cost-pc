@@ -441,7 +441,7 @@ changeShowIdsObj = (val) => {
     const moneyType =  currencyList.find(item => item.id == detail.moneyType);
     // debugger
     if (moneyType && moneyType.exchangeRate) {
-      newDetail.originLoanSum = detail.originLoanSum / moneyType.exchangeRate / 100
+      newDetail.originLoanSum = (detail.originLoanSum / moneyType.exchangeRate / 100).toFixed(2)
     } else {
       newDetail.originLoanSum = detail.originLoanSum / 100
     }
