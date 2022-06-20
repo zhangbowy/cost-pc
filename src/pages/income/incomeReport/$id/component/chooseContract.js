@@ -31,11 +31,13 @@ class ChooseContract extends Component {
   }
 
   onShow = () => {
+    console.log(this.props.officeId, 'this.props.officeId');
     this.props.dispatch({
       type: 'global/contractList',
       payload: {
         // pageNo: 1,
         // pageSize: 10,
+        // officeId: this.props.officeId,
         type: 0
       }
     }).then(() => {
@@ -120,7 +122,14 @@ class ChooseContract extends Component {
   }
 
   render() {
-    const { contractList, total, loading, page, draftTotal, contractDetail = [] } = this.props;
+    const { contractList: list, total, loading, page, draftTotal, contractDetail = [], officeId } = this.props;
+    const contractList = list.filter(item => {
+      if (officeId) {
+        if (!item.officeId || item.officeId === officeId) {
+          return true
+        }
+      }
+    })
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     return (
       <div>

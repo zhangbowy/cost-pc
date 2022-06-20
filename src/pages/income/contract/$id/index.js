@@ -905,7 +905,7 @@ changeShowIdsObj = (val) => {
       payload: {
         contentJson: JSON.stringify(params),
         receiptSum: ((total * 1000)/10).toFixed(0),
-        costSum: ((total * 1000)/10).toFixed(0),
+        costSum: Number(val.money * 100),
         templateType,
         reason: val.reason,
         incomeTemplateName: djDetail.name,

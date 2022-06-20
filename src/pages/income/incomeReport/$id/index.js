@@ -769,9 +769,9 @@ changeShowIdsObj = (val) => {
       showField,
       // newshowField,
       id,
-      contractDetail
+      contractDetail = []
     } = this.state;
-    const { userInfo } = this.props;
+    const { userInfo, djDetail } = this.props;
     let params = {
       ...details,
       incomeTemplateId: id,
@@ -781,6 +781,13 @@ changeShowIdsObj = (val) => {
       showField: JSON.stringify(showField),
       assessSum: 0,
     };
+    // 合同必填的时候
+    if (djDetail.isRelevanceContract && djDetail.isMust) {
+      if (!contractDetail || contractDetail.length === 0) {
+        message.error('请选择合同！');
+        return;
+      }
+    }
     // 关联收入合同
     if (contractDetail && contractDetail.length) {
       const loanSum = contractDetail.reduce((pre, {loanSum, freezeSum}) => pre + loanSum - freezeSum, 0);
@@ -789,6 +796,19 @@ changeShowIdsObj = (val) => {
         message.error('收款总金额不能大于合同未收金额！');
         return;
       }
+      if (details.officeId) {
+        // 两个公司不同的话，之间数据隔离。收款单公司为a公司关联合同只能关联a公司的收入合同
+        if(contractDetail[0].officeId && contractDetail[0].officeId !== details.officeId) {
+          message.error('只能关联当前所选公司的合同， 请重新选择！');
+          return;
+        }
+      } else {
+        // 合同有公司的情况下，但是收款单没有公司，有公司的合同不允许被关联
+        if (contractDetail[0].officeId) {
+          message.error('请重新选择合同！');
+        }
+      }
+
       params.contractId = contractDetail[0].id;
     }
     if (this.changeForm &&
@@ -928,7 +948,7 @@ changeShowIdsObj = (val) => {
   }
 
   onSubmit = (params) => {
-    const { dispatch } = this.props;
+    const { dispatch, djDetail } = this.props;
     const {
       costDetailsVo,
       historyParams,
@@ -1155,7 +1175,9 @@ changeShowIdsObj = (val) => {
       id,
       associatedIds,
       showIdsObj,
-      contractDetail
+      contractDetail,
+      companyId,
+      officeId
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1256,32 +1278,37 @@ changeShowIdsObj = (val) => {
                 }
               </div>
             </div>
-            <div>
-              <Lines name={`关联收入合同`}/>
-              <div>
-                <ChooseContract contractDetail={contractDetail} onOk={(val) => this.onChangeContract(val)}>
-                  {
-                    contractDetail && contractDetail.length > 0 ? (
-                        <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
-                      ): (
-                      <Button
-                        icon={'plus'}
-                        className={style.addHandle}
-                        key="handle"
-                        type={ 'default'}
-                        style={{width: 231}}
-                      >手动添加
-                      </Button>
+            {
+              djDetail.isRelevanceContract && (
+                <div>
+                  <Lines name={`关联收入合同`}/>
+                  <div>
+                    <ChooseContract officeId={details.officeId} contractDetail={contractDetail} onOk={(val) => this.onChangeContract(val)}>
+                      {
+                        contractDetail && contractDetail.length > 0 ? (
+                          <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
+                        ): (
+                          <Button
+                            icon={'plus'}
+                            className={style.addHandle}
+                            key="handle"
+                            type={ 'default'}
+                            style={{width: 231}}
+                          >手动添加
+                          </Button>
+                        )
+                      }
+                    </ChooseContract>
+                    {
+                      contractDetail && contractDetail.length > 0 && (
+                        <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
                       )
-                  }
-                </ChooseContract>
-                {
-                  contractDetail && contractDetail.length > 0 && (
-                    <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
-                  )
-                }
-              </div>
-            </div>
+                    }
+                  </div>
+                </div>
+              )
+            }
+
             {
               !modify &&
               <div style={{paddingTop: '24px', paddingBottom: '30px'}}>

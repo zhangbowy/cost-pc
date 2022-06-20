@@ -176,9 +176,9 @@ class DraftList extends Component {
       width: '140px'
     }, {
       title: '金额（元）',
-      dataIndex: 'originLoanSum',
+      dataIndex: 'costSum',
       render: (_, record) => (
-          <span>{record.originLoanSum ? record.originLoanSum/100 : 0}</span>
+          <span>{record.costSum ? record.costSum/100 : 0}</span>
       ),
       className: 'moneyCol',
       width: '140px'
