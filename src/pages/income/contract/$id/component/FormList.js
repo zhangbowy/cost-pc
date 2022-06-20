@@ -140,7 +140,7 @@ class ChangeForm extends Component {
       data = {
         ...data,
         projectId: val,
-        projectName: projectInfo ? projectInfo.projectName : ''
+        projectName: projectInfo ? projectInfo.name : ''
       };
     } else {
       data = {
