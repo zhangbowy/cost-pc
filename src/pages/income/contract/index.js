@@ -62,7 +62,7 @@ const ListSearch = [
     type: 'tree',
     label: '项目',
     placeholder: '请选择',
-    key: 'projectIds',
+    key: 'projectId',
     id: 'projectIds'
   },
   // {

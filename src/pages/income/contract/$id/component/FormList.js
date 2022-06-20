@@ -135,9 +135,11 @@ class ChangeForm extends Component {
     const { onChangeData, details } = this.props;
     let data = {...details};
     if (name === 'project') {
+      console.log(val, 'project')
       data = {
         ...data,
         projectId: val,
+
       };
     } else {
       data = {

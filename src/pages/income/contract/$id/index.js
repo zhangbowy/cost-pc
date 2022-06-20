@@ -937,13 +937,13 @@ changeShowIdsObj = (val) => {
       message.error('图片不能超过9张');
       return;
     }
-    if (params.realRepaymentTime) {
-      const repaymentTime = params.repaymentTime
-      const realRepaymentTime = params.realRepaymentTime
-      if (repaymentTime >= realRepaymentTime) {
-        return message.error('到期日期要大于签订日期');
-      }
-    }
+    // if (params.realRepaymentTime) {
+    //   const repaymentTime = params.repaymentTime
+    //   const realRepaymentTime = params.realRepaymentTime
+    //   if (repaymentTime >= realRepaymentTime) {
+    //     return message.error('到期日期要大于签订日期');
+    //   }
+    // }
     if (operateType !== 'modify') {
       dispatch({
         type: 'global/addContract',
