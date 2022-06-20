@@ -339,7 +339,7 @@ class Basic extends React.PureComponent {
                   initialValue: data && data.name,
                   rules: [{ required: true, message: '请输入名称' }]
                 })(
-                  <Input placeholder="请输入名称" />
+                  <Input placeholder="请输入名称" maxLength={20} />
                 )
               }
             </Form.Item>
