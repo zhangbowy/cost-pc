@@ -1204,19 +1204,19 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    isShow&&itw.field === 'note' && showField.note.status ?
-                      <Form.Item label={labelInfo.note} >
+                    isShow&&itw.field === 'remarks' && showField.remarks.status ?
+                      <Form.Item label={showField.remarks && showField.remarks.name} >
                         {
                           getFieldDecorator('note',{
                             initialValue: details.note || '',
                             rules: [
-                              { required: !!(showField.note.isWrite), message: '请输入备注' },
+                              { required: !!(showField.remarks.isWrite), message: '请输入备注' },
                               { max: 500, message: '备注最多500个字' },
                             ]
                           })(
                             <Input
-                              placeholder={showField.note && showField.note.note ? showField.note.note : '请输入'}
-                              disabled={modify && !showField.note.isModify}
+                              placeholder={showField.remarks && showField.remarks.remarks ? showField.remarks.note : '请输入'}
+                              disabled={modify && !showField.remarks.isModify}
                             />
                           )
                         }

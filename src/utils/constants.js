@@ -1249,7 +1249,9 @@ export const templateTypeList = {
   '0': '报销单',
   '1': '借款单',
   '2': '申请单',
-  '3': '薪资单'
+  '3': '薪资单',
+  '20': '收款单',
+  '30': '收入合同'
 };
 
 export const invoiceJson = {
