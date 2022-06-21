@@ -82,6 +82,7 @@ const BasicText = ({
             <span className="fs-14 c-black-65">
               ¥ {details.originLoanSum ? details.originLoanSum / 100 : 0}
             </span>
+            {details._contract_amount && (<span>({details._contract_amount})</span>)}
           </Col>
         )
       }

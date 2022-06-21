@@ -79,7 +79,7 @@ function InvoiceTable(props) {
     dataIndex: 'loanSum',
     render: (_, record) => (
       <span>
-          <span>{record.loanSum ? record.loanSum / 100 - record.freezeSum / 100  : 0}</span>
+          <span>{record.loanSum ? record.loanSum / 100  : 0}</span>
         </span>
     ),
     className: 'moneyCol',

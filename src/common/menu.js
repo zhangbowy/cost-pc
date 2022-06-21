@@ -202,7 +202,7 @@ const menuData = [
   {
     id: 'income',
     name: '收入',
-    myIcon: 'iconjichushezhi',
+    myIcon: 'iconshourutibao',
     path: 'income',
     children: [{
       id: 'income_contract',

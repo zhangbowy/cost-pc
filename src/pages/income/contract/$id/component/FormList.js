@@ -1435,7 +1435,7 @@ renderTreeNodes = data =>
                                   <Option key="-1">CNY 人民币</Option>
                                   {
                                     currencyList && currencyList.map(it => (
-                                      <Option key={it.id}>{it.currencyCode}</Option>
+                                      <Option key={it.id}>{it.currencyCode} {it.name}</Option>
                                     ))
                                   }
                                 </Select>

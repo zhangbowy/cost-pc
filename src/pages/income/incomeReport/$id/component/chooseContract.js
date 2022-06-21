@@ -10,12 +10,13 @@ import InvoiceTable from '@/components/Modals/AddInvoice/ContractTable';
 import { rowSelect } from '@/utils/common';
 
 @withRouter
-@connect(({ costGlobal,global, contract, loading }) => ({
+@connect(({ costGlobal,global, contract, loading, session }) => ({
   contractList: global.contractList,
   total: costGlobal.total,
   page: costGlobal.page,
   draftTotal: costGlobal.draftTotal,
   loading: loading.effects['global/contractList'] || false,
+  userInfo: session.userInfo,
 }))
 class ChooseContract extends Component {
   static propTypes = {
@@ -122,10 +123,10 @@ class ChooseContract extends Component {
   }
 
   render() {
-    const { contractList: list, total, loading, page, draftTotal, contractDetail = [], officeId } = this.props;
+    const { contractList: list, total, loading, page, draftTotal, contractDetail = [], officeId, userInfo } = this.props;
     const contractList = list.filter(item => {
       if (officeId) {
-        if (!item.officeId || item.officeId === officeId) {
+        if (!item.officeId || item.officeId === officeId || item.companyId === item.officeId) {
           return true
         }
       }

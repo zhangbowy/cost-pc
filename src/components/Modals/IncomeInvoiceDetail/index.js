@@ -43,7 +43,8 @@ const { APP_API } = constants;
   cityInfo: costGlobal.cityInfo,
   deptAndUser: costGlobal.deptAndUser,
   incomeDetail: global.incomeDetail,
-  contractDetail: global.contractDetail
+  contractDetail: global.contractDetail,
+  currencyList: global.currencyList,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -60,7 +61,12 @@ class InvoiceDetail extends Component {
   }
 
   onShow = () => {
-    this.onInit(true);
+    this.props.dispatch({
+      type: 'global/getCurrency',
+        payload: {}
+      }).then(() => {
+      this.onInit(true);
+    })
   };
 
   onInit = () => {
@@ -71,6 +77,7 @@ class InvoiceDetail extends Component {
       url = 'global/contractDetail';
       params.loanId = id;
     }
+
     this.props
       .dispatch({
         type: url,
@@ -154,13 +161,23 @@ class InvoiceDetail extends Component {
             name: details.contractName,
             invoiceNo: details.contractInvoiceNo,
             originLoanSum: details.contracOriginLoanSum,
-            loanSum: details.contractWaitAssessSum,
+            loanSum: details.contracOriginLoanSum - details.contractWaitAssessSum,
             updateTime: details.contractCreateTime,
           })
         }
+        let newDetail = details
+        if (templateType == 30) {
+          const currencyInfo = this.props.currencyList.find(item => item.id === contractDetail.moneyType);
+          if (currencyInfo) {
+            newDetail = {
+              ...details,
+              _contract_amount: currencyInfo.currencySymbol + (contractDetail.originLoanSum / 100 / currencyInfo.exchangeRate).toFixed(2)
+            }
+          }
+        }
         this.setState({
           visible: true,
-          details,
+          details: newDetail,
           totalCost,
           showFields: showObj,
           // eslint-disable-next-line react/no-unused-state
