@@ -798,7 +798,8 @@ changeShowIdsObj = (val) => {
       }
       if (details.officeId) {
         // 两个公司不同的话，之间数据隔离。收款单公司为a公司关联合同只能关联a公司的收入合同
-        if(contractDetail[0].officeId && contractDetail[0].officeId !== details.officeId) {
+        if(contractDetail[0].officeId !== details.officeId &&
+          contractDetail[0].officeId !== contractDetail[0].companyId) {
           message.error('只能关联当前所选公司的合同， 请重新选择！');
           return;
         }

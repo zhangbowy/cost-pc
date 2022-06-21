@@ -1429,7 +1429,7 @@ renderTreeNodes = data =>
                               })(
                                 <Select
                                   placeholder="请选择"
-                                  style={{width: '113px'}}
+                                  style={{width: '113px', marginRight: -2}}
                                   onChange={this.onChangeCurr}
                                 >
                                   <Option key="-1">CNY 人民币</Option>

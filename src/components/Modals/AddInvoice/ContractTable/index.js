@@ -62,7 +62,7 @@ function InvoiceTable(props) {
           <span>{record.name || '-'}</span>
         </span>
     ),
-    className: 'moneyCol',
+    // className: 'moneyCol',
     // width: '140px'
   }, {
     title: '合同金额（元）',
@@ -72,7 +72,7 @@ function InvoiceTable(props) {
           <span>{record.originLoanSum ? record.originLoanSum/100 : 0}</span>
         </span>
     ),
-    className: 'moneyCol',
+    // className: 'moneyCol',
     // width: '140px'
   }, {
     title: '未收金额（元）',
@@ -82,7 +82,7 @@ function InvoiceTable(props) {
           <span>{record.loanSum ? record.loanSum / 100  : 0}</span>
         </span>
     ),
-    className: 'moneyCol',
+    // className: 'moneyCol',
     // width: '140px'
   }, {
     title: '提交时间',
