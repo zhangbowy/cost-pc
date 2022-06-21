@@ -150,6 +150,7 @@ class incomeReport extends React.PureComponent {
         createDeptIds: payload.createDeptIds.map(({deptId}) => deptId)
       });
     }
+    delete payload.userIds
     this.props.dispatch({
       type: 'contract/list',
       payload: {
@@ -473,7 +474,7 @@ class incomeReport extends React.PureComponent {
                         onConfirm={() => this.onDelete(record.id)}
                         disabled={record.status == 3 || record.status == 6}
                       >
-                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? '#7F7F7F' : '#00c795'}}>删除</span>
+                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? 'rgba(0,0,0, 0.25)' : '#00c795'}}>删除</span>
                       </Popconfirm>
                     )
                   }
@@ -482,7 +483,7 @@ class incomeReport extends React.PureComponent {
                       <Tooltip
                         title="该合同已收款，撤销收款后重试"
                       >
-                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? '#7F7F7F' : '#00c795'}}>删除</span>
+                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? 'rgba(0,0,0, 0.25)' : '#00c795'}}>删除</span>
                       </Tooltip>
                     )
                   }

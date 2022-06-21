@@ -13,6 +13,7 @@ function Apply(props) {
       width: 160,
       fixed: 'left',
       render: (_, record) => (
+        props.hidden ? <span>{record.number}</span> :
         <IncomeInvoiceDetail
           id={record.loanId}
           // refuse={this.handleRefuse}
@@ -22,7 +23,6 @@ function Apply(props) {
           // onCallback={() => this.onOk()}
           // signCallback={this.onSign}
           title="收款详情"
-          hidden={props.hidden}
         >
           <a>{record.number}</a>
         </IncomeInvoiceDetail>

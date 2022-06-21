@@ -735,7 +735,7 @@ changeShowIdsObj = (val) => {
         loanDeptId: details.deptId || '',
         processPersonId: details.processPersonId || '',
         createDingUserId: details.createDingUserId || '',
-        receiptSum: Number(details.originLoanSum),
+        receiptSum: Number(details.originLoanSum) || 0,
         projectId: details.projectId || '',
         supplierId: details.supplierId || '',
         expandVos,
