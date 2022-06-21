@@ -53,6 +53,7 @@ function InvoiceTable(props) {
         <a>{record.invoiceNo}</a>
       </IncomeInvoiceDetail>
     ),
+    className: 'contractNo',
     width: '200px'
   }, {
     title: '合同名称',
@@ -113,7 +114,7 @@ function InvoiceTable(props) {
   }
 
   return (
-    <>
+    <div className={style.contract_table}>
       {
         searchPro && (
           <div className="m-b-16">
@@ -164,7 +165,7 @@ function InvoiceTable(props) {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

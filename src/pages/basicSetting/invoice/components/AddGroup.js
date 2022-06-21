@@ -119,7 +119,7 @@ class AddGroup extends React.PureComponent {
           onCancel={() => this.setState({ visible: false })}
           maskClosable={false}
           newBodyStyle={{
-            height: '260px'
+            height: '260px',
           }}
           size="small"
           footer={[

@@ -50,7 +50,7 @@ class ModalTemp extends PureComponent {
         width={widthSize[size].width}
         bodyStyle={{
           maxHeight: `${widthSize[size].height - (footer ? 40 : 0)}px`,
-          padding: '16px 0px 0px 32px',
+          padding: '24px 0px 0px 32px',
           ...newBodyStyle,
         }}
       >

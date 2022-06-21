@@ -506,8 +506,8 @@ class incomeReport extends React.PureComponent {
     return (
       <div className="contract-wrap">
         <SearchBanner list={searchList} onChange={this.onChangeSearch}></SearchBanner>
-        <div className="content-dt" style={{padding: '0'}}>
-          <div className="cnt-header" style={{display: 'flex',margin: '24px 24px 16px 24px'}}>
+        <div className="content-dt" style={{padding: '24'}}>
+          <div className="cnt-header" style={{display: 'flex',margin: '0px 0px 16px 0px'}}>
             <div className="head_lf">
               <SelectIncome>
                 <Button type="primary" className="m-r-16">新建合同</Button>

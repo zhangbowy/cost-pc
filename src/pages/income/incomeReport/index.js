@@ -286,6 +286,7 @@ class incomeReport extends React.PureComponent {
             <Search
               placeholder="单号、事由、业务员"
               style={{width: '272px'}}
+              onChange={(val) => this.onComplete(val, 'reason')}
               onSearch={(val) => this.onComplete(val, 'reason')}
             />
             <span style={{lineHeight: '32px'}} className="m-l-16">单据状态：</span>
