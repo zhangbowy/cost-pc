@@ -54,7 +54,10 @@ class ChangeForm extends Component {
 
   componentWillReceiveProps(newProps) {
     const {moneyType = -1} = newProps.details
-    this.onChangeCurr(moneyType)
+    const {currencyId} = this.state;
+    if (currencyId != moneyType) {
+      this.onChangeCurr(moneyType)
+    }
   }
 
   checkMoney = (rule, value, callback) => {
@@ -694,6 +697,7 @@ renderTreeNodes = data =>
   });
 
   onChangeCurr = (option) => {
+    console.log(option, '----option---option')
     if (option !== '-1') {
       const lists = this.props.currencyList.filter(it => it.id === option);
       if (!lists.length) return
@@ -703,6 +707,14 @@ renderTreeNodes = data =>
         exchangeRate: lists[0].exchangeRate,
         currencySymbol: lists[0].currencySymbol
       });
+      const detail = this.props.details;
+      const onChangeData = this.props.onChangeData;
+      // onChangeData({
+      //   detail: {
+      //     ...detail,
+      //     moneyType: option
+      //   },
+      // }, true);
     } else {
       this.setState({
         currencyId: '-1',
