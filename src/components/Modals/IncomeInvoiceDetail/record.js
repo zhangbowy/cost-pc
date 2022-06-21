@@ -22,6 +22,7 @@ function Apply(props) {
           // onCallback={() => this.onOk()}
           // signCallback={this.onSign}
           title="收款详情"
+          hidden={props.hidden}
         >
           <a>{record.number}</a>
         </IncomeInvoiceDetail>
@@ -38,7 +39,7 @@ function Apply(props) {
       title: '已收金额（元）',
       dataIndex: 'receivedMoney',
       render: (receivedMoney) => (
-        <span>{receivedMoney ?  receivedMoney / 100 : '-'}</span>
+        <span>{receivedMoney ?  receivedMoney / 100 : ''}</span>
       )
     },   {
       title: '收款单时间',

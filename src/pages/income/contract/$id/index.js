@@ -499,7 +499,7 @@ changeShowIdsObj = (val) => {
         categorySumEntities: detail.categorySumEntities || [],
         creatorDeptId: detail.createDeptId,
         createDingUserId: userInfo.dingUserId,
-        loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '',
+        loanUserId: newDetail.userJson ? newDetail.userJson[0]?.userId : '',
         loanDeptId: detail.deptId,
         processPersonId: djDetails.approveId,
         projectId: detail.projectId || '',
@@ -507,7 +507,7 @@ changeShowIdsObj = (val) => {
         supplier: detail.supplierAccountId ? `${detail.supplierAccountId}_${detail.supplierId}` : ''
       }, // 详情
       users: detail.userJson,
-      loanUserId: newDetail.userJson ? newDetail.userJson[0].userId : '', // 审批人的userId
+      loanUserId: newDetail.userJson ? newDetail.userJson[0]? newDetail.userJson[0].userId: '' : '', // 审批人的userId
       expandField, // 扩展字段
       assessSum: detail.assessSum || 0, // 核销金额
       expandVos,
@@ -735,7 +735,7 @@ changeShowIdsObj = (val) => {
         loanDeptId: details.deptId || '',
         processPersonId: details.processPersonId || '',
         createDingUserId: details.createDingUserId || '',
-        receiptSum: ((total * 1000)/10).toFixed(0),
+        receiptSum: Number(details.originLoanSum),
         projectId: details.projectId || '',
         supplierId: details.supplierId || '',
         expandVos,
@@ -864,11 +864,14 @@ changeShowIdsObj = (val) => {
         }
       });
     }
+
+    const currencyInfo = this.props.currencyList.find(it => it.id === val.moneyType);
+    const exchangeRate  = currencyInfo ? currencyInfo.exchangeRate: 1
     let params = {
       ...details,
-      money: val.money * details.exchangeRate  * 100,
-      originLoanSum: val.money * details.exchangeRate  * 100,
-      // moneyType: val.moneyType,
+      money: val.money * (exchangeRate || 1)  * 100,
+      originLoanSum: val.money * (exchangeRate || 1)  * 100,
+      moneyType: val.moneyType,
       incomeTemplateId: djDetail.id,
       reason: val.reason,
       name: val.name,

@@ -61,6 +61,7 @@ class InvoiceDetail extends Component {
   }
 
   onShow = () => {
+    if(this.props.hidden) return
     this.props.dispatch({
       type: 'global/getCurrency',
         payload: {}
@@ -374,7 +375,8 @@ class InvoiceDetail extends Component {
       children,
       templateType,
       title,
-      refuse
+      refuse,
+      hidden
     } = this.props;
 
     const getFooter = () => {
@@ -494,11 +496,11 @@ class InvoiceDetail extends Component {
             </span>
                 :
                 <span>
-              收款记录（共{recordCount}项，合计收款单金额 {totalRecordAmount / 100 }，合计已收金额 ¥{receivedCost / 100 }）
+              收款记录（共{recordCount}项，合计收款单金额¥ {totalRecordAmount / 100 }，合计已收金额 ¥{receivedCost / 100 }）
             </span>
             }
           </div>
-          <RecordTable templateType={templateType} list={details.incomeAssessVos} />
+          <RecordTable hidden={templateType == 30 ? true : false} templateType={templateType} list={details.incomeAssessVos} />
         </Modal>
       </span>
     );

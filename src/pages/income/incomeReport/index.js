@@ -170,7 +170,8 @@ class incomeReport extends React.PureComponent {
           <a>{record.invoiceNo}</a>
         </IncomeInvoiceDetail>
 
-      )
+      ),
+      width: 190
     }, {
       title: '金额（元）',
       dataIndex: 'receiptSum',
@@ -179,7 +180,7 @@ class incomeReport extends React.PureComponent {
           <span>{record.receiptSum ? record.receiptSum/100 : 0}</span>
         </span>
       ),
-      className: 'moneyCol',
+      // className: 'moneyCol',
     }, {
       title: '单据类型',
       dataIndex: 'incomeTemplateName'

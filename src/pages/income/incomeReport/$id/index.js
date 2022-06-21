@@ -1010,9 +1010,17 @@ changeShowIdsObj = (val) => {
   }
 
   onChangeContract = (val) => {
-
+    let contractDetail = val;
+    if (val[0]) {
+      // contractDetail =  [
+      //   {
+      //     ...val[0],
+      //     // loanSum: val[0].loanSum -  val[0].freezeSum
+      //   }
+      // ]
+    }
     this.setState({
-      contractDetail: val,
+      contractDetail
     }, () => {
       // this.onAddCost(val, 0, true);
     });
