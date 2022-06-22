@@ -533,6 +533,7 @@ class Workbench extends PureComponent {
       width: 100,
       ellipsis: true,
       textWrap: 'word-break',
+      className: 'green',
       render: (_, record) => (
           <InvoiceDetail
             id={record.invoiceId}
