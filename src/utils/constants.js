@@ -132,6 +132,9 @@ export const isAllCostCategory = [{
 export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory','office'];
 export const spacialString = ['userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory','office'];
 export const dragDisabled = ['detail_money', 'detail_sale', 'detail_account'];
+export const deleteDisabled = [ 'name', 'signingDate', 'stopDate', 'money', 'project', 'deptId1'];
+
+export const contractDisabled = ['name', 'userJson', 'deptId'];
 export const costCategoryJson = [{
   key: 'reason',
   field: 'reason',
@@ -592,6 +595,14 @@ export const approveCreate = [{
   value: '承担人/部门'
 }];
 
+export const approveCreateContract = [{
+  key: 'make_user',
+  value: '提交人'
+}, {
+  key: 'salesman_user_or_dept',
+  value: '业务员/主管'
+}];
+
 export const approveCreateObj = {
   'make_user': '提交人',
   'bear_user_or_dept': '承担人/部门',
@@ -600,6 +611,7 @@ export const approveCreateObj = {
   'third_leader': '三级主管',
   'forth_leader': '四级主管',
   'fifth_leader': '五级主管',
+  'salesman_user_or_dept': '业务员/主管'
 };
 
 
@@ -754,6 +766,42 @@ export const incomeInvoiceStatus = [
     value: '已拒绝',
     color: 'rgba(255, 90, 95, 1)'
   }];
+
+export const contractInvoiceStatus = [
+//   {
+//   key: '0',
+//   value: '草稿'
+// },
+  {
+    key: '1',
+    value: '审批中',
+    color: 'rgba(255, 148, 62, 1)'
+  },
+  {
+    key: '2',
+    value: '待收款',
+    color: 'rgba(3, 122, 254, 1)'
+  }, {
+    key: '3',
+    value: '部分已收款',
+    color: 'rgba(0, 199, 149, 1)',
+  },
+  {
+    key: '6',
+    value: '全部已收款',
+    color: 'rgba(0, 199, 149, 1)',
+  },
+  {
+    key: '4',
+    value: '已撤销',
+    color: 'rgba(255, 90, 95, 1)'
+  },
+  {
+    key: '5',
+    value: '已拒绝',
+    color: 'rgba(255, 90, 95, 1)'
+  }];
+
 export const borrowStatus = [
   //   {
   //   key: '0',
@@ -1203,7 +1251,9 @@ export const templateTypeList = {
   '0': '报销单',
   '1': '借款单',
   '2': '申请单',
-  '3': '薪资单'
+  '3': '薪资单',
+  '20': '收款单',
+  '30': '收入合同'
 };
 
 export const invoiceJson = {
@@ -1326,6 +1376,11 @@ export const invoiceType = {
     type: 20,
     color: 'rgba(110, 0, 255, 0.06)',
     name: '收款'
+  },
+  30: {
+    type: 30,
+    color: 'rgba(110, 0, 255, 0.06)',
+    name: '合同'
   },
 };
 

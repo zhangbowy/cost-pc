@@ -28,6 +28,12 @@ function Controller(props) {
       }
     });
     dispatch({
+      type: 'controller/getClearTime',
+      payload: {
+        companyId: userInfo.companyId,
+      }
+    });
+    dispatch({
       type: 'controller/queryUsers',
       payload: {
         companyId: userInfo.companyId,

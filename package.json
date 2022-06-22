@@ -12,7 +12,6 @@
     "test": "umi test",
     "lint": "eslint --ext .js src",
     "lint:fix": "eslint src --fix",
-    "precommit": "lint-staged",
     "analyze": "cross-env ANALYZE=1 SPD_ENV=prod umi build"
   },
   "repository": {
@@ -71,15 +70,6 @@
     "react-test-renderer": "^16.7.0",
     "sass-loader": "^10.2.0",
     "umi-plugin-react": "^1.8.4"
-  },
-  "lint-staged": {
-    "*.{js,jsx,tsx,ts}": [
-      "eslint --fix",
-      "git add ."
-    ],
-    "*.{ts,tsx,js}": [
-      "eslint -c .eslintrc.js"
-    ]
   },
   "eslintConfig": {
     "extends": "react-app",

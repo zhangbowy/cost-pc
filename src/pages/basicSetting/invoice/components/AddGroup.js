@@ -119,7 +119,7 @@ class AddGroup extends React.PureComponent {
           onCancel={() => this.setState({ visible: false })}
           maskClosable={false}
           newBodyStyle={{
-            height: '260px'
+            height: '260px',
           }}
           size="small"
           footer={[
@@ -164,6 +164,7 @@ class AddGroup extends React.PureComponent {
                       !!(userInfo.orderItemLevel) &&
                       <Radio value={20}>收款单</Radio>
                     }
+                    <Radio value={30}>合同申请</Radio>
                   </Radio.Group>
                 )
               }

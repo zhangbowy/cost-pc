@@ -10,17 +10,20 @@ import style from './index.scss';
 import Lines from '@/components/StyleCom/Lines';
 import Bottom from './component/Bottom';
 import ChangeForm from './component/FormList';
-import { JsonParse, sortBy } from '@/utils/common';
+import {JsonParse, sortBy} from '@/utils/common';
 import AddCost from '@/components/Modals/AddInvoice/AddCost';
 import CostTable from '@/components/Modals/AddInvoice/CostTable';
 import ApproveNode from '@/components/Modals/ApproveNode';
+import ChooseContract from './component/chooseContract';
+import ContractTable from '@/components/Modals/AddInvoice/ContractTable';
 // import { invoiceJson } from '@/utils/constants';
-import { numAdd, numMulti } from '@/utils/float';
-import { fileUpload } from '@/utils/ddApi';
+import {numAdd, numMulti} from '@/utils/float';
+import {fileUpload} from '@/utils/ddApi';
 import treeConvert from '@/utils/treeConvert';
-import { adjustApprove } from '@/utils/approve';
+import {adjustApprove} from '@/utils/approve';
+import SelectIncome from "../components/SelectIncome";
 
-@connect(({ session, global, loading, costGlobal }) => ({
+@connect(({session, global, loading, costGlobal}) => ({
   userInfo: session.userInfo,
   deptInfo: global.deptInfo,
   receiptAcc: global.receiptAcc,
@@ -76,7 +79,8 @@ class addInvoice extends Component {
       id: '',
       operateType: '', // 操作类型，add: 新增
       // associatedIds: [], // 所有被关联项的集合
-      showIdsObj: {}, // 是否显示的对象
+      showIdsObj: {}, // 是否显示的对象,
+      contraccontractDetailtDetail: [],
     };
   }
 
@@ -103,7 +107,7 @@ class addInvoice extends Component {
   }
 
 // 改变showIdsObj
-  
+
 changeShowIdsObj = (val) => {
   const { showIdsObj } = this.state;
   this.setState({showIdsObj:Object.assign(showIdsObj, val)});
@@ -219,7 +223,9 @@ changeShowIdsObj = (val) => {
       selfField.forEach(item => {
         selfSubmitFieldVos.forEach(it => {
           if (item.field === it.field) {
-            item.msg = it.msg;
+            if (item.msg && it.msg) {
+              item.msg = it.msg;
+            }
            }
         });
       });
@@ -248,7 +254,7 @@ changeShowIdsObj = (val) => {
           });
         }
       });
-    } 
+    }
     this.setState({ showIdsObj: showObj }, () => {
       console.log(this.state.showIdsObj,'showIdsObj999');
     });
@@ -396,7 +402,7 @@ changeShowIdsObj = (val) => {
             });
           }
           this.onInit(contents, djDetails);
-          // 处理选项关联 (编辑时) 
+          // 处理选项关联 (编辑时)
           // this.getShowIdsObj(contents.expandSubmitFieldVos);
           this.getShowIdsObj(contents.selfSubmitFieldVos,djDetails.selfField);
           await this.setState({
@@ -463,6 +469,7 @@ changeShowIdsObj = (val) => {
       fileUrl: detail.fileUrl || [], // 附件
       imgUrl: detail.imgUrl ? detail.imgUrl  : [],
       ossFileUrl: detail.ossFileUrl ? detail.ossFileUrl : [],
+      contractDetail: detail.contractDetail ||  []
     });
     await this.props.dispatch({
       type: 'costGlobal/userDep',
@@ -762,8 +769,9 @@ changeShowIdsObj = (val) => {
       showField,
       // newshowField,
       id,
+      contractDetail = []
     } = this.state;
-    const { userInfo } = this.props;
+    const { userInfo, djDetail } = this.props;
     let params = {
       ...details,
       incomeTemplateId: id,
@@ -796,6 +804,38 @@ changeShowIdsObj = (val) => {
         receiptNameJson: '',
       });
     }
+
+    // 合同必填的时候
+    if (djDetail.isRelevanceContract && djDetail.isMust) {
+      if (!contractDetail || contractDetail.length === 0) {
+        message.error('请选择合同！');
+        return;
+      }
+    }
+    // 关联收入合同
+    if (contractDetail && contractDetail.length) {
+      const loanSum = contractDetail.reduce((pre, {loanSum, freezeSum}) => pre + loanSum - freezeSum, 0);
+      // 如果收款金额大于合同的未收金额
+      if (total * 100 > loanSum) {
+        message.error('收款总金额不能大于合同未收金额！');
+        return;
+      }
+      if (details.officeId) {
+        // 两个公司不同的话，之间数据隔离。收款单公司为a公司关联合同只能关联a公司的收入合同
+        if(contractDetail[0].officeId !== details.officeId &&
+          contractDetail[0].officeId !== contractDetail[0].companyId) {
+          message.error('只能关联当前所选公司的合同， 请重新选择！');
+          return;
+        }
+      } else {
+        // 合同有公司的情况下，但是收款单没有公司，有公司的合同不允许被关联
+        if (contractDetail[0].officeId) {
+          message.error('请重新选择合同！');
+        }
+      }
+
+      params.contractId = contractDetail[0].id;
+    }
     this.onSubmit(params);
   }
 
@@ -821,7 +861,8 @@ changeShowIdsObj = (val) => {
       expandField,
       draftId,
       id,
-      templateType
+      templateType,
+      contractDetail
     } = this.state;
     const { djDetail } = this.props;
     const dep = depList.filter(it => `${it.deptId}` === `${val.deptId}`);
@@ -877,7 +918,8 @@ changeShowIdsObj = (val) => {
       receiptSum: ((total * 1000)/10).toFixed(0),
       costSum: ((total * 1000)/10).toFixed(0),
       expandSubmitFieldVos,
-      selfSubmitFieldVos
+      selfSubmitFieldVos,
+      contractDetail
     };
     const arr = defaultFunc.handleCost(costDetailsVo, id);
     params = {
@@ -908,7 +950,7 @@ changeShowIdsObj = (val) => {
   }
 
   onSubmit = (params) => {
-    const { dispatch } = this.props;
+    const { dispatch, djDetail } = this.props;
     const {
       costDetailsVo,
       historyParams,
@@ -965,6 +1007,23 @@ changeShowIdsObj = (val) => {
       costDetailsVo: val,
     }, () => {
       this.onAddCost(val, 0, true);
+    });
+  }
+
+  onChangeContract = (val) => {
+    let contractDetail = val;
+    if (val[0]) {
+      // contractDetail =  [
+      //   {
+      //     ...val[0],
+      //     // loanSum: val[0].loanSum -  val[0].freezeSum
+      //   }
+      // ]
+    }
+    this.setState({
+      contractDetail
+    }, () => {
+      // this.onAddCost(val, 0, true);
     });
   }
 
@@ -1125,7 +1184,10 @@ changeShowIdsObj = (val) => {
       expandVos,
       id,
       associatedIds,
-      showIdsObj
+      showIdsObj,
+      contractDetail,
+      companyId,
+      officeId
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1185,7 +1247,7 @@ changeShowIdsObj = (val) => {
               showIdsObj={showIdsObj}
               changeShowIdsObj={this.changeShowIdsObj}
             />
-            <div style={{paddingTop: '24px', paddingBottom: '30px',
+            <div style={{paddingTop: '24px', paddingBottom: '40px',
               width: this.state.costDetailsVo.length ? '100%' : '936px'}}
             >
               <Lines name={`收入明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />
@@ -1227,9 +1289,40 @@ changeShowIdsObj = (val) => {
               </div>
             </div>
             {
+              djDetail.isRelevanceContract && (
+                <div>
+                  <Lines name={`关联收入合同`}/>
+                  <div>
+                    <ChooseContract officeId={details.officeId} contractDetail={contractDetail} onOk={(val) => this.onChangeContract(val)}>
+                      {
+                        contractDetail && contractDetail.length > 0 ? (
+                          <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
+                        ): (
+                          <Button
+                            icon={'plus'}
+                            className={style.addHandle}
+                            key="handle"
+                            type={ 'default'}
+                            style={{width: 231}}
+                          >手动添加
+                          </Button>
+                        )
+                      }
+                    </ChooseContract>
+                    {
+                      contractDetail && contractDetail.length > 0 && (
+                        <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+            }
+
+            {
               !modify &&
-              <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
-                <Lines name="审批流程" />
+              <div style={{paddingTop: '40px', paddingBottom: '30px'}}>
+                <Lines name="审批流程"/>
                 <ApproveNode
                   approveNodes={nodes}
                   onChangeForm={(val) => this.onChangeNode(val)}

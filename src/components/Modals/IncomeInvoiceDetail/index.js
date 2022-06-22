@@ -23,6 +23,7 @@ import VerificationBasicText from './verification/BasicText';
 // import { DownloadFile } from '../../../utils/ddApi';
 import CostDetailTable from './CostDetailTable';
 import RecordTable from './record';
+import ContractTable from '@/components/Modals/AddInvoice/ContractTable';
 
 const { APP_API } = constants;
 @withRouter
@@ -41,7 +42,9 @@ const { APP_API } = constants;
   aliTripLink: costGlobal.aliTripLink,
   cityInfo: costGlobal.cityInfo,
   deptAndUser: costGlobal.deptAndUser,
-  incomeDetail: global.incomeDetail
+  incomeDetail: global.incomeDetail,
+  contractDetail: global.contractDetail,
+  currencyList: global.currencyList,
 }))
 class InvoiceDetail extends Component {
   constructor(props) {
@@ -58,13 +61,24 @@ class InvoiceDetail extends Component {
   }
 
   onShow = () => {
-    this.onInit(true);
+    if(this.props.hidden) return
+    this.props.dispatch({
+      type: 'global/getCurrency',
+        payload: {}
+      }).then(() => {
+      this.onInit(true);
+    })
   };
 
   onInit = () => {
-    const { id } = this.props;
-    const url = 'global/incomeDetail';
-    const params = { id };
+    const {id, templateType} = this.props;
+    let url = 'global/incomeDetail';
+    const params = {id};
+    if (templateType == 30) {
+      url = 'global/contractDetail';
+      params.loanId = id;
+    }
+
     this.props
       .dispatch({
         type: url,
@@ -73,11 +87,21 @@ class InvoiceDetail extends Component {
       .then(async () => {
         const {
           incomeDetail,
+          contractDetail
         } = this.props;
-        const details = incomeDetail;
+        const details = templateType == 30 ? contractDetail : incomeDetail;
         let productSum = 0;
         let totalCost = 0;
+
+        let receivedCost = 0;
+        let totalRecordAmount = 0;
         const recordCount = details.incomeAssessVos.length;
+        if (recordCount && templateType == 30) {
+          details.incomeAssessVos.forEach(it => {
+            totalRecordAmount += Number(it.repaySum);
+            receivedCost += Number(it.receivedMoney);
+          });
+        }
         if (details.incomeDetailVo) {
           this.setState({
             category: details.incomeDetailVo
@@ -131,15 +155,39 @@ class InvoiceDetail extends Component {
               showObj[it.field] = { ...it };
             });
         }
+        const contractList = [];
+        if (details.contractId) {
+          contractList.push({
+            id: details.contractId,
+            name: details.contractName,
+            invoiceNo: details.contractInvoiceNo,
+            originLoanSum: details.contracOriginLoanSum,
+            loanSum: details.contracOriginLoanSum - details.contractWaitAssessSum,
+            updateTime: details.contractCreateTime,
+          })
+        }
+        let newDetail = details
+        if (templateType == 30) {
+          const currencyInfo = this.props.currencyList.find(item => item.id === contractDetail.moneyType);
+          if (currencyInfo) {
+            newDetail = {
+              ...details,
+              _contract_amount: currencyInfo.currencySymbol + (contractDetail.originLoanSum / 100 / currencyInfo.exchangeRate).toFixed(2)
+            }
+          }
+        }
         this.setState({
           visible: true,
-          details,
+          details: newDetail,
           totalCost,
           showFields: showObj,
           // eslint-disable-next-line react/no-unused-state
           expandSubmitFieldVos,
           selfSubmitFieldVos,
-          recordCount
+          recordCount,
+          totalRecordAmount,
+          receivedCost,
+          contractList
         });
       });
   };
@@ -193,6 +241,11 @@ class InvoiceDetail extends Component {
         'token'
       )}&id=${id}`;
     }
+    if (Number(templateType) === 30) {
+      window.location.href = `${APP_API}/cost/export/pdfDetail4Contract?token=${localStorage.getItem(
+        'token'
+      )}&id=${id}`;
+    }
   };
 
   handelOkPrint = () => {
@@ -200,6 +253,13 @@ class InvoiceDetail extends Component {
     if (Number(templateType) === 20) {
       ddOpenLink(
         `${APP_API}/cost/pdf/batch/income?token=${localStorage.getItem(
+          'token'
+        )}&ids=${id}`
+      );
+    }
+    if (Number(templateType) === 30) {
+      ddOpenLink(
+        `${APP_API}/cost/pdf/batch/contract?token=${localStorage.getItem(
           'token'
         )}&ids=${id}`
       );
@@ -306,13 +366,17 @@ class InvoiceDetail extends Component {
       totalCost,
       selfSubmitFieldVos,
       expandSubmitFieldVos,
-      recordCount
+      recordCount,
+      receivedCost,
+      totalRecordAmount,
+      contractList
     } = this.state;
     const {
       children,
       templateType,
       title,
-      refuse
+      refuse,
+      hidden
     } = this.props;
 
     const getFooter = () => {
@@ -338,7 +402,7 @@ class InvoiceDetail extends Component {
                   )
                 )}
                 </div>
-              </div>): null;
+               </div>): null;
           break;
       }
       return footerDom;
@@ -394,28 +458,49 @@ class InvoiceDetail extends Component {
             previewFiles={this.previewFiles}
             expandSubmitFieldVos={expandSubmitFieldVos}
           />
-          {/* 收入明细 */}
-          <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
-            <div className={style.line} />
-            <span>
-              收入明细（共{category.length}项，合计¥
-              { totalCost / 100})
-            </span>
-          </div>
-          <CostDetailTable
-            list={category}
-            previewImage={this.previewImage}
-            previewFiles={this.previewFiles}
-          />
+          {
+            templateType == 20 && (
+              <>
+                {/* 收入明细 */}
+                <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                  <div className={style.line}/>
+                  <span>
+                    收入明细（共{category.length}项，合计¥
+                    {totalCost / 100})
+                  </span>
+                </div>
+                <CostDetailTable
+                  list={category}
+                  previewImage={this.previewImage}
+                  previewFiles={this.previewFiles}
+                />
+                {/* 关联收入合同 */}
+                <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
+                  <div className={style.line}/>
+                  <span>
+                    关联收入合同
+                  </span>
+                </div>
+                <ContractTable page={1} list={contractList} onOk={(val) => this.onChangeContract([])} hiddenRadio />
+              </>
+            )
+          }
           {/* 收款记录 */}
           <div className={cs(style.header, 'm-b-16', 'm-t-16')}>
             <div className={style.line} />
-            <span>
+            {
+              templateType == 20 ?
+                <span>
               收款记录（共{recordCount}项，合计¥
-              { details.assessSum / 100})
+                  { details.assessSum / 100})
             </span>
+                :
+                <span>
+              收款记录（共{recordCount}项，合计收款单金额¥ {totalRecordAmount / 100 }，合计已收金额 ¥{receivedCost / 100 }）
+            </span>
+            }
           </div>
-          <RecordTable list={details.incomeAssessVos} />
+          <RecordTable hidden={templateType == 30 ? true : false} templateType={templateType} list={details.incomeAssessVos} />
         </Modal>
       </span>
     );

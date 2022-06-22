@@ -39,7 +39,8 @@ const basicSet = {
     key: 'isQrCode',
     value: '单据详情二维码',
   },],
-  20: []
+  20: [],
+  30: []
 };
 @Form.create()
 class Left extends Component {
@@ -107,7 +108,7 @@ class Left extends Component {
             <Select
               onChange={e => this.onChanges(e)}
               value={templatePdfVo.paperType || templatePdfVo.paperType === 0 ? `${templatePdfVo.paperType}` : '2'}
-              disabled={Number(templateType) === 20}
+              disabled={Number(templateType) === 20 || Number(templateType) === 30}
             >
               {
                 printType.map(it => (

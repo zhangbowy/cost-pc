@@ -533,8 +533,8 @@ class Workbench extends PureComponent {
       width: 100,
       ellipsis: true,
       textWrap: 'word-break',
+      className: 'green',
       render: (_, record) => (
-        <span>
           <InvoiceDetail
             id={record.invoiceId}
             templateId={record.invoiceTemplateId}
@@ -544,14 +544,13 @@ class Workbench extends PureComponent {
           >
             <Tooltip placement="topLeft" title={record.reason || ''}>
               <a
-                className="eslips-2"
+                // className="eslips-1"
                 style={{ cursor: 'pointer' }}
               >
                 {record.reason}
               </a>
             </Tooltip>
           </InvoiceDetail>
-        </span>
       ),
     }, {
       title: '金额(元)',

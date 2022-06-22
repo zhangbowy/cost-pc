@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import cs from 'classnames';
 import React from 'react';
 import style from './index.scss';
-import FooterBar from '../../../../components/FooterBar';
+import FooterBar from '../../../../../components/FooterBar';
 
 export default function Bottom({ total, onSave,
   templateType , onDraft, draftLoading, loading, modify }) {

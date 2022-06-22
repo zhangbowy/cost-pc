@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, TreeSelect, Button, Select, Row, Col, Switch } from 'antd';
+import {Form, TreeSelect, Button, Select, Row, Col, Switch, message} from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
@@ -157,11 +157,51 @@ class AddRole extends Component {
       income,
       openCost,
     openIncome,
+      officeIds,
+      category
     } = this.state;
-
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
+      if(values.openIncome) {
+        const {
+          incomeDept = [],
+          incomeUser = [],
+          makeDept = [],
+          makeUser = []
+        } = income
+        const {
+          categoryVos = [],
+          incomeCategory = [],
+          incomeOfficeIds = [],
+        } = values;
+        if (
+          !incomeCategory.length
+          && !incomeOfficeIds.length
+          && !incomeDept.length
+          && !incomeUser.length
+          && !makeDept.length
+          && !makeUser.length
+        ) {
+          return message.error('管理范围至少选择一个')
+        }
+      }
+
+      if (openCost) {
+        if (
+          !category.length
+          && !makeUser.length
+          && !makeDept.length
+          && !bearDept.length
+          && !bearUser.length
+          && !values.officeIds.length
+          // && !userVo.length
+        ) {
+          return message.error('管理范围至少选择一个')
+        }
+      }
+
+
+
         const group = costCategoryList.filter(it => !it.type);
         const groupArr = group && group.length ? group.map(it => it.id) : [];
         const incomeGroup = incomeCategoryList.filter(it => !it.type);
@@ -202,7 +242,6 @@ class AddRole extends Component {
           this.onCancel();
           onOk();
         });
-      }
     });
   }
 

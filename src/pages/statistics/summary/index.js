@@ -530,6 +530,19 @@ class Summary extends React.PureComponent {
       });
   };
 
+  onDeleteIncome = (payload, callback) => {
+    this.props
+      .dispatch({
+        type: 'costGlobal/delIncome',
+        payload
+      })
+      .then(() => {
+        if (callback) {
+          callback();
+        }
+      });
+  };
+
   onDelHistory = id => {
     const { historyPage } = this.props;
     this.props
@@ -788,6 +801,7 @@ class Summary extends React.PureComponent {
               searchContent={searchContent}
               userInfo={userInfo}
               onDelInvoice={this.onDelete}
+              onDeleteIncome={this.onDeleteIncome}
               statisticsDimension={statisticsDimension}
               current={current}
             />

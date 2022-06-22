@@ -59,13 +59,15 @@ class SelectIncome extends Component {
     const arr = [];
     await this.props.dispatch({
       type: 'costGlobal/queryIncomeIds',
-      payload: {}
+      payload: {
+        type: 20
+      }
     }).then(() => {
       const { queryIncomeIds } = this.props;
       console.log('🚀 ~ file: index.js ~ line 65 ~ SelectIncome ~ onShow=async ~ queryIncomeIds', queryIncomeIds);
       const { UseTemplate, OftenTemplate  } = queryIncomeIds;
       console.log('🚀 ~ file: index.js ~ line 67 ~ SelectIncome ~ onShow=async ~ useTemplate', UseTemplate);
-      const users = UseTemplate;
+      const users = UseTemplate || [];
       const often = OftenTemplate;
       const others = users.filter(it => (it.type === 1 && it.parentId === 0));
       const sortUsers = users.sort();
@@ -97,7 +99,7 @@ class SelectIncome extends Component {
       localStorage.setItem('selectCost', JSON.stringify(selectCost));
     }
     localStorage.removeItem('contentJson');
-    this.props.history.push(`/incomeReport/add~${activeObj.templateType}~${activeObj.id}`);
+    this.props.history.push(`/income/incomeReport/add~${activeObj.templateType}~${activeObj.id}`);
     // this.props.history.push('/incomeReport/add~20~713812629653217280');
   }
 

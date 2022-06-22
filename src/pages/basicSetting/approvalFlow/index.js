@@ -23,6 +23,9 @@ const approvePersonList = [{
   key: '3',
   value: '薪资单审批流'
 }, {
+  key: '30',
+  value: '收入合同审批流'
+}, {
   key: '20',
   value: '收款单审批流'
 }];

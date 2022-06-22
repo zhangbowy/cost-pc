@@ -5,6 +5,7 @@ import React from 'react';
 import { Form, Input, Select, Switch, Radio, TreeSelect, Divider, Icon, Checkbox, Tooltip, Spin } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import RadioGroup from 'antd/lib/radio/group';
+import CheckboxGroup from 'antd/lib/checkbox/Group';
 import { isAllUse, isAllCostCategory, templateTypeList } from '@/utils/constants';
 // import { setCommand } from '@/utils/jsapi-auth';
 import UserSelector from './UserSelector';
@@ -33,6 +34,17 @@ const categoryStatus = [{
   key: '2',
   value: '启用必填'
 }];
+const CONTRACT_OPTIONS = [
+  {
+    key: '0',
+    value: '允许关联'
+  },
+  {
+    key: '0',
+    value: '允许关联1'
+  },
+]
+
 @Form.create()
 class Basic extends React.PureComponent {
   constructor(props) {
@@ -132,6 +144,15 @@ class Basic extends React.PureComponent {
             isWriteByRelationApply: false,
           };
           values.relations.forEach(its => {
+            obbj[its] = true;
+          });
+        }
+        if (values.contract) {
+          const obbj = {
+            isRelevanceContract: false,
+            isMust: false,
+          };
+          values.contract.forEach(its => {
             obbj[its] = true;
           });
           Object.assign(values, {
@@ -276,6 +297,7 @@ class Basic extends React.PureComponent {
   }
 
   onChangeRelation = (e, key) => {
+    console.log(e)
     this.props.onChanges(key, e);
   }
 
@@ -289,6 +311,7 @@ class Basic extends React.PureComponent {
       dispatch,
       reApply,
       reLoan,
+      contract
     } = this.props;
     const { cost, user, category, users,
       deptJson, flowId, approveList,
@@ -316,7 +339,7 @@ class Basic extends React.PureComponent {
                   initialValue: data && data.name,
                   rules: [{ required: true, message: '请输入名称' }]
                 })(
-                  <Input placeholder="请输入名称" />
+                  <Input placeholder="请输入名称" maxLength={20} />
                 )
               }
             </Form.Item>
@@ -531,7 +554,7 @@ class Basic extends React.PureComponent {
             }
             {
               Number(templateType) !== 2 && (Number(templateType) !== 3) &&
-              Number(templateType) !== 20 &&
+              Number(templateType) !== 20 && Number(templateType) !== 30 &&
               <Form.Item label="申请单">
                 {
                   getFieldDecorator('relations', {
@@ -548,6 +571,26 @@ class Basic extends React.PureComponent {
                 }
               </Form.Item>
             }
+
+            {
+              Number(templateType) == 20 && (
+                <Form.Item label={'收入合同'}>
+                  {
+                    getFieldDecorator('contract', {
+                      initialValue: data && data.contract ? data.contract : [],
+                    })(
+                      <Checkbox.Group onChange={e => this.onChangeRelation(e, 'contract')}>
+                        <Checkbox value="isRelevanceContract">允许关联合同</Checkbox>
+                        {
+                          contract.includes('isRelevanceContract') &&
+                          <Checkbox value="isMust">必填</Checkbox>
+                        }
+                      </Checkbox.Group>                )
+                  }
+                </Form.Item>
+              )
+            }
+
             <Form.Item label={labelInfo.status}>
               {
                 getFieldDecorator('status', {

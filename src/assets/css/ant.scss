@@ -209,12 +209,21 @@
   .ant-divider{
     background: rgba(0, 0, 0, 0.05)!important;
   }
-  .moneyCol{
+  .moneyCol {
     text-align: right!important;
   }
+
+  .green {
+    color: #00c795
+  }
+
+  .contractNo {
+      padding-left: 0;
+  }
+
   .moneyTagCol{
     text-align: right!important;
-    .ant-table-header-column span{
+    .ant-table-header-column span {
       margin-right: 72px;
     }
   }

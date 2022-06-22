@@ -2,8 +2,8 @@ import React from 'react';
 import { Modal, Form, Select, DatePicker, Button, message, Tooltip, Radio } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
-import { getArrayValue, signStatus } from '../../../utils/constants';
-import UploadImg from '../../../components/UploadImg';
+import { getArrayValue, signStatus } from '../../../../utils/constants';
+import UploadImg from '../../../../components/UploadImg';
 
 const { Option } = Select;
 const accountType = [{

@@ -11,7 +11,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import cs from 'classnames';
 import { Popconfirm } from 'antd';
 import style from './index.scss';
-import { dragDisabled, applyDefault, defaultString } from '../../../../../utils/constants';
+import { dragDisabled, applyDefault, defaultString, deleteDisabled } from '../../../../../utils/constants';
 import CountCmp from './CountCmp';
 import CountChild from './CountCmp/CountChild';
 
@@ -21,7 +21,7 @@ const Card = ({ name, isWrite, index,
   moveCard, field, findCard, dragId, id,
   fieldType, changeDragId, onDelete, disabled, data,
   expandFieldVos, cardList, changeCardList, parentId,
-  dragType, className, defaultList}) => {
+  dragType, className, defaultList, templateType}) => {
     const ref = useRef(null);
     const defaultLists = defaultList || defaultString;
   const [{ isDragging }, drag, preview] = useDrag({
@@ -256,7 +256,7 @@ const Card = ({ name, isWrite, index,
           }
           <div className={style.operator}>
             {
-              !dragDisabled.includes(field) &&
+              (templateType == 30 && !deleteDisabled.includes(field)) &&
                 <p
                   className={
                     defaultLists && defaultLists.includes(field) ?
@@ -270,6 +270,22 @@ const Card = ({ name, isWrite, index,
                 >
                   <i className="iconfont iconshanchu" />
                 </p>
+            }
+            {
+              (!dragDisabled.includes(field) && templateType != 30) &&
+              <p
+                className={
+                  defaultLists && defaultLists.includes(field) ?
+                    cs(style.delete,style.opacity, 'm-r-8') : cs(style.delete, 'm-r-8')
+                }
+                style={{ display: dragId === field ? 'block' : '' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(field, disabled);
+                }}
+              >
+                <i className="iconfont iconshanchu" />
+              </p>
             }
             {
               field === 'detail_money' &&
@@ -293,7 +309,7 @@ const Card = ({ name, isWrite, index,
             }
             <p
               className={defaultLists && defaultLists.includes(field) ||
-              types === 3 || field === 'detail_money' || (types === 10) ?
+              types === 3 || field === 'detail_money' || (types === 10 ) ?
               cs(style.delete,style.opacity, style.drag) :
               cs(style.delete, style.drag)}
               style={{ display: dragId === field ? 'block' : '' }}

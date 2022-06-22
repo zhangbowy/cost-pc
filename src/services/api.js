@@ -45,6 +45,7 @@ export default {
   // 新增报销单单据
   addInvoice: `${APP_API}/cost/invoice/submit/add`,
   addIncome: `${APP_API}/cost/income/invoice/income/add`,
+  addContract: `${APP_API}/cost/contract/example/add`,
   send: `${APP_API}/cost/invoice/payment/payment`,
   // 新增借款单单据
   addLoan: `${APP_API}/cost/invoice/loan/add`,
@@ -136,6 +137,7 @@ export default {
    checkTemplates: `${APP_API}/cost/income/template/checkTemplate`,
    queryModify: `${APP_API}/cost/setting/detail`, // 查询改单
    delInvoice: `${APP_API}/cost/invoice/base/manageDel`, // 管理员删除单据
+   delIncome: `${APP_API}/cost/income/invoice/income/del`, // 管理员删除单据
    recordList: `${APP_API}/cost/invoice/record/recordList`, // 操作单据的记录
    getCondition: `${APP_API}/cost/approve/apProcessPerson/getCondition`, // 获取审批条件
    officeList: `${APP_API}/cost/branch/office/officeList`,
@@ -174,4 +176,8 @@ export default {
   incomeDetail: `${APP_API}/cost/income/invoice/income/detail`,
   // 日志
   actionLogs: `${APP_API}/cost/actionLog/add`,
+  // 合同列表
+  contractList: `${APP_API}/cost/contract/example/list`,
+  contractDetail: `${APP_API}/cost/contract/example/detail`,
+
 };

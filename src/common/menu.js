@@ -200,11 +200,34 @@ const menuData = [
     path: 'approvalList',
   },
   {
-    id: 'incomeReport',
-    name: '收入提报',
+    id: 'income',
+    name: '收入',
     myIcon: 'iconshourutibao',
-    path: 'incomeReport',
+    path: 'income',
+    children: [{
+      id: 'income_contract',
+      name: '合同',
+      myIcon: '',
+      path: 'contract',
+    }, {
+      id: 'incomeReport',
+      name: '收入提报',
+      myIcon: '',
+      path: 'incomeReport',
+    }],
   },
+  // {
+  //   id: 'incomeReport',
+  //   name: '收入提报',
+  //   myIcon: 'iconshourutibao',
+  //   path: 'incomeReport',
+  // },
+  // {
+  //   id: 'contract',
+  //   name: '合同',
+  //   myIcon: 'iconshourutibao',
+  //   path: 'contract',
+  // },
   {
     id: 'basicSetting',
     name: '基础设置',

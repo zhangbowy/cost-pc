@@ -36,6 +36,7 @@ class DraftList extends Component {
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 30
       }
     }).then(() => {
       this.setState({
@@ -93,6 +94,7 @@ class DraftList extends Component {
       type: 'costGlobal/listIncomeDraft',
       payload: {
         ...page,
+        type: 30,
         searchContent: e,
       }
     });
@@ -127,7 +129,8 @@ class DraftList extends Component {
       const { searchContent } = this.state;
       this.onQuery({
         ...page,
-        searchContent,
+        str: searchContent,
+        type: 30
       });
     });
   }
@@ -151,7 +154,7 @@ class DraftList extends Component {
     }
     localStorage.setItem('contentJson', details);
     localStorage.removeItem('selectCost');
-    this.props.history.push(`/incomeReport/${str}~${templateType}~${invoiceId}~${id}`);
+    this.props.history.push(`/income/contract/${str}~${templateType}~${invoiceId}~${id}`);
   }
 
   render() {
@@ -165,21 +168,19 @@ class DraftList extends Component {
       ),
       width: '80px'
     }, {
-      title: '金额（元）',
-      dataIndex: 'costSum',
-      render: (_, record) => (
-        <span>
-          <span>{record.costSum ? record.costSum/100 : 0}</span>
-        </span>
-      ),
-      className: 'moneyCol',
-      width: '140px'
-    }, {
       title: '单据类型',
       dataIndex: 'invoiceTemplateName',
       render: (_, record) => (
         <span>{record.invoiceTemplateName}</span>
       ),
+      width: '140px'
+    }, {
+      title: '金额（元）',
+      dataIndex: 'costSum',
+      render: (_, record) => (
+          <span>{record.costSum ? record.costSum/100 : 0}</span>
+      ),
+      className: 'moneyCol',
       width: '140px'
     }, {
       title: '提交时间',

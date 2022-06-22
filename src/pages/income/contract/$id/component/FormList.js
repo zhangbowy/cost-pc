@@ -1,7 +1,9 @@
 /* eslint-disable no-nested-ternary */
-import React, { Component } from 'react';
-import { Form, Input, Divider, Button,
-  Icon, Select, TreeSelect, DatePicker, message } from 'antd';
+import React, {Component} from 'react';
+import {
+  Form, Input, Divider, Button,
+  Icon, Select, TreeSelect, DatePicker, message, InputNumber, Col
+} from 'antd';
 import moment from 'moment';
 import cs from 'classnames';
 import TextArea from 'antd/lib/input/TextArea';
@@ -13,8 +15,9 @@ import { placeholderType } from '@/utils/constants';
 import { compare, setTime, handleProduction } from '@/utils/common';
 import defaultFunc from './utils';
 import style from './index.scss';
-import UploadImg from '../../../../components/UploadImg';
-import UploadFile from '../../../../components/UploadFile';
+import UploadImg from '../../../../../components/UploadImg';
+import UploadFile from '../../../../../components/UploadFile';
+import { numAdd, numMulti } from '../../../../../utils/float';
 
 const {Option} = Select;
 const { RangePicker } = DatePicker;
@@ -45,7 +48,16 @@ class ChangeForm extends Component {
     super(props);
     this.state = {
       // showIds: {},
+      exchangeRate: 1
     };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const {moneyType = -1} = newProps.details
+    const {currencyId} = this.state;
+    if (currencyId != moneyType) {
+      this.onChangeCurr(moneyType)
+    }
   }
 
   checkMoney = (rule, value, callback) => {
@@ -125,12 +137,15 @@ class ChangeForm extends Component {
   }
 
   onChangePro = (val, name) => {
-    const { onChangeData, details } = this.props;
+    const { onChangeData, details, usableProject } = this.props;
     let data = {...details};
     if (name === 'project') {
+      console.log(val,usableProject, 'project')
+      const projectInfo = usableProject.find(item => item.id == val);
       data = {
         ...data,
         projectId: val,
+        projectName: projectInfo ? projectInfo.name : ''
       };
     } else {
       data = {
@@ -234,6 +249,56 @@ class ChangeForm extends Component {
     });
   }
 
+
+  onChangeMoney = (val) => {
+    const detail = this.props.details;
+    const {exchangeRate} = this.state
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        originLoanSum: val,
+        exchangeRate
+      },
+    }, true);
+  }
+
+  onChangeDate = (val) => {
+    console.log(val, 'date')
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        repaymentTime: moment(val).format('x'),
+      },
+    }, true);
+  }
+
+  onChangRealRepaymentTime = (val) => {
+    console.log(val, 'date')
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        repaymentTime: moment(val).format('x'),
+      },
+    }, true);
+  }
+
+  onChangeName = (val) => {
+    const detail = this.props.details;
+    const { onChangeData } = this.props;
+    onChangeData({
+      details: {
+        ...detail,
+        name: val,
+      },
+    }, true);
+  }
+
+
   onDelFile = (index, e, flag) => {
     const { onChangeData } = this.props;
     e.stopPropagation();
@@ -310,6 +375,8 @@ class ChangeForm extends Component {
       newshowField,
       ossFileUrl,
     } = this.props;
+
+    const { exchangeRate } = this.state
     let params = {};
     form.validateFieldsAndScroll((err, val) => {
       if (!err) {
@@ -352,7 +419,7 @@ class ChangeForm extends Component {
             }
           });
         }
-
+        console.log(val, 'vas')
         params = {
           ...details,
           reason: val.reason,
@@ -373,22 +440,36 @@ class ChangeForm extends Component {
           selfSubmitFieldVos,
           ossFileUrl,
           showField: JSON.stringify(newshowField),
+          name: val.name,
+          originLoanSum: val.money * exchangeRate,
+          moneyType: val.moneyType
         };
         if (val.month) {
           Object.assign(params, {
             month: moment(`${moment(val.month).format('YYYY-MM')}-01 00:00:00`).format('x'),
           });
         }
-        if(Number(templateType) === 1) {
-          console.log('时间',setTime({ time: val.repaymentTime }));
+        console.log(val, '222')
+        if (val.signingDate) {
           Object.assign(params, {
-            loanSum: (val.loanSum*1000)/10,
-            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
+            repaymentTime: moment(val.signingDate).startOf('day').format('x'),
+          });
+        }
+        if (val.stopDate) {
+          Object.assign(params, {
+            realRepaymentTime: moment(val.stopDate).startOf('day').format('x'),
+          });
+        }
+        if (Number(templateType) === 1) {
+          console.log('时间', setTime({time: val.repaymentTime}));
+          Object.assign(params, {
+            loanSum: (val.loanSum * 1000) / 10,
+            repaymentTime: val.repaymentTime ? setTime({time: val.repaymentTime}) : '',
           });
         } else if (Number(templateType) === 2) {
           Object.assign(params, {
-            applicationSum: (val.applicationSum*1000)/10,
-            repaymentTime: val.repaymentTime ? setTime({ time: val.repaymentTime }) : '',
+            applicationSum: (val.applicationSum * 1000) / 10,
+            repaymentTime: val.repaymentTime ? setTime({time: val.repaymentTime}) : '',
           });
           if (showField.happenTime &&
             (showField.happenTime.dateType === '2' ||
@@ -612,16 +693,44 @@ renderTreeNodes = data =>
         </TreeNode>
       );
     }
-    return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
+    return <TreeNode {...item} key={item.key} title={item.label} value={item.value}/>;
   });
 
+  onChangeCurr = (option) => {
+    console.log(option, '----option---option')
+    if (option !== '-1') {
+      const lists = this.props.currencyList.filter(it => it.id === option);
+      if (!lists.length) return
+      this.setState({
+        currencyId: option,
+        currencyName: lists[0].name,
+        exchangeRate: lists[0].exchangeRate,
+        currencySymbol: lists[0].currencySymbol
+      });
+      const detail = this.props.details;
+      const onChangeData = this.props.onChangeData;
+      // onChangeData({
+      //   detail: {
+      //     ...detail,
+      //     moneyType: option
+      //   },
+      // }, true);
+    } else {
+      this.setState({
+        currencyId: '-1',
+        currencyName: '人民币',
+        exchangeRate: '1',
+        currencySymbol: '¥'
+      });
+    }
+  }
 
-  render () {
+  render() {
     const {
       showField,
       newshowField,
       expandField,
-      form: { getFieldDecorator },
+      form: {getFieldDecorator},
       usableProject,
       imgUrl,
       // depList,
@@ -640,20 +749,30 @@ renderTreeNodes = data =>
       ossFileUrl,
       allDeptList,
       // associatedIds,
-      showIdsObj
+      showIdsObj,
+      currencyList
     } = this.props;
-    const projectList = treeConvert({
-      rootId: 0,
-      pId: 'parentId',
-      name: 'name',
-      id: 'id',
-      tName: 'label',
-      tId: 'value',
-      otherKeys: ['type']
-    }, usableProject.sort(compare('sort')));
+    const {
+      exchangeRate
+    } = this.state
+    let projectList = []
+    try {
+      projectList = treeConvert({
+        rootId: 0,
+        pId: 'parentId',
+        name: 'name',
+        id: 'id',
+        tName: 'label',
+        tId: 'value',
+        otherKeys: ['type']
+      }, usableProject.sort(compare('sort')));
+    } catch (e) {
+
+    }
     // const { unShowItems } = this.state;
     const oldForm = [...newshowField, ...expandField].sort(compare('sort'));
     const newForm = handleProduction(oldForm);
+    console.log(details, '----detailsssssss')
     // console.log(associatedIds, unShowItems, newForm, '要隐藏的');
     // 回显时
     // const showItem= this.onShowItems(newForm,associatedIds);
@@ -882,7 +1001,7 @@ renderTreeNodes = data =>
                       </Form.Item>
                   }
                   {
-                    isShow&&itw.field === 'office' && officeList.length > 0 && !modify &&
+                    isShow&&itw.field === 'deptId' && officeList.length > 0 && !modify &&
                       <Form.Item label={labelInfo.officeId} >
                         {
                           getFieldDecorator('officeId', {
@@ -906,14 +1025,6 @@ renderTreeNodes = data =>
                               }
                             </Select>
                           )
-                        }
-                        {
-                          itw.itemExplain && !!(itw.itemExplain.length) &&
-                          itw.itemExplain.map(item => (
-                            <p className="fs-12 c-black-45 li-1 m-t-8" style={{marginBottom: 0}} key={item.note}>
-                              {item.note}
-                            </p>
-                          ))
                         }
                       </Form.Item>
                   }
@@ -1198,19 +1309,19 @@ renderTreeNodes = data =>
                       null
                   }
                   {
-                    isShow&&itw.field === 'note' && showField.note.status ?
-                      <Form.Item label={labelInfo.note} >
+                    isShow&&itw.field === 'remarks' && showField.remarks.status ?
+                      <Form.Item label={showField.remarks && showField.remarks.name} >
                         {
                           getFieldDecorator('note',{
                             initialValue: details.note || '',
                             rules: [
-                              { required: !!(showField.note.isWrite), message: '请输入备注' },
+                              { required: !!(showField.remarks.isWrite), message: '请输入备注' },
                               { max: 500, message: '备注最多500个字' },
                             ]
                           })(
                             <Input
-                              placeholder={showField.note && showField.note.note ? showField.note.note : '请输入'}
-                              disabled={modify && !showField.note.isModify}
+                              placeholder={showField.remarks && showField.remarks.remarks ? showField.remarks.note : '请输入'}
+                              disabled={modify && !showField.remarks.isModify}
                             />
                           )
                         }
@@ -1275,9 +1386,116 @@ renderTreeNodes = data =>
                           ))
                         }
                       </Form.Item>
-                    :
-                    null
+                      :
+                      null
                   }
+                  {/*合同签订日期*/}
+                  {
+                    isShow && itw.field === 'signingDate' && (
+                      <Form.Item label={showField.signingDate && showField.signingDate.name}>
+                        {
+                          getFieldDecorator('signingDate', {
+                            initialValue: details.repaymentTime ?
+                              moment(moment(Number(details.repaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                            rules: [{required: !!(showField.signingDate.isWrite), message: '请选择时间'}]
+                          })(
+                            <DatePicker
+                              onChange={this.onChangeDate}
+                              style={{width: '100%'}}
+                              disabled={modify && !showField.signingDate.isModify}
+                            />
+                          )
+                        }
+                      </Form.Item>
+                    )
+                  }
+                  {
+                    isShow && itw.field === 'stopDate' && (
+                      <Form.Item label={showField.stopDate && showField.stopDate.name}>
+                        {
+                          getFieldDecorator('stopDate', {
+                            initialValue: details.realRepaymentTime ?
+                              moment(moment(Number(details.realRepaymentTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : '',
+                            rules: [{required: !!(showField.stopDate.isWrite), message: '请选择时间'}]
+                          })(
+                            <DatePicker
+                              onChange={this.onChangRealRepaymentTime}
+                              style={{width: '100%'}}
+                              disabled={modify && !showField.stopDate.isModify}
+                            />
+                          )
+                        }
+                      </Form.Item>
+                    )
+                  }
+                  {/*合同金额*/}
+                  {
+                    isShow && itw.field === 'money' && (
+                      <div className={style.contract_money}>
+                        <Form.Item  className={style.contract_money}>
+                          <Form.Item label={showField.money && showField.money.name}>
+                            {
+                              getFieldDecorator('moneyType', {
+                                initialValue: details.moneyType || '-1',
+                                rules: [{required: true, message: '请输入金额'}]
+                              })(
+                                <Select
+                                  placeholder="请选择"
+                                  style={{width: '113px', marginRight: -2}}
+                                  onChange={this.onChangeCurr}
+                                >
+                                  <Option key="-1">CNY 人民币</Option>
+                                  {
+                                    currencyList && currencyList.map(it => (
+                                      <Option key={it.id}>{it.currencyCode} {it.name}</Option>
+                                    ))
+                                  }
+                                </Select>
+                              )
+                            }
+                            {
+                              getFieldDecorator('money', {
+                                initialValue: details.originLoanSum || '',
+                                rules: [{required: true, message: '请输入金额'}]
+                              })(
+                                <InputNumber
+                                  style={{width: '167px'}}
+                                  onChange={this.onChangeMoney}
+                                  disabled={modify && !showField.money.isModify}
+                                />
+                              )
+                            }
+                          </Form.Item>
+                        </Form.Item>
+                        {
+                          exchangeRate && exchangeRate != '1' ?
+                            <span style={{ margin: ''}}
+                                  className="c-black-36">汇率{exchangeRate}</span>
+                            :
+                            null
+                        }
+                      </div>
+                    )
+                  }
+                  {
+                    isShow && itw.field === 'name' && (
+                      <Form.Item label={showField.name && showField.name.name}>
+                        {
+                          getFieldDecorator('name', {
+                            initialValue: details.name || '',
+                            rules: [{required: !!(showField.name.isWrite), max: 20, message: '限制20个字'}]
+                          })(
+                            <Input
+                              onChange={this.onChangeName}
+                              placeholder={itw.note ? itw.note : '请输入'}
+                              disabled={modify && !itw.isModify}
+                            />
+                          )
+                        }
+                      </Form.Item>
+                    )
+                  }
+
                 </>
               );
           })

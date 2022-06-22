@@ -7,9 +7,9 @@ import moment from 'moment';
 import IncomeInvoiceDetail from '@/components/Modals/IncomeInvoiceDetail';
 import SelectIncome from './components/SelectIncome';
 import style from './index.scss';
-import constants, { getArrayColor, getArrayValue, incomeInvoiceStatus, invoiceStatus } from '../../utils/constants';
+import constants, { getArrayColor, getArrayValue, incomeInvoiceStatus, invoiceStatus } from '../../../utils/constants';
 import DraftList from './components/DraftList';
-import { ddOpenLink } from '../../utils/ddApi';
+import { ddOpenLink } from '../../../utils/ddApi';
 
 const { APP_API } = constants;
 @connect(({ loading, incomeReport, costGlobal, global }) => ({
@@ -44,6 +44,7 @@ class incomeReport extends React.PureComponent {
       payload: {
         pageNo: 1,
         pageSize: 10,
+        type: 20
       }
     });
   }
@@ -96,7 +97,7 @@ class incomeReport extends React.PureComponent {
           localStorage.setItem('contentJson', JSON.stringify(incomeDetail));
           localStorage.removeItem('selectCost');
           this.props.history.push(
-            `/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
+            `/income/incomeReport/${operateType}~20~${details.incomeTemplateId}~${details.id}`
           );
         });
 
@@ -169,7 +170,8 @@ class incomeReport extends React.PureComponent {
           <a>{record.invoiceNo}</a>
         </IncomeInvoiceDetail>
 
-      )
+      ),
+      width: 190
     }, {
       title: '金额（元）',
       dataIndex: 'receiptSum',
@@ -178,7 +180,7 @@ class incomeReport extends React.PureComponent {
           <span>{record.receiptSum ? record.receiptSum/100 : 0}</span>
         </span>
       ),
-      className: 'moneyCol',
+      // className: 'moneyCol',
     }, {
       title: '单据类型',
       dataIndex: 'incomeTemplateName'
@@ -285,6 +287,7 @@ class incomeReport extends React.PureComponent {
             <Search
               placeholder="单号、事由、业务员"
               style={{width: '272px'}}
+              onChange={(val) => this.onComplete(val, 'reason')}
               onSearch={(val) => this.onComplete(val, 'reason')}
             />
             <span style={{lineHeight: '32px'}} className="m-l-16">单据状态：</span>

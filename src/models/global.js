@@ -59,8 +59,20 @@ export default {
     getCondition: [], // 获取条件分支的条件
     incomeDetail: {}, // 收入单详情
     incomeCategoryList: [], // 收入支出类别
+    contractList: [],
+    contractDetail: {}
   },
   effects: {
+    *contractList({ payload }, { call, put }) {
+      const response = yield call(post, api.contractList, payload);
+      // eslint-disable-next-line no-return-assign
+      yield put({
+        type: 'save',
+        payload: {
+          contractList: response.contractInvoiceLoanPageResult.list || [],
+        },
+      });
+    },
     *costList({ payload }, { call, put }) {
       const response = yield call(get, api.costCategoryList, payload);
       yield put({
@@ -232,6 +244,16 @@ export default {
         },
       });
     },
+    // 合同详情
+    *contractDetail({ payload }, { call, put }) {
+      const response = yield call(get, api.contractDetail, payload);
+      yield put({
+        type: 'save',
+        payload: {
+          contractDetail: response || {},
+        },
+      });
+    },
     *lbDetail({ payload }, { call, put }) {
       let url = api.cateDet;
       const params = {
@@ -274,6 +296,9 @@ export default {
     },
     *addIncome({ payload }, { call }) {
       yield call(post, api.addIncome, payload);
+    },
+    *addContract({ payload }, { call }) {
+      yield call(post, api.addContract, payload);
     },
     *addAcc({ payload }, { call }) {
       yield call(post, api.addReceipt, payload);

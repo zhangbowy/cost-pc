@@ -265,7 +265,7 @@ class Invoice extends React.PureComponent {
             node: (
               <>
                 {
-                  record.templateType !== 20 &&
+                  record.templateType !== 20 && record.templateType !== 30 &&
                   <QrCodeModal
                     userInfo={userInfo}
                     id={record.id}

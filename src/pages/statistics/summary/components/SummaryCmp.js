@@ -28,6 +28,16 @@ const dateStr = {
   55: '已终止的无效单据',
   52: '已终止的无效单据'
 };
+
+
+const incomeStatusStr = {
+  1: '该单据审批中，可让发起人自行撤销',
+  2: '该单据收款中，可让收款人执行拒绝操作',
+  3: '确认清除该单据吗？此操作不可恢复，需谨慎',
+  4: '该单据已撤销，可让发起人自行删除',
+  55: '该单据已撤销，可让发起人自行清除',
+  52: '该单据已审批拒绝，可让发起人自行清除'
+};
 class SummaryCmp extends Component {
   constructor(props) {
     super(props);
@@ -118,6 +128,24 @@ class SummaryCmp extends Component {
       }
     );
   };
+
+  onDeleteIncome = (id, type, isAliTrip) => {
+    const { templateType, query, searchContent } = this.props;
+    this.props.onDeleteIncome(
+      {
+        id,
+      },
+      () => {
+        message.success('删除成功');
+        this.props.onQuery({
+          pageNo: query.pageNo,
+          pageSize: query.pageSize,
+          content: searchContent
+        });
+      }
+    );
+  };
+
 
   // 修改所属期限
   onOk = (payload, callback) => {
@@ -704,6 +732,47 @@ class SummaryCmp extends Component {
           </span>
         ),
         fixed: 'right'
+      },
+      {
+        title: '操作',
+        dataIndex: 'operate',
+        render: (_, record) => {
+          const { status, approveStatus } = record;
+          return (
+            <>
+              {(status === 3 ) ? (
+                <Popconfirm
+                  title="确认清除该单据吗？此操作不可恢复，需谨慎"
+                  onConfirm={() =>
+                    this.onDeleteIncome(
+                      record.id,
+                    )}
+                  placement="topRight"
+                >
+                  <a>删单</a>
+                </Popconfirm>
+              ) : (
+                <Tooltip
+                  title={
+                    status === 5
+                      ? incomeStatusStr[`${status}${approveStatus}`]
+                      : incomeStatusStr[status]
+                  }
+                  placement="topRight"
+                >
+                  <span
+                    style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)' }}
+                  >
+                    删单
+                  </span>
+                </Tooltip>
+              )}
+            </>
+          );
+        },
+        width: current === '0' ? 150 : 80,
+        fixed: 'right',
+        className: 'fixCenter'
       }
     ];
 

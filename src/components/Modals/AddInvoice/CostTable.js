@@ -68,7 +68,7 @@ class CostTable extends Component {
       dataIndex: 'costSum',
       render: (_, record) => (
         <span>
-          <span>¥{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(record.costSum), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${record.costSum})` : record.costSum}</span>
+          <span>{record.exchangeRate && record.currencyId !== '-1' ? `${Number(numMulti(Number(record.costSum), record.exchangeRate)).toFixed(2)}(${record.currencySymbol}${record.costSum})` : record.costSum}</span>
           {
             record.costDetailShareVOS && record.costDetailShareVOS.length > 0 &&
             <Popover

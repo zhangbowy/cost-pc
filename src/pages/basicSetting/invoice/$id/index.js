@@ -64,6 +64,7 @@ class CategoryAdd extends PureComponent {
     isOpenProject: false,
     reLoan: [],
     reApply: [],
+    contract: []
   }
 
   componentDidMount() {
@@ -139,6 +140,7 @@ class CategoryAdd extends PureComponent {
               }
               const relation = [];
               const relations = [];
+              const contract = [];
               if (detail.isRelationLoan) {
                 relation.push('isRelationLoan');
               }
@@ -150,6 +152,12 @@ class CategoryAdd extends PureComponent {
               }
               if (detail.isWriteByRelationApply) {
                 relations.push('isWriteByRelationApply');
+              }
+              if (detail.isRelevanceContract) {
+                contract.push('isRelevanceContract');
+              }
+              if (detail.isMust) {
+                contract.push('isMust');
               }
               const newCostList = Number(templateType) === 20 ? incomeCategoryList : costCategoryList;
               const ids = newCostList.map(it => it.id);
@@ -170,6 +178,7 @@ class CategoryAdd extends PureComponent {
                  deptJson.map(it => { return { ...it, deptId: `${it.deptId}` }; }) : [],
                 relation,
                 relations,
+                contract
               });
               console.log(titleType);
               if (titleType === 'copy') {
@@ -199,6 +208,7 @@ class CategoryAdd extends PureComponent {
                 },
                 reLoan: relation,
                 reApply: relations,
+                contract: contract,
                 data: datas,
                 selectList: this.changeList(arrs),
               });
@@ -246,7 +256,7 @@ class CategoryAdd extends PureComponent {
       this.setState({
         templatePdfVo: {
           ...templatePdfVo,
-          paperType: Number(templateType) === 20 ? 0 : 2,
+          paperType: Number(templateType) === 20 || Number(templateType) === 30 ? 0 : 2,
         }
       }, () => {
         if (callback) {
@@ -485,6 +495,7 @@ class CategoryAdd extends PureComponent {
 
       if (params.relations) delete params.relations;
       if (params.relation) delete params.relation;
+      if (params.contract) delete params.contract;
       this.props.dispatch({
         type: url,
         payload: {
@@ -586,6 +597,7 @@ class CategoryAdd extends PureComponent {
       reLoan,
       reApply,
       isOpenProject,
+      contract
     } = this.state;
     const {  dispatch, userInfo } = this.props;
     const { categoryList, data, templateType } = this.state;
@@ -670,6 +682,7 @@ class CategoryAdd extends PureComponent {
                     onChanges={this.onChangeDatas}
                     reLoan={reLoan}
                     reApply={reApply}
+                    contract={contract}
                     detailLoading={detailLoading}
                   />
                 </div>
