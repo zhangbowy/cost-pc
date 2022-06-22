@@ -472,14 +472,13 @@ class incomeReport extends React.PureComponent {
                       <Popconfirm
                         title="是否确认删除？"
                         onConfirm={() => this.onDelete(record.id)}
-                        disabled={record.status == 3 || record.status == 6}
                       >
                         <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? 'rgba(0,0,0, 0.25)' : '#00c795'}}>删除</span>
                       </Popconfirm>
                     )
                   }
                   {
-                    (record.status == 3 || record.status == 4) && (
+                    (record.status == 3 || record.status == 6) && (
                       <Tooltip
                         title="该合同已收款，撤销收款后重试"
                       >

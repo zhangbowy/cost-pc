@@ -789,11 +789,11 @@ export const contractInvoiceStatus = [
     value: '全部已收款',
     color: 'rgba(0, 199, 149, 1)',
   },
-  // {
-  //   key: '4',
-  //   value: '已撤销',
-  //   color: 'rgba(255, 90, 95, 1)'
-  // },
+  {
+    key: '4',
+    value: '已撤销',
+    color: 'rgba(255, 90, 95, 1)'
+  },
   {
     key: '5',
     value: '已拒绝',
