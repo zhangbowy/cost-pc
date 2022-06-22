@@ -377,7 +377,7 @@ class AddRole extends Component {
               {
                 getFieldDecorator('openCost', {
                   initialValue: openCost,
-                  valuePropName: 'checked1'
+                  valuePropName: 'checked'
                 })(
                   <Switch onChange={e => this.onChangeS(e, 'openCost')} />
                 )
