@@ -74,8 +74,16 @@ const ListSearch = [
   // },
 ];
 
+const tipMap = {
+  '1': '该单据审批中，可让发起人自行撤销',
+  '5': '该单据已审批拒绝，可让发起人自行清除',
+  '2': '该单据收款，可让收款人执行拒绝操作',
+  '3': '该合同已收款，撤销收款后重试',
+  '6': '该合同已收款，撤销收款后重试',
+}
+
 const { APP_API } = constants;
-@connect(({ loading, contract: incomeReport, costGlobal, global }) => ({
+@connect(({ loading, contract: incomeReport, costGlobal, global, session }) => ({
   loading: loading.effects['incomeReport/list'] || false,
   list: incomeReport.list,
   originLoanSum: incomeReport.originLoanSum,
@@ -89,7 +97,8 @@ const { APP_API } = constants;
   costCategoryList: global.costCategoryList,
   invoiceList: global.invoiceList,
   projectList: costGlobal.projectList,
-  contractDetail: global.contractDetail
+  contractDetail: global.contractDetail,
+  userInfo: session.userInfo,
 }))
 class incomeReport extends React.PureComponent {
   constructor(props) {
@@ -337,6 +346,7 @@ class incomeReport extends React.PureComponent {
   };
 
   render() {
+    const { userInfo } = this.props
     const columns = [{
       title: '单号',
       dataIndex: 'invoiceNo',
@@ -467,22 +477,24 @@ class incomeReport extends React.PureComponent {
         return (
           <span>
                 <>
+                  {/*// 可以删的*/}
                   {
-                    (record.status !== 3 && record.status !== 6) && (
+                    (record.status !== 3 && record.status !== 6 && (userInfo.adminType === 1 || record.createId == userInfo.userId)) && (
                       <Popconfirm
                         title="是否确认删除？"
                         onConfirm={() => this.onDelete(record.id)}
                       >
-                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? 'rgba(0,0,0, 0.25)' : '#00c795'}}>删除</span>
+                        <span  style={{ cursor: 'pointer', color:  '#00c795'}}>删除</span>
                       </Popconfirm>
                     )
                   }
+
                   {
-                    (record.status == 3 || record.status == 6) && (
+                    (record.status == 3 || record.status == 6  || !(userInfo.adminType === 1 || record.createId == userInfo.userId)) && (
                       <Tooltip
-                        title="该合同已收款，撤销收款后重试"
+                        title={tipMap[record.status]}
                       >
-                        <span  style={{ cursor: 'pointer', color: record.status == 3 || record.status == 6? 'rgba(0,0,0, 0.25)' : '#00c795'}}>删除</span>
+                        <span  style={{ cursor: 'pointer', color: 'rgba(0,0,0, 0.25)'}}>删除</span>
                       </Tooltip>
                     )
                   }

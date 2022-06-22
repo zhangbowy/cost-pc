@@ -119,7 +119,7 @@ console.log('🚀 ~ file: Right.js ~ line 20 ~ templatePdfVo', templatePdfVo);
             }
           </div>
           {
-            templatePdfVo.isQrCode && templateType !== 20 &&
+            templatePdfVo.isQrCode && templateType !== 20 && templateType !== 30 &&
               <div className={style['cont-info-qr']}>
                 <span>二维码</span>
               </div>
