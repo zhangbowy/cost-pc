@@ -157,6 +157,8 @@ class AddRole extends Component {
       income,
       openCost,
     openIncome,
+      officeIds,
+      category
     } = this.state;
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
@@ -185,6 +187,22 @@ class AddRole extends Component {
           return message.error('管理范围至少选择一个')
         }
       }
+
+      if (openCost) {
+        if (
+          !category.length
+          && !makeUser.length
+          && !makeDept.length
+          && !bearDept.length
+          && !bearUser.length
+          && !values.officeIds.length
+          && !userVo.length
+        ) {
+          return message.error('管理范围至少选择一个')
+        }
+      }
+
+
 
         const group = costCategoryList.filter(it => !it.type);
         const groupArr = group && group.length ? group.map(it => it.id) : [];
