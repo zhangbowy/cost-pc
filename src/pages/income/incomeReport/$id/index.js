@@ -781,6 +781,30 @@ changeShowIdsObj = (val) => {
       showField: JSON.stringify(showField),
       assessSum: 0,
     };
+    if (this.changeForm &&
+      this.changeForm.onSaveForm &&
+      this.changeForm.onSaveForm()) {
+      params = {
+        ...params,
+        ...this.changeForm.onSaveForm(),
+      };
+    } else {
+      return;
+    }
+    const arr = defaultFunc.handleCost(costDetailsVo, id);
+    params = {
+      ...params,
+      nodeConfigInfo: adjustApprove(nodes, { loginInfo: userInfo }),
+      incomeDetailVo: arr,
+    };
+    if ((showField.receiptId && !showField.receiptId.status) || !showField.receiptId) {
+      Object.assign(params, {
+        receiptId: '',
+        receiptName: '',
+        receiptNameJson: '',
+      });
+    }
+
     // 合同必填的时候
     if (djDetail.isRelevanceContract && djDetail.isMust) {
       if (!contractDetail || contractDetail.length === 0) {
@@ -811,29 +835,6 @@ changeShowIdsObj = (val) => {
       }
 
       params.contractId = contractDetail[0].id;
-    }
-    if (this.changeForm &&
-      this.changeForm.onSaveForm &&
-      this.changeForm.onSaveForm()) {
-      params = {
-        ...params,
-        ...this.changeForm.onSaveForm(),
-      };
-    } else {
-      return;
-    }
-    const arr = defaultFunc.handleCost(costDetailsVo, id);
-    params = {
-      ...params,
-      nodeConfigInfo: adjustApprove(nodes, { loginInfo: userInfo }),
-      incomeDetailVo: arr,
-    };
-    if ((showField.receiptId && !showField.receiptId.status) || !showField.receiptId) {
-      Object.assign(params, {
-        receiptId: '',
-        receiptName: '',
-        receiptNameJson: '',
-      });
     }
     this.onSubmit(params);
   }
