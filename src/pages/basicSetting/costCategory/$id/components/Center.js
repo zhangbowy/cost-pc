@@ -14,7 +14,7 @@ import { defaultString } from '../../../../../utils/constants';
 
 
 
-const StrCenter = ({cardList, changeCardList, dragId, changeDragId, spacialCenter}) => {
+const StrCenter = ({cardList,templateType, changeCardList, dragId, changeDragId, spacialCenter}) => {
   const scrollNode = useRef(null);
   const defaultList =  spacialCenter || defaultString;
   console.log('🚀 ~ file: Center.js ~ line 20 ~ StrCenter ~ defaultList', defaultList);
@@ -116,6 +116,7 @@ const StrCenter = ({cardList, changeCardList, dragId, changeDragId, spacialCente
             cardList={cardList}
             changeCardList={changeCardList}
             defaultList={defaultList}
+            templateType={templateType}
           />
         ))
       }

@@ -130,8 +130,10 @@ export const isAllCostCategory = [{
   value: '部分类别'
 }];
 export const defaultString = ['reason', 'userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory','office'];
-export const spacialString = ['userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory','office', 'name', 'signingDate', 'stopDate', 'money', 'project', 'deptId1'];
+export const spacialString = ['userJson', 'deptId', 'costCategory', 'amount', 'loanSum', 'month', 'incomeCategory','office'];
 export const dragDisabled = ['detail_money', 'detail_sale', 'detail_account'];
+export const deleteDisabled = [ 'name', 'signingDate', 'stopDate', 'money', 'project', 'deptId1'];
+
 export const contractDisabled = ['name', 'userJson', 'deptId'];
 export const costCategoryJson = [{
   key: 'reason',
