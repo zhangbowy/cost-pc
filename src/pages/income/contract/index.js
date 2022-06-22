@@ -400,7 +400,7 @@ class incomeReport extends React.PureComponent {
       width: 130,
       dataIndex: 'repaymentTime',
       render: (_, record) => (
-        <span>{moment(record.repaymentTime).format('YYYY-MM-DD')}</span>
+        <span>{record.repaymentTime ? moment(record.repaymentTime).format('YYYY-MM-DD'): '-'}</span>
       )
     }, {
       title: '项目名称',
