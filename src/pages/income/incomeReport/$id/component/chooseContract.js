@@ -126,6 +126,9 @@ class ChooseContract extends Component {
     const { contractList: list, total, loading, page, draftTotal, contractDetail = [], officeId, userInfo } = this.props;
     const contractList = list.filter(item => {
       if (officeId) {
+        if (item.loanSum - item.freezeSum <= 0) {
+          return false
+        }
         if (!item.officeId || item.officeId === officeId || item.companyId === item.officeId) {
           return true
         }
@@ -134,7 +137,7 @@ class ChooseContract extends Component {
     const { selectedRowKeys, selectedRows, visible, searchContent } = this.state;
     return (
       <div>
-        <div onClick={() => this.onShow()} style={{textAlign: contractDetail.length ? 'left' : 'center', width: 936}}>{this.props.children}</div>
+        <div onClick={() => this.onShow()} style={{textAlign: contractDetail.length ? 'left' : 'center', width: 936, marginTop: 16}}>{this.props.children}</div>
         <ModalTemp
           title="选择收入合同"
           visible={visible}

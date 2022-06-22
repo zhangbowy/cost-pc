@@ -250,7 +250,7 @@ class Summary extends React.PureComponent {
       render: (_, record) => (
         <span>
           {
-            record.templateType === 20 ?
+            record.templateType === 20 || record.templateType === 30 ?
               <IncomeInvoiceDetail
                 id={record.invoiceId}
                 templateId={record.invoiceTemplateId}

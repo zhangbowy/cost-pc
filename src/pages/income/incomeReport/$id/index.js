@@ -1246,7 +1246,7 @@ changeShowIdsObj = (val) => {
               showIdsObj={showIdsObj}
               changeShowIdsObj={this.changeShowIdsObj}
             />
-            <div style={{paddingTop: '24px', paddingBottom: '30px',
+            <div style={{paddingTop: '24px', paddingBottom: '40px',
               width: this.state.costDetailsVo.length ? '100%' : '936px'}}
             >
               <Lines name={`收入明细${costDetailsVo && costDetailsVo.length > 0 ? `（合计¥${total}）` : ''}`} />
@@ -1320,7 +1320,7 @@ changeShowIdsObj = (val) => {
 
             {
               !modify &&
-              <div style={{paddingTop: '24px', paddingBottom: '30px'}}>
+              <div style={{paddingTop: '40px', paddingBottom: '30px'}}>
                 <Lines name="审批流程"/>
                 <ApproveNode
                   approveNodes={nodes}
