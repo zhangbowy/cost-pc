@@ -173,11 +173,9 @@ class AddRole extends Component {
           categoryVos = [],
           incomeCategory = [],
           incomeOfficeIds = [],
-          officeIds = []
         } = values;
         if (
-          !categoryVos.length
-          && !incomeCategory.length
+          !incomeCategory.length
           && !incomeOfficeIds.length
           && !incomeDept.length
           && !incomeUser.length
@@ -196,7 +194,7 @@ class AddRole extends Component {
           && !bearDept.length
           && !bearUser.length
           && !values.officeIds.length
-          && !userVo.length
+          // && !userVo.length
         ) {
           return message.error('管理范围至少选择一个')
         }
