@@ -158,10 +158,15 @@ class AddRole extends Component {
       openCost,
     openIncome,
     } = this.state;
-
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
       if(values.openIncome) {
+        const {
+          incomeDept = [],
+          incomeUser = [],
+          makeDept = [],
+          makeUser = []
+        } = income
         const {
           categoryVos = [],
           incomeCategory = [],
@@ -170,12 +175,14 @@ class AddRole extends Component {
         } = values;
         if (
           !categoryVos.length
-          || !incomeCategory.length
-          || !incomeOfficeIds.length
-          || !officeIds.length
+          && !incomeCategory.length
+          && !incomeOfficeIds.length
+          && !incomeDept.length
+          && !incomeUser.length
+          && !makeDept.length
+          && !makeUser.length
         ) {
-
-          return message.error('收入管理范围至少选择一个')
+          return message.error('管理范围至少选择一个')
         }
       }
 
