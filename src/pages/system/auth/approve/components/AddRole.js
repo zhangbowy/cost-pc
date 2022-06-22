@@ -170,10 +170,11 @@ class AddRole extends Component {
         } = values;
         if (
           !categoryVos.length
-          || incomeCategory.length
-          || incomeOfficeIds.length
-          || officeIds.length
+          || !incomeCategory.length
+          || !incomeOfficeIds.length
+          || !officeIds.length
         ) {
+
           return message.error('收入管理范围至少选择一个')
         }
       }
