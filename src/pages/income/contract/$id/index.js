@@ -735,7 +735,7 @@ changeShowIdsObj = (val) => {
         loanDeptId: details.deptId || '',
         processPersonId: details.processPersonId || '',
         createDingUserId: details.createDingUserId || '',
-        receiptSum: Number(details.originLoanSum) || 0,
+        receiptSum: Number(details.originLoanSum * 100) || 0,
         projectId: details.projectId || '',
         supplierId: details.supplierId || '',
         expandVos,
@@ -772,6 +772,11 @@ changeShowIdsObj = (val) => {
       id,
     } = this.state;
     const { userInfo } = this.props;
+    const val = (this.changeForm && this.changeForm.onGetVal()) || {};
+
+    const currencyInfo = this.props.currencyList.find(it => it.id === details.moneyType);
+    const exchangeRate  = currencyInfo ? currencyInfo.exchangeRate: 1
+    debugger
     let params = {
       ...details,
       // incomeTemplateId: id,
@@ -781,6 +786,7 @@ changeShowIdsObj = (val) => {
       costSum: ((total * 1000)/10).toFixed(0),
       showField: JSON.stringify(showField),
       assessSum: 0,
+
     };
     if (this.changeForm &&
       this.changeForm.onSaveForm &&
@@ -805,6 +811,7 @@ changeShowIdsObj = (val) => {
         receiptNameJson: '',
       });
     }
+    params.originLoanSum = val.money * (exchangeRate || 1)  * 100
     this.onSubmit(params);
   }
 
@@ -900,7 +907,6 @@ changeShowIdsObj = (val) => {
       ...params,
       incomeDetailVo: arr,
     };
-    debugger
 
     const url = draftId ? 'costGlobal/editIncomeDraft' : 'costGlobal/addIncomeDraft';
     this.props.dispatch({

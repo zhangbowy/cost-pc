@@ -257,7 +257,7 @@ class ChangeForm extends Component {
     onChangeData({
       details: {
         ...detail,
-        originLoanSum: val * 100,
+        originLoanSum: val,
         exchangeRate
       },
     }, true);
@@ -441,7 +441,7 @@ class ChangeForm extends Component {
           ossFileUrl,
           showField: JSON.stringify(newshowField),
           name: val.name,
-          originLoanSum: val.money * exchangeRate  * 100,
+          originLoanSum: val.money * exchangeRate,
           moneyType: val.moneyType
         };
         if (val.month) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, TreeSelect, Button, Select, Row, Col, Switch } from 'antd';
+import {Form, TreeSelect, Button, Select, Row, Col, Switch, message} from 'antd';
 import { connect } from 'dva';
 import treeConvert from '@/utils/treeConvert';
 import UserSelector from '@/components/Modals/SelectPeople';
@@ -161,7 +161,23 @@ class AddRole extends Component {
 
     if (loading) return;
     form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
+      if(values.openIncome) {
+        const {
+          categoryVos = [],
+          incomeCategory = [],
+          incomeOfficeIds = [],
+          officeIds = []
+        } = values;
+        if (
+          !categoryVos.length
+          || incomeCategory.length
+          || incomeOfficeIds.length
+          || officeIds.length
+        ) {
+          return message.error('收入管理范围至少选择一个')
+        }
+      }
+
         const group = costCategoryList.filter(it => !it.type);
         const groupArr = group && group.length ? group.map(it => it.id) : [];
         const incomeGroup = incomeCategoryList.filter(it => !it.type);
@@ -202,7 +218,6 @@ class AddRole extends Component {
           this.onCancel();
           onOk();
         });
-      }
     });
   }
 
@@ -338,7 +353,7 @@ class AddRole extends Component {
               {
                 getFieldDecorator('openCost', {
                   initialValue: openCost,
-                  valuePropName: 'checked'
+                  valuePropName: 'checked1'
                 })(
                   <Switch onChange={e => this.onChangeS(e, 'openCost')} />
                 )
