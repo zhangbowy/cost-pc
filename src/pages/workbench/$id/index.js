@@ -101,6 +101,7 @@ class addInvoice extends Component {
       operateType: '', // 操作类型，add: 新增
       associatedIds: [],// 所有被关联项的集合
       showIdsObj: {}, // 是否显示的对象
+      useProjectList: [],
     };
   }
 
@@ -208,6 +209,7 @@ class addInvoice extends Component {
       });
     });
     Promise.all(newArr).then(() => {
+      const { usableProject } = this.props;
       const create = this.props.deptInfo;
       this.setState({
         depList: create,
@@ -217,6 +219,7 @@ class addInvoice extends Component {
         id,
         operateType,
         draftId: draftId || '',
+        useProjectList: usableProject,
       }, () => {
         if (callback) {
           callback();
@@ -1611,7 +1614,6 @@ class addInvoice extends Component {
       djDetail,
       // operateType, // 操作类型，改单：modify, 复制：copy
       detailJson,
-      usableProject,
       officeList, // 所在公司列表,
       aliCostAndI,
       checkStandard,
@@ -1649,7 +1651,8 @@ class addInvoice extends Component {
       exceedVisible,
       id,
       associatedIds,
-      showIdsObj
+      showIdsObj,
+      useProjectList
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1684,7 +1687,7 @@ class addInvoice extends Component {
               templateType={templateType}
               supplierList={supplierList}
               handelAcc={this.handelAcc}
-              usableProject={usableProject}
+              usableProject={useProjectList}
               accountList={accountList}
               users={users}
               depList={depList}

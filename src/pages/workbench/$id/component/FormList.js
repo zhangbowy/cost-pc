@@ -480,7 +480,6 @@ class ChangeForm extends Component {
 
 
     // 如果之前的选项选择了东西，切换后就清除
-    // console.log(Object.keys(newObjs),'666');
     const clearArr = [];
     const clearShowArr = [];
     Object.keys(newObjs).forEach(key => {
@@ -555,7 +554,7 @@ renderTreeNodes = data =>
       // 这一句是关键代码，设置父级都为禁用模式，有条件的让后台返回
       return (
         <TreeNode
-          key={item.key}
+          key={item.value}
           title={item.label}
           value={item.value}
           disabled={!item.type}
@@ -564,7 +563,7 @@ renderTreeNodes = data =>
         </TreeNode>
       );
     }
-    return <TreeNode {...item} key={item.key} title={item.label} value={item.value} />;
+    return <TreeNode {...item} key={item.value} title={item.label} value={item.value} />;
   });
 
   // 选项隐藏时，把此选项的选中置空
