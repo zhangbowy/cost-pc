@@ -53,6 +53,7 @@ export default {
         ],
       },
     }],
+    'transform-remove-console'
   ],
   theme: {
     "@primary-color": "rgba(0, 199, 149, 1)",
@@ -70,7 +71,6 @@ export default {
     // ssoUrl: common.getSsoConfig(constants.APP_ENV),
   },
   ignoreMomentLocale: true,
-  extraBabelPlugins: [!isInProd ? 'transform-remove-console' : ''],
   targets: {
     ios: 8,
     android: 4,
