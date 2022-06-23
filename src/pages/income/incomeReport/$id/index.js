@@ -21,7 +21,6 @@ import {numAdd, numMulti} from '@/utils/float';
 import {fileUpload} from '@/utils/ddApi';
 import treeConvert from '@/utils/treeConvert';
 import {adjustApprove} from '@/utils/approve';
-import SelectIncome from "../components/SelectIncome";
 
 @connect(({session, global, loading, costGlobal}) => ({
   userInfo: session.userInfo,
@@ -80,7 +79,7 @@ class addInvoice extends Component {
       operateType: '', // 操作类型，add: 新增
       // associatedIds: [], // 所有被关联项的集合
       showIdsObj: {}, // 是否显示的对象,
-      contraccontractDetailtDetail: [],
+      projectList: [], // 项目列表
     };
   }
 
@@ -192,6 +191,7 @@ changeShowIdsObj = (val) => {
     });
     Promise.all(newArr).then(() => {
       const create = this.props.deptInfo;
+      const { usableProject } = this.props;
       this.setState({
         depList: create,
         users: userJson,
@@ -200,6 +200,7 @@ changeShowIdsObj = (val) => {
         id,
         operateType,
         draftId: draftId || '',
+        projectList: usableProject
       }, () => {
         if (callback) {
           callback();
@@ -950,7 +951,7 @@ changeShowIdsObj = (val) => {
   }
 
   onSubmit = (params) => {
-    const { dispatch, djDetail } = this.props;
+    const { dispatch } = this.props;
     const {
       costDetailsVo,
       historyParams,
@@ -1011,7 +1012,7 @@ changeShowIdsObj = (val) => {
   }
 
   onChangeContract = (val) => {
-    let contractDetail = val;
+    const contractDetail = val;
     if (val[0]) {
       // contractDetail =  [
       //   {
@@ -1158,7 +1159,6 @@ changeShowIdsObj = (val) => {
       draftLoading,
       djDetail,
       // operateType, // 操作类型，改单：modify, 复制：copy
-      usableProject,
       officeList, // 所在公司列表,
       userDeps,
     } = this.props;
@@ -1186,8 +1186,7 @@ changeShowIdsObj = (val) => {
       associatedIds,
       showIdsObj,
       contractDetail,
-      companyId,
-      officeId
+      projectList,
     } = this.state;
     const modify = operateType === 'modify';
     const routes = [
@@ -1224,7 +1223,7 @@ changeShowIdsObj = (val) => {
               templateType={templateType}
               supplierList={supplierList}
               handelAcc={this.handelAcc}
-              usableProject={usableProject}
+              usableProject={projectList}
               accountList={accountList}
               users={users}
               depList={depList}
@@ -1291,7 +1290,7 @@ changeShowIdsObj = (val) => {
             {
               djDetail.isRelevanceContract && (
                 <div>
-                  <Lines name={`关联收入合同`}/>
+                  <Lines name="关联收入合同"/>
                   <div>
                     <ChooseContract officeId={details.officeId} contractDetail={contractDetail} onOk={(val) => this.onChangeContract(val)}>
                       {
@@ -1299,10 +1298,10 @@ changeShowIdsObj = (val) => {
                           <Button type="primary" className="m-r-16 m-t-16 m-b-16">选择收入合同</Button>
                         ): (
                           <Button
-                            icon={'plus'}
+                            icon="plus"
                             className={style.addHandle}
                             key="handle"
-                            type={ 'default'}
+                            type="default"
                             style={{width: 231}}
                           >手动添加
                           </Button>
@@ -1311,7 +1310,7 @@ changeShowIdsObj = (val) => {
                     </ChooseContract>
                     {
                       contractDetail && contractDetail.length > 0 && (
-                        <ContractTable page={1} list={contractDetail} onOk={(val) => this.onChangeContract([])} hiddenRadio isShowDel></ContractTable>
+                        <ContractTable page={1} list={contractDetail} onOk={() => this.onChangeContract([])} hiddenRadio isShowDel />
                       )
                     }
                   </div>
