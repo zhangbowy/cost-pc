@@ -43,7 +43,6 @@ function parseJSON(response) {
 
 // http请求状态校验
 function checkStatus(response) {
-  // console.log(response);
   if (response.headers.get('token')) {
     localStorage.removeItem('token');
     localStorage.setItem('token', response.headers.get('token'));

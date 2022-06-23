@@ -24,7 +24,8 @@ const APP_API = {
   // test: 'https://pretest.forwe.store',
   // pre: 'https://framework-api-sandbox.jimistore.com',
   pre: 'https://pretest.forwe.store',
-  prod: 'https://cost.forwe.store',
+  // prod: 'https://cost.forwe.store',
+  prod: 'https://app48514.eapps.dingtalkcloud.com',
 }[SPD_ENV];
 
 // 接口网关
