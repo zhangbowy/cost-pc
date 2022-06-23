@@ -52,8 +52,7 @@ export default {
           /components\//,
         ],
       },
-    }],
-    ['transform-remove-console']
+    }, 'transform-remove-console'],
   ],
   theme: {
     "@primary-color": "rgba(0, 199, 149, 1)",
