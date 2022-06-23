@@ -52,8 +52,14 @@ export default {
           /components\//,
         ],
       },
-    }, 'transform-remove-console'],
+    }],
   ],
+  uglifyJSOptions(opts) {
+    opts.uglifyOptions.compress.warnings = true;
+    opts.uglifyOptions.compress.drop_debugger = true;
+    opts.uglifyOptions.compress.drop_console = true;
+    return opts;
+  },
   theme: {
     "@primary-color": "rgba(0, 199, 149, 1)",
     "@link-color": "rgba(0, 199, 149, 1)", // 链接色
