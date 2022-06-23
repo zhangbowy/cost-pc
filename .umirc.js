@@ -70,6 +70,7 @@ export default {
     // ssoUrl: common.getSsoConfig(constants.APP_ENV),
   },
   ignoreMomentLocale: true,
+  extraBabelPlugins: [isInProd ? 'transform-remove-console' : ''],
   targets: {
     ios: 8,
     android: 4,
