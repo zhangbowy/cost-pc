@@ -146,6 +146,9 @@ class Basic extends React.PureComponent {
           values.relations.forEach(its => {
             obbj[its] = true;
           });
+          Object.assign(values, {
+            ...obbj,
+          });
         }
         if (values.contract) {
           const obbj = {
