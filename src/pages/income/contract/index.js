@@ -159,6 +159,11 @@ class incomeReport extends React.PureComponent {
         createDeptIds: payload.createDeptIds.map(({deptId}) => deptId)
       });
     }
+    if(payload.status && !Array.isArray(payload.status)) {
+      Object.assign(payload, {
+        status: [payload.status]
+      });
+    }
     delete payload.userIds
     this.props.dispatch({
       type: 'contract/list',
