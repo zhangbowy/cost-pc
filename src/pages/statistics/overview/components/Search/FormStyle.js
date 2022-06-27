@@ -691,9 +691,9 @@ class FormStyle extends Component {
               mode="multiple"
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={(val) => this.onChangeSelect(val, index)}
-              value={item.value && Array.isArray(item.value)
+              value={item.value && item.value[item.key] && Array.isArray(item.value[item.key])
                   ? item.value[item.key].map(it => { return { key: it }; })
-                  : item.value ? { key: item.value[item.key] }
+                  : item.value && item.value[item.key] ? { key: item.value[item.key] }
                     : undefined}
             >
               {
