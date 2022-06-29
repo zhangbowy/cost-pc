@@ -715,6 +715,7 @@ renderTreeNodes = data =>
                 }
                 renderForm = (
                   <Select
+                    showSearch
                     placeholder={itw.note ? itw.note : '请选择'}
                     disabled={modify && !itw.isModify}
                     mode={Number(itw.fieldType) === 8 ? 'multiple' : ''}
