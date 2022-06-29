@@ -74,6 +74,9 @@ class ChangeForm extends Component {
     const { onChangeData } = this.props;
     if (val.users && val.users.length > 0) {
       const flags = await this.props.checkOffice({ dingUserId: val.users[0].userId });
+      this.props.form.setFieldsValue({
+        officeId: '',
+      });
       if (!flags) return;
       const { deptInfo, userId } = await this.props.selectPle(JSON.stringify(val.users));
       onChangeData({
