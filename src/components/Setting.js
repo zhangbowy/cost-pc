@@ -123,6 +123,7 @@ class Setting extends Component {
     this.setState({ delIds: [] });
   }
 
+
   // 可用人员选择事件监听
   onChange = (e) => {
     const { data } = this.state;
@@ -179,10 +180,10 @@ class Setting extends Component {
         if (target === 'project' && type !== 'group') {
           Object.assign(val, {
             projectManagerJson: JSON.stringify(data.projectManagerJson),
-            startTime: moment(values.time[0]).format('x'),
-            endTime: moment(values.time[1]).format('x'),
+            startTime: moment(values.startTime).format('x'),
+            endTime: values.endTime ? moment(values.endTime).format('x'): null,
           });
-          delete val.time;
+          // delete val.time;
         }
         if (!values.isAllUse && type !== 'group') {
           if (!data.userJson.length && !data.deptJson.length) {
@@ -325,8 +326,14 @@ class Setting extends Component {
     return res;
   }
 
+  disabledDate = current => {
+    const { title, visible, data, groupList, startTime } = this.state;
+    // Can not select days before today and today
+    return current && current < moment(startTime).endOf('day');
+  };
+
   render() {
-    const { title, visible, data, groupList } = this.state;
+    const { title, visible, data, groupList, startTime } = this.state;
     const { form: { getFieldDecorator }, type, target } = this.props;
     const columns = [
       {
@@ -448,22 +455,39 @@ class Setting extends Component {
                 <>
                   {
                     target === 'project' &&
-                    <Form.Item label={labelItem.time} key="time">
+                    <Form.Item label={labelItem.time}>
                       {
-                        getFieldDecorator('time', {
-                          initialValue: data.startTime ?
-                          [moment(moment(Number(data.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'),
-                          moment(moment(Number(data.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD')] : undefined,
+                        getFieldDecorator('startTime', {
+                          initialValue: data.startTime ? moment(moment(Number(data.startTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD'): undefined,
                           rules: [{ required: true, message: '请选择项目期限' }]
                         })(
-                          <RangePicker
-                            placeholder="请选择项目期限"
+
+                          <DatePicker
+                            placeholder="开始日期"
                             format="YYYY-MM-DD"
-                            showTime={{
-                              hideDisabledOptions: true,
-                              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                            onChange={(val) => {
+                              this.setState({
+                                startTime: val
+                              })
                             }}
+
                           />
+                        )
+                      }
+                      <span style={{margin: '0 6px'}}>
+                         <svg  color='rgba(0, 0, 0, 0.25)' viewBox="0 0 1024 1024" focusable="false" data-icon="swap-right" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M873.1 596.2l-164-208A32 32 0 00684 376h-64.8c-6.7 0-10.4 7.7-6.3 13l144.3 183H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h695.9c26.8 0 41.7-30.8 25.2-51.8z"></path></svg>
+                      </span>
+                      {
+                        getFieldDecorator('endTime', {
+                          initialValue: data.endTime ?
+                              moment(moment(Number(data.endTime)).format('YYYY-MM-DD'), 'YYYY-MM-DD') : undefined,
+                        })(
+
+                            <DatePicker
+                              placeholder="结束日期"
+                              format="YYYY-MM-DD"
+                              disabledDate={this.disabledDate}
+                            />
                         )
                       }
                     </Form.Item>
