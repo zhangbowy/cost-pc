@@ -573,7 +573,7 @@ class EchartsTest extends Component {
       const newValue = val[index].value || {};
       if (newValue[keys] !== oldValue[keys]) {
         const pIndex = val.findIndex(it => it.key === 'projectIds');
-        const { lists, projectList } = await this.onProject({ ...newValue });
+        const { lists, projectList } = await this.onProject({ ...newValue, queryType: 4 });
         const values = projectList.filter(it => it.type === 1);
         arr = update(arr, {
           $splice: [[pIndex, 1, {
